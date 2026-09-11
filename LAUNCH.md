@@ -1,6 +1,6 @@
 # Flap Fit website launch handoff
 
-Private draft: https://flap-fit.woolly-gleam-5375.chatgpt.site
+Private draft: https://flap-fit.sportaholic000.chatgpt.site
 
 The website is a separate static project. No mobile app source, manifest, lockfile, or dependencies were edited. No website backend, analytics, signup, payment, database, or app-owned authentication was added. Owner-only access is supplied by Sites.
 
