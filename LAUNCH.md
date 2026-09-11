@@ -23,7 +23,7 @@ Authored public source is in dist/ with /, /privacy/, /support/, and a custom 40
 
 ## Artwork provenance
 
-The six PNG exercise illustrations are byte-for-byte copies of the current app's assets/images/exercises/ images. All ten Sunny SVG stages and the Athlete flying pose were exported from the app's existing createBirdSvg renderer with its Sunny palette. No substitute or newly generated mascot art was used. The gameplay illustration reuses the app's drawBackground and drawPipes routines, with the canonical flying sprite. It is labelled as an illustration, not a recording or playable camera demo.
+The six PNG exercise illustrations are byte-for-byte copies of the current app's assets/images/exercises/ images. The ten Sunny evolution PNGs shown on the homepage are byte-for-byte copies of the current in-app stage artwork. The homepage header uses the exact current splash-screen logo. The gameplay illustration uses the same stage-6 Sunny PNG that the app uses for both showcase and flying contexts. No substitute or newly generated mascot art was used. The gameplay illustration reuses the app's drawBackground and drawPipes routines, with the canonical flying sprite. It is labelled as an illustration, not a recording or playable camera demo.
 
 The hero and exercise section retain the yellow mascot throughout. The evolution gallery keeps Sunny consistent across all ten stages.
 
@@ -47,5 +47,5 @@ These informed presentation patterns only. No wording, artwork, or page layout w
 
 ## Validation
 
-JavaScript syntax, all local assets, requested route entrypoints, navigation anchors, unique HTML IDs, accessible image labels, exact six-artwork hashes, and ten-stage assets checked. Browser testing was not requested; Sites workflow does not allow additional browser QA without that request. As a delegated background task, no user-facing local browser handoff was opened.
+JavaScript syntax, all local assets, requested route entrypoints, navigation anchors, unique HTML IDs, accessible image labels, exact exercise-art, evolution-stage, and splash-logo hashes checked. Browser testing was not requested; Sites workflow does not allow additional browser QA without that request. As a delegated background task, no user-facing local browser handoff was opened.
 

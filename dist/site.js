@@ -31,7 +31,7 @@ for(const button of document.querySelectorAll('[data-stage]')){
   for(const item of document.querySelectorAll('[data-stage]')){const active=item===button;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active));}
   text('stage-number','STAGE '+String(i+1).padStart(2,'0')+' / 10');
   text('stage-name',DATA.stages[i]);text('stage-copy',stageDescriptions[i]);text('stage-time',i===0?'0 minutes':DATA.times[i]);text('stage-watermark',String(i+1).padStart(2,'0'));
-  const art=byId('stage-image');art.src='/assets/sunny-'+(i+1)+'.svg';art.alt='Sunny at stage '+(i+1)+', '+DATA.stages[i]+(i===9?', with a larger muscular build and gold champion details':'');
+  const art=byId('stage-image');art.src='/assets/sunny-'+(i+1)+'.png';art.alt='Sunny at stage '+(i+1)+', '+DATA.stages[i]+(i===9?', with a larger muscular build and gold champion details':'');
  });
 }
 const validEmail=value=>typeof value==='string'&&/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(value.trim());
@@ -101,7 +101,7 @@ function drawPipes() {
 }
 
 
-const sprite=new Image();sprite.src='/assets/sunny-flying.svg';
+const sprite=new Image();sprite.src='/assets/sunny-6.png';
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 let paused=reduced.matches,visible=false,frame=0,lastTime=null,elapsed=0,ready=false;
 const motionButton=byId('motion-toggle');
