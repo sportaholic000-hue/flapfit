@@ -1,0 +1,49 @@
+import { SCRIPT_CORE } from '../html/scriptCore';
+import { SCRIPT_GAME } from '../html/scriptGame';
+import { ENDLESS_BASE, LEVELS } from '../levels';
+
+describe('level run rules', () => {
+  it('caps every ordinary non-final level at exactly 60 pipes', () => {
+    const ordinaryLevels = LEVELS.slice(0, -1);
+
+    expect(ordinaryLevels).not.toHaveLength(0);
+    ordinaryLevels.forEach((level) => {
+      expect(level.maxScore).toBe(60);
+      expect(level.targetScore).toBeLessThanOrEqual(level.maxScore);
+    });
+  });
+
+  it('keeps the final level and endless mode uncapped', () => {
+    const finalLevel = LEVELS[LEVELS.length - 1];
+
+    expect(finalLevel.maxScore).toBe(0);
+    expect(ENDLESS_BASE.maxScore).toBe(0);
+  });
+
+  it('only ends active play for the score cap or a pipe collision', () => {
+    const endGameCalls = SCRIPT_GAME.match(/\bendGame\(\);/g) ?? [];
+
+    expect(endGameCalls).toHaveLength(2);
+    expect(SCRIPT_GAME).toContain('if (CONFIG.maxScore > 0 && score >= CONFIG.maxScore) {');
+    expect(SCRIPT_GAME).toContain('if (collides()) { endGame(); }');
+    expect(SCRIPT_GAME).not.toContain('score >= CONFIG.target) { endGame(); }');
+    expect(SCRIPT_GAME).toContain("state = 'lost';");
+    expect(SCRIPT_GAME).toContain("state = 'resume';");
+  });
+
+  it('pauses on stale camera tracking from the exercise-specific landmark', () => {
+    expect(SCRIPT_CORE).toContain('lastHeadTrackTime');
+    expect(SCRIPT_CORE).toContain('lastWristTrackTime');
+    expect(SCRIPT_CORE).toContain('usesWristTracking() ? wristY : headY');
+    expect(SCRIPT_CORE).not.toContain('wristY !== null ? wristY : headY');
+    expect(SCRIPT_GAME).toContain('if (!trackingFresh()) {');
+  });
+
+  it('uses camera tracking exclusively', () => {
+    expect(SCRIPT_CORE).not.toContain('__sensor');
+    expect(SCRIPT_CORE).not.toContain('initSensorFlow');
+    expect(SCRIPT_GAME).not.toContain('sensorCal');
+    expect(SCRIPT_GAME).not.toContain('CONFIG.control');
+    expect(SCRIPT_GAME).toContain('initCameraFlow();');
+  });
+});
