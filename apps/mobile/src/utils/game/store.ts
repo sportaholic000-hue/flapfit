@@ -6,6 +6,11 @@ import { ENDLESS_UNLOCK_LEVEL, LEVELS } from './levels';
 const STORE_NAME = 'flap-fit-store';
 const LEGACY_STORE_NAME = ['flappy', 'push', 'store'].join('-');
 
+// Bump this value whenever the competition/community rules materially change.
+// Players must accept the current version before publishing names, scores, or
+// challenge attempts to the online service.
+export const COMPETITION_TERMS_VERSION = '2026-09-14';
+
 const migratingStorage = {
   async getItem(name: string) {
     const currentValue = await AsyncStorage.getItem(name);
@@ -168,6 +173,7 @@ type GameStore = {
   exerciseMode: ExerciseMode;
   birdId: string;
   playerName: string;
+  competitionTermsVersion: string | null;
   deviceId: string;
   unlockedLevel: number;
   bestScores: Record<string, number>;
@@ -191,6 +197,7 @@ type GameStore = {
   setExerciseMode: (mode: ExerciseMode) => void;
   setBird: (id: string) => void;
   setPlayerName: (name: string) => void;
+  acceptCompetitionTerms: () => void;
   recordSession: (input: RecordSessionInput) => void;
   recordTut: (seconds: number, exercise: ExerciseMode) => void;
   completeDaily: (day: string) => void;
@@ -206,6 +213,7 @@ export const useGameStore = create<GameStore>()(
       exerciseMode: 'pushups',
       birdId: 'sunny',
       playerName: '',
+      competitionTermsVersion: null,
       deviceId: makeDeviceId(),
       unlockedLevel: 1,
       bestScores: {},
@@ -227,6 +235,7 @@ export const useGameStore = create<GameStore>()(
       setExerciseMode: (mode) => set({ exerciseMode: mode }),
       setBird: (id) => set({ birdId: id }),
       setPlayerName: (name) => set({ playerName: name.slice(0, 20) }),
+      acceptCompetitionTerms: () => set({ competitionTermsVersion: COMPETITION_TERMS_VERSION }),
 
       recordTut: (seconds, exercise) => {
         const safeSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;

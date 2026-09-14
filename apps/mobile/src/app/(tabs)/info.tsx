@@ -227,8 +227,24 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
               </Text>
               <Text style={styles.modalHeading}>Acceptable use</Text>
               <Text style={styles.modalText}>
-                Use Flap Fit lawfully and safely. Do not misuse competitive features, interfere with
-                the service, attempt unauthorized access, or submit harmful or abusive material.
+                Use Flap Fit lawfully and safely. Online competition requires acceptance of the
+                current Terms of Use and community rules before you can publish a player name,
+                leaderboard score, challenge, or challenge result.
+              </Text>
+              <Text style={styles.modalHeading}>Competition community rules</Text>
+              <Text style={styles.modalText}>
+                Do not use player names or competition features for sexual or obscene content, hate
+                or discrimination, threats, harassment, bullying, impersonation, fraud, spam,
+                unlawful content, cheating, score manipulation, unauthorized access, or attempts to
+                disrupt the service. Flap Fit may filter, hide, remove, or restrict content or
+                accounts that break these rules.
+              </Text>
+              <Text style={styles.modalHeading}>Reporting and blocking</Text>
+              <Text style={styles.modalText}>
+                Clearly labeled Report / Block controls are available beside other players' public
+                results. Reports may be reviewed and actioned, and blocked players are hidden from
+                your leaderboard and challenge views. Contact support if an urgent safety issue or
+                illegal content needs attention.
               </Text>
               <Text style={styles.modalHeading}>Service changes</Text>
               <Text style={styles.modalText}>

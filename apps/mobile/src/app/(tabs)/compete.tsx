@@ -2,14 +2,32 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Image, type ImageSource } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Medal, RefreshCw, Search, Share2, Swords, Trophy } from 'lucide-react-native';
+import {
+  CheckCircle2,
+  FileText,
+  Medal,
+  RefreshCw,
+  Search,
+  Share2,
+  Swords,
+  Trophy,
+} from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, ScrollView, Share, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Modal,
+  ScrollView,
+  Share,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import KeyboardAvoidingAnimatedView from '@/components/KeyboardAvoidingAnimatedView';
 import { competitionIsConfigured, competitionRequest } from '@/services/competitionApi';
 import { EXERCISE_IMAGES } from '@/utils/game/exerciseImages';
-import { useGameStore } from '@/utils/game/store';
+import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type LeaderboardRow = {
@@ -129,8 +147,132 @@ function openPlayerActions(target: ModerationTarget, onUpdated: () => void) {
   ]);
 }
 
+function CompetitionTermsModal({
+  visible,
+  onAccept,
+  onClose,
+}: {
+  visible: boolean;
+  onAccept: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <Modal
+      visible={visible}
+      animationType="fade"
+      transparent
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          padding: 20,
+          backgroundColor: 'rgba(15, 23, 42, 0.72)',
+        }}
+      >
+        <View
+          style={{
+            maxHeight: '88%',
+            borderRadius: 22,
+            backgroundColor: '#FFFFFF',
+            overflow: 'hidden',
+          }}
+        >
+          <ScrollView contentContainerStyle={{ padding: 20 }}>
+            <Text style={{ color: '#0F172A', fontSize: 21, fontWeight: '900' }}>
+              Online Competition Terms
+            </Text>
+            <Text style={{ color: '#64748B', fontSize: 12, marginTop: 3 }}>
+              Community rules effective September 14, 2026
+            </Text>
+
+            <Text style={{ color: '#0F172A', fontWeight: '900', marginTop: 18 }}>
+              What becomes public
+            </Text>
+            <Text style={{ color: '#475569', lineHeight: 20, marginTop: 5 }}>
+              After you accept and use Compete, Flap Fit creates a private anonymous online
+              identifier. Your chosen player name, leaderboard score, challenge target, and
+              challenge result may be visible to other Flap Fit players. Your camera feed and
+              recordings are never uploaded to competition services.
+            </Text>
+
+            <Text style={{ color: '#0F172A', fontWeight: '900', marginTop: 16 }}>
+              Community rules
+            </Text>
+            <Text style={{ color: '#475569', lineHeight: 20, marginTop: 5 }}>
+              Do not use player names or competition features for sexual or obscene content, hate or
+              discrimination, threats, harassment, bullying, impersonation, fraud, spam, unlawful
+              content, cheating, score manipulation, or attempts to disrupt the service.
+            </Text>
+
+            <Text style={{ color: '#0F172A', fontWeight: '900', marginTop: 16 }}>
+              Moderation and control
+            </Text>
+            <Text style={{ color: '#475569', lineHeight: 20, marginTop: 5 }}>
+              You can report or block other players from clearly labeled controls beside their
+              results. Flap Fit may filter, hide, remove, or restrict content or accounts that break
+              these rules. You can permanently delete your online profile from the Info tab.
+            </Text>
+
+            <Text style={{ color: '#64748B', fontSize: 12, lineHeight: 18, marginTop: 16 }}>
+              By choosing I Agree, you accept these rules and the Flap Fit Terms of Use. You can
+              review the Terms of Use at any time in the Info tab.
+            </Text>
+          </ScrollView>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 10,
+              padding: 16,
+              borderTopWidth: 1,
+              borderTopColor: '#E2E8F0',
+            }}
+          >
+            <TouchableOpacity
+              accessibilityRole="button"
+              onPress={onClose}
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                borderRadius: 12,
+                paddingVertical: 12,
+                backgroundColor: '#E2E8F0',
+              }}
+            >
+              <Text style={{ color: '#334155', fontWeight: '800' }}>Not now</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="I agree to the online competition terms"
+              onPress={onAccept}
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                borderRadius: 12,
+                paddingVertical: 12,
+                backgroundColor: '#1D4ED8',
+              }}
+            >
+              <Text style={{ color: '#FFFFFF', fontWeight: '900' }}>I Agree</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
 // ─── Leaderboard Panel ────────────────────────────────────────────────────────
-function LeaderboardPanel({ exercise }: { exercise: LeaderboardExercise }) {
+function LeaderboardPanel({
+  exercise,
+  termsAccepted,
+}: {
+  exercise: LeaderboardExercise;
+  termsAccepted: boolean;
+}) {
   const queryClient = useQueryClient();
   const tab = BOARD_TABS.find((t) => t.key === exercise)!;
 
@@ -142,7 +284,7 @@ function LeaderboardPanel({ exercise }: { exercise: LeaderboardExercise }) {
       );
       return d.scores ?? [];
     },
-    enabled: competitionIsConfigured,
+    enabled: competitionIsConfigured && termsAccepted,
     staleTime: 30000,
   });
 
@@ -169,6 +311,28 @@ function LeaderboardPanel({ exercise }: { exercise: LeaderboardExercise }) {
         <Text style={{ color: '#64748B', fontSize: 12, lineHeight: 18, marginTop: 5 }}>
           You can keep playing levels and Endless normally. Scores and training progress still save
           on this device.
+        </Text>
+      </View>
+    );
+  }
+
+  if (!termsAccepted) {
+    return (
+      <View
+        style={{
+          backgroundColor: '#FFFFFF',
+          borderRadius: 18,
+          padding: 18,
+          borderWidth: 1,
+          borderColor: '#E2E8F0',
+        }}
+      >
+        <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 15 }}>
+          Accept the competition rules to connect
+        </Text>
+        <Text style={{ color: '#64748B', fontSize: 12, lineHeight: 18, marginTop: 5 }}>
+          No anonymous online account or competition request starts until you accept the current
+          Terms of Use and community rules above.
         </Text>
       </View>
     );
@@ -323,6 +487,8 @@ export default function CompeteScreen() {
   const queryClient = useQueryClient();
   const playerName = useGameStore((s) => s.playerName);
   const setPlayerName = useGameStore((s) => s.setPlayerName);
+  const competitionTermsVersion = useGameStore((s) => s.competitionTermsVersion);
+  const acceptCompetitionTerms = useGameStore((s) => s.acceptCompetitionTerms);
   const hydrated = useGameStore((s) => s.hydrated);
 
   const [nameDraft, setNameDraft] = useState(playerName);
@@ -334,8 +500,10 @@ export default function CompeteScreen() {
   const [createdCode, setCreatedCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [boardTab, setBoardTab] = useState<LeaderboardExercise>('pushups');
+  const [showCompetitionTerms, setShowCompetitionTerms] = useState(false);
 
   const hasName = playerName.trim().length > 0;
+  const hasAcceptedCompetitionTerms = competitionTermsVersion === COMPETITION_TERMS_VERSION;
 
   // The persisted store hydrates asynchronously. Reflect the stored name once
   // it arrives exactly once. Subsequent store updates must not overwrite text
@@ -350,7 +518,7 @@ export default function CompeteScreen() {
   // Challenge queries
   const challengeQuery = useQuery({
     queryKey: ['challenge', activeCode],
-    enabled: competitionIsConfigured && !!activeCode,
+    enabled: competitionIsConfigured && hasAcceptedCompetitionTerms && !!activeCode,
     queryFn: async (): Promise<ChallengeData> => {
       return competitionRequest<ChallengeData>(
         `/challenges?code=${encodeURIComponent(activeCode ?? '')}`
@@ -408,6 +576,10 @@ export default function CompeteScreen() {
       setError('Online competition is temporarily unavailable.');
       return;
     }
+    if (!hasAcceptedCompetitionTerms) {
+      setShowCompetitionTerms(true);
+      return;
+    }
     const code = joinCode.trim().toUpperCase();
     if (code.length > 0) {
       setActiveCode(code);
@@ -416,6 +588,10 @@ export default function CompeteScreen() {
   };
 
   const playChallenge = (data: ChallengeData) => {
+    if (!hasAcceptedCompetitionTerms) {
+      setShowCompetitionTerms(true);
+      return;
+    }
     router.push({
       pathname: '/game' as never,
       params: {
@@ -530,6 +706,63 @@ export default function CompeteScreen() {
           </Text>
         </View>
 
+        <View
+          style={{
+            backgroundColor: hasAcceptedCompetitionTerms ? '#F0FDF4' : '#EFF6FF',
+            borderRadius: 18,
+            padding: 16,
+            marginTop: 12,
+            borderWidth: 1,
+            borderColor: hasAcceptedCompetitionTerms ? '#BBF7D0' : '#BFDBFE',
+          }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
+            {hasAcceptedCompetitionTerms ? (
+              <CheckCircle2 size={20} color="#15803D" />
+            ) : (
+              <FileText size={20} color="#1D4ED8" />
+            )}
+            <Text
+              style={{
+                flex: 1,
+                color: hasAcceptedCompetitionTerms ? '#166534' : '#1E3A8A',
+                fontWeight: '900',
+                fontSize: 14,
+              }}
+            >
+              {hasAcceptedCompetitionTerms
+                ? 'Online competition terms accepted'
+                : 'Accept the rules before publishing'}
+            </Text>
+          </View>
+          <Text style={{ color: '#475569', fontSize: 12, lineHeight: 18, marginTop: 7 }}>
+            Player names, leaderboard scores, and challenge results can be public. Competition posts
+            stay disabled until you accept the Terms of Use and community rules.
+          </Text>
+          <TouchableOpacity
+            accessibilityRole="button"
+            onPress={() => setShowCompetitionTerms(true)}
+            style={{
+              alignSelf: 'flex-start',
+              marginTop: 10,
+              borderRadius: 10,
+              paddingHorizontal: 13,
+              paddingVertical: 8,
+              backgroundColor: hasAcceptedCompetitionTerms ? '#DCFCE7' : '#1D4ED8',
+            }}
+          >
+            <Text
+              style={{
+                color: hasAcceptedCompetitionTerms ? '#166534' : '#FFFFFF',
+                fontWeight: '800',
+                fontSize: 12,
+              }}
+            >
+              {hasAcceptedCompetitionTerms ? 'Review terms' : 'Review and accept'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         {/* ── Global Leaderboards ─────────────────────────────────────────── */}
         <View style={{ marginTop: 18 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 }}>
@@ -585,7 +818,7 @@ export default function CompeteScreen() {
             ))}
           </View>
 
-          <LeaderboardPanel exercise={boardTab} />
+          <LeaderboardPanel exercise={boardTab} termsAccepted={hasAcceptedCompetitionTerms} />
         </View>
 
         {/* ── Create challenge ────────────────────────────────────────────── */}
@@ -631,9 +864,11 @@ export default function CompeteScreen() {
               onPress={() =>
                 !competitionIsConfigured
                   ? setError('Online competition is temporarily unavailable.')
-                  : hasName
-                    ? createChallenge.mutate()
-                    : setError('Set your player name first.')
+                  : !hasName
+                    ? setError('Set your player name first.')
+                    : !hasAcceptedCompetitionTerms
+                      ? setShowCompetitionTerms(true)
+                      : createChallenge.mutate()
               }
               disabled={!competitionIsConfigured || createChallenge.isPending}
               style={{
@@ -833,6 +1068,15 @@ export default function CompeteScreen() {
 
         {error && <Text style={{ color: '#DC2626', marginTop: 12, fontSize: 13 }}>{error}</Text>}
       </ScrollView>
+      <CompetitionTermsModal
+        visible={showCompetitionTerms}
+        onClose={() => setShowCompetitionTerms(false)}
+        onAccept={() => {
+          acceptCompetitionTerms();
+          setShowCompetitionTerms(false);
+          setError(null);
+        }}
+      />
     </KeyboardAvoidingAnimatedView>
   );
 }

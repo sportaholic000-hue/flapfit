@@ -3,6 +3,8 @@ create extension if not exists pgcrypto;
 create table public.profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
   player_name text not null,
+  terms_version text not null,
+  terms_accepted_at timestamptz not null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint profiles_player_name_length check (char_length(player_name) between 2 and 20),

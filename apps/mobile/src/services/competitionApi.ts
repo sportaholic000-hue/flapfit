@@ -3,6 +3,7 @@ import { createClient, type SupabaseClient, type User } from '@supabase/supabase
 import { AppState, type AppStateStatus } from 'react-native';
 import 'react-native-url-polyfill/auto';
 import { ONLINE_SERVICES } from '@/config/release';
+import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
 
 const FUNCTION_NAME = 'flapfit-game';
 
@@ -13,6 +14,13 @@ export class CompetitionUnavailableError extends Error {
   constructor(message = 'Online competition is not available yet.') {
     super(message);
     this.name = 'CompetitionUnavailableError';
+  }
+}
+
+export class CompetitionTermsRequiredError extends Error {
+  constructor(message = 'Accept the online competition terms before using Compete.') {
+    super(message);
+    this.name = 'CompetitionTermsRequiredError';
   }
 }
 
@@ -68,6 +76,15 @@ export async function competitionRequest<T>(
   path: string,
   options: CompetitionRequestOptions = {}
 ): Promise<T> {
+  const method = options.method ?? 'GET';
+  const requiresCurrentTerms = !(method === 'DELETE' && path === '/me');
+  if (
+    requiresCurrentTerms &&
+    useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION
+  ) {
+    throw new CompetitionTermsRequiredError();
+  }
+
   const { client: supabase } = await anonymousUser();
   const sessionResult = await supabase.auth.getSession();
   const accessToken = sessionResult.data.session?.access_token;
@@ -76,11 +93,12 @@ export async function competitionRequest<T>(
   const response = await fetch(
     `${ONLINE_SERVICES.supabaseUrl}/functions/v1/${FUNCTION_NAME}${path}`,
     {
-      method: options.method ?? 'GET',
+      method,
       headers: {
         apikey: ONLINE_SERVICES.supabasePublishableKey,
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
+        ...(requiresCurrentTerms ? { 'X-FlapFit-Terms-Version': COMPETITION_TERMS_VERSION } : {}),
       },
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
     }

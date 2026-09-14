@@ -3,7 +3,8 @@ import { createClient } from 'npm:@supabase/supabase-js@2.109.0';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info',
+  'Access-Control-Allow-Headers':
+    'authorization, apikey, content-type, x-client-info, x-flapfit-terms-version',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
 };
 
@@ -20,6 +21,7 @@ const ALLOWED_CONTEXT_TYPES = new Set(['leaderboard', 'challenge_attempt']);
 const BLOCKED_NAME_PATTERN =
   /(?:fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i;
 const MAX_DAILY_CHALLENGES = 10;
+const CURRENT_TERMS_VERSION = '2026-09-14';
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: RESPONSE_HEADERS });
@@ -100,6 +102,14 @@ function randomCode(): string {
   return Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join('');
 }
 
+function requireCurrentTerms(req: Request): string {
+  const termsVersion = req.headers.get('X-FlapFit-Terms-Version');
+  if (termsVersion !== CURRENT_TERMS_VERSION) {
+    throw new Error('Accept the current online competition terms before publishing results.');
+  }
+  return termsVersion;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS_HEADERS });
 
@@ -125,6 +135,8 @@ Deno.serve(async (req) => {
     const marker = '/flapfit-game';
     const markerIndex = url.pathname.indexOf(marker);
     const route = markerIndex >= 0 ? url.pathname.slice(markerIndex + marker.length) || '/' : '/';
+    const requestTermsVersion =
+      req.method === 'DELETE' && route === '/me' ? null : requireCurrentTerms(req);
 
     if (req.method === 'GET' && route === '/leaderboard') {
       const exercise = url.searchParams.get('exercise') ?? '';
@@ -166,9 +178,13 @@ Deno.serve(async (req) => {
       if (!ALLOWED_EXERCISES.has(exercise)) return json({ error: 'Exercise is invalid.' }, 400);
       const score = integer(body.score, 0, 100000, 'Score');
       const now = new Date().toISOString();
-      const profileResult = await admin
-        .from('profiles')
-        .upsert({ user_id: user.id, player_name: playerName, updated_at: now });
+      const profileResult = await admin.from('profiles').upsert({
+        user_id: user.id,
+        player_name: playerName,
+        terms_version: requestTermsVersion ?? CURRENT_TERMS_VERSION,
+        terms_accepted_at: now,
+        updated_at: now,
+      });
       if (profileResult.error) throw profileResult.error;
       const scoreResult = await admin.rpc('upsert_leaderboard_score', {
         p_user_id: user.id,
@@ -184,9 +200,13 @@ Deno.serve(async (req) => {
       const playerName = cleanPlayerName(body.creatorName);
       const targetScore = integer(body.targetScore, 1, 60, 'Target score');
       const now = new Date().toISOString();
-      const profileResult = await admin
-        .from('profiles')
-        .upsert({ user_id: user.id, player_name: playerName, updated_at: now });
+      const profileResult = await admin.from('profiles').upsert({
+        user_id: user.id,
+        player_name: playerName,
+        terms_version: requestTermsVersion ?? CURRENT_TERMS_VERSION,
+        terms_accepted_at: now,
+        updated_at: now,
+      });
       if (profileResult.error) throw profileResult.error;
 
       const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -284,9 +304,13 @@ Deno.serve(async (req) => {
       if (challengeResult.error) throw challengeResult.error;
       if (!challengeResult.data) return json({ error: 'Challenge not found.' }, 404);
       const now = new Date().toISOString();
-      const profileResult = await admin
-        .from('profiles')
-        .upsert({ user_id: user.id, player_name: playerName, updated_at: now });
+      const profileResult = await admin.from('profiles').upsert({
+        user_id: user.id,
+        player_name: playerName,
+        terms_version: requestTermsVersion ?? CURRENT_TERMS_VERSION,
+        terms_accepted_at: now,
+        updated_at: now,
+      });
       if (profileResult.error) throw profileResult.error;
       const attemptResult = await admin.rpc('upsert_challenge_attempt', {
         p_user_id: user.id,
