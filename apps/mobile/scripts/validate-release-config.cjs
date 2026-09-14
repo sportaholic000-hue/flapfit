@@ -6,6 +6,7 @@ const repoRoot = path.resolve(appRoot, '..', '..');
 const appJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'app.json'), 'utf8')).expo;
 const easJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'eas.json'), 'utf8'));
 const mobilePackage = JSON.parse(fs.readFileSync(path.join(appRoot, 'package.json'), 'utf8'));
+const easIgnore = fs.readFileSync(path.join(repoRoot, '.easignore'), 'utf8');
 const failures = [];
 
 function isPrivateOrReservedHostname(hostname) {
@@ -226,6 +227,19 @@ if (
   failures.push(
     'package.json: production EAS builds must retain the fail-closed post-install check'
   );
+}
+
+for (const requiredUploadRule of [
+  '!supabase/config.toml',
+  '!supabase/functions/',
+  '!supabase/functions/flapfit-game/',
+  '!supabase/functions/flapfit-game/index.ts',
+]) {
+  if (!easIgnore.split(/\r?\n/).includes(requiredUploadRule)) {
+    failures.push(
+      `.easignore: missing ${requiredUploadRule} required by the production build check`
+    );
+  }
 }
 
 const cameraPlugin = appJson.plugins?.find(

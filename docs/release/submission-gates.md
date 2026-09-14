@@ -94,6 +94,8 @@ Owner/legal inputs still required:
       distribution, auto-incrementing build numbers, ad/analytics packages, and mobile/API
       Competition Terms version parity.
 - [x] The release validator guards the checked-in Edge Function JWT-verification setting.
+- [x] EAS upload rules retain the non-secret Edge Function/config contract files required by the
+      production build validator while excluding database migrations from the app build context.
 - [x] The app is linked to the existing `@sportaholic/flapfit` EAS project and the checked-in project
       ID matches the remote project.
 - [ ] Populate the currently empty EAS `production` environment with the seven validated public

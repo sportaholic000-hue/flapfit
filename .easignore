@@ -5,7 +5,11 @@ node_modules/
 .yarn/unplugged/
 
 apps/web/
-supabase/
+supabase/*
+!supabase/config.toml
+!supabase/functions/
+!supabase/functions/flapfit-game/
+!supabase/functions/flapfit-game/index.ts
 config/
 shared/
 !apps/mobile/polyfills/shared/
