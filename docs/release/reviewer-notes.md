@@ -29,7 +29,7 @@ Flap Fit 1.0 has no ads, purchases, subscriptions, analytics, HealthKit access, 
 location access, or contact access. Fitness and score estimates are not medical measurements. The
 fitness safety notice is available at Info > Fitness safety.
 
-Support: **[REQUIRED INPUT: name, email, phone]**
+Support: **Troy Reardon, awesome-eh@hotmail.com; [REQUIRED INPUT: review phone number]**
 
 Privacy policy: **[REQUIRED INPUT: public HTTPS URL]**
 
@@ -54,7 +54,7 @@ UGC test:
 2. Review and accept Online Competition Terms.
 3. Set a player name.
 4. View leaderboards or create/find a challenge.
-5. Use Report / Block beside another player's result.
+5. Use Report / Block beside another player's leaderboard result, challenge, or challenge attempt.
 6. Use Info > Delete online profile to remove the anonymous account and associated competition data.
 
 Flap Fit 1.0 contains no ads or in-app purchases.
@@ -63,4 +63,4 @@ Public account-deletion page: **[REQUIRED INPUT: public HTTPS URL]**
 
 Privacy policy: **[REQUIRED INPUT: public HTTPS URL]**
 
-Support contact: **[REQUIRED INPUT: public email]**
+Support contact: **awesome-eh@hotmail.com**

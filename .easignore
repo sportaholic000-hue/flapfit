@@ -5,6 +5,7 @@ node_modules/
 .yarn/unplugged/
 
 apps/web/
+apps/mobile/store-assets/
 supabase/*
 !supabase/config.toml
 !supabase/functions/

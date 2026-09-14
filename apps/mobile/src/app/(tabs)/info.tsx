@@ -188,11 +188,12 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
               <Text style={styles.modalHeading}>Public content and moderation</Text>
               <Text style={styles.modalText}>
                 Player names and competition results can be visible to other players. You can report
-                or block another player from the options beside their leaderboard score or challenge
-                attempt. Reported content may be removed and abusive access may be restricted.
-                Challenges are removed after they expire. Pending moderation reports remain until
-                review, then resolved reports are kept for up to 180 days. If an associated account
-                is deleted sooner, its user identifier is removed from the report.
+                or block another player from the options beside public leaderboard results,
+                challenges, and challenge attempts. Reported content may be removed and abusive
+                access may be restricted. Challenges are removed after they expire. Pending
+                moderation reports remain until review, then resolved reports are kept for up to 180
+                days. If an associated account is deleted sooner, its user identifier is removed
+                from the report.
               </Text>
               <Text style={styles.modalHeading}>Your control</Text>
               <Text style={styles.modalText}>
@@ -245,9 +246,9 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
               <Text style={styles.modalHeading}>Reporting and blocking</Text>
               <Text style={styles.modalText}>
                 Clearly labeled Report / Block controls are available beside other players' public
-                results. Reports may be reviewed and actioned, and blocked players are hidden from
-                your leaderboard and challenge views. Contact support if an urgent safety issue or
-                illegal content needs attention.
+                leaderboard results, challenges, and challenge attempts. Reports may be reviewed and
+                actioned, and blocked players are hidden from your leaderboard and challenge views.
+                Contact support if an urgent safety issue or illegal content needs attention.
               </Text>
               <Text style={styles.modalHeading}>Service changes</Text>
               <Text style={styles.modalText}>

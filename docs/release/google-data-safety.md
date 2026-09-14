@@ -90,7 +90,8 @@ Treat Google Play's account-deletion rule as applicable.
 - Terms prohibit obscene/sexual content, hate/discrimination, threats, harassment, bullying,
   impersonation, fraud, spam, unlawful content, cheating, score manipulation, and service abuse.
 - Server-side name filtering runs before publication.
-- Report / Block is clearly labeled beside public results.
+- Report / Block is clearly labeled beside public leaderboard results, challenges, and challenge
+  attempts.
 - Reports are persisted for moderation and blocked users are hidden from the reporter.
 - **[REQUIRED INPUT: operational moderator, support inbox, response SLA, escalation/removal process]**
 
@@ -98,7 +99,7 @@ Treat Google Play's account-deletion rule as applicable.
 
 - Ads: **No** for 1.0. The current binary has no ad SDK.
 - App access: no login credentials required. Explain the optional anonymous Compete profile.
-- Target audience: **[REQUIRED INPUT]**. Do not select children unless the app and website are
+- Target audience: **13 and older**. Do not select children under 13 unless the app and website are
   intentionally brought into full Families-policy compliance.
 - Content rating: answer Yes for user-generated content and answer the fitness/exercise questions
   accurately. Do not claim medical treatment functionality.

@@ -47,6 +47,7 @@ type ChallengeData = {
     code: string;
     creator_name: string;
     creator_profile_id: string;
+    creator_is_me: boolean;
     target_score: number;
     level_id: number | null;
   };
@@ -90,7 +91,7 @@ const BOARD_TABS: {
 type ModerationTarget = {
   profileId: string;
   playerName: string;
-  contextType: 'leaderboard' | 'challenge_attempt';
+  contextType: 'leaderboard' | 'challenge' | 'challenge_attempt';
   contextId: string;
 };
 
@@ -213,9 +214,10 @@ function CompetitionTermsModal({
               Moderation and control
             </Text>
             <Text style={{ color: '#475569', lineHeight: 20, marginTop: 5 }}>
-              You can report or block other players from clearly labeled controls beside their
-              results. Flap Fit may filter, hide, remove, or restrict content or accounts that break
-              these rules. You can permanently delete your online profile from the Info tab.
+              You can report or block other players from clearly labeled controls beside public
+              leaderboard results, challenges, and challenge attempts. Flap Fit may filter, hide,
+              remove, or restrict content or accounts that break these rules. You can permanently
+              delete your online profile from the Info tab.
             </Text>
 
             <Text style={{ color: '#64748B', fontSize: 12, lineHeight: 18, marginTop: 16 }}>
@@ -1036,10 +1038,37 @@ export default function CompeteScreen() {
                 padding: 12,
               }}
             >
-              <Text style={{ fontWeight: '800', color: '#0F172A' }}>
-                {challengeData.challenge.creator_name}'s challenge · Target{' '}
-                {challengeData.challenge.target_score}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Text style={{ flex: 1, fontWeight: '800', color: '#0F172A' }}>
+                  {challengeData.challenge.creator_name}'s challenge · Target{' '}
+                  {challengeData.challenge.target_score}
+                </Text>
+                {!challengeData.challenge.creator_is_me ? (
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    accessibilityLabel={`Report or block ${challengeData.challenge.creator_name}`}
+                    onPress={() =>
+                      openPlayerActions(
+                        {
+                          profileId: challengeData.challenge.creator_profile_id,
+                          playerName: challengeData.challenge.creator_name,
+                          contextType: 'challenge',
+                          contextId: challengeData.challenge.id,
+                        },
+                        () => {
+                          setActiveCode(null);
+                          queryClient.removeQueries({ queryKey: ['challenge'] });
+                        }
+                      )
+                    }
+                    style={{ paddingHorizontal: 6, paddingVertical: 7 }}
+                  >
+                    <Text style={{ color: '#B91C1C', fontWeight: '800', fontSize: 9 }}>
+                      Report / Block
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+              </View>
               {challengeData.attempts.length > 0 ? (
                 <View style={{ marginTop: 8 }}>
                   {challengeData.attempts.slice(0, 10).map((a) => (

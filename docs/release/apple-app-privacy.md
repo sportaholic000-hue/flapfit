@@ -64,8 +64,9 @@ video or message under that destination's terms; Flap Fit does not receive a cop
 - Public privacy policy link: Info > Full privacy policy.
 - In-app account deletion: Info > Delete online profile.
 - UGC filtering: server-side player-name validation and moderation filter.
-- UGC reporting/blocking: clearly labeled Report / Block action on leaderboard and challenge rows.
-- UGC contact information: **[REQUIRED INPUT: public support email]**
+- UGC reporting/blocking: clearly labeled Report / Block action on public leaderboard results,
+  challenges, and challenge attempts.
+- UGC contact information: **awesome-eh@hotmail.com**
 - Timely moderation: **[REQUIRED INPUT: named reviewer and response SLA]**
 - Fitness disclaimer: Info > Fitness safety.
 - Camera permission text explains on-device tracking and optional local recording.

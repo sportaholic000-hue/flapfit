@@ -6,13 +6,16 @@ grant all privileges on all tables in schema cron to postgres;
 alter table public.content_reports
   drop constraint content_reports_reporter_id_fkey,
   drop constraint content_reports_reported_user_id_fkey,
+  drop constraint reports_context_allowed,
   alter column reporter_id drop not null,
   alter column reported_user_id drop not null,
   add column resolved_at timestamptz,
   add constraint content_reports_reporter_id_fkey
     foreign key (reporter_id) references auth.users(id) on delete set null,
   add constraint content_reports_reported_user_id_fkey
-    foreign key (reported_user_id) references auth.users(id) on delete set null;
+    foreign key (reported_user_id) references auth.users(id) on delete set null,
+  add constraint reports_context_allowed
+    check (context_type in ('leaderboard', 'challenge', 'challenge_attempt'));
 
 create index content_reports_retention_idx
   on public.content_reports (resolved_at)

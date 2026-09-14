@@ -17,7 +17,7 @@ const RESPONSE_HEADERS = {
 
 const ALLOWED_EXERCISES = new Set(['pushups', 'squats', 'pullups']);
 const ALLOWED_REPORT_REASONS = new Set(['inappropriate_name', 'cheating', 'harassment_or_other']);
-const ALLOWED_CONTEXT_TYPES = new Set(['leaderboard', 'challenge_attempt']);
+const ALLOWED_CONTEXT_TYPES = new Set(['leaderboard', 'challenge', 'challenge_attempt']);
 const BLOCKED_NAME_PATTERN =
   /(?:fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i;
 const MAX_DAILY_CHALLENGES = 10;
@@ -280,6 +280,7 @@ Deno.serve(async (req) => {
           id: challengeResult.data.id,
           code: challengeResult.data.code,
           creator_profile_id: challengeResult.data.creator_id,
+          creator_is_me: challengeResult.data.creator_id === user.id,
           creator_name: Array.isArray(creatorProfile)
             ? creatorProfile[0]?.player_name
             : creatorProfile?.player_name,
@@ -333,12 +334,17 @@ Deno.serve(async (req) => {
       if (reportedUserId === user.id) return json({ error: 'You cannot report yourself.' }, 400);
 
       const contextTable =
-        contextType === 'leaderboard' ? 'leaderboard_scores' : 'challenge_attempts';
+        contextType === 'leaderboard'
+          ? 'leaderboard_scores'
+          : contextType === 'challenge'
+            ? 'challenges'
+            : 'challenge_attempts';
+      const ownerColumn = contextType === 'challenge' ? 'creator_id' : 'user_id';
       const contextResult = await admin
         .from(contextTable)
         .select('id')
         .eq('id', contextId)
-        .eq('user_id', reportedUserId)
+        .eq(ownerColumn, reportedUserId)
         .maybeSingle();
       if (contextResult.error) throw contextResult.error;
       if (!contextResult.data) return json({ error: 'Reported content was not found.' }, 404);

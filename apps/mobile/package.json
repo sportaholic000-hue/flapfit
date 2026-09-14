@@ -9,6 +9,7 @@
     "start:expo-go": "node ./scripts/start-expo-go.cjs",
     "release:check": "node ./scripts/validate-release-config.cjs",
     "release:links": "node ./scripts/check-release-links.cjs",
+    "release:assets": "node ./scripts/validate-store-assets.cjs",
     "typecheck": "tsc --noEmit",
     "test": "jest --runInBand"
   },

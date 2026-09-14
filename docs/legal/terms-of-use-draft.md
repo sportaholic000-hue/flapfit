@@ -5,12 +5,12 @@ publishing.
 
 Effective date: [REQUIRED: launch date]
 
-These Terms form an agreement between you and [REQUIRED: legal operator name and address] for your
-use of Flap Fit. Contact: [REQUIRED: monitored support email].
+These Terms form an agreement between you and Troy Reardon, located at [REQUIRED: legal postal
+address], for your use of Flap Fit. Contact: awesome-eh@hotmail.com.
 
 ## Eligibility and acceptance
 
-You must be at least [REQUIRED: minimum age] and legally able to accept these Terms. A parent or
+You must be at least 13 and legally able to accept these Terms. A parent or
 guardian must approve use where local law requires it. By using Flap Fit, and separately by accepting
 the Competition Terms before using Compete, you agree to these Terms and the Privacy Policy.
 
@@ -38,10 +38,10 @@ bullying, impersonation, fraud, spam, illegal content, or content that violates 
 rights. Do not cheat, manipulate scores, obtain unauthorized access, evade limits, or disrupt the
 service.
 
-You can report or block another player beside that player's public result. We may filter, restrict,
-hide, or remove content; suspend online access; preserve evidence; and contact appropriate
-authorities when reasonably necessary to enforce these rules or protect users. Contact [REQUIRED:
-monitored support email] for urgent safety or illegal-content reports.
+You can report or block another player beside that player's public leaderboard result, challenge,
+or challenge attempt. We may filter, restrict, hide, or remove content; suspend online access;
+preserve evidence; and contact appropriate authorities when reasonably necessary to enforce these
+rules or protect users. Contact awesome-eh@hotmail.com for urgent safety or illegal-content reports.
 
 ## Your account and deletion
 

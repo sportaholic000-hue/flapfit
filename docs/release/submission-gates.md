@@ -8,12 +8,14 @@ final review decisions.
 ## Technical source gates
 
 - [x] App name is Flap Fit; iOS bundle ID and Android package are `com.flapfit.game`.
+- [x] The 1024 x 1024 source app icon is fully opaque; Android's adaptive foreground correctly uses
+      transparency.
 - [x] Expo SDK 57 dependencies pass Expo dependency checks.
 - [x] The locked dependency graph has a documented reachability review; current registry advisories
       are non-critical and predominantly Expo/Jest build tooling, not untrusted-data paths in the
       shipped game.
-- [ ] Re-run Expo Doctor on final HEAD. The last complete run passed but predates the latest commits;
-      the tool is not in the locked dependency graph, so downloading it requires owner approval.
+- [x] Expo Doctor 1.20.4 passes all 21 checks on the current release candidate; it was run with a
+      temporary Yarn download and left the dependency lockfile unchanged.
 - [x] Android compile SDK and target SDK are 36.
 - [x] Android production profile is configured to build an AAB.
 - [x] Expo SDK 57's automatic EAS iOS image uses Xcode 26.6, meeting Apple's current upload
@@ -55,17 +57,20 @@ The release validator currently requires:
 
 Owner/legal inputs still required:
 
-- [ ] Legal operator/developer name.
-- [ ] Public support email monitored by a real person.
-- [ ] Launch countries and whether EU/UK distribution is included.
-- [ ] Intended audience/age range. Avoid selecting children unless intentionally compliant with
-      Apple's Kids Category and Google Families requirements.
+- [x] Legal operator/developer name: Troy Reardon.
+- [x] Provisional public support email supplied: awesome-eh@hotmail.com. Reconfirm it is monitored and
+      replace it everywhere if the final domain changes.
+- [ ] Canada and the United States are confirmed as the minimum launch availability. Decide whether
+      to add other countries at first release; EU/UK and other country-specific disclosures remain
+      required before selecting those storefronts.
+- [x] Intended audience minimum age is 13. Do not select Apple's Kids Category or Google Families
+      unless the product is intentionally changed to comply with those programs.
 - [ ] Moderation owner, response SLA, takedown/escalation process, and documented handling of urgent
       or illegal reports.
 
 ## Backend gates
 
-- [ ] User selects/approves the Supabase organization.
+- [ ] Create/select a dedicated Flap Fit Supabase organization; do not use the WUF organization.
 - [ ] Obtain exact Supabase project cost and receive explicit cost confirmation.
 - [ ] Create a dedicated Flap Fit project in the chosen region.
 - [ ] Enable anonymous authentication.
@@ -136,6 +141,7 @@ Owner/legal inputs still required:
 - [ ] Complete app access, target audience, content rating, ads, privacy policy, data deletion, and
       any required financial/features declarations.
 - [ ] Upload genuine phone screenshots, app icon, and 1024 x 500 feature graphic.
+- [ ] Run `yarn workspace mobile release:assets` and resolve every local store-media failure.
 - [ ] Upload the AAB to internal testing first and review the pre-launch report.
 - [ ] Satisfy any testing-duration/tester requirement shown on this developer account before
       production access.

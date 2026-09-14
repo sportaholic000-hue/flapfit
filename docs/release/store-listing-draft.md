@@ -6,8 +6,14 @@ accuracy, guaranteed results, or live global usage numbers without evidence.
 ## Name and positioning
 
 - App name: Flap Fit
-- Apple subtitle: Your body controls the bird
+- Apple subtitle: Your body controls the bird (27/30 characters)
+- Apple promotional text: Turn exercise into a flying game, build tracked training time, and evolve
+  the bird you control. (95/170 characters)
+- Apple keywords:
+  `workout,exercise,bodyweight,training,avatar,gamified,pushup,squat,pullup,camera,motion`
+  (86/100 bytes)
 - Google short description: Move your body, guide your bird, and make workout progress visible.
+  (67/80 characters)
 - Primary category: Health & Fitness
 - Secondary Apple category: Games, Casual
 - Google tags: Fitness, Exercise, Casual
@@ -52,11 +58,16 @@ Use genuine captures from the final production build. Do not put fabricated user
 screenshots represented as real live activity; seed clearly marked demo/reviewer data if a populated
 competition screen is required.
 
+Store-listing media belongs in `apps/mobile/store-assets`. Run
+`corepack yarn workspace mobile release:assets` before either submission. The source iOS icon is
+1024 x 1024 and has no transparent pixels; the Google Play store icon and feature graphic remain
+separate deliverables.
+
 ## Required links and contacts
 
 - Marketing URL: [REQUIRED]
 - Privacy Policy URL: [REQUIRED]
 - Terms URL: [REQUIRED]
 - Account and data deletion URL: [REQUIRED]
-- Support email: [REQUIRED]
-- Copyright and legal seller/developer name: [REQUIRED]
+- Support email: awesome-eh@hotmail.com (provisional until the final domain decision)
+- Copyright and legal seller/developer name: Troy Reardon

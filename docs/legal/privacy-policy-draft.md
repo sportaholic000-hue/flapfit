@@ -5,8 +5,8 @@ publishing.
 
 Effective date: [REQUIRED: launch date]
 
-Flap Fit is operated by [REQUIRED: legal operator name and address] ("Flap Fit," "we," "us").
-Questions and privacy requests may be sent to [REQUIRED: monitored support email].
+Flap Fit is operated by Troy Reardon, located at [REQUIRED: legal postal address] ("Flap Fit,"
+"we," "us"). Questions and privacy requests may be sent to awesome-eh@hotmail.com.
 
 ## Information kept on your device
 
@@ -78,14 +78,14 @@ on the device.
 
 If you no longer have the app, visit [REQUIRED: public account-deletion URL] and follow the request
 instructions. Privacy questions and applicable access, correction, objection, restriction, or
-deletion requests may be sent to [REQUIRED: monitored support email]. We may need enough information
+deletion requests may be sent to awesome-eh@hotmail.com. We may need enough information
 to locate the anonymous competition profile without exposing or deleting another player's data.
 
 ## Children
 
-Flap Fit is not directed to children under [REQUIRED: minimum age based on launch countries]. We do
-not knowingly collect online competition information from children below the applicable minimum
-age. Contact us if you believe a child provided information contrary to this policy.
+Flap Fit is not directed to children under 13. We do not knowingly collect online competition
+information from children under 13. Contact us if you believe a child provided information contrary
+to this policy.
 
 ## Safety and changes
 

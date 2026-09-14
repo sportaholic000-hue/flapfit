@@ -21,7 +21,7 @@ and training history stored only on the phone are not deleted by this action.
 
 ## Request deletion without the app
 
-Email [REQUIRED: monitored support email] with the subject "Flap Fit account deletion." Include your
+Email awesome-eh@hotmail.com with the subject "Flap Fit account deletion." Include your
 player name and any challenge code, exercise leaderboard, approximate score, and approximate date
 that can help us locate the anonymous profile. Do not send camera images, workout videos, passwords,
 government identification, or other sensitive information.
@@ -38,4 +38,4 @@ remain until review and resolved reports are removed after 180 days; account ide
 sooner when an associated account is deleted. [REQUIRED BEFORE PUBLISHING: state the verified
 security-log and backup exceptions and their exact retention periods.]
 
-For privacy questions, contact [REQUIRED: legal operator and monitored support email].
+For privacy questions, contact Troy Reardon at awesome-eh@hotmail.com.
