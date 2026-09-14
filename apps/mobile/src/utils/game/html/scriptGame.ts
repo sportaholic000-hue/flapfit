@@ -604,10 +604,7 @@ function loop(now) {
         setProgress(prog);
         if (prog >= 1) {
           var candidate = stabAverage();
-          var requiredCalibrationRange = usesExperimentalFormTracking() && CONFIG.exercise === 'pullups'
-            ? 0.035
-            : 0.06;
-          if (candidate !== null && topY !== null && candidate - topY > requiredCalibrationRange) {
+          if (candidate !== null && topY !== null && candidate - topY > 0.06) {
             bottomY = candidate; stabBuf = [];
             saveExperimentalCalibration('bottom');
             beep(880, 0.18, 'sine', 0.08);

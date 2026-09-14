@@ -28,6 +28,7 @@ function mirroredPair(leftIndex: number, rightIndex: number, x: number, y: numbe
 }
 
 function makeHarness(exercise: string) {
+  let currentTime = 0;
   const factory = new Function(
     'CONFIG',
     'performance',
@@ -52,7 +53,18 @@ function makeHarness(exercise: string) {
     metrics: () => { controllerY: number };
   };
 
-  return factory({ trackingMode: 'form-test', exercise }, { now: () => 0 }, 2000);
+  const harness = factory(
+    { trackingMode: 'form-test', exercise },
+    { now: () => currentTime },
+    2000
+  );
+  return {
+    ...harness,
+    update: (landmarks: Point[], now: number) => {
+      currentTime = now;
+      harness.update(landmarks, now);
+    },
+  };
 }
 
 describe('experimental form tracking', () => {
@@ -111,8 +123,8 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.56),
       ...mirroredPair(27, 28, 0.45, 0.9),
     ]);
-    harness.update(setup, 0);
-    harness.update(setup, 2100);
+    for (let now = 0; now <= 2000; now += 200) harness.update(setup, now);
+    harness.update(setup, 4100);
     const result = harness.validateCalibration('top');
 
     expect(result.valid).toBe(false);
@@ -128,7 +140,20 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.64),
       ...mirroredPair(27, 28, 0.45, 0.92),
     ]);
-    harness.update(setup, 0);
+    for (let now = 0; now <= 2000; now += 200) harness.update(setup, now);
+
+    const deadHang = pose([
+      ...mirroredPair(11, 12, 0.44, 0.44),
+      ...mirroredPair(13, 14, 0.44, 0.28),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.65),
+      ...mirroredPair(27, 28, 0.45, 0.73),
+    ]);
+    harness.update(deadHang, 4100);
+    expect(harness.validateCalibration('top')).toMatchObject({
+      valid: false,
+      message: expect.stringMatching(/pull your body upward/i),
+    });
 
     const top = pose([
       ...mirroredPair(11, 12, 0.43, 0.35),
@@ -137,7 +162,7 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.56),
       ...mirroredPair(27, 28, 0.45, 0.72),
     ]);
-    harness.update(top, 2100);
+    harness.update(top, 4200);
     expect(harness.validateCalibration('top').valid).toBe(true);
     harness.save('top');
 
@@ -148,7 +173,7 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.65),
       ...mirroredPair(27, 28, 0.45, 0.73),
     ]);
-    harness.update(bottom, 2116);
+    harness.update(bottom, 4216);
 
     expect(harness.validateCalibration('bottom').valid).toBe(true);
     harness.save('bottom');
@@ -161,7 +186,7 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.65),
       ...mirroredPair(27, 28, 0.45, 0.92),
     ]);
-    harness.update(feetDown, 2132);
+    harness.update(feetDown, 4232);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
@@ -175,7 +200,7 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.65),
       ...mirroredPair(27, 28, 0.45, 0.73),
     ]);
-    harness.update(releasedBar, 2148);
+    harness.update(releasedBar, 4248);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
