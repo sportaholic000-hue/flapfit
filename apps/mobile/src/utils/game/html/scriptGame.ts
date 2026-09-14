@@ -340,29 +340,14 @@ function endGame() {
 
 // ---------- Drawing ----------
 function drawBackground() {
-  var showingFormCalibration = usesExperimentalFormTracking() &&
-    (state === 'waitTop' || state === 'waitBottom');
-  if ((CONFIG.backgroundMode === 'camera' || showingFormCalibration) &&
-      video && video.readyState >= 2 &&
+  if (CONFIG.backgroundMode === 'camera' && video && video.readyState >= 2 &&
       video.videoWidth > 0 && video.videoHeight > 0) {
     var sourceWidth = video.videoWidth;
     var sourceHeight = video.videoHeight;
     var sourceAspect = sourceWidth / sourceHeight;
     var targetAspect = W / Math.max(1, H);
     var sx = 0, sy = 0, sw = sourceWidth, sh = sourceHeight;
-    var dx = 0, dy = 0, dw = W, dh = H;
-    if (showingFormCalibration) {
-      // Preserve the complete vertical camera field during full-body setup.
-      // Any aspect-ratio difference is handled at the sides, never by cutting
-      // off the player's head, hands, or feet.
-      var fullHeightScale = H / sourceHeight;
-      dw = sourceWidth * fullHeightScale;
-      dh = H;
-      dx = (W - dw) / 2;
-      dy = 0;
-      ctx.fillStyle = '#061B42';
-      ctx.fillRect(0, 0, W, H);
-    } else if (sourceAspect > targetAspect) {
+    if (sourceAspect > targetAspect) {
       sw = sourceHeight * targetAspect;
       sx = (sourceWidth - sw) / 2;
     } else {
@@ -372,7 +357,7 @@ function drawBackground() {
     ctx.save();
     ctx.translate(W, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(video, sx, sy, sw, sh, dx, dy, dw, dh);
+    ctx.drawImage(video, sx, sy, sw, sh, 0, 0, W, H);
     ctx.restore();
     ctx.fillStyle = 'rgba(4,15,38,0.12)';
     ctx.fillRect(0, 0, W, H);

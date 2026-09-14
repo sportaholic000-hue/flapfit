@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Camera, ChevronRight, Move, Ruler, Smartphone } from 'lucide-react-native';
+import { Camera, ChevronRight } from 'lucide-react-native';
 import { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -116,8 +116,7 @@ export default function OnboardingScreen() {
           width: '100%',
         }}
       >
-        <View style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
-          <Smartphone size={26} color="#F59E0B" />
+        <View>
           <View style={{ flex: 1 }}>
             <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
               Push-ups
@@ -127,8 +126,7 @@ export default function OnboardingScreen() {
             </Text>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
-          <Ruler size={26} color="#F59E0B" />
+        <View>
           <View style={{ flex: 1 }}>
             <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
               Squats
@@ -138,8 +136,7 @@ export default function OnboardingScreen() {
             </Text>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
-          <Move size={26} color="#F59E0B" />
+        <View>
           <View style={{ flex: 1 }}>
             <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
               Pull-ups / Bicep Curls{'\n'}Lateral Raises / Shoulder Press
@@ -149,8 +146,7 @@ export default function OnboardingScreen() {
             </Text>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
-          <Move size={26} color="#F59E0B" />
+        <View>
           <View style={{ flex: 1 }}>
             <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
               Good lighting = better tracking. Face the camera and keep your full range of motion

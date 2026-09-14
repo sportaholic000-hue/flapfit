@@ -114,12 +114,7 @@ function startCamera() {
     return Promise.reject(new Error('Camera API unavailable for the game page origin.'));
   }
   return navigator.mediaDevices.getUserMedia({
-    video: {
-      facingMode: 'user',
-      width: { ideal: 480 },
-      height: { ideal: 640 },
-      aspectRatio: { ideal: 0.75 }
-    },
+    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
     audio: false
   }).then(function (stream) {
     video.srcObject = stream;
@@ -288,11 +283,9 @@ function initCameraFlow() {
     showOverlay('Starting camera…', false);
     return startCamera();
   }).then(function () {
-    if (usesCameraBackground() || usesExperimentalFormTracking()) {
+    if (usesCameraBackground()) {
       // Leave a tiny invisible video surface alive for pose tracking and canvas
       // composition while removing the old thumbnail and camera toggle from view.
-      // Form Test shows the complete camera frame on the main canvas during
-      // calibration, so a second cropped thumbnail would only be distracting.
       previewEl.style.display = 'block';
       previewEl.style.opacity = '0';
       previewEl.style.pointerEvents = 'none';
