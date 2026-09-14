@@ -92,6 +92,7 @@ export default function StatsScreen() {
   const dailyCompleted = useGameStore((s) => s.dailyCompleted);
   const totalTut = useGameStore((s) => s.totalTutSeconds);
   const dailyTut = useGameStore((s) => s.dailyTut);
+  const dailyExerciseTut = useGameStore((s) => s.dailyExerciseTut);
   const exerciseTut = useGameStore((s) => s.exerciseTut);
   const lastActivity = useGameStore((s) => s.lastActivityDate);
   const birdId = useGameStore((s) => s.birdId);
@@ -114,12 +115,12 @@ export default function StatsScreen() {
   const selectedDailyTut =
     exerciseFilter === 'global'
       ? dailyTut
-      : sessions.reduce<Record<string, number>>((totals, session) => {
-          if (session.exercise === exerciseFilter) {
-            totals[session.day] = (totals[session.day] ?? 0) + (session.tutSeconds ?? 0);
-          }
-          return totals;
-        }, {});
+      : Object.fromEntries(
+          Object.entries(dailyExerciseTut).map(([day, totals]) => [
+            day,
+            totals[exerciseFilter] ?? 0,
+          ])
+        );
   const numDays = chartWindow === '7d' ? 7 : 30;
   const chartDays: { label: string; key: string; tut: number }[] = [];
   for (let i = numDays - 1; i >= 0; i--) {

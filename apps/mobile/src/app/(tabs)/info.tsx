@@ -31,11 +31,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BirdAvatar from '@/components/BirdAvatar';
 import { getBird } from '@/utils/game/birds';
-import {
-  EVO_NAMES,
-  EVO_THRESHOLDS,
-  useGameStore,
-} from '@/utils/game/store';
+import { EVO_NAMES, EVO_THRESHOLDS, useGameStore } from '@/utils/game/store';
 
 const NAVY = '#0F172A';
 const SKY = '#4AABDE';
@@ -68,7 +64,15 @@ function stageRange(index: number): string {
   return `${clock(start)}–${clock(EVO_THRESHOLDS[index + 1] - 1)}`;
 }
 
-function Section({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) {
+function Section({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <View style={styles.section}>
       <View style={styles.sectionTitleRow}>
@@ -149,67 +153,78 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
             <>
               <Text style={styles.modalHeading}>What the camera does</Text>
               <Text style={styles.modalText}>
-                Flap Fit uses the front camera during a game to estimate body landmarks and turn your
-                movement into bird movement. Video is processed live on this device. Flap Fit does not
-                record, save, or upload camera video.
+                Flap Fit uses the front camera during a game to estimate body landmarks and turn
+                your movement into bird movement. During normal Play, camera video is processed live
+                on this device and is not recorded or uploaded by Flap Fit.
+              </Text>
+              <Text style={styles.modalHeading}>Record & Play</Text>
+              <Text style={styles.modalText}>
+                If you choose Record & Play, Flap Fit creates a composed gameplay video that can
+                include your camera feed, bird, pipes, and score. The file is kept only in the app's
+                temporary cache so you can choose where to share it. Flap Fit does not upload the
+                recording. The temporary file is removed when you leave the result screen or start
+                another run. A service you choose in the share sheet receives the video under that
+                service's privacy terms.
               </Text>
               <Text style={styles.modalHeading}>Tracking technology</Text>
               <Text style={styles.modalText}>
-                The app downloads its MediaPipe tracking engine and pose model from third-party content
-                delivery services. Those services may receive ordinary connection information, such as an
-                IP address, when the files are requested. Camera frames are not sent with those requests.
+                The app downloads its MediaPipe tracking engine and pose model from third-party
+                content delivery services. Those services may receive ordinary connection
+                information, such as an IP address, when the files are requested. Camera frames are
+                not sent with those requests.
               </Text>
               <Text style={styles.modalHeading}>Progress data</Text>
               <Text style={styles.modalText}>
-                Your bird choice, training history, scores, and level progress are stored locally on your
-                phone. If you use online leaderboards or challenges, Flap Fit can send your chosen player
-                name, device identifier, exercise, challenge code, target, and score to its game service.
-                Camera video is never included. Advertising, accounts, or analytics will require this
-                disclosure and the public privacy policy to be updated before release.
+                Your bird choice, training history, scores, and level progress are stored locally on
+                your phone. If online leaderboards or challenges are enabled and you use them, Flap
+                Fit sends your chosen player name, device identifier, exercise, challenge code,
+                target, and score to its game service. Camera frames and gameplay recordings are not
+                included.
               </Text>
               <Text style={styles.modalHeading}>Your control</Text>
               <Text style={styles.modalText}>
-                Camera access begins only after you grant permission and enter a game. You can change the
-                permission at any time in your phone settings.
+                Camera access begins only after you grant permission and enter a game. You can
+                change the permission at any time in your phone settings.
               </Text>
             </>
           ) : page === 'safety' ? (
             <>
               <Text style={styles.modalHeading}>Train safely</Text>
               <Text style={styles.modalText}>
-                Flap Fit is a fitness game, not a medical device. It does not diagnose, treat, cure, or
-                prevent any medical condition. Talk with a qualified health professional before starting
-                a new exercise program, especially if you have an injury or health concern.
+                Flap Fit is a fitness game, not a medical device. It does not diagnose, treat, cure,
+                or prevent any medical condition. Talk with a qualified health professional before
+                starting a new exercise program, especially if you have an injury or health concern.
               </Text>
               <Text style={styles.modalHeading}>Before each session</Text>
               <Text style={styles.modalText}>
-                Use a clear, non-slip area. Secure the phone so it cannot fall. Use equipment only as
-                intended, warm up, and choose a level appropriate for your ability.
+                Use a clear, non-slip area. Secure the phone so it cannot fall. Use equipment only
+                as intended, warm up, and choose a level appropriate for your ability.
               </Text>
               <Text style={styles.modalHeading}>Stop when needed</Text>
               <Text style={styles.modalText}>
-                Stop exercising and seek appropriate help if you feel pain, dizziness, faintness, unusual
-                shortness of breath, or any other concerning symptom. Never prioritize an in-game score
-                over safe form.
+                Stop exercising and seek appropriate help if you feel pain, dizziness, faintness,
+                unusual shortness of breath, or any other concerning symptom. Never prioritize an
+                in-game score over safe form.
               </Text>
             </>
           ) : (
             <>
-              <Text style={styles.modalHeading}>Test-build notice</Text>
+              <Text style={styles.modalHeading}>Using Flap Fit</Text>
               <Text style={styles.modalText}>
-                This is a development version of Flap Fit. Features, scoring, exercise tracking, and stored
-                data may change before public release.
+                Flap Fit is a fitness game for personal, non-commercial use. Game scores, motion
+                tracking, and training-time totals are estimates and may be affected by lighting,
+                camera placement, device performance, or movement outside the frame.
               </Text>
               <Text style={styles.modalHeading}>Acceptable use</Text>
               <Text style={styles.modalText}>
-                Use Flap Fit lawfully and safely. Do not misuse competitive features, interfere with the
-                service, attempt unauthorized access, or submit harmful or abusive material.
+                Use Flap Fit lawfully and safely. Do not misuse competitive features, interfere with
+                the service, attempt unauthorized access, or submit harmful or abusive material.
               </Text>
-              <Text style={styles.modalHeading}>Before launch</Text>
+              <Text style={styles.modalHeading}>Service changes</Text>
               <Text style={styles.modalText}>
-                Final terms, a developer identity, governing law, support contact, and public policy URLs
-                must be supplied before App Store or Google Play submission. This test-build summary is not
-                the final legal agreement.
+                Features and online services may be changed, suspended, or discontinued. Your phone
+                is responsible for locally stored progress, so deleting Flap Fit or clearing its
+                data may permanently remove that progress.
               </Text>
             </>
           )}
@@ -250,7 +265,7 @@ export default function InfoScreen() {
     try {
       await Share.share({
         title: 'Flap Fit',
-        message: 'Check out Flap Fit — a fitness game where your body controls the bird.',
+        message: 'Check out Flap Fit, a fitness game where your body controls the bird.',
       });
     } catch {
       Alert.alert('Could not open sharing', 'Please try again.');
@@ -276,23 +291,26 @@ export default function InfoScreen() {
       >
         <Section title="Camera setup" icon={<Camera size={23} color={AMBER} />}>
           <NumberedStep number={1}>
-            Prop your phone upright and stable. Use bright, even light and keep the camera lens clear.
+            Prop your phone upright and stable. Use bright, even light and keep the camera lens
+            clear.
           </NumberedStep>
           <NumberedStep number={2}>
-            Choose your exercise before pressing Play. Keep the joints used by that exercise in frame.
+            Choose your exercise before pressing Play. Keep the joints used by that exercise in
+            frame.
           </NumberedStep>
           <NumberedStep number={3}>
-            Hold the first position shown until the bar fills, then hold the second position. After the
-            3-second countdown, the bird follows that calibrated range.
+            Hold the first position shown until the bar fills, then hold the second position. After
+            the 3-second countdown, the bird follows that calibrated range.
           </NumberedStep>
           <NumberedStep number={4}>
-            If tracking pauses, return to the center of the frame and hold still. The game resumes when
-            tracking is reliable again.
+            If tracking pauses, return to the center of the frame and hold still. The game resumes
+            when tracking is reliable again.
           </NumberedStep>
           <View style={styles.tipBox}>
             <Text style={styles.tipTitle}>Fast calibration tip</Text>
             <Text style={styles.tipText}>
-              Read the two positions below before pressing Play so you are ready when calibration begins.
+              Read the two positions below before pressing Play so you are ready when calibration
+              begins.
             </Text>
           </View>
           {EXERCISE_SETUP.map(([name, setup]) => (
@@ -305,8 +323,8 @@ export default function InfoScreen() {
 
         <Section title="Bird evolution" icon={<Clock3 size={23} color={AMBER} />}>
           <Text style={styles.bodyText}>
-            Your lifetime tracked training time moves your bird through ten stages. The stage names and
-            times below come directly from the same rules used by the game.
+            Your lifetime tracked training time moves your bird through ten stages. The stage names
+            and times below come directly from the same rules used by the game.
           </Text>
           <ScrollView
             horizontal
@@ -334,7 +352,10 @@ export default function InfoScreen() {
             {EVO_NAMES.map((name, index) => (
               <View
                 key={name}
-                style={[styles.stageRow, index === EVO_NAMES.length - 1 && { borderBottomWidth: 0 }]}
+                style={[
+                  styles.stageRow,
+                  index === EVO_NAMES.length - 1 && { borderBottomWidth: 0 },
+                ]}
               >
                 <View style={styles.stageBadge}>
                   <Text style={styles.stageBadgeText}>{index + 1}</Text>
@@ -347,17 +368,20 @@ export default function InfoScreen() {
           <View style={styles.noticeBox}>
             <TriangleAlert size={20} color="#92400E" />
             <Text style={styles.noticeText}>
-              Current test build: this total is active in-game training time after calibration, not yet
-              verified time-under-tension or a medical measurement.
+              This total is active in-game training time after calibration. It is not verified
+              time-under-tension or a medical measurement.
             </Text>
           </View>
           <Text style={[styles.bodyText, { marginTop: 12 }]}>
-            After 5 inactive days, the displayed stage drops by one; after 7 days, it drops by two. Your
-            earned time is not erased, and your full stage returns when you train again.
+            After 5 inactive days, the displayed stage drops by one; after 7 days, it drops by two.
+            Your earned time is not erased, and your full stage returns when you train again.
           </Text>
         </Section>
 
-        <Section title="Privacy, safety & permissions" icon={<ShieldCheck size={23} color={AMBER} />}>
+        <Section
+          title="Privacy, safety & permissions"
+          icon={<ShieldCheck size={23} color={AMBER} />}
+        >
           <ActionRow
             icon={<ShieldCheck size={21} color="#2563EB" />}
             title="Privacy & camera data"
@@ -373,7 +397,7 @@ export default function InfoScreen() {
           <ActionRow
             icon={<FileText size={21} color="#0284C7" />}
             title="Terms of use"
-            subtitle="Current test-build terms summary"
+            subtitle="Rules for using Flap Fit"
             onPress={() => setModalPage('terms')}
           />
           <ActionRow
@@ -407,7 +431,7 @@ export default function InfoScreen() {
 
         <View style={styles.versionCard}>
           <Text style={styles.versionName}>Flap Fit</Text>
-          <Text style={styles.versionText}>Version {version} · Expo test build</Text>
+          <Text style={styles.versionText}>Version {version}</Text>
         </View>
       </ScrollView>
 

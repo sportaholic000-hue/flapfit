@@ -3,7 +3,7 @@ import { Image, type ImageSource } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Medal, RefreshCw, Search, Share2, Swords, Trophy } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ScrollView, Share, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import KeyboardAvoidingAnimatedView from '@/components/KeyboardAvoidingAnimatedView';
@@ -212,8 +212,10 @@ export default function CompeteScreen() {
   const playerName = useGameStore((s) => s.playerName);
   const setPlayerName = useGameStore((s) => s.setPlayerName);
   const deviceId = useGameStore((s) => s.deviceId);
+  const hydrated = useGameStore((s) => s.hydrated);
 
   const [nameDraft, setNameDraft] = useState(playerName);
+  const hasLoadedNameDraft = useRef(false);
   const [nameSaveState, setNameSaveState] = useState<'idle' | 'saved' | 'empty'>('idle');
   const [targetDraft, setTargetDraft] = useState('10');
   const [joinCode, setJoinCode] = useState('');
@@ -225,11 +227,14 @@ export default function CompeteScreen() {
   const hasName = playerName.trim().length > 0;
 
   // The persisted store hydrates asynchronously. Reflect the stored name once
-  // it arrives so returning players do not see a blank field.
+  // it arrives exactly once. Subsequent store updates must not overwrite text
+  // while the player is editing the field.
   useEffect(() => {
+    if (!hydrated || hasLoadedNameDraft.current) return;
+    hasLoadedNameDraft.current = true;
     setNameDraft(playerName);
     if (playerName.trim().length > 0) setNameSaveState('saved');
-  }, [playerName]);
+  }, [hydrated, playerName]);
 
   // Challenge queries
   const challengeQuery = useQuery({
@@ -269,6 +274,7 @@ export default function CompeteScreen() {
   });
 
   const saveName = () => {
+    if (!hydrated) return;
     const nextName = nameDraft.trim().replace(/\s+/g, ' ');
     if (!nextName) {
       setNameSaveState('empty');
@@ -348,6 +354,7 @@ export default function CompeteScreen() {
           <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
             <TextInput
               value={nameDraft}
+              editable={hydrated}
               onChangeText={(value) => {
                 setNameDraft(value);
                 setNameSaveState('idle');
@@ -374,6 +381,7 @@ export default function CompeteScreen() {
             />
             <TouchableOpacity
               onPress={saveName}
+              disabled={!hydrated}
               accessibilityRole="button"
               accessibilityLabel="Save player name"
               style={{
@@ -381,6 +389,7 @@ export default function CompeteScreen() {
                 borderRadius: 12,
                 paddingHorizontal: 16,
                 justifyContent: 'center',
+                opacity: hydrated ? 1 : 0.55,
               }}
             >
               <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>Save</Text>
@@ -399,11 +408,13 @@ export default function CompeteScreen() {
               marginTop: 6,
             }}
           >
-            {nameSaveState === 'empty'
-              ? 'Enter a player name before saving.'
-              : nameSaveState === 'saved' && hasName
-                ? 'Saved on this device as ' + playerName + '.'
-                : 'Tap Save or Done on the keyboard to keep your leaderboard name.'}
+            {!hydrated
+              ? 'Loading your saved player name…'
+              : nameSaveState === 'empty'
+                ? 'Enter a player name before saving.'
+                : nameSaveState === 'saved' && hasName
+                  ? 'Saved on this device as ' + playerName + '.'
+                  : 'Tap Save or Done on the keyboard to keep your leaderboard name.'}
           </Text>
         </View>
 

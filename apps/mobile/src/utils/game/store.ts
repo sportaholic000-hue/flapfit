@@ -33,7 +33,9 @@ export type SessionRecord = {
   pushups: number;
   mode: string;
   levelId: number | null;
-  calories: number;
+  // Retained only so older saved sessions can still be read. Flap Fit no
+  // longer estimates calories because the camera cannot measure them reliably.
+  calories?: number;
   tutSeconds: number;
 };
 
@@ -44,6 +46,21 @@ export type ExerciseMode =
   | 'lateralraise'
   | 'biceps'
   | 'shoulderpress';
+
+export type DailyExerciseTut = Record<string, Partial<Record<ExerciseMode, number>>>;
+
+export function deriveDailyExerciseTut(sessions: SessionRecord[]): DailyExerciseTut {
+  return sessions.reduce<DailyExerciseTut>((totals, session) => {
+    if (!session.exercise || !Number.isFinite(session.tutSeconds) || session.tutSeconds <= 0) {
+      return totals;
+    }
+    totals[session.day] = {
+      ...totals[session.day],
+      [session.exercise]: (totals[session.day]?.[session.exercise] ?? 0) + session.tutSeconds,
+    };
+    return totals;
+  }, {});
+}
 
 // Evolution currently uses tracked training time from active gameplay. Camera
 // pose/form verification will be layered on separately; do not present these
@@ -166,6 +183,7 @@ type GameStore = {
   totalTutSeconds: number;
   exerciseTut: Record<string, number>;
   dailyTut: Record<string, number>;
+  dailyExerciseTut: DailyExerciseTut;
   lastActivityDate: string | null;
   // Actions
   setHydrated: () => void;
@@ -201,6 +219,7 @@ export const useGameStore = create<GameStore>()(
       totalTutSeconds: 0,
       exerciseTut: {},
       dailyTut: {},
+      dailyExerciseTut: {},
       lastActivityDate: null,
 
       setHydrated: () => set({ hydrated: true }),
@@ -210,16 +229,25 @@ export const useGameStore = create<GameStore>()(
       setPlayerName: (name) => set({ playerName: name.slice(0, 20) }),
 
       recordTut: (seconds, exercise) => {
+        const safeSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
+        if (safeSeconds === 0) return;
         const state = get();
         const today = dayKey();
-        const newTotal = state.totalTutSeconds + seconds;
+        const newTotal = state.totalTutSeconds + safeSeconds;
         const newExerciseTut = {
           ...state.exerciseTut,
-          [exercise]: (state.exerciseTut[exercise] ?? 0) + seconds,
+          [exercise]: (state.exerciseTut[exercise] ?? 0) + safeSeconds,
         };
         const newDailyTut = {
           ...state.dailyTut,
-          [today]: (state.dailyTut[today] ?? 0) + seconds,
+          [today]: (state.dailyTut[today] ?? 0) + safeSeconds,
+        };
+        const newDailyExerciseTut: DailyExerciseTut = {
+          ...state.dailyExerciseTut,
+          [today]: {
+            ...state.dailyExerciseTut[today],
+            [exercise]: (state.dailyExerciseTut[today]?.[exercise] ?? 0) + safeSeconds,
+          },
         };
         // Trim to last 90 days
         const cutoff = dayKey(new Date(Date.now() - 90 * 86400000));
@@ -227,10 +255,15 @@ export const useGameStore = create<GameStore>()(
         for (const k of Object.keys(newDailyTut)) {
           if (k >= cutoff) trimmed[k] = newDailyTut[k];
         }
+        const trimmedExercise: DailyExerciseTut = {};
+        for (const k of Object.keys(newDailyExerciseTut)) {
+          if (k >= cutoff) trimmedExercise[k] = newDailyExerciseTut[k];
+        }
         set({
           totalTutSeconds: newTotal,
           exerciseTut: newExerciseTut,
           dailyTut: trimmed,
+          dailyExerciseTut: trimmedExercise,
           lastActivityDate: new Date().toISOString(),
         });
       },
@@ -238,7 +271,6 @@ export const useGameStore = create<GameStore>()(
       recordSession: ({ exercise, score, pushups, mode, levelId, tutSeconds = 0 }) => {
         const state = get();
         const now = new Date();
-        const calories = Math.round(pushups * 0.32 * 10) / 10;
         const session: SessionRecord = {
           iso: now.toISOString(),
           day: dayKey(now),
@@ -247,7 +279,6 @@ export const useGameStore = create<GameStore>()(
           pushups,
           mode,
           levelId,
-          calories,
           tutSeconds,
         };
         const sessions = [session, ...state.sessions].slice(0, 300);
@@ -293,11 +324,20 @@ export const useGameStore = create<GameStore>()(
       },
       // Old installs may have persisted controlMode: 'sensor'. Force that
       // value to camera during hydration; setHydrated then writes it back.
-      merge: (persistedState, currentState) => ({
-        ...currentState,
-        ...((persistedState ?? {}) as Partial<GameStore>),
-        controlMode: 'camera' as const,
-      }),
+      merge: (persistedState, currentState) => {
+        const persisted = (persistedState ?? {}) as Partial<GameStore>;
+        return {
+          ...currentState,
+          ...persisted,
+          // Existing installs did not persist an exercise-by-day map. Recover
+          // every attributable historical entry once from completed sessions;
+          // older sessions without an exercise stay only in the Total chart.
+          dailyExerciseTut:
+            persisted.dailyExerciseTut ??
+            deriveDailyExerciseTut(persisted.sessions ?? currentState.sessions),
+          controlMode: 'camera' as const,
+        };
+      },
       onRehydrateStorage: () => (state) => {
         state?.setHydrated();
       },
