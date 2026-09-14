@@ -20,6 +20,8 @@ final review decisions.
       toolchain requirement.
 - [x] iOS export compliance declares no non-exempt encryption.
 - [x] iOS permission surface is camera only.
+- [x] The app-level iOS privacy manifest declares no tracking, the optional competition data types,
+      and the required-reason APIs used by the locked native SDKs.
 - [x] Android permission surface is INTERNET, VIBRATE, and CAMERA only.
 - [x] MediaPipe model/runtime assets and exercise/evolution art are bundled locally.
 - [x] Camera recording is local, silent, temporary, and user-shared.

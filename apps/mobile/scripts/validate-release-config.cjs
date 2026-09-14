@@ -61,6 +61,54 @@ if (appJson.ios?.infoPlist?.NSAppTransportSecurity?.NSAllowsArbitraryLoads !== f
   failures.push('app.json: iOS arbitrary network loads must remain disabled');
 }
 
+const privacyManifest = appJson.ios?.privacyManifests;
+if (privacyManifest?.NSPrivacyTracking !== false) {
+  failures.push('app.json: iOS privacy manifest must declare tracking disabled');
+}
+if ((privacyManifest?.NSPrivacyTrackingDomains ?? []).length !== 0) {
+  failures.push('app.json: iOS privacy manifest must not contain tracking domains');
+}
+
+const requiredPrivacyApiReasons = new Map([
+  ['NSPrivacyAccessedAPICategoryFileTimestamp', ['0A2A.1', '3B52.1', 'C617.1']],
+  ['NSPrivacyAccessedAPICategoryDiskSpace', ['85F4.1', 'E174.1']],
+  ['NSPrivacyAccessedAPICategoryUserDefaults', ['CA92.1']],
+  ['NSPrivacyAccessedAPICategorySystemBootTime', ['35F9.1']],
+]);
+for (const [apiType, reasons] of requiredPrivacyApiReasons) {
+  const entry = privacyManifest?.NSPrivacyAccessedAPITypes?.find(
+    (candidate) => candidate.NSPrivacyAccessedAPIType === apiType
+  );
+  if (
+    !entry ||
+    reasons.some((reason) => !entry.NSPrivacyAccessedAPITypeReasons?.includes(reason))
+  ) {
+    failures.push(`app.json: iOS privacy manifest is missing required reasons for ${apiType}`);
+  }
+}
+
+const requiredCollectedDataTypes = new Set([
+  'NSPrivacyCollectedDataTypeUserID',
+  'NSPrivacyCollectedDataTypeGameplayContent',
+  'NSPrivacyCollectedDataTypeFitness',
+  'NSPrivacyCollectedDataTypeOtherUserContent',
+]);
+for (const dataType of requiredCollectedDataTypes) {
+  const entry = privacyManifest?.NSPrivacyCollectedDataTypes?.find(
+    (candidate) => candidate.NSPrivacyCollectedDataType === dataType
+  );
+  if (
+    !entry ||
+    entry.NSPrivacyCollectedDataTypeLinked !== true ||
+    entry.NSPrivacyCollectedDataTypeTracking !== false ||
+    !entry.NSPrivacyCollectedDataTypePurposes?.includes(
+      'NSPrivacyCollectedDataTypePurposeAppFunctionality'
+    )
+  ) {
+    failures.push(`app.json: iOS privacy manifest is incomplete for ${dataType}`);
+  }
+}
+
 const buildPropertiesPlugin = appJson.plugins?.find(
   (plugin) => Array.isArray(plugin) && plugin[0] === 'expo-build-properties'
 );

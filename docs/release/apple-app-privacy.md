@@ -18,13 +18,17 @@ data to the Flap Fit Supabase service. The camera and normal training history re
 
 ## Data types to declare
 
-| Apple data type       | Current source behavior                                                                                                         | Linked to user?                           | Tracking? | Purposes                                         |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | --------- | ------------------------------------------------ |
-| User ID               | Supabase anonymous user ID and player screen name/handle                                                                        | Yes, to the anonymous competition profile | No        | App Functionality, Account Management            |
-| Gameplay Content      | Exercise category, leaderboard score, challenge target/code, and challenge attempts                                             | Yes                                       | No        | App Functionality                                |
-| Fitness               | Exercise category attached to an online score or challenge result                                                               | Yes                                       | No        | App Functionality                                |
-| Other User Content    | Player-entered competition content plus reports and blocks                                                                      | Yes                                       | No        | App Functionality, Fraud Prevention and Security |
-| Other Diagnostic Data | Ordinary request, error, and security logs retained by the production service provider, if the final Supabase plan retains them | Confirm after provisioning                | No        | App Functionality, Fraud Prevention and Security |
+| Apple data type       | Current source behavior                                                                                                         | Linked to user?                           | Tracking? | Apple purpose     |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | --------- | ----------------- |
+| User ID               | Supabase anonymous user ID and player screen name/handle                                                                        | Yes, to the anonymous competition profile | No        | App Functionality |
+| Gameplay Content      | Exercise category, leaderboard score, challenge target/code, and challenge attempts                                             | Yes                                       | No        | App Functionality |
+| Fitness               | Exercise category attached to an online score or challenge result                                                               | Yes                                       | No        | App Functionality |
+| Other User Content    | Player-entered competition content plus reports and blocks                                                                      | Yes                                       | No        | App Functionality |
+| Other Diagnostic Data | Ordinary request, error, and security logs retained by the production service provider, if the final Supabase plan retains them | Confirm after provisioning                | No        | App Functionality |
+
+Apple's privacy taxonomy places account management, fraud prevention, and security needed to run
+the feature under **App Functionality**. Do not enter the Google Data Safety purpose labels in App
+Store Connect.
 
 All online categories are optional because a user can play levels, Endless, use camera tracking,
 record locally, and retain local progress without using Compete.
@@ -65,6 +69,21 @@ video or message under that destination's terms; Flap Fit does not receive a cop
 - Timely moderation: **[REQUIRED INPUT: named reviewer and response SLA]**
 - Fitness disclaimer: Info > Fitness safety.
 - Camera permission text explains on-device tracking and optional local recording.
+
+## App privacy manifest
+
+`apps/mobile/app.json` now generates an app-level `PrivacyInfo.xcprivacy` with:
+
+- tracking disabled and no tracking domains;
+- the User ID, Gameplay Content, Fitness, and Other User Content collected-data declarations above;
+- File Timestamp, Disk Space, User Defaults, and System Boot Time required-reason API declarations;
+  and
+- the exact reason codes shipped by the locked React Native, AsyncStorage, Expo Constants, and Expo
+  FileSystem packages.
+
+Expo warns that privacy manifests inside static CocoaPods are not always combined reliably, so these
+SDK reasons are repeated at the app target. Inspect the generated privacy report from the final Xcode
+26 build and reconcile it with App Store Connect before submission.
 
 ## Privacy-policy facts that must match the live service
 
