@@ -21,6 +21,7 @@ import {
   ActivityIndicator,
   Animated,
   Easing,
+  Linking,
   Platform,
   Share,
   Text,
@@ -879,9 +880,17 @@ export default function GameScreen() {
           Flap Fit uses your front camera to track your body movement.{'\n\n'}All tracking runs on
           your device. Video is recorded only when you explicitly select Record &amp; Play. That
           recording is kept temporarily for sharing and is not uploaded by Flap Fit.
+          {!permission.canAskAgain
+            ? '\n\nCamera access is currently blocked. Open your phone settings to allow it.'
+            : ''}
         </Text>
         <TouchableOpacity
-          onPress={() => requestPermission()}
+          accessibilityRole="button"
+          accessibilityLabel={permission.canAskAgain ? 'Allow camera' : 'Open camera settings'}
+          onPress={() => {
+            if (permission.canAskAgain) void requestPermission();
+            else void Linking.openSettings();
+          }}
           style={{
             backgroundColor: '#F59E0B',
             borderRadius: 16,
@@ -889,7 +898,9 @@ export default function GameScreen() {
             alignItems: 'center',
           }}
         >
-          <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>Allow camera</Text>
+          <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
+            {permission.canAskAgain ? 'Allow camera' : 'Open settings'}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
           <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>

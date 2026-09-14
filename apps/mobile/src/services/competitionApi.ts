@@ -115,6 +115,10 @@ export async function competitionRequest<T>(
 export async function deleteCompetitionIdentity(): Promise<void> {
   if (!competitionIsConfigured) return;
   const supabase = getClient();
+  const sessionResult = await supabase.auth.getSession();
+  if (sessionResult.error) throw sessionResult.error;
+  if (!sessionResult.data.session?.user) return;
+
   await competitionRequest<{ deleted: true }>('/me', { method: 'DELETE' });
   await supabase.auth.signOut({ scope: 'local' });
 }
