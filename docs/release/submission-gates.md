@@ -12,9 +12,12 @@ final review decisions.
 - [x] The locked dependency graph has a documented reachability review; current registry advisories
       are non-critical and predominantly Expo/Jest build tooling, not untrusted-data paths in the
       shipped game.
-- [x] Expo Doctor passes all checks.
+- [ ] Re-run Expo Doctor on final HEAD. The last complete Doctor run passed, but it predates the
+      latest release-hardening commits.
 - [x] Android compile SDK and target SDK are 36.
-- [x] Android production profile builds an AAB.
+- [x] Android production profile is configured to build an AAB.
+- [x] Expo SDK 57's automatic EAS iOS image uses Xcode 26.6, meeting Apple's current upload
+      toolchain requirement.
 - [x] iOS export compliance declares no non-exempt encryption.
 - [x] iOS permission surface is camera only.
 - [x] Android permission surface is INTERNET, VIBRATE, and CAMERA only.
@@ -79,7 +82,13 @@ Owner/legal inputs still required:
 - [x] EAS development, preview, and production profiles explicitly select their matching EAS
       environment so store builds cannot silently inherit the wrong values.
 - [x] The release validator also guards bundle IDs, API 36, cleartext traffic, camera/audio
-      permissions, ad/analytics packages, and mobile/API Competition Terms version parity.
+      permissions, Expo/React Native alignment, the Xcode 26 image, production AAB/store
+      distribution, auto-incrementing build numbers, ad/analytics packages, and mobile/API
+      Competition Terms version parity.
+- [x] The app is linked to the existing `@sportaholic/flapfit` EAS project and the checked-in project
+      ID matches the remote project.
+- [ ] Populate the currently empty EAS `production` environment with the seven validated public
+      release values.
 - [ ] Support email/form is visible and functional.
 - [ ] Privacy policy identifies data, purposes, providers, retention, deletion, user rights, and
       international transfers where applicable.
@@ -91,16 +100,21 @@ Owner/legal inputs still required:
 - [ ] App Store Connect app record exists with the exact bundle ID.
 - [ ] Complete App Privacy using `apple-app-privacy.md`.
 - [ ] Complete age rating honestly for fitness/wellness and user-generated competition content.
+- [ ] Complete Apple's updated 2026 age-rating questionnaire.
 - [ ] Add final name, subtitle, description, keywords, categories, copyright, support URL, privacy
       URL, marketing URL, and review contact.
 - [ ] Upload genuine screenshots from the production build for every required iPhone display class.
 - [ ] Attach the production build, enter reviewer notes, and submit to TestFlight before App Review.
 - [ ] Answer export compliance and content-rights questions accurately.
+- [ ] If distributing in the EU, complete Digital Services Act trader-status and contact disclosures.
+- [ ] Confirm the uploaded build metadata shows Xcode 26 or newer and review the generated privacy
+      manifest before submission.
 
 ## Google Play submission gates
 
 - [ ] Google Play developer account and required developer verification are complete.
 - [ ] Play Console app record exists with package `com.flapfit.game`.
+- [ ] Enroll the app in Play App Signing and protect the upload key.
 - [ ] Complete Data Safety using `google-data-safety.md`.
 - [ ] Complete Health apps declaration as Activity and Fitness; do not claim no health features.
 - [ ] Complete app access, target audience, content rating, ads, privacy policy, data deletion, and
@@ -109,6 +123,8 @@ Owner/legal inputs still required:
 - [ ] Upload the AAB to internal testing first and review the pre-launch report.
 - [ ] Satisfy any testing-duration/tester requirement shown on this developer account before
       production access.
+- [ ] Confirm the uploaded AAB targets API 36 and review the Play-generated permission/device catalog
+      before production rollout.
 
 ## Flap Fit 1.0 monetization declaration
 

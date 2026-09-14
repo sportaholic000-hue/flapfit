@@ -4,6 +4,7 @@ const path = require('node:path');
 const appRoot = path.resolve(__dirname, '..');
 const repoRoot = path.resolve(appRoot, '..', '..');
 const appJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'app.json'), 'utf8')).expo;
+const easJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'eas.json'), 'utf8'));
 const mobilePackage = JSON.parse(fs.readFileSync(path.join(appRoot, 'package.json'), 'utf8'));
 const failures = [];
 
@@ -35,8 +36,11 @@ if (supabaseKey && !supabaseKey.startsWith('sb_publishable_')) {
   failures.push('EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: use a modern sb_publishable_ key');
 }
 
-if (!appJson.extra?.eas?.projectId) {
-  failures.push('app.json: missing extra.eas.projectId (link the app to its EAS project)');
+if (appJson.owner !== 'sportaholic') {
+  failures.push('app.json: Expo owner must remain sportaholic');
+}
+if (appJson.extra?.eas?.projectId !== 'bbbfea4f-3047-46f6-a5ba-6286356e4718') {
+  failures.push('app.json: EAS project ID must remain linked to @sportaholic/flapfit');
 }
 
 if (appJson.name !== 'Flap Fit' || appJson.slug !== 'flapfit') {
@@ -49,7 +53,9 @@ if (appJson.android?.package !== 'com.flapfit.game') {
   failures.push('app.json: Android package must be com.flapfit.game');
 }
 if (appJson.android?.allowBackup !== false) {
-  failures.push('app.json: Android backup must remain disabled for local game and anonymous auth data');
+  failures.push(
+    'app.json: Android backup must remain disabled for local game and anonymous auth data'
+  );
 }
 if (appJson.ios?.infoPlist?.NSAppTransportSecurity?.NSAllowsArbitraryLoads !== false) {
   failures.push('app.json: iOS arbitrary network loads must remain disabled');
@@ -58,11 +64,66 @@ if (appJson.ios?.infoPlist?.NSAppTransportSecurity?.NSAllowsArbitraryLoads !== f
 const buildPropertiesPlugin = appJson.plugins?.find(
   (plugin) => Array.isArray(plugin) && plugin[0] === 'expo-build-properties'
 );
+if ((buildPropertiesPlugin?.[1]?.android?.compileSdkVersion ?? 0) < 36) {
+  failures.push('app.json: Android compile SDK must be API 36 or newer');
+}
 if ((buildPropertiesPlugin?.[1]?.android?.targetSdkVersion ?? 0) < 36) {
   failures.push('app.json: Android target SDK must be API 36 or newer');
 }
 if (buildPropertiesPlugin?.[1]?.android?.usesCleartextTraffic !== false) {
   failures.push('app.json: Android cleartext network traffic must remain disabled');
+}
+if (Number.parseFloat(buildPropertiesPlugin?.[1]?.ios?.deploymentTarget ?? '0') < 16.4) {
+  failures.push('app.json: iOS deployment target must remain 16.4 or newer for Expo SDK 57');
+}
+
+if (!/^~57\./.test(String(mobilePackage.dependencies?.expo ?? ''))) {
+  failures.push(
+    'package.json: Expo SDK 57 is required for the current Apple and Google toolchains'
+  );
+}
+if (!/^0\.86\./.test(String(mobilePackage.dependencies?.['react-native'] ?? ''))) {
+  failures.push('package.json: React Native 0.86 must remain aligned with Expo SDK 57');
+}
+
+const productionBuild = easJson.build?.production;
+if (!productionBuild) {
+  failures.push('eas.json: missing production build profile');
+} else {
+  if (productionBuild.environment !== 'production') {
+    failures.push('eas.json: production builds must use the production EAS environment');
+  }
+  if (productionBuild.autoIncrement !== true) {
+    failures.push('eas.json: production build numbers must auto-increment');
+  }
+  if (productionBuild.distribution === 'internal' || productionBuild.developmentClient === true) {
+    failures.push(
+      'eas.json: production must create store-distribution builds, not internal/dev builds'
+    );
+  }
+  if (productionBuild.android?.buildType !== 'app-bundle') {
+    failures.push('eas.json: Google Play production builds must use the Android App Bundle format');
+  }
+
+  const iosImage = String(productionBuild.ios?.image ?? 'auto');
+  const iosImageSupportsXcode26 =
+    iosImage === 'auto' ||
+    iosImage === 'latest' ||
+    iosImage === 'sdk-57' ||
+    /xcode-26(?:\.|$)/i.test(iosImage);
+  if (!iosImageSupportsXcode26) {
+    failures.push(
+      "eas.json: iOS production image must support Apple's required Xcode 26 toolchain"
+    );
+  }
+}
+
+if (
+  mobilePackage.scripts?.['eas-build-post-install'] !== 'node ./scripts/eas-build-post-install.cjs'
+) {
+  failures.push(
+    'package.json: production EAS builds must retain the fail-closed post-install check'
+  );
 }
 
 const cameraPlugin = appJson.plugins?.find(
@@ -88,7 +149,9 @@ const forbiddenReleasePackages = [
 ];
 for (const packageName of forbiddenReleasePackages) {
   if (packageNames.has(packageName)) {
-    failures.push(`package.json: ${packageName} conflicts with the ad-free, no-analytics 1.0 declaration`);
+    failures.push(
+      `package.json: ${packageName} conflicts with the ad-free, no-analytics 1.0 declaration`
+    );
   }
 }
 
@@ -97,9 +160,7 @@ const functionSource = fs.readFileSync(
   path.join(repoRoot, 'supabase', 'functions', 'flapfit-game', 'index.ts'),
   'utf8'
 );
-const appTermsVersion = storeSource.match(
-  /COMPETITION_TERMS_VERSION\s*=\s*['"]([^'"]+)['"]/
-)?.[1];
+const appTermsVersion = storeSource.match(/COMPETITION_TERMS_VERSION\s*=\s*['"]([^'"]+)['"]/)?.[1];
 const apiTermsVersion = functionSource.match(/CURRENT_TERMS_VERSION\s*=\s*['"]([^'"]+)['"]/)?.[1];
 if (!appTermsVersion || !apiTermsVersion || appTermsVersion !== apiTermsVersion) {
   failures.push('competition Terms version must match between the mobile app and Edge Function');
