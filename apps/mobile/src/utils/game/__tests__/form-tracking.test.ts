@@ -3,7 +3,12 @@ import { SCRIPT_CORE } from '../html/scriptCore';
 import { SCRIPT_GAME } from '../html/scriptGame';
 
 type Point = { x: number; y: number; visibility: number };
-type FormCheck = { valid: boolean; message: string };
+type FormCheck = {
+  valid: boolean;
+  message: string;
+  fatal: boolean;
+  fatalKey: string;
+};
 
 function point(x: number, y: number): Point {
   return { x, y, visibility: 1 };
@@ -148,6 +153,34 @@ describe('experimental form tracking', () => {
     expect(harness.validateCalibration('bottom').valid).toBe(true);
     harness.save('bottom');
     expect(harness.validateGameplay(0).valid).toBe(true);
+
+    const feetDown = pose([
+      ...mirroredPair(11, 12, 0.44, 0.44),
+      ...mirroredPair(13, 14, 0.44, 0.28),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.65),
+      ...mirroredPair(27, 28, 0.45, 0.92),
+    ]);
+    harness.update(feetDown, 2132);
+    expect(harness.validateGameplay(0)).toMatchObject({
+      valid: false,
+      fatal: true,
+      fatalKey: 'pullup-feet',
+    });
+
+    const releasedBar = pose([
+      ...mirroredPair(11, 12, 0.44, 0.44),
+      ...mirroredPair(13, 14, 0.44, 0.38),
+      ...mirroredPair(15, 16, 0.44, 0.48),
+      ...mirroredPair(23, 24, 0.44, 0.65),
+      ...mirroredPair(27, 28, 0.45, 0.73),
+    ]);
+    harness.update(releasedBar, 2148);
+    expect(harness.validateGameplay(0)).toMatchObject({
+      valid: false,
+      fatal: true,
+      fatalKey: 'pullup-bar',
+    });
   });
 
   it('accepts push-up calibration and gameplay with the phone in front', () => {
@@ -174,5 +207,33 @@ describe('experimental form tracking', () => {
     expect(harness.validateCalibration('bottom').valid).toBe(true);
     harness.save('bottom');
     expect(harness.validateGameplay(0).valid).toBe(true);
+
+    const handsLifted = pose([
+      ...mirroredPair(11, 12, 0.42, 0.45),
+      ...mirroredPair(13, 14, 0.4, 0.4),
+      ...mirroredPair(15, 16, 0.42, 0.35),
+      ...mirroredPair(23, 24, 0.43, 0.62),
+    ]);
+    harness.update(handsLifted, 2132);
+    expect(harness.validateGameplay(0)).toMatchObject({
+      valid: false,
+      fatal: true,
+      fatalKey: 'pushup-hands',
+    });
+  });
+
+  it('rejects push-up calibration when the hands are raised near the head', () => {
+    const harness = makeHarness('pushups');
+    const handsRaised = pose([
+      ...mirroredPair(11, 12, 0.42, 0.4),
+      ...mirroredPair(13, 14, 0.4, 0.34),
+      ...mirroredPair(15, 16, 0.42, 0.28),
+      ...mirroredPair(23, 24, 0.43, 0.62),
+    ]);
+    harness.update(handsRaised, 2100);
+
+    const result = harness.validateCalibration('top');
+    expect(result.valid).toBe(false);
+    expect(result.message).toMatch(/hands on the floor/i);
   });
 });

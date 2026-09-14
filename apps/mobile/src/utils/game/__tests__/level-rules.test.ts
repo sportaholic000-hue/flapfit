@@ -28,10 +28,13 @@ describe('level run rules', () => {
     expect(ENDLESS_BASE.maxScore).toBe(0);
   });
 
-  it('only ends active play for the score cap or a pipe collision', () => {
+  it('only ends runs for the score cap, pipe collision, or confirmed critical form failure', () => {
     const endGameCalls = SCRIPT_GAME.match(/\bendGame\(\);/g) ?? [];
+    const criticalFormChecks = SCRIPT_GAME.match(/fatalFormFailureConfirmed\(/g) ?? [];
 
-    expect(endGameCalls).toHaveLength(2);
+    expect(endGameCalls).toHaveLength(4);
+    expect(criticalFormChecks).toHaveLength(3);
+    expect(SCRIPT_GAME).toContain('var FATAL_FORM_GRACE_MS = 350;');
     expect(SCRIPT_GAME).toContain('if (CONFIG.maxScore > 0 && score >= CONFIG.maxScore) {');
     expect(SCRIPT_GAME).toContain('if (collides()) { endGame(); }');
     expect(SCRIPT_GAME).not.toContain('score >= CONFIG.target) { endGame(); }');

@@ -95,9 +95,11 @@ function stabilityProgress(y, now) {
     if (v < mn) { mn = v; }
     if (v > mx) { mx = v; }
   }
-  if (mx - mn > 0.028) { stabBuf = [{ t: now, y: y }]; return 0; }
+  var isPullupFormCalibration = usesExperimentalFormTracking() && CONFIG.exercise === 'pullups';
+  var maxCalibrationDrift = isPullupFormCalibration ? 0.045 : 0.028;
+  if (mx - mn > maxCalibrationDrift) { stabBuf = [{ t: now, y: y }]; return 0; }
   var span = now - stabBuf[0].t;
-  return Math.min(1, span / 1300);
+  return Math.min(1, span / (isPullupFormCalibration ? 900 : 1300));
 }
 function stabAverage() {
   var sum = 0;
@@ -280,9 +282,11 @@ function initCameraFlow() {
     showOverlay('Starting camera…', false);
     return startCamera();
   }).then(function () {
-    if (usesCameraBackground()) {
+    if (usesCameraBackground() || usesExperimentalFormTracking()) {
       // Leave a tiny invisible video surface alive for pose tracking and canvas
       // composition while removing the old thumbnail and camera toggle from view.
+      // Form Test shows the complete camera frame on the main canvas during
+      // calibration, so a second cropped thumbnail would only be distracting.
       previewEl.style.display = 'block';
       previewEl.style.opacity = '0';
       previewEl.style.pointerEvents = 'none';

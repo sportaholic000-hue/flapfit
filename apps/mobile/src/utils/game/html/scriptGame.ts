@@ -25,6 +25,24 @@ export const SCRIPT_GAME = `
 // This is active gameplay time, not pose/form-verified physiological TUT.
 var tutSeconds = 0;
 var tutReportedSeconds = 0;
+var fatalFormKey = '';
+var fatalFormSince = 0;
+var FATAL_FORM_GRACE_MS = 350;
+
+function fatalFormFailureConfirmed(check, now) {
+  if (!check || !check.fatal) {
+    fatalFormKey = '';
+    fatalFormSince = 0;
+    return false;
+  }
+  var key = check.fatalKey || check.message;
+  if (fatalFormKey !== key) {
+    fatalFormKey = key;
+    fatalFormSince = now;
+    return false;
+  }
+  return now - fatalFormSince >= FATAL_FORM_GRACE_MS;
+}
 
 // ---------- Composed-run recording ----------
 // The live camera is painted into the game canvas below. A smaller hidden canvas
@@ -322,14 +340,26 @@ function endGame() {
 
 // ---------- Drawing ----------
 function drawBackground() {
-  if (CONFIG.backgroundMode === 'camera' && video && video.readyState >= 2 &&
+  var showingFormCalibration = usesExperimentalFormTracking() &&
+    (state === 'waitTop' || state === 'waitBottom');
+  if ((CONFIG.backgroundMode === 'camera' || showingFormCalibration) &&
+      video && video.readyState >= 2 &&
       video.videoWidth > 0 && video.videoHeight > 0) {
     var sourceWidth = video.videoWidth;
     var sourceHeight = video.videoHeight;
     var sourceAspect = sourceWidth / sourceHeight;
     var targetAspect = W / Math.max(1, H);
     var sx = 0, sy = 0, sw = sourceWidth, sh = sourceHeight;
-    if (sourceAspect > targetAspect) {
+    var dx = 0, dy = 0, dw = W, dh = H;
+    if (showingFormCalibration) {
+      var containScale = Math.min(W / sourceWidth, H / sourceHeight);
+      dw = sourceWidth * containScale;
+      dh = sourceHeight * containScale;
+      dx = (W - dw) / 2;
+      dy = (H - dh) / 2;
+      ctx.fillStyle = '#061B42';
+      ctx.fillRect(0, 0, W, H);
+    } else if (sourceAspect > targetAspect) {
       sw = sourceHeight * targetAspect;
       sx = (sourceWidth - sw) / 2;
     } else {
@@ -339,7 +369,7 @@ function drawBackground() {
     ctx.save();
     ctx.translate(W, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(video, sx, sy, sw, sh, 0, 0, W, H);
+    ctx.drawImage(video, sx, sy, sw, sh, dx, dy, dw, dh);
     ctx.restore();
     ctx.fillStyle = 'rgba(4,15,38,0.12)';
     ctx.fillRect(0, 0, W, H);
@@ -574,7 +604,10 @@ function loop(now) {
         setProgress(prog);
         if (prog >= 1) {
           var candidate = stabAverage();
-          if (candidate !== null && topY !== null && candidate - topY > 0.06) {
+          var requiredCalibrationRange = usesExperimentalFormTracking() && CONFIG.exercise === 'pullups'
+            ? 0.035
+            : 0.06;
+          if (candidate !== null && topY !== null && candidate - topY > requiredCalibrationRange) {
             bottomY = candidate; stabBuf = [];
             saveExperimentalCalibration('bottom');
             beep(880, 0.18, 'sine', 0.08);
@@ -637,6 +670,10 @@ function loop(now) {
     var gameplayFormCheck = usesExperimentalFormTracking()
       ? validateExperimentalGameplay(norm)
       : { valid: true, message: '' };
+    if (fatalFormFailureConfirmed(gameplayFormCheck, now)) {
+      endGame();
+      return;
+    }
 
     // Active training/play time. Pose/form verification is not implemented yet.
     tutSeconds += dt;
@@ -689,7 +726,10 @@ function loop(now) {
     var resumeFormCheck = usesExperimentalFormTracking()
       ? validateExperimentalGameplay(norm)
       : { valid: true, message: '' };
-    if (trackingFresh() && resumeFormCheck.valid) {
+    if (fatalFormFailureConfirmed(resumeFormCheck, now)) {
+      endGame();
+      return;
+    } else if (trackingFresh() && resumeFormCheck.valid) {
       resumeEnd = now + 1200;
       state = 'resume';
       showOverlay('Locked on!<br>Resuming…', false);
