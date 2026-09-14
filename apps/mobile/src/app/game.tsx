@@ -1,5 +1,4 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { Asset } from 'expo-asset';
 import { useCameraPermissions } from 'expo-camera';
 import { File, Paths, type FileHandle } from 'expo-file-system';
 import * as Haptics from 'expo-haptics';
@@ -34,6 +33,7 @@ import { WebView } from 'react-native-webview';
 import BirdAvatar from '@/components/BirdAvatar';
 import { competitionIsConfigured, competitionRequest } from '@/services/competitionApi';
 import { getBirdStageArt } from '@/utils/game/birdStageArt';
+import { loadBirdAssetDataUri } from '@/utils/game/birdWebAsset';
 import { getBird } from '@/utils/game/birds';
 import { buildGameHtml } from '@/utils/game/gameHtml';
 import { ENDLESS_BASE, getLevel, LEVELS } from '@/utils/game/levels';
@@ -304,19 +304,11 @@ export default function GameScreen() {
 
   useEffect(() => {
     let cancelled = false;
-    const asset = Asset.fromModule(birdImageAsset as number);
     setBirdImageErrorKey(null);
 
     const loadBirdImage = async () => {
       try {
-        await asset.downloadAsync();
-        const uri = asset.localUri ?? asset.uri;
-        const dataUri = uri.startsWith('data:')
-          ? uri
-          : uri.startsWith('file:')
-            ? `data:image/png;base64,${await new File(uri).base64()}`
-            : uri;
-
+        const dataUri = await loadBirdAssetDataUri(birdImageAsset as number);
         if (!cancelled) setLoadedBirdImage({ key: birdImageRequestKey, dataUri });
       } catch (error) {
         console.error('Failed to preload bird art', error);
