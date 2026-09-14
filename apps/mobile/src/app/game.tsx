@@ -37,7 +37,11 @@ import { loadBirdAssetDataUri } from '@/utils/game/birdWebAsset';
 import { getBird } from '@/utils/game/birds';
 import { buildGameHtml } from '@/utils/game/gameHtml';
 import { ENDLESS_BASE, getLevel, LEVELS } from '@/utils/game/levels';
-import { prepareMediaPipeAssets, type PreparedMediaPipeAssets } from '@/utils/game/mediapipeAssets';
+import {
+  prepareMediaPipeAssets,
+  readMediaPipeAssetPayload,
+  type PreparedMediaPipeAssets,
+} from '@/utils/game/mediapipeAssets';
 import {
   computeBirdMorphology,
   computeEvolutionStage,
@@ -57,7 +61,7 @@ type LoadedBirdImage = {
   dataUri: string;
 };
 
-type GameWebSource = { uri: string } | { html: string; baseUrl: string };
+type GameWebSource = { html: string; baseUrl: string };
 
 type RecordingPhase = 'idle' | 'recording' | 'preparing' | 'ready' | 'error';
 
@@ -72,6 +76,7 @@ const CONFETTI_COLORS = ['#F59E0B', '#FDE047', '#4ADE80', '#38BDF8', '#A78BFA', 
 // file:// game page can make getUserMedia unavailable even with permission.
 // Store builds continue to use the tracker files bundled inside the app.
 const USE_REMOTE_TRACKER = __DEV__;
+const TRACKER_TRANSFER_CHUNK_SIZE = 96_000;
 const CONFETTI_PIECES = Array.from({ length: 22 }, (_, index) => ({
   id: index,
   left: `${4 + ((index * 37) % 92)}%` as `${number}%`,
@@ -207,7 +212,6 @@ export default function GameScreen() {
   const [trackerAssets, setTrackerAssets] = useState<PreparedMediaPipeAssets | null>(null);
   const [trackerLoadError, setTrackerLoadError] = useState<string | null>(null);
   const [trackerRetryKey, setTrackerRetryKey] = useState(0);
-  const [webSource, setWebSource] = useState<GameWebSource | null>(null);
   const [recordingPhase, setRecordingPhase] = useState<RecordingPhase>('idle');
   const [recordingError, setRecordingError] = useState<string | null>(null);
   const [recordedVideo, setRecordedVideo] = useState<RecordedVideo | null>(null);
@@ -220,7 +224,9 @@ export default function GameScreen() {
   const recordingMetadataRef = useRef<{ mimeType: string; extension: string } | null>(null);
   const expectedRecordingChunkRef = useRef(0);
   const pendingRecordingChunksRef = useRef(new Map<number, string>());
-  const screenSessionId = useRef(`${Date.now()}-${Math.random().toString(36).slice(2, 9)}`).current;
+  const webViewRef = useRef<WebView>(null);
+  const trackerTransferTokenRef = useRef(0);
+  const trackerRequestIdRef = useRef<string | null>(null);
   const ceremonyOpacity = useRef(new Animated.Value(0)).current;
   const ceremonyScale = useRef(new Animated.Value(0.55)).current;
   const confettiProgress = useRef(new Animated.Value(0)).current;
@@ -397,43 +403,65 @@ export default function GameScreen() {
     ]
   );
 
-  // Expo Go uses the same secure inline-page architecture that previously
-  // passed camera testing. Store builds load a private file beside the bundled
-  // MediaPipe runtime so production does not download executable tracker code.
+  // Both Expo Go and store builds use an HTTPS-base inline document so camera
+  // capture has a trustworthy origin. Production waits for the packaged
+  // tracker files, then transfers only the WebView's supported Wasm variant.
+  const webSource = useMemo<GameWebSource | null>(() => {
+    if (!html || (!USE_REMOTE_TRACKER && !trackerAssets)) return null;
+    return { html, baseUrl: 'https://flapfit.local' };
+  }, [html, trackerAssets]);
+
   useEffect(() => {
-    setWebSource(null);
-    if (!html) return;
+    trackerTransferTokenRef.current += 1;
+    trackerRequestIdRef.current = null;
+  }, [runKey, trackerAssets]);
 
-    if (USE_REMOTE_TRACKER) {
-      setTrackerLoadError(null);
-      setWebSource({ html, baseUrl: 'https://flapfit.local' });
-      return;
-    }
+  const sendBundledTrackerAssets = useCallback(
+    async (requestId: string, useSimd: boolean) => {
+      if (USE_REMOTE_TRACKER || !trackerAssets || !webViewRef.current) return;
+      if (trackerRequestIdRef.current === requestId) return;
+      trackerRequestIdRef.current = requestId;
+      const transferToken = ++trackerTransferTokenRef.current;
 
-    if (!trackerAssets) return;
+      try {
+        const payload = await readMediaPipeAssetPayload(trackerAssets, useSimd);
+        const entries = Object.entries(payload) as Array<[keyof typeof payload, string]>;
+        const totalCharacters = entries.reduce((total, [, value]) => total + value.length, 0);
+        let sentCharacters = 0;
 
-    const htmlFile = new File(trackerAssets.directoryUri, `game-${screenSessionId}-${runKey}.html`);
-    try {
-      htmlFile.write(html);
-      setTrackerLoadError(null);
-      setWebSource({ uri: htmlFile.uri });
-    } catch (error) {
-      console.error('Failed to prepare local game page', error);
-      setTrackerLoadError(
-        error instanceof Error ? error.message : 'The local game page could not be prepared.'
-      );
-    }
+        for (const [name, encoded] of entries) {
+          const chunkCount = Math.ceil(encoded.length / TRACKER_TRANSFER_CHUNK_SIZE);
+          for (let index = 0; index < chunkCount; index += 1) {
+            if (trackerTransferTokenRef.current !== transferToken) return;
+            const chunk = encoded.slice(
+              index * TRACKER_TRANSFER_CHUNK_SIZE,
+              (index + 1) * TRACKER_TRANSFER_CHUNK_SIZE
+            );
+            sentCharacters += chunk.length;
+            const progress = Math.min(1, sentCharacters / totalCharacters);
+            webViewRef.current?.injectJavaScript(
+              `window.__receiveTrackerAssetChunk(${JSON.stringify(name)},${index},${chunkCount},${JSON.stringify(chunk)},${progress});true;`
+            );
 
-    return () => {
-      if (htmlFile.exists) {
-        try {
-          htmlFile.delete();
-        } catch (error) {
-          console.warn('Failed to remove temporary game page', error);
+            // Yield regularly so a large packaged Wasm payload cannot starve
+            // rendering or the native bridge on lower-memory phones.
+            if (index % 4 === 3) {
+              await new Promise<void>((resolve) => setTimeout(resolve, 0));
+            }
+          }
         }
+      } catch (error) {
+        const detail =
+          error instanceof Error ? error.message : 'The bundled camera tracker could not be read.';
+        console.error('Failed to transfer bundled camera tracker', error);
+        setTrackerLoadError(detail);
+        webViewRef.current?.injectJavaScript(
+          `window.__rejectTrackerAssets(${JSON.stringify(detail)});true;`
+        );
       }
-    };
-  }, [html, runKey, screenSessionId, trackerAssets]);
+    },
+    [trackerAssets]
+  );
 
   const ceremonyBirdEvo = useMemo(
     () => ({
@@ -680,10 +708,21 @@ export default function GameScreen() {
         data?: string;
         chunkCount?: number;
         message?: string;
+        requestId?: string;
+        simd?: boolean;
       } = {};
       try {
         msg = JSON.parse(event.nativeEvent.data);
       } catch {
+        return;
+      }
+
+      if (msg.type === 'trackerassetrequest') {
+        if (typeof msg.requestId !== 'string' || msg.requestId.length === 0) {
+          console.error('The game requested tracker assets without a request ID.');
+          return;
+        }
+        void sendBundledTrackerAssets(msg.requestId, msg.simd !== false);
         return;
       }
 
@@ -801,6 +840,7 @@ export default function GameScreen() {
       completeVideoRecording,
       failRecording,
       updateRecordingPhase,
+      sendBundledTrackerAssets,
     ]
   );
 
@@ -934,16 +974,16 @@ export default function GameScreen() {
       <StatusBar style="light" hidden={Platform.OS === 'ios'} />
       {webSource ? (
         <WebView
+          ref={webViewRef}
           key={runKey}
           source={webSource}
           style={{ flex: 1, backgroundColor: level.sky1 }}
           originWhitelist={['*']}
           javaScriptEnabled
           domStorageEnabled
-          allowFileAccess={!USE_REMOTE_TRACKER}
-          allowFileAccessFromFileURLs={!USE_REMOTE_TRACKER}
+          allowFileAccess={false}
+          allowFileAccessFromFileURLs={false}
           allowUniversalAccessFromFileURLs={false}
-          allowingReadAccessToURL={USE_REMOTE_TRACKER ? undefined : trackerAssets?.directoryUri}
           allowsInlineMediaPlayback
           mediaPlaybackRequiresUserAction={false}
           mediaCapturePermissionGrantType="grant"

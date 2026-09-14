@@ -10,6 +10,22 @@ type TrackerAssetSpec = {
 
 export type PreparedMediaPipeAssets = {
   directoryUri: string;
+  fileUris: Record<TrackerRuntimeName, string>;
+};
+
+type TrackerRuntimeName =
+  | 'vision_bundle.mjs'
+  | 'vision_wasm_internal.js'
+  | 'vision_wasm_internal.wasm'
+  | 'vision_wasm_nosimd_internal.js'
+  | 'vision_wasm_nosimd_internal.wasm'
+  | 'pose_landmarker_lite.task';
+
+export type MediaPipeAssetPayload = {
+  module: string;
+  loader: string;
+  wasm: string;
+  model: string;
 };
 
 const TRACKER_VERSION = '0.10.14';
@@ -56,10 +72,14 @@ let preparationPromise: Promise<PreparedMediaPipeAssets> | null = null;
 async function stageTrackerAssets(): Promise<PreparedMediaPipeAssets> {
   const directory = new Directory(Paths.cache, TRACKER_DIRECTORY_NAME);
   directory.create({ idempotent: true, intermediates: true });
+  const fileUris = {} as Record<TrackerRuntimeName, string>;
 
   for (const spec of TRACKER_ASSETS) {
     const destination = new File(directory, spec.runtimeName);
-    if (destination.exists && destination.size === spec.expectedBytes) continue;
+    if (destination.exists && destination.size === spec.expectedBytes) {
+      fileUris[spec.runtimeName as TrackerRuntimeName] = destination.uri;
+      continue;
+    }
 
     const sourceAsset = Asset.fromModule(spec.module);
     const bundledAsset = isAndroidEmbeddedResource(sourceAsset.uri)
@@ -84,9 +104,10 @@ async function stageTrackerAssets(): Promise<PreparedMediaPipeAssets> {
     if (!destination.exists || destination.size !== spec.expectedBytes) {
       throw new Error(`Bundled tracker asset failed integrity check: ${spec.runtimeName}`);
     }
+    fileUris[spec.runtimeName as TrackerRuntimeName] = destination.uri;
   }
 
-  return { directoryUri: directory.uri };
+  return { directoryUri: directory.uri, fileUris };
 }
 
 export function prepareMediaPipeAssets(): Promise<PreparedMediaPipeAssets> {
@@ -97,4 +118,34 @@ export function prepareMediaPipeAssets(): Promise<PreparedMediaPipeAssets> {
     });
   }
   return preparationPromise;
+}
+
+/**
+ * Reads only the Wasm variant supported by the current WebView. The payload is
+ * transferred to a secure inline page, which keeps getUserMedia available
+ * without downloading executable code or granting a file:// page camera access.
+ */
+export async function readMediaPipeAssetPayload(
+  assets: PreparedMediaPipeAssets,
+  useSimd: boolean
+): Promise<MediaPipeAssetPayload> {
+  const loaderName = useSimd
+    ? 'vision_wasm_internal.js'
+    : 'vision_wasm_nosimd_internal.js';
+  const wasmName = useSimd
+    ? 'vision_wasm_internal.wasm'
+    : 'vision_wasm_nosimd_internal.wasm';
+
+  const [module, loader, wasm, model] = await Promise.all([
+    new File(assets.fileUris['vision_bundle.mjs']).base64(),
+    new File(assets.fileUris[loaderName]).base64(),
+    new File(assets.fileUris[wasmName]).base64(),
+    new File(assets.fileUris['pose_landmarker_lite.task']).base64(),
+  ]);
+
+  if (!module || !loader || !wasm || !model) {
+    throw new Error('One or more bundled tracker files were empty.');
+  }
+
+  return { module, loader, wasm, model };
 }

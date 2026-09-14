@@ -105,6 +105,9 @@ function stabAverage() {
 
 // ---------- Camera + MediaPipe ----------
 function startCamera() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    return Promise.reject(new Error('Camera API unavailable for the game page origin.'));
+  }
   return navigator.mediaDevices.getUserMedia({
     video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
     audio: false
@@ -115,34 +118,161 @@ function startCamera() {
 }
 
 // Production uses the exact MediaPipe 0.10.14 runtime and pose model bundled
-// inside Flap Fit. Expo Go development uses the previously proven HTTPS path
-// because a file:// WebView does not provide a reliable camera-capable origin.
+// inside Flap Fit. The native screen streams those files into this secure
+// HTTPS-base inline page and only sends the supported Wasm variant. Expo Go
+// development keeps the previously proven HTTPS loader for fast iteration.
 var REMOTE_VISION_BASE_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
-var VISION_MODULE_URL = CONFIG.trackerAssetMode === 'remote'
-  ? REMOTE_VISION_BASE_URL + '/vision_bundle.mjs'
-  : './vision_bundle.mjs';
-var VISION_WASM_BASE_URL = CONFIG.trackerAssetMode === 'remote'
-  ? REMOTE_VISION_BASE_URL + '/wasm'
-  : './';
-var MODEL_URL = CONFIG.trackerAssetMode === 'remote'
-  ? 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task'
-  : './pose_landmarker_lite.task';
+var REMOTE_MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task';
+var TRACKER_ASSET_NAMES = ['module', 'loader', 'wasm', 'model'];
+var trackerAssetChunks = {};
+var trackerAssetValues = {};
+var trackerAssetResolve = null;
+var trackerAssetReject = null;
+var trackerAssetTimeout = null;
+var trackerAssetPromise = null;
+var trackerBlobUrls = [];
+
+function supportsWasmSimd() {
+  try {
+    return WebAssembly.validate(new Uint8Array([
+      0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11
+    ]));
+  } catch (e) {
+    return false;
+  }
+}
+
+function decodeTrackerBase64(encoded) {
+  var binary = atob(encoded);
+  var bytes = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) { bytes[i] = binary.charCodeAt(i); }
+  return bytes;
+}
+
+function makeTrackerBlobUrl(encoded, mimeType) {
+  var url = URL.createObjectURL(new Blob([decodeTrackerBase64(encoded)], { type: mimeType }));
+  trackerBlobUrls.push(url);
+  return url;
+}
+
+function releaseTrackerBlobUrls() {
+  for (var i = 0; i < trackerBlobUrls.length; i++) {
+    try { URL.revokeObjectURL(trackerBlobUrls[i]); } catch (e) {}
+  }
+  trackerBlobUrls = [];
+}
+
+function completeBundledTrackerAssetsIfReady() {
+  for (var i = 0; i < TRACKER_ASSET_NAMES.length; i++) {
+    if (!trackerAssetValues[TRACKER_ASSET_NAMES[i]]) { return; }
+  }
+
+  try {
+    if (trackerAssetTimeout) { clearTimeout(trackerAssetTimeout); }
+    var assets = {
+      moduleUrl: makeTrackerBlobUrl(trackerAssetValues.module, 'text/javascript'),
+      loaderUrl: makeTrackerBlobUrl(trackerAssetValues.loader, 'text/javascript'),
+      wasmUrl: makeTrackerBlobUrl(trackerAssetValues.wasm, 'application/wasm'),
+      modelBuffer: decodeTrackerBase64(trackerAssetValues.model)
+    };
+    trackerAssetChunks = {};
+    trackerAssetValues = {};
+    setProgress(1);
+    trackerAssetResolve(assets);
+  } catch (err) {
+    releaseTrackerBlobUrls();
+    trackerAssetReject(err);
+  }
+}
+
+window.__receiveTrackerAssetChunk = function(name, index, chunkCount, data, progress) {
+  if (TRACKER_ASSET_NAMES.indexOf(name) < 0 || index < 0 || chunkCount < 1 || typeof data !== 'string') {
+    if (trackerAssetReject) { trackerAssetReject(new Error('Invalid bundled tracker asset data.')); }
+    return;
+  }
+  if (!trackerAssetChunks[name]) { trackerAssetChunks[name] = new Array(chunkCount); }
+  trackerAssetChunks[name][index] = data;
+  if (typeof progress === 'number') { setProgress(Math.max(0, Math.min(1, progress))); }
+
+  for (var i = 0; i < trackerAssetChunks[name].length; i++) {
+    if (typeof trackerAssetChunks[name][i] !== 'string') { return; }
+  }
+  trackerAssetValues[name] = trackerAssetChunks[name].join('');
+  delete trackerAssetChunks[name];
+  completeBundledTrackerAssetsIfReady();
+};
+
+window.__rejectTrackerAssets = function(message) {
+  if (trackerAssetTimeout) { clearTimeout(trackerAssetTimeout); }
+  if (trackerAssetReject) {
+    trackerAssetReject(new Error(message || 'The bundled camera tracker could not be loaded.'));
+  }
+};
+
+function requestBundledTrackerAssets() {
+  if (trackerAssetPromise) { return trackerAssetPromise; }
+  trackerAssetPromise = new Promise(function(resolve, reject) {
+    trackerAssetResolve = resolve;
+    trackerAssetReject = reject;
+    var requestId = String(Date.now()) + '-' + String(Math.random()).slice(2, 10);
+    postRN({ type: 'trackerassetrequest', requestId: requestId, simd: supportsWasmSimd() });
+    trackerAssetTimeout = setTimeout(function() {
+      reject(new Error('Timed out while loading the bundled tracking engine.'));
+    }, 120000);
+  });
+  return trackerAssetPromise;
+}
+
+function loadTrackerRuntime() {
+  if (CONFIG.trackerAssetMode === 'remote') {
+    return import(REMOTE_VISION_BASE_URL + '/vision_bundle.mjs').then(function(vision) {
+      return vision.FilesetResolver.forVisionTasks(REMOTE_VISION_BASE_URL + '/wasm').then(function(files) {
+        return { vision: vision, files: files, modelAssetPath: REMOTE_MODEL_URL };
+      });
+    });
+  }
+
+  return requestBundledTrackerAssets().then(function(assets) {
+    return import(assets.moduleUrl).then(function(vision) {
+      return {
+        vision: vision,
+        files: { wasmLoaderPath: assets.loaderUrl, wasmBinaryPath: assets.wasmUrl },
+        modelAssetBuffer: assets.modelBuffer,
+        release: function() {
+          assets.modelBuffer = null;
+          releaseTrackerBlobUrls();
+          trackerAssetPromise = null;
+        }
+      };
+    });
+  });
+}
 
 function initCameraFlow() {
-  showOverlay(CONFIG.trackerAssetMode === 'remote' ? 'Loading camera tracking engine…' : 'Loading on-device tracking engine…', false);
-  import(VISION_MODULE_URL).then(function (vision) {
-    return vision.FilesetResolver.forVisionTasks(VISION_WASM_BASE_URL).then(function (files) {
+  showOverlay(CONFIG.trackerAssetMode === 'remote' ? 'Loading camera tracking engine…' : 'Loading on-device tracking engine…', CONFIG.trackerAssetMode !== 'remote');
+  loadTrackerRuntime().then(function (runtime) {
       var makeOpts = function (delegate) {
+        var baseOptions = { delegate: delegate };
+        if (runtime.modelAssetBuffer) { baseOptions.modelAssetBuffer = runtime.modelAssetBuffer; }
+        else { baseOptions.modelAssetPath = runtime.modelAssetPath; }
         return {
-          baseOptions: { modelAssetPath: MODEL_URL, delegate: delegate },
+          baseOptions: baseOptions,
           runningMode: 'VIDEO',
           numPoses: 1
         };
       };
-      return vision.PoseLandmarker.createFromOptions(files, makeOpts('GPU')).catch(function () {
-        return vision.PoseLandmarker.createFromOptions(files, makeOpts('CPU'));
+      var createLandmarker = runtime.vision.PoseLandmarker
+        .createFromOptions(runtime.files, makeOpts('GPU'))
+        .catch(function () {
+          return runtime.vision.PoseLandmarker.createFromOptions(runtime.files, makeOpts('CPU'));
+        });
+      return createLandmarker.then(function(lm) {
+        if (runtime.release) { runtime.release(); }
+        return lm;
+      }, function(err) {
+        if (runtime.release) { runtime.release(); }
+        throw err;
       });
-    });
   }).then(function (lm) {
     landmarker = lm;
     showOverlay('Starting camera…', false);

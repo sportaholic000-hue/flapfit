@@ -3,10 +3,12 @@ import { SCRIPT_GAME } from '../html/scriptGame';
 import { ENDLESS_BASE, LEVELS } from '../levels';
 
 describe('level run rules', () => {
-  it('loads the tracking runtime and model only from bundled local files', () => {
-    expect(SCRIPT_CORE).toContain("var VISION_MODULE_URL = './vision_bundle.mjs';");
-    expect(SCRIPT_CORE).toContain("var MODEL_URL = './pose_landmarker_lite.task';");
-    expect(SCRIPT_CORE).not.toMatch(/https?:\/\//);
+  it('can load the production tracking runtime through the bundled native asset bridge', () => {
+    expect(SCRIPT_CORE).toContain("type: 'trackerassetrequest'");
+    expect(SCRIPT_CORE).toContain('URL.createObjectURL');
+    expect(SCRIPT_CORE).toContain('wasmLoaderPath: assets.loaderUrl');
+    expect(SCRIPT_CORE).toContain('modelAssetBuffer: assets.modelBuffer');
+    expect(SCRIPT_CORE).not.toContain("import('./vision_bundle.mjs')");
   });
 
   it('caps every ordinary non-final level at exactly 60 pipes', () => {
