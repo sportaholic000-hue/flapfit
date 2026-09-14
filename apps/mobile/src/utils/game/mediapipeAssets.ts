@@ -1,5 +1,6 @@
 import { Asset } from 'expo-asset';
 import { Directory, File, Paths } from 'expo-file-system';
+import { isAndroidEmbeddedResource } from './birdWebAsset';
 
 type TrackerAssetSpec = {
   module: number;
@@ -60,7 +61,18 @@ async function stageTrackerAssets(): Promise<PreparedMediaPipeAssets> {
     const destination = new File(directory, spec.runtimeName);
     if (destination.exists && destination.size === spec.expectedBytes) continue;
 
-    const bundledAsset = Asset.fromModule(spec.module);
+    const sourceAsset = Asset.fromModule(spec.module);
+    const bundledAsset = isAndroidEmbeddedResource(sourceAsset.uri)
+      ? new Asset({
+          name: sourceAsset.name,
+          type: sourceAsset.type,
+          hash: sourceAsset.hash,
+          uri: sourceAsset.uri,
+          width: sourceAsset.width,
+          height: sourceAsset.height,
+        })
+      : sourceAsset;
+
     await bundledAsset.downloadAsync();
     const sourceUri = bundledAsset.localUri ?? bundledAsset.uri;
     if (!sourceUri.startsWith('file:')) {

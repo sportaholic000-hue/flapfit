@@ -114,15 +114,22 @@ function startCamera() {
   });
 }
 
-// These exact MediaPipe 0.10.14 runtime files and the pose model ship inside
-// Flap Fit and are staged beside this HTML file before the WebView is opened.
-// No executable code or camera model is downloaded while the game is running.
-var VISION_MODULE_URL = './vision_bundle.mjs';
-var VISION_WASM_BASE_URL = './';
-var MODEL_URL = './pose_landmarker_lite.task';
+// Production uses the exact MediaPipe 0.10.14 runtime and pose model bundled
+// inside Flap Fit. Expo Go development uses the previously proven HTTPS path
+// because a file:// WebView does not provide a reliable camera-capable origin.
+var REMOTE_VISION_BASE_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+var VISION_MODULE_URL = CONFIG.trackerAssetMode === 'remote'
+  ? REMOTE_VISION_BASE_URL + '/vision_bundle.mjs'
+  : './vision_bundle.mjs';
+var VISION_WASM_BASE_URL = CONFIG.trackerAssetMode === 'remote'
+  ? REMOTE_VISION_BASE_URL + '/wasm'
+  : './';
+var MODEL_URL = CONFIG.trackerAssetMode === 'remote'
+  ? 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task'
+  : './pose_landmarker_lite.task';
 
 function initCameraFlow() {
-  showOverlay('Loading on-device tracking engine…', false);
+  showOverlay(CONFIG.trackerAssetMode === 'remote' ? 'Loading camera tracking engine…' : 'Loading on-device tracking engine…', false);
   import(VISION_MODULE_URL).then(function (vision) {
     return vision.FilesetResolver.forVisionTasks(VISION_WASM_BASE_URL).then(function (files) {
       var makeOpts = function (delegate) {
@@ -162,8 +169,9 @@ function initCameraFlow() {
     requestAnimationFrame(trackLoop);
   }).catch(function (err) {
     console.error(err);
-    showOverlay('Could not start camera tracking.<br><br>Check the camera permission and lighting, then try again.', false);
-    postRN({ type: 'trackingerror', message: String(err) });
+    var detail = err && (err.stack || err.message) ? String(err.stack || err.message) : String(err);
+    showOverlay('Could not start camera tracking.<br><br><small>The tracking engine or camera could not initialize. Please try again.</small>', false);
+    postRN({ type: 'trackingerror', message: detail });
   });
 }
 

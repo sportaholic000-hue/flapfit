@@ -57,9 +57,7 @@ type LoadedBirdImage = {
   dataUri: string;
 };
 
-type GameWebSource = {
-  uri: string;
-};
+type GameWebSource = { uri: string } | { html: string; baseUrl: string };
 
 type RecordingPhase = 'idle' | 'recording' | 'preparing' | 'ready' | 'error';
 
@@ -70,6 +68,10 @@ type RecordedVideo = {
 };
 
 const CONFETTI_COLORS = ['#F59E0B', '#FDE047', '#4ADE80', '#38BDF8', '#A78BFA', '#FB7185'];
+// Expo Go camera capture is reliable from an HTTPS-base inline page, while a
+// file:// game page can make getUserMedia unavailable even with permission.
+// Store builds continue to use the tracker files bundled inside the app.
+const USE_REMOTE_TRACKER = __DEV__;
 const CONFETTI_PIECES = Array.from({ length: 22 }, (_, index) => ({
   id: index,
   left: `${4 + ((index * 37) % 92)}%` as `${number}%`,
@@ -333,6 +335,12 @@ export default function GameScreen() {
     setTrackerAssets(null);
     setTrackerLoadError(null);
 
+    if (USE_REMOTE_TRACKER) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
     void prepareMediaPipeAssets()
       .then((assets) => {
         if (!cancelled) setTrackerAssets(assets);
@@ -355,6 +363,7 @@ export default function GameScreen() {
     () => {
       if (!birdImageDataUri) return null;
       return buildGameHtml({
+        trackerAssetMode: USE_REMOTE_TRACKER ? 'remote' : 'bundled',
         exercise: exerciseMode,
         endless: isEndless,
         speed: level.speed,
@@ -388,13 +397,20 @@ export default function GameScreen() {
     ]
   );
 
-  // Load the game from a private file beside the bundled MediaPipe runtime.
-  // Relative module/Wasm/model requests therefore stay inside the app. A new
-  // file is written only for a deliberate new run, preserving the stable
-  // WebView source that prevents random mid-game restarts.
+  // Expo Go uses the same secure inline-page architecture that previously
+  // passed camera testing. Store builds load a private file beside the bundled
+  // MediaPipe runtime so production does not download executable tracker code.
   useEffect(() => {
     setWebSource(null);
-    if (!html || !trackerAssets) return;
+    if (!html) return;
+
+    if (USE_REMOTE_TRACKER) {
+      setTrackerLoadError(null);
+      setWebSource({ html, baseUrl: 'https://flapfit.local' });
+      return;
+    }
+
+    if (!trackerAssets) return;
 
     const htmlFile = new File(trackerAssets.directoryUri, `game-${screenSessionId}-${runKey}.html`);
     try {
@@ -706,6 +722,10 @@ export default function GameScreen() {
         );
         return;
       }
+      if (msg.type === 'trackingerror') {
+        console.error('Camera tracker failed inside the game WebView', msg.message ?? 'Unknown error');
+        return;
+      }
 
       // `tut` is the legacy persisted field/event name. It currently means
       // tracked active gameplay time, not pose/form-verified physiological TUT.
@@ -920,10 +940,10 @@ export default function GameScreen() {
           originWhitelist={['*']}
           javaScriptEnabled
           domStorageEnabled
-          allowFileAccess
-          allowFileAccessFromFileURLs
+          allowFileAccess={!USE_REMOTE_TRACKER}
+          allowFileAccessFromFileURLs={!USE_REMOTE_TRACKER}
           allowUniversalAccessFromFileURLs={false}
-          allowingReadAccessToURL={trackerAssets?.directoryUri}
+          allowingReadAccessToURL={USE_REMOTE_TRACKER ? undefined : trackerAssets?.directoryUri}
           allowsInlineMediaPlayback
           mediaPlaybackRequiresUserAction={false}
           mediaCapturePermissionGrantType="grant"
@@ -951,7 +971,7 @@ export default function GameScreen() {
               ? 'Your bird did not load.'
               : trackerLoadError
                 ? 'The on-device camera tracker did not load.'
-                : trackerAssets
+                : USE_REMOTE_TRACKER || trackerAssets
                   ? 'Starting your game…'
                   : 'Preparing on-device tracking…'}
           </Text>

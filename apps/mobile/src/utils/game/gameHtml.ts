@@ -11,6 +11,7 @@ export type BirdEvolution = {
 };
 
 export type GameHtmlConfig = {
+  trackerAssetMode: 'bundled' | 'remote';
   exercise: 'pushups' | 'squats' | 'pullups' | 'lateralraise' | 'biceps' | 'shoulderpress';
   backgroundMode: 'sky' | 'camera';
   recordRun: boolean;
