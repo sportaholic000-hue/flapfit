@@ -4,6 +4,11 @@ const DATA={"exercises":[{"id":"pushups","name":"Push-ups","part":"Wings + chest
 const config=window.FLAP_FIT_CONFIG||{};
 const byId=id=>document.getElementById(id);
 const text=(id,value)=>{const node=byId(id);if(node)node.textContent=value;};
+for(const nav of document.querySelectorAll('.footer nav')){
+ for(const [href,label] of [['/terms/','Terms'],['/delete-account/','Delete online data']]){
+  if(!nav.querySelector('a[href="'+href+'"]')){const link=document.createElement('a');link.href=href;link.textContent=label;nav.append(link);}
+ }
+}
 for(const button of document.querySelectorAll('[data-exercise]')){
  button.addEventListener('click',()=>{
   const exercise=DATA.exercises.find(x=>x.id===button.dataset.exercise);
@@ -39,7 +44,7 @@ for(const node of document.querySelectorAll('[data-config]')){const value=config
 if(validEmail(config.supportEmail)){
  text('support-status','Contact Flap Fit at '+config.supportEmail+'.');
  const container=byId('support-action');
- if(container){const link=document.createElement('a');link.className='button primary';link.href='mailto:'+config.supportEmail+'?subject='+encodeURIComponent('Flap Fit support');link.textContent='Email Flap Fit support ↗';container.append(link);}
+ if(container&&!container.querySelector('a[href^="mailto:"]')){const link=document.createElement('a');link.className='button primary';link.href='mailto:'+config.supportEmail+'?subject='+encodeURIComponent('Flap Fit support');link.textContent='Email Flap Fit support ↗';container.append(link);}
 }
 if(validEmail(config.privacyEmail)){text('privacy-contact','For privacy questions or data requests, contact '+config.privacyEmail+'.');}
 const officialStore=(value,host)=>{try{const url=new URL(value);return url.protocol==='https:'&&url.hostname===host?url.href:null;}catch{return null;}};
