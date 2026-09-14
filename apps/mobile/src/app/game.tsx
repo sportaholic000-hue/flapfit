@@ -31,10 +31,12 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import BirdAvatar from '@/components/BirdAvatar';
+import { competitionIsConfigured, competitionRequest } from '@/services/competitionApi';
 import { getBirdStageArt } from '@/utils/game/birdStageArt';
 import { getBird } from '@/utils/game/birds';
 import { buildGameHtml } from '@/utils/game/gameHtml';
 import { ENDLESS_BASE, getLevel, LEVELS } from '@/utils/game/levels';
+import { prepareMediaPipeAssets, type PreparedMediaPipeAssets } from '@/utils/game/mediapipeAssets';
 import {
   computeBirdMorphology,
   computeEvolutionStage,
@@ -52,6 +54,10 @@ type GameResult = {
 type LoadedBirdImage = {
   key: string;
   dataUri: string;
+};
+
+type GameWebSource = {
+  uri: string;
 };
 
 type RecordingPhase = 'idle' | 'recording' | 'preparing' | 'ready' | 'error';
@@ -115,7 +121,10 @@ function decodeBase64Bytes(value: string) {
 }
 
 function normalizeVideoExtension(extension?: string, mimeType?: string) {
-  const sanitized = extension?.replace(/[^a-z0-9]/gi, '').toLowerCase().slice(0, 8);
+  const sanitized = extension
+    ?.replace(/[^a-z0-9]/gi, '')
+    .toLowerCase()
+    .slice(0, 8);
   if (sanitized) return sanitized;
   if (mimeType?.includes('mp4')) return 'mp4';
   if (mimeType?.includes('quicktime')) return 'mov';
@@ -157,7 +166,6 @@ export default function GameScreen() {
   const birdId = useGameStore((s) => s.birdId);
   const exerciseMode = useGameStore((s) => s.exerciseMode);
   const playerName = useGameStore((s) => s.playerName);
-  const deviceId = useGameStore((s) => s.deviceId);
   const recordSession = useGameStore((s) => s.recordSession);
   const recordTut = useGameStore((s) => s.recordTut);
   const completeDaily = useGameStore((s) => s.completeDaily);
@@ -193,6 +201,10 @@ export default function GameScreen() {
   const [showEvolutionCeremony, setShowEvolutionCeremony] = useState(false);
   const [loadedBirdImage, setLoadedBirdImage] = useState<LoadedBirdImage | null>(null);
   const [birdImageErrorKey, setBirdImageErrorKey] = useState<string | null>(null);
+  const [trackerAssets, setTrackerAssets] = useState<PreparedMediaPipeAssets | null>(null);
+  const [trackerLoadError, setTrackerLoadError] = useState<string | null>(null);
+  const [trackerRetryKey, setTrackerRetryKey] = useState(0);
+  const [webSource, setWebSource] = useState<GameWebSource | null>(null);
   const [recordingPhase, setRecordingPhase] = useState<RecordingPhase>('idle');
   const [recordingError, setRecordingError] = useState<string | null>(null);
   const [recordedVideo, setRecordedVideo] = useState<RecordedVideo | null>(null);
@@ -205,6 +217,7 @@ export default function GameScreen() {
   const recordingMetadataRef = useRef<{ mimeType: string; extension: string } | null>(null);
   const expectedRecordingChunkRef = useRef(0);
   const pendingRecordingChunksRef = useRef(new Map<number, string>());
+  const screenSessionId = useRef(`${Date.now()}-${Math.random().toString(36).slice(2, 9)}`).current;
   const ceremonyOpacity = useRef(new Animated.Value(0)).current;
   const ceremonyScale = useRef(new Animated.Value(0.55)).current;
   const confettiProgress = useRef(new Animated.Value(0)).current;
@@ -322,6 +335,29 @@ export default function GameScreen() {
       ? loadedBirdImage.dataUri
       : null;
 
+  useEffect(() => {
+    let cancelled = false;
+    setTrackerAssets(null);
+    setTrackerLoadError(null);
+
+    void prepareMediaPipeAssets()
+      .then((assets) => {
+        if (!cancelled) setTrackerAssets(assets);
+      })
+      .catch((error) => {
+        console.error('Failed to prepare bundled camera tracker', error);
+        if (!cancelled) {
+          setTrackerLoadError(
+            error instanceof Error ? error.message : 'The on-device camera tracker did not load.'
+          );
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [trackerRetryKey]);
+
   const html = useMemo(
     () => {
       if (!birdImageDataUri) return null;
@@ -359,13 +395,36 @@ export default function GameScreen() {
     ]
   );
 
-  // Keep the complete source prop stable while an active run records training
-  // time. A fresh source object can make react-native-webview reload even when
-  // its HTML string is unchanged, which would silently restart the game.
-  const webSource = useMemo(
-    () => (html ? { html, baseUrl: 'https://flapfit.local' } : null),
-    [html]
-  );
+  // Load the game from a private file beside the bundled MediaPipe runtime.
+  // Relative module/Wasm/model requests therefore stay inside the app. A new
+  // file is written only for a deliberate new run, preserving the stable
+  // WebView source that prevents random mid-game restarts.
+  useEffect(() => {
+    setWebSource(null);
+    if (!html || !trackerAssets) return;
+
+    const htmlFile = new File(trackerAssets.directoryUri, `game-${screenSessionId}-${runKey}.html`);
+    try {
+      htmlFile.write(html);
+      setTrackerLoadError(null);
+      setWebSource({ uri: htmlFile.uri });
+    } catch (error) {
+      console.error('Failed to prepare local game page', error);
+      setTrackerLoadError(
+        error instanceof Error ? error.message : 'The local game page could not be prepared.'
+      );
+    }
+
+    return () => {
+      if (htmlFile.exists) {
+        try {
+          htmlFile.delete();
+        } catch (error) {
+          console.warn('Failed to remove temporary game page', error);
+        }
+      }
+    };
+  }, [html, runKey, screenSessionId, trackerAssets]);
 
   const ceremonyBirdEvo = useMemo(
     () => ({
@@ -408,6 +467,7 @@ export default function GameScreen() {
 
   const submitScores = useCallback(
     async (score: number) => {
+      if (!competitionIsConfigured) return;
       try {
         const boardableExercises = ['pushups', 'squats', 'pullups'];
         if (
@@ -415,39 +475,32 @@ export default function GameScreen() {
           playerName.trim().length > 0 &&
           boardableExercises.includes(exerciseMode)
         ) {
-          const res = await fetch('/api/leaderboard', {
+          await competitionRequest('/leaderboard', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              deviceId,
+            body: {
               playerName,
               score,
-              pushups: 0,
               exercise: exerciseMode,
-            }),
+            },
           });
-          if (!res.ok) throw new Error(`[${res.status}] ${res.statusText}`);
           queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
         }
         if (challengeCode) {
-          const res = await fetch('/api/challenges/attempts', {
+          await competitionRequest('/challenges/attempts', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+            body: {
               code: challengeCode,
               playerName: playerName.trim().length > 0 ? playerName : 'Anonymous',
-              deviceId,
               score,
-            }),
+            },
           });
-          if (!res.ok) throw new Error(`[${res.status}] ${res.statusText}`);
           queryClient.invalidateQueries({ queryKey: ['challenge', challengeCode] });
         }
       } catch (e) {
         console.error(e);
       }
     },
-    [isEndless, playerName, deviceId, challengeCode, exerciseMode, queryClient]
+    [isEndless, playerName, challengeCode, exerciseMode, queryClient]
   );
 
   const beginVideoRecording = useCallback(
@@ -650,12 +703,7 @@ export default function GameScreen() {
           failRecording('The gameplay recorder could not finish the temporary video.');
           return;
         }
-        completeVideoRecording(
-          msg.sessionId,
-          msg.mimeType,
-          msg.extension,
-          msg.chunkCount
-        );
+        completeVideoRecording(msg.sessionId, msg.mimeType, msg.extension, msg.chunkCount);
         return;
       }
       if (msg.type === 'recordingerror') {
@@ -843,10 +891,7 @@ export default function GameScreen() {
         >
           <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>Allow camera</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={leaveGame}
-          style={{ alignItems: 'center', paddingVertical: 4 }}
-        >
+        <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
           <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>
         </TouchableOpacity>
       </View>
@@ -857,10 +902,7 @@ export default function GameScreen() {
   const nextUnlocked =
     cleared && mode === 'level' && level.id === unlockedBefore.current && level.id < LEVELS.length;
   const canGoNextLevel =
-    cleared &&
-    mode === 'level' &&
-    level.id < LEVELS.length &&
-    unlockedLevel >= level.id + 1;
+    cleared && mode === 'level' && level.id < LEVELS.length && unlockedLevel >= level.id + 1;
   const tutMinDisplay = result ? Math.floor(result.tutSeconds / 60) : 0;
   const tutSecDisplay = result ? result.tutSeconds % 60 : 0;
 
@@ -875,6 +917,10 @@ export default function GameScreen() {
           originWhitelist={['*']}
           javaScriptEnabled
           domStorageEnabled
+          allowFileAccess
+          allowFileAccessFromFileURLs
+          allowUniversalAccessFromFileURLs={false}
+          allowingReadAccessToURL={trackerAssets?.directoryUri}
           allowsInlineMediaPlayback
           mediaPlaybackRequiresUserAction={false}
           mediaCapturePermissionGrantType="grant"
@@ -894,17 +940,26 @@ export default function GameScreen() {
             backgroundColor: level.sky1,
           }}
         >
-          {birdImageErrorKey === birdImageRequestKey ? null : (
+          {birdImageErrorKey === birdImageRequestKey || trackerLoadError ? null : (
             <ActivityIndicator color="#FFFFFF" size="large" />
           )}
           <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '800' }}>
             {birdImageErrorKey === birdImageRequestKey
               ? 'Your bird did not load.'
-              : 'Loading your bird…'}
+              : trackerLoadError
+                ? 'The on-device camera tracker did not load.'
+                : trackerAssets
+                  ? 'Starting your game…'
+                  : 'Preparing on-device tracking…'}
           </Text>
-          {birdImageErrorKey === birdImageRequestKey ? (
+          {birdImageErrorKey === birdImageRequestKey || trackerLoadError ? (
             <TouchableOpacity
-              onPress={() => setRunKey((key) => key + 1)}
+              onPress={() => {
+                if (birdImageErrorKey === birdImageRequestKey) {
+                  setRunKey((key) => key + 1);
+                }
+                if (trackerLoadError) setTrackerRetryKey((key) => key + 1);
+              }}
               style={{
                 borderRadius: 14,
                 backgroundColor: 'rgba(15,23,42,0.82)',
@@ -1202,7 +1257,6 @@ export default function GameScreen() {
                   TRAINING TIME
                 </Text>
               </View>
-
             </View>
             {!isEndless && !cleared ? (
               <Text style={{ color: '#64748B', fontSize: 13, marginTop: 12 }}>
@@ -1287,7 +1341,10 @@ export default function GameScreen() {
                 <Text style={{ color: '#991B1B', fontSize: 13, fontWeight: '900' }}>
                   Recording unavailable
                 </Text>
-                <Text selectable style={{ color: '#7F1D1D', fontSize: 12, lineHeight: 17, marginTop: 3 }}>
+                <Text
+                  selectable
+                  style={{ color: '#7F1D1D', fontSize: 12, lineHeight: 17, marginTop: 3 }}
+                >
                   {recordingError || 'Your result was saved, but this run could not be recorded.'}
                 </Text>
               </View>
@@ -1295,7 +1352,13 @@ export default function GameScreen() {
             {recordRun && recordingPhase === 'ready' && recordingError ? (
               <Text
                 selectable
-                style={{ color: '#B91C1C', fontSize: 12, lineHeight: 17, marginTop: 8, textAlign: 'center' }}
+                style={{
+                  color: '#B91C1C',
+                  fontSize: 12,
+                  lineHeight: 17,
+                  marginTop: 8,
+                  textAlign: 'center',
+                }}
               >
                 {recordingError}
               </Text>

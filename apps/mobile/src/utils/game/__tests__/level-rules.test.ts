@@ -3,6 +3,12 @@ import { SCRIPT_GAME } from '../html/scriptGame';
 import { ENDLESS_BASE, LEVELS } from '../levels';
 
 describe('level run rules', () => {
+  it('loads the tracking runtime and model only from bundled local files', () => {
+    expect(SCRIPT_CORE).toContain("var VISION_MODULE_URL = './vision_bundle.mjs';");
+    expect(SCRIPT_CORE).toContain("var MODEL_URL = './pose_landmarker_lite.task';");
+    expect(SCRIPT_CORE).not.toMatch(/https?:\/\//);
+  });
+
   it('caps every ordinary non-final level at exactly 60 pipes', () => {
     const ordinaryLevels = LEVELS.slice(0, -1);
 

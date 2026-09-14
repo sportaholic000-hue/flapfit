@@ -5,6 +5,7 @@ node_modules/
 .yarn/unplugged/
 
 apps/web/
+supabase/
 config/
 shared/
 !apps/mobile/polyfills/shared/

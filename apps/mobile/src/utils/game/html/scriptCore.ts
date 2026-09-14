@@ -114,13 +114,17 @@ function startCamera() {
   });
 }
 
-var VISION_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
-var MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task';
+// These exact MediaPipe 0.10.14 runtime files and the pose model ship inside
+// Flap Fit and are staged beside this HTML file before the WebView is opened.
+// No executable code or camera model is downloaded while the game is running.
+var VISION_MODULE_URL = './vision_bundle.mjs';
+var VISION_WASM_BASE_URL = './';
+var MODEL_URL = './pose_landmarker_lite.task';
 
 function initCameraFlow() {
   showOverlay('Loading on-device tracking engine…', false);
-  import(VISION_URL + '/vision_bundle.mjs').then(function (vision) {
-    return vision.FilesetResolver.forVisionTasks(VISION_URL + '/wasm').then(function (files) {
+  import(VISION_MODULE_URL).then(function (vision) {
+    return vision.FilesetResolver.forVisionTasks(VISION_WASM_BASE_URL).then(function (files) {
       var makeOpts = function (delegate) {
         return {
           baseOptions: { modelAssetPath: MODEL_URL, delegate: delegate },

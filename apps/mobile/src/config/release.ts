@@ -6,3 +6,8 @@ export const RELEASE_LINKS = {
   iosAppUrl: process.env.EXPO_PUBLIC_IOS_APP_URL?.trim() ?? '',
   androidAppUrl: process.env.EXPO_PUBLIC_ANDROID_APP_URL?.trim() ?? '',
 } as const;
+
+export const ONLINE_SERVICES = {
+  supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL?.trim() ?? '',
+  supabasePublishableKey: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim() ?? '',
+} as const;

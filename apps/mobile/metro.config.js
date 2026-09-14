@@ -4,6 +4,13 @@ const path = require('node:path');
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 
+// MediaPipe's JavaScript, Wasm, and model files are intentionally stored with
+// a neutral extension so Metro treats them as opaque bundled assets. They are
+// copied to their required runtime filenames in the app cache before a game.
+if (!config.resolver.assetExts.includes('mpasset')) {
+  config.resolver.assetExts.push('mpasset');
+}
+
 config.maxWorkers = 6;
 // Keep Metro's live watcher scoped to app source. SDK 57 can resolve the hoisted
 // workspace dependencies on demand, avoiding a multi-minute Windows scan of
@@ -34,10 +41,6 @@ const WEB_ALIASES = {
   'expo-notifications': path.resolve(__dirname, './polyfills/web/notifications.web.tsx'),
   'expo-contacts': path.resolve(__dirname, './polyfills/web/contacts.web.ts'),
   'expo-font': path.resolve(__dirname, './polyfills/web/expo-font.web.ts'),
-  'react-native-google-mobile-ads': path.resolve(
-    __dirname,
-    './polyfills/web/google-mobile-ads.web.tsx'
-  ),
   'react-native-web/dist/exports/ScrollView': path.resolve(
     __dirname,
     './polyfills/web/scrollview.web.tsx'
@@ -58,22 +61,6 @@ const NATIVE_ALIASES = {
   './Libraries/Components/TextInput/TextInput': path.resolve(
     __dirname,
     './polyfills/native/textinput.native.tsx'
-  ),
-};
-// Expo Go compatibility aliases. The real packages crash on
-// import in Expo Go preview (their browser-mode shims pull in DOM-only code
-// that throws on Hermes), which makes expo-router silently swallow the load
-// error and warn "Route is missing the required default export" — leaving
-// the app on a black/splash screen. EAS development and production builds keep the real
-// modules so paid users hit the native SDKs as normal.
-const useExpoGoStubs = process.env.FLAPFIT_EXPO_GO_STUBS === '1';
-const DEV_ONLY_NATIVE_ALIASES = {
-  // The ads stub must never ship in EAS builds: with it bundled, the JS layer
-  // never reaches the RNGoogleMobileAds native modules, so no ad request is
-  // ever made and banners render the placeholder forever.
-  'react-native-google-mobile-ads': path.resolve(
-    __dirname,
-    './polyfills/native/google-mobile-ads.native.tsx'
   ),
 };
 const SHARED_ALIASES = {
@@ -103,13 +90,6 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   }
   if (NATIVE_ALIASES[moduleName] && !moduleName.startsWith('./polyfills/')) {
     return context.resolveRequest(context, NATIVE_ALIASES[moduleName], platform);
-  }
-  if (
-    useExpoGoStubs &&
-    DEV_ONLY_NATIVE_ALIASES[moduleName] &&
-    !moduleName.startsWith('./polyfills/')
-  ) {
-    return context.resolveRequest(context, DEV_ONLY_NATIVE_ALIASES[moduleName], platform);
   }
   return context.resolveRequest(context, moduleName, platform);
 };

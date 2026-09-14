@@ -12,6 +12,7 @@ import {
   Share2,
   ShieldCheck,
   Smartphone,
+  Trash2,
   TriangleAlert,
   X,
 } from 'lucide-react-native';
@@ -32,6 +33,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BirdAvatar from '@/components/BirdAvatar';
 import { RELEASE_LINKS } from '@/config/release';
+import { competitionIsConfigured, deleteCompetitionIdentity } from '@/services/competitionApi';
 import { getBird } from '@/utils/game/birds';
 import { EVO_NAMES, EVO_THRESHOLDS, useGameStore } from '@/utils/game/store';
 
@@ -170,18 +172,24 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
               </Text>
               <Text style={styles.modalHeading}>Tracking technology</Text>
               <Text style={styles.modalText}>
-                The app downloads its MediaPipe tracking engine and pose model from third-party
-                content delivery services. Those services may receive ordinary connection
-                information, such as an IP address, when the files are requested. Camera frames are
-                not sent with those requests.
+                The MediaPipe tracking engine and pose model are bundled inside Flap Fit and run on
+                this device. The game does not download tracking code or send camera frames to a
+                tracking service.
               </Text>
               <Text style={styles.modalHeading}>Progress data</Text>
               <Text style={styles.modalText}>
                 Your bird choice, training history, scores, and level progress are stored locally on
-                your phone. If online leaderboards or challenges are enabled and you use them, Flap
-                Fit sends your chosen player name, device identifier, exercise, challenge code,
-                target, and score to its game service. Camera frames and gameplay recordings are not
-                included.
+                your phone. If you use online leaderboards or challenges, Flap Fit creates a private
+                anonymous online identifier and sends your chosen player name, exercise, scores,
+                challenge details, reports, and blocks to its Supabase-hosted game service. The
+                service also processes ordinary connection and security logs. Your camera frames,
+                gameplay recordings, and local training history are not included.
+              </Text>
+              <Text style={styles.modalHeading}>Public content and moderation</Text>
+              <Text style={styles.modalText}>
+                Player names and competition results can be visible to other players. You can report
+                or block another player from the options beside their leaderboard score or challenge
+                attempt. Reported content may be removed and abusive access may be restricted.
               </Text>
               <Text style={styles.modalHeading}>Your control</Text>
               <Text style={styles.modalText}>
@@ -239,7 +247,9 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
 export default function InfoScreen() {
   const insets = useSafeAreaInsets();
   const [modalPage, setModalPage] = useState<ModalPage>(null);
+  const [onlineDeleteBusy, setOnlineDeleteBusy] = useState(false);
   const birdId = useGameStore((state) => state.birdId);
+  const setPlayerName = useGameStore((state) => state.setPlayerName);
   const supportEmail = RELEASE_LINKS.supportEmail;
   const version = Constants.expoConfig?.version ?? '1.0.0';
   const skin = getBird(birdId);
@@ -291,6 +301,36 @@ export default function InfoScreen() {
     } catch {
       Alert.alert('Could not open sharing', 'Please try again.');
     }
+  };
+
+  const deleteOnlineProfile = () => {
+    if (!competitionIsConfigured || onlineDeleteBusy) return;
+    Alert.alert(
+      'Delete online profile?',
+      'This permanently deletes your anonymous leaderboard scores, challenges, attempts, reports, blocks, and player name from the online service. Local game progress stays on this phone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            setOnlineDeleteBusy(true);
+            void deleteCompetitionIdentity()
+              .then(() => {
+                setPlayerName('');
+                Alert.alert('Online profile deleted', 'Your local game progress was not removed.');
+              })
+              .catch(() =>
+                Alert.alert(
+                  'Profile not deleted',
+                  'Please try again or contact support from this page.'
+                )
+              )
+              .finally(() => setOnlineDeleteBusy(false));
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -460,6 +500,18 @@ export default function InfoScreen() {
             subtitle="Open your phone's share sheet"
             onPress={() => void shareApp()}
           />
+          {competitionIsConfigured ? (
+            <ActionRow
+              icon={<Trash2 size={21} color="#DC2626" />}
+              title="Delete online profile"
+              subtitle={
+                onlineDeleteBusy
+                  ? 'Deleting online competition data…'
+                  : 'Permanently remove leaderboard and challenge data'
+              }
+              onPress={deleteOnlineProfile}
+            />
+          ) : null}
         </Section>
 
         <View style={styles.versionCard}>

@@ -917,7 +917,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.6, @babel/runtime@npm:^7.20.0, @babel/runtime@npm:^7.25.0":
+"@babel/runtime@npm:^7.18.6, @babel/runtime@npm:^7.20.0, @babel/runtime@npm:^7.25.0":
   version: 7.29.7
   resolution: "@babel/runtime@npm:7.29.7"
   checksum: 10c0/ca11572f7146b21e0bde6a9ed4bb6a89eafbee5f0944c7eb54d0d8a2dac962c33638a1d611e14faa71dfbb92b4b5f9236232208568a6b7d5c6f3f39ddb91771e
@@ -1918,13 +1918,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iabtcf/core@npm:^1.5.3":
-  version: 1.5.6
-  resolution: "@iabtcf/core@npm:1.5.6"
-  checksum: 10c0/e7bb104fab82c5c2a051986b51bf31577f6cc9ca84b5561612d649d4503aa7db21113e667c241cb9ec93c8fe9ce65e1266396174e2f64dd1105f91a097ffa85c
-  languageName: node
-  linkType: hard
-
 "@isaacs/fs-minipass@npm:^4.0.0":
   version: 4.0.1
   resolution: "@isaacs/fs-minipass@npm:4.0.1"
@@ -2016,7 +2009,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/create-cache-key-function@npm:^29.2.1":
+"@jest/create-cache-key-function@npm:^29.2.1, @jest/create-cache-key-function@npm:^29.7.0":
   version: 29.7.0
   resolution: "@jest/create-cache-key-function@npm:29.7.0"
   dependencies:
@@ -2251,6 +2244,13 @@ __metadata:
     "@jridgewell/resolve-uri": "npm:^3.1.0"
     "@jridgewell/sourcemap-codec": "npm:^1.4.14"
   checksum: 10c0/4b30ec8cd56c5fd9a661f088230af01e0c1a3888d11ffb6b47639700f71225be21d1f7e168048d6d4f9449207b978a235c07c8f15c07705685d16dc06280e9d9
+  languageName: node
+  linkType: hard
+
+"@mediapipe/tasks-vision@npm:0.10.14":
+  version: 0.10.14
+  resolution: "@mediapipe/tasks-vision@npm:0.10.14"
+  checksum: 10c0/dea1d094153fcb91e76d1a266b6a79baf9cbdd106a786adc0236ded87099b5242c89e0e5b73a3f5d57d7e23ff657dd37f40b9261e12a330762041cd9549fadcc
   languageName: node
   linkType: hard
 
@@ -3177,6 +3177,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native/jest-preset@npm:0.86.3":
+  version: 0.86.3
+  resolution: "@react-native/jest-preset@npm:0.86.3"
+  dependencies:
+    "@jest/create-cache-key-function": "npm:^29.7.0"
+    "@react-native/js-polyfills": "npm:0.86.3"
+    babel-jest: "npm:^29.7.0"
+    jest-environment-node: "npm:^29.7.0"
+    regenerator-runtime: "npm:^0.13.2"
+  peerDependencies:
+    react: ^19.2.3
+  checksum: 10c0/6eddbd33e3e057a04e0ddd44ad0a40f36f122095aa9709004d5e608da97314452ca023df63c69592fa0efe58a98de2eb166c015fd130d39140476ed5d3c321d6
+  languageName: node
+  linkType: hard
+
 "@react-native/js-polyfills@npm:0.86.3":
   version: 0.86.3
   resolution: "@react-native/js-polyfills@npm:0.86.3"
@@ -3330,234 +3345,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@revenuecat/purchases-js-hybrid-mappings@npm:17.12.0":
-  version: 17.12.0
-  resolution: "@revenuecat/purchases-js-hybrid-mappings@npm:17.12.0"
-  dependencies:
-    "@revenuecat/purchases-js": "npm:1.17.0"
-  checksum: 10c0/3da975b7ff7b6b4be9d78d87b7c83914d4ad8774f6f90cf4b1501ba4a46954830e7e2cc93f7516ca4b5114cdd96c0ff1fb389335c07d4e6b00e2bb9223c32278
-  languageName: node
-  linkType: hard
-
-"@revenuecat/purchases-js@npm:1.17.0":
-  version: 1.17.0
-  resolution: "@revenuecat/purchases-js@npm:1.17.0"
-  checksum: 10c0/51d274bc582a94a59c6ac0c6f5328ae97ef03f3c9b0e620e1a1485268286bddce521c07a84c0574c70d3639d7791563b18613e63da7b1bff916552025c8b1f18
-  languageName: node
-  linkType: hard
-
-"@revenuecat/purchases-typescript-internal@npm:17.12.0":
-  version: 17.12.0
-  resolution: "@revenuecat/purchases-typescript-internal@npm:17.12.0"
-  checksum: 10c0/d27183a662edf3495e4f6d6658ff01f3c83ec79021641c45d6fa0adb397834ea93d2804ddc53992f995ea3c75e19cd49d75836f6e175d7b3917b839bd3c0b42d
-  languageName: node
-  linkType: hard
-
-"@sentry-internal/browser-utils@npm:10.37.0":
-  version: 10.37.0
-  resolution: "@sentry-internal/browser-utils@npm:10.37.0"
-  dependencies:
-    "@sentry/core": "npm:10.37.0"
-  checksum: 10c0/d25869667c12268ffebfe24957acc70e6a3295a777b096816d53d6cad2e1defebd8d8121f84d34e5ec79ba7be41b26833f7d0a405953bca037b2ca87bdc2350a
-  languageName: node
-  linkType: hard
-
-"@sentry-internal/feedback@npm:10.37.0":
-  version: 10.37.0
-  resolution: "@sentry-internal/feedback@npm:10.37.0"
-  dependencies:
-    "@sentry/core": "npm:10.37.0"
-  checksum: 10c0/b6438bf58bd2c6dffbdaa48aa80a668337c36f9c330334218e32fb0c38bc076dfc94dda4baf0e1e2b9276d3b788202228cabee4b2d4a6c9026f4b5b247ebf620
-  languageName: node
-  linkType: hard
-
-"@sentry-internal/replay-canvas@npm:10.37.0":
-  version: 10.37.0
-  resolution: "@sentry-internal/replay-canvas@npm:10.37.0"
-  dependencies:
-    "@sentry-internal/replay": "npm:10.37.0"
-    "@sentry/core": "npm:10.37.0"
-  checksum: 10c0/1a7975ea4063505db766a6913f6fbfb17c35180c55b6a9857ce83579d32c26563b58775c0a871fe7144368678fac20930d21445deb41b86c1c7fd8d9280b07a6
-  languageName: node
-  linkType: hard
-
-"@sentry-internal/replay@npm:10.37.0":
-  version: 10.37.0
-  resolution: "@sentry-internal/replay@npm:10.37.0"
-  dependencies:
-    "@sentry-internal/browser-utils": "npm:10.37.0"
-    "@sentry/core": "npm:10.37.0"
-  checksum: 10c0/8f8b41f1264969148d580b41cc968525b66b4b05d2a7b405ee44a28ecabd855ee7688866b5e7ed7a70e8b18a64ed3c238dc2c2ad81ae10d5805dafb20a0dde7f
-  languageName: node
-  linkType: hard
-
-"@sentry/babel-plugin-component-annotate@npm:4.8.0":
-  version: 4.8.0
-  resolution: "@sentry/babel-plugin-component-annotate@npm:4.8.0"
-  checksum: 10c0/640f612010b0932c8cf5d753188054735b7d8bc9903c21a431ef6fde65bb91b3b57f4fb859c8e132013a4203ee3983c53326a8978039b97e3155d59e6927eaa0
-  languageName: node
-  linkType: hard
-
-"@sentry/browser@npm:10.37.0":
-  version: 10.37.0
-  resolution: "@sentry/browser@npm:10.37.0"
-  dependencies:
-    "@sentry-internal/browser-utils": "npm:10.37.0"
-    "@sentry-internal/feedback": "npm:10.37.0"
-    "@sentry-internal/replay": "npm:10.37.0"
-    "@sentry-internal/replay-canvas": "npm:10.37.0"
-    "@sentry/core": "npm:10.37.0"
-  checksum: 10c0/09628c8a987bfa26a1ad119c4f6b7f77bd6a25d1d7c2a70f076c5fe68db455425a41e5e1155bb5bdd489c728e2c1c563c7b68774e05f71dd9a1101a885d2e9ac
-  languageName: node
-  linkType: hard
-
-"@sentry/cli-darwin@npm:2.58.4":
-  version: 2.58.4
-  resolution: "@sentry/cli-darwin@npm:2.58.4"
-  conditions: os=darwin
-  languageName: node
-  linkType: hard
-
-"@sentry/cli-linux-arm64@npm:2.58.4":
-  version: 2.58.4
-  resolution: "@sentry/cli-linux-arm64@npm:2.58.4"
-  conditions: (os=linux | os=freebsd | os=android) & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@sentry/cli-linux-arm@npm:2.58.4":
-  version: 2.58.4
-  resolution: "@sentry/cli-linux-arm@npm:2.58.4"
-  conditions: (os=linux | os=freebsd | os=android) & cpu=arm
-  languageName: node
-  linkType: hard
-
-"@sentry/cli-linux-i686@npm:2.58.4":
-  version: 2.58.4
-  resolution: "@sentry/cli-linux-i686@npm:2.58.4"
-  conditions: (os=linux | os=freebsd | os=android) & (cpu=x86 | cpu=ia32)
-  languageName: node
-  linkType: hard
-
-"@sentry/cli-linux-x64@npm:2.58.4":
-  version: 2.58.4
-  resolution: "@sentry/cli-linux-x64@npm:2.58.4"
-  conditions: (os=linux | os=freebsd | os=android) & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@sentry/cli-win32-arm64@npm:2.58.4":
-  version: 2.58.4
-  resolution: "@sentry/cli-win32-arm64@npm:2.58.4"
-  conditions: os=win32 & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@sentry/cli-win32-i686@npm:2.58.4":
-  version: 2.58.4
-  resolution: "@sentry/cli-win32-i686@npm:2.58.4"
-  conditions: os=win32 & (cpu=x86 | cpu=ia32)
-  languageName: node
-  linkType: hard
-
-"@sentry/cli-win32-x64@npm:2.58.4":
-  version: 2.58.4
-  resolution: "@sentry/cli-win32-x64@npm:2.58.4"
-  conditions: os=win32 & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@sentry/cli@npm:2.58.4":
-  version: 2.58.4
-  resolution: "@sentry/cli@npm:2.58.4"
-  dependencies:
-    "@sentry/cli-darwin": "npm:2.58.4"
-    "@sentry/cli-linux-arm": "npm:2.58.4"
-    "@sentry/cli-linux-arm64": "npm:2.58.4"
-    "@sentry/cli-linux-i686": "npm:2.58.4"
-    "@sentry/cli-linux-x64": "npm:2.58.4"
-    "@sentry/cli-win32-arm64": "npm:2.58.4"
-    "@sentry/cli-win32-i686": "npm:2.58.4"
-    "@sentry/cli-win32-x64": "npm:2.58.4"
-    https-proxy-agent: "npm:^5.0.0"
-    node-fetch: "npm:^2.6.7"
-    progress: "npm:^2.0.3"
-    proxy-from-env: "npm:^1.1.0"
-    which: "npm:^2.0.2"
-  dependenciesMeta:
-    "@sentry/cli-darwin":
-      optional: true
-    "@sentry/cli-linux-arm":
-      optional: true
-    "@sentry/cli-linux-arm64":
-      optional: true
-    "@sentry/cli-linux-i686":
-      optional: true
-    "@sentry/cli-linux-x64":
-      optional: true
-    "@sentry/cli-win32-arm64":
-      optional: true
-    "@sentry/cli-win32-i686":
-      optional: true
-    "@sentry/cli-win32-x64":
-      optional: true
-  bin:
-    sentry-cli: bin/sentry-cli
-  checksum: 10c0/9adcc71bf2968f89e1c27c5a24c308a35281eb610bc4736b18f2396e37e9699e1e10f1be95db431e7ff939f3378fbad8634adf0d28fb2b74c74fa81a05070f10
-  languageName: node
-  linkType: hard
-
-"@sentry/core@npm:10.37.0":
-  version: 10.37.0
-  resolution: "@sentry/core@npm:10.37.0"
-  checksum: 10c0/129f6d1590a9ced159815b6346ed3a3cf9343d0bb8cb24a4c9e360fae50395af7229168a5c4b2dc04102406961a3851287810b4d05394746171ae65432835b9c
-  languageName: node
-  linkType: hard
-
-"@sentry/react-native@npm:~7.11.0":
-  version: 7.11.0
-  resolution: "@sentry/react-native@npm:7.11.0"
-  dependencies:
-    "@sentry/babel-plugin-component-annotate": "npm:4.8.0"
-    "@sentry/browser": "npm:10.37.0"
-    "@sentry/cli": "npm:2.58.4"
-    "@sentry/core": "npm:10.37.0"
-    "@sentry/react": "npm:10.37.0"
-    "@sentry/types": "npm:10.37.0"
-  peerDependencies:
-    expo: ">=49.0.0"
-    react: ">=17.0.0"
-    react-native: ">=0.65.0"
-  peerDependenciesMeta:
-    expo:
-      optional: true
-  bin:
-    sentry-expo-upload-sourcemaps: scripts/expo-upload-sourcemaps.js
-  checksum: 10c0/ce5369f3697ccf4c995b4c1b6af405665d5a3e20b6e20815dccf832690926297dd5d503ee8f0dddbc8937bcd373943285d8ba9db130e77caba19728c94346d52
-  languageName: node
-  linkType: hard
-
-"@sentry/react@npm:10.37.0":
-  version: 10.37.0
-  resolution: "@sentry/react@npm:10.37.0"
-  dependencies:
-    "@sentry/browser": "npm:10.37.0"
-    "@sentry/core": "npm:10.37.0"
-  peerDependencies:
-    react: ^16.14.0 || 17.x || 18.x || 19.x
-  checksum: 10c0/84c15ea511cd973bec571ca34085c8d041e40f51f79cf4206f48391ef2654cdabdaf93be3f58850171c8e13cab8850390c5cdd5fc982416ca3406f988212e8a6
-  languageName: node
-  linkType: hard
-
-"@sentry/types@npm:10.37.0":
-  version: 10.37.0
-  resolution: "@sentry/types@npm:10.37.0"
-  dependencies:
-    "@sentry/core": "npm:10.37.0"
-  checksum: 10c0/a7e8c582db5b3b709ddfc0cf3c870f5697d6fe6b03a451834e5da39b3197534b86c25737954eeb3ec873d6646f5340fbeeaac7ffc80eeba451f4e0337ba41345
-  languageName: node
-  linkType: hard
-
 "@shopify/react-native-skia@npm:2.6.2":
   version: 2.6.2
   resolution: "@shopify/react-native-skia@npm:2.6.2"
@@ -3613,6 +3400,73 @@ __metadata:
   dependencies:
     "@sinonjs/commons": "npm:^3.0.0"
   checksum: 10c0/2e2fb6cc57f227912814085b7b01fede050cd4746ea8d49a1e44d5a0e56a804663b0340ae2f11af7559ea9bf4d087a11f2f646197a660ea3cb04e19efc04aa63
+  languageName: node
+  linkType: hard
+
+"@supabase/auth-js@npm:2.109.0":
+  version: 2.109.0
+  resolution: "@supabase/auth-js@npm:2.109.0"
+  dependencies:
+    tslib: "npm:2.8.1"
+  checksum: 10c0/9a8d078591d2a21e6fa58afc703b3b5cae02348cacde54e84af992495a6544006733e9e03631af575fe81da1a1e5ebac248e919680ac3da903cf124ce06cb1a4
+  languageName: node
+  linkType: hard
+
+"@supabase/functions-js@npm:2.109.0":
+  version: 2.109.0
+  resolution: "@supabase/functions-js@npm:2.109.0"
+  dependencies:
+    tslib: "npm:2.8.1"
+  checksum: 10c0/306a76f673813fdc2b175fc4f7d6fa57989b6ddcade8c882ebcd7cf235af4504d5beebf8835993ccf65bab47138c710e417f8de9231ef8918f4f6b058f9f7bd4
+  languageName: node
+  linkType: hard
+
+"@supabase/phoenix@npm:0.4.4":
+  version: 0.4.4
+  resolution: "@supabase/phoenix@npm:0.4.4"
+  checksum: 10c0/b4ba930c82b20d412358826aa87ce0735147fd168efb817bfc34e31d78605220947dc7c5844726268ac6bf338f0cd081f9908a7bab87aaff4058cb80bf71ab5b
+  languageName: node
+  linkType: hard
+
+"@supabase/postgrest-js@npm:2.109.0":
+  version: 2.109.0
+  resolution: "@supabase/postgrest-js@npm:2.109.0"
+  dependencies:
+    tslib: "npm:2.8.1"
+  checksum: 10c0/31ccbe65a7ce986f4088e82692e56e543e3a3b74e367f3e50f110bcb92e6eee7efc723e7fef2e51c552501a114a2f4fbe79893aac6292ead536cfea3947d87a7
+  languageName: node
+  linkType: hard
+
+"@supabase/realtime-js@npm:2.109.0":
+  version: 2.109.0
+  resolution: "@supabase/realtime-js@npm:2.109.0"
+  dependencies:
+    "@supabase/phoenix": "npm:0.4.4"
+    tslib: "npm:2.8.1"
+  checksum: 10c0/d0742e922b4805be26bfd6aa6a015ea5a152cab39a55116182772426c9bb45ae6dddcd865a78d8cde53797982b3fa50c2f77fe16d7decbef8fdaa63f638a5c25
+  languageName: node
+  linkType: hard
+
+"@supabase/storage-js@npm:2.109.0":
+  version: 2.109.0
+  resolution: "@supabase/storage-js@npm:2.109.0"
+  dependencies:
+    iceberg-js: "npm:^0.8.1"
+    tslib: "npm:2.8.1"
+  checksum: 10c0/fa43f13f940b60d986137c84cc08f6cf27736b0d7b92302b377b25cffd6d4124fb5e68a873b4906c508a319fa031277900567db0cc689bf39aa06be11b9bc981
+  languageName: node
+  linkType: hard
+
+"@supabase/supabase-js@npm:2.109.0":
+  version: 2.109.0
+  resolution: "@supabase/supabase-js@npm:2.109.0"
+  dependencies:
+    "@supabase/auth-js": "npm:2.109.0"
+    "@supabase/functions-js": "npm:2.109.0"
+    "@supabase/postgrest-js": "npm:2.109.0"
+    "@supabase/realtime-js": "npm:2.109.0"
+    "@supabase/storage-js": "npm:2.109.0"
+  checksum: 10c0/663a8cbae8ee6cdcf0abf8ca3c382b1b60b28738906d10795e8338a23ee522d627644da08627977d22e84aab50ba8a68d53563ff88b6d2a3b766d57cdeb6d7cd
   languageName: node
   linkType: hard
 
@@ -4220,16 +4074,6 @@ __metadata:
   version: 1.3.3
   resolution: "@ungap/structured-clone@npm:1.3.3"
   checksum: 10c0/b199e280ee06e9c447e0ccd38df60a65c2b2c13d3c77af50b1e6d77230aee1ea7da309d7b80c5a4850c8e22e4eee9e4b2813c6a33f8c360560d7f2e99a9f6e8f
-  languageName: node
-  linkType: hard
-
-"@uploadcare/upload-client@npm:6.14.3":
-  version: 6.14.3
-  resolution: "@uploadcare/upload-client@npm:6.14.3"
-  dependencies:
-    form-data: "npm:^4.0.0"
-    ws: "npm:^8.2.3"
-  checksum: 10c0/afc2329a86c45ade2016b7a959f8bb936f73470bb183608a77c52727d28c13101f98e79c0d2474eabea645d8116e6669fe5599bc5641831eb1d8bb27644015c8
   languageName: node
   linkType: hard
 
@@ -5613,13 +5457,6 @@ __metadata:
   version: 2.0.0
   resolution: "depd@npm:2.0.0"
   checksum: 10c0/58bd06ec20e19529b06f7ad07ddab60e504d9e0faca4bd23079fac2d279c3594334d736508dc350e06e510aba5e22e4594483b3a6562ce7c17dd797f4cc4ad2c
-  languageName: node
-  linkType: hard
-
-"dequal@npm:^2.0.2":
-  version: 2.0.3
-  resolution: "dequal@npm:2.0.3"
-  checksum: 10c0/f98860cdf58b64991ae10205137c0e97d384c3a4edc7f807603887b7c4b850af1224a33d88012009f150861cbee4fa2d322c4cc04b9313bee312e47f6ecaa888
   languageName: node
   linkType: hard
 
@@ -7567,7 +7404,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"https-proxy-agent@npm:^5.0.0, https-proxy-agent@npm:^5.0.1":
+"https-proxy-agent@npm:^5.0.1":
   version: 5.0.1
   resolution: "https-proxy-agent@npm:5.0.1"
   dependencies:
@@ -7598,6 +7435,13 @@ __metadata:
   version: 1.1.0
   resolution: "hyphenate-style-name@npm:1.1.0"
   checksum: 10c0/bfe88deac2414a41a0d08811e277c8c098f23993d6a1eb17f14a0f11b54c4d42865a63d3cfe1914668eefb9a188e2de58f38b55a179a238fd1fef606893e194f
+  languageName: node
+  linkType: hard
+
+"iceberg-js@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "iceberg-js@npm:0.8.1"
+  checksum: 10c0/e504da64cc26e8ad7c5344353a7203c671a740c14eb6086f20505f5e9739cab774493e616032530c962df97f2a855115cc2e89a47dd81581df5917b21a69ec48
   languageName: node
   linkType: hard
 
@@ -9657,23 +9501,24 @@ __metadata:
     "@expo/ngrok": "npm:4.1.3"
     "@expo/vector-icons": "npm:15.0.3"
     "@gorhom/bottom-sheet": "npm:5.2.6"
+    "@mediapipe/tasks-vision": "npm:0.10.14"
     "@react-native-async-storage/async-storage": "npm:2.2.0"
     "@react-native-community/netinfo": "npm:12.0.1"
     "@react-native-community/slider": "npm:5.2.0"
     "@react-native-masked-view/masked-view": "npm:0.3.2"
     "@react-native-picker/picker": "npm:2.11.4"
+    "@react-native/jest-preset": "npm:0.86.3"
     "@react-navigation/bottom-tabs": "npm:7.4.8"
     "@react-navigation/elements": "npm:2.6.5"
     "@react-navigation/native": "npm:7.2.2"
     "@react-navigation/native-stack": "npm:7.3.27"
-    "@sentry/react-native": "npm:~7.11.0"
     "@shopify/react-native-skia": "npm:2.6.2"
+    "@supabase/supabase-js": "npm:2.109.0"
     "@tailwindcss/postcss": "npm:4.1.18"
     "@tanstack/react-query": "npm:5.72.2"
     "@teovilla/react-native-web-maps": "npm:0.9.5"
     "@types/jest": "npm:29.5.14"
     "@types/react": "npm:~19.2.4"
-    "@uploadcare/upload-client": "npm:6.14.3"
     autoprefixer: "npm:10.4.20"
     color2k: "npm:2.0.3"
     date-fns: "npm:4.1.0"
@@ -9730,11 +9575,8 @@ __metadata:
     react-native: "npm:0.86.3"
     react-native-calendars: "https://codeload.github.com/craftworkco/react-native-calendars/tar.gz/ae19e2af74ecdb29d6117ca41fbf41977a10cc23"
     react-native-gesture-handler: "npm:~2.32.0"
-    react-native-google-mobile-ads: "npm:15.8.3"
     react-native-graph: "npm:1.1.0"
     react-native-maps: "npm:1.27.2"
-    react-native-purchases: "patch:react-native-purchases@npm%3A9.6.1#~/.yarn/patches/react-native-purchases+9.6.1.patch"
-    react-native-purchases-ui: "patch:react-native-purchases-ui@npm%3A9.6.1#~/.yarn/patches/react-native-purchases-ui+9.6.1.patch"
     react-native-reanimated: "npm:4.5.1"
     react-native-reanimated-carousel: "npm:4.0.2"
     react-native-safe-area-context: "npm:~5.7.0"
@@ -9856,7 +9698,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.7, node-fetch@npm:^2.7.0":
+"node-fetch@npm:^2.7.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -10677,13 +10519,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proxy-from-env@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "proxy-from-env@npm:1.1.0"
-  checksum: 10c0/fe7dd8b1bdbbbea18d1459107729c3e4a2243ca870d26d34c2c1bcd3e4425b7bcc5112362df2d93cc7fb9746f6142b5e272fd1cc5c86ddf8580175186f6ad42b
-  languageName: node
-  linkType: hard
-
 "psl@npm:^1.1.33":
   version: 1.15.0
   resolution: "psl@npm:1.15.0"
@@ -10872,21 +10707,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-google-mobile-ads@npm:15.8.3":
-  version: 15.8.3
-  resolution: "react-native-google-mobile-ads@npm:15.8.3"
-  dependencies:
-    "@iabtcf/core": "npm:^1.5.3"
-    use-deep-compare-effect: "npm:^1.8.1"
-  peerDependencies:
-    expo: ">=47.0.0"
-  peerDependenciesMeta:
-    expo:
-      optional: true
-  checksum: 10c0/444adaa3a852a2acbe799802ba5e1b4cf9b94c5ff07c2e2d0a403084a85120060b5426046e613fe90efe92b222949dbbe5dcd38fd4d25cce70d7e46bad9af8c7
-  languageName: node
-  linkType: hard
-
 "react-native-graph@npm:1.1.0":
   version: 1.1.0
   resolution: "react-native-graph@npm:1.1.0"
@@ -10923,74 +10743,6 @@ __metadata:
     react-native-web:
       optional: true
   checksum: 10c0/cde71f62c5cc1dee7f1a158d354ddb0a3295b1be589e98991510cbd4586b8eaa1ea6cfe68f6fbb25a87a4c9bb6be4a5aa93b410053f120bc34adfb526a4ca671
-  languageName: node
-  linkType: hard
-
-"react-native-purchases-ui@npm:9.6.1":
-  version: 9.6.1
-  resolution: "react-native-purchases-ui@npm:9.6.1"
-  dependencies:
-    "@revenuecat/purchases-typescript-internal": "npm:17.12.0"
-  peerDependencies:
-    react: "*"
-    react-native: ">= 0.73.0"
-    react-native-purchases: 9.6.1
-    react-native-web: "*"
-  peerDependenciesMeta:
-    react-native-web:
-      optional: true
-  checksum: 10c0/3cf0e0eaa73862a05c5aa880d4b00d70bd7f2fb2231e409ba6ba0d5e99dcfbf34fbbd2d58ae9ab604c6658e9de1686bfe0bd52ea3a4a4fb96310731ba625233f
-  languageName: node
-  linkType: hard
-
-"react-native-purchases-ui@patch:react-native-purchases-ui@npm%3A9.6.1#~/.yarn/patches/react-native-purchases-ui+9.6.1.patch":
-  version: 9.6.1
-  resolution: "react-native-purchases-ui@patch:react-native-purchases-ui@npm%3A9.6.1#~/.yarn/patches/react-native-purchases-ui+9.6.1.patch::version=9.6.1&hash=f82a16"
-  dependencies:
-    "@revenuecat/purchases-typescript-internal": "npm:17.12.0"
-  peerDependencies:
-    react: "*"
-    react-native: ">= 0.73.0"
-    react-native-purchases: 9.6.1
-    react-native-web: "*"
-  peerDependenciesMeta:
-    react-native-web:
-      optional: true
-  checksum: 10c0/4b2addfafc685b7391ff64b301518a1235b57808ede5eefd9701a8a86c49c82d518bb5b88f115a9e2b4956a088d123a790ea239342888aadf05ac5007cafd05c
-  languageName: node
-  linkType: hard
-
-"react-native-purchases@npm:9.6.1":
-  version: 9.6.1
-  resolution: "react-native-purchases@npm:9.6.1"
-  dependencies:
-    "@revenuecat/purchases-js-hybrid-mappings": "npm:17.12.0"
-    "@revenuecat/purchases-typescript-internal": "npm:17.12.0"
-  peerDependencies:
-    react: ">= 16.6.3"
-    react-native: ">= 0.73.0"
-    react-native-web: "*"
-  peerDependenciesMeta:
-    react-native-web:
-      optional: true
-  checksum: 10c0/8e49e393a745ef3703df5a47870673d62cc8937571c78794aec9c5af4368c1a21e05c77ca730964c9caf1992cf3caabbc83b884c665cb2f0a74ee482fdc8e212
-  languageName: node
-  linkType: hard
-
-"react-native-purchases@patch:react-native-purchases@npm%3A9.6.1#~/.yarn/patches/react-native-purchases+9.6.1.patch":
-  version: 9.6.1
-  resolution: "react-native-purchases@patch:react-native-purchases@npm%3A9.6.1#~/.yarn/patches/react-native-purchases+9.6.1.patch::version=9.6.1&hash=e62cfb"
-  dependencies:
-    "@revenuecat/purchases-js-hybrid-mappings": "npm:17.12.0"
-    "@revenuecat/purchases-typescript-internal": "npm:17.12.0"
-  peerDependencies:
-    react: ">= 16.6.3"
-    react-native: ">= 0.73.0"
-    react-native-web: "*"
-  peerDependenciesMeta:
-    react-native-web:
-      optional: true
-  checksum: 10c0/a86986f348e3a2b661500e2a006c20209deaaeefe0495f19380c673ab46b3d3c5cee10f372fd4641f018733fc6ec319c07bbbe74114d595d90e8018ece0c7f60
   languageName: node
   linkType: hard
 
@@ -12474,7 +12226,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0":
+"tslib@npm:2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
@@ -12691,18 +12443,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/f887488c6e6075cdad4962979da1714b217bcb1ee009a9e57ce9a844bcfc4c3a99e93983dfc2e5af9e0913824d24e730090ff255e902c516dcb58d2d3837e01c
-  languageName: node
-  linkType: hard
-
-"use-deep-compare-effect@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "use-deep-compare-effect@npm:1.8.1"
-  dependencies:
-    "@babel/runtime": "npm:^7.12.5"
-    dequal: "npm:^2.0.2"
-  peerDependencies:
-    react: ">=16.13"
-  checksum: 10c0/f21f4239d774182e5389172321f00db487b415a97f5835abbe99d228eec45e3fd97803a52a25db6216ae6e1e1203b3f523336d94695dc683c661bad36a318891
   languageName: node
   linkType: hard
 
@@ -12948,7 +12688,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"which@npm:^2.0.1, which@npm:^2.0.2":
+"which@npm:^2.0.1":
   version: 2.0.2
   resolution: "which@npm:2.0.2"
   dependencies:
@@ -13020,7 +12760,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.11.0, ws@npm:^8.12.1, ws@npm:^8.2.3":
+"ws@npm:^8.11.0, ws@npm:^8.12.1":
   version: 8.21.3
   resolution: "ws@npm:8.21.3"
   peerDependencies:

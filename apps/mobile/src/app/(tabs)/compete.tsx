@@ -4,29 +4,39 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Medal, RefreshCw, Search, Share2, Swords, Trophy } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
-import { ScrollView, Share, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, Share, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import KeyboardAvoidingAnimatedView from '@/components/KeyboardAvoidingAnimatedView';
+import { competitionIsConfigured, competitionRequest } from '@/services/competitionApi';
 import { EXERCISE_IMAGES } from '@/utils/game/exerciseImages';
 import { useGameStore } from '@/utils/game/store';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type LeaderboardRow = {
-  device_id: string;
+  id: string;
+  profile_id: string;
   player_name: string;
   score: number;
   exercise: string;
+  is_me: boolean;
 };
 
 type ChallengeData = {
   challenge: {
-    id: number;
+    id: string;
     code: string;
     creator_name: string;
+    creator_profile_id: string;
     target_score: number;
     level_id: number | null;
   };
-  attempts: { player_name: string; device_id: string; score: number }[];
+  attempts: {
+    id: string;
+    profile_id: string;
+    player_name: string;
+    score: number;
+    is_me: boolean;
+  }[];
 };
 
 type LeaderboardExercise = 'pushups' | 'squats' | 'pullups';
@@ -57,33 +67,113 @@ const BOARD_TABS: {
   },
 ];
 
+type ModerationTarget = {
+  profileId: string;
+  playerName: string;
+  contextType: 'leaderboard' | 'challenge_attempt';
+  contextId: string;
+};
+
+function openPlayerActions(target: ModerationTarget, onUpdated: () => void) {
+  const report = (reason: 'inappropriate_name' | 'cheating' | 'harassment_or_other') => {
+    void competitionRequest<{ reported: true }>('/reports', {
+      method: 'POST',
+      body: {
+        reportedUserId: target.profileId,
+        contextType: target.contextType,
+        contextId: target.contextId,
+        reason,
+      },
+    })
+      .then(() => Alert.alert('Report received', 'Thank you. The report will be reviewed.'))
+      .catch(() => Alert.alert('Report not sent', 'Please try again or use Contact us in Info.'));
+  };
+
+  const chooseReportReason = () => {
+    Alert.alert('Report player', 'What should we review?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Inappropriate name', onPress: () => report('inappropriate_name') },
+      { text: 'Cheating', onPress: () => report('cheating') },
+      { text: 'Harassment or other', onPress: () => report('harassment_or_other') },
+    ]);
+  };
+
+  const confirmBlock = () => {
+    Alert.alert(
+      `Block ${target.playerName}?`,
+      'Their scores and challenge attempts will be hidden from you. You can reset your online identity from Info if needed.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Block',
+          style: 'destructive',
+          onPress: () => {
+            void competitionRequest<{ blocked: true }>('/blocks', {
+              method: 'POST',
+              body: { blockedUserId: target.profileId },
+            })
+              .then(() => {
+                onUpdated();
+                Alert.alert('Player blocked', `${target.playerName} is now hidden.`);
+              })
+              .catch(() => Alert.alert('Player not blocked', 'Please try again.'));
+          },
+        },
+      ]
+    );
+  };
+
+  Alert.alert(target.playerName, 'Choose an action for this player.', [
+    { text: 'Cancel', style: 'cancel' },
+    { text: 'Report', onPress: chooseReportReason },
+    { text: 'Block', style: 'destructive', onPress: confirmBlock },
+  ]);
+}
+
 // ─── Leaderboard Panel ────────────────────────────────────────────────────────
-function LeaderboardPanel({
-  exercise,
-  deviceId,
-}: {
-  exercise: LeaderboardExercise;
-  deviceId: string;
-}) {
+function LeaderboardPanel({ exercise }: { exercise: LeaderboardExercise }) {
   const queryClient = useQueryClient();
   const tab = BOARD_TABS.find((t) => t.key === exercise)!;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['leaderboard', exercise],
     queryFn: async (): Promise<LeaderboardRow[]> => {
-      const res = await fetch(`/api/leaderboard?exercise=${exercise}`);
-      if (!res.ok) throw new Error(`[${res.status}] ${res.statusText}`);
-      const d = await res.json();
+      const d = await competitionRequest<{ scores: LeaderboardRow[] }>(
+        `/leaderboard?exercise=${exercise}`
+      );
       return d.scores ?? [];
     },
+    enabled: competitionIsConfigured,
     staleTime: 30000,
   });
 
   const rows = data ?? [];
-  const myIndex = rows.findIndex((r) => r.device_id === deviceId);
+  const myIndex = rows.findIndex((r) => r.is_me);
   const myRow = myIndex >= 0 ? rows[myIndex] : null;
 
   const medalColors = ['#F59E0B', '#9CA3AF', '#B45309'];
+
+  if (!competitionIsConfigured) {
+    return (
+      <View
+        style={{
+          backgroundColor: '#FFFFFF',
+          borderRadius: 18,
+          padding: 18,
+          borderWidth: 1,
+          borderColor: '#E2E8F0',
+        }}
+      >
+        <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 15 }}>
+          Online competition is temporarily unavailable
+        </Text>
+        <Text style={{ color: '#64748B', fontSize: 12, lineHeight: 18, marginTop: 5 }}>
+          You can keep playing levels and Endless normally. Scores and training progress still save
+          on this device.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View
@@ -151,10 +241,10 @@ function LeaderboardPanel({
         </Text>
       ) : (
         rows.slice(0, 20).map((row, idx) => {
-          const isMe = row.device_id === deviceId;
+          const isMe = row.is_me;
           return (
             <View
-              key={`${row.device_id}-${idx}`}
+              key={row.id}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -190,6 +280,26 @@ function LeaderboardPanel({
                 {row.player_name}
                 {isMe ? ' (you)' : ''}
               </Text>
+              {!isMe ? (
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  accessibilityLabel={`Report or block ${row.player_name}`}
+                  onPress={() =>
+                    openPlayerActions(
+                      {
+                        profileId: row.profile_id,
+                        playerName: row.player_name,
+                        contextType: 'leaderboard',
+                        contextId: row.id,
+                      },
+                      () => queryClient.invalidateQueries({ queryKey: ['leaderboard'] })
+                    )
+                  }
+                  style={{ paddingHorizontal: 7, paddingVertical: 6 }}
+                >
+                  <Text style={{ color: '#64748B', fontWeight: '900', fontSize: 15 }}>•••</Text>
+                </TouchableOpacity>
+              ) : null}
               {/* Score */}
               <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 3 }}>
                 <Text style={{ fontWeight: '900', color: '#0F172A', fontSize: 14 }}>
@@ -209,9 +319,9 @@ function LeaderboardPanel({
 export default function CompeteScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const playerName = useGameStore((s) => s.playerName);
   const setPlayerName = useGameStore((s) => s.setPlayerName);
-  const deviceId = useGameStore((s) => s.deviceId);
   const hydrated = useGameStore((s) => s.hydrated);
 
   const [nameDraft, setNameDraft] = useState(playerName);
@@ -239,28 +349,25 @@ export default function CompeteScreen() {
   // Challenge queries
   const challengeQuery = useQuery({
     queryKey: ['challenge', activeCode],
-    enabled: !!activeCode,
+    enabled: competitionIsConfigured && !!activeCode,
     queryFn: async (): Promise<ChallengeData> => {
-      const res = await fetch(`/api/challenges?code=${encodeURIComponent(activeCode ?? '')}`);
-      if (!res.ok) throw new Error(`[${res.status}] ${res.statusText}`);
-      return res.json();
+      return competitionRequest<ChallengeData>(
+        `/challenges?code=${encodeURIComponent(activeCode ?? '')}`
+      );
     },
   });
 
   const createChallenge = useMutation({
     mutationFn: async (): Promise<{ code: string }> => {
-      const target = parseInt(targetDraft, 10);
-      const res = await fetch('/api/challenges', {
+      const parsedTarget = parseInt(targetDraft, 10);
+      const target = Number.isFinite(parsedTarget) ? Math.min(60, Math.max(1, parsedTarget)) : 10;
+      return competitionRequest<{ code: string }>('/challenges', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           creatorName: playerName,
-          deviceId,
-          targetScore: Number.isFinite(target) && target > 0 ? target : 10,
-        }),
+          targetScore: target,
+        },
       });
-      if (!res.ok) throw new Error(`[${res.status}] ${res.statusText}`);
-      return res.json();
     },
     onSuccess: (data) => {
       setCreatedCode(data.code);
@@ -296,6 +403,10 @@ export default function CompeteScreen() {
   };
 
   const lookupChallenge = () => {
+    if (!competitionIsConfigured) {
+      setError('Online competition is temporarily unavailable.');
+      return;
+    }
     const code = joinCode.trim().toUpperCase();
     if (code.length > 0) {
       setActiveCode(code);
@@ -473,7 +584,7 @@ export default function CompeteScreen() {
             ))}
           </View>
 
-          <LeaderboardPanel exercise={boardTab} deviceId={deviceId} />
+          <LeaderboardPanel exercise={boardTab} />
         </View>
 
         {/* ── Create challenge ────────────────────────────────────────────── */}
@@ -517,15 +628,19 @@ export default function CompeteScreen() {
             />
             <TouchableOpacity
               onPress={() =>
-                hasName ? createChallenge.mutate() : setError('Set your player name first.')
+                !competitionIsConfigured
+                  ? setError('Online competition is temporarily unavailable.')
+                  : hasName
+                    ? createChallenge.mutate()
+                    : setError('Set your player name first.')
               }
-              disabled={createChallenge.isPending}
+              disabled={!competitionIsConfigured || createChallenge.isPending}
               style={{
                 backgroundColor: '#1D4ED8',
                 borderRadius: 12,
                 paddingHorizontal: 16,
                 justifyContent: 'center',
-                opacity: createChallenge.isPending ? 0.6 : 1,
+                opacity: !competitionIsConfigured || createChallenge.isPending ? 0.6 : 1,
               }}
             >
               <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>
@@ -615,11 +730,13 @@ export default function CompeteScreen() {
             />
             <TouchableOpacity
               onPress={lookupChallenge}
+              disabled={!competitionIsConfigured}
               style={{
                 backgroundColor: '#0EA5E9',
                 borderRadius: 12,
                 paddingHorizontal: 16,
                 justifyContent: 'center',
+                opacity: competitionIsConfigured ? 1 : 0.6,
               }}
             >
               <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>Find</Text>
@@ -652,14 +769,31 @@ export default function CompeteScreen() {
               {challengeData.attempts.length > 0 ? (
                 <View style={{ marginTop: 8 }}>
                   {challengeData.attempts.slice(0, 10).map((a, idx) => (
-                    <View
-                      key={`${a.device_id}-${idx}`}
-                      style={{ flexDirection: 'row', paddingVertical: 4 }}
-                    >
+                    <View key={a.id} style={{ flexDirection: 'row', paddingVertical: 4 }}>
                       <Text style={{ flex: 1, color: '#334155', fontWeight: '600', fontSize: 13 }}>
                         {a.player_name}
-                        {a.device_id === deviceId ? ' (you)' : ''}
+                        {a.is_me ? ' (you)' : ''}
                       </Text>
+                      {!a.is_me ? (
+                        <TouchableOpacity
+                          accessibilityRole="button"
+                          accessibilityLabel={`Report or block ${a.player_name}`}
+                          onPress={() =>
+                            openPlayerActions(
+                              {
+                                profileId: a.profile_id,
+                                playerName: a.player_name,
+                                contextType: 'challenge_attempt',
+                                contextId: a.id,
+                              },
+                              () => queryClient.invalidateQueries({ queryKey: ['challenge'] })
+                            )
+                          }
+                          style={{ paddingHorizontal: 8, paddingVertical: 2 }}
+                        >
+                          <Text style={{ color: '#64748B', fontWeight: '900' }}>•••</Text>
+                        </TouchableOpacity>
+                      ) : null}
                       <Text
                         style={{
                           fontWeight: '800',

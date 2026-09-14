@@ -10,6 +10,8 @@ const requiredPublicValues = [
   ['EXPO_PUBLIC_PRIVACY_URL', 'public privacy policy URL'],
   ['EXPO_PUBLIC_TERMS_URL', 'public terms URL'],
   ['EXPO_PUBLIC_MARKETING_URL', 'public support/marketing website URL'],
+  ['EXPO_PUBLIC_SUPABASE_URL', 'Supabase project URL'],
+  ['EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY', 'Supabase publishable key'],
 ];
 
 for (const [key, label] of requiredPublicValues) {
@@ -23,6 +25,11 @@ for (const [key, label] of requiredPublicValues) {
 const supportEmail = String(process.env.EXPO_PUBLIC_SUPPORT_EMAIL ?? '').trim();
 if (supportEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(supportEmail)) {
   failures.push('EXPO_PUBLIC_SUPPORT_EMAIL: invalid email address');
+}
+
+const supabaseKey = String(process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '').trim();
+if (supabaseKey && !supabaseKey.startsWith('sb_publishable_')) {
+  failures.push('EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: use a modern sb_publishable_ key');
 }
 
 if (!appJson.extra?.eas?.projectId) {

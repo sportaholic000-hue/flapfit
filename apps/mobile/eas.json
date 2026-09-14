@@ -8,14 +8,12 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "FLAPFIT_EXPO_GO_STUBS": "0",
         "EXPO_USE_PRECOMPILED_MODULES": "0"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "FLAPFIT_EXPO_GO_STUBS": "0",
         "EXPO_USE_PRECOMPILED_MODULES": "0"
       }
     },
@@ -28,7 +26,6 @@
         "resourceClass": "m-medium"
       },
       "env": {
-        "FLAPFIT_EXPO_GO_STUBS": "0",
         "EXPO_USE_PRECOMPILED_MODULES": "0"
       }
     }
