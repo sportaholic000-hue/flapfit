@@ -15,6 +15,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import {
   Alert,
+  Linking,
   Modal,
   ScrollView,
   Share,
@@ -25,6 +26,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import KeyboardAvoidingAnimatedView from '@/components/KeyboardAvoidingAnimatedView';
+import { RELEASE_LINKS } from '@/config/release';
 import { competitionIsConfigured, competitionRequest } from '@/services/competitionApi';
 import { EXERCISE_IMAGES } from '@/utils/game/exerciseImages';
 import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
@@ -220,6 +222,42 @@ function CompetitionTermsModal({
               By choosing I Agree, you accept these rules and the Flap Fit Terms of Use. You can
               review the Terms of Use at any time in the Info tab.
             </Text>
+
+            {RELEASE_LINKS.termsUrl || RELEASE_LINKS.privacyUrl ? (
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 14 }}>
+                {RELEASE_LINKS.termsUrl ? (
+                  <TouchableOpacity
+                    accessibilityRole="link"
+                    accessibilityLabel="Open the full Flap Fit Terms of Use"
+                    onPress={() =>
+                      void Linking.openURL(RELEASE_LINKS.termsUrl).catch(() =>
+                        Alert.alert('Could not open Terms', 'Please try again from the Info tab.')
+                      )
+                    }
+                    style={{ paddingVertical: 6, paddingRight: 8 }}
+                  >
+                    <Text style={{ color: '#1D4ED8', fontWeight: '900' }}>Full Terms</Text>
+                  </TouchableOpacity>
+                ) : null}
+                {RELEASE_LINKS.privacyUrl ? (
+                  <TouchableOpacity
+                    accessibilityRole="link"
+                    accessibilityLabel="Open the Flap Fit Privacy Policy"
+                    onPress={() =>
+                      void Linking.openURL(RELEASE_LINKS.privacyUrl).catch(() =>
+                        Alert.alert(
+                          'Could not open Privacy Policy',
+                          'Please try again from the Info tab.'
+                        )
+                      )
+                    }
+                    style={{ paddingVertical: 6, paddingRight: 8 }}
+                  >
+                    <Text style={{ color: '#1D4ED8', fontWeight: '900' }}>Privacy Policy</Text>
+                  </TouchableOpacity>
+                ) : null}
+              </View>
+            ) : null}
           </ScrollView>
 
           <View
@@ -1004,7 +1042,7 @@ export default function CompeteScreen() {
               </Text>
               {challengeData.attempts.length > 0 ? (
                 <View style={{ marginTop: 8 }}>
-                  {challengeData.attempts.slice(0, 10).map((a, idx) => (
+                  {challengeData.attempts.slice(0, 10).map((a) => (
                     <View key={a.id} style={{ flexDirection: 'row', paddingVertical: 4 }}>
                       <Text style={{ flex: 1, color: '#334155', fontWeight: '600', fontSize: 13 }}>
                         {a.player_name}

@@ -32,6 +32,8 @@ final review decisions.
       light styling without adding an unnecessary native dependency.
 - [x] Online competition has name filtering, report, block, deletion, and rate limiting.
 - [x] Competition publishing requires versioned Terms acceptance.
+- [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
+      required production URLs are configured.
 - [ ] Re-run TypeScript, tests, format/lint, Expo Doctor, and both production exports on final HEAD.
 - [ ] Build the production iOS artifact and test through TestFlight on a physical iPhone.
 - [ ] Build the production Android AAB and test on Play internal testing / physical Android.
@@ -87,6 +89,7 @@ Owner/legal inputs still required:
       permissions, Expo/React Native alignment, the Xcode 26 image, production AAB/store
       distribution, auto-incrementing build numbers, ad/analytics packages, and mobile/API
       Competition Terms version parity.
+- [x] The release validator guards the checked-in Edge Function JWT-verification setting.
 - [x] The app is linked to the existing `@sportaholic/flapfit` EAS project and the checked-in project
       ID matches the remote project.
 - [ ] Populate the currently empty EAS `production` environment with the seven validated public

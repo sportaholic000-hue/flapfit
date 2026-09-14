@@ -208,6 +208,13 @@ const functionSource = fs.readFileSync(
   path.join(repoRoot, 'supabase', 'functions', 'flapfit-game', 'index.ts'),
   'utf8'
 );
+const supabaseConfig = fs.readFileSync(path.join(repoRoot, 'supabase', 'config.toml'), 'utf8');
+const functionConfig = supabaseConfig.match(
+  /\[functions\.flapfit-game\]([\s\S]*?)(?=\r?\n\[|$)/
+)?.[1];
+if (!functionConfig || !/^\s*verify_jwt\s*=\s*true\s*$/m.test(functionConfig)) {
+  failures.push('supabase/config.toml: flapfit-game must keep JWT verification enabled');
+}
 const appTermsVersion = storeSource.match(/COMPETITION_TERMS_VERSION\s*=\s*['"]([^'"]+)['"]/)?.[1];
 const apiTermsVersion = functionSource.match(/CURRENT_TERMS_VERSION\s*=\s*['"]([^'"]+)['"]/)?.[1];
 if (!appTermsVersion || !apiTermsVersion || appTermsVersion !== apiTermsVersion) {

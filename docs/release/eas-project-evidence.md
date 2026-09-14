@@ -12,6 +12,10 @@ immediately before producing the final store artifacts.
 - EAS project ID: `bbbfea4f-3047-46f6-a5ba-6286356e4718`
 - The ID matches `apps/mobile/app.json`.
 - The EAS `production` environment currently has no variables configured.
+- The installed EAS CLI successfully resolves both production profiles without queuing a build:
+  iOS uses store distribution, automatic build-number incrementing, the production environment, and
+  the `m-medium` resource class; Android uses store distribution, automatic version-code
+  incrementing, the production environment, and the `app-bundle` build type.
 
 The missing production variables are an intentional hard stop. The EAS post-install hook must reject
 a production build until all public legal/support links and the dedicated Supabase project values are
