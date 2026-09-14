@@ -68,10 +68,6 @@ const NATIVE_ALIASES = {
 // modules so paid users hit the native SDKs as normal.
 const useExpoGoStubs = process.env.FLAPFIT_EXPO_GO_STUBS === '1';
 const DEV_ONLY_NATIVE_ALIASES = {
-  'react-native-purchases': path.resolve(
-    __dirname,
-    './polyfills/native/react-native-purchases.native.tsx'
-  ),
   // The ads stub must never ship in EAS builds: with it bundled, the JS layer
   // never reaches the RNGoogleMobileAds native modules, so no ad request is
   // ever made and banners render the placeholder forever.
@@ -88,8 +84,7 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   // Polyfills must resolve their own imports normally.
   if (
     context.originModulePath.startsWith(`${__dirname}/polyfills/native`) ||
-    context.originModulePath.startsWith(`${__dirname}/polyfills/web`) ||
-    context.originModulePath.startsWith(`${__dirname}/polyfills/shared`)
+    context.originModulePath.startsWith(`${__dirname}/polyfills/web`)
   ) {
     return context.resolveRequest(context, moduleName, platform);
   }

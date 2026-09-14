@@ -21,6 +21,7 @@ import {
   Alert,
   Linking,
   Modal,
+  Platform,
   ScrollView,
   Share,
   StyleSheet,
@@ -30,6 +31,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BirdAvatar from '@/components/BirdAvatar';
+import { RELEASE_LINKS } from '@/config/release';
 import { getBird } from '@/utils/game/birds';
 import { EVO_NAMES, EVO_THRESHOLDS, useGameStore } from '@/utils/game/store';
 
@@ -238,7 +240,7 @@ export default function InfoScreen() {
   const insets = useSafeAreaInsets();
   const [modalPage, setModalPage] = useState<ModalPage>(null);
   const birdId = useGameStore((state) => state.birdId);
-  const supportEmail = String(Constants.expoConfig?.extra?.supportEmail ?? '').trim();
+  const supportEmail = RELEASE_LINKS.supportEmail;
   const version = Constants.expoConfig?.version ?? '1.0.0';
   const skin = getBird(birdId);
 
@@ -261,11 +263,30 @@ export default function InfoScreen() {
     }
   };
 
+  const openReleasePage = async (title: string, url: string) => {
+    if (!url) {
+      Alert.alert(
+        `${title} is not connected`,
+        'This public link must be configured before release.'
+      );
+      return;
+    }
+    try {
+      await Linking.openURL(url);
+    } catch {
+      Alert.alert(`Could not open ${title.toLowerCase()}`, url);
+    }
+  };
+
   const shareApp = async () => {
+    const storeUrl = Platform.OS === 'ios' ? RELEASE_LINKS.iosAppUrl : RELEASE_LINKS.androidAppUrl;
+    const shareUrl = storeUrl || RELEASE_LINKS.marketingUrl;
     try {
       await Share.share({
         title: 'Flap Fit',
-        message: 'Check out Flap Fit, a fitness game where your body controls the bird.',
+        message: ['Check out Flap Fit, a fitness game where your body controls the bird.', shareUrl]
+          .filter(Boolean)
+          .join('\n\n'),
       });
     } catch {
       Alert.alert('Could not open sharing', 'Please try again.');
@@ -385,8 +406,14 @@ export default function InfoScreen() {
           <ActionRow
             icon={<ShieldCheck size={21} color="#2563EB" />}
             title="Privacy & camera data"
-            subtitle="What is processed, saved, and downloaded"
+            subtitle="Plain-language data and recording summary"
             onPress={() => setModalPage('privacy')}
+          />
+          <ActionRow
+            icon={<FileText size={21} color="#2563EB" />}
+            title="Full privacy policy"
+            subtitle={RELEASE_LINKS.privacyUrl || 'Public link required before release'}
+            onPress={() => void openReleasePage('Privacy policy', RELEASE_LINKS.privacyUrl)}
           />
           <ActionRow
             icon={<TriangleAlert size={21} color="#EA580C" />}
@@ -399,6 +426,12 @@ export default function InfoScreen() {
             title="Terms of use"
             subtitle="Rules for using Flap Fit"
             onPress={() => setModalPage('terms')}
+          />
+          <ActionRow
+            icon={<FileText size={21} color="#0284C7" />}
+            title="Full terms"
+            subtitle={RELEASE_LINKS.termsUrl || 'Public link required before release'}
+            onPress={() => void openReleasePage('Terms', RELEASE_LINKS.termsUrl)}
           />
           <ActionRow
             icon={<Settings size={21} color="#475569" />}

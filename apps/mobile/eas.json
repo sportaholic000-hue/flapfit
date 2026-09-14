@@ -9,7 +9,6 @@
       "distribution": "internal",
       "env": {
         "FLAPFIT_EXPO_GO_STUBS": "0",
-        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
         "EXPO_USE_PRECOMPILED_MODULES": "0"
       }
     },
@@ -17,7 +16,6 @@
       "distribution": "internal",
       "env": {
         "FLAPFIT_EXPO_GO_STUBS": "0",
-        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
         "EXPO_USE_PRECOMPILED_MODULES": "0"
       }
     },
@@ -31,7 +29,6 @@
       },
       "env": {
         "FLAPFIT_EXPO_GO_STUBS": "0",
-        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
         "EXPO_USE_PRECOMPILED_MODULES": "0"
       }
     }

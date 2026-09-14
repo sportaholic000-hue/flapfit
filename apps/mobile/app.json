@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "Flap Fit",
-    "slug": "flap-fit",
+    "slug": "flapfit",
+    "owner": "sportaholic",
     "scheme": "flapfit",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -90,6 +91,9 @@
       "onDemandFilesystem": "UNSTABLE_ALLOW_ALL"
     },
     "extra": {
+      "eas": {
+        "projectId": "bbbfea4f-3047-46f6-a5ba-6286356e4718"
+      },
       "router": {
         "origin": false
       }

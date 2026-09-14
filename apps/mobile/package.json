@@ -6,6 +6,7 @@
   "scripts": {
     "eas-build-pre-install": "corepack enable",
     "start:expo-go": "node ./scripts/start-expo-go.cjs",
+    "release:check": "node ./scripts/validate-release-config.cjs",
     "typecheck": "tsc --noEmit",
     "test": "jest --runInBand"
   },
