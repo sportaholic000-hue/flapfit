@@ -81,8 +81,12 @@ Owner/legal inputs still required:
 - [ ] Public privacy policy is linked in the app and both store listings.
 - [ ] Public Terms of Use is linked in the app and covers the competition community rules.
 - [ ] Public account/data deletion page works without requiring the app to be installed.
+- [ ] Run `yarn workspace mobile release:links` against the production environment and confirm every
+      public page returns HTML containing the expected Flap Fit page label.
 - [x] Production EAS builds fail closed when any required public link or online-service value is
       missing.
+- [x] The release validator rejects reserved/private placeholder domains and requires separate
+      Privacy, Terms, and account-deletion pages.
 - [x] EAS development, preview, and production profiles explicitly select their matching EAS
       environment so store builds cannot silently inherit the wrong values.
 - [x] The release validator also guards bundle IDs, API 36, cleartext traffic, camera/audio

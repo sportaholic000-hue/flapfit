@@ -8,6 +8,25 @@ const easJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'eas.json'), 'utf8
 const mobilePackage = JSON.parse(fs.readFileSync(path.join(appRoot, 'package.json'), 'utf8'));
 const failures = [];
 
+function isPrivateOrReservedHostname(hostname) {
+  const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  if (
+    host === 'localhost' ||
+    host === '0.0.0.0' ||
+    host === '::1' ||
+    host.endsWith('.localhost') ||
+    host.endsWith('.local') ||
+    host.endsWith('.test') ||
+    host.endsWith('.invalid') ||
+    ['example.com', 'example.org', 'example.net'].includes(host)
+  ) {
+    return true;
+  }
+  if (/^127\./.test(host) || /^10\./.test(host) || /^192\.168\./.test(host)) return true;
+  const private172 = host.match(/^172\.(\d{1,2})\./);
+  return private172 ? Number(private172[1]) >= 16 && Number(private172[1]) <= 31 : false;
+}
+
 const requiredPublicValues = [
   ['EXPO_PUBLIC_SUPPORT_EMAIL', 'public support email'],
   ['EXPO_PUBLIC_PRIVACY_URL', 'public privacy policy URL'],
@@ -21,14 +40,49 @@ const requiredPublicValues = [
 for (const [key, label] of requiredPublicValues) {
   const value = String(process.env[key] ?? '').trim();
   if (!value) failures.push(`${key}: missing ${label}`);
-  if (key.endsWith('_URL') && value && !/^https:\/\//i.test(value)) {
-    failures.push(`${key}: must use a public https:// URL`);
+  if (key.endsWith('_URL') && value) {
+    try {
+      const url = new URL(value);
+      if (
+        url.protocol !== 'https:' ||
+        !url.hostname.includes('.') ||
+        url.username ||
+        url.password ||
+        isPrivateOrReservedHostname(url.hostname)
+      ) {
+        failures.push(`${key}: must use a public non-placeholder https:// URL`);
+      }
+    } catch {
+      failures.push(`${key}: must be a valid public https:// URL`);
+    }
   }
 }
 
 const supportEmail = String(process.env.EXPO_PUBLIC_SUPPORT_EMAIL ?? '').trim();
 if (supportEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(supportEmail)) {
   failures.push('EXPO_PUBLIC_SUPPORT_EMAIL: invalid email address');
+}
+const supportDomain = supportEmail.split('@')[1] ?? '';
+if (supportDomain && isPrivateOrReservedHostname(supportDomain)) {
+  failures.push('EXPO_PUBLIC_SUPPORT_EMAIL: must not use a placeholder or private domain');
+}
+
+const legalUrls = [
+  process.env.EXPO_PUBLIC_PRIVACY_URL,
+  process.env.EXPO_PUBLIC_TERMS_URL,
+  process.env.EXPO_PUBLIC_ACCOUNT_DELETION_URL,
+].map((value) => {
+  const raw = String(value ?? '').trim();
+  if (!raw) return raw;
+  try {
+    const url = new URL(raw);
+    return `${url.origin}${url.pathname.replace(/\/+$/, '')}`;
+  } catch {
+    return raw;
+  }
+});
+if (legalUrls.every(Boolean) && new Set(legalUrls).size !== legalUrls.length) {
+  failures.push('privacy, terms, and account-deletion URLs must be separate public pages');
 }
 
 const supabaseKey = String(process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '').trim();
