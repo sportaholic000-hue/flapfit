@@ -524,12 +524,19 @@ function loop(now) {
   if (state === 'waitTop' || state === 'waitBottom') {
     prevBirdNorm = birdNorm;
     drawBird(now);
+    var calibrationFormCheck = usesExperimentalFormTracking()
+      ? validateExperimentalCalibration(state === 'waitTop' ? 'top' : 'bottom')
+      : { valid: true, message: '' };
     if (state === 'waitTop' && now < calibrationReadyAt) {
       var delaySeconds = Math.max(1, Math.ceil((calibrationReadyAt - now) / 1000));
       showOverlay(
         topCalibrationMessage() + '<br><small>Calibration begins in ' + delaySeconds + '…</small>',
         true
       );
+      setProgress(0);
+      stabBuf = [];
+    } else if (!calibrationFormCheck.valid) {
+      showOverlay(calibrationFormCheck.message, false);
       setProgress(0);
       stabBuf = [];
     } else if (getTrackY() !== null && trackingFresh()) {
@@ -539,6 +546,7 @@ function loop(now) {
         setProgress(prog);
         if (prog >= 1) {
           topY = stabAverage(); stabBuf = [];
+          saveExperimentalCalibration('top');
           beep(660, 0.15, 'sine', 0.08);
           state = 'waitBottom';
         }
@@ -563,6 +571,7 @@ function loop(now) {
           var candidate = stabAverage();
           if (candidate !== null && topY !== null && candidate - topY > 0.06) {
             bottomY = candidate; stabBuf = [];
+            saveExperimentalCalibration('bottom');
             beep(880, 0.18, 'sine', 0.08);
             postRN({ type: 'calibrated' });
             countdownEnd = now + 3000;
@@ -620,6 +629,9 @@ function loop(now) {
     prevBirdNorm = birdNorm;
     birdNorm += (norm - birdNorm) * Math.min(1, dt * 16);
     updatePushups(norm);
+    var gameplayFormCheck = usesExperimentalFormTracking()
+      ? validateExperimentalGameplay(norm)
+      : { valid: true, message: '' };
 
     // Active training/play time. Pose/form verification is not implemented yet.
     tutSeconds += dt;
@@ -634,14 +646,16 @@ function loop(now) {
       return;
     }
 
-    if (!trackingFresh()) {
+    if (!trackingFresh() || !gameplayFormCheck.valid) {
       state = 'lost';
       var isWristEx2 = CONFIG.exercise === 'lateralraise' || CONFIG.exercise === 'biceps' || CONFIG.exercise === 'shoulderpress';
-      var lostMsg = CONFIG.exercise === 'pullups'
-        ? 'Tracking lost<br><br><b>Re-center in frame</b><br>Return to your hang — game resumes automatically.'
-        : isWristEx2
-        ? 'Tracking lost<br><br><b>Re-center in frame</b><br>Face camera and hold still — game resumes automatically.'
-        : 'Tracking lost<br><br><b>Re-center in frame</b><br>Hold your position — game resumes automatically.';
+      var lostMsg = !gameplayFormCheck.valid
+        ? gameplayFormCheck.message
+        : CONFIG.exercise === 'pullups'
+          ? 'Tracking lost<br><br><b>Re-center in frame</b><br>Return to your hang — game resumes automatically.'
+          : isWristEx2
+            ? 'Tracking lost<br><br><b>Re-center in frame</b><br>Face camera and hold still — game resumes automatically.'
+            : 'Tracking lost<br><br><b>Re-center in frame</b><br>Hold your position — game resumes automatically.';
       showOverlay(lostMsg, false);
     } else {
       if (now - lastSpawn > currentSpawnMs()) { lastSpawn = now; spawnPipe(now); }
@@ -667,10 +681,15 @@ function loop(now) {
     drewPlayableRecordingFrame = true;
   } else if (state === 'lost') {
     drawPipes(); drawParticles(0); drawBird(now); drawHUD();
-    if (trackingFresh()) {
+    var resumeFormCheck = usesExperimentalFormTracking()
+      ? validateExperimentalGameplay(norm)
+      : { valid: true, message: '' };
+    if (trackingFresh() && resumeFormCheck.valid) {
       resumeEnd = now + 1200;
       state = 'resume';
       showOverlay('Locked on!<br>Resuming…', false);
+    } else if (trackingFresh() && !resumeFormCheck.valid) {
+      showOverlay(resumeFormCheck.message, false);
     }
   } else if (state === 'resume') {
     prevBirdNorm = birdNorm;

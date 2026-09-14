@@ -44,7 +44,7 @@ describe('level run rules', () => {
     expect(SCRIPT_CORE).toContain('lastWristTrackTime');
     expect(SCRIPT_CORE).toContain('usesWristTracking() ? wristY : headY');
     expect(SCRIPT_CORE).not.toContain('wristY !== null ? wristY : headY');
-    expect(SCRIPT_GAME).toContain('if (!trackingFresh()) {');
+    expect(SCRIPT_GAME).toContain('if (!trackingFresh() || !gameplayFormCheck.valid) {');
   });
 
   it('uses camera tracking exclusively', () => {

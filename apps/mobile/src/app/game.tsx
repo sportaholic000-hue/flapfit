@@ -158,6 +158,7 @@ export default function GameScreen() {
     challengeCode?: string;
     backgroundMode?: string;
     record?: string;
+    trackingMode?: string;
   }>();
 
   const mode = typeof params.mode === 'string' ? params.mode : 'level';
@@ -166,6 +167,8 @@ export default function GameScreen() {
   const challengeCode = typeof params.challengeCode === 'string' ? params.challengeCode : null;
   const backgroundMode = params.backgroundMode === 'camera' ? 'camera' : 'sky';
   const recordRun = params.record === 'true' || params.record === '1';
+  const trackingMode =
+    __DEV__ && params.trackingMode === 'form-test' ? 'form-test' : 'original';
 
   const isEndless = mode === 'endless';
   const level = isEndless ? ENDLESS_BASE : getLevel(levelId);
@@ -370,6 +373,7 @@ export default function GameScreen() {
       if (!birdImageDataUri) return null;
       return buildGameHtml({
         trackerAssetMode: USE_REMOTE_TRACKER ? 'remote' : 'bundled',
+        trackingMode,
         exercise: exerciseMode,
         endless: isEndless,
         speed: level.speed,
@@ -399,6 +403,7 @@ export default function GameScreen() {
       recordRun,
       skin.id,
       target,
+      trackingMode,
       runKey,
     ]
   );

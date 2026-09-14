@@ -1,0 +1,147 @@
+import { SCRIPT_FORM_TRACKING } from '../html/scriptFormTracking';
+import { SCRIPT_CORE } from '../html/scriptCore';
+import { SCRIPT_GAME } from '../html/scriptGame';
+
+type Point = { x: number; y: number; visibility: number };
+type FormCheck = { valid: boolean; message: string };
+
+function point(x: number, y: number): Point {
+  return { x, y, visibility: 1 };
+}
+
+function pose(entries: Array<[number, Point]>) {
+  const landmarks = Array.from({ length: 33 }, () => ({ x: 0, y: 0, visibility: 0 }));
+  for (const [index, value] of entries) landmarks[index] = value;
+  return landmarks;
+}
+
+function mirroredPair(leftIndex: number, rightIndex: number, x: number, y: number) {
+  return [
+    [leftIndex, point(x, y)],
+    [rightIndex, point(1 - x, y)],
+  ] as Array<[number, Point]>;
+}
+
+function makeHarness(exercise: string) {
+  const factory = new Function(
+    'CONFIG',
+    'performance',
+    SCRIPT_FORM_TRACKING +
+      '; return {' +
+      ' update: updateExperimentalFormPose,' +
+      ' validateCalibration: validateExperimentalCalibration,' +
+      ' save: saveExperimentalCalibration,' +
+      ' metrics: function() { return formCurrentMetrics; }' +
+      '};'
+  ) as (
+    config: { trackingMode: string; exercise: string },
+    clock: { now: () => number }
+  ) => {
+    update: (landmarks: Point[], now: number) => void;
+    validateCalibration: (position: 'top' | 'bottom') => FormCheck;
+    save: (position: 'top' | 'bottom') => void;
+    metrics: () => { controllerY: number };
+  };
+
+  return factory({ trackingMode: 'form-test', exercise }, { now: () => 0 });
+}
+
+describe('experimental form tracking', () => {
+  it('keeps the complete WebView game script syntactically valid', () => {
+    expect(() => new Function(SCRIPT_CORE + SCRIPT_FORM_TRACKING + SCRIPT_GAME)).not.toThrow();
+  });
+
+  it('uses hips rather than head movement to control squats', () => {
+    const harness = makeHarness('squats');
+    const standing = pose([
+      ...mirroredPair(11, 12, 0.42, 0.3),
+      ...mirroredPair(23, 24, 0.43, 0.52),
+      ...mirroredPair(25, 26, 0.44, 0.72),
+      ...mirroredPair(27, 28, 0.45, 0.92),
+      [0, point(0.5, 0.1)],
+    ]);
+    harness.update(standing, 0);
+    const before = harness.metrics().controllerY;
+    standing[0] = point(0.5, 0.28);
+    harness.update(standing, 16);
+
+    expect(harness.metrics().controllerY).toBeCloseTo(before);
+  });
+
+  it('rejects a waist bend with straight knees as a squat bottom position', () => {
+    const harness = makeHarness('squats');
+    const top = pose([
+      ...mirroredPair(11, 12, 0.42, 0.3),
+      ...mirroredPair(23, 24, 0.43, 0.52),
+      ...mirroredPair(25, 26, 0.44, 0.72),
+      ...mirroredPair(27, 28, 0.45, 0.92),
+    ]);
+    harness.update(top, 0);
+    expect(harness.validateCalibration('top').valid).toBe(true);
+    harness.save('top');
+
+    const waistBend = pose([
+      ...mirroredPair(11, 12, 0.3, 0.54),
+      ...mirroredPair(23, 24, 0.43, 0.59),
+      ...mirroredPair(25, 26, 0.44, 0.74),
+      ...mirroredPair(27, 28, 0.45, 0.92),
+    ]);
+    harness.update(waistBend, 16);
+    const result = harness.validateCalibration('bottom');
+
+    expect(result.valid).toBe(false);
+    expect(result.message).toMatch(/waist|knees/i);
+  });
+
+  it('rejects a pull-up calibration when the feet stay planted', () => {
+    const harness = makeHarness('pullups');
+    const top = pose([
+      ...mirroredPair(11, 12, 0.43, 0.35),
+      ...mirroredPair(13, 14, 0.39, 0.25),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.56),
+      ...mirroredPair(27, 28, 0.45, 0.9),
+    ]);
+    harness.update(top, 0);
+    expect(harness.validateCalibration('top').valid).toBe(true);
+    harness.save('top');
+
+    const feetPlanted = pose([
+      ...mirroredPair(11, 12, 0.44, 0.44),
+      ...mirroredPair(13, 14, 0.44, 0.28),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.65),
+      ...mirroredPair(27, 28, 0.45, 0.9),
+    ]);
+    harness.update(feetPlanted, 16);
+    const result = harness.validateCalibration('bottom');
+
+    expect(result.valid).toBe(false);
+    expect(result.message).toMatch(/feet appear planted/i);
+  });
+
+  it('accepts a lenient hanging pull-up range when hands stay fixed and feet move', () => {
+    const harness = makeHarness('pullups');
+    const top = pose([
+      ...mirroredPair(11, 12, 0.43, 0.35),
+      ...mirroredPair(13, 14, 0.39, 0.25),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.56),
+      ...mirroredPair(27, 28, 0.45, 0.75),
+    ]);
+    harness.update(top, 0);
+    expect(harness.validateCalibration('top').valid).toBe(true);
+    harness.save('top');
+
+    const bottom = pose([
+      ...mirroredPair(11, 12, 0.44, 0.44),
+      ...mirroredPair(13, 14, 0.44, 0.28),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.65),
+      ...mirroredPair(27, 28, 0.45, 0.84),
+    ]);
+    harness.update(bottom, 16);
+
+    expect(harness.validateCalibration('bottom').valid).toBe(true);
+  });
+});

@@ -297,6 +297,7 @@ function initCameraFlow() {
       if (camBtnEl) { camBtnEl.style.display = 'block'; }
     }
     calibrationReadyAt = performance.now() + CALIBRATION_START_DELAY_MS;
+    if (usesExperimentalFormTracking()) { resetExperimentalFormTracking(); }
     state = 'waitTop';
     stabBuf = [];
     requestAnimationFrame(trackLoop);
@@ -315,6 +316,9 @@ function trackLoop() {
       var res = landmarker.detectForVideo(video, performance.now());
       if (res && res.landmarks && res.landmarks.length > 0) {
         var lm = res.landmarks[0];
+        if (usesExperimentalFormTracking()) {
+          updateExperimentalFormPose(lm, performance.now());
+        }
         var nose = lm[0], ls = lm[11], rs = lm[12];
         var nv = (nose && nose.visibility !== undefined) ? nose.visibility : 1;
         var lv = (ls && ls.visibility !== undefined) ? ls.visibility : 0;
@@ -371,12 +375,15 @@ function usesWristTracking() {
   return CONFIG.exercise === 'lateralraise' || CONFIG.exercise === 'biceps' || CONFIG.exercise === 'shoulderpress';
 }
 function getTrackY() {
+  if (usesExperimentalFormTracking()) { return getExperimentalTrackY(); }
   return usesWristTracking() ? wristY : headY;
 }
 function getTrackYSmooth() {
+  if (usesExperimentalFormTracking()) { return getExperimentalTrackYSmooth(); }
   return usesWristTracking() ? wristYSmooth : headYSmooth;
 }
 function trackingFresh() {
+  if (usesExperimentalFormTracking()) { return experimentalTrackingFresh(); }
   var lastInputTime = usesWristTracking()
     ? lastWristTrackTime
     : lastHeadTrackTime;

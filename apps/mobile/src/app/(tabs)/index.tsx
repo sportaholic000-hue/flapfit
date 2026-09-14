@@ -82,6 +82,7 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [backgroundMode, setBackgroundMode] = useState<'sky' | 'camera'>('sky');
+  const [trackingMode, setTrackingMode] = useState<'original' | 'form-test'>('original');
 
   const hydrated = useGameStore((s) => s.hydrated);
   const hasOnboarded = useGameStore((s) => s.hasOnboarded);
@@ -130,6 +131,7 @@ export default function HomeScreen() {
   const withGameOptions = (params: Record<string, string>, record = false) => ({
     ...params,
     backgroundMode,
+    ...(__DEV__ && trackingMode === 'form-test' ? { trackingMode: 'form-test' } : {}),
     ...(record && backgroundMode === 'camera' ? { record: '1' } : {}),
   });
 
@@ -477,6 +479,54 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
         </View>
+
+        {__DEV__ ? (
+          <View
+            style={{
+              marginTop: 12,
+              padding: 16,
+              borderRadius: 20,
+              backgroundColor: 'rgba(255,255,255,0.96)',
+              gap: 10,
+            }}
+          >
+            <View style={{ gap: 3 }}>
+              <Text style={{ fontWeight: '900', color: NAVY, fontSize: 16 }}>
+                Camera Tracking Test
+              </Text>
+              <Text style={{ color: '#64748B', fontSize: 12, lineHeight: 17 }}>
+                Compare the approved tracker with invisible form checks. No skeleton is displayed.
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              {(['original', 'form-test'] as const).map((option) => {
+                const selected = trackingMode === option;
+                return (
+                  <TouchableOpacity
+                    key={option}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                    onPress={() => setTrackingMode(option)}
+                    style={{
+                      flex: 1,
+                      minHeight: 48,
+                      borderRadius: 14,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: selected ? ACCENT_BLUE : '#CBD5E1',
+                      backgroundColor: selected ? '#E0F2FE' : '#F8FAFC',
+                    }}
+                  >
+                    <Text style={{ color: selected ? '#0369A1' : '#475569', fontWeight: '900' }}>
+                      {option === 'original' ? 'Original' : 'Form Test'}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        ) : null}
 
         {/* Current level start */}
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>

@@ -1,5 +1,6 @@
 import type { BirdSkin } from './birds';
 import { SCRIPT_CORE } from './html/scriptCore';
+import { SCRIPT_FORM_TRACKING } from './html/scriptFormTracking';
 import { SCRIPT_GAME } from './html/scriptGame';
 
 export type BirdEvolution = {
@@ -12,6 +13,7 @@ export type BirdEvolution = {
 
 export type GameHtmlConfig = {
   trackerAssetMode: 'bundled' | 'remote';
+  trackingMode: 'original' | 'form-test';
   exercise: 'pushups' | 'squats' | 'pullups' | 'lateralraise' | 'biceps' | 'shoulderpress';
   backgroundMode: 'sky' | 'camera';
   recordRun: boolean;
@@ -61,8 +63,9 @@ body { margin: 0; padding: 0; background: ${config.sky1}; overflow: hidden; heig
 <script>
 "use strict";
 var CONFIG = ${configJson};
-${SCRIPT_CORE}
-${SCRIPT_GAME}
+  ${SCRIPT_CORE}
+  ${SCRIPT_FORM_TRACKING}
+  ${SCRIPT_GAME}
 </script>
 </body>
 </html>`;
