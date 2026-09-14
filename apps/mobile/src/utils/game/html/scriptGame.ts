@@ -494,6 +494,9 @@ function topCalibrationMessage() {
     return 'STEP 1 OF 2<br><br>Stand <b>TALL</b><br>Feet shoulder-width apart, head up<br><br>Hold still…';
   }
   if (CONFIG.exercise === 'pullups') {
+    if (usesExperimentalFormTracking()) {
+      return 'STEP 1 OF 2<br><br>Lift your feet and pull to your <b>HIGHEST</b> point<br>Bent knees are fine<br><br>Hold still…';
+    }
     return 'STEP 1 OF 2<br><br>Pull to your <b>HIGHEST</b> point<br>Chin at or above the bar<br><br>Hold still…';
   }
   if (CONFIG.exercise === 'lateralraise') {
@@ -529,10 +532,10 @@ function loop(now) {
       : { valid: true, message: '' };
     if (state === 'waitTop' && now < calibrationReadyAt) {
       var delaySeconds = Math.max(1, Math.ceil((calibrationReadyAt - now) / 1000));
-      showOverlay(
-        topCalibrationMessage() + '<br><small>Calibration begins in ' + delaySeconds + '…</small>',
-        true
-      );
+      var preparationMessage = usesExperimentalFormTracking() && CONFIG.exercise === 'pullups'
+        ? 'PULL-UP SETUP<br><br>Keep both feet on the floor<br>and hold the bar overhead<br><br><small>Learning floor position · ' + delaySeconds + '…</small>'
+        : topCalibrationMessage() + '<br><small>Calibration begins in ' + delaySeconds + '…</small>';
+      showOverlay(preparationMessage, true);
       setProgress(0);
       stabBuf = [];
     } else if (!calibrationFormCheck.valid) {
@@ -555,7 +558,9 @@ function loop(now) {
         if (CONFIG.exercise === 'squats') {
           botMsg = 'STEP 2 OF 2<br><br>Lower to a <b>DEEP SQUAT</b><br>Thighs parallel to the floor<br><br>Hold still…';
         } else if (CONFIG.exercise === 'pullups') {
-          botMsg = 'STEP 2 OF 2<br><br>Lower to a full <b>DEAD HANG</b><br>Arms completely locked straight<br><br>Hold still…';
+          botMsg = usesExperimentalFormTracking()
+            ? 'STEP 2 OF 2<br><br>Lower to a comfortable <b>DEAD HANG</b><br>Keep feet clear, bent knees are fine<br><br>Hold still…'
+            : 'STEP 2 OF 2<br><br>Lower to a full <b>DEAD HANG</b><br>Arms completely locked straight<br><br>Hold still…';
         } else if (CONFIG.exercise === 'lateralraise') {
           botMsg = 'STEP 2 OF 2<br><br>Lower arms to your <b>SIDES</b><br>Hands near hips<br><br>Hold still…';
         } else if (CONFIG.exercise === 'biceps') {

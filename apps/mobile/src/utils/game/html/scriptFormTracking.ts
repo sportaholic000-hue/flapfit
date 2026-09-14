@@ -9,6 +9,7 @@ var formCurrentMetrics = null;
 var formTrackY = null, formTrackYSmooth = null;
 var lastFormTrackTime = 0;
 var formTopMetrics = null, formBottomMetrics = null;
+var pullupFloorY = null;
 
 function usesExperimentalFormTracking() {
   return CONFIG.trackingMode === 'form-test';
@@ -22,6 +23,7 @@ function resetExperimentalFormTracking() {
   lastFormTrackTime = 0;
   formTopMetrics = null;
   formBottomMetrics = null;
+  pullupFloorY = null;
 }
 
 function formPoint(index, minVisibility) {
@@ -111,6 +113,17 @@ function collectExperimentalFormMetrics() {
 function updateExperimentalFormPose(landmarks, now) {
   formPoseLandmarks = landmarks;
   formCurrentMetrics = collectExperimentalFormMetrics();
+  if (
+    CONFIG.exercise === 'pullups' &&
+    formTopMetrics === null &&
+    now < calibrationReadyAt &&
+    formCurrentMetrics &&
+    formCurrentMetrics.feet
+  ) {
+    pullupFloorY = pullupFloorY === null
+      ? formCurrentMetrics.feet.y
+      : Math.max(pullupFloorY, formCurrentMetrics.feet.y);
+  }
   if (!formCurrentMetrics || formCurrentMetrics.controllerY === null) { return; }
   formTrackY = formCurrentMetrics.controllerY;
   if (formTrackYSmooth === null) { formTrackYSmooth = formTrackY; }
@@ -127,13 +140,6 @@ function experimentalTrackingFresh() {
 function formValid() { return { valid: true, message: '' }; }
 function formInvalid(message) { return { valid: false, message: message }; }
 
-function formTorsoIsHorizontal(metrics) {
-  if (!metrics || !metrics.shoulders || !metrics.hips) { return false; }
-  var dx = Math.abs(metrics.shoulders.x - metrics.hips.x);
-  var dy = Math.abs(metrics.shoulders.y - metrics.hips.y);
-  return dx > dy * 0.45;
-}
-
 function formTorsoIsUpright(metrics) {
   if (!metrics || !metrics.shoulders || !metrics.hips) { return false; }
   var dx = Math.abs(metrics.shoulders.x - metrics.hips.x);
@@ -149,9 +155,6 @@ function validateExperimentalCalibration(position) {
   if (CONFIG.exercise === 'pushups') {
     if (!metrics.shoulders || !metrics.hips || metrics.elbowAngle === null) {
       return formInvalid('Form check<br><br>Keep a shoulder, elbow, wrist, and hip visible.');
-    }
-    if (!formTorsoIsHorizontal(metrics)) {
-      return formInvalid('Form check<br><br>Turn side-on and keep your torso in a push-up position.');
     }
     if (position === 'top' && metrics.elbowAngle < 125) {
       return formInvalid('Form check<br><br>Straighten your arms for the top position.');
@@ -191,21 +194,23 @@ function validateExperimentalCalibration(position) {
     if (metrics.wrists.y > metrics.shoulders.y - 0.015) {
       return formInvalid('Form check<br><br>Keep both hands fixed overhead on the bar.');
     }
+    if (pullupFloorY === null) {
+      return formInvalid('Form check<br><br>Restart and keep your feet on the floor during the 2-second setup.');
+    }
+    if (metrics.feet.y > pullupFloorY - 0.012) {
+      return formInvalid('Form check<br><br>Lift your feet clear of the floor. Bent knees are completely fine.');
+    }
     if (position === 'top' && metrics.elbowAngle > 155) {
       return formInvalid('Form check<br><br>Pull high enough to visibly bend your elbows.');
     }
     if (position === 'bottom' && formTopMetrics) {
       var bodyTravel = metrics.controllerY - formTopMetrics.controllerY;
-      var footTravel = metrics.feet.y - formTopMetrics.feet.y;
       var wristTravel = formDistance(metrics.wrists, formTopMetrics.wrists);
       if (metrics.elbowAngle < 125 || metrics.elbowAngle - formTopMetrics.elbowAngle < 15) {
         return formInvalid('Form check<br><br>Lower until your elbows are comfortably straight.');
       }
       if (wristTravel > Math.max(0.06, bodyTravel * 0.6)) {
         return formInvalid('Form check<br><br>Keep your hands anchored on the bar.');
-      }
-      if (footTravel < Math.max(0.018, bodyTravel * 0.28)) {
-        return formInvalid('Form check<br><br>Your feet appear planted. Keep them off the floor while you lower.');
       }
     }
     return formValid();
@@ -281,8 +286,8 @@ function validateExperimentalGameplay(norm) {
   }
 
   if (CONFIG.exercise === 'pushups') {
-    if (!formTorsoIsHorizontal(metrics) || metrics.elbowAngle === null) {
-      return formInvalid('Form check<br><br>Stay side-on in your push-up position.');
+    if (!metrics.shoulders || !metrics.hips || metrics.elbowAngle === null) {
+      return formInvalid('Form check<br><br>Keep your shoulders, elbows, wrists, and hips visible.');
     }
     if (!formMetricMatches(metrics.elbowAngle, formTopMetrics.elbowAngle, formBottomMetrics.elbowAngle, norm, 50)) {
       return formInvalid('Form check<br><br>Move through your elbows instead of bobbing your head.');
@@ -314,10 +319,8 @@ function validateExperimentalGameplay(norm) {
     if (!formMetricMatches(metrics.elbowAngle, formTopMetrics.elbowAngle, formBottomMetrics.elbowAngle, norm, 55)) {
       return formInvalid('Form check<br><br>Let your elbows bend and straighten with your body.');
     }
-    var expectedFootY = formExpected(formTopMetrics.feet.y, formBottomMetrics.feet.y, norm);
-    var footTolerance = Math.max(0.055, Math.abs(formBottomMetrics.feet.y - formTopMetrics.feet.y) * 0.7);
-    if (Math.abs(metrics.feet.y - expectedFootY) > footTolerance) {
-      return formInvalid('Form check<br><br>Keep your feet off the floor and moving with your body.');
+    if (pullupFloorY === null || metrics.feet.y > pullupFloorY - 0.008) {
+      return formInvalid('Form check<br><br>Keep your feet off the floor. Bent knees are fine.');
     }
     return formValid();
   }

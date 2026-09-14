@@ -26,24 +26,28 @@ function makeHarness(exercise: string) {
   const factory = new Function(
     'CONFIG',
     'performance',
+    'calibrationReadyAt',
     SCRIPT_FORM_TRACKING +
       '; return {' +
       ' update: updateExperimentalFormPose,' +
       ' validateCalibration: validateExperimentalCalibration,' +
+      ' validateGameplay: validateExperimentalGameplay,' +
       ' save: saveExperimentalCalibration,' +
       ' metrics: function() { return formCurrentMetrics; }' +
       '};'
   ) as (
     config: { trackingMode: string; exercise: string },
-    clock: { now: () => number }
+    clock: { now: () => number },
+    calibrationReadyAt: number
   ) => {
     update: (landmarks: Point[], now: number) => void;
     validateCalibration: (position: 'top' | 'bottom') => FormCheck;
+    validateGameplay: (norm: number) => FormCheck;
     save: (position: 'top' | 'bottom') => void;
     metrics: () => { controllerY: number };
   };
 
-  return factory({ trackingMode: 'form-test', exercise }, { now: () => 0 });
+  return factory({ trackingMode: 'form-test', exercise }, { now: () => 0 }, 2000);
 }
 
 describe('experimental form tracking', () => {
@@ -95,41 +99,40 @@ describe('experimental form tracking', () => {
 
   it('rejects a pull-up calibration when the feet stay planted', () => {
     const harness = makeHarness('pullups');
-    const top = pose([
+    const setup = pose([
       ...mirroredPair(11, 12, 0.43, 0.35),
       ...mirroredPair(13, 14, 0.39, 0.25),
       ...mirroredPair(15, 16, 0.44, 0.14),
       ...mirroredPair(23, 24, 0.44, 0.56),
       ...mirroredPair(27, 28, 0.45, 0.9),
     ]);
-    harness.update(top, 0);
-    expect(harness.validateCalibration('top').valid).toBe(true);
-    harness.save('top');
-
-    const feetPlanted = pose([
-      ...mirroredPair(11, 12, 0.44, 0.44),
-      ...mirroredPair(13, 14, 0.44, 0.28),
-      ...mirroredPair(15, 16, 0.44, 0.14),
-      ...mirroredPair(23, 24, 0.44, 0.65),
-      ...mirroredPair(27, 28, 0.45, 0.9),
-    ]);
-    harness.update(feetPlanted, 16);
-    const result = harness.validateCalibration('bottom');
+    harness.update(setup, 0);
+    harness.update(setup, 2100);
+    const result = harness.validateCalibration('top');
 
     expect(result.valid).toBe(false);
-    expect(result.message).toMatch(/feet appear planted/i);
+    expect(result.message).toMatch(/lift your feet|bent knees/i);
   });
 
-  it('accepts a lenient hanging pull-up range when hands stay fixed and feet move', () => {
+  it('accepts a hanging pull-up range when knees stay bent and feet barely move', () => {
     const harness = makeHarness('pullups');
+    const setup = pose([
+      ...mirroredPair(11, 12, 0.43, 0.43),
+      ...mirroredPair(13, 14, 0.42, 0.29),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.64),
+      ...mirroredPair(27, 28, 0.45, 0.92),
+    ]);
+    harness.update(setup, 0);
+
     const top = pose([
       ...mirroredPair(11, 12, 0.43, 0.35),
       ...mirroredPair(13, 14, 0.39, 0.25),
       ...mirroredPair(15, 16, 0.44, 0.14),
       ...mirroredPair(23, 24, 0.44, 0.56),
-      ...mirroredPair(27, 28, 0.45, 0.75),
+      ...mirroredPair(27, 28, 0.45, 0.72),
     ]);
-    harness.update(top, 0);
+    harness.update(top, 2100);
     expect(harness.validateCalibration('top').valid).toBe(true);
     harness.save('top');
 
@@ -138,10 +141,38 @@ describe('experimental form tracking', () => {
       ...mirroredPair(13, 14, 0.44, 0.28),
       ...mirroredPair(15, 16, 0.44, 0.14),
       ...mirroredPair(23, 24, 0.44, 0.65),
-      ...mirroredPair(27, 28, 0.45, 0.84),
+      ...mirroredPair(27, 28, 0.45, 0.73),
     ]);
-    harness.update(bottom, 16);
+    harness.update(bottom, 2116);
 
     expect(harness.validateCalibration('bottom').valid).toBe(true);
+    harness.save('bottom');
+    expect(harness.validateGameplay(0).valid).toBe(true);
+  });
+
+  it('accepts push-up calibration and gameplay with the phone in front', () => {
+    const harness = makeHarness('pushups');
+    const frontFacingTop = pose([
+      ...mirroredPair(11, 12, 0.42, 0.35),
+      ...mirroredPair(13, 14, 0.42, 0.5),
+      ...mirroredPair(15, 16, 0.42, 0.65),
+      ...mirroredPair(23, 24, 0.43, 0.58),
+    ]);
+    harness.update(frontFacingTop, 2100);
+
+    expect(harness.validateCalibration('top').valid).toBe(true);
+    harness.save('top');
+
+    const frontFacingBottom = pose([
+      ...mirroredPair(11, 12, 0.42, 0.45),
+      ...mirroredPair(13, 14, 0.37, 0.5),
+      ...mirroredPair(15, 16, 0.42, 0.65),
+      ...mirroredPair(23, 24, 0.43, 0.62),
+    ]);
+    harness.update(frontFacingBottom, 2116);
+
+    expect(harness.validateCalibration('bottom').valid).toBe(true);
+    harness.save('bottom');
+    expect(harness.validateGameplay(0).valid).toBe(true);
   });
 });
