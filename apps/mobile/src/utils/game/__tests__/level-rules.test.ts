@@ -54,4 +54,14 @@ describe('level run rules', () => {
     expect(SCRIPT_GAME).not.toContain('CONFIG.control');
     expect(SCRIPT_GAME).toContain('initCameraFlow();');
   });
+
+  it('locks every exercise calibration for two seconds after the camera starts', () => {
+    expect(SCRIPT_CORE).toContain('var CALIBRATION_START_DELAY_MS = 2000;');
+    expect(SCRIPT_CORE).toContain(
+      'calibrationReadyAt = performance.now() + CALIBRATION_START_DELAY_MS;'
+    );
+    expect(SCRIPT_GAME).toContain("state === 'waitTop' && now < calibrationReadyAt");
+    expect(SCRIPT_GAME).toContain('setProgress(0);');
+    expect(SCRIPT_GAME).toContain("topCalibrationMessage() + '<br><small>Calibration begins in '");
+  });
 });

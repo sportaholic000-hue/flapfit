@@ -489,6 +489,25 @@ function computeNorm() {
   return norm;
 }
 
+function topCalibrationMessage() {
+  if (CONFIG.exercise === 'squats') {
+    return 'STEP 1 OF 2<br><br>Stand <b>TALL</b><br>Feet shoulder-width apart, head up<br><br>Hold still…';
+  }
+  if (CONFIG.exercise === 'pullups') {
+    return 'STEP 1 OF 2<br><br>Pull to your <b>HIGHEST</b> point<br>Chin at or above the bar<br><br>Hold still…';
+  }
+  if (CONFIG.exercise === 'lateralraise') {
+    return 'STEP 1 OF 2<br><br>Raise arms to <b>SHOULDER HEIGHT</b><br>Parallel to the floor<br><br>Hold still…';
+  }
+  if (CONFIG.exercise === 'biceps') {
+    return 'STEP 1 OF 2<br><br>Curl to the <b>TOP</b><br>Wrists near your shoulders<br><br>Hold still…';
+  }
+  if (CONFIG.exercise === 'shoulderpress') {
+    return 'STEP 1 OF 2<br><br>Press <b>OVERHEAD</b> fully<br>Arms locked straight above you<br><br>Hold still…';
+  }
+  return 'STEP 1 OF 2<br><br>Hold the <b>TOP</b> of a push-up<br>Arms fully extended<br><br>Hold still…';
+}
+
 function loop(now) {
   var dt = lastFrame ? Math.min(0.035, (now - lastFrame) / 1000) : 0.016;
   var drewPlayableRecordingFrame = false;
@@ -505,24 +524,18 @@ function loop(now) {
   if (state === 'waitTop' || state === 'waitBottom') {
     prevBirdNorm = birdNorm;
     drawBird(now);
-    if (getTrackY() !== null && trackingFresh()) {
+    if (state === 'waitTop' && now < calibrationReadyAt) {
+      var delaySeconds = Math.max(1, Math.ceil((calibrationReadyAt - now) / 1000));
+      showOverlay(
+        topCalibrationMessage() + '<br><small>Calibration begins in ' + delaySeconds + '…</small>',
+        true
+      );
+      setProgress(0);
+      stabBuf = [];
+    } else if (getTrackY() !== null && trackingFresh()) {
       var prog = stabilityProgress(getTrackY(), now);
       if (state === 'waitTop') {
-        var topMsg;
-        if (CONFIG.exercise === 'squats') {
-          topMsg = 'STEP 1 OF 2<br><br>Stand <b>TALL</b><br>Feet shoulder-width apart, head up<br><br>Hold still…';
-        } else if (CONFIG.exercise === 'pullups') {
-          topMsg = 'STEP 1 OF 2<br><br>Pull to your <b>HIGHEST</b> point<br>Chin at or above the bar<br><br>Hold still…';
-        } else if (CONFIG.exercise === 'lateralraise') {
-          topMsg = 'STEP 1 OF 2<br><br>Raise arms to <b>SHOULDER HEIGHT</b><br>Parallel to the floor<br><br>Hold still…';
-        } else if (CONFIG.exercise === 'biceps') {
-          topMsg = 'STEP 1 OF 2<br><br>Curl to the <b>TOP</b><br>Wrists near your shoulders<br><br>Hold still…';
-        } else if (CONFIG.exercise === 'shoulderpress') {
-          topMsg = 'STEP 1 OF 2<br><br>Press <b>OVERHEAD</b> fully<br>Arms locked straight above you<br><br>Hold still…';
-        } else {
-          topMsg = 'STEP 1 OF 2<br><br>Hold the <b>TOP</b> of a push-up<br>Arms fully extended<br><br>Hold still…';
-        }
-        showOverlay(topMsg, true);
+        showOverlay(topCalibrationMessage(), true);
         setProgress(prog);
         if (prog >= 1) {
           topY = stabAverage(); stabBuf = [];
@@ -578,15 +591,15 @@ function loop(now) {
     } else {
       var frameMsg;
       if (CONFIG.exercise === 'squats') {
-        frameMsg = 'Get your head and body in frame<br><small>Place phone 1.5–2m in front at knee height</small>';
+        frameMsg = 'Get your head and body in frame<br><small>Place phone on the floor or a chair, 1.5–2m in front</small>';
       } else if (CONFIG.exercise === 'pullups') {
-        frameMsg = 'Get in frame — head and arms visible<br><small>Place phone on a chair or surface facing you</small>';
+        frameMsg = 'Get in frame — head and arms visible<br><small>Place phone on a chair or higher, facing you</small>';
       } else if (CONFIG.exercise === 'lateralraise') {
-        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone 2m in front at chest height</small>';
+        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, about 2m in front</small>';
       } else if (CONFIG.exercise === 'biceps') {
-        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone 1–1.5m in front at waist height</small>';
+        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, 1–1.5m in front</small>';
       } else if (CONFIG.exercise === 'shoulderpress') {
-        frameMsg = 'Get in frame — arms raised must be visible<br><small>Place phone 1.5–2m in front at chest height</small>';
+        frameMsg = 'Get in frame — arms raised must be visible<br><small>Place phone on a chair or higher, 1.5–2m in front</small>';
       } else {
         frameMsg = 'Get your head and shoulders in frame<br><small>Place phone 1–1.5m in front of you on the floor</small>';
       }

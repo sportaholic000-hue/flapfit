@@ -45,11 +45,11 @@ type ModalPage = 'privacy' | 'safety' | 'terms' | null;
 
 const EXERCISE_SETUP = [
   ['Push-ups', 'Phone on the floor, 1–1.5 m in front; keep your full body visible.'],
-  ['Squats', 'Phone stable at knee height, 1.5–2 m in front.'],
-  ['Pull-ups', 'Phone on a stable chair or stand, facing the bar and your full range.'],
-  ['Bicep curls', 'Phone at waist height, 1–1.5 m in front; keep both wrists visible.'],
-  ['Lateral raises', 'Phone at chest height, about 2 m in front; keep both wrists visible.'],
-  ['Shoulder press', 'Phone at chest height, 1.5–2 m in front; keep hands visible overhead.'],
+  ['Squats', 'Phone on the floor or a stable chair, 1.5–2 m in front.'],
+  ['Pull-ups', 'Phone on a stable chair or higher, facing the bar and your full range.'],
+  ['Bicep curls', 'Phone on a chair or higher, 1–1.5 m in front; keep both wrists visible.'],
+  ['Lateral raises', 'Phone on a chair or higher, about 2 m in front; keep both wrists visible.'],
+  ['Shoulder press', 'Phone on a chair or higher, 1.5–2 m in front; keep hands visible overhead.'],
 ] as const;
 
 function clock(seconds: number): string {
@@ -380,8 +380,9 @@ export default function InfoScreen() {
             frame.
           </NumberedStep>
           <NumberedStep number={3}>
-            Hold the first position shown until the bar fills, then hold the second position. After
-            the 3-second countdown, the bird follows that calibrated range.
+            The first position appears for two seconds before calibration can begin. Get into that
+            position, hold it until the bar fills, then hold the second position. After the 3-second
+            countdown, the bird follows that calibrated range.
           </NumberedStep>
           <NumberedStep number={4}>
             If tracking pauses, return to the center of the frame and hold still. The game resumes
@@ -390,8 +391,8 @@ export default function InfoScreen() {
           <View style={styles.tipBox}>
             <Text style={styles.tipTitle}>Fast calibration tip</Text>
             <Text style={styles.tipText}>
-              Read the two positions below before pressing Play so you are ready when calibration
-              begins.
+              Use the two-second preparation window to read Step 1 and get fully into position. The
+              calibration bar stays locked until that window ends.
             </Text>
           </View>
           {EXERCISE_SETUP.map(([name, setup]) => (

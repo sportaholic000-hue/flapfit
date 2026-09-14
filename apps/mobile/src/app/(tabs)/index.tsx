@@ -197,13 +197,14 @@ export default function HomeScreen() {
   };
 
   const exDescriptions: Record<string, string> = {
-    squats: 'Stand tall = top, deep squat = bottom. Phone 1.5–2m in front at knee height.',
-    pullups: 'Chin at bar = top, arms fully locked = bottom. Phone on a chair facing you.',
+    squats: 'Stand tall = top, deep squat = bottom. Phone on the floor or a chair, 1.5–2m in front.',
+    pullups: 'Chin at bar = top, arms fully locked = bottom. Phone on a chair or higher, facing you.',
     lateralraise:
-      'Arms at shoulder height = top, arms at sides = bottom. Phone 2m in front at chest height.',
-    biceps: 'Wrists at shoulders = top, arms extended = bottom. Phone 1–1.5m at waist height.',
+      'Arms at shoulder height = top, arms at sides = bottom. Phone on a chair or higher, about 2m in front.',
+    biceps:
+      'Wrists at shoulders = top, arms extended = bottom. Phone on a chair or higher, 1–1.5m in front.',
     shoulderpress:
-      'Arms overhead = top, wrists at shoulders = bottom. Phone 1.5–2m at chest height.',
+      'Arms overhead = top, wrists at shoulders = bottom. Phone on a chair or higher, 1.5–2m in front.',
     pushups: 'Arms extended = top, chest to floor = bottom. Phone 1–1.5m in front on the floor.',
   };
 
@@ -554,11 +555,11 @@ export default function HomeScreen() {
             }}
           >
             {exBtn('pushups', 'Push-ups', 'phone on floor')}
-            {exBtn('squats', 'Squats', 'phone at knee height')}
-            {exBtn('pullups', 'Pull-ups', 'phone on a chair')}
-            {exBtn('lateralraise', 'Lateral Raise', 'chest height')}
-            {exBtn('biceps', 'Bicep Curls', 'waist height')}
-            {exBtn('shoulderpress', 'Shoulder Press', 'chest height')}
+            {exBtn('squats', 'Squats', 'phone on floor or chair')}
+            {exBtn('pullups', 'Pull-ups', 'phone on chair or higher')}
+            {exBtn('lateralraise', 'Lateral Raise', 'phone on chair or higher')}
+            {exBtn('biceps', 'Bicep Curls', 'phone on chair or higher')}
+            {exBtn('shoulderpress', 'Shoulder Press', 'phone on chair or higher')}
           </View>
           <Text
             style={{

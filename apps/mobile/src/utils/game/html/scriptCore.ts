@@ -76,6 +76,8 @@ var pipes = [], particles = [], clouds = [];
 var lastSpawn = 0, lastFrame = 0, countdownEnd = 0, resumeEnd = 0;
 var gameOverSent = false;
 var lastVideoTime = -1;
+var calibrationReadyAt = 0;
+var CALIBRATION_START_DELAY_MS = 2000;
 
 for (var ci = 0; ci < 5; ci++) {
   clouds.push({ x: Math.random(), y: 0.08 + Math.random() * 0.3, s: 0.5 + Math.random() * 0.8, v: 6 + Math.random() * 10 });
@@ -294,6 +296,7 @@ function initCameraFlow() {
       if (!camHidden) { previewEl.style.display = 'block'; }
       if (camBtnEl) { camBtnEl.style.display = 'block'; }
     }
+    calibrationReadyAt = performance.now() + CALIBRATION_START_DELAY_MS;
     state = 'waitTop';
     stabBuf = [];
     requestAnimationFrame(trackLoop);

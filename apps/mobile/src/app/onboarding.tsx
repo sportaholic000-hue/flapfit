@@ -47,7 +47,7 @@ export default function OnboardingScreen() {
           lineHeight: 26,
         }}
       >
-        Do exercises to fly a bird through pipes.{'\n'}Your body is the controller. 💪{'\n\n'}
+        Do exercises to fly a bird through pipes.{'\n'}Your body is the controller.{'\n\n'}
         Choose your weapon:{'\n'}
         <Text style={{ fontWeight: '900' }}>
           Push-ups · Squats · Pull-ups{'\n'}Lateral Raise · Bicep Curls · Shoulder Press
@@ -61,7 +61,7 @@ export default function OnboardingScreen() {
           paddingVertical: 10,
         }}
       >
-        <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '700', textAlign: 'center' }}>
+        <Text style={{ color: '#0F172A', fontSize: 13, fontWeight: '700', textAlign: 'center' }}>
           🐣 Your bird is a Hatchling — tracked training time grows it into a Legend
         </Text>
       </View>
@@ -120,10 +120,10 @@ export default function OnboardingScreen() {
           <Smartphone size={26} color="#F59E0B" />
           <View style={{ flex: 1 }}>
             <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
-              Push-ups / Squats / Curls / Press
+              Push-ups
             </Text>
             <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
-              Place phone on the floor or a surface, propped facing you, 1–2m away.
+              Place phone on the floor, propped facing you, 1–1.5m away.
             </Text>
           </View>
         </View>
@@ -131,10 +131,21 @@ export default function OnboardingScreen() {
           <Ruler size={26} color="#F59E0B" />
           <View style={{ flex: 1 }}>
             <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
-              Pull-ups
+              Squats
             </Text>
             <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
-              Place phone on a chair or bench facing the bar, so your full torso is visible.
+              Place phone on the floor or a chair, propped facing you, 1.5–2m away.
+            </Text>
+          </View>
+        </View>
+        <View style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+          <Move size={26} color="#F59E0B" />
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
+              Pull-ups / Bicep Curls{'\n'}Lateral Raises / Shoulder Press
+            </Text>
+            <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
+              Place phone on a chair or higher, facing you with the full movement visible.
             </Text>
           </View>
         </View>
@@ -180,7 +191,8 @@ export default function OnboardingScreen() {
           3. 3-2-1… GO! The bird follows your movement in real time.
         </Text>
         <Text style={{ color: '#6B7280', fontSize: 12, marginTop: 6 }}>
-          All tracking runs on your device. Camera images never leave your phone.
+          Normal Play processes camera images only on your device. Record &amp; Play creates a
+          temporary video that you decide whether and where to share.
         </Text>
       </View>
       <TouchableOpacity
