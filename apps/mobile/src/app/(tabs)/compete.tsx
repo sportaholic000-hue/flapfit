@@ -93,8 +93,7 @@ function openPlayerActions(target: ModerationTarget, onUpdated: () => void) {
     Alert.alert('Report player', 'What should we review?', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Inappropriate name', onPress: () => report('inappropriate_name') },
-      { text: 'Cheating', onPress: () => report('cheating') },
-      { text: 'Harassment or other', onPress: () => report('harassment_or_other') },
+      { text: 'Cheating or other', onPress: () => report('harassment_or_other') },
     ]);
   };
 
@@ -295,9 +294,11 @@ function LeaderboardPanel({ exercise }: { exercise: LeaderboardExercise }) {
                       () => queryClient.invalidateQueries({ queryKey: ['leaderboard'] })
                     )
                   }
-                  style={{ paddingHorizontal: 7, paddingVertical: 6 }}
+                  style={{ paddingHorizontal: 5, paddingVertical: 7 }}
                 >
-                  <Text style={{ color: '#64748B', fontWeight: '900', fontSize: 15 }}>•••</Text>
+                  <Text style={{ color: '#B91C1C', fontWeight: '800', fontSize: 9 }}>
+                    Report / Block
+                  </Text>
                 </TouchableOpacity>
               ) : null}
               {/* Score */}
@@ -789,9 +790,11 @@ export default function CompeteScreen() {
                               () => queryClient.invalidateQueries({ queryKey: ['challenge'] })
                             )
                           }
-                          style={{ paddingHorizontal: 8, paddingVertical: 2 }}
+                          style={{ paddingHorizontal: 6, paddingVertical: 5 }}
                         >
-                          <Text style={{ color: '#64748B', fontWeight: '900' }}>•••</Text>
+                          <Text style={{ color: '#B91C1C', fontWeight: '800', fontSize: 9 }}>
+                            Report / Block
+                          </Text>
                         </TouchableOpacity>
                       ) : null}
                       <Text
