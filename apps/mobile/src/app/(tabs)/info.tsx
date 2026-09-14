@@ -490,6 +490,16 @@ export default function InfoScreen() {
             onPress={() => void openReleasePage('Terms', RELEASE_LINKS.termsUrl)}
           />
           <ActionRow
+            icon={<Trash2 size={21} color="#DC2626" />}
+            title="Account & data deletion"
+            subtitle={
+              RELEASE_LINKS.accountDeletionUrl || 'Public deletion page required before release'
+            }
+            onPress={() =>
+              void openReleasePage('Account deletion', RELEASE_LINKS.accountDeletionUrl)
+            }
+          />
+          <ActionRow
             icon={<Settings size={21} color="#475569" />}
             title="Camera permission settings"
             subtitle="Open this app's system settings"

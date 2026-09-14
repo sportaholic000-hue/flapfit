@@ -9,6 +9,9 @@ final review decisions.
 
 - [x] App name is Flap Fit; iOS bundle ID and Android package are `com.flapfit.game`.
 - [x] Expo SDK 57 dependencies pass Expo dependency checks.
+- [x] The locked dependency graph has a documented reachability review; current registry advisories
+      are non-critical and predominantly Expo/Jest build tooling, not untrusted-data paths in the
+      shipped game.
 - [x] Expo Doctor passes all checks.
 - [x] Android compile SDK and target SDK are 36.
 - [x] Android production profile builds an AAB.
@@ -17,6 +20,11 @@ final review decisions.
 - [x] Android permission surface is INTERNET, VIBRATE, and CAMERA only.
 - [x] MediaPipe model/runtime assets and exercise/evolution art are bundled locally.
 - [x] Camera recording is local, silent, temporary, and user-shared.
+- [x] Arbitrary cleartext network traffic is disabled for both iOS and Android release builds.
+- [x] Android cloud backup is disabled so local training state and anonymous auth tokens are not
+      restored onto another device unexpectedly.
+- [x] The unsupported automatic interface-style override is removed; app screens keep their explicit
+      light styling without adding an unnecessary native dependency.
 - [x] Online competition has name filtering, report, block, deletion, and rate limiting.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [ ] Re-run TypeScript, tests, format/lint, Expo Doctor, and both production exports on final HEAD.
@@ -32,6 +40,7 @@ The release validator currently requires:
 - [ ] `EXPO_PUBLIC_SUPPORT_EMAIL`
 - [ ] `EXPO_PUBLIC_PRIVACY_URL`
 - [ ] `EXPO_PUBLIC_TERMS_URL`
+- [ ] `EXPO_PUBLIC_ACCOUNT_DELETION_URL`
 - [ ] `EXPO_PUBLIC_MARKETING_URL`
 - [ ] `EXPO_PUBLIC_SUPABASE_URL`
 - [ ] `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
@@ -65,6 +74,12 @@ Owner/legal inputs still required:
 - [ ] Public privacy policy is linked in the app and both store listings.
 - [ ] Public Terms of Use is linked in the app and covers the competition community rules.
 - [ ] Public account/data deletion page works without requiring the app to be installed.
+- [x] Production EAS builds fail closed when any required public link or online-service value is
+      missing.
+- [x] EAS development, preview, and production profiles explicitly select their matching EAS
+      environment so store builds cannot silently inherit the wrong values.
+- [x] The release validator also guards bundle IDs, API 36, cleartext traffic, camera/audio
+      permissions, ad/analytics packages, and mobile/API Competition Terms version parity.
 - [ ] Support email/form is visible and functional.
 - [ ] Privacy policy identifies data, purposes, providers, retention, deletion, user rights, and
       international transfers where applicable.

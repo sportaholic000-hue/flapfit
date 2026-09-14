@@ -76,6 +76,8 @@ Treat Google Play's account-deletion rule as applicable.
   reports, and blocks.
 - A public web deletion resource is still required:
   **[REQUIRED INPUT: public HTTPS deletion URL]**
+- The production build requires this URL as `EXPO_PUBLIC_ACCOUNT_DELETION_URL`, and the same page is
+  linked from Info > Account & data deletion.
 - The page must name Flap Fit, make the request path prominent, work without reinstalling the app,
   explain what is deleted/retained, and provide a functional support email or form.
 
