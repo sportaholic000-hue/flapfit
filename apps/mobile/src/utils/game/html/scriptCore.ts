@@ -95,7 +95,10 @@ function stabilityProgress(y, now) {
     if (v < mn) { mn = v; }
     if (v > mx) { mx = v; }
   }
-  if (mx - mn > 0.028) { stabBuf = [{ t: now, y: y }]; return 0; }
+  var maxCalibrationDrift = usesExperimentalFormTracking() && CONFIG.exercise === 'pullups'
+    ? 0.04
+    : 0.028;
+  if (mx - mn > maxCalibrationDrift) { stabBuf = [{ t: now, y: y }]; return 0; }
   var span = now - stabBuf[0].t;
   return Math.min(1, span / 1300);
 }
@@ -111,7 +114,12 @@ function startCamera() {
     return Promise.reject(new Error('Camera API unavailable for the game page origin.'));
   }
   return navigator.mediaDevices.getUserMedia({
-    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+    video: {
+      facingMode: 'user',
+      width: { ideal: 480 },
+      height: { ideal: 640 },
+      aspectRatio: { ideal: 0.75 }
+    },
     audio: false
   }).then(function (stream) {
     video.srcObject = stream;

@@ -352,11 +352,14 @@ function drawBackground() {
     var sx = 0, sy = 0, sw = sourceWidth, sh = sourceHeight;
     var dx = 0, dy = 0, dw = W, dh = H;
     if (showingFormCalibration) {
-      var containScale = Math.min(W / sourceWidth, H / sourceHeight);
-      dw = sourceWidth * containScale;
-      dh = sourceHeight * containScale;
+      // Preserve the complete vertical camera field during full-body setup.
+      // Any aspect-ratio difference is handled at the sides, never by cutting
+      // off the player's head, hands, or feet.
+      var fullHeightScale = H / sourceHeight;
+      dw = sourceWidth * fullHeightScale;
+      dh = H;
       dx = (W - dw) / 2;
-      dy = (H - dh) / 2;
+      dy = 0;
       ctx.fillStyle = '#061B42';
       ctx.fillRect(0, 0, W, H);
     } else if (sourceAspect > targetAspect) {

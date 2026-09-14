@@ -13,6 +13,7 @@ var pullupFloorY = null;
 var pullupFloorClearance = 0.035;
 var pullupSetupShoulderY = null;
 var pullupSetupStartedAt = null;
+var pullupSetupLastValidAt = 0;
 var pullupSetupSamples = [];
 var pullupTopReadyAt = 0;
 var PULLUP_SETUP_HOLD_MS = 2000;
@@ -34,6 +35,7 @@ function resetExperimentalFormTracking() {
   pullupFloorClearance = 0.035;
   pullupSetupShoulderY = null;
   pullupSetupStartedAt = null;
+  pullupSetupLastValidAt = 0;
   pullupSetupSamples = [];
   pullupTopReadyAt = 0;
 }
@@ -88,7 +90,11 @@ function formAverageAngle(triples, minVisibility) {
 
 function collectExperimentalFormMetrics() {
   if (!formPoseLandmarks) { return null; }
-  var shoulders = formMeanPoint([11, 12], 0.24, 1);
+  var shoulders = formMeanPoint(
+    [11, 12],
+    CONFIG.exercise === 'pullups' ? 0.15 : 0.24,
+    1
+  );
   var elbows = formMeanPoint([13, 14], 0.24, 1);
   var pullupVisibility = CONFIG.exercise === 'pullups' ? 0.15 : 0.24;
   var leftWrist = formPoint(15, pullupVisibility);
@@ -147,30 +153,21 @@ function updateExperimentalFormPose(landmarks, now) {
       formCurrentMetrics.feet &&
       formCurrentMetrics.wrists.y < formCurrentMetrics.shoulders.y - 0.015;
     if (!setupReady) {
-      pullupSetupStartedAt = null;
-      pullupSetupSamples = [];
+      if (pullupSetupStartedAt !== null && now - pullupSetupLastValidAt > 600) {
+        pullupSetupStartedAt = null;
+        pullupSetupSamples = [];
+      }
     } else {
       if (pullupSetupStartedAt === null) {
         pullupSetupStartedAt = now;
         pullupSetupSamples = [];
       }
+      pullupSetupLastValidAt = now;
       pullupSetupSamples.push({
         footY: formCurrentMetrics.feet.y,
         shoulderY: formCurrentMetrics.shoulders.y
       });
-      var setupMinY = 2, setupMaxY = -1;
-      for (var psi = 0; psi < pullupSetupSamples.length; psi++) {
-        var setupY = pullupSetupSamples[psi].footY;
-        if (setupY < setupMinY) { setupMinY = setupY; }
-        if (setupY > setupMaxY) { setupMaxY = setupY; }
-      }
-      if (setupMaxY - setupMinY > 0.04) {
-        pullupSetupStartedAt = now;
-        pullupSetupSamples = [{
-          footY: formCurrentMetrics.feet.y,
-          shoulderY: formCurrentMetrics.shoulders.y
-        }];
-      } else if (
+      if (
         now - pullupSetupStartedAt >= PULLUP_SETUP_HOLD_MS &&
         pullupSetupSamples.length >= 8
       ) {
@@ -184,6 +181,7 @@ function updateExperimentalFormPose(landmarks, now) {
         var setupBodySpan = Math.abs(pullupFloorY - pullupSetupShoulderY);
         pullupFloorClearance = Math.max(0.035, Math.min(0.07, setupBodySpan * 0.07));
         pullupTopReadyAt = now + PULLUP_MOVE_BUFFER_MS;
+        if (typeof beep === 'function') { beep(540, 0.15, 'sine', 0.08); }
       }
     }
   }
@@ -231,7 +229,11 @@ function formTorsoIsUpright(metrics) {
 function validateExperimentalCalibration(position) {
   if (!usesExperimentalFormTracking()) { return formValid(); }
   var metrics = formCurrentMetrics;
-  if (!metrics) { return formInvalid('Form check<br><br>Move into frame and hold still.'); }
+  if (!metrics) {
+    return formInvalid(CONFIG.exercise === 'pullups'
+      ? 'PULL-UP SETUP<br><br>Stand with feet planted and hold the bar<br>Keep your full body in the camera'
+      : 'Form check<br><br>Move into frame and hold still.');
+  }
 
   if (CONFIG.exercise === 'pushups') {
     if (!metrics.shoulders || !metrics.hips || !metrics.supportHand || metrics.elbowAngle === null) {
@@ -272,45 +274,49 @@ function validateExperimentalCalibration(position) {
   }
 
   if (CONFIG.exercise === 'pullups') {
-    if (!metrics.shoulders || !metrics.wrists || !metrics.feet || metrics.elbowAngle === null) {
-      return formInvalid('PULL-UP SETUP<br><br>Keep your shoulders, hands, elbows, and at least one foot visible.');
-    }
+    var pullupSetupMessage = 'PULL-UP SETUP<br><br>Stand with feet planted and hold the bar<br>Keep your full body in the camera';
+    var pullupTopMessage = 'STEP 1 OF 2<br><br>Lift your feet and pull to your <b>HIGHEST</b> point<br>Bent knees are fine<br><br>Hold still…';
+    var pullupBottomMessage = 'STEP 2 OF 2<br><br>Lower to a comfortable <b>DEAD HANG</b><br>Keep feet clear, bent knees are fine<br><br>Hold still…';
     if (pullupFloorY === null) {
-      if (metrics.wrists.y > metrics.shoulders.y - 0.015) {
-        return formInvalid('PULL-UP SETUP<br><br>Keep both feet planted and take hold of the bar overhead.');
-      }
-      var setupElapsed = pullupSetupStartedAt === null
-        ? 0
-        : performance.now() - pullupSetupStartedAt;
-      var setupSeconds = Math.max(1, Math.ceil((PULLUP_SETUP_HOLD_MS - setupElapsed) / 1000));
-      return formInvalid('PULL-UP SETUP<br><br>Keep both feet planted and hold the bar<br><br><small>Learning floor position · ' + setupSeconds + '…</small>');
+      return formInvalid(pullupSetupMessage);
     }
     if (performance.now() < pullupTopReadyAt) {
       var moveSeconds = Math.max(1, Math.ceil((pullupTopReadyAt - performance.now()) / 1000));
-      return formInvalid('SETUP COMPLETE<br><br>Lift your feet and pull to your highest point<br>Bent knees are fine<br><br><small>Calibration begins in ' + moveSeconds + '…</small>');
+      return formInvalid('GET READY<br><br>Lift your feet and pull upward<br>Bent knees are fine<br><br><small>Step 1 opens in ' + moveSeconds + '…</small>');
     }
-    if (metrics.wrists.y > metrics.shoulders.y - 0.015) {
-      return formInvalid('Form check<br><br>Keep both hands fixed overhead on the bar.');
-    }
-    if (metrics.feet.y > pullupFloorY - pullupFloorClearance) {
-      return formInvalid('Form check<br><br>Lift your feet clear of the floor. Bent knees are completely fine.');
+    if (position === 'top') {
+      if (
+        !metrics.shoulders ||
+        !metrics.wrists ||
+        !metrics.feet ||
+        metrics.elbowAngle === null ||
+        metrics.wrists.y > metrics.shoulders.y - 0.015 ||
+        metrics.feet.y > pullupFloorY - pullupFloorClearance ||
+        metrics.elbowAngle > 135 ||
+        pullupSetupShoulderY === null ||
+        metrics.shoulders.y > pullupSetupShoulderY - 0.035
+      ) {
+        return formInvalid(pullupTopMessage);
+      }
+      return formValid();
     }
     if (
-      position === 'top' &&
-      (metrics.elbowAngle > 135 ||
-        pullupSetupShoulderY === null ||
-        metrics.shoulders.y > pullupSetupShoulderY - 0.035)
+      !metrics.shoulders ||
+      !metrics.wrists ||
+      !metrics.feet ||
+      metrics.elbowAngle === null ||
+      metrics.feet.y > pullupFloorY - pullupFloorClearance
     ) {
-      return formInvalid('Form check<br><br>Pull your body upward before Step 1 can lock.');
+      return formInvalid(pullupBottomMessage);
     }
-    if (position === 'bottom' && formTopMetrics) {
+    if (formTopMetrics) {
       var bodyTravel = metrics.controllerY - formTopMetrics.controllerY;
       var wristTravel = formDistance(metrics.wrists, formTopMetrics.wrists);
       if (metrics.elbowAngle < 125 || metrics.elbowAngle - formTopMetrics.elbowAngle < 15) {
-        return formInvalid('Form check<br><br>Lower until your elbows are comfortably straight.');
+        return formInvalid(pullupBottomMessage);
       }
       if (wristTravel > Math.max(0.06, bodyTravel * 0.6)) {
-        return formInvalid('Form check<br><br>Keep your hands anchored on the bar.');
+        return formInvalid(pullupBottomMessage);
       }
     }
     return formValid();

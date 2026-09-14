@@ -128,7 +128,7 @@ describe('experimental form tracking', () => {
     const result = harness.validateCalibration('top');
 
     expect(result.valid).toBe(false);
-    expect(result.message).toMatch(/lift your feet|bent knees/i);
+    expect(result.message).toMatch(/step 1|pull your body/i);
   });
 
   it('accepts a hanging pull-up range when knees stay bent and feet barely move', () => {
@@ -152,7 +152,7 @@ describe('experimental form tracking', () => {
     harness.update(deadHang, 4100);
     expect(harness.validateCalibration('top')).toMatchObject({
       valid: false,
-      message: expect.stringMatching(/pull your body upward/i),
+      message: expect.stringMatching(/step 1|pull your body/i),
     });
 
     const top = pose([

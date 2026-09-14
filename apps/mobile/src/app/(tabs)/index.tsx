@@ -525,6 +525,22 @@ export default function HomeScreen() {
                 );
               })}
             </View>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Review onboarding"
+              onPress={() => router.push('/onboarding' as never)}
+              style={{
+                minHeight: 44,
+                borderRadius: 14,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: '#94A3B8',
+                backgroundColor: '#F8FAFC',
+              }}
+            >
+              <Text style={{ color: NAVY, fontWeight: '900' }}>Review Onboarding</Text>
+            </TouchableOpacity>
           </View>
         ) : null}
 
