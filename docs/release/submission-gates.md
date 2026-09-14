@@ -12,8 +12,8 @@ final review decisions.
 - [x] The locked dependency graph has a documented reachability review; current registry advisories
       are non-critical and predominantly Expo/Jest build tooling, not untrusted-data paths in the
       shipped game.
-- [ ] Re-run Expo Doctor on final HEAD. The last complete Doctor run passed, but it predates the
-      latest release-hardening commits.
+- [ ] Re-run Expo Doctor on final HEAD. The last complete run passed but predates the latest commits;
+      the tool is not in the locked dependency graph, so downloading it requires owner approval.
 - [x] Android compile SDK and target SDK are 36.
 - [x] Android production profile is configured to build an AAB.
 - [x] Expo SDK 57's automatic EAS iOS image uses Xcode 26.6, meeting Apple's current upload
@@ -34,7 +34,8 @@ final review decisions.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [ ] Re-run TypeScript, tests, format/lint, Expo Doctor, and both production exports on final HEAD.
+- [x] Re-run TypeScript, tests, format/lint, and both production-style local Expo exports on the
+      current release candidate.
 - [ ] Build the production iOS artifact and test through TestFlight on a physical iPhone.
 - [ ] Build the production Android AAB and test on Play internal testing / physical Android.
 - [ ] Test camera denial/re-enable, low light, interrupted recording, offline mode, API failure,
@@ -71,8 +72,12 @@ Owner/legal inputs still required:
 - [ ] Apply the checked-in schema and deploy `flapfit-game` with JWT verification enabled.
 - [ ] Confirm HTTPS, RLS/table privilege posture, authentication, name filtering, Terms enforcement,
       leaderboard ordering, challenge limits, report/block behavior, and full account deletion.
-- [ ] Define and implement truthful retention for expired challenges, reports, operational logs, and
-      backups, then copy those periods into the public privacy policy.
+- [x] Define and document source-controlled retention for expired challenges and moderation reports.
+- [x] The checked-in retention migration deletes expired 30-day challenges daily, removes resolved
+      moderation reports after 180 days, minimizes account-deletion records, and prunes Cron history.
+- [ ] Verify the retention migration and scheduled jobs in the dedicated production Supabase project,
+      record the provider's exact service-log and backup periods, and copy them into the public
+      privacy policy.
 - [ ] Run Supabase security and performance advisors and resolve launch-impacting findings.
 
 ## Website and legal gates shared by both stores

@@ -72,8 +72,9 @@ Using Compete creates a Supabase anonymous account even though no email or passw
 Treat Google Play's account-deletion rule as applicable.
 
 - In-app deletion path exists: Info > Delete online profile.
-- It deletes the Supabase auth user and cascades through profile, scores, challenges, attempts,
-  reports, and blocks.
+- It deletes the Supabase auth user and cascades through the public profile, scores, challenges,
+  attempts, and blocks. A minimized moderation report can remain until review and for up to 180 days
+  after resolution, with the deleted account's user identifier removed.
 - A public web deletion resource is still required:
   **[REQUIRED INPUT: public HTTPS deletion URL]**
 - The production build requires this URL as `EXPO_PUBLIC_ACCOUNT_DELETION_URL`, and the same page is

@@ -58,21 +58,23 @@ permit cross-app tracking.
 ## Retention
 
 Local information remains until you clear app data or delete the app. Online profiles and current
-leaderboard scores remain until you delete the online profile or until the inactive-account period
-in the final production retention schedule expires. Challenges expire after 30 days and are removed
-with their attempts by the production cleanup process. Reports and enforcement records are kept only
-for the period needed to investigate abuse, meet safety and legal obligations, and document actions.
-Service logs and backups follow the production provider configuration.
+leaderboard scores remain until you delete the online profile. Challenges expire after 30 days and
+are removed with their attempts by the daily production cleanup process. Pending reports remain until
+reviewed. Resolved moderation reports are removed 180 days after resolution. If either party deletes
+their account before then, the report is retained without that account's user identifier. Service
+logs and backups follow the production provider configuration.
 
-[REQUIRED BEFORE PUBLISHING: insert the verified inactive-profile, report, log, and backup periods.
-The public wording must match the live cleanup jobs and Supabase plan.]
+[REQUIRED BEFORE PUBLISHING: insert the verified service-log and backup periods. The public wording
+must match the live cleanup jobs and Supabase plan.]
 
 ## Your choices and deletion
 
 You may decline camera permission, use normal Play instead of Record & Play, avoid Compete, or stop
 using Compete at any time. In the app, open Info and select Delete online profile to permanently
 delete the anonymous competition account and its associated profile, scores, challenges, attempts,
-reports, and blocks. Local game progress stays on the device.
+and blocks. A minimized moderation report may remain until review and for up to 180 days after
+resolution, but the deleted account's user identifier is removed from it. Local game progress stays
+on the device.
 
 If you no longer have the app, visit [REQUIRED: public account-deletion URL] and follow the request
 instructions. Privacy questions and applicable access, correction, objection, restriction, or

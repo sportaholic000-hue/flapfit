@@ -190,6 +190,9 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
                 Player names and competition results can be visible to other players. You can report
                 or block another player from the options beside their leaderboard score or challenge
                 attempt. Reported content may be removed and abusive access may be restricted.
+                Challenges are removed after they expire. Pending moderation reports remain until
+                review, then resolved reports are kept for up to 180 days. If an associated account
+                is deleted sooner, its user identifier is removed from the report.
               </Text>
               <Text style={styles.modalHeading}>Your control</Text>
               <Text style={styles.modalText}>
@@ -323,7 +326,7 @@ export default function InfoScreen() {
     if (!competitionIsConfigured || onlineDeleteBusy) return;
     Alert.alert(
       'Delete online profile?',
-      'This permanently deletes your anonymous leaderboard scores, challenges, attempts, reports, blocks, and player name from the online service. Local game progress stays on this phone.',
+      'This permanently deletes your anonymous leaderboard scores, challenges, attempts, blocks, and player name. Moderation reports may remain until review and for up to 180 days after resolution for safety, with your user identifier removed. Local game progress stays on this phone.',
       [
         { text: 'Cancel', style: 'cancel' },
         {

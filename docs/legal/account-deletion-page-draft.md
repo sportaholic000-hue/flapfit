@@ -14,7 +14,9 @@ you accept the Competition Terms and use Compete.
 4. Confirm Delete.
 
 This permanently deletes the anonymous Supabase authentication user and associated player name,
-leaderboard scores, challenges, challenge attempts, reports, and blocks. Local bird, level, score,
+leaderboard scores, challenges, challenge attempts, and blocks. A minimized moderation report may
+remain until review and for up to 180 days after resolution for safety, abuse prevention, and legal
+obligations, but the deleted account's user identifier is removed from it. Local bird, level, score,
 and training history stored only on the phone are not deleted by this action.
 
 ## Request deletion without the app
@@ -31,8 +33,9 @@ cannot safely identify the profile, we will explain the next available step.
 
 ## Retention after deletion
 
-The live service removes the online account and associated competition rows. [REQUIRED BEFORE
-PUBLISHING: state the verified report, security-log, and backup exceptions and their exact retention
-periods.]
+The live service removes the online account and public competition rows. Pending moderation reports
+remain until review and resolved reports are removed after 180 days; account identifiers are removed
+sooner when an associated account is deleted. [REQUIRED BEFORE PUBLISHING: state the verified
+security-log and backup exceptions and their exact retention periods.]
 
 For privacy questions, contact [REQUIRED: legal operator and monitored support email].

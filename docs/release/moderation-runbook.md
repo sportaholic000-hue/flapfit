@@ -23,6 +23,11 @@ block buttons do not replace active moderation.
 7. Reply through the support channel when a reporter supplied a reachable address. The app itself
    does not collect an email address.
 
+Changing a report from `pending` to `reviewed`, `actioned`, or `dismissed` automatically records its
+resolution time. The daily retention job removes resolved reports after 180 days. Account deletion
+nulls the deleted party's identifier without erasing still-needed moderation evidence. Never copy
+player identifiers into free-text notes.
+
 ## Escalation
 
 - Credible imminent harm: contact local emergency services or the legally appropriate authority.
