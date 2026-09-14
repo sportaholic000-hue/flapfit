@@ -19,13 +19,11 @@ config.watchFolders = [__dirname];
 config.resolver.unstable_onDemandFilesystem = 'UNSTABLE_ALLOW_ALL';
 
 const WEB_ALIASES = {
-  'expo-secure-store': path.resolve(__dirname, './polyfills/web/secureStore.web.ts'),
   'react-native-webview': path.resolve(__dirname, './polyfills/web/webview.web.tsx'),
   'react-native-safe-area-context': path.resolve(
     __dirname,
     './polyfills/web/safeAreaContext.web.tsx'
   ),
-  'react-native-maps': path.resolve(__dirname, './polyfills/web/maps.web.tsx'),
   'react-native-web/dist/exports/SafeAreaView': path.resolve(
     __dirname,
     './polyfills/web/SafeAreaView.web.tsx'
@@ -36,22 +34,14 @@ const WEB_ALIASES = {
     './polyfills/web/refreshControl.web.tsx'
   ),
   'expo-status-bar': path.resolve(__dirname, './polyfills/web/statusBar.web.tsx'),
-  'expo-location': path.resolve(__dirname, './polyfills/web/location.web.ts'),
   './layouts/Tabs': path.resolve(__dirname, './polyfills/web/tabbar.web.tsx'),
-  'expo-notifications': path.resolve(__dirname, './polyfills/web/notifications.web.tsx'),
-  'expo-contacts': path.resolve(__dirname, './polyfills/web/contacts.web.ts'),
-  'expo-font': path.resolve(__dirname, './polyfills/web/expo-font.web.ts'),
   'react-native-web/dist/exports/ScrollView': path.resolve(
     __dirname,
     './polyfills/web/scrollview.web.tsx'
   ),
   'expo-haptics': path.resolve(__dirname, './polyfills/web/haptics.web.ts'),
-  'expo-clipboard': path.resolve(__dirname, './polyfills/web/clipboard.web.ts'),
   'expo-camera': path.resolve(__dirname, './polyfills/web/camera.web.tsx'),
-  'expo-image-picker': path.resolve(__dirname, './polyfills/web/imagePicker.web.ts'),
   'expo-linking': path.resolve(__dirname, './polyfills/web/linking.web.ts'),
-  'expo-web-browser': path.resolve(__dirname, './polyfills/web/webBrowser.web.ts'),
-  'expo-document-picker': path.resolve(__dirname, './polyfills/web/documentPicker.web.ts'),
 };
 // TextInput alias: the polyfill MUST deep-import the RN host via the package
 // subpath (`react-native/Libraries/.../TextInput`), NOT the `react-native`
@@ -76,9 +66,6 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
     return context.resolveRequest(context, moduleName, platform);
   }
 
-  if (moduleName.startsWith('@expo-google-fonts/') && moduleName !== '@expo-google-fonts/dev') {
-    return context.resolveRequest(context, '@expo-google-fonts/dev', platform);
-  }
   if (SHARED_ALIASES[moduleName] && !moduleName.startsWith('./polyfills/')) {
     return context.resolveRequest(context, SHARED_ALIASES[moduleName], platform);
   }

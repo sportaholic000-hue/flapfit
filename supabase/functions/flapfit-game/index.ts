@@ -19,6 +19,7 @@ const ALLOWED_REPORT_REASONS = new Set(['inappropriate_name', 'cheating', 'haras
 const ALLOWED_CONTEXT_TYPES = new Set(['leaderboard', 'challenge_attempt']);
 const BLOCKED_NAME_PATTERN =
   /(?:fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i;
+const MAX_DAILY_CHALLENGES = 10;
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: RESPONSE_HEADERS });
@@ -37,15 +38,32 @@ async function bodyJson(req: Request): Promise<Record<string, unknown>> {
 
 function cleanPlayerName(value: unknown): string {
   if (typeof value !== 'string') throw new Error('Enter a player name.');
-  const name = value
-    .normalize('NFKC')
-    .replace(/[\u0000-\u001f\u007f]/g, '')
-    .trim()
-    .replace(/\s+/g, ' ');
+  const normalized = value.normalize('NFKC');
+  const withoutControls = Array.from(normalized)
+    .filter((character) => {
+      const codePoint = character.codePointAt(0) ?? 0;
+      return codePoint > 31 && codePoint !== 127;
+    })
+    .join('');
+  const name = withoutControls.trim().replace(/\s+/g, ' ');
   if (name.length < 2 || name.length > 20) {
     throw new Error('Player names must be 2 to 20 characters.');
   }
-  if (!/^[\p{L}\p{N}][\p{L}\p{N} _.\-']+$/u.test(name) || BLOCKED_NAME_PATTERN.test(name)) {
+  const moderationName = name
+    .normalize('NFKD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/[0@]/g, 'o')
+    .replace(/[1!|]/g, 'i')
+    .replace(/[3]/g, 'e')
+    .replace(/[4]/g, 'a')
+    .replace(/[5$]/g, 's')
+    .replace(/[7+]/g, 't')
+    .replace(/[^a-z0-9]/g, '');
+  if (
+    !/^[\p{L}\p{N}][\p{L}\p{N} _.\-']+$/u.test(name) ||
+    BLOCKED_NAME_PATTERN.test(moderationName)
+  ) {
     throw new Error('Choose a different player name.');
   }
   return name;
@@ -147,9 +165,10 @@ Deno.serve(async (req) => {
       const exercise = typeof body.exercise === 'string' ? body.exercise : '';
       if (!ALLOWED_EXERCISES.has(exercise)) return json({ error: 'Exercise is invalid.' }, 400);
       const score = integer(body.score, 0, 100000, 'Score');
+      const now = new Date().toISOString();
       const profileResult = await admin
         .from('profiles')
-        .upsert({ user_id: user.id, player_name: playerName });
+        .upsert({ user_id: user.id, player_name: playerName, updated_at: now });
       if (profileResult.error) throw profileResult.error;
       const scoreResult = await admin.rpc('upsert_leaderboard_score', {
         p_user_id: user.id,
@@ -164,10 +183,22 @@ Deno.serve(async (req) => {
       const body = await bodyJson(req);
       const playerName = cleanPlayerName(body.creatorName);
       const targetScore = integer(body.targetScore, 1, 60, 'Target score');
+      const now = new Date().toISOString();
       const profileResult = await admin
         .from('profiles')
-        .upsert({ user_id: user.id, player_name: playerName });
+        .upsert({ user_id: user.id, player_name: playerName, updated_at: now });
       if (profileResult.error) throw profileResult.error;
+
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const recentResult = await admin
+        .from('challenges')
+        .select('id', { count: 'exact', head: true })
+        .eq('creator_id', user.id)
+        .gte('created_at', since);
+      if (recentResult.error) throw recentResult.error;
+      if ((recentResult.count ?? 0) >= MAX_DAILY_CHALLENGES) {
+        return json({ error: 'Challenge limit reached. Try again later.' }, 429);
+      }
 
       for (let attempt = 0; attempt < 5; attempt += 1) {
         const code = randomCode();
@@ -252,9 +283,10 @@ Deno.serve(async (req) => {
         .maybeSingle();
       if (challengeResult.error) throw challengeResult.error;
       if (!challengeResult.data) return json({ error: 'Challenge not found.' }, 404);
+      const now = new Date().toISOString();
       const profileResult = await admin
         .from('profiles')
-        .upsert({ user_id: user.id, player_name: playerName });
+        .upsert({ user_id: user.id, player_name: playerName, updated_at: now });
       if (profileResult.error) throw profileResult.error;
       const attemptResult = await admin.rpc('upsert_challenge_attempt', {
         p_user_id: user.id,
@@ -275,6 +307,18 @@ Deno.serve(async (req) => {
         return json({ error: 'Report details are invalid.' }, 400);
       }
       if (reportedUserId === user.id) return json({ error: 'You cannot report yourself.' }, 400);
+
+      const contextTable =
+        contextType === 'leaderboard' ? 'leaderboard_scores' : 'challenge_attempts';
+      const contextResult = await admin
+        .from(contextTable)
+        .select('id')
+        .eq('id', contextId)
+        .eq('user_id', reportedUserId)
+        .maybeSingle();
+      if (contextResult.error) throw contextResult.error;
+      if (!contextResult.data) return json({ error: 'Reported content was not found.' }, 404);
+
       const result = await admin.from('content_reports').insert({
         reporter_id: user.id,
         reported_user_id: reportedUserId,
