@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 15.0.15",
+    "version": ">= 16.0.1",
     "appVersionSource": "remote"
   },
   "build": {
@@ -8,6 +8,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
+        "FLAPFIT_EXPO_GO_STUBS": "0",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true",
         "EXPO_USE_PRECOMPILED_MODULES": "0"
       }
@@ -15,6 +16,7 @@
     "preview": {
       "distribution": "internal",
       "env": {
+        "FLAPFIT_EXPO_GO_STUBS": "0",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true",
         "EXPO_USE_PRECOMPILED_MODULES": "0"
       }
@@ -24,20 +26,17 @@
       "android": {
         "buildType": "app-bundle"
       },
+      "ios": {
+        "resourceClass": "m-medium"
+      },
       "env": {
+        "FLAPFIT_EXPO_GO_STUBS": "0",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true",
         "EXPO_USE_PRECOMPILED_MODULES": "0"
       }
     }
   },
   "submit": {
-    "production": {
-      "android": {
-        "serviceAccountKeyPath": "./google-service-account.json",
-        "track": "internal",
-        "releaseStatus": "draft",
-        "changesNotSentForReview": false
-      }
-    }
+    "production": {}
   }
 }

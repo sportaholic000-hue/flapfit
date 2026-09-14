@@ -48,8 +48,6 @@ e2b.*.local.toml
 **/.react-router
 apps/mobile/caches/*
 
-# anything
-.anything
 
 # local Expo, Codex, dependency, and recovery artifacts
 .expo/

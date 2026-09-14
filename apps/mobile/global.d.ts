@@ -1,3 +1,5 @@
+declare const global: typeof globalThis;
+
 declare module 'react-native/Libraries/Core/ExceptionsManager' {
   export function handleException(err: Error, isFatal: boolean): void;
 }
@@ -19,11 +21,6 @@ declare module 'react-native-web-refresh-control' {
 declare module 'react-native-web/dist/exports/ScrollView' {
   const ScrollView: React.ComponentType<any>;
   export default ScrollView;
-}
-
-declare module '@anythingai/app/screens/launcher-menu' {
-  const LauncherMenuContainer: React.ComponentType<any>;
-  export default LauncherMenuContainer;
 }
 
 declare module 'lodash' {

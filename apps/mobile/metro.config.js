@@ -60,12 +60,13 @@ const NATIVE_ALIASES = {
     './polyfills/native/textinput.native.tsx'
   ),
 };
-// Aliases that only apply outside production. The real packages crash on
+// Expo Go compatibility aliases. The real packages crash on
 // import in Expo Go preview (their browser-mode shims pull in DOM-only code
 // that throws on Hermes), which makes expo-router silently swallow the load
 // error and warn "Route is missing the required default export" — leaving
-// the app on a black/splash screen. EAS production builds keep the real
+// the app on a black/splash screen. EAS development and production builds keep the real
 // modules so paid users hit the native SDKs as normal.
+const useExpoGoStubs = process.env.FLAPFIT_EXPO_GO_STUBS === '1';
 const DEV_ONLY_NATIVE_ALIASES = {
   'react-native-purchases': path.resolve(
     __dirname,
@@ -108,7 +109,11 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (NATIVE_ALIASES[moduleName] && !moduleName.startsWith('./polyfills/')) {
     return context.resolveRequest(context, NATIVE_ALIASES[moduleName], platform);
   }
-  if (DEV_ONLY_NATIVE_ALIASES[moduleName] && !moduleName.startsWith('./polyfills/')) {
+  if (
+    useExpoGoStubs &&
+    DEV_ONLY_NATIVE_ALIASES[moduleName] &&
+    !moduleName.startsWith('./polyfills/')
+  ) {
     return context.resolveRequest(context, DEV_ONLY_NATIVE_ALIASES[moduleName], platform);
   }
   return context.resolveRequest(context, moduleName, platform);
