@@ -6,10 +6,53 @@ import { Camera, ChevronRight } from 'lucide-react-native';
 import { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
 import BirdAvatar from '@/components/BirdAvatar';
 import { BIRDS, getBird } from '@/utils/game/birds';
 
 import { useGameStore } from '@/utils/game/store';
+
+const CLOUD_PATH =
+  'M22 69C10 69 2 61 2 50C2 40 9 32 19 30C21 15 33 5 48 5C59 5 69 11 74 20C79 15 86 12 94 12C108 12 119 23 119 37C122 34 127 32 133 32C144 32 152 40 152 51C152 62 143 69 132 69H22Z';
+
+function Cloud({
+  top,
+  left,
+  scale = 1,
+  opacity = 0.88,
+}: {
+  top: number;
+  left: number;
+  scale?: number;
+  opacity?: number;
+}) {
+  return (
+    <Svg
+      pointerEvents="none"
+      width={154 * scale}
+      height={74 * scale}
+      viewBox="0 0 154 74"
+      style={{ position: 'absolute', top, left, opacity }}
+    >
+      <Defs>
+        <SvgLinearGradient id="onboardingCloudFill" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0" stopColor="#FFFFFF" />
+          <Stop offset="0.72" stopColor="#F8FCFF" />
+          <Stop offset="1" stopColor="#DCEFF8" />
+        </SvgLinearGradient>
+      </Defs>
+      <Path d={CLOUD_PATH} fill="rgba(15, 23, 42, 0.10)" transform="translate(0 3)" />
+      <Path d={CLOUD_PATH} fill="url(#onboardingCloudFill)" />
+      <Path
+        d="M18 57C43 63 113 63 138 56"
+        fill="none"
+        stroke="rgba(74, 171, 222, 0.16)"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </Svg>
+  );
+}
 
 export default function OnboardingScreen() {
   const insets = useSafeAreaInsets();
@@ -176,10 +219,10 @@ export default function OnboardingScreen() {
           you through 2 calibration steps:
         </Text>
         <Text style={{ color: '#374151', fontWeight: '600', fontSize: 14 }}>
-          1. Hold the TOP position of your exercise until the ring fills.
+          1. Hold the TOP position of your exercise until the bar fills.
         </Text>
         <Text style={{ color: '#374151', fontWeight: '600', fontSize: 14 }}>
-          2. Hold the BOTTOM position until the ring fills.
+          2. Hold the BOTTOM position until the bar fills.
         </Text>
         <Text style={{ color: '#374151', fontWeight: '600', fontSize: 14 }}>
           3. 3-2-1… GO! The bird follows your movement in real time.
@@ -220,6 +263,18 @@ export default function OnboardingScreen() {
         colors={['#3BAADB', '#7DD6F7', '#C9F0FF']}
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       />
+      {step > 0 ? (
+        <View
+          pointerEvents="none"
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden' }}
+        >
+          <Cloud top={56} left={-28} scale={1.05} opacity={0.55} />
+          <Cloud top={132} left={232} scale={0.76} opacity={0.42} />
+          <Cloud top={276} left={-38} scale={0.72} opacity={0.36} />
+          <Cloud top={410} left={226} scale={0.92} opacity={0.4} />
+          <Cloud top={570} left={12} scale={0.78} opacity={0.34} />
+        </View>
+      ) : null}
       <View
         style={{
           flex: 1,
