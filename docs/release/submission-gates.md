@@ -107,6 +107,9 @@ Owner/legal inputs still required:
 ## Website and legal gates shared by both stores
 
 - [ ] Public marketing site loads signed out over HTTPS.
+- [ ] Remove the current access-control gate only after explicit owner approval. On September 15,
+      `flapfitapp.com` resolved to its Cloudflare front end, but the marketing, Privacy, Terms, and
+      deletion URLs all returned HTTP 401 to the signed-out release checker.
 - [ ] Public privacy policy is linked in the app and both store listings.
 - [ ] Public Terms of Use is linked in the app and covers the competition community rules.
 - [ ] Public account/data deletion page works without requiring the app to be installed.
