@@ -240,13 +240,12 @@ describe('experimental form tracking', () => {
 
   it('calibrates pull-ups from the upper body when feet are outside the frame', () => {
     const harness = makeHarness('pullups');
-    const barGrab = pose([
+    const preparationPose = pose([
       ...mirroredPair(11, 12, 0.43, 0.43),
       ...mirroredPair(13, 14, 0.42, 0.29),
-      ...mirroredPair(15, 16, 0.44, 0.14),
       ...mirroredPair(23, 24, 0.44, 0.64),
     ]);
-    for (let now = 0; now <= 1900; now += 100) harness.update(barGrab, now);
+    for (let now = 0; now <= 1900; now += 100) harness.update(preparationPose, now);
 
     const top = pose([
       ...mirroredPair(11, 12, 0.43, 0.35),

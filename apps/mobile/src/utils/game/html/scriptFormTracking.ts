@@ -167,10 +167,6 @@ function updateExperimentalFormPose(landmarks, now) {
     !formTopMetrics &&
     now <= calibrationReadyAt &&
     formCurrentMetrics.shoulders &&
-    formCurrentMetrics.wrists &&
-    formCurrentMetrics.elbowAngle !== null &&
-    formCurrentMetrics.elbowCount >= 2 &&
-    formCurrentMetrics.wrists.y <= formCurrentMetrics.shoulders.y - 0.015 &&
     (
       !pullupTopReferenceMetrics ||
       formCurrentMetrics.controllerY > pullupTopReferenceMetrics.controllerY
@@ -315,13 +311,8 @@ function validateExperimentalCalibration(position) {
         return formInvalid(pullupTopMessage);
       }
       var topShoulderRise = pullupTopReferenceMetrics.controllerY - metrics.controllerY;
-      var topElbowBend = pullupTopReferenceMetrics.elbowAngle - metrics.elbowAngle;
-      var topWristTravel = formDistance(metrics.wrists, pullupTopReferenceMetrics.wrists);
-      if (topShoulderRise < 0.04 || topElbowBend < 10) {
-        return formInvalid('STEP 1 OF 2<br><br>Pull your shoulders <b>UP</b> toward the bar<br>Your elbows should bend as your body rises<br><br>Hold your highest point…');
-      }
-      if (topWristTravel > Math.max(0.06, topShoulderRise * 0.6)) {
-        return formInvalid('STEP 1 OF 2<br><br>Keep both hands anchored on the bar<br>Pull your shoulders <b>UP</b> toward your hands<br><br>Hold still…');
+      if (topShoulderRise < 0.025) {
+        return formInvalid('STEP 1 OF 2<br><br>Pull your shoulders <b>UP</b> toward the bar<br>Keep both hands on the bar<br><br>Hold your highest point…');
       }
       return formValid();
     }
