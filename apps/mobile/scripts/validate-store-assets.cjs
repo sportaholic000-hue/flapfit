@@ -4,6 +4,16 @@ const path = require('node:path');
 const appRoot = path.resolve(__dirname, '..');
 const assetRoot = path.join(appRoot, 'store-assets');
 const failures = [];
+const expectedScreenshotNames = [
+  '01-home.png',
+  '02-exercises.png',
+  '03-sky-gameplay.png',
+  '04-live-camera.png',
+  '05-evolution.png',
+  '06-stats.png',
+  '07-compete.png',
+  '08-record-share.png',
+];
 
 function fail(message) {
   failures.push(message);
@@ -86,6 +96,44 @@ function imageFiles(relativeDirectory) {
     .sort();
 }
 
+function validateScreenshotSet(relativeDirectory, expectedWidth, expectedHeight, storeName) {
+  const screenshots = imageFiles(relativeDirectory);
+  const actualNames = screenshots.map((filePath) => path.basename(filePath));
+  const missingNames = expectedScreenshotNames.filter((name) => !actualNames.includes(name));
+  const unexpectedNames = actualNames.filter((name) => !expectedScreenshotNames.includes(name));
+
+  for (const name of missingNames) {
+    fail(`${relativeDirectory}/${name}: missing`);
+  }
+  for (const name of unexpectedNames) {
+    fail(`${relativeDirectory}/${name}: unexpected screenshot filename`);
+  }
+
+  for (const filePath of screenshots) {
+    const name = path.basename(filePath);
+    try {
+      const info = imageInfo(filePath);
+      if (info.width !== expectedWidth || info.height !== expectedHeight) {
+        fail(
+          `${relativeDirectory}/${name}: ${storeName} screenshot must be exactly ${expectedWidth}x${expectedHeight}`
+        );
+      }
+      if (info.hasAlphaChannel) {
+        fail(
+          `${relativeDirectory}/${name}: ${storeName} screenshots cannot contain an alpha channel`
+        );
+      }
+      if (storeName === 'Google Play' && info.bytes > 8 * 1024 * 1024) {
+        fail(`${relativeDirectory}/${name}: Google Play screenshots must be 8 MB or smaller`);
+      }
+    } catch (error) {
+      fail(
+        `${relativeDirectory}/${name}: ${error instanceof Error ? error.message : 'invalid image'}`
+      );
+    }
+  }
+}
+
 const appIcon = pngInfo(path.join(appRoot, 'assets', 'images', 'icon.png'));
 if (appIcon.width !== 1024 || appIcon.height !== 1024) {
   fail('assets/images/icon.png: iOS source icon must be exactly 1024x1024');
@@ -117,61 +165,8 @@ requireImage('google-play/feature-graphic-1024x500.png', (info) => {
   }
 });
 
-const appleScreenshotSizes = new Set([
-  '1260x2736',
-  '1290x2796',
-  '1320x2868',
-  '2736x1260',
-  '2796x1290',
-  '2868x1320',
-]);
-const appleScreenshots = imageFiles('app-store/iphone-6.9');
-if (appleScreenshots.length < 1 || appleScreenshots.length > 10) {
-  fail('app-store/iphone-6.9: provide 1 to 10 genuine screenshots');
-}
-for (const filePath of appleScreenshots) {
-  try {
-    const info = imageInfo(filePath);
-    if (!appleScreenshotSizes.has(`${info.width}x${info.height}`)) {
-      fail(`${path.basename(filePath)}: unsupported iPhone 6.9-inch screenshot dimensions`);
-    }
-    if (info.hasAlphaChannel) {
-      fail(`${path.basename(filePath)}: App Store screenshots cannot contain an alpha channel`);
-    }
-  } catch (error) {
-    fail(`${path.basename(filePath)}: ${error instanceof Error ? error.message : 'invalid image'}`);
-  }
-}
-
-const googleScreenshots = imageFiles('google-play/phone');
-if (googleScreenshots.length < 4 || googleScreenshots.length > 8) {
-  fail('google-play/phone: provide 4 to 8 genuine phone screenshots');
-}
-for (const filePath of googleScreenshots) {
-  try {
-    const info = imageInfo(filePath);
-    const minimum = Math.min(info.width, info.height);
-    const maximum = Math.max(info.width, info.height);
-    if (minimum < 320 || maximum > 3840 || maximum > minimum * 2) {
-      fail(
-        `${path.basename(filePath)}: Google screenshot dimensions are outside 320-3840px or exceed 2:1`
-      );
-    }
-    if (minimum < 1080) {
-      fail(
-        `${path.basename(filePath)}: use at least 1080px on the short edge for Play promotion eligibility`
-      );
-    }
-    if (info.bytes > 8 * 1024 * 1024) {
-      fail(`${path.basename(filePath)}: Google screenshots must be 8 MB or smaller`);
-    }
-    if (info.hasAlphaChannel) {
-      fail(`${path.basename(filePath)}: Google screenshots cannot contain an alpha channel`);
-    }
-  } catch (error) {
-    fail(`${path.basename(filePath)}: ${error instanceof Error ? error.message : 'invalid image'}`);
-  }
-}
+validateScreenshotSet('app-store/iphone-6.9', 1320, 2868, 'App Store');
+validateScreenshotSet('google-play/phone', 1440, 2560, 'Google Play');
 
 if (failures.length) {
   console.error('Flap Fit store assets are incomplete:\n');
