@@ -136,6 +136,9 @@ Owner/legal inputs still required:
 - [x] The release validator guards the checked-in Edge Function JWT-verification setting.
 - [x] EAS upload rules retain the non-secret Edge Function/config contract files required by the
       production build validator while excluding database migrations from the app build context.
+- [x] A September 15 full-history credential scan found no Supabase service-role value, private-key
+      block, GitHub token, Stripe secret, AWS access key, or assigned EAS token in any reachable Git
+      commit. Public mobile identifiers remain intentionally separate from server-only credentials.
 - [x] The app is linked to the existing `@sportaholic/flapfit` EAS project and the checked-in project
       ID matches the remote project.
 - [x] EAS build profiles contain the seven validated public release values. No service-role secret is

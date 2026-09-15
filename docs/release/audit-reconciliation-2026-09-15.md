@@ -32,6 +32,9 @@ requires physical or signed-build evidence. It is not a guarantee of store appro
   removed afterward.
 - Production-style iOS and Android Expo exports included all six exercises, 60 evolution sprites,
   the pose model, and both WASM runtimes. Signed offline/native testing is still required.
+- A bounded scan of every reachable Git commit found no Supabase service-role value, private-key
+  block, GitHub token, Stripe secret, AWS access key, or assigned EAS token. The scan reported only
+  pattern counts and paths, never potential values.
 
 ## Remaining release blockers
 
