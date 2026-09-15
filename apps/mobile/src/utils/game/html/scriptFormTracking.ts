@@ -2,7 +2,7 @@
 // so physical A/B testing can happen without replacing the launch baseline.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-09-15.3';
+export const FORM_TRACKING_RULES_VERSION = '2026-09-15.4';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -13,6 +13,10 @@ var lastFormTrackTime = 0;
 var formTopMetrics = null, formBottomMetrics = null;
 var pullupFloorY = null;
 var pullupFloorClearance = 0.035;
+var pullupLeftFloorY = null;
+var pullupRightFloorY = null;
+var pullupFloorContactTolerance = 0.008;
+var pullupFloorContactStartedAt = 0;
 var pullupSetupShoulderY = null;
 var pullupSetupStartedAt = null;
 var pullupSetupLastValidAt = 0;
@@ -23,6 +27,7 @@ var pullupFeetMissingAt = 0;
 var PULLUP_SETUP_HOLD_MS = 2000;
 var PULLUP_MOVE_BUFFER_MS = 2000;
 var PULLUP_EVIDENCE_GRACE_MS = 1200;
+var PULLUP_FLOOR_CONTACT_HOLD_MS = 800;
 
 function usesExperimentalFormTracking() {
   return CONFIG.trackingMode === 'form-test';
@@ -38,6 +43,10 @@ function resetExperimentalFormTracking() {
   formBottomMetrics = null;
   pullupFloorY = null;
   pullupFloorClearance = 0.035;
+  pullupLeftFloorY = null;
+  pullupRightFloorY = null;
+  pullupFloorContactTolerance = 0.008;
+  pullupFloorContactStartedAt = 0;
   pullupSetupShoulderY = null;
   pullupSetupStartedAt = null;
   pullupSetupLastValidAt = 0;
@@ -180,21 +189,28 @@ function updateExperimentalFormPose(landmarks, now) {
       pullupSetupLastValidAt = now;
       pullupSetupSamples.push({
         footY: formCurrentMetrics.feet.y,
+        leftFootY: formCurrentMetrics.leftFoot.y,
+        rightFootY: formCurrentMetrics.rightFoot.y,
         shoulderY: formCurrentMetrics.shoulders.y
       });
       if (
         now - pullupSetupStartedAt >= PULLUP_SETUP_HOLD_MS &&
         pullupSetupSamples.length >= 8
       ) {
-        var floorTotal = 0, shoulderTotal = 0;
+        var floorTotal = 0, leftFloorTotal = 0, rightFloorTotal = 0, shoulderTotal = 0;
         for (var psj = 0; psj < pullupSetupSamples.length; psj++) {
           floorTotal += pullupSetupSamples[psj].footY;
+          leftFloorTotal += pullupSetupSamples[psj].leftFootY;
+          rightFloorTotal += pullupSetupSamples[psj].rightFootY;
           shoulderTotal += pullupSetupSamples[psj].shoulderY;
         }
         pullupFloorY = floorTotal / pullupSetupSamples.length;
+        pullupLeftFloorY = leftFloorTotal / pullupSetupSamples.length;
+        pullupRightFloorY = rightFloorTotal / pullupSetupSamples.length;
         pullupSetupShoulderY = shoulderTotal / pullupSetupSamples.length;
         var setupBodySpan = Math.abs(pullupFloorY - pullupSetupShoulderY);
         pullupFloorClearance = Math.max(0.035, Math.min(0.07, setupBodySpan * 0.07));
+        pullupFloorContactTolerance = Math.max(0.006, Math.min(0.012, setupBodySpan * 0.015));
         pullupTopReadyAt = now + PULLUP_MOVE_BUFFER_MS;
         if (typeof beep === 'function') { beep(540, 0.15, 'sine', 0.08); }
       }
@@ -515,8 +531,20 @@ function validateExperimentalGameplay(norm) {
     if (formDistance(metrics.wrists, wristAnchor) > 0.075) {
       return formFatal('Bar released<br><br>Your run is ending.', 'pullup-bar');
     }
-    if (pullupFloorY === null || metrics.feet.y > pullupFloorY - pullupFloorClearance * 0.8) {
-      return formFatal('Feet touched the floor<br><br>Your run is ending.', 'pullup-feet');
+    var leftFootNearFloor = pullupLeftFloorY !== null &&
+      metrics.leftFoot.y >= pullupLeftFloorY - pullupFloorContactTolerance;
+    var rightFootNearFloor = pullupRightFloorY !== null &&
+      metrics.rightFoot.y >= pullupRightFloorY - pullupFloorContactTolerance;
+    if (pullupFloorY === null || pullupLeftFloorY === null || pullupRightFloorY === null) {
+      return formFatal('Floor position can no longer be verified<br><br>Your run is ending.', 'pullup-floor-unverified');
+    }
+    if (leftFootNearFloor || rightFootNearFloor) {
+      if (!pullupFloorContactStartedAt) { pullupFloorContactStartedAt = pullupNow; }
+      if (pullupNow - pullupFloorContactStartedAt >= PULLUP_FLOOR_CONTACT_HOLD_MS) {
+        return formFatal('Feet touched the floor<br><br>Your run is ending.', 'pullup-feet');
+      }
+    } else {
+      pullupFloorContactStartedAt = 0;
     }
     if (!formMetricMatches(metrics.elbowAngle, formTopMetrics.elbowAngle, formBottomMetrics.elbowAngle, norm, 55)) {
       return formInvalid('Form check<br><br>Let your elbows bend and straighten with your body.');

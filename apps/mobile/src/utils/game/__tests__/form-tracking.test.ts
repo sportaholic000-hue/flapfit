@@ -303,6 +303,18 @@ describe('experimental form tracking', () => {
     harness.save('bottom');
     expect(harness.validateGameplay(0).valid).toBe(true);
 
+    const straightLegHang = pose([
+      ...mirroredPair(11, 12, 0.44, 0.44),
+      ...mirroredPair(13, 14, 0.44, 0.28),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.65),
+      ...mirroredPair(27, 28, 0.45, 0.9),
+    ]);
+    harness.update(straightLegHang, 4232);
+    expect(harness.validateGameplay(0).valid).toBe(true);
+    harness.update(straightLegHang, 5100);
+    expect(harness.validateGameplay(0).valid).toBe(true);
+
     const feetDown = pose([
       ...mirroredPair(11, 12, 0.44, 0.44),
       ...mirroredPair(13, 14, 0.44, 0.28),
@@ -310,7 +322,9 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.65),
       ...mirroredPair(27, 28, 0.45, 0.92),
     ]);
-    harness.update(feetDown, 4232);
+    harness.update(feetDown, 5116);
+    expect(harness.validateGameplay(0)).toMatchObject({ valid: true, fatal: false });
+    harness.update(feetDown, 6000);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
@@ -325,7 +339,7 @@ describe('experimental form tracking', () => {
       [27, point(0.45, 0.92)],
       [28, point(0.55, 0.73)],
     ]);
-    harness.update(oneFootDown, 4240);
+    harness.update(oneFootDown, 6016);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
@@ -340,9 +354,9 @@ describe('experimental form tracking', () => {
       [27, { x: 0.45, y: 0.92, visibility: 0.1 }],
       [28, point(0.55, 0.73)],
     ]);
-    harness.update(oneFootHidden, 4250);
+    harness.update(oneFootHidden, 6025);
     expect(harness.validateGameplay(0)).toMatchObject({ valid: false, fatal: false });
-    harness.update(oneFootHidden, 5500);
+    harness.update(oneFootHidden, 7300);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
@@ -357,9 +371,9 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.65),
       ...mirroredPair(27, 28, 0.45, 0.73),
     ]);
-    harness.update(wristTemporarilyHidden, 5600);
+    harness.update(wristTemporarilyHidden, 7400);
     expect(harness.validateGameplay(0)).toMatchObject({ valid: false, fatal: false });
-    harness.update(wristTemporarilyHidden, 6900);
+    harness.update(wristTemporarilyHidden, 8700);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
@@ -373,7 +387,7 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.65),
       ...mirroredPair(27, 28, 0.45, 0.73),
     ]);
-    harness.update(releasedBar, 7000);
+    harness.update(releasedBar, 8800);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
