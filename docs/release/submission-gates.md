@@ -30,6 +30,8 @@ final review decisions.
 - [x] MediaPipe model/runtime assets and exercise/evolution art are bundled locally.
 - [x] Camera recording is local, temporary, and user-shared. It can include the user's voice and
       workout sounds when microphone permission is granted.
+- [x] Record & Play requires an explicit user choice and shows a persistent red RECORDING indicator
+      while the temporary video is being captured.
 - [x] Arbitrary cleartext network traffic is disabled for both iOS and Android release builds.
 - [x] Android cloud backup is disabled so local training state and anonymous auth tokens are not
       restored onto another device unexpectedly.
@@ -40,7 +42,7 @@ final review decisions.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [x] The current pre-test candidate passes TypeScript, 24 automated tests, repository formatting,
+- [x] The current pre-test candidate passes TypeScript, 25 automated tests, repository formatting,
       lint, and production-style local Expo exports for both iOS and Android.
 - [ ] Rerun the same checks after tomorrow's physical testing and any resulting source changes.
 - [ ] Physically approve Form Test tracking for all six exercises, then promote it from the
@@ -139,12 +141,20 @@ Owner/legal inputs still required:
 - [ ] Complete App Privacy using `apple-app-privacy.md`.
 - [ ] Complete age rating honestly for fitness/wellness and user-generated competition content.
 - [ ] Complete Apple's updated 2026 age-rating questionnaire.
+- [ ] Because the primary category is Health & Fitness, complete Apple's regulated-medical-device
+      declaration for the EU/EEA, UK, and US. Flap Fit is a fitness game, not a regulated medical
+      device, so answer No unless the product or its regulatory status materially changes.
+- [ ] Review Accessibility Nutrition Labels on the exact signed iPhone build. Claim a supported
+      feature only when every common task meets Apple's criteria; otherwise leave it unclaimed rather
+      than overstating accessibility support.
 - [ ] Add final name, subtitle, description, keywords, categories, copyright, support URL, privacy
       URL, marketing URL, and review contact.
 - [ ] Upload genuine screenshots from the production build for every required iPhone display class.
 - [ ] Attach the production build, enter reviewer notes, and submit to TestFlight before App Review.
 - [ ] Answer export compliance and content-rights questions accurately.
-- [ ] If distributing in the EU, complete Digital Services Act trader-status and contact disclosures.
+- [ ] Declare Digital Services Act trader status even if the first release excludes the EU. If
+      distributing in the EU as a trader, verify the public address/P.O. box, phone number, and
+      support email before Apple displays them on the product page.
 - [ ] Confirm the uploaded build metadata shows Xcode 26 or newer and review the generated privacy
       manifest before submission.
 
@@ -179,6 +189,21 @@ Approved placement strategy:
 - never during recording or sharing;
 - ad failure never blocks the selected action; and
 - prevent stale or duplicate ad displays.
+
+Privacy and review constraints for the final implementation:
+
+- never provide camera frames, recordings, player names, exercise choice, training time, score,
+  evolution state, challenge activity, or other health/fitness/gameplay data to an ad SDK or use it
+  for advertising profiles or targeting;
+- launch with non-personalized ads and no IDFA/ATT request unless the final reviewed design is
+  deliberately changed and all declarations are updated;
+- complete Google's UMP consent flow before requesting ads where required, including the EEA, UK,
+  and Switzerland, and add an Info-screen Privacy and cookie settings entry point for changing or
+  revoking choices;
+- ensure every interstitial is clearly identified as an ad, has a prominent close/skip control, and
+  exposes the ad network's inappropriate-ad reporting path; and
+- keep ad and purchase SDK initialization independent from camera calibration and gameplay so a
+  network, consent, store, or purchase failure cannot block exercise play.
 
 - [ ] After tomorrow's Expo gameplay approval, integrate the approved ad and RevenueCat design in a
       native build, add consent/privacy handling for selected launch countries, and test both paid
