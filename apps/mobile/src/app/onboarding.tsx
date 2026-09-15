@@ -390,12 +390,17 @@ export default function OnboardingScreen() {
                 <Cloud top={insets.top + 18} left={width / 2 - 60} scale={0.78} opacity={0.46} />
               ) : (
                 <>
-                  <Cloud top={insets.top + 30} left={width / 2 - 54} scale={0.7} opacity={0.44} />
                   <Cloud
-                    top={height - insets.bottom - 90}
-                    left={width / 2 - 50}
-                    scale={0.64}
-                    opacity={0.46}
+                    top={insets.top + 38}
+                    left={Math.max(28, width * 0.14)}
+                    scale={0.62}
+                    opacity={0.4}
+                  />
+                  <Cloud
+                    top={height - insets.bottom - 104}
+                    left={width - 142}
+                    scale={0.73}
+                    opacity={0.48}
                   />
                 </>
               )}
