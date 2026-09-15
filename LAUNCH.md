@@ -15,7 +15,7 @@ The website is a separate static project. No mobile app source, manifest, lockfi
 
 ## Configuration and source
 
-Edit `dist/site-config.js` for the developer name, contact emails, effective date, release status, and official store URLs. Empty contact values show clear draft notices. Store buttons appear only when releaseStatus is available and URLs use the official Apple or Google store hosts.
+Edit `dist/site-config.js` for the developer name, contact emails, effective date, release status, and official store URLs. Empty contact values show clear draft notices. The closing section displays App Store and Android badges below the coordination and endurance challenge and “Download for free.” Android says “Coming soon.” Badges remain disabled until releaseStatus is available and the corresponding URL uses the official Apple or Google store host; then the existing badge becomes a download link. The App Store placeholder includes a note that its official link is pending.
 
 Before public release, update availability copy in the homepage FAQ and hero, add the official store URLs, and remove noindex/nofollow and robots.txt Disallow only when public indexing is intended. The current owner-only Sites access must be explicitly changed to public before any store can use these URLs.
 
@@ -48,4 +48,3 @@ These informed presentation patterns only. No wording, artwork, or page layout w
 ## Validation
 
 Run `node scripts/validate-site.cjs` before publishing. It checks JavaScript syntax, local links and assets, route entrypoints, navigation anchors, unique HTML IDs, canonical URLs, legal-page content, launch configuration, and owner-only indexing controls.
-

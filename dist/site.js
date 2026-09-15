@@ -50,9 +50,14 @@ if(validEmail(config.privacyEmail)){text('privacy-contact','For privacy question
 const officialStore=(value,host)=>{try{const url=new URL(value);return url.protocol==='https:'&&url.hostname===host?url.href:null;}catch{return null;}};
 const storeLinks=byId('store-links');
 if(storeLinks&&config.releaseStatus==='available'){
- const links=[['App Store',officialStore(config.appStoreUrl,'apps.apple.com')],['Google Play',officialStore(config.googlePlayUrl,'play.google.com')]].filter(([,url])=>url);
- for(const [name,url] of links){const link=document.createElement('a');link.className='button primary';link.href=url;link.textContent='Get Flap Fit on '+name;storeLinks.append(link);}
- if(links.length)text('launch-copy','Flap Fit is available on '+links.map(([name])=>name).join(' and ')+'. Choose an official store to download the game.');
+ const links=[['app-store-download','App Store',officialStore(config.appStoreUrl,'apps.apple.com'),'Download on the'],['android-download','Google Play',officialStore(config.googlePlayUrl,'play.google.com'),'Get it on Google Play']].filter(([, ,url])=>url);
+ for(const [id,name,url,caption] of links){
+  const badge=byId(id);if(!badge)continue;
+  const link=document.createElement('a');link.id=id;link.className=badge.className;link.href=url;link.setAttribute('aria-label','Download Flap Fit on '+name);
+  while(badge.firstChild)link.append(badge.firstChild);
+  link.querySelector('[data-store-caption]').textContent=caption;badge.replaceWith(link);
+ }
+ if(links.length)text('launch-copy','Flap Fit is available on '+links.map(([,name])=>name).join(' and ')+'.');
 }
 const copyButton=byId('copy-report');
 if(copyButton)copyButton.addEventListener('click',async()=>{
