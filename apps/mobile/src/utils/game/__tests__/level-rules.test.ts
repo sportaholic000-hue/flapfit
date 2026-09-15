@@ -62,10 +62,20 @@ describe('level run rules', () => {
     const endGameScript = SCRIPT_GAME.slice(endGameStart, endGameEnd);
 
     expect(endGameScript.indexOf("type: 'gameover'")).toBeGreaterThanOrEqual(0);
+    expect(endGameScript.indexOf('setTimeout(stopRunRecording')).toBeGreaterThan(
+      endGameScript.indexOf("type: 'gameover'")
+    );
     expect(endGameScript.indexOf('setTimeout(stopCameraAndTracking')).toBeGreaterThan(
       endGameScript.indexOf("type: 'gameover'")
     );
     expect(endGameScript).not.toContain('else { stopCameraAndTracking(); }');
+  });
+
+  it('records one complete media container before slicing it for the native bridge', () => {
+    expect(SCRIPT_GAME).toContain('runRecorder.start();');
+    expect(SCRIPT_GAME).not.toContain('runRecorder.start(1000);');
+    expect(SCRIPT_GAME).toContain('queueRecordingBlob(event.data);');
+    expect(SCRIPT_GAME).toContain('RECORDING_BRIDGE_CHUNK_BYTES');
   });
 
   it('uses camera tracking exclusively', () => {
@@ -83,6 +93,6 @@ describe('level run rules', () => {
     );
     expect(SCRIPT_GAME).toContain("state === 'waitTop' && now < calibrationReadyAt");
     expect(SCRIPT_GAME).toContain('setProgress(0);');
-    expect(SCRIPT_GAME).toContain("topCalibrationMessage() + '<br><small>Calibration begins in '");
+    expect(SCRIPT_GAME).toContain("'<br><small>Calibration begins in '");
   });
 });

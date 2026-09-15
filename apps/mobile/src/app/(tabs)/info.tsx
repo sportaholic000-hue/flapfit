@@ -48,7 +48,10 @@ type ModalPage = 'privacy' | 'safety' | 'terms' | null;
 const EXERCISE_SETUP = [
   ['Push-ups', 'Phone on the floor, 1–1.5 m in front; keep your full body visible.'],
   ['Squats', 'Phone on the floor or a stable chair, 1.5–2 m in front.'],
-  ['Pull-ups', 'Phone on a stable chair or higher, facing the bar and your full range.'],
+  [
+    'Pull-ups',
+    'Phone on a stable chair or higher; keep both hands, elbows, and shoulders visible. Feet are optional.',
+  ],
   ['Bicep curls', 'Phone on a chair or higher, 1–1.5 m in front; keep both wrists visible.'],
   ['Lateral raises', 'Phone on a chair or higher, about 2 m in front; keep both wrists visible.'],
   ['Shoulder press', 'Phone on a chair or higher, 1.5–2 m in front; keep hands visible overhead.'],
@@ -461,8 +464,8 @@ export default function InfoScreen() {
           </NumberedStep>
           <NumberedStep number={4}>
             If tracking briefly pauses, return to the center of the frame and hold still. The game
-            can resume when tracking is reliable again. Sustained loss of required hand or foot
-            evidence can end a protected push-up or pull-up run.
+            can resume when tracking is reliable again. Sustained loss of required hand evidence,
+            releasing the bar, or a detected planted foot can end a protected pull-up run.
           </NumberedStep>
           <View style={styles.tipBox}>
             <Text style={styles.tipTitle}>Fast calibration tip</Text>

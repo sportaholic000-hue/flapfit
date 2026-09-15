@@ -76,6 +76,7 @@ var recordingReadFailed = false;
 var recordingActive = false;
 var recordingAwaitingPlayFrame = false;
 var lastRecordingFrameTime = 0;
+var RECORDING_BRIDGE_CHUNK_BYTES = 192 * 1024;
 
 function recordingError(message) {
   postRN({
@@ -168,6 +169,15 @@ function queueRecordingChunk(blob) {
   });
 }
 
+function queueRecordingBlob(blob) {
+  if (!blob || blob.size <= 0) { return; }
+  for (var offset = 0; offset < blob.size; offset += RECORDING_BRIDGE_CHUNK_BYTES) {
+    queueRecordingChunk(
+      blob.slice(offset, Math.min(blob.size, offset + RECORDING_BRIDGE_CHUNK_BYTES), blob.type)
+    );
+  }
+}
+
 function releaseRecordingStream() {
   if (!recordingStream || typeof recordingStream.getTracks !== 'function') { return; }
   var tracks = recordingStream.getTracks();
@@ -219,7 +229,7 @@ function startRunRecording() {
     lastRecordingFrameTime = 0;
 
     runRecorder.ondataavailable = function(event) {
-      queueRecordingChunk(event.data);
+      queueRecordingBlob(event.data);
     };
     runRecorder.onerror = function(event) {
       recordingReadFailed = true;
@@ -249,7 +259,9 @@ function startRunRecording() {
       });
     };
 
-    runRecorder.start(1000);
+    // One complete recorder blob preserves the container's real duration.
+    // It is sliced into bridge-sized chunks only after recording stops.
+    runRecorder.start();
     recordingActive = true;
     postRN({
       type: 'recordingstart',
@@ -355,7 +367,6 @@ function endGame() {
   beep(140, 0.4, 'sawtooth', 0.1);
   burst(birdX(), birdScreenY(), CONFIG.bird.body, 26);
   var recorderWasRunning = !!runRecorder;
-  stopRunRecording();
   postRN({
     type: 'gameover',
     score: score,
@@ -363,6 +374,13 @@ function endGame() {
     tutSeconds: tutSeconds,
     unreportedTutSeconds: Math.max(0, tutSeconds - tutReportedSeconds)
   });
+  // Give React Native the result first. Recorder finalization and base64 transfer
+  // continue asynchronously while the visible card says Preparing video.
+  if (recorderWasRunning) {
+    setTimeout(stopRunRecording, 50);
+  } else {
+    stopRunRecording();
+  }
   // Closing MediaPipe can briefly block the WebView thread on some devices.
   // Let React Native display the result first, then release camera resources.
   setTimeout(stopCameraAndTracking, recorderWasRunning ? 200 : 0);
@@ -543,7 +561,7 @@ function topCalibrationMessage() {
   }
   if (CONFIG.exercise === 'pullups') {
     if (usesExperimentalFormTracking()) {
-      return 'STEP 1 OF 2<br><br>Lift your feet and pull to your <b>HIGHEST</b> point<br>Bent knees are fine<br><br>Hold still…';
+      return 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull to your <b>HIGHEST</b> point<br>Bent knees or straight legs are fine<br><br>Hold still…';
     }
     return 'STEP 1 OF 2<br><br>Pull to your <b>HIGHEST</b> point<br>Chin at or above the bar<br><br>Hold still…';
   }
@@ -580,9 +598,8 @@ function loop(now) {
       : { valid: true, message: '' };
     if (state === 'waitTop' && now < calibrationReadyAt) {
       var delaySeconds = Math.max(1, Math.ceil((calibrationReadyAt - now) / 1000));
-      var preparationMessage = usesExperimentalFormTracking() && CONFIG.exercise === 'pullups'
-        ? 'PULL-UP SETUP<br><br>Keep both feet on the floor<br>and hold the bar overhead<br><br><small>Learning floor position · ' + delaySeconds + '…</small>'
-        : topCalibrationMessage() + '<br><small>Calibration begins in ' + delaySeconds + '…</small>';
+      var preparationMessage = topCalibrationMessage() +
+        '<br><small>Calibration begins in ' + delaySeconds + '…</small>';
       showOverlay(preparationMessage, true);
       setProgress(0);
       stabBuf = [];
@@ -607,7 +624,7 @@ function loop(now) {
           botMsg = 'STEP 2 OF 2<br><br>Lower to a <b>DEEP SQUAT</b><br>Thighs parallel to the floor<br><br>Hold still…';
         } else if (CONFIG.exercise === 'pullups') {
           botMsg = usesExperimentalFormTracking()
-            ? 'STEP 2 OF 2<br><br>Lower to a comfortable <b>DEAD HANG</b><br>Keep feet clear, bent knees are fine<br><br>Hold still…'
+            ? 'STEP 2 OF 2<br><br>Lower to a comfortable <b>HANG</b><br>Slight elbow bend is fine<br>Keep both hands on the bar<br><br>Hold still…'
             : 'STEP 2 OF 2<br><br>Lower to a full <b>DEAD HANG</b><br>Arms completely locked straight<br><br>Hold still…';
         } else if (CONFIG.exercise === 'lateralraise') {
           botMsg = 'STEP 2 OF 2<br><br>Lower arms to your <b>SIDES</b><br>Hands near hips<br><br>Hold still…';
@@ -658,7 +675,7 @@ function loop(now) {
         frameMsg = 'Get your head and body in frame<br><small>Place phone on the floor or a chair, 1.5–2m in front</small>';
       } else if (CONFIG.exercise === 'pullups') {
         frameMsg = usesExperimentalFormTracking()
-          ? 'Get your full body in frame<br><small>Head, wrists, and both feet must stay visible</small>'
+          ? 'Get your upper body in frame<br><small>Both hands, elbows, and shoulders must stay visible</small>'
           : 'Get in frame — head and arms visible<br><small>Place phone on a chair or higher, facing you</small>';
       } else if (CONFIG.exercise === 'lateralraise') {
         frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, about 2m in front</small>';
