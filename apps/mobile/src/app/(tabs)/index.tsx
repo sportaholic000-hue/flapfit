@@ -202,7 +202,7 @@ export default function HomeScreen() {
     squats:
       'Stand tall = top, deep squat = bottom. Phone on the floor or a chair, 1.5–2m in front.',
     pullups:
-      'Chin at bar = top, arms fully locked = bottom. Phone on a chair or higher, facing you.',
+      'Chin at bar = top, comfortable hang with a slight elbow bend = bottom. Phone on a chair or higher, facing you.',
     lateralraise:
       'Arms at shoulder height = top, arms at sides = bottom. Phone on a chair or higher, about 2m in front.',
     biceps:
