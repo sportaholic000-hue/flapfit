@@ -2,6 +2,9 @@ const unsupportedPackages = [
   'expo-ads-admob',
   '@react-native-firebase/analytics',
   '@segment/analytics-react-native',
+  'react-native-purchases-ui',
+  'expo-in-app-purchases',
+  'react-native-iap',
 ];
 
 function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile }) {
@@ -13,9 +16,7 @@ function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile 
 
   for (const packageName of unsupportedPackages) {
     if (packageNames.has(packageName)) {
-      failures.push(
-        `package.json: unsupported launch advertising/analytics package ${packageName}`
-      );
+      failures.push(`package.json: unsupported Flap Fit 1.0 package ${packageName}`);
     }
   }
 

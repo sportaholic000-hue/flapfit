@@ -68,6 +68,27 @@ describe('validateMonetizationConfig', () => {
     );
   });
 
+  test('rejects purchase and paywall packages from the ads-only 1.0 candidate', () => {
+    const failures = validateMonetizationConfig({
+      appJson: { plugins: [] },
+      mobilePackage: {
+        dependencies: {
+          'react-native-purchases-ui': '10.9.1',
+          'react-native-iap': '14.5.1',
+        },
+      },
+      env: {},
+      buildProfile: 'preview',
+    });
+
+    expect(failures).toEqual(
+      expect.arrayContaining([
+        'package.json: unsupported Flap Fit 1.0 package react-native-purchases-ui',
+        'package.json: unsupported Flap Fit 1.0 package react-native-iap',
+      ])
+    );
+  });
+
   test('accepts a complete production monetization configuration', () => {
     expect(
       validateMonetizationConfig({ ...validMonetizedFixture(), buildProfile: 'production' })
