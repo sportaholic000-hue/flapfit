@@ -48,7 +48,8 @@ inference.
 
 - Camera images: on-device pose processing only.
 - Record & Play video: temporary local cache only, then a user-directed system share sheet.
-- Audio: microphone permission is blocked and recording has no audio.
+- Audio: Record & Play can request microphone permission and add sound to the temporary local video,
+  but Flap Fit does not transmit or collect the audio.
 - Local training history, bird/evolution state, and level progress: device-only.
 - Contacts, location, calendar, external storage, payments, purchase history, advertising IDs,
   analytics, and Health Connect data: not used by the current source.

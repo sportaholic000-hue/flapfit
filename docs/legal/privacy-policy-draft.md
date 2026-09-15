@@ -21,11 +21,12 @@ Flap Fit uses the front camera during gameplay to estimate body landmarks and tr
 into bird movement. Pose estimation runs on your device using a model bundled with the app. During
 normal Play, Flap Fit does not record or upload camera images.
 
-If you select Record & Play, Flap Fit creates a silent video containing the camera view and game
-graphics. The video remains in temporary app storage only so you can use your device's share sheet.
-Flap Fit does not upload or receive the video. A destination you choose in the share sheet processes
-the video under its own privacy terms. The temporary file is removed when you leave the result
-screen or begin another run, subject to normal operating-system cache behavior.
+If you select Record & Play, Flap Fit can request microphone permission and create a video containing
+the camera view, game graphics, your voice, and workout sounds. The video remains in temporary app
+storage only so you can use your device's share sheet. Flap Fit does not upload or receive the video.
+A destination you choose in the share sheet processes the video under its own privacy terms. The
+temporary file is removed when you leave the result screen or begin another run, subject to normal
+operating-system cache behavior.
 
 ## Optional online competition
 

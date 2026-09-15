@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useCameraPermissions } from 'expo-camera';
+import { useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
 import { File, Paths, type FileHandle } from 'expo-file-system';
 import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -206,6 +206,8 @@ export default function GameScreen() {
   const runBirdEvo = useRef(birdEvo);
 
   const [permission, requestPermission] = useCameraPermissions();
+  const [microphonePermission, requestMicrophonePermission] = useMicrophonePermissions();
+  const [recordWithoutAudio, setRecordWithoutAudio] = useState(false);
   const [runKey, setRunKey] = useState(0);
   const [result, setResult] = useState<GameResult | null>(null);
   const [evolvedTo, setEvolvedTo] = useState<number | null>(null);
@@ -391,6 +393,7 @@ export default function GameScreen() {
         birdImageDataUri,
         backgroundMode,
         recordRun,
+        recordAudio: recordRun && !recordWithoutAudio && microphonePermission?.granted === true,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -401,6 +404,8 @@ export default function GameScreen() {
       isEndless,
       level.id,
       recordRun,
+      recordWithoutAudio,
+      microphonePermission?.granted,
       skin.id,
       target,
       trackingMode,
@@ -913,7 +918,10 @@ export default function GameScreen() {
 
   // Camera permission gate
   const needsCameraPermission = permission != null && !permission.granted;
-  if (permission == null) return <View style={{ flex: 1, backgroundColor: '#0F172A' }} />;
+  const microphonePermissionLoading = recordRun && !recordWithoutAudio && microphonePermission == null;
+  if (permission == null || microphonePermissionLoading) {
+    return <View style={{ flex: 1, backgroundColor: '#0F172A' }} />;
+  }
 
   if (needsCameraPermission) {
     return (
@@ -935,8 +943,9 @@ export default function GameScreen() {
         </Text>
         <Text style={{ color: '#CBD5E1', fontSize: 15, lineHeight: 22 }}>
           Flap Fit uses your front camera to track your body movement.{'\n\n'}All tracking runs on
-          your device. Video is recorded only when you explicitly select Record &amp; Play. That
-          recording is kept temporarily for sharing and is not uploaded by Flap Fit.
+          your device. Video is recorded only when you explicitly select Record &amp; Play. With your
+          permission, that recording includes microphone sound. It is kept temporarily for sharing
+          and is not uploaded by Flap Fit.
           {!permission.canAskAgain
             ? '\n\nCamera access is currently blocked. Open your phone settings to allow it.'
             : ''}
@@ -958,6 +967,68 @@ export default function GameScreen() {
           <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
             {permission.canAskAgain ? 'Allow camera' : 'Open settings'}
           </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
+          <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const needsMicrophonePermission =
+    recordRun && !recordWithoutAudio && microphonePermission != null && !microphonePermission.granted;
+  if (needsMicrophonePermission) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#0F172A',
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom + 20,
+          paddingHorizontal: 28,
+          justifyContent: 'center',
+          gap: 16,
+        }}
+      >
+        <StatusBar style="light" />
+        <Camera size={44} color="#F59E0B" />
+        <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: '900' }}>
+          Add sound to your video
+        </Text>
+        <Text style={{ color: '#CBD5E1', fontSize: 15, lineHeight: 22 }}>
+          Record &amp; Play can include your voice and workout sounds. Microphone audio stays inside
+          the temporary video on this device unless you choose to share it.
+          {!microphonePermission.canAskAgain
+            ? '\n\nMicrophone access is currently blocked. Open your phone settings to allow it.'
+            : ''}
+        </Text>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={
+            microphonePermission.canAskAgain ? 'Allow microphone' : 'Open microphone settings'
+          }
+          onPress={() => {
+            if (microphonePermission.canAskAgain) void requestMicrophonePermission();
+            else void Linking.openSettings();
+          }}
+          style={{
+            backgroundColor: '#F59E0B',
+            borderRadius: 16,
+            paddingVertical: 16,
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
+            {microphonePermission.canAskAgain ? 'Allow microphone' : 'Open settings'}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Continue recording without sound"
+          onPress={() => setRecordWithoutAudio(true)}
+          style={{ alignItems: 'center', paddingVertical: 8 }}
+        >
+          <Text style={{ color: '#CBD5E1', fontWeight: '800' }}>Continue without sound</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
           <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>

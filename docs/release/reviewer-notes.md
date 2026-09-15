@@ -17,17 +17,20 @@ Camera processing:
 5. Complete the countdown and move through the calibrated range to control the bird.
 
 Pose estimation runs on-device using a bundled MediaPipe model. Normal Play does not record or upload
-camera video. Record & Play creates a temporary, silent, composed gameplay video in the app cache and
-shows the iOS share sheet only when the user chooses Share. Flap Fit never receives the video.
+camera video or request microphone access. Record & Play requests microphone access so the temporary
+composed gameplay video can include the user's voice and workout sounds. The file remains in the app
+cache, and the iOS share sheet appears only when the user chooses Share. Flap Fit never receives the
+video or audio.
 
 Compete is optional and uses an anonymous Supabase account. Before publishing a name, score,
 challenge, or attempt, the player must accept the current Terms and community rules. Public
 competition rows have a clearly labeled Report / Block control. The in-app deletion path is
 Info > Delete online profile. No reviewer credentials are required.
 
-Flap Fit 1.0 has no ads, purchases, subscriptions, analytics, HealthKit access, microphone access,
-location access, or contact access. Fitness and score estimates are not medical measurements. The
-fitness safety notice is available at Info > Fitness safety.
+Flap Fit 1.0 has no ads, purchases, subscriptions, analytics, HealthKit access, location access, or
+contact access. Microphone access is optional and used only for Record & Play. Fitness and score
+estimates are not medical measurements. The fitness safety notice is available at Info > Fitness
+safety.
 
 Support: **Troy Reardon, awesome-eh@hotmail.com; [REQUIRED INPUT: review phone number]**
 
@@ -42,8 +45,9 @@ anonymous account only when its online API is used; it does not request email, p
 password.
 
 The camera, calibration, gameplay, and Record & Play test steps are the same as the Apple steps
-above. The Android manifest requests CAMERA, INTERNET, and VIBRATE only. Microphone, external
-storage, contacts, calendar, location, and overlay permissions are explicitly blocked.
+above. The Android manifest requests CAMERA, RECORD_AUDIO, INTERNET, and VIBRATE. Microphone access
+is requested only after the user selects Record & Play. External storage, contacts, calendar,
+location, and overlay permissions remain explicitly blocked.
 
 Health declaration: Activity and Fitness. Flap Fit records exercise routines and tracked in-game
 training time, but is not a medical app and does not access Health Connect.

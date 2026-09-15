@@ -23,6 +23,12 @@ help if you feel pain, dizziness, faintness, unusual shortness of breath, or ano
 symptom. Consult a qualified health professional before starting a new exercise program if you have
 an injury, medical condition, or other concern. Never prioritize a game score over safe form.
 
+Exercise involves risk. You are responsible for choosing safe movements, equipment, surroundings,
+and effort for your ability. To the fullest extent permitted by applicable law, Flap Fit and its
+owner or operator are not liable for injuries or losses arising from gameplay or exercise. Nothing
+in these Terms excludes rights, remedies, or liability that applicable law does not allow to be
+excluded.
+
 ## License
 
 We grant you a limited, personal, non-exclusive, non-transferable, revocable license to use Flap Fit
@@ -52,10 +58,11 @@ is available at [REQUIRED: public account-deletion URL].
 
 ## Record & Play and sharing
 
-Record & Play makes a temporary, silent video on your device. You control whether and where it is
-shared. Do not record or share another person without permission, and do not share content that is
-illegal or violates another person's privacy, publicity, or intellectual-property rights. Services
-selected in the operating-system share sheet have their own terms and privacy practices.
+Record & Play makes a temporary video on your device. If you grant microphone permission, the video
+can include your voice and workout sounds. You control whether and where it is shared. Do not record
+or share another person without permission, and do not share content that is illegal or violates
+another person's privacy, publicity, or intellectual-property rights. Services selected in the
+operating-system share sheet have their own terms and privacy practices.
 
 ## Availability and changes
 

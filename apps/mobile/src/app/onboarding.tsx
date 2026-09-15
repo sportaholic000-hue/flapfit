@@ -117,42 +117,34 @@ export default function OnboardingScreen() {
         }}
       >
         <View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
-              Push-ups
-            </Text>
-            <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
-              Place phone on the floor, propped facing you, 1–1.5m away.
-            </Text>
-          </View>
+          <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
+            Push-ups
+          </Text>
+          <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
+            Place phone on the floor, propped facing you, 1–1.5m away.
+          </Text>
         </View>
         <View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
-              Squats
-            </Text>
-            <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
-              Place phone on the floor or a chair, propped facing you, 1.5–2m away.
-            </Text>
-          </View>
+          <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
+            Squats
+          </Text>
+          <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
+            Place phone on the floor or a chair, propped facing you, 1.5–2m away.
+          </Text>
         </View>
         <View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
-              Pull-ups / Bicep Curls{'\n'}Lateral Raises / Shoulder Press
-            </Text>
-            <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
-              Place phone on a chair or higher, facing you with the full movement visible.
-            </Text>
-          </View>
+          <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
+            Pull-ups / Bicep Curls{'\n'}Lateral Raises / Shoulder Press
+          </Text>
+          <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
+            Place phone on a chair or higher, facing you with the full movement visible.
+          </Text>
         </View>
         <View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
-              Good lighting = better tracking. Face the camera and keep your full range of motion
-              visible.
-            </Text>
-          </View>
+          <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
+            Good lighting = better tracking. Face the camera and keep your full range of motion
+            visible.
+          </Text>
         </View>
       </View>
     </View>,
@@ -187,8 +179,9 @@ export default function OnboardingScreen() {
           3. 3-2-1… GO! The bird follows your movement in real time.
         </Text>
         <Text style={{ color: '#6B7280', fontSize: 12, marginTop: 6 }}>
-          Normal Play processes camera images only on your device. Record &amp; Play creates a
-          temporary video that you decide whether and where to share.
+          Normal Play processes camera images only on your device. Record &amp; Play can include your
+          microphone audio if you allow it and creates a temporary video that you decide whether and
+          where to share.
         </Text>
       </View>
       <TouchableOpacity

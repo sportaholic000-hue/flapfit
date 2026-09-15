@@ -276,7 +276,7 @@ function validateExperimentalCalibration(position) {
   if (CONFIG.exercise === 'pullups') {
     var pullupSetupMessage = 'PULL-UP SETUP<br><br>Stand with feet planted and hold the bar<br>Keep your full body in the camera';
     var pullupTopMessage = 'STEP 1 OF 2<br><br>Lift your feet and pull to your <b>HIGHEST</b> point<br>Bent knees are fine<br><br>Hold still…';
-    var pullupBottomMessage = 'STEP 2 OF 2<br><br>Lower to a comfortable <b>DEAD HANG</b><br>Keep feet clear, bent knees are fine<br><br>Hold still…';
+    var pullupBottomMessage = 'STEP 2 OF 2<br><br>Lower to a comfortable <b>BOTTOM</b> position<br>A slight elbow bend and bent knees are fine<br>Keep at least one ankle visible<br><br>Hold still…';
     if (pullupFloorY === null) {
       return formInvalid(pullupSetupMessage);
     }
@@ -312,7 +312,7 @@ function validateExperimentalCalibration(position) {
     if (formTopMetrics) {
       var bodyTravel = metrics.controllerY - formTopMetrics.controllerY;
       var wristTravel = formDistance(metrics.wrists, formTopMetrics.wrists);
-      if (metrics.elbowAngle < 125 || metrics.elbowAngle - formTopMetrics.elbowAngle < 15) {
+      if (metrics.elbowAngle < 115 || metrics.elbowAngle - formTopMetrics.elbowAngle < 10) {
         return formInvalid(pullupBottomMessage);
       }
       if (wristTravel > Math.max(0.06, bodyTravel * 0.6)) {

@@ -183,6 +183,17 @@ function startRunRecording() {
     recordingCtx = recordingCanvas.getContext('2d', { alpha: false });
     if (!recordingCtx) { throw new Error('Unable to create the recording surface.'); }
     recordingStream = recordingCanvas.captureStream(24);
+    if (CONFIG.recordAudio && video && video.srcObject &&
+        typeof video.srcObject.getAudioTracks === 'function' &&
+        typeof recordingStream.addTrack === 'function') {
+      var sourceAudioTracks = video.srcObject.getAudioTracks();
+      if (sourceAudioTracks.length > 0) {
+        var sourceAudioTrack = sourceAudioTracks[0];
+        recordingStream.addTrack(
+          typeof sourceAudioTrack.clone === 'function' ? sourceAudioTrack.clone() : sourceAudioTrack
+        );
+      }
+    }
     runRecorder = makeRunRecorder(recordingStream);
     recordingMimeType = runRecorder.mimeType || 'video/webm';
     recordingExtension = recordingMimeType.toLowerCase().indexOf('mp4') >= 0 ? 'mp4' : 'webm';

@@ -37,7 +37,8 @@ record locally, and retain local progress without using Compete.
 
 - Photos or Videos: camera frames are processed live on-device. Record & Play produces a temporary
   local composed video. Flap Fit does not upload it.
-- Audio Data: the app neither requests microphone access nor records audio.
+- Audio Data: Record & Play can request microphone access and add sound to the temporary local
+  video, but Flap Fit does not upload or receive that audio. It is not collected by Flap Fit.
 - Precise or Approximate Location: the app does not request location and does not use IP addresses
   to infer location.
 - Contacts, email, phone number, payment information, purchases, advertising data, or browsing
@@ -69,7 +70,7 @@ video or message under that destination's terms; Flap Fit does not receive a cop
 - UGC contact information: **awesome-eh@hotmail.com**
 - Timely moderation: **[REQUIRED INPUT: named reviewer and response SLA]**
 - Fitness disclaimer: Info > Fitness safety.
-- Camera permission text explains on-device tracking and optional local recording.
+- Camera and microphone permission text explains on-device tracking and optional local recording.
 
 ## App privacy manifest
 

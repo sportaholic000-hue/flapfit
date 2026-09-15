@@ -115,7 +115,11 @@ function startCamera() {
   }
   return navigator.mediaDevices.getUserMedia({
     video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
-    audio: false
+    audio: CONFIG.recordAudio ? {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true
+    } : false
   }).then(function (stream) {
     video.srcObject = stream;
     return video.play();

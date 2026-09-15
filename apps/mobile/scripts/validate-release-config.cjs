@@ -247,10 +247,13 @@ const cameraPlugin = appJson.plugins?.find(
 );
 if (
   !cameraPlugin ||
-  cameraPlugin[1]?.microphonePermission !== false ||
-  cameraPlugin[1]?.recordAudioAndroid !== false
+  typeof cameraPlugin[1]?.microphonePermission !== 'string' ||
+  !cameraPlugin[1].microphonePermission.includes('Record & Play') ||
+  cameraPlugin[1]?.recordAudioAndroid !== true
 ) {
-  failures.push('app.json: Expo Camera must keep microphone permission and Android audio disabled');
+  failures.push(
+    'app.json: Expo Camera must explain optional Record & Play microphone use and enable Android audio'
+  );
 }
 
 const packageNames = new Set([

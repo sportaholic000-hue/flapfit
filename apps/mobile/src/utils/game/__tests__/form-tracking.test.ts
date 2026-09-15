@@ -208,6 +208,40 @@ describe('experimental form tracking', () => {
     });
   });
 
+  it('accepts a comfortable pull-up bottom position with a slight elbow bend', () => {
+    const harness = makeHarness('pullups');
+    const setup = pose([
+      ...mirroredPair(11, 12, 0.43, 0.43),
+      ...mirroredPair(13, 14, 0.42, 0.29),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.64),
+      ...mirroredPair(27, 28, 0.45, 0.92),
+    ]);
+    for (let now = 0; now <= 2000; now += 200) harness.update(setup, now);
+
+    const top = pose([
+      ...mirroredPair(11, 12, 0.43, 0.35),
+      ...mirroredPair(13, 14, 0.39, 0.25),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.56),
+      ...mirroredPair(27, 28, 0.45, 0.72),
+    ]);
+    harness.update(top, 4200);
+    expect(harness.validateCalibration('top').valid).toBe(true);
+    harness.save('top');
+
+    const slightBendBottom = pose([
+      ...mirroredPair(11, 12, 0.44, 0.43),
+      ...mirroredPair(13, 14, 0.43, 0.29),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.64),
+      ...mirroredPair(27, 28, 0.45, 0.73),
+    ]);
+    harness.update(slightBendBottom, 4216);
+
+    expect(harness.validateCalibration('bottom').valid).toBe(true);
+  });
+
   it('accepts push-up calibration and gameplay with the phone in front', () => {
     const harness = makeHarness('pushups');
     const frontFacingTop = pose([

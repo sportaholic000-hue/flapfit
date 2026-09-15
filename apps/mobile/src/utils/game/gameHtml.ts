@@ -17,6 +17,7 @@ export type GameHtmlConfig = {
   exercise: 'pushups' | 'squats' | 'pullups' | 'lateralraise' | 'biceps' | 'shoulderpress';
   backgroundMode: 'sky' | 'camera';
   recordRun: boolean;
+  recordAudio: boolean;
   endless: boolean;
   speed: number;
   gapFrac: number;

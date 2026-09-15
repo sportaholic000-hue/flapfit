@@ -164,11 +164,11 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
               <Text style={styles.modalHeading}>Record & Play</Text>
               <Text style={styles.modalText}>
                 If you choose Record & Play, Flap Fit creates a composed gameplay video that can
-                include your camera feed, bird, pipes, and score. The file is kept only in the app's
-                temporary cache so you can choose where to share it. Flap Fit does not upload the
-                recording. The temporary file is removed when you leave the result screen or start
-                another run. A service you choose in the share sheet receives the video under that
-                service's privacy terms.
+                include your camera feed, bird, pipes, score, and microphone audio if you grant
+                microphone permission. The file is kept only in the app's temporary cache so you can
+                choose where to share it. Flap Fit does not upload the recording. The temporary file
+                is removed when you leave the result screen or start another run. A service you
+                choose in the share sheet receives the video under that service's privacy terms.
               </Text>
               <Text style={styles.modalHeading}>Tracking technology</Text>
               <Text style={styles.modalText}>
@@ -220,6 +220,14 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
                 unusual shortness of breath, or any other concerning symptom. Never prioritize an
                 in-game score over safe form.
               </Text>
+              <Text style={styles.modalHeading}>Exercise risk and responsibility</Text>
+              <Text style={styles.modalText}>
+                Exercise involves risk. You are responsible for choosing safe movements, equipment,
+                surroundings, and effort for your ability. To the fullest extent permitted by law,
+                Flap Fit and its owner or operator are not responsible for injuries or losses arising
+                from gameplay or exercise. This does not limit rights or liability that applicable
+                law does not allow to be excluded.
+              </Text>
             </>
           ) : (
             <>
@@ -255,6 +263,14 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
                 Features and online services may be changed, suspended, or discontinued. Your phone
                 is responsible for locally stored progress, so deleting Flap Fit or clearing its
                 data may permanently remove that progress.
+              </Text>
+              <Text style={styles.modalHeading}>Exercise risk and liability</Text>
+              <Text style={styles.modalText}>
+                Exercise involves risk. You are responsible for choosing safe movements, equipment,
+                surroundings, and effort for your ability. To the fullest extent permitted by law,
+                Flap Fit and its owner or operator are not liable for injuries or losses arising from
+                gameplay or exercise. Nothing in these terms excludes rights, remedies, or liability
+                that applicable law does not allow to be excluded.
               </Text>
             </>
           )}
