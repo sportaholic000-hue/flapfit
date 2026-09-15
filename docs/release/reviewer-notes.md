@@ -32,11 +32,11 @@ contact access. Microphone access is optional and used only for Record & Play. F
 estimates are not medical measurements. The fitness safety notice is available at Info > Fitness
 safety.
 
-Support: **Troy Reardon, awesome-eh@hotmail.com; [REQUIRED INPUT: review phone number]**
+Support: **Troy Reardon, support@flapfitapp.com; [REQUIRED INPUT: review phone number]**
 
-Privacy policy: **[REQUIRED INPUT: public HTTPS URL]**
+Privacy policy: **https://flapfitapp.com/privacy/**
 
-Terms: **[REQUIRED INPUT: public HTTPS URL]**
+Terms: **https://flapfitapp.com/terms/**
 
 ## Google Play App access and review notes
 
@@ -63,8 +63,8 @@ UGC test:
 
 Flap Fit 1.0 contains no ads or in-app purchases.
 
-Public account-deletion page: **[REQUIRED INPUT: public HTTPS URL]**
+Public account-deletion page: **https://flapfitapp.com/delete-account/**
 
-Privacy policy: **[REQUIRED INPUT: public HTTPS URL]**
+Privacy policy: **https://flapfitapp.com/privacy/**
 
-Support contact: **awesome-eh@hotmail.com**
+Support contact: **support@flapfitapp.com**

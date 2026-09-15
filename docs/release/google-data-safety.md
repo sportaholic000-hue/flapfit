@@ -77,7 +77,7 @@ Treat Google Play's account-deletion rule as applicable.
   attempts, and blocks. A minimized moderation report can remain until review and for up to 180 days
   after resolution, with the deleted account's user identifier removed.
 - A public web deletion resource is still required:
-  **[REQUIRED INPUT: public HTTPS deletion URL]**
+  **https://flapfitapp.com/delete-account/**
 - The production build requires this URL as `EXPO_PUBLIC_ACCOUNT_DELETION_URL`, and the same page is
   linked from Info > Account & data deletion.
 - The page must name Flap Fit, make the request path prominent, work without reinstalling the app,

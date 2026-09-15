@@ -6,7 +6,7 @@ publishing.
 Effective date: [REQUIRED: launch date]
 
 Flap Fit is operated by Troy Reardon, located at [REQUIRED: legal postal address] ("Flap Fit,"
-"we," "us"). Questions and privacy requests may be sent to awesome-eh@hotmail.com.
+"we," "us"). Questions and privacy requests may be sent to support@flapfitapp.com.
 
 ## Information kept on your device
 
@@ -77,9 +77,9 @@ and blocks. A minimized moderation report may remain until review and for up to 
 resolution, but the deleted account's user identifier is removed from it. Local game progress stays
 on the device.
 
-If you no longer have the app, visit [REQUIRED: public account-deletion URL] and follow the request
+If you no longer have the app, visit https://flapfitapp.com/delete-account/ and follow the request
 instructions. Privacy questions and applicable access, correction, objection, restriction, or
-deletion requests may be sent to awesome-eh@hotmail.com. We may need enough information
+deletion requests may be sent to support@flapfitapp.com. We may need enough information
 to locate the anonymous competition profile without exposing or deleting another player's data.
 
 ## Children

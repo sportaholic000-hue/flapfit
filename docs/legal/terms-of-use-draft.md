@@ -5,8 +5,7 @@ publishing.
 
 Effective date: [REQUIRED: launch date]
 
-These Terms form an agreement between you and Troy Reardon, located at [REQUIRED: legal postal
-address], for your use of Flap Fit. Contact: awesome-eh@hotmail.com.
+These Terms govern your use of Flap Fit. Contact: support@flapfitapp.com.
 
 ## Eligibility and acceptance
 
@@ -47,14 +46,14 @@ service.
 You can report or block another player beside that player's public leaderboard result, challenge,
 or challenge attempt. We may filter, restrict, hide, or remove content; suspend online access;
 preserve evidence; and contact appropriate authorities when reasonably necessary to enforce these
-rules or protect users. Contact awesome-eh@hotmail.com for urgent safety or illegal-content reports.
+rules or protect users. Contact support@flapfitapp.com for urgent safety or illegal-content reports.
 
 ## Your account and deletion
 
 Compete uses an anonymous online account without requiring email, phone, or password. Because it is
 anonymous, access may be lost if you delete the app, clear its data, or lose the device. In-app
 deletion is available at Info > Delete online profile. A request path that does not require the app
-is available at [REQUIRED: public account-deletion URL].
+is available at https://flapfitapp.com/delete-account/.
 
 ## Record & Play and sharing
 

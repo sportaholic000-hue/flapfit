@@ -7,7 +7,7 @@ block buttons do not replace active moderation.
 
 - Primary moderator: [REQUIRED: name]
 - Backup moderator: [REQUIRED: name]
-- Monitored inbox: awesome-eh@hotmail.com (replace everywhere if the final domain changes)
+- Monitored inbox: support@flapfitapp.com (replace everywhere if the final domain changes)
 - Routine report target: acknowledge within 24 hours and decide within 72 hours.
 - Credible threat, exploitation, or illegal-content target: review immediately and escalate under
   the applicable law and platform policy.

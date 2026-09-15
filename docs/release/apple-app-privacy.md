@@ -51,7 +51,7 @@ video or message under that destination's terms; Flap Fit does not receive a cop
 
 ## Required App Store Connect answers
 
-- Privacy Policy URL: **[REQUIRED INPUT: public HTTPS URL]**
+- Privacy Policy URL: **https://flapfitapp.com/privacy/**
 - User Privacy Choices URL: use the public deletion/privacy-controls page once live.
 - Data used for tracking: **No**
 - Third-party advertising: **No**
@@ -67,7 +67,7 @@ video or message under that destination's terms; Flap Fit does not receive a cop
 - UGC filtering: server-side player-name validation and moderation filter.
 - UGC reporting/blocking: clearly labeled Report / Block action on public leaderboard results,
   challenges, and challenge attempts.
-- UGC contact information: **awesome-eh@hotmail.com**
+- UGC contact information: **support@flapfitapp.com**
 - Timely moderation: **[REQUIRED INPUT: named reviewer and response SLA]**
 - Fitness disclaimer: Info > Fitness safety.
 - Camera and microphone permission text explains on-device tracking and optional local recording.

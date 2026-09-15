@@ -65,9 +65,9 @@ separate deliverables.
 
 ## Required links and contacts
 
-- Marketing URL: [REQUIRED]
-- Privacy Policy URL: [REQUIRED]
-- Terms URL: [REQUIRED]
-- Account and data deletion URL: [REQUIRED]
-- Support email: awesome-eh@hotmail.com (provisional until the final domain decision)
+- Marketing URL: https://flapfitapp.com/
+- Privacy Policy URL: https://flapfitapp.com/privacy/
+- Terms URL: https://flapfitapp.com/terms/
+- Account and data deletion URL: https://flapfitapp.com/delete-account/
+- Support email: support@flapfitapp.com
 - Copyright and legal seller/developer name: Troy Reardon

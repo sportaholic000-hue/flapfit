@@ -47,18 +47,18 @@ final review decisions.
 
 The release validator currently requires:
 
-- [ ] `EXPO_PUBLIC_SUPPORT_EMAIL`
-- [ ] `EXPO_PUBLIC_PRIVACY_URL`
-- [ ] `EXPO_PUBLIC_TERMS_URL`
-- [ ] `EXPO_PUBLIC_ACCOUNT_DELETION_URL`
-- [ ] `EXPO_PUBLIC_MARKETING_URL`
+- [x] `EXPO_PUBLIC_SUPPORT_EMAIL`
+- [x] `EXPO_PUBLIC_PRIVACY_URL`
+- [x] `EXPO_PUBLIC_TERMS_URL`
+- [x] `EXPO_PUBLIC_ACCOUNT_DELETION_URL`
+- [x] `EXPO_PUBLIC_MARKETING_URL`
 - [ ] `EXPO_PUBLIC_SUPABASE_URL`
 - [ ] `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 
 Owner/legal inputs still required:
 
 - [x] Legal operator/developer name: Troy Reardon.
-- [x] Provisional public support email supplied: awesome-eh@hotmail.com. Reconfirm it is monitored and
+- [x] Public support email supplied: support@flapfitapp.com. Reconfirm it is monitored and
       replace it everywhere if the final domain changes.
 - [ ] Canada and the United States are confirmed as the minimum launch availability. Decide whether
       to add other countries at first release; EU/UK and other country-specific disclosures remain
