@@ -1,10 +1,13 @@
 import { computeBirdRadii } from '../html/scriptGame';
 import {
   computeEvolutionStage,
+  deriveDailyTut,
   deriveDailyExerciseTut,
   EVO_EMOJIS,
   EVO_NAMES,
   EVO_THRESHOLDS,
+  recoverDailyExerciseTut,
+  recoverDailyTut,
   type SessionRecord,
 } from '../store';
 
@@ -51,6 +54,46 @@ describe('evolution core', () => {
 
     expect(totals).toEqual({
       '2026-09-15': { pushups: 45, squats: 40 },
+    });
+
+    expect(
+      deriveDailyTut([
+        { ...base, exercise: 'pushups', tutSeconds: 30 },
+        { ...base, exercise: 'squats', tutSeconds: 40 },
+        { ...base, tutSeconds: 90 },
+      ])
+    ).toEqual({ '2026-09-15': 160 });
+  });
+
+  it('recovers missing legacy chart buckets without double-counting saved values', () => {
+    const sessions: SessionRecord[] = [
+      {
+        iso: '2026-09-15T12:00:00.000Z',
+        day: '2026-09-15',
+        exercise: 'pushups',
+        score: 10,
+        pushups: 0,
+        mode: 'level',
+        levelId: 1,
+        tutSeconds: 30,
+      },
+      {
+        iso: '2026-09-15T12:01:00.000Z',
+        day: '2026-09-15',
+        exercise: 'squats',
+        score: 10,
+        pushups: 0,
+        mode: 'level',
+        levelId: 1,
+        tutSeconds: 40,
+      },
+    ];
+
+    expect(recoverDailyTut({ '2026-09-15': 100 }, sessions)).toEqual({
+      '2026-09-15': 100,
+    });
+    expect(recoverDailyExerciseTut({ '2026-09-15': { pushups: 55 } }, sessions)).toEqual({
+      '2026-09-15': { pushups: 55, squats: 40 },
     });
   });
 });

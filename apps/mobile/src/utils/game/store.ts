@@ -54,6 +54,14 @@ export type ExerciseMode =
 
 export type DailyExerciseTut = Record<string, Partial<Record<ExerciseMode, number>>>;
 
+export function deriveDailyTut(sessions: SessionRecord[]): Record<string, number> {
+  return sessions.reduce<Record<string, number>>((totals, session) => {
+    if (!Number.isFinite(session.tutSeconds) || session.tutSeconds <= 0) return totals;
+    totals[session.day] = (totals[session.day] ?? 0) + session.tutSeconds;
+    return totals;
+  }, {});
+}
+
 export function deriveDailyExerciseTut(sessions: SessionRecord[]): DailyExerciseTut {
   return sessions.reduce<DailyExerciseTut>((totals, session) => {
     if (!session.exercise || !Number.isFinite(session.tutSeconds) || session.tutSeconds <= 0) {
@@ -67,9 +75,39 @@ export function deriveDailyExerciseTut(sessions: SessionRecord[]): DailyExercise
   }, {});
 }
 
-// Evolution currently uses tracked training time from active gameplay. Camera
-// pose/form verification will be layered on separately; do not present these
-// totals as medically or competitively verified exercise time yet.
+export function recoverDailyTut(
+  persisted: Record<string, number> | undefined,
+  sessions: SessionRecord[]
+): Record<string, number> {
+  const recovered = { ...(persisted ?? {}) };
+  for (const [day, seconds] of Object.entries(deriveDailyTut(sessions))) {
+    if (!Number.isFinite(recovered[day]) || recovered[day] <= 0) recovered[day] = seconds;
+  }
+  return recovered;
+}
+
+export function recoverDailyExerciseTut(
+  persisted: DailyExerciseTut | undefined,
+  sessions: SessionRecord[]
+): DailyExerciseTut {
+  const recovered: DailyExerciseTut = Object.fromEntries(
+    Object.entries(persisted ?? {}).map(([day, totals]) => [day, { ...totals }])
+  );
+  for (const [day, totals] of Object.entries(deriveDailyExerciseTut(sessions))) {
+    const dayTotals = { ...(recovered[day] ?? {}) };
+    for (const exercise of Object.keys(totals) as ExerciseMode[]) {
+      const existing = dayTotals[exercise];
+      if (!Number.isFinite(existing) || (existing ?? 0) <= 0)
+        dayTotals[exercise] = totals[exercise];
+    }
+    recovered[day] = dayTotals;
+  }
+  return recovered;
+}
+
+// Evolution uses active tracked gameplay time. These totals are not full-rep,
+// calorie, medical, or diagnostic measurements; competition verification is
+// handled separately by the selected versioned tracking rules.
 export const EVO_THRESHOLDS = [
   0, // Starting bird
   2 * 60,
@@ -335,15 +373,15 @@ export const useGameStore = create<GameStore>()(
       // value to camera during hydration; setHydrated then writes it back.
       merge: (persistedState, currentState) => {
         const persisted = (persistedState ?? {}) as Partial<GameStore>;
+        const sessions = persisted.sessions ?? currentState.sessions;
         return {
           ...currentState,
           ...persisted,
-          // Existing installs did not persist an exercise-by-day map. Recover
-          // every attributable historical entry once from completed sessions;
-          // older sessions without an exercise stay only in the Total chart.
-          dailyExerciseTut:
-            persisted.dailyExerciseTut ??
-            deriveDailyExerciseTut(persisted.sessions ?? currentState.sessions),
+          // Recover missing day buckets from completed sessions. Stored values
+          // win so hydration never double-counts current installs; older
+          // sessions without an exercise stay only in the Total chart.
+          dailyTut: recoverDailyTut(persisted.dailyTut, sessions),
+          dailyExerciseTut: recoverDailyExerciseTut(persisted.dailyExerciseTut, sessions),
           controlMode: 'camera' as const,
         };
       },
