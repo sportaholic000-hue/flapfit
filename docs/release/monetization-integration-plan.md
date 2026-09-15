@@ -67,8 +67,7 @@ a result screen. Never show an ad automatically when the result appears.
 - Normal run: action tap -> show a ready eligible ad -> ad close/failure -> perform the action once.
 - Record & Play run: share flow -> return to Flap Fit -> action tap -> show a ready eligible ad -> ad
   close/failure -> perform the action once.
-- No ready ad, no consent, offline, SDK error, timeout, or remove-ads entitlement: perform the action
-  immediately.
+- No ready ad, no consent, offline, SDK error, or timeout: perform the action immediately.
 
 Use a single completion guard so close, dismissal, timeout, error, and component cleanup cannot run
 the selected action twice. Clear the pending action when the result screen unmounts. An ad loaded for
@@ -80,7 +79,6 @@ Do not show ads:
 - when opening the app or returning from the background;
 - before a player has completed a first run;
 - from onboarding, camera/microphone permission, Terms, Privacy, deletion, report, or safety flows;
-- after an ad-free entitlement becomes active; or
 - to recover from an earlier failed ad request.
 
 The final frequency cap must be selected before implementation. Recommended launch default: at most
@@ -122,3 +120,7 @@ Use Google test ad-unit IDs until the complete flow passes. Never click live ads
 
 Before changing dependencies, present the package names, resolved versions, lockfile diff, required
 AdMob/RevenueCat values, and the chosen frequency cap to the user. Proceed only after approval.
+
+`react-native-purchases` is included in 1.0 only for RevenueCat ad-event reporting required by the
+approved contest strategy. Do not create an offering, entitlement, product, purchase button,
+subscription, paywall, restore control, or remove-ads promise for this release.

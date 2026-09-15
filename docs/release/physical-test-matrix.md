@@ -8,7 +8,7 @@ for every failure. Do not submit a different commit from the one that completed 
 
 Run on at least one Android phone, one iPhone, and one iPad. Expo Go verifies JavaScript behavior and
 the remote development tracker. It does not replace signed-build testing of native permissions,
-recording, ads, purchases, or the bundled production tracker.
+recording, ads, RevenueCat ad-event reporting, or the bundled production tracker.
 
 Use `start:expo-go` for devices on the computer's Wi-Fi. Use `start:expo-go:tunnel` for a tester on
 another network. Share the direct Expo Go deep link returned by Metro's `/_expo/open?runtime=expo`
@@ -89,8 +89,9 @@ Repeat all applicable checks above on the exact signed binaries, then verify:
 - [ ] Consent appears before any ad request where required and can be reopened from Info.
 - [ ] Ads appear only after an eligible result action, never during gameplay, recording, or sharing.
 - [ ] Closing or failing an ad always completes Done, Try Again, or Next Level exactly once.
-- [ ] Purchase, restore-purchase, offline entitlement, and remove-ads behavior work with sandbox/test
-      accounts and never block free gameplay.
+- [ ] RevenueCat receives only the approved ad lifecycle and paid-impression events; RevenueCat
+      failure never blocks free gameplay. Flap Fit 1.0 has no purchase, subscription, paywall, or
+      remove-ads UI.
 - [ ] Public marketing, Privacy, Terms, deletion, and support links open signed out over HTTPS.
 - [ ] Apple privacy and Google Data Safety answers match the exact SDK/network behavior observed.
 

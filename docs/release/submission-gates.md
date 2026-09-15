@@ -195,8 +195,10 @@ Owner/legal inputs still required:
 ## Flap Fit 1.0 monetization gate
 
 The Expo Go checkpoint is intentionally ad-free. It is not the final monetized store candidate. Do
-not complete either store's ads, purchases, privacy, or reviewer declarations until the approved ad
-and RevenueCat implementation exists in the exact submitted source and has passed signed-build tests.
+not complete either store's ads, privacy, or reviewer declarations until the approved ad and
+RevenueCat implementation exists in the exact submitted source and has passed signed-build tests.
+Flap Fit 1.0 has no purchase, subscription, paywall, or remove-ads product; both stores' in-app
+purchase declarations must say No for this release.
 
 Approved placement strategy:
 
@@ -219,11 +221,12 @@ Privacy and review constraints for the final implementation:
   revoking choices;
 - ensure every interstitial is clearly identified as an ad, has a prominent close/skip control, and
   exposes the ad network's inappropriate-ad reporting path; and
-- keep ad and purchase SDK initialization independent from camera calibration and gameplay so a
-  network, consent, store, or purchase failure cannot block exercise play.
+- keep AdMob and RevenueCat initialization independent from camera calibration and gameplay so a
+  network, consent, or SDK failure cannot block exercise play.
 
 - [ ] After tomorrow's Expo gameplay approval, integrate the approved ad and RevenueCat design in a
-      native build, add consent/privacy handling for selected launch countries, and test both paid
-      and unpaid paths in TestFlight and Play internal testing.
+      native build, add consent/privacy handling for selected launch countries, and test ad-ready,
+      no-ad, offline, failure, and consent paths in TestFlight and Play internal testing.
 - [ ] Update the store listing, privacy policy, reviewer notes, Apple App Privacy, Google Data Safety,
-      Ads declaration, and in-app-purchase declarations from the exact monetized build.
+      and Ads declaration from the exact monetized build. Confirm both stores say no in-app
+      purchases or subscriptions for Flap Fit 1.0.

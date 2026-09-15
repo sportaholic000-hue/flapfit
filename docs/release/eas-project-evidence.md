@@ -67,7 +67,7 @@ without generating iOS or Android project folders:
   disables backup. Overlay, location, calendar, contacts, and external-storage permission entries
   are present only as `tools:node="remove"` manifest directives and are not requested capabilities.
 
-Inspect the final signed artifacts again because native ad and purchase plugins will intentionally
+Inspect the final signed artifacts again because native AdMob and RevenueCat plugins will intentionally
 change the generated manifests after monetization is approved and integrated.
 
 ## Current toolchain requirements

@@ -67,9 +67,10 @@ Store-listing media belongs in `apps/mobile/store-assets`. Run
 1024 x 1024 and has no transparent pixels; the Google Play store icon and feature graphic remain
 separate deliverables.
 
-The final description must add accurate advertising and purchase wording after the approved ad and
-RevenueCat implementation is present in the exact store build. Do not reuse the interim ad-free Expo
-checkpoint declaration.
+The final description must add accurate advertising wording after the approved AdMob and RevenueCat
+ad-reporting implementation is present in the exact store build. Flap Fit 1.0 has no purchase,
+subscription, paywall, or remove-ads product. Do not reuse the interim ad-free Expo checkpoint
+declaration.
 
 ## Required links and contacts
 

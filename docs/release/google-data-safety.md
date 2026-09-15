@@ -99,8 +99,10 @@ Treat Google Play's account-deletion rule as applicable.
 
 ## Other Play Console declarations
 
-- Ads, SDK data collection, and in-app purchases: **Do not submit these answers yet. Re-evaluate from
-  the exact monetized build after the approved ad and RevenueCat integration.**
+- Ads and SDK data collection: **Do not submit these answers yet. Re-evaluate from the exact
+  monetized build after the approved AdMob and RevenueCat integration.**
+- In-app purchases: **No for Flap Fit 1.0.** There is no product, subscription, paywall, purchase,
+  restore, or remove-ads feature. RevenueCat is used only for ad-event reporting.
 - App access: no login credentials required. Explain the optional anonymous Compete profile.
 - Target audience: **13 and older**. Do not select children under 13 unless the app and website are
   intentionally brought into full Families-policy compliance.

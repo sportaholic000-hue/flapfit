@@ -54,8 +54,10 @@ video or message under that destination's terms; Flap Fit does not receive a cop
 - Privacy Policy URL: **https://flapfitapp.com/privacy/**
 - User Privacy Choices URL: use the public deletion/privacy-controls page once live.
 - Data used for tracking: **No**
-- Third-party advertising, analytics, purchases, and subscriptions: **Do not submit these answers
-  yet. Re-evaluate from the exact monetized build after the approved ad and RevenueCat integration.**
+- Third-party advertising and related SDK data: **Do not submit these answers yet. Re-evaluate from
+  the exact monetized build after the approved AdMob and RevenueCat integration.**
+- Payments, purchases, and subscriptions: **None in Flap Fit 1.0.** RevenueCat is used only for
+  ad-event reporting; there is no product, paywall, purchase, restore, or remove-ads interface.
 - HealthKit: **Not used**
 
 ## Apple review-specific checks

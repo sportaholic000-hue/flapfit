@@ -38,7 +38,8 @@ requires physical or signed-build evidence. It is not a guarantee of store appro
 1. Complete the physical matrix in `physical-test-matrix.md`, especially Form Test calibration and
    anti-cheat behavior for all six exercises.
 2. Promote the approved tracker to production and rerun automated, export, and physical checks.
-3. Integrate and test the approved ad/RevenueCat design with consent and purchase restoration.
+3. Integrate and test the approved AdMob/RevenueCat ad-reporting design with consent; Flap Fit 1.0
+   has no purchase or subscription flow.
 4. Publish and verify the support, Privacy, Terms, deletion, and marketing pages at the final domain.
 5. Build and test the exact signed TestFlight and Play internal candidates.
 6. Capture genuine screenshots from those approved candidates and complete the current store forms.

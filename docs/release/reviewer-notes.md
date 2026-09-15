@@ -43,7 +43,8 @@ Info > Delete online profile. No reviewer credentials are required.
 The app has no HealthKit, location, or contact access. Microphone access is optional and used only
 for Record & Play. Fitness and score estimates are not medical measurements. The fitness safety
 notice is available at Info > Fitness safety. Replace this paragraph with the exact final ads,
-purchases, subscriptions, consent, and analytics disclosure after monetization is integrated.
+consent, and RevenueCat ad-reporting disclosure after monetization is integrated. Flap Fit 1.0 has
+no purchase, subscription, paywall, or remove-ads product.
 
 Support: **Troy Reardon, support@flapfitapp.com; [REQUIRED INPUT: review phone number]**
 
@@ -74,8 +75,8 @@ UGC test:
 5. Use Report / Block beside another player's leaderboard result, challenge, or challenge attempt.
 6. Use Info > Delete online profile to remove the anonymous account and associated competition data.
 
-Before submission, add the exact final ads and in-app-purchase disclosure from the tested production
-build.
+Before submission, add the exact final ads and RevenueCat ad-reporting disclosure from the tested
+production build. Declare that Flap Fit 1.0 has no in-app purchases or subscriptions.
 
 Public account-deletion page: **https://flapfitapp.com/delete-account/**
 
