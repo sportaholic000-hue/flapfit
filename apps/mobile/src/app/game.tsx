@@ -31,7 +31,14 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import BirdAvatar from '@/components/BirdAvatar';
-import { competitionIsConfigured, competitionRequest } from '@/services/competitionApi';
+import {
+  beginCompetitionRun,
+  competitionIsConfigured,
+  competitionPlayerNameError,
+  flushPendingCompetitionResults,
+  submitCompetitionRunResult,
+  type CompetitionRunSession,
+} from '@/services/competitionApi';
 import { getBirdStageArt } from '@/utils/game/birdStageArt';
 import { loadBirdAssetDataUri } from '@/utils/game/birdWebAsset';
 import { getBird } from '@/utils/game/birds';
@@ -45,6 +52,7 @@ import {
 import {
   computeBirdMorphology,
   computeEvolutionStage,
+  COMPETITION_TERMS_VERSION,
   dayKey,
   EVO_NAMES,
   useGameStore,
@@ -146,6 +154,14 @@ function videoUti(mimeType: string, extension: string) {
   return 'public.movie';
 }
 
+function isAllowedGameNavigation(url: string) {
+  return (
+    url === 'about:blank' ||
+    url === 'https://flapfit.local/' ||
+    url.startsWith('blob:https://flapfit.local/')
+  );
+}
+
 export default function GameScreen() {
   const insets = useSafeAreaInsets();
   const { height: viewportHeight } = useWindowDimensions();
@@ -167,8 +183,7 @@ export default function GameScreen() {
   const challengeCode = typeof params.challengeCode === 'string' ? params.challengeCode : null;
   const backgroundMode = params.backgroundMode === 'camera' ? 'camera' : 'sky';
   const recordRun = params.record === 'true' || params.record === '1';
-  const trackingMode =
-    __DEV__ && params.trackingMode === 'form-test' ? 'form-test' : 'original';
+  const trackingMode = __DEV__ && params.trackingMode === 'form-test' ? 'form-test' : 'original';
 
   const isEndless = mode === 'endless';
   const level = isEndless ? ENDLESS_BASE : getLevel(levelId);
@@ -232,6 +247,9 @@ export default function GameScreen() {
   const webViewRef = useRef<WebView>(null);
   const trackerTransferTokenRef = useRef(0);
   const trackerRequestIdRef = useRef<string | null>(null);
+  const competitionRunPromiseRef = useRef<Promise<CompetitionRunSession | null>>(
+    Promise.resolve(null)
+  );
   const ceremonyOpacity = useRef(new Animated.Value(0)).current;
   const ceremonyScale = useRef(new Animated.Value(0.55)).current;
   const confettiProgress = useRef(new Animated.Value(0)).current;
@@ -305,6 +323,34 @@ export default function GameScreen() {
   }, []);
 
   useEffect(() => () => discardRecording(false), [discardRecording]);
+
+  useEffect(() => {
+    const boardableExercises = ['pushups', 'squats', 'pullups'];
+    const hasCompetitionTerms =
+      useGameStore.getState().competitionTermsVersion === COMPETITION_TERMS_VERSION;
+    const leaderboardEligible =
+      isEndless &&
+      competitionPlayerNameError(playerName) === null &&
+      boardableExercises.includes(exerciseMode);
+    const kind = challengeCode ? 'challenge' : leaderboardEligible ? 'leaderboard' : null;
+
+    if (!competitionIsConfigured || !hasCompetitionTerms || !kind) {
+      competitionRunPromiseRef.current = Promise.resolve(null);
+      return;
+    }
+
+    void flushPendingCompetitionResults().catch((error) => {
+      console.warn('Pending competition results will retry later', error);
+    });
+    competitionRunPromiseRef.current = beginCompetitionRun({
+      kind,
+      exercise: exerciseMode,
+      challengeCode,
+    }).catch((error) => {
+      console.warn('This run could not start an online verification session', error);
+      return null;
+    });
+  }, [challengeCode, exerciseMode, isEndless, playerName, runKey]);
 
   // Resolve exactly one bundled PNG for this run. The request key changes only
   // for a deliberate retry/next-level run, never for five-second TUT updates.
@@ -513,41 +559,28 @@ export default function GameScreen() {
   }, [ceremonyOpacity, ceremonyScale, confettiProgress, showEvolutionCeremony]);
 
   const submitScores = useCallback(
-    async (score: number) => {
+    async (score: number, tutSeconds: number) => {
       if (!competitionIsConfigured) return;
       try {
-        const boardableExercises = ['pushups', 'squats', 'pullups'];
-        if (
-          isEndless &&
-          playerName.trim().length > 0 &&
-          boardableExercises.includes(exerciseMode)
-        ) {
-          await competitionRequest('/leaderboard', {
-            method: 'POST',
-            body: {
-              playerName,
-              score,
-              exercise: exerciseMode,
-            },
-          });
-          queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
-        }
+        const session = await competitionRunPromiseRef.current;
+        if (!session) return;
+        const validPlayerName =
+          competitionPlayerNameError(playerName) === null ? playerName : 'Anonymous';
+        await submitCompetitionRunResult({
+          runId: session.runId,
+          playerName: validPlayerName,
+          score,
+          durationMs: Math.round(Math.max(0, tutSeconds) * 1000),
+        });
+        if (isEndless) queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
         if (challengeCode) {
-          await competitionRequest('/challenges/attempts', {
-            method: 'POST',
-            body: {
-              code: challengeCode,
-              playerName: playerName.trim().length > 0 ? playerName : 'Anonymous',
-              score,
-            },
-          });
           queryClient.invalidateQueries({ queryKey: ['challenge', challengeCode] });
         }
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.warn('Competition result is queued for retry', error);
       }
     },
-    [isEndless, playerName, challengeCode, exerciseMode, queryClient]
+    [isEndless, playerName, challengeCode, queryClient]
   );
 
   const beginVideoRecording = useCallback(
@@ -772,7 +805,10 @@ export default function GameScreen() {
         return;
       }
       if (msg.type === 'trackingerror') {
-        console.error('Camera tracker failed inside the game WebView', msg.message ?? 'Unknown error');
+        console.error(
+          'Camera tracker failed inside the game WebView',
+          msg.message ?? 'Unknown error'
+        );
         return;
       }
 
@@ -818,7 +854,7 @@ export default function GameScreen() {
         });
         if (mode === 'daily' && score >= target) completeDaily(dayKey());
         if (challengeCode && score >= target) addChallengeWon();
-        submitScores(score);
+        void submitScores(score, tutSecs);
         const newStage = computeEvolutionStage(
           useGameStore.getState().totalTutSeconds,
           useGameStore.getState().lastActivityDate
@@ -897,6 +933,7 @@ export default function GameScreen() {
         levelId: String(nextLevelId),
         backgroundMode,
         record: recordRun ? 'true' : 'false',
+        ...(trackingMode === 'form-test' ? { trackingMode: 'form-test' } : {}),
       },
     });
   };
@@ -918,7 +955,8 @@ export default function GameScreen() {
 
   // Camera permission gate
   const needsCameraPermission = permission != null && !permission.granted;
-  const microphonePermissionLoading = recordRun && !recordWithoutAudio && microphonePermission == null;
+  const microphonePermissionLoading =
+    recordRun && !recordWithoutAudio && microphonePermission == null;
   if (permission == null || microphonePermissionLoading) {
     return <View style={{ flex: 1, backgroundColor: '#0F172A' }} />;
   }
@@ -943,9 +981,9 @@ export default function GameScreen() {
         </Text>
         <Text style={{ color: '#CBD5E1', fontSize: 15, lineHeight: 22 }}>
           Flap Fit uses your front camera to track your body movement.{'\n\n'}All tracking runs on
-          your device. Video is recorded only when you explicitly select Record &amp; Play. With your
-          permission, that recording includes microphone sound. It is kept temporarily for sharing
-          and is not uploaded by Flap Fit.
+          your device. Video is recorded only when you explicitly select Record &amp; Play. With
+          your permission, that recording includes microphone sound. It is kept temporarily for
+          sharing and is not uploaded by Flap Fit.
           {!permission.canAskAgain
             ? '\n\nCamera access is currently blocked. Open your phone settings to allow it.'
             : ''}
@@ -976,7 +1014,10 @@ export default function GameScreen() {
   }
 
   const needsMicrophonePermission =
-    recordRun && !recordWithoutAudio && microphonePermission != null && !microphonePermission.granted;
+    recordRun &&
+    !recordWithoutAudio &&
+    microphonePermission != null &&
+    !microphonePermission.granted;
   if (needsMicrophonePermission) {
     return (
       <View
@@ -1054,7 +1095,12 @@ export default function GameScreen() {
           key={runKey}
           source={webSource}
           style={{ flex: 1, backgroundColor: level.sky1 }}
-          originWhitelist={['*']}
+          originWhitelist={[
+            'about:blank',
+            'https://flapfit.local/*',
+            'blob:https://flapfit.local/*',
+          ]}
+          onShouldStartLoadWithRequest={(request) => isAllowedGameNavigation(request.url)}
           javaScriptEnabled
           domStorageEnabled
           allowFileAccess={false}
@@ -1063,6 +1109,7 @@ export default function GameScreen() {
           allowsInlineMediaPlayback
           mediaPlaybackRequiresUserAction={false}
           mediaCapturePermissionGrantType="grant"
+          mixedContentMode="never"
           onMessage={onMessage}
           allowsFullscreenVideo={false}
           bounces={false}

@@ -1,5 +1,12 @@
 import { computeBirdRadii } from '../html/scriptGame';
-import { computeEvolutionStage, EVO_EMOJIS, EVO_NAMES, EVO_THRESHOLDS } from '../store';
+import {
+  computeEvolutionStage,
+  deriveDailyExerciseTut,
+  EVO_EMOJIS,
+  EVO_NAMES,
+  EVO_THRESHOLDS,
+  type SessionRecord,
+} from '../store';
 
 describe('evolution core', () => {
   it('defines all ten tracked-training-time stages', () => {
@@ -23,5 +30,27 @@ describe('evolution core', () => {
 
     expect(final.collision).toBe(start.collision);
     expect(final.visual).toBe(start.visual);
+  });
+
+  it('keeps daily chart totals separated by exercise', () => {
+    const base = {
+      iso: '2026-09-15T12:00:00.000Z',
+      day: '2026-09-15',
+      score: 10,
+      pushups: 0,
+      mode: 'level',
+      levelId: 1,
+    } satisfies Omit<SessionRecord, 'exercise' | 'tutSeconds'>;
+
+    const totals = deriveDailyExerciseTut([
+      { ...base, exercise: 'pushups', tutSeconds: 30 },
+      { ...base, exercise: 'pushups', tutSeconds: 15 },
+      { ...base, exercise: 'squats', tutSeconds: 40 },
+      { ...base, tutSeconds: 90 },
+    ]);
+
+    expect(totals).toEqual({
+      '2026-09-15': { pushups: 45, squats: 40 },
+    });
   });
 });

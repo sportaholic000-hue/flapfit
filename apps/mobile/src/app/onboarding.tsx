@@ -179,9 +179,9 @@ export default function OnboardingScreen() {
           3. 3-2-1… GO! The bird follows your movement in real time.
         </Text>
         <Text style={{ color: '#6B7280', fontSize: 12, marginTop: 6 }}>
-          Normal Play processes camera images only on your device. Record &amp; Play can include your
-          microphone audio if you allow it and creates a temporary video that you decide whether and
-          where to share.
+          Normal Play processes camera images only on your device. Record &amp; Play can include
+          your microphone audio if you allow it and creates a temporary video that you decide
+          whether and where to share.
         </Text>
       </View>
       <TouchableOpacity

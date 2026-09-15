@@ -78,6 +78,7 @@ var gameOverSent = false;
 var lastVideoTime = -1;
 var calibrationReadyAt = 0;
 var CALIBRATION_START_DELAY_MS = 2000;
+var trackingLoopActive = false;
 
 for (var ci = 0; ci < 5; ci++) {
   clouds.push({ x: Math.random(), y: 0.08 + Math.random() * 0.3, s: 0.5 + Math.random() * 0.8, v: 6 + Math.random() * 10 });
@@ -124,6 +125,22 @@ function startCamera() {
     video.srcObject = stream;
     return video.play();
   });
+}
+
+function stopCameraAndTracking() {
+  trackingLoopActive = false;
+  if (video && video.srcObject && typeof video.srcObject.getTracks === 'function') {
+    var sourceTracks = video.srcObject.getTracks();
+    for (var sti = 0; sti < sourceTracks.length; sti++) {
+      try { sourceTracks[sti].stop(); } catch (e) {}
+    }
+  }
+  try { if (video) { video.pause(); video.srcObject = null; } } catch (e) {}
+  if (landmarker) {
+    try { if (typeof landmarker.close === 'function') { landmarker.close(); } } catch (e) {}
+    landmarker = null;
+  }
+  releaseTrackerBlobUrls();
 }
 
 // Production uses the exact MediaPipe 0.10.14 runtime and pose model bundled
@@ -307,6 +324,7 @@ function initCameraFlow() {
     if (usesExperimentalFormTracking()) { resetExperimentalFormTracking(); }
     state = 'waitTop';
     stabBuf = [];
+    trackingLoopActive = true;
     requestAnimationFrame(trackLoop);
   }).catch(function (err) {
     console.error(err);
@@ -317,6 +335,7 @@ function initCameraFlow() {
 }
 
 function trackLoop() {
+  if (!trackingLoopActive) { return; }
   if (landmarker && video.readyState >= 2 && video.currentTime !== lastVideoTime) {
     lastVideoTime = video.currentTime;
     try {
@@ -365,8 +384,11 @@ function trackLoop() {
     } catch (e) { console.error(e); }
   }
   updateDot();
-  requestAnimationFrame(trackLoop);
+  if (trackingLoopActive) { requestAnimationFrame(trackLoop); }
 }
+
+window.addEventListener('pagehide', stopCameraAndTracking);
+window.addEventListener('beforeunload', stopCameraAndTracking);
 
 function updateDot() {
   var activeY = getTrackY();

@@ -1,6 +1,6 @@
 # Google Play declarations worksheet
 
-Last source review: 2026-09-14
+Last source review: 2026-09-15
 
 This worksheet covers the current Flap Fit 1.0 source and must be checked against the exact AAB and
 live Supabase configuration before the Play Console forms are submitted.
@@ -30,13 +30,13 @@ Official references:
 For every row below select **Collected**, **Not shared**, **Not processed ephemerally**, and
 **Users can choose whether this data is collected**.
 
-| Google category and data type               | What is sent                                               | Purpose                                                 |
-| ------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------- |
-| Personal info > Name                        | User-chosen player nickname                                | App functionality, Account management                   |
-| Personal info > User IDs                    | Supabase anonymous account ID                              | App functionality, Account management                   |
-| Health and fitness > Fitness info           | Exercise category associated with online competition       | App functionality                                       |
-| App activity > Other actions                | Leaderboard scores, challenge targets, codes, and attempts | App functionality                                       |
-| App activity > Other user-generated content | Player names plus report/block submissions                 | App functionality, Fraud prevention/security/compliance |
+| Google category and data type               | What is sent                                                                 | Purpose                                                 |
+| ------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Personal info > Name                        | User-chosen player nickname                                                  | App functionality, Account management                   |
+| Personal info > User IDs                    | Supabase anonymous account ID                                                | App functionality, Account management                   |
+| Health and fitness > Fitness info           | Exercise category and active run duration associated with online competition | App functionality                                       |
+| App activity > Other actions                | Leaderboard scores, challenge targets, codes, and attempts                   | App functionality                                       |
+| App activity > Other user-generated content | Player names plus report/block submissions                                   | App functionality, Fraud prevention/security/compliance |
 
 Before the final form, inspect the live Supabase logging configuration. Add **App info and
 performance > Diagnostics** only if request/error telemetry is retained beyond short-lived request
@@ -94,11 +94,13 @@ Treat Google Play's account-deletion rule as applicable.
 - Report / Block is clearly labeled beside public leaderboard results, challenges, and challenge
   attempts.
 - Reports are persisted for moderation and blocked users are hidden from the reporter.
-- **[REQUIRED INPUT: operational moderator, support inbox, response SLA, escalation/removal process]**
+- The Flap Fit operator monitors support@flapfitapp.com. Response targets, takedown decisions, and
+  urgent escalation are documented in `moderation-runbook.md`.
 
 ## Other Play Console declarations
 
-- Ads: **No** for 1.0. The current binary has no ad SDK.
+- Ads, SDK data collection, and in-app purchases: **Do not submit these answers yet. Re-evaluate from
+  the exact monetized build after the approved ad and RevenueCat integration.**
 - App access: no login credentials required. Explain the optional anonymous Compete profile.
 - Target audience: **13 and older**. Do not select children under 13 unless the app and website are
   intentionally brought into full Families-policy compliance.

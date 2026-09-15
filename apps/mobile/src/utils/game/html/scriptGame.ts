@@ -28,6 +28,8 @@ var tutReportedSeconds = 0;
 var fatalFormKey = '';
 var fatalFormSince = 0;
 var FATAL_FORM_GRACE_MS = 350;
+var protectedTrackingLossSince = 0;
+var PROTECTED_TRACKING_LOSS_GRACE_MS = 1600;
 
 function fatalFormFailureConfirmed(check, now) {
   if (!check || !check.fatal) {
@@ -42,6 +44,19 @@ function fatalFormFailureConfirmed(check, now) {
     return false;
   }
   return now - fatalFormSince >= FATAL_FORM_GRACE_MS;
+}
+
+function protectedTrackingLossConfirmed(now) {
+  var protectedExercise = CONFIG.exercise === 'pullups' || CONFIG.exercise === 'pushups';
+  if (!usesExperimentalFormTracking() || !protectedExercise || trackingFresh()) {
+    protectedTrackingLossSince = 0;
+    return false;
+  }
+  if (!protectedTrackingLossSince) {
+    protectedTrackingLossSince = now;
+    return false;
+  }
+  return now - protectedTrackingLossSince >= PROTECTED_TRACKING_LOSS_GRACE_MS;
 }
 
 // ---------- Composed-run recording ----------
@@ -339,7 +354,10 @@ function endGame() {
   state = 'over';
   beep(140, 0.4, 'sawtooth', 0.1);
   burst(birdX(), birdScreenY(), CONFIG.bird.body, 26);
+  var recorderWasRunning = !!runRecorder;
   stopRunRecording();
+  if (recorderWasRunning) { setTimeout(stopCameraAndTracking, 200); }
+  else { stopCameraAndTracking(); }
   postRN({
     type: 'gameover',
     score: score,
@@ -670,6 +688,10 @@ function loop(now) {
       endGame();
       return;
     }
+    if (protectedTrackingLossConfirmed(now)) {
+      endGame();
+      return;
+    }
 
     // Active training/play time. Pose/form verification is not implemented yet.
     tutSeconds += dt;
@@ -723,6 +745,9 @@ function loop(now) {
       ? validateExperimentalGameplay(norm)
       : { valid: true, message: '' };
     if (fatalFormFailureConfirmed(resumeFormCheck, now)) {
+      endGame();
+      return;
+    } else if (protectedTrackingLossConfirmed(now)) {
       endGame();
       return;
     } else if (trackingFresh() && resumeFormCheck.valid) {

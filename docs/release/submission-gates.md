@@ -14,30 +14,39 @@ final review decisions.
 - [x] The locked dependency graph has a documented reachability review; current registry advisories
       are non-critical and predominantly Expo/Jest build tooling, not untrusted-data paths in the
       shipped game.
-- [x] Expo Doctor 1.20.4 passes all 21 checks on the current release candidate; it was run with a
-      temporary Yarn download and left the dependency lockfile unchanged.
+- [x] Expo Doctor 1.20.4 passes all 21 checks on the current candidate. It ran as a temporary Yarn
+      download and left the dependency lockfile unchanged.
 - [x] Android compile SDK and target SDK are 36.
 - [x] Android production profile is configured to build an AAB.
 - [x] Expo SDK 57's automatic EAS iOS image uses Xcode 26.6, meeting Apple's current upload
       toolchain requirement.
 - [x] iOS export compliance declares no non-exempt encryption.
-- [x] iOS permission surface is camera only.
+- [x] iOS permission surface is camera plus optional microphone access requested only for Record &
+      Play.
 - [x] The app-level iOS privacy manifest declares no tracking, the optional competition data types,
       and the required-reason APIs used by the locked native SDKs.
-- [x] Android permission surface is INTERNET, VIBRATE, and CAMERA only.
+- [x] Android permission surface is INTERNET, VIBRATE, CAMERA, and RECORD_AUDIO. Microphone access
+      is requested only for Record & Play.
 - [x] MediaPipe model/runtime assets and exercise/evolution art are bundled locally.
-- [x] Camera recording is local, silent, temporary, and user-shared.
+- [x] Camera recording is local, temporary, and user-shared. It can include the user's voice and
+      workout sounds when microphone permission is granted.
 - [x] Arbitrary cleartext network traffic is disabled for both iOS and Android release builds.
 - [x] Android cloud backup is disabled so local training state and anonymous auth tokens are not
       restored onto another device unexpectedly.
 - [x] The unsupported automatic interface-style override is removed; app screens keep their explicit
       light styling without adding an unnecessary native dependency.
-- [x] Online competition has name filtering, report, block, deletion, and rate limiting.
+- [x] Online competition has shared client/server name validation, report, block, deletion, run and
+      challenge rate limits, replay protection, plausibility checks, and a durable result outbox.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [x] Re-run TypeScript, tests, format/lint, and both production-style local Expo exports on the
-      current release candidate.
+- [x] The current pre-test candidate passes TypeScript, 24 automated tests, repository formatting,
+      lint, and production-style local Expo exports for both iOS and Android.
+- [ ] Rerun the same checks after tomorrow's physical testing and any resulting source changes.
+- [ ] Physically approve Form Test tracking for all six exercises, then promote it from the
+      development-only comparison toggle to the production tracker before enabling global
+      leaderboards. A server-issued run prevents fabricated/replayed submissions, but it cannot by
+      itself prove exercise form on a modified client.
 - [ ] Build the production iOS artifact and test through TestFlight on a physical iPhone.
 - [ ] Build the production Android AAB and test on Play internal testing / physical Android.
 - [ ] Test camera denial/re-enable, low light, interrupted recording, offline mode, API failure,
@@ -52,8 +61,8 @@ The release validator currently requires:
 - [x] `EXPO_PUBLIC_TERMS_URL`
 - [x] `EXPO_PUBLIC_ACCOUNT_DELETION_URL`
 - [x] `EXPO_PUBLIC_MARKETING_URL`
-- [ ] `EXPO_PUBLIC_SUPABASE_URL`
-- [ ] `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- [x] `EXPO_PUBLIC_SUPABASE_URL`
+- [x] `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 
 Owner/legal inputs still required:
 
@@ -65,25 +74,33 @@ Owner/legal inputs still required:
       required before selecting those storefronts.
 - [x] Intended audience minimum age is 13. Do not select Apple's Kids Category or Google Families
       unless the product is intentionally changed to comply with those programs.
-- [ ] Moderation owner, response SLA, takedown/escalation process, and documented handling of urgent
-      or illegal reports.
+- [x] Moderation owner, response targets, takedown/escalation process, and handling of urgent or
+      illegal reports are documented in `moderation-runbook.md`.
 
 ## Backend gates
 
-- [ ] Create/select a dedicated Flap Fit Supabase organization; do not use the WUF organization.
-- [ ] Obtain exact Supabase project cost and receive explicit cost confirmation.
-- [ ] Create a dedicated Flap Fit project in the chosen region.
-- [ ] Enable anonymous authentication.
-- [ ] Apply the checked-in schema and deploy `flapfit-game` with JWT verification enabled.
-- [ ] Confirm HTTPS, RLS/table privilege posture, authentication, name filtering, Terms enforcement,
-      leaderboard ordering, challenge limits, report/block behavior, and full account deletion.
+- [x] Dedicated Flap Fit Supabase organization is separate from WUF.
+- [x] Current project is on Supabase Free at $0 while within its published quotas. A production
+      backup/availability decision remains below.
+- [x] Dedicated Flap Fit project is healthy in AWS US East (Ohio), `us-east-2`.
+- [x] Anonymous authentication is enabled.
+- [x] All checked-in migrations are live and `flapfit-game` version 3 is deployed with JWT
+      verification enabled.
+- [x] Live verification covers Terms enforcement, leaderboard read, legacy claimed-score rejection,
+      verified-run creation/finalization, idempotent retry, replay rejection, implausible-result
+      rejection, all-exercise challenges, and profile deletion.
+- [x] Every public application table has RLS enabled. Protected score writes are service-only.
 - [x] Define and document source-controlled retention for expired challenges and moderation reports.
 - [x] The checked-in retention migration deletes expired 30-day challenges daily, removes resolved
       moderation reports after 180 days, minimizes account-deletion records, and prunes Cron history.
-- [ ] Verify the retention migration and scheduled jobs in the dedicated production Supabase project,
-      record the provider's exact service-log and backup periods, and copy them into the public
-      privacy policy.
-- [ ] Run Supabase security and performance advisors and resolve launch-impacting findings.
+- [x] Retention migrations and the daily cleanup job are live. The public privacy draft records the
+      current Free-plan observability and backup limitations.
+- [x] Supabase security and performance advisors were rerun after the verified-run migrations. The
+      challenge foreign-key index was added; remaining notices concern Supabase-managed Cron tables,
+      password protection unused by anonymous-only Auth, and expected unused indexes on empty data.
+- [ ] Decide whether to upgrade to Supabase Pro before public launch. The Free plan has no automatic
+      daily database backups and may pause a low-activity project after seven days; Pro currently
+      provides seven days of daily backups and avoids inactivity pausing.
 
 ## Website and legal gates shared by both stores
 
@@ -108,8 +125,8 @@ Owner/legal inputs still required:
       production build validator while excluding database migrations from the app build context.
 - [x] The app is linked to the existing `@sportaholic/flapfit` EAS project and the checked-in project
       ID matches the remote project.
-- [ ] Populate the currently empty EAS `production` environment with the seven validated public
-      release values.
+- [x] EAS build profiles contain the seven validated public release values. No service-role secret is
+      present in the mobile configuration.
 - [ ] Support email/form is visible and functional.
 - [ ] Privacy policy identifies data, purposes, providers, retention, deletion, user rights, and
       international transfers where applicable.
@@ -148,12 +165,13 @@ Owner/legal inputs still required:
 - [ ] Confirm the uploaded AAB targets API 36 and review the Play-generated permission/device catalog
       before production rollout.
 
-## Flap Fit 1.0 monetization declaration
+## Flap Fit 1.0 monetization gate
 
-Flap Fit 1.0 is ad-free and contains no ad SDK. Answer **No ads** in both stores.
+The Expo Go checkpoint is intentionally ad-free. It is not the final monetized store candidate. Do
+not complete either store's ads, purchases, privacy, or reviewer declarations until the approved ad
+and RevenueCat implementation exists in the exact submitted source and has passed signed-build tests.
 
-Future ads must not be added to these declarations until the source actually includes an approved ad
-SDK and consent/privacy work is complete. The approved future placement strategy is:
+Approved placement strategy:
 
 - no automatic ad when a result screen appears;
 - eligible only after Done, Try Again, or Next Level;
@@ -161,3 +179,9 @@ SDK and consent/privacy work is complete. The approved future placement strategy
 - never during recording or sharing;
 - ad failure never blocks the selected action; and
 - prevent stale or duplicate ad displays.
+
+- [ ] After tomorrow's Expo gameplay approval, integrate the approved ad and RevenueCat design in a
+      native build, add consent/privacy handling for selected launch countries, and test both paid
+      and unpaid paths in TestFlight and Play internal testing.
+- [ ] Update the store listing, privacy policy, reviewer notes, Apple App Privacy, Google Data Safety,
+      Ads declaration, and in-app-purchase declarations from the exact monetized build.

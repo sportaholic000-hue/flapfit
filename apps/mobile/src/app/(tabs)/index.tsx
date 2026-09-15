@@ -199,8 +199,10 @@ export default function HomeScreen() {
   };
 
   const exDescriptions: Record<string, string> = {
-    squats: 'Stand tall = top, deep squat = bottom. Phone on the floor or a chair, 1.5–2m in front.',
-    pullups: 'Chin at bar = top, arms fully locked = bottom. Phone on a chair or higher, facing you.',
+    squats:
+      'Stand tall = top, deep squat = bottom. Phone on the floor or a chair, 1.5–2m in front.',
+    pullups:
+      'Chin at bar = top, arms fully locked = bottom. Phone on a chair or higher, facing you.',
     lateralraise:
       'Arms at shoulder height = top, arms at sides = bottom. Phone on a chair or higher, about 2m in front.',
     biceps:
@@ -460,10 +462,7 @@ export default function HomeScreen() {
               }}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Camera
-                  size={23}
-                  color={backgroundMode === 'camera' ? ACCENT_BLUE : '#64748B'}
-                />
+                <Camera size={23} color={backgroundMode === 'camera' ? ACCENT_BLUE : '#64748B'} />
                 {backgroundMode === 'camera' ? (
                   <CheckCircle2 size={19} color={ACCENT_BLUE} fill="#FFFFFF" />
                 ) : null}
@@ -495,7 +494,7 @@ export default function HomeScreen() {
                 Camera Tracking Test
               </Text>
               <Text style={{ color: '#64748B', fontSize: 12, lineHeight: 17 }}>
-                Compare the approved tracker with invisible form checks. No skeleton is displayed.
+                Compare the current tracker with invisible form checks. No skeleton is displayed.
               </Text>
             </View>
             <View style={{ flexDirection: 'row', gap: 10 }}>

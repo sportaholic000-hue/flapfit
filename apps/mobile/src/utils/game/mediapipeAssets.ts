@@ -129,12 +129,8 @@ export async function readMediaPipeAssetPayload(
   assets: PreparedMediaPipeAssets,
   useSimd: boolean
 ): Promise<MediaPipeAssetPayload> {
-  const loaderName = useSimd
-    ? 'vision_wasm_internal.js'
-    : 'vision_wasm_nosimd_internal.js';
-  const wasmName = useSimd
-    ? 'vision_wasm_internal.wasm'
-    : 'vision_wasm_nosimd_internal.wasm';
+  const loaderName = useSimd ? 'vision_wasm_internal.js' : 'vision_wasm_nosimd_internal.js';
+  const wasmName = useSimd ? 'vision_wasm_internal.wasm' : 'vision_wasm_nosimd_internal.wasm';
 
   const [module, loader, wasm, model] = await Promise.all([
     new File(assets.fileUris['vision_bundle.mjs']).base64(),

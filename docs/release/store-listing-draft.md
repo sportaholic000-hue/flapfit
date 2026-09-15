@@ -30,15 +30,15 @@ training time, unlock levels, and watch your chosen bird evolve through ten incr
 stages. Your evolution bird is also the bird you fly.
 
 Choose the colorful Sky game or place the pipes and bird over your live camera view. Record & Play
-can create a silent, temporary gameplay video on your phone so you can share a run using your normal
-system share sheet.
+can create a temporary gameplay video on your phone, including your voice and workout sounds when
+you allow microphone access, so you can share a run using your normal system share sheet.
 
 Compete is optional. Accept the community rules to post an anonymous player name and score, climb
 bodyweight-exercise leaderboards, or challenge a friend with a short code. No email or password is
 required, and the main game works without Compete.
 
 Camera pose estimation runs on your device. Normal Play does not record video, and Flap Fit does not
-upload Record & Play videos. Flap Fit 1.0 has no ads or in-app purchases.
+upload Record & Play videos.
 
 Flap Fit is a fitness game, not a medical device. Tracking, scores, and training-time totals are
 estimates. Train safely and consult a qualified health professional when appropriate.
@@ -62,6 +62,10 @@ Store-listing media belongs in `apps/mobile/store-assets`. Run
 `corepack yarn workspace mobile release:assets` before either submission. The source iOS icon is
 1024 x 1024 and has no transparent pixels; the Google Play store icon and feature graphic remain
 separate deliverables.
+
+The final description must add accurate advertising and purchase wording after the approved ad and
+RevenueCat implementation is present in the exact store build. Do not reuse the interim ad-free Expo
+checkpoint declaration.
 
 ## Required links and contacts
 

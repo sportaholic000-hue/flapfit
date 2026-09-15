@@ -115,4 +115,3 @@ function normalizeSkinId(skinId: string): BirdStageArtSkinId {
 export function getBirdStageArt(skinId: string, stage: number): ImageSourcePropType {
   return BIRD_STAGE_ART[normalizeSkinId(skinId)][clampBirdStage(stage)];
 }
-

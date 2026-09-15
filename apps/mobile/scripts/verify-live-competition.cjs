@@ -1,0 +1,145 @@
+const { createClient } = require('@supabase/supabase-js');
+
+const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const key = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+const termsVersion = '2026-09-14';
+
+if (!url || !key) {
+  throw new Error('Supabase public configuration is required.');
+}
+
+const client = createClient(url, key, {
+  auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
+});
+
+async function request(path, { method = 'GET', body, includeTerms = true } = {}) {
+  const session = await client.auth.getSession();
+  const token = session.data.session?.access_token;
+  if (!token) throw new Error('Anonymous verification session is unavailable.');
+  const response = await fetch(`${url}/functions/v1/flapfit-game${path}`, {
+    method,
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      ...(includeTerms ? { 'X-FlapFit-Terms-Version': termsVersion } : {}),
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const payload = await response.json().catch(() => null);
+  return { status: response.status, payload };
+}
+
+function expectStatus(label, result, expected) {
+  if (result.status !== expected) {
+    throw new Error(`${label}: expected ${expected}, received ${result.status}.`);
+  }
+  console.log(`${label}: ${result.status}`);
+}
+
+async function main() {
+  const signIn = await client.auth.signInAnonymously();
+  if (signIn.error || !signIn.data.session)
+    throw signIn.error ?? new Error('Anonymous sign-in failed.');
+
+  try {
+    expectStatus(
+      'Terms required',
+      await request('/leaderboard?exercise=pushups', { includeTerms: false }),
+      428
+    );
+    expectStatus('Leaderboard read', await request('/leaderboard?exercise=pushups'), 200);
+    expectStatus(
+      'Legacy claimed score rejected',
+      await request('/leaderboard', {
+        method: 'POST',
+        body: { playerName: 'LaunchTest', exercise: 'pushups', score: 100 },
+      }),
+      410
+    );
+
+    const run = await request('/runs', {
+      method: 'POST',
+      body: { kind: 'leaderboard', exercise: 'pushups' },
+    });
+    expectStatus('Verified run created', run, 201);
+    const runId = run.payload?.run_id;
+    if (typeof runId !== 'string') throw new Error('Verified run did not return an ID.');
+
+    const finalBody = { runId, playerName: 'LaunchTest', score: 1, durationMs: 1000 };
+    expectStatus(
+      'Verified run finalized',
+      await request('/runs/finalize', { method: 'POST', body: finalBody }),
+      200
+    );
+    expectStatus(
+      'Exact retry is idempotent',
+      await request('/runs/finalize', { method: 'POST', body: finalBody }),
+      200
+    );
+    expectStatus(
+      'Changed replay rejected',
+      await request('/runs/finalize', {
+        method: 'POST',
+        body: { ...finalBody, score: 2 },
+      }),
+      409
+    );
+
+    const impossibleRun = await request('/runs', {
+      method: 'POST',
+      body: { kind: 'leaderboard', exercise: 'pullups' },
+    });
+    expectStatus('Second verified run created', impossibleRun, 201);
+    expectStatus(
+      'Implausible result rejected',
+      await request('/runs/finalize', {
+        method: 'POST',
+        body: {
+          runId: impossibleRun.payload?.run_id,
+          playerName: 'LaunchTest',
+          score: 1000,
+          durationMs: 1000,
+        },
+      }),
+      422
+    );
+
+    const challenge = await request('/challenges', {
+      method: 'POST',
+      body: { creatorName: 'LaunchTest', targetScore: 5 },
+    });
+    expectStatus('Challenge created', challenge, 201);
+    const challengeRun = await request('/runs', {
+      method: 'POST',
+      body: {
+        kind: 'challenge',
+        exercise: 'shoulderpress',
+        challengeCode: challenge.payload?.code,
+      },
+    });
+    expectStatus('All-exercise challenge run created', challengeRun, 201);
+    expectStatus(
+      'Challenge run finalized',
+      await request('/runs/finalize', {
+        method: 'POST',
+        body: {
+          runId: challengeRun.payload?.run_id,
+          playerName: 'LaunchTest',
+          score: 1,
+          durationMs: 1000,
+        },
+      }),
+      200
+    );
+  } finally {
+    const deletion = await request('/me', { method: 'DELETE', includeTerms: false });
+    expectStatus('Temporary verification profile deleted', deletion, 200);
+    await client.auth.signOut({ scope: 'local' });
+  }
+}
+
+main().catch((error) => {
+  console.error(error instanceof Error ? error.message : error);
+  process.exitCode = 1;
+});

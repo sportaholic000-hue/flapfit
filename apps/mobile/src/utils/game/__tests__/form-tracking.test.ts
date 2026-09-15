@@ -193,6 +193,55 @@ describe('experimental form tracking', () => {
       fatalKey: 'pullup-feet',
     });
 
+    const oneFootDown = pose([
+      ...mirroredPair(11, 12, 0.44, 0.44),
+      ...mirroredPair(13, 14, 0.44, 0.28),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.65),
+      [27, point(0.45, 0.92)],
+      [28, point(0.55, 0.73)],
+    ]);
+    harness.update(oneFootDown, 4240);
+    expect(harness.validateGameplay(0)).toMatchObject({
+      valid: false,
+      fatal: true,
+      fatalKey: 'pullup-feet',
+    });
+
+    const oneFootHidden = pose([
+      ...mirroredPair(11, 12, 0.44, 0.44),
+      ...mirroredPair(13, 14, 0.44, 0.28),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.65),
+      [27, { x: 0.45, y: 0.92, visibility: 0.1 }],
+      [28, point(0.55, 0.73)],
+    ]);
+    harness.update(oneFootHidden, 4250);
+    expect(harness.validateGameplay(0)).toMatchObject({ valid: false, fatal: false });
+    harness.update(oneFootHidden, 5500);
+    expect(harness.validateGameplay(0)).toMatchObject({
+      valid: false,
+      fatal: true,
+      fatalKey: 'pullup-feet-unverified',
+    });
+
+    const wristTemporarilyHidden = pose([
+      ...mirroredPair(11, 12, 0.44, 0.44),
+      ...mirroredPair(13, 14, 0.44, 0.28),
+      [15, { x: 0.44, y: 0.14, visibility: 0.1 }],
+      [16, point(0.56, 0.14)],
+      ...mirroredPair(23, 24, 0.44, 0.65),
+      ...mirroredPair(27, 28, 0.45, 0.73),
+    ]);
+    harness.update(wristTemporarilyHidden, 5600);
+    expect(harness.validateGameplay(0)).toMatchObject({ valid: false, fatal: false });
+    harness.update(wristTemporarilyHidden, 6900);
+    expect(harness.validateGameplay(0)).toMatchObject({
+      valid: false,
+      fatal: true,
+      fatalKey: 'pullup-grip-unverified',
+    });
+
     const releasedBar = pose([
       ...mirroredPair(11, 12, 0.44, 0.44),
       ...mirroredPair(13, 14, 0.44, 0.38),
@@ -200,7 +249,7 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.65),
       ...mirroredPair(27, 28, 0.45, 0.73),
     ]);
-    harness.update(releasedBar, 4248);
+    harness.update(releasedBar, 7000);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,

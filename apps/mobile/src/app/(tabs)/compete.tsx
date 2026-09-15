@@ -27,7 +27,13 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import KeyboardAvoidingAnimatedView from '@/components/KeyboardAvoidingAnimatedView';
 import { RELEASE_LINKS } from '@/config/release';
-import { competitionIsConfigured, competitionRequest } from '@/services/competitionApi';
+import {
+  competitionIsConfigured,
+  competitionPlayerNameError,
+  competitionRequest,
+  flushPendingCompetitionResults,
+  normalizeCompetitionPlayerName,
+} from '@/services/competitionApi';
 import { EXERCISE_IMAGES } from '@/utils/game/exerciseImages';
 import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
 
@@ -39,6 +45,7 @@ type LeaderboardRow = {
   score: number;
   exercise: string;
   is_me: boolean;
+  rank: number;
 };
 
 type ChallengeData = {
@@ -329,8 +336,7 @@ function LeaderboardPanel({
   });
 
   const rows = data ?? [];
-  const myIndex = rows.findIndex((r) => r.is_me);
-  const myRow = myIndex >= 0 ? rows[myIndex] : null;
+  const myRow = rows.find((r) => r.is_me) ?? null;
 
   const medalColors = ['#F59E0B', '#9CA3AF', '#B45309'];
 
@@ -426,7 +432,7 @@ function LeaderboardPanel({
         >
           <Trophy size={13} color="#B45309" />
           <Text style={{ fontWeight: '800', color: '#B45309', fontSize: 12 }}>
-            You're #{myIndex + 1} · {myRow.score} pipes
+            You're #{myRow.rank} · {myRow.score} pipes
           </Text>
         </View>
       )}
@@ -463,11 +469,15 @@ function LeaderboardPanel({
             >
               {/* Rank */}
               <View style={{ width: 26, alignItems: 'center' }}>
-                {idx < 3 ? (
-                  <Medal size={17} color={medalColors[idx]} fill={medalColors[idx]} />
+                {row.rank <= 3 ? (
+                  <Medal
+                    size={17}
+                    color={medalColors[row.rank - 1]}
+                    fill={medalColors[row.rank - 1]}
+                  />
                 ) : (
                   <Text style={{ color: '#94A3B8', fontWeight: '800', fontSize: 12 }}>
-                    {idx + 1}
+                    {row.rank}
                   </Text>
                 )}
               </View>
@@ -533,7 +543,7 @@ export default function CompeteScreen() {
 
   const [nameDraft, setNameDraft] = useState(playerName);
   const hasLoadedNameDraft = useRef(false);
-  const [nameSaveState, setNameSaveState] = useState<'idle' | 'saved' | 'empty'>('idle');
+  const [nameSaveState, setNameSaveState] = useState<'idle' | 'saved' | 'invalid'>('idle');
   const [targetDraft, setTargetDraft] = useState('10');
   const [joinCode, setJoinCode] = useState('');
   const [activeCode, setActiveCode] = useState<string | null>(null);
@@ -542,7 +552,7 @@ export default function CompeteScreen() {
   const [boardTab, setBoardTab] = useState<LeaderboardExercise>('pushups');
   const [showCompetitionTerms, setShowCompetitionTerms] = useState(false);
 
-  const hasName = playerName.trim().length > 0;
+  const hasName = competitionPlayerNameError(playerName) === null;
   const hasAcceptedCompetitionTerms = competitionTermsVersion === COMPETITION_TERMS_VERSION;
 
   // The persisted store hydrates asynchronously. Reflect the stored name once
@@ -554,6 +564,18 @@ export default function CompeteScreen() {
     setNameDraft(playerName);
     if (playerName.trim().length > 0) setNameSaveState('saved');
   }, [hydrated, playerName]);
+
+  useEffect(() => {
+    if (!competitionIsConfigured || !hasAcceptedCompetitionTerms) return;
+    void flushPendingCompetitionResults()
+      .then((submitted) => {
+        if (submitted > 0) {
+          queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
+          queryClient.invalidateQueries({ queryKey: ['challenge'] });
+        }
+      })
+      .catch((flushError) => console.warn('Competition results remain queued', flushError));
+  }, [hasAcceptedCompetitionTerms, queryClient]);
 
   // Challenge queries
   const challengeQuery = useQuery({
@@ -591,9 +613,9 @@ export default function CompeteScreen() {
 
   const saveName = () => {
     if (!hydrated) return;
-    const nextName = nameDraft.trim().replace(/\s+/g, ' ');
-    if (!nextName) {
-      setNameSaveState('empty');
+    const nextName = normalizeCompetitionPlayerName(nameDraft);
+    if (competitionPlayerNameError(nextName)) {
+      setNameSaveState('invalid');
       return;
     }
     setNameDraft(nextName);
@@ -727,7 +749,7 @@ export default function CompeteScreen() {
             accessibilityLiveRegion="polite"
             style={{
               color:
-                nameSaveState === 'empty'
+                nameSaveState === 'invalid'
                   ? '#DC2626'
                   : nameSaveState === 'saved' && hasName
                     ? '#15803D'
@@ -738,8 +760,8 @@ export default function CompeteScreen() {
           >
             {!hydrated
               ? 'Loading your saved player name…'
-              : nameSaveState === 'empty'
-                ? 'Enter a player name before saving.'
+              : nameSaveState === 'invalid'
+                ? competitionPlayerNameError(nameDraft)
                 : nameSaveState === 'saved' && hasName
                   ? 'Saved on this device as ' + playerName + '.'
                   : 'Tap Save or Done on the keyboard to keep your leaderboard name.'}

@@ -16,8 +16,11 @@ var pullupSetupStartedAt = null;
 var pullupSetupLastValidAt = 0;
 var pullupSetupSamples = [];
 var pullupTopReadyAt = 0;
+var pullupWristMissingAt = 0;
+var pullupFeetMissingAt = 0;
 var PULLUP_SETUP_HOLD_MS = 2000;
 var PULLUP_MOVE_BUFFER_MS = 2000;
+var PULLUP_EVIDENCE_GRACE_MS = 1200;
 
 function usesExperimentalFormTracking() {
   return CONFIG.trackingMode === 'form-test';
@@ -38,6 +41,8 @@ function resetExperimentalFormTracking() {
   pullupSetupLastValidAt = 0;
   pullupSetupSamples = [];
   pullupTopReadyAt = 0;
+  pullupWristMissingAt = 0;
+  pullupFeetMissingAt = 0;
 }
 
 function formPoint(index, minVisibility) {
@@ -106,7 +111,13 @@ function collectExperimentalFormMetrics() {
     ? wrists
     : (leftWrist || rightWrist);
   var hips = formMeanPoint([23, 24], 0.24, 1);
-  var feet = formMeanPoint([27, 28], CONFIG.exercise === 'pullups' ? 0.12 : 0.22, 1);
+  var leftFoot = formMeanPoint([27, 29, 31], CONFIG.exercise === 'pullups' ? 0.12 : 0.22, 1);
+  var rightFoot = formMeanPoint([28, 30, 32], CONFIG.exercise === 'pullups' ? 0.12 : 0.22, 1);
+  var feet = CONFIG.exercise === 'pullups'
+    ? (leftFoot && rightFoot
+      ? { x: (leftFoot.x + rightFoot.x) / 2, y: Math.max(leftFoot.y, rightFoot.y) }
+      : null)
+    : formMeanPoint([27, 28], 0.22, 1);
   var elbow = formAverageAngle([[11, 13, 15], [12, 14, 16]], pullupVisibility);
   var knee = formAverageAngle([[23, 25, 27], [24, 26, 28]], 0.22);
   var abduction = formAverageAngle([[23, 11, 13], [24, 12, 14]], 0.24);
@@ -130,6 +141,8 @@ function collectExperimentalFormMetrics() {
     supportHand: supportHand,
     hips: hips,
     feet: feet,
+    leftFoot: leftFoot,
+    rightFoot: rightFoot,
     elbowAngle: elbow.value,
     elbowCount: elbow.count,
     kneeAngle: knee.value,
@@ -276,7 +289,7 @@ function validateExperimentalCalibration(position) {
   if (CONFIG.exercise === 'pullups') {
     var pullupSetupMessage = 'PULL-UP SETUP<br><br>Stand with feet planted and hold the bar<br>Keep your full body in the camera';
     var pullupTopMessage = 'STEP 1 OF 2<br><br>Lift your feet and pull to your <b>HIGHEST</b> point<br>Bent knees are fine<br><br>Hold still…';
-    var pullupBottomMessage = 'STEP 2 OF 2<br><br>Lower to a comfortable <b>BOTTOM</b> position<br>A slight elbow bend and bent knees are fine<br>Keep at least one ankle visible<br><br>Hold still…';
+    var pullupBottomMessage = 'STEP 2 OF 2<br><br>Lower to a comfortable <b>BOTTOM</b> position<br>A slight elbow bend and bent knees are fine<br>Keep both feet visible<br><br>Hold still…';
     if (pullupFloorY === null) {
       return formInvalid(pullupSetupMessage);
     }
@@ -288,7 +301,8 @@ function validateExperimentalCalibration(position) {
       if (
         !metrics.shoulders ||
         !metrics.wrists ||
-        !metrics.feet ||
+        !metrics.leftFoot ||
+        !metrics.rightFoot ||
         metrics.elbowAngle === null ||
         metrics.wrists.y > metrics.shoulders.y - 0.015 ||
         metrics.feet.y > pullupFloorY - pullupFloorClearance ||
@@ -303,7 +317,8 @@ function validateExperimentalCalibration(position) {
     if (
       !metrics.shoulders ||
       !metrics.wrists ||
-      !metrics.feet ||
+      !metrics.leftFoot ||
+      !metrics.rightFoot ||
       metrics.elbowAngle === null ||
       metrics.feet.y > pullupFloorY - pullupFloorClearance
     ) {
@@ -418,11 +433,25 @@ function validateExperimentalGameplay(norm) {
   }
 
   if (CONFIG.exercise === 'pullups') {
-    if (!metrics.wrists) {
-      return formFatal('Bar released<br><br>Your run is ending.', 'pullup-bar');
+    var pullupNow = performance.now();
+    if (!metrics.leftWrist || !metrics.rightWrist || !metrics.wrists) {
+      if (!pullupWristMissingAt) { pullupWristMissingAt = pullupNow; }
+      if (pullupNow - pullupWristMissingAt >= PULLUP_EVIDENCE_GRACE_MS) {
+        return formFatal('Grip can no longer be verified<br><br>Your run is ending.', 'pullup-grip-unverified');
+      }
+      return formInvalid('Grip temporarily out of view<br><br>Show both hands on the bar to continue.');
     }
-    if (!metrics.feet || metrics.elbowAngle === null) {
-      return formInvalid('Form check<br><br>Keep your arms and at least one foot visible.');
+    pullupWristMissingAt = 0;
+    if (!metrics.leftFoot || !metrics.rightFoot || !metrics.feet) {
+      if (!pullupFeetMissingAt) { pullupFeetMissingAt = pullupNow; }
+      if (pullupNow - pullupFeetMissingAt >= PULLUP_EVIDENCE_GRACE_MS) {
+        return formFatal('Feet can no longer be verified<br><br>Your run is ending.', 'pullup-feet-unverified');
+      }
+      return formInvalid('Feet temporarily out of view<br><br>Show both feet clear of the floor to continue.');
+    }
+    pullupFeetMissingAt = 0;
+    if (metrics.elbowAngle === null) {
+      return formInvalid('Form check<br><br>Keep your arms visible.');
     }
     var wristAnchor = {
       x: (formTopMetrics.wrists.x + formBottomMetrics.wrists.x) / 2,

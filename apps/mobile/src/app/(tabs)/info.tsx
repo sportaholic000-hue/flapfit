@@ -224,9 +224,9 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
               <Text style={styles.modalText}>
                 Exercise involves risk. You are responsible for choosing safe movements, equipment,
                 surroundings, and effort for your ability. To the fullest extent permitted by law,
-                Flap Fit and its owner or operator are not responsible for injuries or losses arising
-                from gameplay or exercise. This does not limit rights or liability that applicable
-                law does not allow to be excluded.
+                Flap Fit and its owner or operator are not responsible for injuries or losses
+                arising from gameplay or exercise. This does not limit rights or liability that
+                applicable law does not allow to be excluded.
               </Text>
             </>
           ) : (
@@ -268,9 +268,9 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
               <Text style={styles.modalText}>
                 Exercise involves risk. You are responsible for choosing safe movements, equipment,
                 surroundings, and effort for your ability. To the fullest extent permitted by law,
-                Flap Fit and its owner or operator are not liable for injuries or losses arising from
-                gameplay or exercise. Nothing in these terms excludes rights, remedies, or liability
-                that applicable law does not allow to be excluded.
+                Flap Fit and its owner or operator are not liable for injuries or losses arising
+                from gameplay or exercise. Nothing in these terms excludes rights, remedies, or
+                liability that applicable law does not allow to be excluded.
               </Text>
             </>
           )}

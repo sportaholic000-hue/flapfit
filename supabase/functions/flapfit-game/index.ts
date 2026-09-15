@@ -16,12 +16,49 @@ const RESPONSE_HEADERS = {
 };
 
 const ALLOWED_EXERCISES = new Set(['pushups', 'squats', 'pullups']);
+const ALLOWED_GAME_EXERCISES = new Set([
+  'pushups',
+  'squats',
+  'pullups',
+  'biceps',
+  'lateralraise',
+  'shoulderpress',
+]);
 const ALLOWED_REPORT_REASONS = new Set(['inappropriate_name', 'cheating', 'harassment_or_other']);
 const ALLOWED_CONTEXT_TYPES = new Set(['leaderboard', 'challenge', 'challenge_attempt']);
 const BLOCKED_NAME_PATTERN =
   /(?:fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i;
-const MAX_DAILY_CHALLENGES = 10;
 const CURRENT_TERMS_VERSION = '2026-09-14';
+const CURRENT_RUN_RULES_VERSION = '2026-09-15.1';
+const ALLOWED_RUN_KINDS = new Set(['leaderboard', 'challenge']);
+
+class ApiError extends Error {
+  constructor(
+    readonly status: number,
+    message: string
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+function databaseApiError(error: { message?: string }): ApiError | null {
+  const message = error.message ?? '';
+  if (/run limit/i.test(message))
+    return new ApiError(429, 'Too many game runs. Try again shortly.');
+  if (/challenge limit/i.test(message)) {
+    return new ApiError(429, 'Challenge limit reached. Try again later.');
+  }
+  if (/already finalized/i.test(message))
+    return new ApiError(409, 'This game run was already submitted.');
+  if (/expired/i.test(message))
+    return new ApiError(410, 'This game run expired before it was submitted.');
+  if (/not found/i.test(message)) return new ApiError(404, 'Game run not found.');
+  if (/implausible|does not match|duration/i.test(message)) {
+    return new ApiError(422, 'This result could not be verified.');
+  }
+  return null;
+}
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: RESPONSE_HEADERS });
@@ -29,17 +66,22 @@ function json(body: unknown, status = 200): Response {
 
 async function bodyJson(req: Request): Promise<Record<string, unknown>> {
   const text = await req.text();
-  if (text.length > 4096) throw new Error('Request body is too large.');
+  if (text.length > 4096) throw new ApiError(413, 'Request body is too large.');
   if (!text) return {};
-  const value = JSON.parse(text);
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    throw new ApiError(400, 'Request body must be valid JSON.');
+  }
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    throw new Error('Request body must be an object.');
+    throw new ApiError(400, 'Request body must be an object.');
   }
   return value as Record<string, unknown>;
 }
 
 function cleanPlayerName(value: unknown): string {
-  if (typeof value !== 'string') throw new Error('Enter a player name.');
+  if (typeof value !== 'string') throw new ApiError(400, 'Enter a player name.');
   const normalized = value.normalize('NFKC');
   const withoutControls = Array.from(normalized)
     .filter((character) => {
@@ -49,7 +91,7 @@ function cleanPlayerName(value: unknown): string {
     .join('');
   const name = withoutControls.trim().replace(/\s+/g, ' ');
   if (name.length < 2 || name.length > 20) {
-    throw new Error('Player names must be 2 to 20 characters.');
+    throw new ApiError(400, 'Player names must be 2 to 20 characters.');
   }
   const moderationName = name
     .normalize('NFKD')
@@ -66,7 +108,7 @@ function cleanPlayerName(value: unknown): string {
     !/^[\p{L}\p{N}][\p{L}\p{N} _.\-']+$/u.test(name) ||
     BLOCKED_NAME_PATTERN.test(moderationName)
   ) {
-    throw new Error('Choose a different player name.');
+    throw new ApiError(400, 'Choose a different player name.');
   }
   return name;
 }
@@ -74,7 +116,7 @@ function cleanPlayerName(value: unknown): string {
 function integer(value: unknown, min: number, max: number, label: string): number {
   const number = typeof value === 'number' ? value : Number.NaN;
   if (!Number.isInteger(number) || number < min || number > max) {
-    throw new Error(`${label} must be between ${min} and ${max}.`);
+    throw new ApiError(400, `${label} must be between ${min} and ${max}.`);
   }
   return number;
 }
@@ -84,15 +126,15 @@ function uuid(value: unknown, label: string): string {
     typeof value !== 'string' ||
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
   ) {
-    throw new Error(`${label} is invalid.`);
+    throw new ApiError(400, `${label} is invalid.`);
   }
   return value;
 }
 
 function challengeCode(value: unknown): string {
-  if (typeof value !== 'string') throw new Error('Challenge code is invalid.');
+  if (typeof value !== 'string') throw new ApiError(400, 'Challenge code is invalid.');
   const code = value.trim().toUpperCase();
-  if (!/^[A-Z2-9]{6}$/.test(code)) throw new Error('Challenge code is invalid.');
+  if (!/^[A-Z2-9]{6}$/.test(code)) throw new ApiError(400, 'Challenge code is invalid.');
   return code;
 }
 
@@ -105,7 +147,10 @@ function randomCode(): string {
 function requireCurrentTerms(req: Request): string {
   const termsVersion = req.headers.get('X-FlapFit-Terms-Version');
   if (termsVersion !== CURRENT_TERMS_VERSION) {
-    throw new Error('Accept the current online competition terms before publishing results.');
+    throw new ApiError(
+      428,
+      'Accept the current online competition terms before publishing results.'
+    );
   }
   return termsVersion;
 }
@@ -156,9 +201,10 @@ Deno.serve(async (req) => {
       if (blocksResult.error) throw blocksResult.error;
       const blocked = new Set((blocksResult.data ?? []).map((row) => row.blocked_id));
       const scores = (scoresResult.data ?? [])
-        .filter((row) => !blocked.has(row.user_id))
+        .map((row, index) => ({ row, rank: index + 1 }))
+        .filter(({ row }) => !blocked.has(row.user_id))
         .slice(0, 20)
-        .map((row) => ({
+        .map(({ row, rank }) => ({
           id: row.id,
           profile_id: row.user_id,
           player_name: Array.isArray(row.profiles)
@@ -167,69 +213,86 @@ Deno.serve(async (req) => {
           score: row.score,
           exercise: row.exercise,
           is_me: row.user_id === user.id,
+          rank,
         }));
       return json({ scores });
     }
 
-    if (req.method === 'POST' && route === '/leaderboard') {
+    if (req.method === 'POST' && route === '/runs') {
       const body = await bodyJson(req);
-      const playerName = cleanPlayerName(body.playerName);
+      const kind = typeof body.kind === 'string' ? body.kind : '';
       const exercise = typeof body.exercise === 'string' ? body.exercise : '';
-      if (!ALLOWED_EXERCISES.has(exercise)) return json({ error: 'Exercise is invalid.' }, 400);
+      if (!ALLOWED_RUN_KINDS.has(kind)) return json({ error: 'Game run type is invalid.' }, 400);
+      const exerciseAllowed =
+        kind === 'leaderboard'
+          ? ALLOWED_EXERCISES.has(exercise)
+          : ALLOWED_GAME_EXERCISES.has(exercise);
+      if (!exerciseAllowed) return json({ error: 'Exercise is invalid.' }, 400);
+      const code = kind === 'challenge' ? challengeCode(body.challengeCode) : null;
+      const runResult = await admin
+        .rpc('begin_game_run', {
+          p_user_id: user.id,
+          p_kind: kind,
+          p_exercise: exercise,
+          p_challenge_code: code,
+          p_rules_version: CURRENT_RUN_RULES_VERSION,
+        })
+        .single();
+      if (runResult.error) throw databaseApiError(runResult.error) ?? runResult.error;
+      return json({ run_id: runResult.data.run_id, expires_at: runResult.data.expires_at }, 201);
+    }
+
+    if (req.method === 'POST' && route === '/runs/finalize') {
+      const body = await bodyJson(req);
+      const runId = uuid(body.runId, 'Game run');
+      const playerName = cleanPlayerName(body.playerName);
       const score = integer(body.score, 0, 100000, 'Score');
-      const now = new Date().toISOString();
-      const profileResult = await admin.from('profiles').upsert({
-        user_id: user.id,
-        player_name: playerName,
-        terms_version: requestTermsVersion ?? CURRENT_TERMS_VERSION,
-        terms_accepted_at: now,
-        updated_at: now,
+      const durationMs = integer(body.durationMs, 0, 6 * 60 * 60 * 1000, 'Run duration');
+      const finalizeResult = await admin
+        .rpc('finalize_game_run', {
+          p_run_id: runId,
+          p_user_id: user.id,
+          p_player_name: playerName,
+          p_score: score,
+          p_duration_ms: durationMs,
+          p_terms_version: requestTermsVersion ?? CURRENT_TERMS_VERSION,
+          p_rules_version: CURRENT_RUN_RULES_VERSION,
+        })
+        .single();
+      if (finalizeResult.error) {
+        throw databaseApiError(finalizeResult.error) ?? finalizeResult.error;
+      }
+      return json({
+        saved: true,
+        improved: finalizeResult.data.improved,
+        kind: finalizeResult.data.result_kind,
+        exercise: finalizeResult.data.exercise_name,
+        challenge_code: finalizeResult.data.challenge_code,
       });
-      if (profileResult.error) throw profileResult.error;
-      const scoreResult = await admin.rpc('upsert_leaderboard_score', {
-        p_user_id: user.id,
-        p_exercise: exercise,
-        p_score: score,
-      });
-      if (scoreResult.error) throw scoreResult.error;
-      return json({ saved: true });
+    }
+
+    if (req.method === 'POST' && route === '/leaderboard') {
+      return json({ error: 'Update Flap Fit to submit verified leaderboard runs.' }, 410);
     }
 
     if (req.method === 'POST' && route === '/challenges') {
       const body = await bodyJson(req);
       const playerName = cleanPlayerName(body.creatorName);
       const targetScore = integer(body.targetScore, 1, 60, 'Target score');
-      const now = new Date().toISOString();
-      const profileResult = await admin.from('profiles').upsert({
-        user_id: user.id,
-        player_name: playerName,
-        terms_version: requestTermsVersion ?? CURRENT_TERMS_VERSION,
-        terms_accepted_at: now,
-        updated_at: now,
-      });
-      if (profileResult.error) throw profileResult.error;
-
-      const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      const recentResult = await admin
-        .from('challenges')
-        .select('id', { count: 'exact', head: true })
-        .eq('creator_id', user.id)
-        .gte('created_at', since);
-      if (recentResult.error) throw recentResult.error;
-      if ((recentResult.count ?? 0) >= MAX_DAILY_CHALLENGES) {
-        return json({ error: 'Challenge limit reached. Try again later.' }, 429);
-      }
 
       for (let attempt = 0; attempt < 5; attempt += 1) {
         const code = randomCode();
-        const result = await admin.from('challenges').insert({
-          code,
-          creator_id: user.id,
-          target_score: targetScore,
-          level_id: 3,
-        });
-        if (!result.error) return json({ code }, 201);
-        if (result.error.code !== '23505') throw result.error;
+        const result = await admin
+          .rpc('create_challenge_limited', {
+            p_user_id: user.id,
+            p_player_name: playerName,
+            p_terms_version: requestTermsVersion ?? CURRENT_TERMS_VERSION,
+            p_target_score: targetScore,
+            p_code: code,
+          })
+          .single();
+        if (!result.error) return json({ code: result.data.code }, 201);
+        if (result.error.code !== '23505') throw databaseApiError(result.error) ?? result.error;
       }
       return json({ error: 'Could not create a unique challenge code.' }, 503);
     }
@@ -292,34 +355,7 @@ Deno.serve(async (req) => {
     }
 
     if (req.method === 'POST' && route === '/challenges/attempts') {
-      const body = await bodyJson(req);
-      const code = challengeCode(body.code);
-      const playerName = cleanPlayerName(body.playerName);
-      const score = integer(body.score, 0, 60, 'Score');
-      const challengeResult = await admin
-        .from('challenges')
-        .select('id')
-        .eq('code', code)
-        .gt('expires_at', new Date().toISOString())
-        .maybeSingle();
-      if (challengeResult.error) throw challengeResult.error;
-      if (!challengeResult.data) return json({ error: 'Challenge not found.' }, 404);
-      const now = new Date().toISOString();
-      const profileResult = await admin.from('profiles').upsert({
-        user_id: user.id,
-        player_name: playerName,
-        terms_version: requestTermsVersion ?? CURRENT_TERMS_VERSION,
-        terms_accepted_at: now,
-        updated_at: now,
-      });
-      if (profileResult.error) throw profileResult.error;
-      const attemptResult = await admin.rpc('upsert_challenge_attempt', {
-        p_user_id: user.id,
-        p_challenge_id: challengeResult.data.id,
-        p_score: score,
-      });
-      if (attemptResult.error) throw attemptResult.error;
-      return json({ saved: true });
+      return json({ error: 'Update Flap Fit to submit verified challenge runs.' }, 410);
     }
 
     if (req.method === 'POST' && route === '/reports') {
@@ -381,11 +417,9 @@ Deno.serve(async (req) => {
     return json({ error: 'Not found.' }, 404);
   } catch (error) {
     console.error(error);
-    const message = error instanceof Error ? error.message : 'Request failed.';
-    const clientError = /invalid|must|enter|choose|between|not found/i.test(message);
-    return json(
-      { error: clientError ? message : 'Online service is temporarily unavailable.' },
-      clientError ? 400 : 500
-    );
+    if (error instanceof ApiError) {
+      return json({ error: error.message }, error.status);
+    }
+    return json({ error: 'Online service is temporarily unavailable.' }, 500);
   }
 });

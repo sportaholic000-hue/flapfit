@@ -5,22 +5,22 @@ block buttons do not replace active moderation.
 
 ## Ownership
 
-- Primary moderator: [REQUIRED: name]
-- Backup moderator: [REQUIRED: name]
-- Monitored inbox: support@flapfitapp.com (replace everywhere if the final domain changes)
+- Primary moderator: Flap Fit operator.
+- Backup moderator: Flap Fit operator until another trusted moderator is designated.
+- Monitored inbox: support@flapfitapp.com.
 - Routine report target: acknowledge within 24 hours and decide within 72 hours.
-- Credible threat, exploitation, or illegal-content target: review immediately and escalate under
-  the applicable law and platform policy.
+- Credible threat, exploitation, child-safety, imminent-harm, or illegal-content target: review as
+  soon as practical and target initial action within 24 hours.
 
 ## Review procedure
 
 1. Review pending `content_reports` in oldest-first order at least once each business day.
-2. Verify the referenced leaderboard, challenge, or challenge-attempt row and the reported player
-   profile.
+2. Verify the referenced leaderboard, challenge, or challenge-attempt row, relevant server run
+   metadata, and the reported player profile. Do not request camera images or workout recordings.
 3. Classify the report as dismissed, reviewed, or actioned, and record a concise internal reason.
 4. For a violating player name, replace or remove the public profile and associated public results.
 5. For cheating or score manipulation, remove the result and restrict online access when warranted.
-6. Preserve only the minimum evidence needed for safety, repeat-abuse, or legal obligations.
+6. Preserve only the minimum evidence needed for safety, repeat abuse, or legal obligations.
 7. Reply through the support channel when a reporter supplied a reachable address. The app itself
    does not collect an email address.
 

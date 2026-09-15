@@ -1,12 +1,11 @@
 # Flap Fit Privacy Policy
 
-Status: release draft. Replace every bracketed item and verify the live Supabase settings before
-publishing.
+Status: release candidate. The live Supabase settings were verified on September 15, 2026.
 
-Effective date: [REQUIRED: launch date]
+Effective date: September 16, 2026
 
-Flap Fit is operated by Troy Reardon, located at [REQUIRED: legal postal address] ("Flap Fit,"
-"we," "us"). Questions and privacy requests may be sent to support@flapfitapp.com.
+Flap Fit is operated in Canada ("Flap Fit," "we," "us"). Questions and privacy requests may be sent
+to support@flapfitapp.com.
 
 ## Information kept on your device
 
@@ -34,8 +33,8 @@ You can play Flap Fit without using Compete. If you accept the Competition Terms
 Flap Fit creates an anonymous Supabase authentication identifier and processes:
 
 - your chosen player name;
-- the exercise category and score submitted to a leaderboard;
-- challenge codes, targets, and attempts;
+- the exercise category, score, and active run duration submitted to a leaderboard;
+- challenge codes, targets, attempts, and active run duration;
 - reports and blocks you submit; and
 - ordinary service, security, and error logs generated when the service handles a request.
 
@@ -48,9 +47,13 @@ competition service.
 ## Service providers and transfers
 
 Supabase hosts authentication, database, and server functions for Compete as a service provider to
-Flap Fit. Information may be processed where Supabase and its subprocessors operate. [REQUIRED:
-confirm the production project region, applicable transfer mechanism, and link to the final
-subprocessor disclosure before publishing.]
+Flap Fit. The production project's primary database and Auth service are hosted in AWS US East
+(Ohio), United States (`us-east-2`). Edge Functions may execute in a region near the requesting user,
+and logs, backups, support, and subprocessors can involve other jurisdictions. Supabase describes
+its data processing terms and subprocessors at https://supabase.com/legal/dpa and
+https://supabase.com/legal/subprocessors. Information transferred outside Canada is subject to the
+laws of the jurisdiction where it is processed and to the contractual safeguards available through
+the provider.
 
 We do not sell personal information. Flap Fit 1.0 contains no advertising SDK and does not use
 health or fitness information for advertising, marketing profiles, or data brokerage. We do not
@@ -62,11 +65,12 @@ Local information remains until you clear app data or delete the app. Online pro
 leaderboard scores remain until you delete the online profile. Challenges expire after 30 days and
 are removed with their attempts by the daily production cleanup process. Pending reports remain until
 reviewed. Resolved moderation reports are removed 180 days after resolution. If either party deletes
-their account before then, the report is retained without that account's user identifier. Service
-logs and backups follow the production provider configuration.
-
-[REQUIRED BEFORE PUBLISHING: insert the verified service-log and backup periods. The public wording
-must match the live cleanup jobs and Supabase plan.]
+their account before then, the report is retained without that account's user identifier. The
+current Supabase Free plan exposes service reports for up to the preceding 24 hours. Supabase may
+retain operational and security information for its own documented service purposes beyond the
+period visible to Flap Fit. The current Free plan does not provide Flap Fit with automatic daily
+database backups. If Flap Fit enables a paid backup service or creates off-site backups, this policy
+will be updated before that change applies to user data.
 
 ## Your choices and deletion
 

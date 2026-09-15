@@ -1,6 +1,6 @@
 # Apple App Privacy worksheet
 
-Last source review: 2026-09-14
+Last source review: 2026-09-15
 
 This worksheet describes the current Flap Fit 1.0 source. Re-check it against the exact production
 binary and live Supabase configuration before publishing the App Privacy answers.
@@ -21,8 +21,8 @@ data to the Flap Fit Supabase service. The camera and normal training history re
 | Apple data type       | Current source behavior                                                                                                         | Linked to user?                           | Tracking? | Apple purpose     |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | --------- | ----------------- |
 | User ID               | Supabase anonymous user ID and player screen name/handle                                                                        | Yes, to the anonymous competition profile | No        | App Functionality |
-| Gameplay Content      | Exercise category, leaderboard score, challenge target/code, and challenge attempts                                             | Yes                                       | No        | App Functionality |
-| Fitness               | Exercise category attached to an online score or challenge result                                                               | Yes                                       | No        | App Functionality |
+| Gameplay Content      | Exercise category, leaderboard score, active run duration, challenge target/code, and challenge attempts                        | Yes                                       | No        | App Functionality |
+| Fitness               | Exercise category and active run duration attached to an online score or challenge result                                       | Yes                                       | No        | App Functionality |
 | Other User Content    | Player-entered competition content plus reports and blocks                                                                      | Yes                                       | No        | App Functionality |
 | Other Diagnostic Data | Ordinary request, error, and security logs retained by the production service provider, if the final Supabase plan retains them | Confirm after provisioning                | No        | App Functionality |
 
@@ -54,9 +54,8 @@ video or message under that destination's terms; Flap Fit does not receive a cop
 - Privacy Policy URL: **https://flapfitapp.com/privacy/**
 - User Privacy Choices URL: use the public deletion/privacy-controls page once live.
 - Data used for tracking: **No**
-- Third-party advertising: **No**
-- Analytics: **No**
-- Purchases or subscriptions: **No**
+- Third-party advertising, analytics, purchases, and subscriptions: **Do not submit these answers
+  yet. Re-evaluate from the exact monetized build after the approved ad and RevenueCat integration.**
 - HealthKit: **Not used**
 
 ## Apple review-specific checks
@@ -68,7 +67,8 @@ video or message under that destination's terms; Flap Fit does not receive a cop
 - UGC reporting/blocking: clearly labeled Report / Block action on public leaderboard results,
   challenges, and challenge attempts.
 - UGC contact information: **support@flapfitapp.com**
-- Timely moderation: **[REQUIRED INPUT: named reviewer and response SLA]**
+- Timely moderation: **Flap Fit operator; targets and urgent escalation are documented in
+  `moderation-runbook.md`.**
 - Fitness disclaimer: Info > Fitness safety.
 - Camera and microphone permission text explains on-device tracking and optional local recording.
 

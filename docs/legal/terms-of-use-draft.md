@@ -1,9 +1,8 @@
 # Flap Fit Terms of Use
 
-Status: release draft. Replace every bracketed item and obtain appropriate legal review before
-publishing.
+Status: release candidate. Appropriate legal review is recommended before publishing.
 
-Effective date: [REQUIRED: launch date]
+Effective date: September 16, 2026
 
 These Terms govern your use of Flap Fit. Contact: support@flapfitapp.com.
 
@@ -71,10 +70,18 @@ Material Competition Terms changes will require renewed acceptance before furthe
 
 ## Disclaimers and liability
 
-To the extent permitted by law, Flap Fit is provided "as is" and "as available." Nothing in these
-Terms excludes rights or remedies that cannot legally be excluded. [REQUIRED: jurisdiction-specific
-warranty, liability, governing-law, dispute, and consumer-rights wording based on the operator and
-launch countries.]
+To the extent permitted by law, Flap Fit is provided "as is" and "as available," without warranties
+of merchantability, fitness for a particular purpose, or non-infringement. To the fullest extent
+permitted by law, Flap Fit's total liability arising from the app is limited to the amount you paid
+for the app or service during the twelve months before the claim. These limits do not apply where
+applicable law prohibits them, including liability that cannot be limited for fraud, intentional
+misconduct, or personal injury caused by negligence.
+
+These Terms are governed by the federal laws of Canada and the laws of the Canadian province or
+territory in which Flap Fit's operator is ordinarily resident, without regard to conflict-of-law
+rules. Courts with jurisdiction there may hear disputes, but this does not remove any mandatory
+consumer right to bring a claim elsewhere or use another remedy. If a provision is unenforceable,
+the remaining provisions continue in effect.
 
 ## Apple and Google platform terms
 
