@@ -1,9 +1,13 @@
 const { spawn } = require('node:child_process');
 
 const expoCli = require.resolve('expo/bin/cli');
+const requestedArgs = process.argv.slice(2);
+const connectionFlags = new Set(['--lan', '--tunnel', '--localhost']);
+const connectionFlag = requestedArgs.find((arg) => connectionFlags.has(arg)) ?? '--lan';
+const forwardedArgs = requestedArgs.filter((arg) => !connectionFlags.has(arg));
 const child = spawn(
   process.execPath,
-  [expoCli, 'start', '--lan', '--go', ...process.argv.slice(2)],
+  [expoCli, 'start', connectionFlag, '--go', ...forwardedArgs],
   {
     cwd: __dirname + '/..',
     env: process.env,

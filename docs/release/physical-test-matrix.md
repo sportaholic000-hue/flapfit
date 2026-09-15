@@ -10,6 +10,11 @@ Run on at least one Android phone, one iPhone, and one iPad. Expo Go verifies Ja
 the remote development tracker. It does not replace signed-build testing of native permissions,
 recording, ads, purchases, or the bundled production tracker.
 
+Use `start:expo-go` for devices on the computer's Wi-Fi. Use `start:expo-go:tunnel` for a tester on
+another network. Share the direct Expo Go deep link returned by Metro's `/_expo/open?runtime=expo`
+endpoint, not an Expo dashboard/project URL. Do not clear `.expo` or Metro caches during a working
+session merely to generate another QR; keep the same process running so Fast Refresh stays active.
+
 For each of Push-ups, Squats, Pull-ups, Bicep Curls, Lateral Raise, and Shoulder Press:
 
 - [ ] Original tracking calibrates both positions after the two-second reading/setup buffer.

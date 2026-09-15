@@ -7,6 +7,7 @@
     "eas-build-pre-install": "corepack enable",
     "eas-build-post-install": "node ./scripts/eas-build-post-install.cjs",
     "start:expo-go": "node ./scripts/start-expo-go.cjs",
+    "start:expo-go:tunnel": "node ./scripts/start-expo-go.cjs --tunnel",
     "release:check": "node ./scripts/validate-release-config.cjs",
     "release:links": "node ./scripts/check-release-links.cjs",
     "release:assets": "node ./scripts/validate-store-assets.cjs",
