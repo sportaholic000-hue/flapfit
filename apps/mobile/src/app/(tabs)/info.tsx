@@ -181,9 +181,11 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
                 Your bird choice, training history, scores, and level progress are stored locally on
                 your phone. If you use online leaderboards or challenges, Flap Fit creates a private
                 anonymous online identifier and sends your chosen player name, exercise, scores,
-                challenge details, reports, and blocks to its Supabase-hosted game service. The
-                service also processes ordinary connection and security logs. Your camera frames,
-                gameplay recordings, and local training history are not included.
+                active run duration, competition rules version, challenge details, reports, and
+                blocks to its Supabase-hosted game service. Active run duration is used to validate
+                an eligible competition result. The service also processes ordinary connection and
+                security logs. Your camera frames, gameplay recordings, and full local training
+                history are not included.
               </Text>
               <Text style={styles.modalHeading}>Public content and moderation</Text>
               <Text style={styles.modalText}>
@@ -401,8 +403,9 @@ export default function InfoScreen() {
             countdown, the bird follows that calibrated range.
           </NumberedStep>
           <NumberedStep number={4}>
-            If tracking pauses, return to the center of the frame and hold still. The game resumes
-            when tracking is reliable again.
+            If tracking briefly pauses, return to the center of the frame and hold still. The game
+            can resume when tracking is reliable again. Sustained loss of required hand or foot
+            evidence can end a protected push-up or pull-up run.
           </NumberedStep>
           <View style={styles.tipBox}>
             <Text style={styles.tipTitle}>Fast calibration tip</Text>
