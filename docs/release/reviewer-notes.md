@@ -8,6 +8,19 @@ the exact production build before submission.
 Flap Fit is a portrait fitness game in which front-camera pose estimation controls an animated bird.
 The app is usable without registration or login.
 
+Fast equipment-free review path:
+
+1. On Home, select Squats and Sky.
+2. Tap Play and grant camera access.
+3. Place the phone upright on the floor or a stable chair about 1.5 to 2 metres away so the full body
+   is visible.
+4. The first two seconds are a reading/setup buffer. Stand comfortably for the top calibration,
+   then use a comfortable squat for the lower calibration.
+5. After the 3-2-1 countdown, alternate between those calibrated positions to move the bird.
+
+No weights or pull-up bar are required for this review path. Live Camera changes only the game
+background. Record & Play is optional and adds the temporary video/share flow described below.
+
 Camera processing:
 
 1. Choose an exercise and either Sky or Live Camera mode.
