@@ -45,18 +45,22 @@ estimates. Train safely and consult a qualified health professional when appropr
 
 ## Screenshot sequence
 
-1. Home: exercise birds plus "Your body is the controller"
-2. Live Camera mode: player, flying bird, and pipes in one real gameplay frame
-3. Sky mode: clean gameplay and visible score
-4. Evolution: early, middle, and Legend bird stages
-5. Levels: progression and 60-pipe completion goal
-6. Stats: real tracked-training charts with no calorie claim
-7. Compete: leaderboard with Report / Block visible
-8. Record & Play result: Share video action
+1. Home: Flap Fit logo, selected bird, background choices, and "Your body is the controller"
+2. Exercises: all six muscular exercise birds, including Lateral Raise and Shoulder Press
+3. Sky gameplay: selected evolution bird, pipes, and visible score during a real run
+4. Live Camera gameplay: consenting adult, selected evolution bird, and pipe overlay
+5. Evolution: genuine early, middle, and Legend stages from one bird color
+6. Stats: attributable daily/monthly training charts with no calorie or repetition claim
+7. Compete: global leaderboard with Report / Block visible
+8. Record & Play result: real Share video action
 
 Use genuine captures from the final production build. Do not put fabricated usernames or scores in
 screenshots represented as real live activity; seed clearly marked demo/reviewer data if a populated
 competition screen is required.
+
+Use the exact filenames, dimensions, scene order, headlines, and capture rules in
+`store-screenshot-production-plan.md`. Apple and Google should tell the same eight-screen story;
+recompose each frame for its required dimensions rather than stretching or cropping it.
 
 Store-listing media belongs in `apps/mobile/store-assets`. Run
 `corepack yarn workspace mobile release:assets` before either submission. The source iOS icon is

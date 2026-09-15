@@ -148,8 +148,11 @@ Owner/legal inputs still required:
 - [ ] Apple Developer membership and agreements are active.
 - [ ] App Store Connect app record exists with the exact bundle ID.
 - [ ] Complete App Privacy using `apple-app-privacy.md`.
-- [ ] Complete age rating honestly for fitness/wellness and user-generated competition content.
-- [ ] Complete Apple's updated 2026 age-rating questionnaire.
+- [ ] Complete age rating honestly for fitness/wellness and user-generated competition content,
+      using `apple-age-rating.md` against the exact final binary.
+- [ ] Complete Apple's updated 2026 age-rating questionnaire, including the social-media-capability
+      questions required for submissions beginning September 2026. Current facts support UGC Yes,
+      messaging/chat No, and social-media capabilities No.
 - [ ] Because the primary category is Health & Fitness, complete Apple's regulated-medical-device
       declaration for the EU/EEA, UK, and US. Flap Fit is a fitness game, not a regulated medical
       device, so answer No unless the product or its regulatory status materially changes.
