@@ -240,19 +240,31 @@ export default function OnboardingScreen() {
       <View style={{ width: 72, height: 4, borderRadius: 2, backgroundColor: '#F59E0B' }} />
       <View style={{ gap: 12, width: '100%', paddingHorizontal: 8 }}>
         <View style={{ gap: 3 }}>
-          <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 14 }}>Push-ups</Text>
+          <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 14, textAlign: 'center' }}>
+            Push-ups
+          </Text>
           <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 13, lineHeight: 18 }}>
             Place phone on the floor, propped facing you, 1–1.5m away.
           </Text>
         </View>
         <View style={{ gap: 3 }}>
-          <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 14 }}>Squats</Text>
+          <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 14, textAlign: 'center' }}>
+            Squats
+          </Text>
           <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 13, lineHeight: 18 }}>
             Place phone on the floor or a chair, propped facing you, 1.5–2m away.
           </Text>
         </View>
         <View style={{ gap: 3 }}>
-          <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 14, lineHeight: 18 }}>
+          <Text
+            style={{
+              color: '#0F172A',
+              fontWeight: '900',
+              fontSize: 14,
+              lineHeight: 18,
+              textAlign: 'center',
+            }}
+          >
             Pull-ups / Bicep Curls{'\n'}Lateral Raises / Shoulder Press
           </Text>
           <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 13, lineHeight: 18 }}>
@@ -279,15 +291,6 @@ export default function OnboardingScreen() {
         position: 'relative',
       }}
     >
-      <View
-        pointerEvents="none"
-        style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
-      >
-        <PipeDecoration direction="down" height={82} top={0} left={0} />
-        <PipeDecoration direction="down" height={116} top={0} right={10} />
-        <PipeDecoration direction="up" height={104} bottom={0} left={18} />
-        <PipeDecoration direction="up" height={72} bottom={0} right={0} />
-      </View>
       <Text
         style={{
           color: '#0F172A',
@@ -308,13 +311,16 @@ export default function OnboardingScreen() {
           you through 2 calibration steps:
         </Text>
         <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
-          1. Hold the TOP position of your exercise until the bar fills.
+          <Text style={{ color: '#0F172A', fontWeight: '900' }}>1.</Text> Hold the TOP position of
+          your exercise until the bar fills.
         </Text>
         <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
-          2. Hold the BOTTOM position until the bar fills.
+          <Text style={{ color: '#0F172A', fontWeight: '900' }}>2.</Text> Hold the BOTTOM position
+          until the bar fills.
         </Text>
         <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
-          3. 3-2-1… GO! The bird follows your movement in real time.
+          <Text style={{ color: '#0F172A', fontWeight: '900' }}>3.</Text> 3-2-1… GO! The bird
+          follows your movement in real time.
         </Text>
         <Text
           style={{
@@ -381,6 +387,17 @@ export default function OnboardingScreen() {
               <Cloud top={height - 112} left={width - 86} scale={0.82} opacity={0.4} />
             </>
           )}
+        </View>
+      ) : null}
+      {step === 3 ? (
+        <View
+          pointerEvents="none"
+          style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, overflow: 'hidden' }}
+        >
+          <PipeDecoration direction="down" height={116} top={0} left={0} />
+          <PipeDecoration direction="down" height={158} top={0} right={0} />
+          <PipeDecoration direction="up" height={142} bottom={0} left={0} />
+          <PipeDecoration direction="up" height={102} bottom={0} right={0} />
         </View>
       ) : null}
       <View
