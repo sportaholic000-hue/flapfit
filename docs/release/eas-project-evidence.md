@@ -53,6 +53,23 @@ platforms without changing dependencies or the lockfile:
 These exports prove the current JavaScript and asset graph bundles for both platforms. They are not
 signed native artifacts and do not replace TestFlight or Play internal testing.
 
+## Generated native configuration evidence
+
+A read-only Expo config-plugin introspection on September 15 produced the following native values
+without generating iOS or Android project folders:
+
+- App name `Flap Fit`, version `1.0.0`, URL scheme `flapfit`, and package/bundle ID
+  `com.flapfit.game` on both platforms.
+- iOS contains the full camera and optional Record & Play microphone usage descriptions, declares
+  no non-exempt encryption, disallows arbitrary network loads, declares no tracking, and includes
+  four collected-data plus four required-reason API categories.
+- Android requests only INTERNET, VIBRATE, CAMERA, and RECORD_AUDIO, disables cleartext traffic, and
+  disables backup. Overlay, location, calendar, contacts, and external-storage permission entries
+  are present only as `tools:node="remove"` manifest directives and are not requested capabilities.
+
+Inspect the final signed artifacts again because native ad and purchase plugins will intentionally
+change the generated manifests after monetization is approved and integrated.
+
 ## Current toolchain requirements
 
 - Apple has required App Store uploads to use Xcode 26 and an iOS 26 SDK since 2026-04-28.
