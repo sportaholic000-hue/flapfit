@@ -26,14 +26,14 @@ export default function LevelsScreen() {
   const bestScores = useGameStore((s) => s.bestScores);
   const endlessBest = useGameStore((s) => s.endlessBest);
   const endlessOpen = isEndlessUnlocked(unlockedLevel);
-  const [backgroundMode, setBackgroundMode] = useState<'sky' | 'camera'>('sky');
-  const [runMode, setRunMode] = useState<'play' | 'record'>('play');
+  const [playStyle, setPlayStyle] = useState<'sky' | 'camera' | 'record'>('sky');
+  const backgroundMode = playStyle === 'sky' ? 'sky' : 'camera';
 
   const withGameOptions = (params: Record<string, string>) => ({
     ...params,
     backgroundMode,
     ...(__DEV__ ? { trackingMode: 'form-test' } : {}),
-    ...(backgroundMode === 'camera' && runMode === 'record' ? { record: '1' } : {}),
+    ...(playStyle === 'record' ? { record: '1' } : {}),
   });
 
   const playLevel = (levelId: number) => {
@@ -74,11 +74,9 @@ export default function LevelsScreen() {
           }}
         >
           <View style={{ gap: 3 }}>
-            <Text style={{ fontWeight: '900', color: '#1F2937', fontSize: 16 }}>
-              Game Background
-            </Text>
+            <Text style={{ fontWeight: '900', color: '#1F2937', fontSize: 16 }}>Game Setup</Text>
             <Text style={{ color: '#64748B', fontSize: 12 }}>
-              Your choice applies to Endless Mode and every level below.
+              Choose one, then tap Endless Mode or any unlocked level.
             </Text>
           </View>
 
@@ -87,25 +85,22 @@ export default function LevelsScreen() {
               accessibilityRole="button"
               accessibilityLabel="Sky Background"
               accessibilityHint="Uses the classic Flap Fit sky for levels"
-              accessibilityState={{ selected: backgroundMode === 'sky' }}
-              onPress={() => {
-                setBackgroundMode('sky');
-                setRunMode('play');
-              }}
+              accessibilityState={{ selected: playStyle === 'sky' }}
+              onPress={() => setPlayStyle('sky')}
               style={{
                 flex: 1,
                 minHeight: 92,
                 padding: 12,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'sky' ? ACCENT_BLUE : '#D1D5DB',
-                backgroundColor: backgroundMode === 'sky' ? '#E0F2FE' : '#F8FAFC',
+                borderColor: playStyle === 'sky' ? ACCENT_BLUE : '#D1D5DB',
+                backgroundColor: playStyle === 'sky' ? '#E0F2FE' : '#F8FAFC',
                 justifyContent: 'space-between',
               }}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Sun size={23} color={backgroundMode === 'sky' ? ACCENT_BLUE : '#64748B'} />
-                {backgroundMode === 'sky' ? (
+                <Sun size={23} color={playStyle === 'sky' ? ACCENT_BLUE : '#64748B'} />
+                {playStyle === 'sky' ? (
                   <CheckCircle2 size={19} color={ACCENT_BLUE} fill="#FFFFFF" />
                 ) : null}
               </View>
@@ -123,22 +118,22 @@ export default function LevelsScreen() {
               accessibilityRole="button"
               accessibilityLabel="Live Camera Background"
               accessibilityHint="Shows your front camera behind levels"
-              accessibilityState={{ selected: backgroundMode === 'camera' }}
-              onPress={() => setBackgroundMode('camera')}
+              accessibilityState={{ selected: playStyle === 'camera' }}
+              onPress={() => setPlayStyle('camera')}
               style={{
                 flex: 1,
                 minHeight: 92,
                 padding: 12,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'camera' ? ACCENT_BLUE : '#D1D5DB',
-                backgroundColor: backgroundMode === 'camera' ? '#E0F2FE' : '#F8FAFC',
+                borderColor: playStyle === 'camera' ? ACCENT_BLUE : '#D1D5DB',
+                backgroundColor: playStyle === 'camera' ? '#E0F2FE' : '#F8FAFC',
                 justifyContent: 'space-between',
               }}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Camera size={23} color={backgroundMode === 'camera' ? ACCENT_BLUE : '#64748B'} />
-                {backgroundMode === 'camera' ? (
+                <Camera size={23} color={playStyle === 'camera' ? ACCENT_BLUE : '#64748B'} />
+                {playStyle === 'camera' ? (
                   <CheckCircle2 size={19} color={ACCENT_BLUE} fill="#FFFFFF" />
                 ) : null}
               </View>
@@ -153,73 +148,44 @@ export default function LevelsScreen() {
             </TouchableOpacity>
           </View>
 
-          {backgroundMode === 'camera' ? (
-            <View style={{ gap: 8 }}>
-              <Text style={{ color: '#475569', fontSize: 12, fontWeight: '700' }}>
-                Choose how the selected level starts
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Record and play with live camera"
+            accessibilityHint="Selects live-camera gameplay recording for the level you tap next"
+            accessibilityState={{ selected: playStyle === 'record' }}
+            onPress={() => setPlayStyle('record')}
+            style={{
+              minHeight: 58,
+              paddingHorizontal: 14,
+              paddingVertical: 10,
+              borderRadius: 16,
+              borderWidth: 2,
+              borderColor: playStyle === 'record' ? '#DC2626' : '#D1D5DB',
+              backgroundColor: playStyle === 'record' ? '#FEF2F2' : '#F8FAFC',
+              alignItems: 'center',
+              flexDirection: 'row',
+              gap: 10,
+            }}
+          >
+            <Video size={22} color={playStyle === 'record' ? '#DC2626' : '#64748B'} />
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text
+                style={{
+                  color: playStyle === 'record' ? '#B91C1C' : '#0F172A',
+                  fontWeight: '900',
+                  fontSize: 14,
+                }}
+              >
+                Record &amp; Play
               </Text>
-              <View style={{ flexDirection: 'row', gap: 10 }}>
-                <TouchableOpacity
-                  accessibilityRole="button"
-                  accessibilityLabel="Play without recording"
-                  accessibilityState={{ selected: runMode === 'play' }}
-                  onPress={() => setRunMode('play')}
-                  style={{
-                    flex: 1,
-                    minHeight: 48,
-                    borderRadius: 14,
-                    borderWidth: 2,
-                    borderColor: runMode === 'play' ? ACCENT_BLUE : '#CBD5E1',
-                    backgroundColor: runMode === 'play' ? '#E0F2FE' : '#F8FAFC',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    gap: 7,
-                  }}
-                >
-                  <Play size={18} color={runMode === 'play' ? ACCENT_BLUE : '#64748B'} />
-                  <Text
-                    style={{
-                      color: runMode === 'play' ? '#0369A1' : '#475569',
-                      fontWeight: '900',
-                    }}
-                  >
-                    Play
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  accessibilityRole="button"
-                  accessibilityLabel="Record and play"
-                  accessibilityHint="Records the live-camera game for sharing"
-                  accessibilityState={{ selected: runMode === 'record' }}
-                  onPress={() => setRunMode('record')}
-                  style={{
-                    flex: 1,
-                    minHeight: 48,
-                    borderRadius: 14,
-                    borderWidth: 2,
-                    borderColor: runMode === 'record' ? '#DC2626' : '#CBD5E1',
-                    backgroundColor: runMode === 'record' ? '#FEF2F2' : '#F8FAFC',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    gap: 7,
-                  }}
-                >
-                  <Video size={18} color={runMode === 'record' ? '#DC2626' : '#64748B'} />
-                  <Text
-                    style={{
-                      color: runMode === 'record' ? '#B91C1C' : '#475569',
-                      fontWeight: '900',
-                    }}
-                  >
-                    Record &amp; Play
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              <Text style={{ color: '#64748B', fontSize: 10, fontWeight: '600' }}>
+                Live camera with a shareable video
+              </Text>
             </View>
-          ) : null}
+            {playStyle === 'record' ? (
+              <CheckCircle2 size={20} color="#DC2626" fill="#FFFFFF" />
+            ) : null}
+          </TouchableOpacity>
         </View>
 
         {/* Endless card */}

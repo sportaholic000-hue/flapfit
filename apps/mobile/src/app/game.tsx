@@ -42,6 +42,11 @@ import {
 import { getBirdStageArt } from '@/utils/game/birdStageArt';
 import { loadBirdAssetDataUri } from '@/utils/game/birdWebAsset';
 import { getBird } from '@/utils/game/birds';
+import {
+  GAME_WEB_BASE_URL,
+  GAME_WEB_ORIGIN_WHITELIST,
+  isAllowedGameNavigation,
+} from '@/utils/game/game-web-navigation';
 import { buildGameHtml } from '@/utils/game/gameHtml';
 import { ENDLESS_BASE, getLevel, LEVELS } from '@/utils/game/levels';
 import {
@@ -153,14 +158,6 @@ function videoUti(mimeType: string, extension: string) {
   if (mimeType.includes('quicktime') || extension === 'mov') return 'com.apple.quicktime-movie';
   if (mimeType.includes('webm') || extension === 'webm') return 'org.webmproject.webm';
   return 'public.movie';
-}
-
-function isAllowedGameNavigation(url: string) {
-  return (
-    url === 'about:blank' ||
-    url === 'https://flapfit.local/' ||
-    url.startsWith('blob:https://flapfit.local/')
-  );
 }
 
 export default function GameScreen() {
@@ -466,7 +463,7 @@ export default function GameScreen() {
   // tracker files, then transfers only the WebView's supported Wasm variant.
   const webSource = useMemo<GameWebSource | null>(() => {
     if (!html || (!USE_REMOTE_TRACKER && !trackerAssets)) return null;
-    return { html, baseUrl: 'https://flapfit.local' };
+    return { html, baseUrl: GAME_WEB_BASE_URL };
   }, [html, trackerAssets]);
 
   useEffect(() => {
@@ -1097,11 +1094,7 @@ export default function GameScreen() {
           key={runKey}
           source={webSource}
           style={{ flex: 1, backgroundColor: level.sky1 }}
-          originWhitelist={[
-            'about:blank',
-            'https://flapfit.local/*',
-            'blob:https://flapfit.local/*',
-          ]}
+          originWhitelist={GAME_WEB_ORIGIN_WHITELIST}
           onShouldStartLoadWithRequest={(request) => isAllowedGameNavigation(request.url)}
           javaScriptEnabled
           domStorageEnabled
