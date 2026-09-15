@@ -24,8 +24,8 @@ function validMonetizedFixture() {
     },
     mobilePackage: {
       dependencies: {
-        'react-native-google-mobile-ads': '16.1.0',
-        'react-native-purchases': '10.2.0',
+        'react-native-google-mobile-ads': '16.5.0',
+        'react-native-purchases': '10.9.1',
       },
     },
     env: validEnv,
@@ -74,6 +74,30 @@ describe('validateMonetizationConfig', () => {
     ).toEqual([]);
   });
 
+  test('accepts Google sample IDs only for preview ad testing', () => {
+    const fixture = validMonetizedFixture();
+    fixture.appJson.plugins[0][1].androidAppId = 'ca-app-pub-3940256099942544~3347511713';
+    fixture.appJson.plugins[0][1].iosAppId = 'ca-app-pub-3940256099942544~1458002511';
+    fixture.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID = 'ca-app-pub-3940256099942544/4411468910';
+    fixture.env.EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL_ID =
+      'ca-app-pub-3940256099942544/1033173712';
+
+    expect(validateMonetizationConfig({ ...fixture, buildProfile: 'preview' })).toEqual([]);
+  });
+
+  test('rejects unapproved monetization package versions', () => {
+    const fixture = validMonetizedFixture();
+    fixture.mobilePackage.dependencies['react-native-google-mobile-ads'] = '16.4.0';
+    fixture.mobilePackage.dependencies['react-native-purchases'] = '10.8.0';
+
+    expect(validateMonetizationConfig({ ...fixture, buildProfile: 'production' })).toEqual(
+      expect.arrayContaining([
+        'package.json: react-native-google-mobile-ads must use the explicitly approved 16.5.0 release',
+        'package.json: react-native-purchases must use the explicitly approved 10.9.1 release',
+      ])
+    );
+  });
+
   test('rejects RevenueCat versions older than the ad-tracking minimum', () => {
     const fixture = validMonetizedFixture();
     fixture.mobilePackage.dependencies['react-native-purchases'] = '10.1.9';
@@ -95,7 +119,7 @@ describe('validateMonetizationConfig', () => {
       ...validEnv,
       EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID: 'ca-app-pub-3940256099942544/4411468910',
     };
-    const failures = validateMonetizationConfig(fixture);
+    const failures = validateMonetizationConfig({ ...fixture, buildProfile: 'production' });
 
     expect(failures).toEqual(
       expect.arrayContaining([

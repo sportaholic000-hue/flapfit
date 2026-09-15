@@ -42,6 +42,17 @@ function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile 
 
   if (!hasAdMob || !hasRevenueCat) return failures;
 
+  if (mobilePackage.dependencies?.['react-native-google-mobile-ads'] !== '16.5.0') {
+    failures.push(
+      'package.json: react-native-google-mobile-ads must use the explicitly approved 16.5.0 release'
+    );
+  }
+  if (mobilePackage.dependencies?.['react-native-purchases'] !== '10.9.1') {
+    failures.push(
+      'package.json: react-native-purchases must use the explicitly approved 10.9.1 release'
+    );
+  }
+
   const revenueCatVersion = String(
     mobilePackage.dependencies?.['react-native-purchases'] ?? ''
   ).match(/(\d+)\.(\d+)\.(\d+)/);
@@ -62,7 +73,10 @@ function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile 
     if (appIds.some((id) => !/^ca-app-pub-\d+~\d+$/.test(String(id ?? '')))) {
       failures.push('app.json: monetized builds require valid iOS and Android AdMob app IDs');
     }
-    if (appIds.some((id) => String(id).startsWith('ca-app-pub-3940256099942544'))) {
+    if (
+      buildProfile === 'production' &&
+      appIds.some((id) => String(id).startsWith('ca-app-pub-3940256099942544'))
+    ) {
       failures.push('app.json: Google sample AdMob app IDs cannot be used in a production build');
     }
     if (adsPlugin[1]?.delayAppMeasurementInit !== true) {
@@ -96,7 +110,7 @@ function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile 
   for (const [key, pattern, label] of monetizationValues) {
     const value = String(env[key] ?? '').trim();
     if (!pattern.test(value)) failures.push(`${key}: missing or invalid ${label}`);
-    if (value.startsWith('ca-app-pub-3940256099942544')) {
+    if (buildProfile === 'production' && value.startsWith('ca-app-pub-3940256099942544')) {
       failures.push(`${key}: Google sample ad-unit ID cannot be used in a production build`);
     }
   }
