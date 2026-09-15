@@ -656,7 +656,9 @@ function loop(now) {
       if (CONFIG.exercise === 'squats') {
         frameMsg = 'Get your head and body in frame<br><small>Place phone on the floor or a chair, 1.5–2m in front</small>';
       } else if (CONFIG.exercise === 'pullups') {
-        frameMsg = 'Get in frame — head and arms visible<br><small>Place phone on a chair or higher, facing you</small>';
+        frameMsg = usesExperimentalFormTracking()
+          ? 'Get your full body in frame<br><small>Head, wrists, and both feet must stay visible</small>'
+          : 'Get in frame — head and arms visible<br><small>Place phone on a chair or higher, facing you</small>';
       } else if (CONFIG.exercise === 'lateralraise') {
         frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, about 2m in front</small>';
       } else if (CONFIG.exercise === 'biceps') {

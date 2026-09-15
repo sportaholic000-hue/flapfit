@@ -167,7 +167,8 @@ export default function OnboardingScreen() {
         }}
       >
         <Text style={{ color: '#1F2937', fontWeight: '700', fontSize: 15 }}>
-          Before each session the app guides you through 2 steps:
+          First, you have 2 seconds to read the screen and get into position. Then the app guides
+          you through 2 calibration steps:
         </Text>
         <Text style={{ color: '#374151', fontWeight: '600', fontSize: 14 }}>
           1. Hold the TOP position of your exercise until the ring fills.
