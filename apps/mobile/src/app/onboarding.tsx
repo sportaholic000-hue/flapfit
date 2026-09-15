@@ -4,10 +4,11 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Camera, ChevronRight } from 'lucide-react-native';
 import { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
 import BirdAvatar from '@/components/BirdAvatar';
+import { BIRD_STAGE_COUNT, getBirdStageArt } from '@/utils/game/birdStageArt';
 import { BIRDS, getBird } from '@/utils/game/birds';
 
 import { useGameStore } from '@/utils/game/store';
@@ -54,8 +55,80 @@ function Cloud({
   );
 }
 
+function PipeDecoration({
+  direction,
+  height,
+  top,
+  bottom,
+  left,
+  right,
+}: {
+  direction: 'up' | 'down';
+  height: number;
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+}) {
+  const capPosition = direction === 'down' ? { bottom: 0 } : { top: 0 };
+
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        top,
+        bottom,
+        left,
+        right,
+        width: 54,
+        height,
+      }}
+    >
+      <View
+        style={{
+          position: 'absolute',
+          top: direction === 'down' ? 0 : 14,
+          bottom: direction === 'up' ? 0 : 14,
+          left: 8,
+          width: 38,
+          backgroundColor: '#22C55E',
+          borderColor: '#166534',
+          borderWidth: 3,
+          borderRadius: 5,
+        }}
+      >
+        <View
+          style={{
+            position: 'absolute',
+            top: 3,
+            bottom: 3,
+            left: 5,
+            width: 7,
+            borderRadius: 4,
+            backgroundColor: 'rgba(255,255,255,0.28)',
+          }}
+        />
+      </View>
+      <View
+        style={{
+          position: 'absolute',
+          ...capPosition,
+          left: 0,
+          width: 54,
+          height: 20,
+          backgroundColor: '#16A34A',
+          borderColor: '#166534',
+          borderWidth: 3,
+          borderRadius: 6,
+        }}
+      />
+    </View>
+  );
+}
+
 export default function OnboardingScreen() {
   const insets = useSafeAreaInsets();
+  const { height, width } = useWindowDimensions();
   const router = useRouter();
   const { preview } = useLocalSearchParams<{ preview?: string }>();
   const [step, setStep] = useState(0);
@@ -150,46 +223,44 @@ export default function OnboardingScreen() {
     // Step 2: Phone placement
     <View
       key="placement"
-      style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20 }}
+      style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 }}
     >
-      <Text style={{ fontSize: 28, color: '#FFFFFF', textAlign: 'center', fontWeight: '900' }}>
+      <Image
+        accessible
+        accessibilityLabel={`${skin.name} in Legend form`}
+        accessibilityRole="image"
+        source={getBirdStageArt(skin.id, BIRD_STAGE_COUNT - 1)}
+        style={{ width: 118, height: 118 }}
+        contentFit="contain"
+        transition={150}
+      />
+      <Text style={{ fontSize: 28, color: '#0F172A', textAlign: 'center', fontWeight: '900' }}>
         SET THE STAGE
       </Text>
-      <View
-        style={{
-          backgroundColor: 'rgba(255,255,255,0.95)',
-          borderRadius: 20,
-          padding: 20,
-          gap: 16,
-          width: '100%',
-        }}
-      >
-        <View>
-          <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
-            Push-ups
-          </Text>
-          <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
+      <View style={{ width: 72, height: 4, borderRadius: 2, backgroundColor: '#F59E0B' }} />
+      <View style={{ gap: 12, width: '100%', paddingHorizontal: 8 }}>
+        <View style={{ gap: 3 }}>
+          <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 14 }}>Push-ups</Text>
+          <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 13, lineHeight: 18 }}>
             Place phone on the floor, propped facing you, 1–1.5m away.
           </Text>
         </View>
-        <View>
-          <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
-            Squats
-          </Text>
-          <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
+        <View style={{ gap: 3 }}>
+          <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 14 }}>Squats</Text>
+          <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 13, lineHeight: 18 }}>
             Place phone on the floor or a chair, propped facing you, 1.5–2m away.
           </Text>
         </View>
-        <View>
-          <Text style={{ color: '#1F2937', fontWeight: '800', fontSize: 14, marginBottom: 4 }}>
+        <View style={{ gap: 3 }}>
+          <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 14, lineHeight: 18 }}>
             Pull-ups / Bicep Curls{'\n'}Lateral Raises / Shoulder Press
           </Text>
-          <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
+          <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 13, lineHeight: 18 }}>
             Place phone on a chair or higher, facing you with the full movement visible.
           </Text>
         </View>
         <View>
-          <Text style={{ color: '#374151', fontWeight: '600', fontSize: 13 }}>
+          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13, lineHeight: 18 }}>
             Good lighting = better tracking. Face the camera and keep your full range of motion
             visible.
           </Text>
@@ -200,34 +271,59 @@ export default function OnboardingScreen() {
     // Step 3: Camera calibration
     <View
       key="calibration"
-      style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }}
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 14,
+        position: 'relative',
+      }}
     >
-      <Text style={{ fontSize: 28, color: '#FFFFFF', textAlign: 'center', fontWeight: '900' }}>
-        QUICK CALIBRATION
-      </Text>
       <View
+        pointerEvents="none"
+        style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
+      >
+        <PipeDecoration direction="down" height={82} top={0} left={0} />
+        <PipeDecoration direction="down" height={116} top={0} right={10} />
+        <PipeDecoration direction="up" height={104} bottom={0} left={18} />
+        <PipeDecoration direction="up" height={72} bottom={0} right={0} />
+      </View>
+      <Text
         style={{
-          backgroundColor: 'rgba(255,255,255,0.95)',
-          borderRadius: 20,
-          padding: 20,
-          width: '100%',
-          gap: 10,
+          color: '#0F172A',
+          fontSize: 28,
+          textAlign: 'center',
+          fontWeight: '900',
+          zIndex: 1,
         }}
       >
-        <Text style={{ color: '#1F2937', fontWeight: '700', fontSize: 15 }}>
+        SIMPLE CALIBRATION
+      </Text>
+      <View
+        style={{ width: 72, height: 4, borderRadius: 2, backgroundColor: '#F59E0B', zIndex: 1 }}
+      />
+      <View style={{ width: '100%', gap: 12, paddingHorizontal: 22, zIndex: 1 }}>
+        <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15, lineHeight: 21 }}>
           First, you have 2 seconds to read the screen and get into position. Then the app guides
           you through 2 calibration steps:
         </Text>
-        <Text style={{ color: '#374151', fontWeight: '600', fontSize: 14 }}>
+        <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
           1. Hold the TOP position of your exercise until the bar fills.
         </Text>
-        <Text style={{ color: '#374151', fontWeight: '600', fontSize: 14 }}>
+        <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
           2. Hold the BOTTOM position until the bar fills.
         </Text>
-        <Text style={{ color: '#374151', fontWeight: '600', fontSize: 14 }}>
+        <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
           3. 3-2-1… GO! The bird follows your movement in real time.
         </Text>
-        <Text style={{ color: '#6B7280', fontSize: 12, marginTop: 6 }}>
+        <Text
+          style={{
+            color: 'rgba(255,255,255,0.92)',
+            fontSize: 12,
+            lineHeight: 17,
+            fontWeight: '600',
+          }}
+        >
           Normal Play processes camera images only on your device. Record &amp; Play can include
           your microphone audio if you allow it and creates a temporary video that you decide
           whether and where to share.
@@ -244,6 +340,7 @@ export default function OnboardingScreen() {
           flexDirection: 'row',
           justifyContent: 'center',
           gap: 8,
+          zIndex: 1,
         }}
       >
         <Camera size={20} color="#FFFFFF" />
@@ -268,11 +365,22 @@ export default function OnboardingScreen() {
           pointerEvents="none"
           style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden' }}
         >
-          <Cloud top={56} left={-28} scale={1.05} opacity={0.55} />
-          <Cloud top={132} left={232} scale={0.76} opacity={0.42} />
-          <Cloud top={276} left={-38} scale={0.72} opacity={0.36} />
-          <Cloud top={410} left={226} scale={0.92} opacity={0.4} />
-          <Cloud top={570} left={12} scale={0.78} opacity={0.34} />
+          {step === 1 ? (
+            <>
+              <Cloud top={56} left={-28} scale={1.05} opacity={0.55} />
+              <Cloud top={132} left={width - 128} scale={0.76} opacity={0.42} />
+              <Cloud top={276} left={-38} scale={0.72} opacity={0.36} />
+              <Cloud top={410} left={width - 134} scale={0.92} opacity={0.4} />
+              <Cloud top={570} left={12} scale={0.78} opacity={0.34} />
+            </>
+          ) : (
+            <>
+              <Cloud top={72} left={-92} scale={0.9} opacity={0.38} />
+              <Cloud top={126} left={width - 54} scale={0.72} opacity={0.32} />
+              <Cloud top={height - 145} left={-32} scale={0.7} opacity={0.44} />
+              <Cloud top={height - 112} left={width - 86} scale={0.82} opacity={0.4} />
+            </>
+          )}
         </View>
       ) : null}
       <View
@@ -311,7 +419,7 @@ export default function OnboardingScreen() {
             <TouchableOpacity
               onPress={() => setStep(step + 1)}
               style={{
-                backgroundColor: '#FFFFFF',
+                backgroundColor: '#F59E0B',
                 borderRadius: 18,
                 paddingVertical: 12,
                 paddingHorizontal: 22,
@@ -320,8 +428,8 @@ export default function OnboardingScreen() {
                 gap: 4,
               }}
             >
-              <Text style={{ fontWeight: '900', color: '#0F172A' }}>Next</Text>
-              <ChevronRight size={18} color="#0F172A" />
+              <Text style={{ fontWeight: '900', color: '#FFFFFF' }}>Next</Text>
+              <ChevronRight size={18} color="#FFFFFF" />
             </TouchableOpacity>
           ) : null}
         </View>
