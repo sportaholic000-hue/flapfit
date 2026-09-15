@@ -4,7 +4,7 @@ const unsupportedPackages = [
   '@segment/analytics-react-native',
 ];
 
-function validateMonetizationConfig({ appJson, mobilePackage, env }) {
+function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile }) {
   const failures = [];
   const packageNames = new Set([
     ...Object.keys(mobilePackage.dependencies ?? {}),
@@ -32,6 +32,12 @@ function validateMonetizationConfig({ appJson, mobilePackage, env }) {
   );
   if (!hasAdMob && adsPlugin) {
     failures.push('app.json: AdMob config plugin is present without the AdMob package');
+  }
+
+  if (buildProfile === 'production' && (!hasAdMob || !hasRevenueCat)) {
+    failures.push(
+      'production launch requires the approved AdMob and RevenueCat integration; keep Expo/preview testing ad-free until it is approved'
+    );
   }
 
   if (!hasAdMob || !hasRevenueCat) return failures;

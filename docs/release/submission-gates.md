@@ -50,6 +50,8 @@ final review decisions.
 - [x] Production EAS validation fails closed while the hardened tracker remains unapproved: Form
       Test must be promoted and `FLAPFIT_APPROVED_TRACKER_RULES_VERSION` must exactly match the
       versioned rules marker. Development and preview testing remain available.
+- [x] Production EAS validation also fails closed while the agreed AdMob and RevenueCat integration
+      is absent. The current Expo/preview checkpoint remains intentionally ad-free.
 - [ ] Rerun the same checks after tomorrow's physical testing and any resulting source changes.
 - [ ] Physically approve Form Test tracking for all six exercises, then promote it from the
       development-only comparison toggle to the production tracker before enabling global

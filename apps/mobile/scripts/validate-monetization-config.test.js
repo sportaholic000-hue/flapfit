@@ -35,8 +35,26 @@ function validMonetizedFixture() {
 describe('validateMonetizationConfig', () => {
   test('accepts the current pre-monetization candidate', () => {
     expect(
-      validateMonetizationConfig({ appJson: { plugins: [] }, mobilePackage: {}, env: {} })
+      validateMonetizationConfig({
+        appJson: { plugins: [] },
+        mobilePackage: {},
+        env: {},
+        buildProfile: 'preview',
+      })
     ).toEqual([]);
+  });
+
+  test('rejects an ad-free production launch candidate', () => {
+    expect(
+      validateMonetizationConfig({
+        appJson: { plugins: [] },
+        mobilePackage: {},
+        env: {},
+        buildProfile: 'production',
+      })
+    ).toContain(
+      'production launch requires the approved AdMob and RevenueCat integration; keep Expo/preview testing ad-free until it is approved'
+    );
   });
 
   test('rejects a partial native-package installation', () => {
@@ -51,7 +69,9 @@ describe('validateMonetizationConfig', () => {
   });
 
   test('accepts a complete production monetization configuration', () => {
-    expect(validateMonetizationConfig(validMonetizedFixture())).toEqual([]);
+    expect(
+      validateMonetizationConfig({ ...validMonetizedFixture(), buildProfile: 'production' })
+    ).toEqual([]);
   });
 
   test('rejects RevenueCat versions older than the ad-tracking minimum', () => {

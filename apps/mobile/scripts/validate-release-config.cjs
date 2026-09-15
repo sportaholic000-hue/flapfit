@@ -263,7 +263,14 @@ if (
   );
 }
 
-failures.push(...validateMonetizationConfig({ appJson, mobilePackage, env: process.env }));
+failures.push(
+  ...validateMonetizationConfig({
+    appJson,
+    mobilePackage,
+    env: process.env,
+    buildProfile: process.env.EAS_BUILD_PROFILE,
+  })
+);
 
 const storeSource = fs.readFileSync(path.join(appRoot, 'src', 'utils', 'game', 'store.ts'), 'utf8');
 const functionSource = fs.readFileSync(
