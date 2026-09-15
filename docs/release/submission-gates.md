@@ -42,7 +42,7 @@ final review decisions.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [x] The current pre-test candidate passes TypeScript, 25 automated tests, repository formatting,
+- [x] The current pre-test candidate passes TypeScript, 31 automated tests, repository formatting,
       lint, and production-style local Expo exports for both iOS and Android.
 - [ ] Rerun the same checks after tomorrow's physical testing and any resulting source changes.
 - [ ] Physically approve Form Test tracking for all six exercises, then promote it from the
