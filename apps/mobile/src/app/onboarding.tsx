@@ -52,7 +52,7 @@ export default function OnboardingScreen() {
           lineHeight: 26,
         }}
       >
-        Do exercises to fly a bird through pipes.{'\n'}Your body is the controller.{'\n\n'}
+        Do exercises and fly a bird through obstacles.{'\n'}Your body is the controller.{'\n\n'}
         Choose your weapon:{'\n'}
         <Text style={{ fontWeight: '900' }}>
           Push-ups · Squats · Pull-ups{'\n'}Lateral Raise · Bicep Curls · Shoulder Press
@@ -67,7 +67,7 @@ export default function OnboardingScreen() {
         }}
       >
         <Text style={{ color: '#0F172A', fontSize: 13, fontWeight: '700', textAlign: 'center' }}>
-          🐣 Your bird is a Hatchling — tracked training time grows it into a Legend
+          🐣 Your bird begins as a hatchling. Tracked training time grows it into a Legend.
         </Text>
       </View>
     </View>,
@@ -205,7 +205,7 @@ export default function OnboardingScreen() {
       >
         <Camera size={20} color="#FFFFFF" />
         <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
-          {preview === '1' ? 'Return to Info' : 'Continue with camera tracking'}
+          {preview === '1' ? 'Return to Info' : "I'm ready to play"}
         </Text>
       </TouchableOpacity>
     </View>,
