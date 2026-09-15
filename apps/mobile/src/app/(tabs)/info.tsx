@@ -295,6 +295,14 @@ export default function InfoScreen() {
   const supportEmail = RELEASE_LINKS.supportEmail;
   const version = Constants.expoConfig?.version ?? '1.0.0';
   const skin = getBird(birdId);
+  const bugReportDetails = [
+    'What happened:',
+    '',
+    'Steps to reproduce:',
+    '',
+    'Flap Fit version: ' + version,
+    'Device: ' + Platform.OS + ' ' + String(Platform.Version),
+  ].join('\n');
 
   const emailSupport = async (kind: 'contact' | 'bug') => {
     if (!supportEmail) {
@@ -305,8 +313,7 @@ export default function InfoScreen() {
       return;
     }
     const subject = kind === 'bug' ? 'Flap Fit bug report' : 'Flap Fit support';
-    const details =
-      kind === 'bug' ? '\n\nWhat happened:\n\nSteps to reproduce:\n\nPhone and OS:' : '';
+    const details = kind === 'bug' ? '\n\n' + bugReportDetails : '';
     const url = `mailto:${supportEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(details)}`;
     try {
       await Linking.openURL(url);
@@ -336,13 +343,45 @@ export default function InfoScreen() {
     try {
       await Share.share({
         title: 'Flap Fit',
-        message: ['Check out Flap Fit, a fitness game where your body controls the bird.', shareUrl]
+        message: [
+          'Check out Flap Fit, a fitness game where your body is the controller. Are you up for the challenge?',
+          shareUrl,
+        ]
           .filter(Boolean)
           .join('\n\n'),
       });
     } catch {
       Alert.alert('Could not open sharing', 'Please try again.');
     }
+  };
+
+  const reportBug = () => {
+    if (!supportEmail) {
+      Alert.alert(
+        'Support address needed',
+        'No real Flap Fit support email is configured yet. One must be connected before launch.'
+      );
+      return;
+    }
+
+    Alert.alert('Report a bug', 'Send a prefilled report to ' + supportEmail + '.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Share report',
+        onPress: () => {
+          void Share.share({
+            title: 'Flap Fit bug report',
+            message: ['Send to: ' + supportEmail, bugReportDetails].join('\n\n'),
+          }).catch(() =>
+            Alert.alert('Could not open sharing', 'Email us at ' + supportEmail + '.')
+          );
+        },
+      },
+      {
+        text: 'Open email',
+        onPress: () => void emailSupport('bug'),
+      },
+    ]);
   };
 
   const deleteOnlineProfile = () => {
@@ -444,6 +483,9 @@ export default function InfoScreen() {
           <Text style={styles.bodyText}>
             Your lifetime tracked training time moves your bird through ten stages. The stage names
             and times below come directly from the same rules used by the game.
+          </Text>
+          <Text style={[styles.bodyText, { marginTop: 8 }]}>
+            Swipe the bird images below to see the stages of evolution.
           </Text>
           <ScrollView
             horizontal
@@ -560,7 +602,7 @@ export default function InfoScreen() {
             icon={<MessageSquareWarning size={21} color="#DC2626" />}
             title="Report a bug"
             subtitle="Send the steps and your phone details"
-            onPress={() => void emailSupport('bug')}
+            onPress={reportBug}
           />
           <ActionRow
             icon={<Share2 size={21} color="#16A34A" />}
