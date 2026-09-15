@@ -274,6 +274,23 @@ for (const requiredUploadRule of [
   }
 }
 
+for (const requiredCredentialExclusion of [
+  '*.p8',
+  '*.p12',
+  '*.pem',
+  '*.key',
+  '*.jks',
+  '*.keystore',
+  '*.mobileprovision',
+  '*service-account*.json',
+]) {
+  if (!easIgnore.split(/\r?\n/).includes(requiredCredentialExclusion)) {
+    failures.push(
+      `.easignore: missing ${requiredCredentialExclusion} private credential exclusion`
+    );
+  }
+}
+
 const cameraPlugin = appJson.plugins?.find(
   (plugin) => Array.isArray(plugin) && plugin[0] === 'expo-camera'
 );

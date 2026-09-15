@@ -145,6 +145,9 @@ Owner/legal inputs still required:
 - [x] A September 15 full-history credential scan found no Supabase service-role value, private-key
       block, GitHub token, Stripe secret, AWS access key, or assigned EAS token in any reachable Git
       commit. Public mobile identifiers remain intentionally separate from server-only credentials.
+- [x] Root Git and EAS upload rules exclude Apple API/signing keys, provisioning profiles, Android
+      keystores, and store service-account files regardless of where they are downloaded inside the
+      repository. Production validation fails if those EAS exclusions are removed.
 - [x] The app is linked to the existing `@sportaholic/flapfit` EAS project and the checked-in project
       ID matches the remote project.
 - [x] EAS build profiles contain the seven validated public release values. No service-role secret is

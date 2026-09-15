@@ -30,6 +30,14 @@ README.md
 
 *.log
 *.tgz
+*.p8
+*.p12
+*.pem
+*.key
+*.jks
+*.keystore
+*.mobileprovision
+*service-account*.json
 /.env
 /.env.*
 /apps/mobile/.env
