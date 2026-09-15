@@ -12,12 +12,16 @@ import {
   Video,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LEVELS } from '@/utils/game/levels';
 import { isEndlessUnlocked, useGameStore } from '@/utils/game/store';
 
 const ACCENT_BLUE = '#0284C7';
+
+type PendingGame =
+  | { mode: 'level'; levelId: number; title: string }
+  | { mode: 'endless'; title: string };
 
 export default function LevelsScreen() {
   const insets = useSafeAreaInsets();
@@ -26,25 +30,39 @@ export default function LevelsScreen() {
   const bestScores = useGameStore((s) => s.bestScores);
   const endlessBest = useGameStore((s) => s.endlessBest);
   const endlessOpen = isEndlessUnlocked(unlockedLevel);
-  const [playStyle, setPlayStyle] = useState<'sky' | 'camera' | 'record'>('sky');
-  const backgroundMode = playStyle === 'sky' ? 'sky' : 'camera';
+  const [backgroundMode, setBackgroundMode] = useState<'sky' | 'camera'>('sky');
+  const [pendingGame, setPendingGame] = useState<PendingGame | null>(null);
 
-  const withGameOptions = (params: Record<string, string>) => ({
+  const withGameOptions = (params: Record<string, string>, record = false) => ({
     ...params,
     backgroundMode,
     ...(__DEV__ ? { trackingMode: 'form-test' } : {}),
-    ...(playStyle === 'record' ? { record: '1' } : {}),
+    ...(record && backgroundMode === 'camera' ? { record: '1' } : {}),
   });
 
-  const playLevel = (levelId: number) => {
+  const launchGame = (game: PendingGame, record = false) => {
+    setPendingGame(null);
     router.push({
       pathname: '/game',
-      params: withGameOptions({ mode: 'level', levelId: String(levelId) }),
+      params: withGameOptions(
+        game.mode === 'level'
+          ? { mode: 'level', levelId: String(game.levelId) }
+          : { mode: 'endless' },
+        record
+      ),
     });
   };
 
+  const playLevel = (levelId: number, title: string) => {
+    const game: PendingGame = { mode: 'level', levelId, title };
+    if (backgroundMode === 'camera') setPendingGame(game);
+    else launchGame(game);
+  };
+
   const playEndless = () => {
-    router.push({ pathname: '/game', params: withGameOptions({ mode: 'endless' }) });
+    const game: PendingGame = { mode: 'endless', title: 'Endless Mode' };
+    if (backgroundMode === 'camera') setPendingGame(game);
+    else launchGame(game);
   };
 
   return (
@@ -74,9 +92,11 @@ export default function LevelsScreen() {
           }}
         >
           <View style={{ gap: 3 }}>
-            <Text style={{ fontWeight: '900', color: '#1F2937', fontSize: 16 }}>Game Setup</Text>
+            <Text style={{ fontWeight: '900', color: '#1F2937', fontSize: 16 }}>
+              Game Background
+            </Text>
             <Text style={{ color: '#64748B', fontSize: 12 }}>
-              Choose one, then tap Endless Mode or any unlocked level.
+              Choose a background, then tap Endless Mode or any unlocked level.
             </Text>
           </View>
 
@@ -85,22 +105,22 @@ export default function LevelsScreen() {
               accessibilityRole="button"
               accessibilityLabel="Sky Background"
               accessibilityHint="Uses the classic Flap Fit sky for levels"
-              accessibilityState={{ selected: playStyle === 'sky' }}
-              onPress={() => setPlayStyle('sky')}
+              accessibilityState={{ selected: backgroundMode === 'sky' }}
+              onPress={() => setBackgroundMode('sky')}
               style={{
                 flex: 1,
                 minHeight: 92,
                 padding: 12,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: playStyle === 'sky' ? ACCENT_BLUE : '#D1D5DB',
-                backgroundColor: playStyle === 'sky' ? '#E0F2FE' : '#F8FAFC',
+                borderColor: backgroundMode === 'sky' ? ACCENT_BLUE : '#D1D5DB',
+                backgroundColor: backgroundMode === 'sky' ? '#E0F2FE' : '#F8FAFC',
                 justifyContent: 'space-between',
               }}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Sun size={23} color={playStyle === 'sky' ? ACCENT_BLUE : '#64748B'} />
-                {playStyle === 'sky' ? (
+                <Sun size={23} color={backgroundMode === 'sky' ? ACCENT_BLUE : '#64748B'} />
+                {backgroundMode === 'sky' ? (
                   <CheckCircle2 size={19} color={ACCENT_BLUE} fill="#FFFFFF" />
                 ) : null}
               </View>
@@ -118,22 +138,22 @@ export default function LevelsScreen() {
               accessibilityRole="button"
               accessibilityLabel="Live Camera Background"
               accessibilityHint="Shows your front camera behind levels"
-              accessibilityState={{ selected: playStyle === 'camera' }}
-              onPress={() => setPlayStyle('camera')}
+              accessibilityState={{ selected: backgroundMode === 'camera' }}
+              onPress={() => setBackgroundMode('camera')}
               style={{
                 flex: 1,
                 minHeight: 92,
                 padding: 12,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: playStyle === 'camera' ? ACCENT_BLUE : '#D1D5DB',
-                backgroundColor: playStyle === 'camera' ? '#E0F2FE' : '#F8FAFC',
+                borderColor: backgroundMode === 'camera' ? ACCENT_BLUE : '#D1D5DB',
+                backgroundColor: backgroundMode === 'camera' ? '#E0F2FE' : '#F8FAFC',
                 justifyContent: 'space-between',
               }}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Camera size={23} color={playStyle === 'camera' ? ACCENT_BLUE : '#64748B'} />
-                {playStyle === 'camera' ? (
+                <Camera size={23} color={backgroundMode === 'camera' ? ACCENT_BLUE : '#64748B'} />
+                {backgroundMode === 'camera' ? (
                   <CheckCircle2 size={19} color={ACCENT_BLUE} fill="#FFFFFF" />
                 ) : null}
               </View>
@@ -147,45 +167,6 @@ export default function LevelsScreen() {
               </View>
             </TouchableOpacity>
           </View>
-
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel="Record and play with live camera"
-            accessibilityHint="Selects live-camera gameplay recording for the level you tap next"
-            accessibilityState={{ selected: playStyle === 'record' }}
-            onPress={() => setPlayStyle('record')}
-            style={{
-              minHeight: 58,
-              paddingHorizontal: 14,
-              paddingVertical: 10,
-              borderRadius: 16,
-              borderWidth: 2,
-              borderColor: playStyle === 'record' ? '#DC2626' : '#D1D5DB',
-              backgroundColor: playStyle === 'record' ? '#FEF2F2' : '#F8FAFC',
-              alignItems: 'center',
-              flexDirection: 'row',
-              gap: 10,
-            }}
-          >
-            <Video size={22} color={playStyle === 'record' ? '#DC2626' : '#64748B'} />
-            <View style={{ flex: 1, gap: 2 }}>
-              <Text
-                style={{
-                  color: playStyle === 'record' ? '#B91C1C' : '#0F172A',
-                  fontWeight: '900',
-                  fontSize: 14,
-                }}
-              >
-                Record &amp; Play
-              </Text>
-              <Text style={{ color: '#64748B', fontSize: 10, fontWeight: '600' }}>
-                Live camera with a shareable video
-              </Text>
-            </View>
-            {playStyle === 'record' ? (
-              <CheckCircle2 size={20} color="#DC2626" fill="#FFFFFF" />
-            ) : null}
-          </TouchableOpacity>
         </View>
 
         {/* Endless card */}
@@ -226,7 +207,11 @@ export default function LevelsScreen() {
           return (
             <TouchableOpacity
               key={level.id}
-              onPress={unlocked ? () => playLevel(level.id) : undefined}
+              onPress={
+                unlocked
+                  ? () => playLevel(level.id, `Level ${level.id} · ${level.name}`)
+                  : undefined
+              }
               disabled={!unlocked}
               style={{
                 backgroundColor: '#FFFFFF',
@@ -278,6 +263,120 @@ export default function LevelsScreen() {
           );
         })}
       </ScrollView>
+
+      <Modal
+        visible={pendingGame !== null}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={() => setPendingGame(null)}
+      >
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Close game start options"
+          onPress={() => setPendingGame(null)}
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(15,23,42,0.58)',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Pressable
+            onPress={(event) => event.stopPropagation()}
+            style={{
+              backgroundColor: '#FFFFFF',
+              borderTopLeftRadius: 28,
+              borderTopRightRadius: 28,
+              paddingTop: 22,
+              paddingHorizontal: 20,
+              paddingBottom: Math.max(insets.bottom, 20),
+              gap: 14,
+            }}
+          >
+            <View style={{ alignItems: 'center', gap: 4 }}>
+              <Text
+                style={{
+                  color: '#0F172A',
+                  fontWeight: '900',
+                  fontSize: 20,
+                  textAlign: 'center',
+                }}
+              >
+                {pendingGame?.title}
+              </Text>
+              <Text style={{ color: '#64748B', fontSize: 13, fontWeight: '700' }}>
+                Live Camera Background
+              </Text>
+            </View>
+
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Play with live camera"
+                onPress={() => pendingGame && launchGame(pendingGame)}
+                style={{
+                  flex: 1,
+                  minHeight: 72,
+                  borderRadius: 20,
+                  backgroundColor: '#F59E0B',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 4,
+                }}
+              >
+                <Play size={22} color="#FFFFFF" fill="#FFFFFF" />
+                <Text
+                  style={{
+                    color: '#FFFFFF',
+                    fontWeight: '900',
+                    fontSize: 17,
+                    textAlign: 'center',
+                  }}
+                >
+                  PLAY
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Record and play with live camera"
+                accessibilityHint="Records this game for sharing"
+                onPress={() => pendingGame && launchGame(pendingGame, true)}
+                style={{
+                  flex: 1,
+                  minHeight: 72,
+                  borderRadius: 20,
+                  backgroundColor: '#DC2626',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 4,
+                }}
+              >
+                <Video size={22} color="#FFFFFF" />
+                <Text
+                  style={{
+                    color: '#FFFFFF',
+                    fontWeight: '900',
+                    fontSize: 13,
+                    textAlign: 'center',
+                  }}
+                >
+                  RECORD{`\n`}&amp; PLAY
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Cancel"
+              onPress={() => setPendingGame(null)}
+              style={{ minHeight: 44, alignItems: 'center', justifyContent: 'center' }}
+            >
+              <Text style={{ color: '#64748B', fontWeight: '800' }}>Cancel</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }

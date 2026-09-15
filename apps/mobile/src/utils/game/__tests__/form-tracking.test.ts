@@ -67,6 +67,19 @@ function makeHarness(exercise: string) {
   };
 }
 
+function calibrateWeightedExercise(
+  harness: ReturnType<typeof makeHarness>,
+  top: Point[],
+  bottom: Point[]
+) {
+  harness.update(top, 2100);
+  expect(harness.validateCalibration('top').valid).toBe(true);
+  harness.save('top');
+  harness.update(bottom, 2116);
+  expect(harness.validateCalibration('bottom').valid).toBe(true);
+  harness.save('bottom');
+}
+
 describe('experimental form tracking', () => {
   it('keeps the complete WebView game script syntactically valid', () => {
     expect(() => new Function(SCRIPT_CORE + SCRIPT_FORM_TRACKING + SCRIPT_GAME)).not.toThrow();
@@ -112,6 +125,117 @@ describe('experimental form tracking', () => {
 
     expect(result.valid).toBe(false);
     expect(result.message).toMatch(/waist|knees/i);
+  });
+
+  it('requires both arms to move together during bicep curls', () => {
+    const harness = makeHarness('biceps');
+    const top = pose([
+      ...mirroredPair(11, 12, 0.42, 0.35),
+      ...mirroredPair(13, 14, 0.42, 0.53),
+      ...mirroredPair(15, 16, 0.42, 0.37),
+      ...mirroredPair(23, 24, 0.43, 0.67),
+    ]);
+    const bottom = pose([
+      ...mirroredPair(11, 12, 0.42, 0.35),
+      ...mirroredPair(13, 14, 0.42, 0.53),
+      ...mirroredPair(15, 16, 0.42, 0.72),
+      ...mirroredPair(23, 24, 0.43, 0.67),
+    ]);
+    calibrateWeightedExercise(harness, top, bottom);
+
+    harness.update(top, 2132);
+    expect(harness.validateGameplay(1).valid).toBe(true);
+
+    const oneArmOnly = pose([
+      ...mirroredPair(11, 12, 0.42, 0.35),
+      ...mirroredPair(13, 14, 0.42, 0.53),
+      [15, point(0.42, 0.37)],
+      [16, point(0.58, 0.72)],
+      ...mirroredPair(23, 24, 0.43, 0.67),
+    ]);
+    harness.update(oneArmOnly, 2148);
+
+    expect(harness.validateGameplay(0.5)).toMatchObject({
+      valid: false,
+      fatal: true,
+      fatalKey: 'biceps-both-arms',
+    });
+  });
+
+  it('requires both arms to move together during lateral raises', () => {
+    const harness = makeHarness('lateralraise');
+    const top = pose([
+      ...mirroredPair(11, 12, 0.42, 0.38),
+      [13, point(0.27, 0.38)],
+      [14, point(0.73, 0.38)],
+      [15, point(0.12, 0.38)],
+      [16, point(0.88, 0.38)],
+      ...mirroredPair(23, 24, 0.43, 0.7),
+    ]);
+    const bottom = pose([
+      ...mirroredPair(11, 12, 0.42, 0.38),
+      ...mirroredPair(13, 14, 0.42, 0.55),
+      ...mirroredPair(15, 16, 0.42, 0.7),
+      ...mirroredPair(23, 24, 0.43, 0.7),
+    ]);
+    calibrateWeightedExercise(harness, top, bottom);
+
+    harness.update(top, 2132);
+    expect(harness.validateGameplay(1).valid).toBe(true);
+
+    const oneArmOnly = pose([
+      ...mirroredPair(11, 12, 0.42, 0.38),
+      [13, point(0.27, 0.38)],
+      [14, point(0.58, 0.55)],
+      [15, point(0.12, 0.38)],
+      [16, point(0.58, 0.7)],
+      ...mirroredPair(23, 24, 0.43, 0.7),
+    ]);
+    harness.update(oneArmOnly, 2148);
+
+    expect(harness.validateGameplay(0.5)).toMatchObject({
+      valid: false,
+      fatal: true,
+      fatalKey: 'lateralraise-both-arms',
+    });
+  });
+
+  it('requires both arms to move together during shoulder presses', () => {
+    const harness = makeHarness('shoulderpress');
+    const top = pose([
+      ...mirroredPair(11, 12, 0.42, 0.42),
+      ...mirroredPair(13, 14, 0.42, 0.27),
+      ...mirroredPair(15, 16, 0.42, 0.12),
+      ...mirroredPair(23, 24, 0.43, 0.7),
+    ]);
+    const bottom = pose([
+      ...mirroredPair(11, 12, 0.42, 0.42),
+      [13, point(0.32, 0.5)],
+      [14, point(0.68, 0.5)],
+      [15, point(0.24, 0.42)],
+      [16, point(0.76, 0.42)],
+      ...mirroredPair(23, 24, 0.43, 0.7),
+    ]);
+    calibrateWeightedExercise(harness, top, bottom);
+
+    harness.update(top, 2132);
+    expect(harness.validateGameplay(1).valid).toBe(true);
+
+    const oneArmOnly = pose([
+      ...mirroredPair(11, 12, 0.42, 0.42),
+      [13, point(0.42, 0.27)],
+      [14, point(0.68, 0.5)],
+      [15, point(0.42, 0.12)],
+      [16, point(0.76, 0.42)],
+      ...mirroredPair(23, 24, 0.43, 0.7),
+    ]);
+    harness.update(oneArmOnly, 2148);
+
+    expect(harness.validateGameplay(0.5)).toMatchObject({
+      valid: false,
+      fatal: true,
+      fatalKey: 'shoulderpress-both-arms',
+    });
   });
 
   it('rejects a pull-up calibration when the feet stay planted', () => {

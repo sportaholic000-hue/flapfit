@@ -2,7 +2,7 @@
 // so physical A/B testing can happen without replacing the launch baseline.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-09-15.1';
+export const FORM_TRACKING_RULES_VERSION = '2026-09-15.3';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -340,7 +340,7 @@ function validateExperimentalCalibration(position) {
   }
 
   if (CONFIG.exercise === 'biceps') {
-    if (!metrics.shoulders || !metrics.hips || !metrics.elbows || !metrics.wrists || metrics.elbowAngle === null) {
+    if (!metrics.shoulders || !metrics.hips || !metrics.elbows || !metrics.wrists || metrics.elbowAngle === null || metrics.elbowCount < 2) {
       return formInvalid('Form check<br><br>Keep your shoulders, elbows, wrists, and torso visible.');
     }
     if (!formTorsoIsUpright(metrics)) {
@@ -352,11 +352,14 @@ function validateExperimentalCalibration(position) {
     if (position === 'bottom' && formTopMetrics && metrics.elbowAngle - formTopMetrics.elbowAngle < 20) {
       return formInvalid('Form check<br><br>Extend your elbows more for the bottom position.');
     }
+    if (position === 'bottom' && formTopMetrics && !formHasBilateralWristRange(metrics, 0.05)) {
+      return formInvalid('Form check<br><br>Move both dumbbells through the full curl range.');
+    }
     return formValid();
   }
 
   if (CONFIG.exercise === 'lateralraise') {
-    if (!metrics.shoulders || !metrics.hips || !metrics.wrists || metrics.elbowAngle === null || metrics.abductionAngle === null) {
+    if (!metrics.shoulders || !metrics.hips || !metrics.wrists || metrics.elbowAngle === null || metrics.abductionAngle === null || metrics.elbowCount < 2 || metrics.abductionCount < 2) {
       return formInvalid('Form check<br><br>Keep your torso and both arms visible.');
     }
     if (metrics.elbowAngle < 115) {
@@ -368,10 +371,13 @@ function validateExperimentalCalibration(position) {
     if (position === 'bottom' && formTopMetrics && formTopMetrics.abductionAngle - metrics.abductionAngle < 25) {
       return formInvalid('Form check<br><br>Lower your arms toward your sides.');
     }
+    if (position === 'bottom' && formTopMetrics && !formHasBilateralWristRange(metrics, 0.05)) {
+      return formInvalid('Form check<br><br>Lower both arms through the full range.');
+    }
     return formValid();
   }
 
-  if (!metrics.shoulders || !metrics.hips || !metrics.wrists || metrics.elbowAngle === null) {
+  if (!metrics.shoulders || !metrics.hips || !metrics.wrists || metrics.elbowAngle === null || metrics.elbowCount < 2) {
     return formInvalid('Form check<br><br>Keep your torso, elbows, and both wrists visible.');
   }
   if (!formTorsoIsUpright(metrics)) {
@@ -382,6 +388,9 @@ function validateExperimentalCalibration(position) {
   }
   if (position === 'bottom' && formTopMetrics && formTopMetrics.elbowAngle - metrics.elbowAngle < 15) {
     return formInvalid('Form check<br><br>Lower your hands and bend your elbows toward shoulder height.');
+  }
+  if (position === 'bottom' && formTopMetrics && !formHasBilateralWristRange(metrics, 0.05)) {
+    return formInvalid('Form check<br><br>Lower both hands through the full press range.');
   }
   return formValid();
 }
@@ -399,6 +408,50 @@ function formExpected(topValue, bottomValue, norm) {
 function formMetricMatches(value, topValue, bottomValue, norm, tolerance) {
   if (value === null || topValue === null || bottomValue === null) { return false; }
   return Math.abs(value - formExpected(topValue, bottomValue, norm)) <= tolerance;
+}
+
+function formHasBilateralWristRange(metrics, minimumTravel) {
+  if (
+    !metrics ||
+    !metrics.leftWrist ||
+    !metrics.rightWrist ||
+    !formTopMetrics ||
+    !formTopMetrics.leftWrist ||
+    !formTopMetrics.rightWrist
+  ) { return false; }
+  return (
+    Math.abs(metrics.leftWrist.y - formTopMetrics.leftWrist.y) >= minimumTravel &&
+    Math.abs(metrics.rightWrist.y - formTopMetrics.rightWrist.y) >= minimumTravel
+  );
+}
+
+function formWristProgress(value, topValue, bottomValue) {
+  var range = bottomValue - topValue;
+  if (Math.abs(range) < 0.04) { return null; }
+  return (bottomValue - value) / range;
+}
+
+function formBilateralWristMotionMatches(metrics) {
+  if (
+    !metrics.leftWrist ||
+    !metrics.rightWrist ||
+    !formTopMetrics.leftWrist ||
+    !formTopMetrics.rightWrist ||
+    !formBottomMetrics.leftWrist ||
+    !formBottomMetrics.rightWrist
+  ) { return false; }
+  var leftProgress = formWristProgress(
+    metrics.leftWrist.y,
+    formTopMetrics.leftWrist.y,
+    formBottomMetrics.leftWrist.y
+  );
+  var rightProgress = formWristProgress(
+    metrics.rightWrist.y,
+    formTopMetrics.rightWrist.y,
+    formBottomMetrics.rightWrist.y
+  );
+  if (leftProgress === null || rightProgress === null) { return false; }
+  return Math.abs(leftProgress - rightProgress) <= 0.3;
 }
 
 function validateExperimentalGameplay(norm) {
@@ -472,8 +525,14 @@ function validateExperimentalGameplay(norm) {
   }
 
   if (CONFIG.exercise === 'biceps') {
+    if (!metrics.leftWrist || !metrics.rightWrist || metrics.elbowCount < 2) {
+      return formFatal('Both arms can no longer be verified.', 'biceps-both-arms');
+    }
     if (!formTorsoIsUpright(metrics) || !metrics.elbows || metrics.elbowAngle === null) {
       return formInvalid('Form check<br><br>Keep your torso and elbows visible.');
+    }
+    if (!formBilateralWristMotionMatches(metrics)) {
+      return formFatal('Both-arm curl could not be verified.', 'biceps-both-arms');
     }
     if (!formMetricMatches(metrics.elbowAngle, formTopMetrics.elbowAngle, formBottomMetrics.elbowAngle, norm, 55)) {
       return formInvalid('Form check<br><br>Curl by bending your elbows, not lifting your whole arms.');
@@ -489,6 +548,12 @@ function validateExperimentalGameplay(norm) {
   }
 
   if (CONFIG.exercise === 'lateralraise') {
+    if (!metrics.leftWrist || !metrics.rightWrist || metrics.elbowCount < 2 || metrics.abductionCount < 2) {
+      return formFatal('Both arms can no longer be verified.', 'lateralraise-both-arms');
+    }
+    if (!formBilateralWristMotionMatches(metrics)) {
+      return formFatal('Both-arm lateral raise could not be verified.', 'lateralraise-both-arms');
+    }
     if (metrics.elbowAngle === null || metrics.abductionAngle === null || metrics.elbowAngle < 105) {
       return formInvalid('Form check<br><br>Keep both arms visible and comfortably straight.');
     }
@@ -498,8 +563,14 @@ function validateExperimentalGameplay(norm) {
     return formValid();
   }
 
+  if (!metrics.leftWrist || !metrics.rightWrist || metrics.elbowCount < 2) {
+    return formFatal('Both arms can no longer be verified.', 'shoulderpress-both-arms');
+  }
   if (!formTorsoIsUpright(metrics) || metrics.elbowAngle === null) {
-    return formInvalid('Form check<br><br>Keep your torso, elbows, and hands visible.');
+    return formInvalid('Form check<br><br>Keep your torso and elbows visible.');
+  }
+  if (!formBilateralWristMotionMatches(metrics)) {
+    return formFatal('Both-arm shoulder press could not be verified.', 'shoulderpress-both-arms');
   }
   if (!formMetricMatches(metrics.elbowAngle, formTopMetrics.elbowAngle, formBottomMetrics.elbowAngle, norm, 55)) {
     return formInvalid('Form check<br><br>Press by bending and straightening your elbows.');

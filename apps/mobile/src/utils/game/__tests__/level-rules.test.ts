@@ -50,7 +50,10 @@ describe('level run rules', () => {
     expect(SCRIPT_CORE).toContain('lastWristTrackTime');
     expect(SCRIPT_CORE).toContain('usesWristTracking() ? wristY : headY');
     expect(SCRIPT_CORE).not.toContain('wristY !== null ? wristY : headY');
-    expect(SCRIPT_GAME).toContain('if (!trackingFresh() || !gameplayFormCheck.valid) {');
+    expect(SCRIPT_GAME).toContain(
+      'if (!trackingFresh() || (!gameplayFormCheck.valid && !gameplayFormCheck.fatal)) {'
+    );
+    expect(SCRIPT_GAME).toContain('Fatal anti-cheat failures keep the game moving');
   });
 
   it('reports game over before deferring expensive camera cleanup', () => {

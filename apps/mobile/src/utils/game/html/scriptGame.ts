@@ -711,7 +711,9 @@ function loop(now) {
       return;
     }
 
-    if (!trackingFresh() || !gameplayFormCheck.valid) {
+    // Fatal anti-cheat failures keep the game moving during the short camera-noise
+    // confirmation window, then end the run. They must never become a rest pause.
+    if (!trackingFresh() || (!gameplayFormCheck.valid && !gameplayFormCheck.fatal)) {
       state = 'lost';
       var isWristEx2 = CONFIG.exercise === 'lateralraise' || CONFIG.exercise === 'biceps' || CONFIG.exercise === 'shoulderpress';
       var lostMsg = !gameplayFormCheck.valid
