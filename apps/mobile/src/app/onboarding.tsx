@@ -351,7 +351,7 @@ export default function OnboardingScreen() {
       >
         <Camera size={20} color="#FFFFFF" />
         <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
-          {preview === '1' ? 'Return to Info' : "I'm ready to play"}
+          {preview === '1' ? 'Return to Info' : "I'm ready to play!"}
         </Text>
       </TouchableOpacity>
     </View>,
@@ -378,6 +378,7 @@ export default function OnboardingScreen() {
               <Cloud top={276} left={-38} scale={0.72} opacity={0.36} />
               <Cloud top={410} left={width - 134} scale={0.92} opacity={0.4} />
               <Cloud top={570} left={12} scale={0.78} opacity={0.34} />
+              <Cloud top={height - 188} left={width / 2 - 58} scale={0.64} opacity={0.48} />
             </>
           ) : (
             <>
@@ -385,6 +386,19 @@ export default function OnboardingScreen() {
               <Cloud top={126} left={width - 54} scale={0.72} opacity={0.32} />
               <Cloud top={height - 145} left={-32} scale={0.7} opacity={0.44} />
               <Cloud top={height - 112} left={width - 86} scale={0.82} opacity={0.4} />
+              {step === 2 ? (
+                <Cloud top={insets.top + 18} left={width / 2 - 60} scale={0.78} opacity={0.46} />
+              ) : (
+                <>
+                  <Cloud top={insets.top + 30} left={width / 2 - 54} scale={0.7} opacity={0.44} />
+                  <Cloud
+                    top={height - insets.bottom - 90}
+                    left={width / 2 - 50}
+                    scale={0.64}
+                    opacity={0.46}
+                  />
+                </>
+              )}
             </>
           )}
         </View>
