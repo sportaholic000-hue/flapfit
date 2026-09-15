@@ -129,6 +129,7 @@ function PipeDecoration({
 export default function OnboardingScreen() {
   const insets = useSafeAreaInsets();
   const { height, width } = useWindowDimensions();
+  const pipeHorizontalInset = Math.max(14, Math.min(110, (width - 560) / 2));
   const router = useRouter();
   const { preview } = useLocalSearchParams<{ preview?: string }>();
   const [step, setStep] = useState(0);
@@ -238,12 +239,28 @@ export default function OnboardingScreen() {
         SET THE STAGE
       </Text>
       <View style={{ width: 72, height: 4, borderRadius: 2, backgroundColor: '#F59E0B' }} />
-      <View style={{ gap: 12, width: '100%', paddingHorizontal: 8 }}>
+      <View
+        style={{
+          gap: 12,
+          width: '100%',
+          maxWidth: 560,
+          alignSelf: 'center',
+          paddingHorizontal: 8,
+        }}
+      >
         <View style={{ gap: 3 }}>
           <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 14, textAlign: 'center' }}>
             Push-ups
           </Text>
-          <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 13, lineHeight: 18 }}>
+          <Text
+            style={{
+              color: '#FFFFFF',
+              fontWeight: '600',
+              fontSize: 13,
+              lineHeight: 18,
+              textAlign: 'center',
+            }}
+          >
             Place phone on the floor, propped facing you, 1–1.5m away.
           </Text>
         </View>
@@ -251,7 +268,15 @@ export default function OnboardingScreen() {
           <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 14, textAlign: 'center' }}>
             Squats
           </Text>
-          <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 13, lineHeight: 18 }}>
+          <Text
+            style={{
+              color: '#FFFFFF',
+              fontWeight: '600',
+              fontSize: 13,
+              lineHeight: 18,
+              textAlign: 'center',
+            }}
+          >
             Place phone on the floor or a chair, propped facing you, 1.5–2m away.
           </Text>
         </View>
@@ -267,12 +292,28 @@ export default function OnboardingScreen() {
           >
             Pull-ups / Bicep Curls{'\n'}Lateral Raises / Shoulder Press
           </Text>
-          <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 13, lineHeight: 18 }}>
+          <Text
+            style={{
+              color: '#FFFFFF',
+              fontWeight: '600',
+              fontSize: 13,
+              lineHeight: 18,
+              textAlign: 'center',
+            }}
+          >
             Place phone on a chair or higher, facing you with the full movement visible.
           </Text>
         </View>
         <View>
-          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13, lineHeight: 18 }}>
+          <Text
+            style={{
+              color: '#FFFFFF',
+              fontWeight: '800',
+              fontSize: 13,
+              lineHeight: 18,
+              textAlign: 'center',
+            }}
+          >
             Good lighting = better tracking. Face the camera and keep your full range of motion
             visible.
           </Text>
@@ -413,10 +454,10 @@ export default function OnboardingScreen() {
           pointerEvents="none"
           style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, overflow: 'hidden' }}
         >
-          <PipeDecoration direction="down" height={116} top={0} left={0} />
-          <PipeDecoration direction="down" height={158} top={0} right={0} />
-          <PipeDecoration direction="up" height={142} bottom={0} left={0} />
-          <PipeDecoration direction="up" height={102} bottom={0} right={0} />
+          <PipeDecoration direction="down" height={116} top={12} left={pipeHorizontalInset} />
+          <PipeDecoration direction="down" height={158} top={12} right={pipeHorizontalInset} />
+          <PipeDecoration direction="up" height={142} bottom={12} left={pipeHorizontalInset} />
+          <PipeDecoration direction="up" height={102} bottom={12} right={pipeHorizontalInset} />
         </View>
       ) : null}
       <View
