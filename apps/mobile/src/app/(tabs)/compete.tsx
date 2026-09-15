@@ -34,6 +34,11 @@ import {
   flushPendingCompetitionResults,
   normalizeCompetitionPlayerName,
 } from '@/services/competitionApi';
+import {
+  isCompleteChallengeCode,
+  normalizeChallengeCode,
+  normalizeChallengeTarget,
+} from '@/utils/game/challengeInput';
 import { EXERCISE_IMAGES } from '@/utils/game/exerciseImages';
 import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
 
@@ -590,8 +595,7 @@ export default function CompeteScreen() {
 
   const createChallenge = useMutation({
     mutationFn: async (): Promise<{ code: string }> => {
-      const parsedTarget = parseInt(targetDraft, 10);
-      const target = Number.isFinite(parsedTarget) ? Math.min(60, Math.max(1, parsedTarget)) : 10;
+      const target = normalizeChallengeTarget(targetDraft);
       return competitionRequest<{ code: string }>('/challenges', {
         method: 'POST',
         body: {
@@ -642,11 +646,14 @@ export default function CompeteScreen() {
       setShowCompetitionTerms(true);
       return;
     }
-    const code = joinCode.trim().toUpperCase();
-    if (code.length > 0) {
-      setActiveCode(code);
-      setError(null);
+    const code = normalizeChallengeCode(joinCode);
+    setJoinCode(code);
+    if (!isCompleteChallengeCode(code)) {
+      setError('Enter the complete six-character challenge code.');
+      return;
     }
+    setActiveCode(code);
+    setError(null);
   };
 
   const playChallenge = (data: ChallengeData) => {
@@ -906,7 +913,7 @@ export default function CompeteScreen() {
           <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
             <TextInput
               value={targetDraft}
-              onChangeText={setTargetDraft}
+              onChangeText={(value) => setTargetDraft(value.replace(/\D/g, '').slice(0, 2))}
               keyboardType="number-pad"
               placeholder="Target score"
               placeholderTextColor="#94A3B8"
@@ -970,7 +977,7 @@ export default function CompeteScreen() {
                 {createdCode}
               </Text>
               <TouchableOpacity
-                onPress={() => shareChallenge(createdCode, parseInt(targetDraft, 10) || 10)}
+                onPress={() => shareChallenge(createdCode, normalizeChallengeTarget(targetDraft))}
                 style={{
                   backgroundColor: '#1D4ED8',
                   borderRadius: 10,
@@ -1008,7 +1015,7 @@ export default function CompeteScreen() {
           <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
             <TextInput
               value={joinCode}
-              onChangeText={setJoinCode}
+              onChangeText={(value) => setJoinCode(normalizeChallengeCode(value))}
               autoCapitalize="characters"
               placeholder="e.g. AB12CD"
               placeholderTextColor="#94A3B8"
