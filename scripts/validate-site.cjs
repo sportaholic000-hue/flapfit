@@ -25,7 +25,7 @@ const routes = new Map([
   ['/delete-account/', 'dist/delete-account/index.html'],
   ['/support/', 'dist/support/index.html'],
 ]);
-const expectedOrigin = 'https://flap-fit.sportaholic000.chatgpt.site';
+const expectedOrigin = 'https://flapfitapp.com';
 
 for (const [route, relativePath] of routes) {
   const fullPath = path.join(projectRoot, relativePath);
@@ -64,8 +64,8 @@ for (const staleText of ['[REQUIRED]', 'Not configured', 'private draft', 'track
 
 const config = read('dist/site-config.js');
 check(config.includes('developerName: "Troy Reardon"'), 'operator name is not configured');
-check(config.includes('supportEmail: "awesome-eh@hotmail.com"'), 'support email is not configured');
-check(config.includes('privacyEmail: "awesome-eh@hotmail.com"'), 'privacy email is not configured');
+check(config.includes('supportEmail: "support@flapfitapp.com"'), 'support email is not configured');
+check(config.includes('privacyEmail: "support@flapfitapp.com"'), 'privacy email is not configured');
 check(config.includes('privacyEffectiveDate: "September 14, 2026"'), 'privacy effective date is not configured');
 check(config.includes('releaseStatus: "development"'), 'release status must remain development until store URLs exist');
 
@@ -84,7 +84,7 @@ for (const phrase of ['Open the Info tab.', 'Delete online profile', 'Request de
   check(deletion.includes(phrase), `deletion page is missing: ${phrase}`);
 }
 const support = read('dist/support/index.html');
-check(support.includes('awesome-eh@hotmail.com'), 'support page lacks the configured email');
+check(support.includes('support@flapfitapp.com'), 'support page lacks the configured email');
 check(support.includes('bundled with the app'), 'support page has incorrect tracking-model guidance');
 
 const siteScript = read('dist/site.js');

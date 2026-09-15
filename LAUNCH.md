@@ -1,17 +1,17 @@
 # Flap Fit website launch handoff
 
-Owner-only deployment: https://flap-fit.sportaholic000.chatgpt.site
+Canonical domain: https://flapfitapp.com (DNS activation pending)
 
 The website is a separate static project. No mobile app source, manifest, lockfile, or dependencies were edited. No website backend, analytics, signup, payment, database, or app-owned authentication was added. Owner-only access is supplied by Sites.
 
 ## Exact details required before public launch
 
 - Legal postal address for store records and any region that requires it publicly.
-- Final support domain/email if it changes from `awesome-eh@hotmail.com`.
+- Confirm `support@flapfitapp.com` is monitored before store submission.
 - Confirm the production Supabase region, service-log retention, and backup retention after provisioning.
 - Confirm all release-build service providers, analytics/crash reporting, account, advertising, and purchase behavior, then align the policy and store disclosures with that actual build.
 - Approved release status and real App Store / Google Play listing URLs. The site currently says the app is in development and offers no false store links.
-- Public canonical domain, if different from the private Sites address. Public publishing requires a separately authorized audience change.
+- Complete DNS validation for `flapfitapp.com`. Public publishing still requires the separately authorized audience change noted below.
 
 ## Configuration and source
 
