@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Camera, ChevronRight } from 'lucide-react-native';
 import { useState } from 'react';
@@ -14,6 +14,7 @@ import { useGameStore } from '@/utils/game/store';
 export default function OnboardingScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { preview } = useLocalSearchParams<{ preview?: string }>();
   const [step, setStep] = useState(0);
   const birdId = useGameStore((s) => s.birdId);
   const setBird = useGameStore((s) => s.setBird);
@@ -22,6 +23,10 @@ export default function OnboardingScreen() {
   const skin = getBird(birdId);
 
   const finish = () => {
+    if (preview === '1') {
+      router.back();
+      return;
+    }
     setOnboarded();
     router.replace('/');
   };
@@ -200,7 +205,7 @@ export default function OnboardingScreen() {
       >
         <Camera size={20} color="#FFFFFF" />
         <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
-          Continue with camera tracking
+          {preview === '1' ? 'Return to Info' : 'Continue with camera tracking'}
         </Text>
       </TouchableOpacity>
     </View>,

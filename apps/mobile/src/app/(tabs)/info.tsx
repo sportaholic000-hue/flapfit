@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -285,6 +286,7 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
 
 export default function InfoScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const [modalPage, setModalPage] = useState<ModalPage>(null);
   const [onlineDeleteBusy, setOnlineDeleteBusy] = useState(false);
   const queryClient = useQueryClient();
@@ -395,6 +397,15 @@ export default function InfoScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 32 }]}
       >
+        <Section title="Getting started" icon={<CircleHelp size={23} color={AMBER} />}>
+          <ActionRow
+            icon={<CircleHelp size={21} color="#2563EB" />}
+            title="View introduction again"
+            subtitle="Review bird choice, phone placement, and calibration"
+            onPress={() => router.push({ pathname: '/onboarding', params: { preview: '1' } })}
+          />
+        </Section>
+
         <Section title="Camera setup" icon={<Camera size={23} color={AMBER} />}>
           <NumberedStep number={1}>
             Prop your phone upright and stable. Use bright, even light and keep the camera lens

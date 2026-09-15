@@ -15,6 +15,10 @@ another network. Share the direct Expo Go deep link returned by Metro's `/_expo/
 endpoint, not an Expo dashboard/project URL. Do not clear `.expo` or Metro caches during a working
 session merely to generate another QR; keep the same process running so Fast Refresh stays active.
 
+- [ ] Open Info > View introduction again and verify all four onboarding screens, all six exercise
+      names, phone-placement copy, two-second setup buffer, bird selection, and the return to Info.
+      Confirm replaying the introduction does not reset local progress.
+
 For each of Push-ups, Squats, Pull-ups, Bicep Curls, Lateral Raise, and Shoulder Press:
 
 - [ ] Original tracking calibrates both positions after the two-second reading/setup buffer.
