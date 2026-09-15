@@ -69,7 +69,7 @@ branch. It describes implemented behavior, not planned marketing claims.
 ## Bird evolution
 
 - Replaced the childlike placeholder evolution birds with ten progressively stronger muscular bird
-  stages for all six bird colors.
+  stages for all seven bird colors.
 - The selected evolution bird is also the flying bird.
 - Current lifetime tracked-training thresholds are 0, 2, 10, 30, and 60 minutes, then 2, 4, 8, 15,
   and 30 hours.
@@ -128,7 +128,7 @@ branch. It describes implemented behavior, not planned marketing claims.
 - Added reliable LAN/tunnel Expo scripts and documented the direct deep-link QR workflow.
 - Copied the project to a local development folder and synchronized the private GitHub repository.
 - Verified no targeted private credentials exist in the current tree or any reachable Git commit.
-- Current automated result is 46 of 46 tests passing, plus TypeScript, effective strict lint, and
+- Current automated result is 48 of 48 tests passing, plus TypeScript, effective strict lint, and
   repository formatting checks.
 
 ## Deliberately not complete yet

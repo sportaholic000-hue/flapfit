@@ -48,7 +48,7 @@ final review decisions.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [x] The current pre-test candidate passes TypeScript, 46 automated tests, repository formatting,
+- [x] The current pre-test candidate passes TypeScript, 48 automated tests, repository formatting,
       lint, and production-style local Expo exports for both iOS and Android.
 - [x] Production EAS validation fails closed while the hardened tracker remains unapproved: Form
       Test must be promoted and `FLAPFIT_APPROVED_TRACKER_RULES_VERSION` must exactly match the

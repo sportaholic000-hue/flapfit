@@ -47,7 +47,7 @@ platforms without changing dependencies or the lockfile:
 
 - iOS bundled 3,561 modules, a 7 MB Hermes bundle, and 106 assets.
 - Android bundled 3,655 modules, a 7.2 MB Hermes bundle, and 110 assets.
-- Both exports included all six exercise images, all 60 bird-evolution images, the splash logo, the
+- Both exports included all six exercise images, all 70 bird-evolution images, the splash logo, the
   bundled pose model, and the SIMD plus non-SIMD tracker runtimes.
 
 These exports prove the current JavaScript and asset graph bundles for both platforms. They are not

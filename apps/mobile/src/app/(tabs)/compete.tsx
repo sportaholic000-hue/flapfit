@@ -1017,7 +1017,7 @@ export default function CompeteScreen() {
               value={joinCode}
               onChangeText={(value) => setJoinCode(normalizeChallengeCode(value))}
               autoCapitalize="characters"
-              placeholder="e.g. AB12CD"
+              placeholder="e.g. AB27CD"
               placeholderTextColor="#94A3B8"
               maxLength={6}
               style={{
