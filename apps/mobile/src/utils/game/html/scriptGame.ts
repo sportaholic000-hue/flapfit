@@ -635,7 +635,9 @@ function loop(now) {
             if (CONFIG.exercise === 'squats') {
               tooSmallMsg = 'Range too small!<br><br>Move closer to the camera<br>then hold a <b>DEEP SQUAT</b> again.';
             } else if (CONFIG.exercise === 'pullups') {
-              tooSmallMsg = 'Range too small!<br><br>Lower to a full <b>DEAD HANG</b><br>arms completely locked — then hold still.';
+              tooSmallMsg = usesExperimentalFormTracking()
+                ? 'Range too small!<br><br>Lower to a comfortable <b>HANG</b><br>Slight elbow bend is fine. Hold still.'
+                : 'Range too small!<br><br>Lower to a full <b>DEAD HANG</b><br>arms completely locked — then hold still.';
             } else if (CONFIG.exercise === 'lateralraise') {
               tooSmallMsg = 'Range too small!<br><br>Make sure both wrists are visible<br>then lower arms to your <b>SIDES</b> and hold.';
             } else if (CONFIG.exercise === 'biceps') {
@@ -693,7 +695,7 @@ function loop(now) {
       return;
     }
 
-    // Active training/play time. Pose/form verification is not implemented yet.
+    // Active training/play time after calibration and any enabled form checks above.
     tutSeconds += dt;
     while (tutSeconds - tutReportedSeconds >= 5) {
       tutReportedSeconds += 5;
@@ -712,7 +714,11 @@ function loop(now) {
       var lostMsg = !gameplayFormCheck.valid
         ? gameplayFormCheck.message
         : CONFIG.exercise === 'pullups'
-          ? 'Tracking lost<br><br><b>Re-center in frame</b><br>Return to your hang — game resumes automatically.'
+          ? usesExperimentalFormTracking()
+            ? 'Tracking lost<br><br><b>Return to your hang quickly</b><br><small>Sustained tracking loss ends this run</small>'
+            : 'Tracking lost<br><br><b>Re-center in frame</b><br>Return to your hang — game resumes automatically.'
+          : CONFIG.exercise === 'pushups' && usesExperimentalFormTracking()
+            ? 'Tracking lost<br><br><b>Return to your push-up position quickly</b><br><small>Sustained tracking loss ends this run</small>'
           : isWristEx2
             ? 'Tracking lost<br><br><b>Re-center in frame</b><br>Face camera and hold still — game resumes automatically.'
             : 'Tracking lost<br><br><b>Re-center in frame</b><br>Hold your position — game resumes automatically.';
