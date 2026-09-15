@@ -255,7 +255,7 @@ describe('experimental form tracking', () => {
     expect(result.message).toMatch(/step 1|pull your body/i);
   });
 
-  it('accepts a hanging pull-up range when knees stay bent and feet barely move', () => {
+  it('accepts bent knees and a switch to straight airborne legs during pull-ups', () => {
     const harness = makeHarness('pullups');
     const setup = pose([
       ...mirroredPair(11, 12, 0.43, 0.43),
@@ -303,16 +303,28 @@ describe('experimental form tracking', () => {
     harness.save('bottom');
     expect(harness.validateGameplay(0).valid).toBe(true);
 
-    const straightLegHang = pose([
+    const straightLegBottom = pose([
       ...mirroredPair(11, 12, 0.44, 0.44),
       ...mirroredPair(13, 14, 0.44, 0.28),
       ...mirroredPair(15, 16, 0.44, 0.14),
       ...mirroredPair(23, 24, 0.44, 0.65),
-      ...mirroredPair(27, 28, 0.45, 0.9),
+      ...mirroredPair(27, 28, 0.45, 0.918),
     ]);
-    harness.update(straightLegHang, 4232);
+    harness.update(straightLegBottom, 4232);
     expect(harness.validateGameplay(0).valid).toBe(true);
-    harness.update(straightLegHang, 5100);
+
+    const straightLegTop = pose([
+      ...mirroredPair(11, 12, 0.43, 0.35),
+      ...mirroredPair(13, 14, 0.39, 0.25),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.56),
+      ...mirroredPair(27, 28, 0.45, 0.828),
+    ]);
+    harness.update(straightLegBottom, 5100);
+    expect(harness.validateGameplay(0).valid).toBe(true);
+    harness.update(straightLegTop, 5600);
+    expect(harness.validateGameplay(1).valid).toBe(true);
+    harness.update(straightLegBottom, 6100);
     expect(harness.validateGameplay(0).valid).toBe(true);
 
     const feetDown = pose([
@@ -322,9 +334,19 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.65),
       ...mirroredPair(27, 28, 0.45, 0.92),
     ]);
-    harness.update(feetDown, 5116);
+    harness.update(feetDown, 6200);
     expect(harness.validateGameplay(0)).toMatchObject({ valid: true, fatal: false });
-    harness.update(feetDown, 6000);
+
+    const feetDownAtTop = pose([
+      ...mirroredPair(11, 12, 0.43, 0.35),
+      ...mirroredPair(13, 14, 0.39, 0.25),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.56),
+      ...mirroredPair(27, 28, 0.45, 0.92),
+    ]);
+    harness.update(feetDownAtTop, 6700);
+    expect(harness.validateGameplay(1)).toMatchObject({ valid: true, fatal: false });
+    harness.update(feetDown, 7100);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
@@ -339,7 +361,7 @@ describe('experimental form tracking', () => {
       [27, point(0.45, 0.92)],
       [28, point(0.55, 0.73)],
     ]);
-    harness.update(oneFootDown, 6016);
+    harness.update(oneFootDown, 7116);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
@@ -354,9 +376,9 @@ describe('experimental form tracking', () => {
       [27, { x: 0.45, y: 0.92, visibility: 0.1 }],
       [28, point(0.55, 0.73)],
     ]);
-    harness.update(oneFootHidden, 6025);
+    harness.update(oneFootHidden, 7125);
     expect(harness.validateGameplay(0)).toMatchObject({ valid: false, fatal: false });
-    harness.update(oneFootHidden, 7300);
+    harness.update(oneFootHidden, 8400);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
@@ -371,9 +393,9 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.65),
       ...mirroredPair(27, 28, 0.45, 0.73),
     ]);
-    harness.update(wristTemporarilyHidden, 7400);
+    harness.update(wristTemporarilyHidden, 8500);
     expect(harness.validateGameplay(0)).toMatchObject({ valid: false, fatal: false });
-    harness.update(wristTemporarilyHidden, 8700);
+    harness.update(wristTemporarilyHidden, 9800);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
@@ -387,7 +409,7 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.65),
       ...mirroredPair(27, 28, 0.45, 0.73),
     ]);
-    harness.update(releasedBar, 8800);
+    harness.update(releasedBar, 9900);
     expect(harness.validateGameplay(0)).toMatchObject({
       valid: false,
       fatal: true,
