@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { validateMonetizationConfig } = require('./validate-monetization-config.cjs');
+const { validateTrackerReleaseConfig } = require('./validate-tracker-release.cjs');
 
 const appRoot = path.resolve(__dirname, '..');
 const repoRoot = path.resolve(appRoot, '..', '..');
@@ -263,6 +264,19 @@ const storeSource = fs.readFileSync(path.join(appRoot, 'src', 'utils', 'game', '
 const functionSource = fs.readFileSync(
   path.join(repoRoot, 'supabase', 'functions', 'flapfit-game', 'index.ts'),
   'utf8'
+);
+const gameScreenSource = fs.readFileSync(path.join(appRoot, 'src', 'app', 'game.tsx'), 'utf8');
+const formTrackingSource = fs.readFileSync(
+  path.join(appRoot, 'src', 'utils', 'game', 'html', 'scriptFormTracking.ts'),
+  'utf8'
+);
+failures.push(
+  ...validateTrackerReleaseConfig({
+    buildProfile: process.env.EAS_BUILD_PROFILE,
+    approvedVersion: process.env.FLAPFIT_APPROVED_TRACKER_RULES_VERSION,
+    gameScreenSource,
+    formTrackingSource,
+  })
 );
 const supabaseConfig = fs.readFileSync(path.join(repoRoot, 'supabase', 'config.toml'), 'utf8');
 const functionConfig = supabaseConfig.match(

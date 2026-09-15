@@ -85,6 +85,7 @@ const CONFETTI_COLORS = ['#F59E0B', '#FDE047', '#4ADE80', '#38BDF8', '#A78BFA', 
 // Store builds continue to use the tracker files bundled inside the app.
 const USE_REMOTE_TRACKER = __DEV__;
 const TRACKER_TRANSFER_CHUNK_SIZE = 96_000;
+const PRODUCTION_TRACKING_MODE: 'original' | 'form-test' = 'original';
 const CONFETTI_PIECES = Array.from({ length: 22 }, (_, index) => ({
   id: index,
   left: `${4 + ((index * 37) % 92)}%` as `${number}%`,
@@ -183,7 +184,8 @@ export default function GameScreen() {
   const challengeCode = typeof params.challengeCode === 'string' ? params.challengeCode : null;
   const backgroundMode = params.backgroundMode === 'camera' ? 'camera' : 'sky';
   const recordRun = params.record === 'true' || params.record === '1';
-  const trackingMode = __DEV__ && params.trackingMode === 'form-test' ? 'form-test' : 'original';
+  const trackingMode =
+    __DEV__ && params.trackingMode === 'form-test' ? 'form-test' : PRODUCTION_TRACKING_MODE;
 
   const isEndless = mode === 'endless';
   const level = isEndless ? ENDLESS_BASE : getLevel(levelId);
