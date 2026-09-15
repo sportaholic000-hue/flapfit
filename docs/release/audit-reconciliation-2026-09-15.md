@@ -27,6 +27,8 @@ requires physical or signed-build evidence. It is not a guarantee of store appro
   mixed content, and no longer uses a wildcard navigation policy.
 - Missing Terms acceptance, invalid input, oversized bodies, replays, expired runs, and implausible
   results return purposeful HTTP statuses instead of a generic server failure.
+- Deleting an online profile clears queued submissions, cached competition screens, the saved
+  player name, and prior Competition Terms acceptance. Local bird and workout progress remain.
 - Live Supabase migrations, RLS, service-only score writes, retention jobs, Edge Function version 3,
   and the verification suite were exercised against the dedicated Flap Fit project. Test rows were
   removed afterward.

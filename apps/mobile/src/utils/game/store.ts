@@ -236,6 +236,7 @@ type GameStore = {
   setBird: (id: string) => void;
   setPlayerName: (name: string) => void;
   acceptCompetitionTerms: () => void;
+  resetCompetitionProfile: () => void;
   recordSession: (input: RecordSessionInput) => void;
   recordTut: (seconds: number, exercise: ExerciseMode) => void;
   completeDaily: (day: string) => void;
@@ -274,6 +275,7 @@ export const useGameStore = create<GameStore>()(
       setBird: (id) => set({ birdId: id }),
       setPlayerName: (name) => set({ playerName: name.slice(0, 20) }),
       acceptCompetitionTerms: () => set({ competitionTermsVersion: COMPETITION_TERMS_VERSION }),
+      resetCompetitionProfile: () => set({ playerName: '', competitionTermsVersion: null }),
 
       recordTut: (seconds, exercise) => {
         const safeSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;

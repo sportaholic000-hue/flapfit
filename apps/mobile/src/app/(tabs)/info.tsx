@@ -1,5 +1,6 @@
 import Constants from 'expo-constants';
 import { StatusBar } from 'expo-status-bar';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Camera,
   ChevronRight,
@@ -286,8 +287,9 @@ export default function InfoScreen() {
   const insets = useSafeAreaInsets();
   const [modalPage, setModalPage] = useState<ModalPage>(null);
   const [onlineDeleteBusy, setOnlineDeleteBusy] = useState(false);
+  const queryClient = useQueryClient();
   const birdId = useGameStore((state) => state.birdId);
-  const setPlayerName = useGameStore((state) => state.setPlayerName);
+  const resetCompetitionProfile = useGameStore((state) => state.resetCompetitionProfile);
   const supportEmail = RELEASE_LINKS.supportEmail;
   const version = Constants.expoConfig?.version ?? '1.0.0';
   const skin = getBird(birdId);
@@ -355,8 +357,13 @@ export default function InfoScreen() {
             setOnlineDeleteBusy(true);
             void deleteCompetitionIdentity()
               .then(() => {
-                setPlayerName('');
-                Alert.alert('Online profile deleted', 'Your local game progress was not removed.');
+                resetCompetitionProfile();
+                queryClient.removeQueries({ queryKey: ['leaderboard'] });
+                queryClient.removeQueries({ queryKey: ['challenge'] });
+                Alert.alert(
+                  'Online profile deleted',
+                  'Your local game progress was not removed. To use Compete again, you must accept the current Terms and create a new player name.'
+                );
               })
               .catch(() =>
                 Alert.alert(

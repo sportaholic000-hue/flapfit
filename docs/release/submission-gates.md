@@ -42,10 +42,13 @@ final review decisions.
       light styling without adding an unnecessary native dependency.
 - [x] Online competition has shared client/server name validation, report, block, deletion, run and
       challenge rate limits, replay protection, plausibility checks, and a durable result outbox.
+- [x] Online-profile deletion clears pending submissions, cached competition results, the local
+      player name, and prior Terms acceptance while preserving bird and workout progress. A new
+      anonymous profile cannot be recreated until the player accepts the current Terms again.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [x] The current pre-test candidate passes TypeScript, 45 automated tests, repository formatting,
+- [x] The current pre-test candidate passes TypeScript, 46 automated tests, repository formatting,
       lint, and production-style local Expo exports for both iOS and Android.
 - [x] Production EAS validation fails closed while the hardened tracker remains unapproved: Form
       Test must be promoted and `FLAPFIT_APPROVED_TRACKER_RULES_VERSION` must exactly match the

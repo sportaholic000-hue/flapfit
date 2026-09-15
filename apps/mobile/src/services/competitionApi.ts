@@ -300,7 +300,10 @@ export async function deleteCompetitionIdentity(): Promise<void> {
   const supabase = getClient();
   const sessionResult = await supabase.auth.getSession();
   if (sessionResult.error) throw sessionResult.error;
-  if (!sessionResult.data.session?.user) return;
+  if (!sessionResult.data.session?.user) {
+    await clearPendingCompetitionResults();
+    return;
+  }
 
   await competitionRequest<{ deleted: true }>('/me', { method: 'DELETE' });
   await clearPendingCompetitionResults();
