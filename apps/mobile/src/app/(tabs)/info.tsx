@@ -50,7 +50,7 @@ const EXERCISE_SETUP = [
   ['Squats', 'Phone on the floor or a stable chair, 1.5–2 m in front.'],
   [
     'Pull-ups',
-    'Phone on a stable chair or higher; keep both hands, elbows, and shoulders visible. Feet are optional.',
+    'Phone on a stable chair or higher, 1.5–2 m in front; keep both hands on the bar.',
   ],
   ['Bicep curls', 'Phone on a chair or higher, 1–1.5 m in front; keep both wrists visible.'],
   ['Lateral raises', 'Phone on a chair or higher, about 2 m in front; keep both wrists visible.'],

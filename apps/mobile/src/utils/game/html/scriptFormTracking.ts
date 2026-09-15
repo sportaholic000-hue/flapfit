@@ -2,7 +2,7 @@
 // so physical A/B testing can happen without replacing the launch baseline.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-09-15.6';
+export const FORM_TRACKING_RULES_VERSION = '2026-09-15.7';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -11,6 +11,7 @@ var formCurrentMetrics = null;
 var formTrackY = null, formTrackYSmooth = null;
 var lastFormTrackTime = 0;
 var formTopMetrics = null, formBottomMetrics = null;
+var pullupTopReferenceMetrics = null;
 var pullupFootAnchorEvidence = { left: [], right: [] };
 var pullupWristMissingAt = 0;
 var PULLUP_EVIDENCE_GRACE_MS = 1200;
@@ -29,6 +30,7 @@ function resetExperimentalFormTracking() {
   lastFormTrackTime = 0;
   formTopMetrics = null;
   formBottomMetrics = null;
+  pullupTopReferenceMetrics = null;
   pullupFootAnchorEvidence = { left: [], right: [] };
   pullupWristMissingAt = 0;
 }
@@ -160,6 +162,22 @@ function updateExperimentalFormPose(landmarks, now) {
   if (formTrackYSmooth === null) { formTrackYSmooth = formTrackY; }
   formTrackYSmooth = formTrackYSmooth + (formTrackY - formTrackYSmooth) * 0.55;
   lastFormTrackTime = now;
+  if (
+    CONFIG.exercise === 'pullups' &&
+    !formTopMetrics &&
+    now <= calibrationReadyAt &&
+    formCurrentMetrics.shoulders &&
+    formCurrentMetrics.wrists &&
+    formCurrentMetrics.elbowAngle !== null &&
+    formCurrentMetrics.elbowCount >= 2 &&
+    formCurrentMetrics.wrists.y <= formCurrentMetrics.shoulders.y - 0.015 &&
+    (
+      !pullupTopReferenceMetrics ||
+      formCurrentMetrics.controllerY > pullupTopReferenceMetrics.controllerY
+    )
+  ) {
+    pullupTopReferenceMetrics = formCurrentMetrics;
+  }
 }
 
 function getExperimentalTrackY() { return formTrackY; }
@@ -275,7 +293,7 @@ function validateExperimentalCalibration(position) {
   }
 
   if (CONFIG.exercise === 'pullups') {
-    var pullupTopMessage = 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull to your <b>HIGHEST</b> point<br>Bent knees or straight legs are fine<br><br>Hold still…';
+    var pullupTopMessage = 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull your shoulders <b>UP</b> to your highest point<br><br>Hold still…';
     var pullupBottomMessage = 'STEP 2 OF 2<br><br>Lower to a comfortable <b>BOTTOM</b> position<br>A slight elbow bend is fine<br>Keep both hands on the bar<br><br>Hold still…';
     if (position === 'top') {
       if (
@@ -284,9 +302,26 @@ function validateExperimentalCalibration(position) {
         metrics.elbowAngle === null ||
         metrics.elbowCount < 2 ||
         metrics.wrists.y > metrics.shoulders.y - 0.015 ||
-        metrics.elbowAngle > 135
+        metrics.elbowAngle > 145
       ) {
         return formInvalid(pullupTopMessage);
+      }
+      if (!pullupTopReferenceMetrics) {
+        pullupTopReferenceMetrics = metrics;
+        return formInvalid('STEP 1 OF 2<br><br>Hands set. Now pull your shoulders <b>UP</b> toward the bar<br><br>Hold your highest point…');
+      }
+      if (metrics.controllerY > pullupTopReferenceMetrics.controllerY + 0.01) {
+        pullupTopReferenceMetrics = metrics;
+        return formInvalid(pullupTopMessage);
+      }
+      var topShoulderRise = pullupTopReferenceMetrics.controllerY - metrics.controllerY;
+      var topElbowBend = pullupTopReferenceMetrics.elbowAngle - metrics.elbowAngle;
+      var topWristTravel = formDistance(metrics.wrists, pullupTopReferenceMetrics.wrists);
+      if (topShoulderRise < 0.04 || topElbowBend < 10) {
+        return formInvalid('STEP 1 OF 2<br><br>Pull your shoulders <b>UP</b> toward the bar<br>Your elbows should bend as your body rises<br><br>Hold your highest point…');
+      }
+      if (topWristTravel > Math.max(0.06, topShoulderRise * 0.6)) {
+        return formInvalid('STEP 1 OF 2<br><br>Keep both hands anchored on the bar<br>Pull your shoulders <b>UP</b> toward your hands<br><br>Hold still…');
       }
       return formValid();
     }
@@ -480,19 +515,19 @@ function validateExperimentalGameplay(norm) {
     if (formDistance(metrics.wrists, wristAnchor) > 0.075) {
       return formFatal('Bar released<br><br>Your run is ending.', 'pullup-bar');
     }
-    var leftFootAnchored = pullupFootAppearsPlanted(
+      var leftFootAnchored = pullupFootAppearsPlanted(
       'left',
       metrics.leftFoot,
       metrics.shoulders,
       metrics.leftKneeAngle,
-      pullupNow
+        pullupNow
     );
     var rightFootAnchored = pullupFootAppearsPlanted(
       'right',
       metrics.rightFoot,
       metrics.shoulders,
       metrics.rightKneeAngle,
-      pullupNow
+        pullupNow
     );
     if (leftFootAnchored || rightFootAnchored) {
       return formFatal('A planted foot was detected<br><br>Your run is ending.', 'pullup-feet');

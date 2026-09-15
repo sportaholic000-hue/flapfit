@@ -560,9 +560,9 @@ function topCalibrationMessage() {
     return 'STEP 1 OF 2<br><br>Stand <b>TALL</b><br>Feet shoulder-width apart, head up<br><br>Hold still…';
   }
   if (CONFIG.exercise === 'pullups') {
-    if (usesExperimentalFormTracking()) {
-      return 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull to your <b>HIGHEST</b> point<br>Bent knees or straight legs are fine<br><br>Hold still…';
-    }
+      if (usesExperimentalFormTracking()) {
+        return 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull your shoulders <b>UP</b> to your highest point<br><br>Hold still…';
+      }
     return 'STEP 1 OF 2<br><br>Pull to your <b>HIGHEST</b> point<br>Chin at or above the bar<br><br>Hold still…';
   }
   if (CONFIG.exercise === 'lateralraise') {
