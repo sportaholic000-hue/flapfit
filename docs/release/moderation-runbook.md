@@ -45,3 +45,10 @@ Before submission, save screenshots or a short test record showing Terms accepta
 unsafe name, report submission, immediate local block behavior, moderation queue visibility, content
 removal, and full online-profile deletion. Test the published support and deletion pages from a
 signed-out browser.
+
+Use two clearly temporary player names such as `FFReviewA` and `FFReviewB` for the release test.
+Have A create a challenge and B find it by the six-character code. From B, submit one report against
+A and block A. Confirm the report appears in the moderator queue and the blocked content disappears
+without changing surviving global ranks. Mark the test report `dismissed`, record the resolution
+evidence, then delete both temporary online profiles from the app. Confirm their public competition
+rows are gone; retain only the minimized resolved test report under the normal 180-day policy.
