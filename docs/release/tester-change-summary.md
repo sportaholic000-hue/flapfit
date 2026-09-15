@@ -21,6 +21,8 @@ branch. It describes implemented behavior, not planned marketing claims.
   profile deletion.
 - Added Info > View introduction again so an existing tester can replay onboarding without erasing
   progress.
+- Replaced the blank post-splash state during saved-progress hydration with branded loading and a
+  delayed retry button. A rejected hydration now exits the loading gate instead of spinning forever.
 
 ## Gameplay and levels
 
@@ -128,7 +130,7 @@ branch. It describes implemented behavior, not planned marketing claims.
 - Added reliable LAN/tunnel Expo scripts and documented the direct deep-link QR workflow.
 - Copied the project to a local development folder and synchronized the private GitHub repository.
 - Verified no targeted private credentials exist in the current tree or any reachable Git commit.
-- Current automated result is 48 of 48 tests passing, plus TypeScript, effective strict lint, and
+- Current automated result is 50 of 50 tests passing, plus TypeScript, effective strict lint, and
   repository formatting checks.
 
 ## Deliberately not complete yet

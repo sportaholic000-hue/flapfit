@@ -51,8 +51,11 @@ final review decisions.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [x] The current pre-test candidate passes TypeScript, 48 automated tests, repository formatting,
+- [x] The current pre-test candidate passes TypeScript, 50 automated tests, repository formatting,
       lint, and production-style local Expo exports for both iOS and Android.
+- [x] Persisted-state hydration no longer leaves a blank Home screen after a read failure. Slow
+      hydration shows branded loading and a retry control; an actual hydration error opens the app
+      through a logged fallback without explicitly deleting the stored value.
 - [x] Production EAS validation fails closed while the hardened tracker remains unapproved: Form
       Test must be promoted and `FLAPFIT_APPROVED_TRACKER_RULES_VERSION` must exactly match the
       versioned rules marker. Development and preview testing remain available.

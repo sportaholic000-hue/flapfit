@@ -54,6 +54,19 @@ export type ExerciseMode =
 
 export type DailyExerciseTut = Record<string, Partial<Record<ExerciseMode, number>>>;
 
+export function finishPersistedStoreHydration(
+  state: { setHydrated: () => void } | undefined,
+  error: unknown,
+  fallback: () => void
+): void {
+  if (error) console.error('Flap Fit saved progress could not be loaded', error);
+  if (state) {
+    state.setHydrated();
+    return;
+  }
+  fallback();
+}
+
 export function deriveDailyTut(sessions: SessionRecord[]): Record<string, number> {
   return sessions.reduce<Record<string, number>>((totals, session) => {
     if (!Number.isFinite(session.tutSeconds) || session.tutSeconds <= 0) return totals;
@@ -387,8 +400,10 @@ export const useGameStore = create<GameStore>()(
           controlMode: 'camera' as const,
         };
       },
-      onRehydrateStorage: () => (state) => {
-        state?.setHydrated();
+      onRehydrateStorage: () => (state, error) => {
+        finishPersistedStoreHydration(state, error, () =>
+          useGameStore.setState({ hydrated: true })
+        );
       },
     }
   )

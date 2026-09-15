@@ -11,8 +11,8 @@ import {
   Sun,
   Video,
 } from 'lucide-react-native';
-import { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
 import BirdAvatar from '@/components/BirdAvatar';
@@ -83,6 +83,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const [backgroundMode, setBackgroundMode] = useState<'sky' | 'camera'>('sky');
   const [trackingMode, setTrackingMode] = useState<'original' | 'form-test'>('original');
+  const [hydrationSlow, setHydrationSlow] = useState(false);
 
   const hydrated = useGameStore((s) => s.hydrated);
   const hasOnboarded = useGameStore((s) => s.hasOnboarded);
@@ -98,7 +99,61 @@ export default function HomeScreen() {
   const exerciseTut = useGameStore((s) => s.exerciseTut);
   const lastActivityDate = useGameStore((s) => s.lastActivityDate);
 
-  if (!hydrated) return null;
+  useEffect(() => {
+    if (hydrated) {
+      setHydrationSlow(false);
+      return;
+    }
+    const timeout = setTimeout(() => setHydrationSlow(true), 8_000);
+    return () => clearTimeout(timeout);
+  }, [hydrated]);
+
+  if (!hydrated) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: 28,
+          backgroundColor: NAVY,
+        }}
+      >
+        <StatusBar style="light" />
+        <Image
+          source={require('../../../assets/images/flapfit-splash-logo.png')}
+          style={{ width: '92%', maxWidth: 360, aspectRatio: 1.5 }}
+          contentFit="contain"
+          transition={0}
+        />
+        <ActivityIndicator color="#FFFFFF" size="large" style={{ marginTop: 14 }} />
+        <Text style={{ color: '#FFFFFF', fontWeight: '800', marginTop: 14 }}>
+          Loading your bird…
+        </Text>
+        {hydrationSlow ? (
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Try loading saved progress again"
+            onPress={() => {
+              setHydrationSlow(false);
+              Promise.resolve(useGameStore.persist.rehydrate()).catch((error) =>
+                console.error('Flap Fit saved-progress retry failed', error)
+              );
+            }}
+            style={{
+              marginTop: 18,
+              backgroundColor: '#0284C7',
+              borderRadius: 12,
+              paddingHorizontal: 20,
+              paddingVertical: 12,
+            }}
+          >
+            <Text style={{ color: '#FFFFFF', fontWeight: '900' }}>Try loading again</Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>
+    );
+  }
   if (!hasOnboarded) return <Redirect href={'/onboarding' as never} />;
 
   const streak = computeStreak(sessions);

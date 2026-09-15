@@ -18,6 +18,9 @@ session merely to generate another QR; keep the same process running so Fast Ref
 - [ ] Open Info > View introduction again and verify all four onboarding screens, all six exercise
       names, phone-placement copy, two-second setup buffer, bird selection, and the return to Info.
       Confirm replaying the introduction does not reset local progress.
+- [ ] Cold-open an existing install and confirm the native splash moves to Home without a blank
+      app-controlled screen. If saved progress takes more than eight seconds, confirm branded loading
+      exposes Try loading again and never erases progress merely because it is slow.
 
 For each of Push-ups, Squats, Pull-ups, Bicep Curls, Lateral Raise, and Shoulder Press:
 
