@@ -106,6 +106,11 @@ if (appJson.name !== 'Flap Fit' || appJson.slug !== 'flapfit') {
 if (appJson.ios?.bundleIdentifier !== 'com.flapfit.game') {
   failures.push('app.json: iOS bundle identifier must be com.flapfit.game');
 }
+if (appJson.ios?.supportsTablet !== false) {
+  failures.push(
+    'app.json: iOS tablet support must remain disabled for the approved iPhone-only 1.0 listing and screenshot set'
+  );
+}
 if (appJson.android?.package !== 'com.flapfit.game') {
   failures.push('app.json: Android package must be com.flapfit.game');
 }

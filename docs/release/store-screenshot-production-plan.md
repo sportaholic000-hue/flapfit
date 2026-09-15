@@ -11,6 +11,8 @@ scores, camera behavior, and feature state shown inside the capture must be genu
 - Produce eight portrait PNG or JPEG images at `1320 x 2868` with no transparency.
 - Save them under `apps/mobile/store-assets/app-store/iphone-6.9`.
 - Use the same approved iPhone build and visual sequence for every image.
+- Flap Fit 1.0 has `ios.supportsTablet: false`; do not create or upload a separate iPad screenshot
+  set for this release. Expo Go testing on an iPad does not change the production device family.
 - Apple permits 1 to 10 screenshots. The eight-image set below tells the complete Flap Fit story
   while keeping the first three focused on the core product.
 
