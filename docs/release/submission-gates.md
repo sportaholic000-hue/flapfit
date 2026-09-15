@@ -230,3 +230,12 @@ Privacy and review constraints for the final implementation:
 - [ ] Update the store listing, privacy policy, reviewer notes, Apple App Privacy, Google Data Safety,
       and Ads declaration from the exact monetized build. Confirm both stores say no in-app
       purchases or subscriptions for Flap Fit 1.0.
+
+## Shipaton 2026 gate
+
+- [ ] Follow `shipaton-submission.md`; the deadline is September 30, 2026 at 11:45 PM Pacific.
+- [ ] Confirm Flap Fit's first public release occurs during the contest window and is downloadable
+      in the United States. TestFlight or a build waiting for App Review is not sufficient.
+- [ ] Confirm the released build serves ads through RevenueCat Ads and matches the demonstration.
+- [ ] Submit a public YouTube/Vimeo video under two minutes, a public store URL, the RevenueCat
+      project ID, the 1024 x 1024 icon, and a qualifying frameless screenshot.
