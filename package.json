@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "lint": "oxlint --no-ignore --deny-warnings apps/mobile/src apps/mobile/scripts"
+  },
   "workspaces": [
     "apps/mobile"
   ],
