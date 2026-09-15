@@ -13,6 +13,9 @@ final review decisions.
       compatibility evidence but do not expand the App Store device family.
 - [x] The 1024 x 1024 source app icon is fully opaque; Android's adaptive foreground correctly uses
       transparency.
+- [x] Release validation locks the approved app icon and adaptive icon plus the transparent Flap Fit
+      splash logo at 340 px on a solid `#0F172A` native background. Pixel inspection confirms the
+      exposed splash background matches exactly, with no light-blue field or contrasting square.
 - [x] Expo SDK 57 dependencies pass Expo dependency checks.
 - [x] The locked dependency graph has a documented reachability review; current registry advisories
       are non-critical and predominantly Expo/Jest build tooling, not untrusted-data paths in the

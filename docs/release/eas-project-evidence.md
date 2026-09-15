@@ -60,6 +60,9 @@ without generating iOS or Android project folders:
 
 - App name `Flap Fit`, version `1.0.0`, URL scheme `flapfit`, and package/bundle ID
   `com.flapfit.game` on both platforms.
+- The splash uses the transparent approved Flap Fit logo at 340 px over native `#0F172A` navy.
+  Corner and exposed-background pixel checks match that color exactly, so no embedded logo square
+  appears. The app icon and Android adaptive foreground are separately locked by release validation.
 - iOS contains the full camera and optional Record & Play microphone usage descriptions, declares
   no non-exempt encryption, disallows arbitrary network loads, declares no tracking, and includes
   four collected-data plus four required-reason API categories.

@@ -103,6 +103,31 @@ if (appJson.extra?.eas?.projectId !== 'bbbfea4f-3047-46f6-a5ba-6286356e4718') {
 if (appJson.name !== 'Flap Fit' || appJson.slug !== 'flapfit') {
   failures.push('app.json: release name and slug must remain Flap Fit / flapfit');
 }
+if (appJson.icon !== './assets/images/icon.png') {
+  failures.push('app.json: release icon must use the approved Flap Fit app icon');
+}
+const splashPlugin = appJson.plugins?.find(
+  (plugin) => Array.isArray(plugin) && plugin[0] === 'expo-splash-screen'
+);
+if (
+  !splashPlugin ||
+  splashPlugin[1]?.image !== './assets/images/flapfit-splash-logo.png' ||
+  splashPlugin[1]?.imageWidth !== 340 ||
+  splashPlugin[1]?.resizeMode !== 'contain' ||
+  String(splashPlugin[1]?.backgroundColor).toUpperCase() !== '#0F172A'
+) {
+  failures.push(
+    'app.json: splash must keep the approved 340px Flap Fit logo on the solid #0F172A navy background'
+  );
+}
+if (
+  appJson.android?.adaptiveIcon?.foregroundImage !== './assets/images/adaptive-icon.png' ||
+  String(appJson.android?.adaptiveIcon?.backgroundColor).toUpperCase() !== '#0F172A'
+) {
+  failures.push(
+    'app.json: Android adaptive icon must keep the approved safe-area foreground on #0F172A'
+  );
+}
 if (appJson.ios?.bundleIdentifier !== 'com.flapfit.game') {
   failures.push('app.json: iOS bundle identifier must be com.flapfit.game');
 }
