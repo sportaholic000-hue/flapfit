@@ -53,6 +53,18 @@ describe('level run rules', () => {
     expect(SCRIPT_GAME).toContain('if (!trackingFresh() || !gameplayFormCheck.valid) {');
   });
 
+  it('reports game over before deferring expensive camera cleanup', () => {
+    const endGameStart = SCRIPT_GAME.indexOf('function endGame()');
+    const endGameEnd = SCRIPT_GAME.indexOf('// ---------- Drawing ----------', endGameStart);
+    const endGameScript = SCRIPT_GAME.slice(endGameStart, endGameEnd);
+
+    expect(endGameScript.indexOf("type: 'gameover'")).toBeGreaterThanOrEqual(0);
+    expect(endGameScript.indexOf('setTimeout(stopCameraAndTracking')).toBeGreaterThan(
+      endGameScript.indexOf("type: 'gameover'")
+    );
+    expect(endGameScript).not.toContain('else { stopCameraAndTracking(); }');
+  });
+
   it('uses camera tracking exclusively', () => {
     expect(SCRIPT_CORE).not.toContain('__sensor');
     expect(SCRIPT_CORE).not.toContain('initSensorFlow');

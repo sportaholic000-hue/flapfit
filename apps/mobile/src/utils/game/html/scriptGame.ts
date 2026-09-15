@@ -356,8 +356,6 @@ function endGame() {
   burst(birdX(), birdScreenY(), CONFIG.bird.body, 26);
   var recorderWasRunning = !!runRecorder;
   stopRunRecording();
-  if (recorderWasRunning) { setTimeout(stopCameraAndTracking, 200); }
-  else { stopCameraAndTracking(); }
   postRN({
     type: 'gameover',
     score: score,
@@ -365,6 +363,9 @@ function endGame() {
     tutSeconds: tutSeconds,
     unreportedTutSeconds: Math.max(0, tutSeconds - tutReportedSeconds)
   });
+  // Closing MediaPipe can briefly block the WebView thread on some devices.
+  // Let React Native display the result first, then release camera resources.
+  setTimeout(stopCameraAndTracking, recorderWasRunning ? 200 : 0);
 }
 
 // ---------- Drawing ----------

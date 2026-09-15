@@ -82,7 +82,7 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [backgroundMode, setBackgroundMode] = useState<'sky' | 'camera'>('sky');
-  const [trackingMode, setTrackingMode] = useState<'original' | 'form-test'>('original');
+  const [trackingMode, setTrackingMode] = useState<'original' | 'form-test'>('form-test');
   const [hydrationSlow, setHydrationSlow] = useState(false);
 
   const hydrated = useGameStore((s) => s.hydrated);
