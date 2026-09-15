@@ -30,6 +30,8 @@ export default function LevelsScreen() {
   const bestScores = useGameStore((s) => s.bestScores);
   const endlessBest = useGameStore((s) => s.endlessBest);
   const endlessOpen = isEndlessUnlocked(unlockedLevel);
+  const currentLevel =
+    [...LEVELS].reverse().find((level) => level.id <= unlockedLevel) ?? LEVELS[0];
   const [backgroundMode, setBackgroundMode] = useState<'sky' | 'camera'>('sky');
   const [pendingGame, setPendingGame] = useState<PendingGame | null>(null);
 
@@ -64,6 +66,16 @@ export default function LevelsScreen() {
     if (backgroundMode === 'camera') setPendingGame(game);
     else launchGame(game);
   };
+
+  const playCurrentLevel = (record = false) =>
+    launchGame(
+      {
+        mode: 'level',
+        levelId: currentLevel.id,
+        title: `Level ${currentLevel.id} · ${currentLevel.name}`,
+      },
+      record
+    );
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F0F9FF' }}>
@@ -166,6 +178,71 @@ export default function LevelsScreen() {
                 </Text>
               </View>
             </TouchableOpacity>
+          </View>
+
+          <View style={{ flexDirection: 'row', gap: 10 }}>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={`Play Level ${currentLevel.id}`}
+              onPress={() => playCurrentLevel()}
+              style={{
+                flex: 1,
+                minHeight: 72,
+                backgroundColor: '#F59E0B',
+                borderRadius: 20,
+                paddingVertical: 14,
+                alignItems: 'center',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                gap: 8,
+              }}
+            >
+              <Play size={24} color="#FFFFFF" fill="#FFFFFF" />
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 18 }}>PLAY</Text>
+                <Text
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: 10,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                  }}
+                >
+                  Level {currentLevel.id} · {currentLevel.name}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            {backgroundMode === 'camera' ? (
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel={`Record and play Level ${currentLevel.id}`}
+                accessibilityHint="Records the live-camera game for sharing"
+                onPress={() => playCurrentLevel(true)}
+                style={{
+                  flex: 1,
+                  minHeight: 72,
+                  backgroundColor: '#DC2626',
+                  borderRadius: 20,
+                  paddingVertical: 14,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 4,
+                }}
+              >
+                <Video size={22} color="#FFFFFF" />
+                <Text
+                  style={{
+                    color: '#FFFFFF',
+                    fontWeight: '900',
+                    fontSize: 13,
+                    textAlign: 'center',
+                  }}
+                >
+                  RECORD{`\n`}&amp; PLAY
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
         </View>
 
