@@ -1,6 +1,6 @@
 # EAS project and artifact evidence
 
-Verified: 2026-09-14
+Verified: 2026-09-15
 
 This file records non-secret release evidence for the active Flap Fit mobile app. Re-run the checks
 immediately before producing the final store artifacts.
@@ -11,19 +11,26 @@ immediately before producing the final store artifacts.
 - EAS project: `@sportaholic/flapfit`
 - EAS project ID: `bbbfea4f-3047-46f6-a5ba-6286356e4718`
 - The ID matches `apps/mobile/app.json`.
-- The EAS `production` environment currently has no variables configured.
+- The EAS `production` environment currently has no separate server-side variables configured.
+- All seven validated public release values are now present directly in the checked-in development,
+  preview, and production build profiles. The additional `EXPO_USE_PRECOMPILED_MODULES=0` build
+  control is also explicit. No Supabase service-role secret is present.
 - The installed EAS CLI successfully resolves both production profiles without queuing a build:
   iOS uses store distribution, automatic build-number incrementing, the production environment, and
   the `m-medium` resource class; Android uses store distribution, automatic version-code
   incrementing, the production environment, and the `app-bundle` build type.
 
-The missing production variables are an intentional hard stop. The EAS post-install hook must reject
-a production build until all public legal/support links and the dedicated Supabase project values are
-live.
+Read-only `eas config` checks on September 15 resolved both current production profiles successfully:
+iOS uses store distribution, remote credentials, automatic build-number increments, the production
+environment, and the `m-medium` resource class; Android uses store distribution, remote credentials,
+automatic version-code increments, the production environment, and `app-bundle`. Both resolved all
+seven public release values from the checked-in profile. This does not establish that the public
+website paths are live; link verification remains a separate hard gate before a production build.
 
 ## Existing artifacts
 
-The linked project currently has no iOS build and no production-distribution build.
+The linked project still has no iOS build and no production-distribution build as of the September 15
+read-only EAS build listing.
 
 | Build ID                               | Platform | Profile | Distribution | Status   | Created (UTC)           | Assessment                                       |
 | -------------------------------------- | -------- | ------- | ------------ | -------- | ----------------------- | ------------------------------------------------ |
