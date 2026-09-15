@@ -8,9 +8,14 @@ without the user's explicit approval.
 
 Install only:
 
-- `react-native-google-mobile-ads` for iOS and Android AdMob interstitials, UMP privacy choices, and
-  impression-level revenue callbacks; and
-- `react-native-purchases` version 10.2.0 or newer for RevenueCat configuration and ad-event tracking.
+- `react-native-google-mobile-ads@16.5.0` for iOS and Android AdMob interstitials, UMP privacy
+  choices, and impression-level revenue callbacks; and
+- `react-native-purchases@10.9.1` for RevenueCat configuration and ad-event tracking. RevenueCat
+  requires 10.2.0 or newer for React Native ad monetization.
+
+Those were the current registry versions in a read-only check on September 15, 2026. Reconfirm them
+and present the resulting package/lockfile diff before installation; this note is not authorization
+to install or upgrade anything.
 
 Do not add `react-native-purchases-ui` for the first ad-funded candidate. A paywall and paid ad-free
 entitlement are a later product step, so its native UI package is unnecessary now.
