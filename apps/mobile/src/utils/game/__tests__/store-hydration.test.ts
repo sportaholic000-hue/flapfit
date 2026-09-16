@@ -58,4 +58,32 @@ describe('persisted store hydration', () => {
     expect(useGameStore.getState().totalTutSeconds).toBe(456);
     consoleError.mockRestore();
   });
+
+  test('keeps malformed saved bytes untouched until a valid copy can be restored', async () => {
+    const malformed = '{"state":';
+    await AsyncStorage.setItem('flap-fit-store', malformed);
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    await retryPersistedStoreHydration();
+    expect(useGameStore.getState().hydrationError).toBe(true);
+    useGameStore.setState({ playerName: 'Never replace malformed save' });
+    await Promise.resolve();
+    expect(await AsyncStorage.getItem('flap-fit-store')).toBe(malformed);
+
+    const restored = JSON.stringify({
+      state: {
+        hasOnboarded: true,
+        birdId: 'midnight',
+        unlockedLevel: 12,
+        totalTutSeconds: 1200,
+      },
+      version: 0,
+    });
+    await AsyncStorage.setItem('flap-fit-store', restored);
+    await retryPersistedStoreHydration();
+    expect(useGameStore.getState().hydrationError).toBe(false);
+    expect(useGameStore.getState().unlockedLevel).toBe(12);
+    expect(useGameStore.getState().totalTutSeconds).toBe(1200);
+    consoleError.mockRestore();
+  });
 });
