@@ -170,7 +170,8 @@ export default function OnboardingScreen() {
         }}
       >
         Do exercises and fly a bird through obstacles.{'\n'}Your body is the controller.{'\n\n'}
-        Choose your weapon:{'\n'}
+        <Text style={{ color: '#0F172A', fontWeight: '800' }}>Choose your workout:</Text>
+        {'\n'}
         <Text style={{ fontWeight: '900' }}>
           Push-ups · Squats · Pull-ups{'\n'}Lateral Raise · Bicep Curls · Shoulder Press
         </Text>
