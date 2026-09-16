@@ -94,6 +94,25 @@ Official sources:
 - https://docs.expo.dev/build-reference/infrastructure/
 - https://support.google.com/googleplay/android-developer/answer/11926878
 
+## September 16 current-source iOS and Android JavaScript exports
+
+Commit `207a685` completed an offline `expo export --platform ios --max-workers 1` with the
+existing locked dependencies. Metro bundled 3,562 modules in 179,806 ms and emitted 106 assets,
+one 7,011,070-byte Hermes bundle, and `metadata.json` (108 files total). The bundle SHA-256 was
+`23A0C34FEA2B72957FFC2F1FB0922C6B582E14424EC8249675362EE10F3E4872`.
+The exported assets included all six exercise illustrations, 70 evolution-stage images, the
+pose model, and both local MediaPipe Wasm variants. The verified temporary output was removed
+after inspection and can be regenerated from the committed source.
+
+The same commit completed an offline Android export with one Metro worker. Metro bundled 3,656
+modules in 528,654 ms and emitted 110 assets, one 7,240,408-byte Hermes bundle, and metadata
+(112 files total). The Android bundle SHA-256 was
+`E190E66C984C96AD5704EE3F1F1EAC79C54EF4B50EB1DE679F6F93CC58F46DAF`.
+
+This proves current-source JavaScript packaging only. It does not prove signed native startup,
+camera/microphone permissions, offline tracker loading, recording, or store acceptance.
+Native ad dependencies and production tracker approval remain separate gates.
+
 ## Required final evidence
 
 - A production iOS build generated from the final release commit, processed by App Store Connect,

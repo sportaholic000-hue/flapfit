@@ -52,7 +52,8 @@ final review decisions.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
 - [x] The September 16 audit-hardening candidate passes TypeScript, 74 automated tests and repository
-      lint. Earlier production-style local Expo exports covered the pre-audit candidate only.
+      lint. Current-source offline iOS and Android JavaScript exports passed on commit `207a685`;
+      signed native packaging and physical tests remain pending.
 - [x] Persisted-state hydration does not overwrite unreadable saved progress with defaults. Slow
       hydration shows branded loading and retry; a read error blocks writes and offers a retry. A real
       AsyncStorage regression preserves the original bytes and restores progress.
