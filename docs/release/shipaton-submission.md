@@ -1,6 +1,6 @@
 # Flap Fit Shipaton 2026 submission handoff
 
-Last official-rules check: 2026-09-15
+Last official-rules check: 2026-09-16
 
 Official sources:
 
@@ -49,13 +49,15 @@ Official sources:
 
 ## Suggested demo-video sequence
 
-Keep the finished video under two minutes:
+Use `shipaton-demo-script.md` for a 1:54 shot-by-shot capture plan. Keep the finished video under two
+minutes and film the exact released native build on a physical device:
 
-1. Flap Fit home, six exercise birds, and Sky/Live Camera choices.
-2. Two-position calibration followed by real camera-controlled gameplay.
+1. Open on a real workout controlling the bird, with physical-player and game footage from the
+   same run. Follow with the home screen, six exercise birds, and Sky/Live Camera choices.
+2. Show two-position calibration followed by continuous camera-controlled gameplay.
 3. Live Camera Record & Play and the resulting native share action.
 4. Bird evolution and tracked-training Stats.
-5. Optional Compete leaderboard/challenge code with Report / Block visible.
+5. Optional real Compete leaderboard and player-code challenge if physically verified.
 6. A brief, truthful RevenueCat Ads result-action demonstration from the released candidate.
 
 Do not claim that pose tracking proves perfect form, that calories or complete repetitions are
