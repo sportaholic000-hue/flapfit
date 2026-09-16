@@ -565,7 +565,7 @@ function topCalibrationMessage() {
   }
   if (CONFIG.exercise === 'pullups') {
       if (usesExperimentalFormTracking()) {
-        return 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull your shoulders <b>UP</b> to your highest point<br><br>Hold still…';
+        return 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull your shoulders <b>UP</b> until your eye line reaches the bar<br><br>Hold still…';
       }
     return 'STEP 1 OF 2<br><br>Pull to your <b>HIGHEST</b> point<br>Chin at or above the bar<br><br>Hold still…';
   }
@@ -603,8 +603,10 @@ function loop(now) {
       : { valid: true, message: '' };
     if (state === 'waitTop' && now < calibrationReadyAt) {
       var delaySeconds = Math.max(1, Math.ceil((calibrationReadyAt - now) / 1000));
-      var preparationMessage = topCalibrationMessage() +
-        '<br><small>Calibration begins in ' + delaySeconds + '…</small>';
+      var preparationMessage = CONFIG.exercise === 'pullups' && usesExperimentalFormTracking()
+        ? 'STEP 1 OF 2<br><br>Grip the bar and settle into a comfortable hang<br>Pull up after the countdown<br><br><small>Calibration begins in ' + delaySeconds + '…</small>'
+        : topCalibrationMessage() +
+          '<br><small>Calibration begins in ' + delaySeconds + '…</small>';
       showOverlay(preparationMessage, true);
       setProgress(0);
       stabBuf = [];

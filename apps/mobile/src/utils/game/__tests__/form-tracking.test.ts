@@ -241,8 +241,10 @@ describe('experimental form tracking', () => {
   it('calibrates pull-ups from the upper body when feet are outside the frame', () => {
     const harness = makeHarness('pullups');
     const preparationPose = pose([
+      ...mirroredPair(2, 5, 0.47, 0.27),
       ...mirroredPair(11, 12, 0.43, 0.43),
       ...mirroredPair(13, 14, 0.42, 0.29),
+      ...mirroredPair(15, 16, 0.44, 0.14),
       ...mirroredPair(23, 24, 0.44, 0.64),
     ]);
     for (let now = 0; now <= 1900; now += 100) harness.update(preparationPose, now);
@@ -308,6 +310,33 @@ describe('experimental form tracking', () => {
       ...mirroredPair(23, 24, 0.44, 0.61),
     ]);
     harness.update(oneInchToeRise, 2100);
+
+    expect(harness.validateCalibration('top')).toMatchObject({
+      valid: false,
+      message: expect.stringMatching(/eye line.*bar/i),
+    });
+  });
+
+  it('rejects tiptoes and a head tilt even when the eyes appear level with the bar', () => {
+    const harness = makeHarness('pullups');
+    const barGrab = pose([
+      ...mirroredPair(2, 5, 0.47, 0.27),
+      ...mirroredPair(11, 12, 0.43, 0.43),
+      ...mirroredPair(13, 14, 0.36, 0.29),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.64),
+    ]);
+    for (let now = 0; now <= 1900; now += 100) harness.update(barGrab, now);
+
+    const tiptoesAndHeadTilt = pose([
+      ...mirroredPair(2, 5, 0.47, 0.165),
+      ...mirroredPair(11, 12, 0.43, 0.4),
+      ...mirroredPair(13, 14, 0.36, 0.26),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.61),
+      ...mirroredPair(27, 28, 0.45, 0.92),
+    ]);
+    harness.update(tiptoesAndHeadTilt, 2100);
 
     expect(harness.validateCalibration('top')).toMatchObject({
       valid: false,

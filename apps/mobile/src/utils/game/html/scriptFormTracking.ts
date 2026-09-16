@@ -2,7 +2,7 @@
 // so physical A/B testing can happen without replacing the launch baseline.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-09-16.1';
+export const FORM_TRACKING_RULES_VERSION = '2026-09-16.2';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -13,6 +13,7 @@ var lastFormTrackTime = 0;
 var formTopMetrics = null, formBottomMetrics = null;
 var pullupFootAnchorEvidence = { left: [], right: [] };
 var pullupWristMissingAt = 0;
+var pullupHangReference = null;
 var PULLUP_EVIDENCE_GRACE_MS = 1200;
 var PULLUP_FOOT_EVIDENCE_WINDOW_MS = 1800;
 var PULLUP_PLANTED_FOOT_HOLD_MS = 1000;
@@ -31,6 +32,7 @@ function resetExperimentalFormTracking() {
   formBottomMetrics = null;
   pullupFootAnchorEvidence = { left: [], right: [] };
   pullupWristMissingAt = 0;
+  pullupHangReference = null;
 }
 
 function formPoint(index, minVisibility) {
@@ -157,6 +159,16 @@ function collectExperimentalFormMetrics() {
 function updateExperimentalFormPose(landmarks, now) {
   formPoseLandmarks = landmarks;
   formCurrentMetrics = collectExperimentalFormMetrics();
+  if (CONFIG.exercise === 'pullups' && !formTopMetrics && formCurrentMetrics &&
+      formCurrentMetrics.shoulders && formCurrentMetrics.wrists &&
+      formCurrentMetrics.elbowCount === 2) {
+    // Hands on the bar provide a fixed reference. Remember the lowest visible
+    // shoulder position before top calibration, including during the buffer.
+    var hangGap = formCurrentMetrics.shoulders.y - formCurrentMetrics.wrists.y;
+    if (hangGap > 0.08 && (!pullupHangReference || hangGap > pullupHangReference.gap)) {
+      pullupHangReference = { gap: hangGap };
+    }
+  }
   if (!formCurrentMetrics || formCurrentMetrics.controllerY === null) { return; }
   formTrackY = formCurrentMetrics.controllerY;
   if (formTrackYSmooth === null) { formTrackYSmooth = formTrackY; }
@@ -292,7 +304,15 @@ function validateExperimentalCalibration(position) {
         return formInvalid(pullupTopMessage);
       }
       var eyeLineToBar = metrics.eyes.y - metrics.wrists.y;
-      if (eyeLineToBar > 0.07) {
+      if (eyeLineToBar > 0.035) {
+        return formInvalid(pullupTopMessage);
+      }
+      var shoulderToBar = metrics.shoulders.y - metrics.wrists.y;
+      var requiredShoulderLift = pullupHangReference
+        ? Math.max(0.04, Math.min(0.08, pullupHangReference.gap * 0.25))
+        : 0.04;
+      if (!pullupHangReference ||
+          pullupHangReference.gap - shoulderToBar < requiredShoulderLift) {
         return formInvalid(pullupTopMessage);
       }
       return formValid();
