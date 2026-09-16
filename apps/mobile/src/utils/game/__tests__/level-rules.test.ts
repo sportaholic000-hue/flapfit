@@ -95,4 +95,33 @@ describe('level run rules', () => {
     expect(SCRIPT_GAME).toContain('setProgress(0);');
     expect(SCRIPT_GAME).toContain("'<br><small>Calibration begins in '");
   });
+
+  it('tracks real active time at 15–20 FPS while leaving physics frame steps capped', () => {
+    const timing = SCRIPT_GAME.match(
+      /var accountedFrameMs = [^\n]+;\n    competitionDurationMs \+= [^\n]+;[\s\S]*?tutSeconds \+= [^\n]+;/
+    )?.[0];
+    if (!timing) throw new Error('Game timing updates are missing.');
+    const step = new Function(
+      'rawFrameMs',
+      'competitionDurationMs',
+      'tutSeconds',
+      timing + '\nreturn { competitionDurationMs, tutSeconds };'
+    ) as (
+      frameMs: number,
+      durationMs: number,
+      trainingSeconds: number
+    ) => {
+      competitionDurationMs: number;
+      tutSeconds: number;
+    };
+    let totals = { competitionDurationMs: 0, tutSeconds: 0 };
+    for (let frame = 0; frame < 900; frame++) {
+      totals = step(50, totals.competitionDurationMs, totals.tutSeconds);
+    }
+    expect(totals.competitionDurationMs).toBe(45000);
+    expect(totals.tutSeconds).toBeCloseTo(45, 5);
+    expect(step(1000 / 15, 0, 0).tutSeconds).toBeCloseTo(1 / 15, 5);
+    expect(step(2000, 0, 0).tutSeconds).toBe(0.25);
+    expect(SCRIPT_GAME).toContain('var dt = Math.min(0.035, rawFrameMs / 1000);');
+  });
 });

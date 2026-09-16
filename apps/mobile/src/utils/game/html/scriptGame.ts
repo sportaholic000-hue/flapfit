@@ -719,10 +719,11 @@ function loop(now) {
     }
 
     // Independent wall-clock evidence for online score plausibility.
-    competitionDurationMs += Math.min(rawFrameMs, 250);
+    var accountedFrameMs = Math.min(rawFrameMs, 250);
+    competitionDurationMs += accountedFrameMs;
 
     // Active training/play time after calibration and any enabled form checks above.
-    tutSeconds += dt;
+    tutSeconds += accountedFrameMs / 1000;
     while (tutSeconds - tutReportedSeconds >= 5) {
       tutReportedSeconds += 5;
       postRN({ type: 'tut', seconds: 5 });

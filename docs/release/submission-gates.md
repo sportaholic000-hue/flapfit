@@ -51,11 +51,17 @@ final review decisions.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [x] The September 16 audit-hardening candidate passes TypeScript, 71 automated tests and repository
+- [x] The September 16 audit-hardening candidate passes TypeScript, 74 automated tests and repository
       lint. Earlier production-style local Expo exports covered the pre-audit candidate only.
 - [x] Persisted-state hydration does not overwrite unreadable saved progress with defaults. Slow
       hydration shows branded loading and retry; a read error blocks writes and offers a retry. A real
       AsyncStorage regression preserves the original bytes and restores progress.
+- [x] Empty-storage hydration starts with the default bird and level, then persists new workout
+      progress. Malformed saved bytes also remain untouched until a valid copy is restored.
+- [x] Tracked training time uses capped active wall-clock frame time rather than the 35 ms physics
+      step; executable regression checks 15–20 FPS and a long background frame gap.
+- [x] Development friend-code challenges launch with Form Test like Home and Levels. The production
+      tracker remains deliberately gated pending physical approval.
 - [x] Production EAS validation fails closed while the hardened tracker remains unapproved: Form
       Test must be promoted and `FLAPFIT_APPROVED_TRACKER_RULES_VERSION` must exactly match the
       versioned rules marker. Development and preview testing remain available.

@@ -86,4 +86,22 @@ describe('persisted store hydration', () => {
     expect(useGameStore.getState().totalTutSeconds).toBe(1200);
     consoleError.mockRestore();
   });
+
+  test('starts cleanly with empty storage and can save new progress', async () => {
+    useGameStore.setState(useGameStore.getInitialState(), true);
+    await AsyncStorage.clear();
+
+    await retryPersistedStoreHydration();
+    expect(useGameStore.getState().hydrationError).toBe(false);
+    expect(useGameStore.getState().hydrated).toBe(true);
+    expect(useGameStore.getState().birdId).toBe('sunny');
+    expect(useGameStore.getState().unlockedLevel).toBe(1);
+    expect(useGameStore.getState().totalTutSeconds).toBe(0);
+
+    useGameStore.getState().recordTut(5, 'pushups');
+    await Promise.resolve();
+    const saved = await AsyncStorage.getItem('flap-fit-store');
+    expect(saved).not.toBeNull();
+    expect(JSON.parse(saved!).state.totalTutSeconds).toBe(5);
+  });
 });

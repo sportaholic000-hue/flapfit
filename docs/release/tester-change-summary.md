@@ -130,8 +130,9 @@ branch. It describes implemented behavior, not planned marketing claims.
 - Added reliable LAN/tunnel Expo scripts and documented the direct deep-link QR workflow.
 - Copied the project to a local development folder and synchronized the private GitHub repository.
 - Verified no targeted private credentials exist in the current tree or any reachable Git commit.
-- Current automated result is 50 of 50 tests passing, plus TypeScript, effective strict lint, and
-  repository formatting checks.
+- Public marketing, Privacy, Terms, and deletion pages now load signed out over HTTPS.
+- Current automated result is 74 of 74 tests passing, plus TypeScript and repository lint.
+  This includes real empty-storage and low-frame-rate training-time regressions.
 
 ## Deliberately not complete yet
 
@@ -141,8 +142,7 @@ branch. It describes implemented behavior, not planned marketing claims.
 - The hardened Form Test tracker is not yet the production tracker. Physical approval comes first.
 - The optional recorded top-five leaderboard celebration is not implemented. Recording and sharing
   are implemented; changing recording finalization this close to release is intentionally deferred.
-- The public marketing, Privacy, Terms, and deletion URLs still return a sign-in-required response.
-  Removing that access gate requires explicit owner approval before submission.
+- A real signed-out send-and-reply test of support@flapfitapp.com is still required.
 - Genuine store screenshots are not fabricated. They will be captured from the exact approved signed
   candidate, then framed and validated for Apple and Google.
 - No App Store or Google Play submission has been made.

@@ -679,6 +679,7 @@ export default function CompeteScreen() {
         levelId: String(data.challenge.level_id ?? 3),
         target: String(data.challenge.target_score),
         challengeCode: data.challenge.code,
+        ...(__DEV__ ? { trackingMode: 'form-test' } : {}),
       },
     });
   };
