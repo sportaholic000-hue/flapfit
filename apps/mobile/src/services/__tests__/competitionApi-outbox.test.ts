@@ -128,13 +128,14 @@ describe('online result delivery', () => {
     await AsyncStorage.setItem(key, JSON.stringify(pending));
     (global.fetch as jest.Mock).mockResolvedValue(reply(500));
 
-    const result = await submitCompetitionRunResult(run('queued-0'));
+    const result = await submitCompetitionRunResult({ ...run('queued-0'), score: 99 });
     const saved = JSON.parse((await AsyncStorage.getItem(key)) ?? '[]') as { runId: string }[];
 
     expect(result.status).toBe('pending');
     expect(saved).toHaveLength(25);
     expect(saved.filter((entry) => entry.runId === 'queued-0')).toHaveLength(1);
     expect(saved.some((entry) => entry.runId === 'queued-1')).toBe(true);
+    expect(saved.find((entry) => entry.runId === 'queued-0')).toMatchObject({ score: 5 });
   });
 
   test('deleting the online identity clears pending results and notices', async () => {

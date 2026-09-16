@@ -433,9 +433,9 @@ export async function submitCompetitionRunResult(input: {
   };
   const queued = await withOutboxLock(async () => {
     const pending = await readCompetitionOutbox();
-    const withoutDuplicate = pending.filter((item) => item.runId !== entry.runId);
-    if (withoutDuplicate.length >= MAX_PENDING_RESULTS) return false;
-    await writeCompetitionOutbox([...withoutDuplicate, entry]);
+    if (pending.some((item) => item.runId === entry.runId)) return true;
+    if (pending.length >= MAX_PENDING_RESULTS) return false;
+    await writeCompetitionOutbox([...pending, entry]);
     return true;
   });
   if (!queued) {
