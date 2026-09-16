@@ -34,8 +34,8 @@ for(const button of document.querySelectorAll('[data-stage]')){
  button.addEventListener('click',()=>{
   const i=Number(button.dataset.stage);
   for(const item of document.querySelectorAll('[data-stage]')){const active=item===button;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active));}
-  text('stage-number','STAGE '+String(i+1).padStart(2,'0')+' / 10');
-  text('stage-name',DATA.stages[i]);text('stage-copy',stageDescriptions[i]);text('stage-time',i===0?'0 minutes':DATA.times[i]);text('stage-watermark',String(i+1).padStart(2,'0'));
+  text('stage-number','STAGE '+String(i+1)+' / 10');
+  text('stage-name',DATA.stages[i]);text('stage-copy',stageDescriptions[i]);text('stage-time',i===0?'0 minutes':DATA.times[i]);text('stage-watermark',String(i+1));
   const art=byId('stage-image');art.src='/assets/sunny-'+(i+1)+'.png';art.alt='Sunny at stage '+(i+1)+', '+DATA.stages[i]+(i===9?', with a larger muscular build and gold champion details':'');
  });
 }
