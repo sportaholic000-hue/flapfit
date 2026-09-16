@@ -8,6 +8,7 @@ import {
   CircleHelp,
   Clock3,
   FileText,
+  KeyRound,
   Mail,
   MessageSquareWarning,
   Settings,
@@ -35,7 +36,11 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BirdAvatar from '@/components/BirdAvatar';
 import { RELEASE_LINKS } from '@/config/release';
-import { competitionIsConfigured, deleteCompetitionIdentity } from '@/services/competitionApi';
+import {
+  competitionIsConfigured,
+  deleteCompetitionIdentity,
+  getCompetitionSupportId,
+} from '@/services/competitionApi';
 import { getBird } from '@/utils/game/birds';
 import { EVO_NAMES, EVO_THRESHOLDS, useGameStore } from '@/utils/game/store';
 
@@ -387,6 +392,31 @@ export default function InfoScreen() {
     ]);
   };
 
+  const shareCompetitionSupportId = async () => {
+    try {
+      const supportId = await getCompetitionSupportId();
+      if (!supportId) {
+        Alert.alert(
+          'No online profile yet',
+          'A support ID is available after you accept the Competition Terms and use Compete.'
+        );
+        return;
+      }
+      await Share.share({
+        title: 'Flap Fit online profile support ID',
+        message: [
+          `Flap Fit online profile support ID: ${supportId}`,
+          'Only share this identifier with Flap Fit Support for an account or deletion request.',
+        ].join('\n\n'),
+      });
+    } catch {
+      Alert.alert(
+        'Support ID unavailable',
+        'Please check your connection and try again before contacting support.'
+      );
+    }
+  };
+
   const deleteOnlineProfile = () => {
     if (!competitionIsConfigured || onlineDeleteBusy) return;
     Alert.alert(
@@ -613,6 +643,14 @@ export default function InfoScreen() {
             subtitle="Open your phone's share sheet"
             onPress={() => void shareApp()}
           />
+          {competitionIsConfigured ? (
+            <ActionRow
+              icon={<KeyRound size={21} color="#2563EB" />}
+              title="Online profile support ID"
+              subtitle="Use only for support or deletion requests"
+              onPress={() => void shareCompetitionSupportId()}
+            />
+          ) : null}
           {competitionIsConfigured ? (
             <ActionRow
               icon={<Trash2 size={21} color="#DC2626" />}

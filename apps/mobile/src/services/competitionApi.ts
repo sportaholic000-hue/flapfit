@@ -461,6 +461,14 @@ export async function clearPendingCompetitionResults(): Promise<void> {
   await AsyncStorage.removeItem(COMPETITION_NOTICE_KEY);
 }
 
+export async function getCompetitionSupportId(): Promise<string | null> {
+  if (!competitionIsConfigured) return null;
+  const supabase = getClient();
+  const sessionResult = await supabase.auth.getSession();
+  if (sessionResult.error) throw sessionResult.error;
+  return sessionResult.data.session?.user.id ?? null;
+}
+
 export async function deleteCompetitionIdentity(): Promise<void> {
   if (!competitionIsConfigured) return;
   const supabase = getClient();

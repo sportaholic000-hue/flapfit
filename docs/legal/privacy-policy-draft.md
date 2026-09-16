@@ -62,10 +62,12 @@ permit cross-app tracking.
 ## Retention
 
 Local information remains until you clear app data or delete the app. Online profiles and current
-leaderboard scores remain until you delete the online profile. Challenges expire after 30 days and
-are removed with their attempts by the daily production cleanup process. Pending reports remain until
-reviewed. Resolved moderation reports are removed 180 days after resolution. If either party deletes
-their account before then, the report is retained without that account's user identifier. The
+leaderboard scores remain until you delete the online profile. Online run-verification records expire
+six hours after they are created. The daily production cleanup removes those run records after they
+have been expired for seven days. Challenges expire after 30 days and are removed with their attempts
+by the daily production cleanup process. Pending reports remain until reviewed. Resolved moderation
+reports are removed 180 days after resolution. If either party deletes their account before then,
+the report is retained without that account's user identifier. The
 current Supabase Free plan exposes service reports for up to the preceding 24 hours. Supabase may
 retain operational and security information for its own documented service purposes beyond the
 period visible to Flap Fit. The current Free plan does not provide Flap Fit with automatic daily
@@ -83,8 +85,10 @@ on the device.
 
 If you no longer have the app, visit https://flapfitapp.com/delete-account/ and follow the request
 instructions. Privacy questions and applicable access, correction, objection, restriction, or
-deletion requests may be sent to support@flapfitapp.com. We may need enough information
-to locate the anonymous competition profile without exposing or deleting another player's data.
+deletion requests may be sent to support@flapfitapp.com. For a remote deletion request, use the
+Online profile support ID that you can share from the app's Info tab. A public player name, score,
+challenge code, or screenshot is not enough to prove ownership. Flap Fit will not disclose or delete
+another player's data when ownership cannot be verified.
 
 ## Children
 
