@@ -6,12 +6,12 @@ accuracy, guaranteed results, or live global usage numbers without evidence.
 ## Name and positioning
 
 - App name: Flap Fit
-- Apple subtitle: Your body controls the bird (27/30 characters)
+- Apple subtitle: Your body is the controller (27/30 characters)
 - Apple promotional text: Turn exercise into a flying game, build tracked training time, and evolve
   the bird you control. (95/170 characters)
 - Apple keywords:
-  `workout,exercise,bodyweight,training,avatar,gamified,pushup,squat,pullup,camera,motion`
-  (86/100 bytes)
+  `workout,exercise,bodyweight,training,avatar,gamified,pushup,squat,pullup,camera,motion,fitness,game`
+  (99/100 bytes)
 - Google short description: Move your body, guide your bird, and make workout progress visible.
   (67/80 characters)
 - Primary category: Health & Fitness
@@ -33,7 +33,7 @@ Choose the colorful Sky game or place the pipes and bird over your live camera v
 can create a temporary gameplay video on your phone, including your voice and workout sounds when
 you allow microphone access, so you can share a run using your normal system share sheet.
 
-Compete is optional. Accept the community rules to post an anonymous player name and score, climb
+Compete is optional. Accept the community rules to post a chosen player name and score, climb
 bodyweight-exercise leaderboards, or challenge a friend with a short code. No email or password is
 required, and the main game works without Compete.
 
@@ -75,6 +75,7 @@ declaration.
 ## Required links and contacts
 
 - Marketing URL: https://flapfitapp.com/
+- Support URL: https://flapfitapp.com/support/
 - Privacy Policy URL: https://flapfitapp.com/privacy/
 - Terms URL: https://flapfitapp.com/terms/
 - Account and data deletion URL: https://flapfitapp.com/delete-account/

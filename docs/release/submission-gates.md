@@ -167,7 +167,9 @@ Owner/legal inputs still required:
       matches the transferred project and the stale owner validator is corrected.
 - [x] EAS build profiles contain the seven validated public release values. No service-role secret is
       present in the mobile configuration.
-- [ ] Support email/form is visible and functional.
+- [x] Public support page at https://flapfitapp.com/support/ loads signed out over HTTPS and exposes
+      a direct support@flapfitapp.com email link.
+- [ ] Support mailbox receipt and reply work from an external sender.
 - [x] Public DNS for support email has both IONOS MX records plus resolving SPF, DKIM, and DMARC
       records. A real signed-out send-and-reply test is still required before the support gate above
       can be marked complete.
