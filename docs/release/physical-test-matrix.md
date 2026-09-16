@@ -10,6 +10,13 @@ Run on at least one Android phone, one iPhone, and one iPad. Expo Go verifies Ja
 the remote development tracker. It does not replace signed-build testing of native permissions,
 recording, ads, RevenueCat ad-event reporting, or the bundled production tracker.
 
+For SDK 57, do not assume a fresh iPhone/iPad App Store Expo Go install can run this project:
+[Expo says its App Store Expo Go stops at SDK 54](https://docs.expo.dev/troubleshooting/expo-go-version-mismatch/).
+An already-compatible iOS install can still be tested. Otherwise, get the owner's approval for an
+internal signed-test route; do not upload an app to Apple merely to bypass this gate. The September
+16 tunnel attempt timed out, while the LAN endpoint returned HTTP 200. A LAN QR is not a remote
+test link; reverify the tunnel before giving a link to a tester in another province.
+
 Use `start:expo-go` for devices on the computer's Wi-Fi. Use `start:expo-go:tunnel` for a tester on
 another network. Share the direct Expo Go deep link returned by Metro's `/_expo/open?runtime=expo`
 endpoint, not an Expo dashboard/project URL. Do not clear `.expo` or Metro caches during a working
