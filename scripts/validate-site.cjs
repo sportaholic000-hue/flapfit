@@ -63,10 +63,10 @@ for (const staleText of ['[REQUIRED]', 'Not configured', 'private draft', 'track
 }
 
 const config = read('dist/site-config.js');
-check(config.includes('developerName: "Troy Reardon"'), 'operator name is not configured');
+check(config.includes('developerName: "Flap Fit"'), 'app identity is not configured');
 check(config.includes('supportEmail: "support@flapfitapp.com"'), 'support email is not configured');
 check(config.includes('privacyEmail: "support@flapfitapp.com"'), 'privacy email is not configured');
-check(config.includes('privacyEffectiveDate: "September 14, 2026"'), 'privacy effective date is not configured');
+check(config.includes('privacyEffectiveDate: "September 16, 2026"'), 'privacy effective date is not configured');
 check(config.includes('releaseStatus: "development"'), 'release status must remain development until store URLs exist');
 
 const homepage = read('dist/index.html');
@@ -96,7 +96,8 @@ const headers = read('dist/_headers');
 for (const directive of ['X-Content-Type-Options: nosniff', 'Content-Security-Policy:', 'Permissions-Policy: camera=()']) {
   check(headers.includes(directive), `_headers is missing ${directive}`);
 }
-check(read('dist/robots.txt').includes('Disallow: /'), 'owner-only draft must remain blocked from indexing');
+check(/^(?:Allow:[ \t]*\/|Disallow:)[ \t]*$/m.test(read('dist/robots.txt')), 'public site must allow crawling');
+check(!/^Disallow:\s*\/\s*$/m.test(read('dist/robots.txt')), 'public site must not block all crawling');
 
 if (failures.length) {
   console.error(`Site validation failed (${failures.length}):`);
@@ -104,4 +105,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Site validation passed: ${routes.size} routes, legal content, links, assets, scripts, and owner-only controls verified.`);
+console.log(`Site validation passed: ${routes.size} routes, legal content, links, assets, scripts, and public-site controls verified.`);
