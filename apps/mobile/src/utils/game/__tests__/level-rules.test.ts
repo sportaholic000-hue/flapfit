@@ -28,16 +28,18 @@ describe('level run rules', () => {
     expect(ENDLESS_BASE.maxScore).toBe(0);
   });
 
-  it('only ends runs for score cap, collision, confirmed form failure, or sustained protected tracking loss', () => {
-    const endGameCalls = SCRIPT_GAME.match(/\bendGame\(\);/g) ?? [];
+  it('only ends runs for score cap, collision, confirmed form failure, or sustained tracking interruption', () => {
+    const endGameCalls = SCRIPT_GAME.match(/\bendGame\(/g) ?? [];
     const criticalFormChecks = SCRIPT_GAME.match(/fatalFormFailureConfirmed\(/g) ?? [];
-    const protectedTrackingChecks = SCRIPT_GAME.match(/protectedTrackingLossConfirmed\(/g) ?? [];
+    const interruptionChecks = SCRIPT_GAME.match(/formTrackingInterruptionConfirmed\(/g) ?? [];
 
-    expect(endGameCalls).toHaveLength(6);
+    expect(endGameCalls).toHaveLength(7); // One definition and six ending paths.
+    expect(SCRIPT_GAME).toContain("endGame(gameplayFormCheck.valid ? 'tracking' : 'form')");
+    expect(SCRIPT_GAME).toContain("endGame(resumeFormCheck.valid ? 'tracking' : 'form')");
     expect(criticalFormChecks).toHaveLength(3);
-    expect(protectedTrackingChecks).toHaveLength(3);
+    expect(interruptionChecks).toHaveLength(3);
     expect(SCRIPT_GAME).toContain('var FATAL_FORM_GRACE_MS = 350;');
-    expect(SCRIPT_GAME).toContain('var PROTECTED_TRACKING_LOSS_GRACE_MS = 1600;');
+    expect(SCRIPT_GAME).toContain('var FORM_TRACKING_INTERRUPTION_GRACE_MS = 1600;');
     expect(SCRIPT_GAME).toContain('if (CONFIG.maxScore > 0 && score >= CONFIG.maxScore) {');
     expect(SCRIPT_GAME).toContain('if (collides()) { endGame(); }');
     expect(SCRIPT_GAME).not.toContain('score >= CONFIG.target) { endGame(); }');
@@ -45,7 +47,7 @@ describe('level run rules', () => {
     expect(SCRIPT_GAME).toContain("state = 'resume';");
   });
 
-  it('pauses on stale camera tracking from the exercise-specific landmark', () => {
+  it('briefly pauses on stale camera tracking from the exercise-specific landmark', () => {
     expect(SCRIPT_CORE).toContain('lastHeadTrackTime');
     expect(SCRIPT_CORE).toContain('lastWristTrackTime');
     expect(SCRIPT_CORE).toContain('usesWristTracking() ? wristY : headY');
@@ -56,8 +58,40 @@ describe('level run rules', () => {
     expect(SCRIPT_GAME).toContain('Fatal anti-cheat failures keep the game moving');
   });
 
+  it('ends sustained Form Test interruption but permits a brief recovery', () => {
+    const helperStart = SCRIPT_GAME.indexOf('var formTrackingInterruptionSince');
+    const helperEnd = SCRIPT_GAME.indexOf('// ---------- Composed-run recording', helperStart);
+    const factory = new Function(
+      'usesExperimentalFormTracking',
+      'trackingFresh',
+      SCRIPT_GAME.slice(helperStart, helperEnd) + '\nreturn formTrackingInterruptionConfirmed;'
+    ) as (
+      formTest: () => boolean,
+      fresh: () => boolean
+    ) => (check: { valid: boolean; fatal: boolean }, now: number) => boolean;
+
+    let fresh = true;
+    let formTest = true;
+    const interrupted = factory(
+      () => formTest,
+      () => fresh
+    );
+    const invalid = { valid: false, fatal: false };
+    const valid = { valid: true, fatal: false };
+
+    expect(interrupted(invalid, 100)).toBe(false);
+    expect(interrupted(invalid, 1699)).toBe(false);
+    expect(interrupted(invalid, 1700)).toBe(true);
+    expect(interrupted(valid, 1800)).toBe(false);
+    expect(interrupted(invalid, 1900)).toBe(false);
+    fresh = false;
+    expect(interrupted(valid, 3500)).toBe(true);
+    formTest = false;
+    expect(interrupted(invalid, 3600)).toBe(false);
+  });
+
   it('reports game over before deferring expensive camera cleanup', () => {
-    const endGameStart = SCRIPT_GAME.indexOf('function endGame()');
+    const endGameStart = SCRIPT_GAME.indexOf('function endGame(reason)');
     const endGameEnd = SCRIPT_GAME.indexOf('// ---------- Drawing ----------', endGameStart);
     const endGameScript = SCRIPT_GAME.slice(endGameStart, endGameEnd);
 

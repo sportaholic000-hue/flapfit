@@ -2,7 +2,8 @@
 
 Use this checklist on the exact commit named at the top of the test session. Record the device,
 operating-system version, app source (Expo Go, TestFlight, or Play internal), result, and a short note
-for every failure. Do not submit a different commit from the one that completed this matrix.
+for every failure. Record Form Test rules version `2026-09-16.1` with the exact commit; the
+bounded-interruption behavior changed after version `2026-09-15.8`. Do not submit a different commit
 
 ## Expo Go gameplay approval
 
@@ -44,7 +45,9 @@ Additional protected-form checks:
 
 - [ ] Pull-ups allow bent knees and a slight elbow bend at the bottom.
 - [ ] Pull-ups do not accept planted feet, one planted foot, head bobbing, or releasing the bar.
-- [ ] Brief wrist/foot occlusion pauses with a useful message; sustained missing evidence ends the run.
+- [ ] Brief camera or landmark loss allows recovery; sustained stale tracking or invalid form ends
+      the run rather than providing an unlimited rest pause. Confirm this for all six exercises.
+- [ ] The result card distinguishes an unverified-form or lost-camera ending from a pipe collision.
 - [ ] Push-ups work from a view where the player can still see the screen.
 - [ ] Push-ups do not accept head bobbing or hands leaving the supporting surface.
 - [ ] Squats do not accept bending only at the waist.

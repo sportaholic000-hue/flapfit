@@ -2,7 +2,7 @@
 // so physical A/B testing can happen without replacing the launch baseline.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-09-15.8';
+export const FORM_TRACKING_RULES_VERSION = '2026-09-16.1';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------

@@ -67,6 +67,7 @@ type GameResult = {
   score: number;
   pushups: number;
   tutSeconds: number;
+  endReason?: 'form' | 'tracking';
 };
 
 type CompetitionResultState = {
@@ -768,6 +769,7 @@ export default function GameScreen() {
     (event: { nativeEvent: { data: string } }) => {
       let msg: {
         type?: string;
+        reason?: string;
         score?: number;
         pushups?: number;
         tutSeconds?: number;
@@ -895,7 +897,9 @@ export default function GameScreen() {
           setShowEvolutionCeremony(true);
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         }
-        setResult({ score, pushups, tutSeconds: Math.round(tutSecs) });
+        const endReason =
+          msg.reason === 'form' || msg.reason === 'tracking' ? msg.reason : undefined;
+        setResult({ score, pushups, tutSeconds: Math.round(tutSecs), endReason });
       }
     },
     [
@@ -1443,6 +1447,20 @@ export default function GameScreen() {
                     : 'Level cleared!'
                 : 'Run over'}
             </Text>
+            {result.endReason ? (
+              <Text
+                style={{
+                  color: '#475569',
+                  fontSize: 13,
+                  textAlign: 'center',
+                  marginTop: 8,
+                }}
+              >
+                {result.endReason === 'form'
+                  ? 'Run ended because exercise form could not be verified.'
+                  : 'Run ended because camera tracking was lost.'}
+              </Text>
+            ) : null}
             {nextUnlocked ? (
               <Text style={{ color: '#16A34A', fontWeight: '800', marginTop: 4 }}>
                 Level {level.id + 1} unlocked 🎉

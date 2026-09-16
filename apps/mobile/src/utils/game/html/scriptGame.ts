@@ -29,8 +29,8 @@ var competitionDurationMs = 0;
 var fatalFormKey = '';
 var fatalFormSince = 0;
 var FATAL_FORM_GRACE_MS = 350;
-var protectedTrackingLossSince = 0;
-var PROTECTED_TRACKING_LOSS_GRACE_MS = 1600;
+var formTrackingInterruptionSince = 0;
+var FORM_TRACKING_INTERRUPTION_GRACE_MS = 1600;
 
 function fatalFormFailureConfirmed(check, now) {
   if (!check || !check.fatal) {
@@ -47,17 +47,18 @@ function fatalFormFailureConfirmed(check, now) {
   return now - fatalFormSince >= FATAL_FORM_GRACE_MS;
 }
 
-function protectedTrackingLossConfirmed(now) {
-  var protectedExercise = CONFIG.exercise === 'pullups' || CONFIG.exercise === 'pushups';
-  if (!usesExperimentalFormTracking() || !protectedExercise || trackingFresh()) {
-    protectedTrackingLossSince = 0;
+function formTrackingInterruptionConfirmed(check, now) {
+  if (!usesExperimentalFormTracking() || (trackingFresh() && check.valid)) {
+    formTrackingInterruptionSince = 0;
     return false;
   }
-  if (!protectedTrackingLossSince) {
-    protectedTrackingLossSince = now;
+  // Fatal form evidence has its separate, shorter confirmation window.
+  if (check.fatal) { return false; }
+  if (!formTrackingInterruptionSince) {
+    formTrackingInterruptionSince = now;
     return false;
   }
-  return now - protectedTrackingLossSince >= PROTECTED_TRACKING_LOSS_GRACE_MS;
+  return now - formTrackingInterruptionSince >= FORM_TRACKING_INTERRUPTION_GRACE_MS;
 }
 
 // ---------- Composed-run recording ----------
@@ -361,7 +362,7 @@ function birdScreenY() {
   return m + (1 - birdNorm) * (H - m * 2);
 }
 
-function endGame() {
+function endGame(reason) {
   if (gameOverSent) { return; }
   gameOverSent = true;
   state = 'over';
@@ -370,6 +371,7 @@ function endGame() {
   var recorderWasRunning = !!runRecorder;
   postRN({
     type: 'gameover',
+    reason: reason || '',
     score: score,
     pushups: pushups,
     tutSeconds: tutSeconds,
@@ -710,11 +712,11 @@ function loop(now) {
       ? validateExperimentalGameplay(norm)
       : { valid: true, message: '' };
     if (fatalFormFailureConfirmed(gameplayFormCheck, now)) {
-      endGame();
+      endGame('form');
       return;
     }
-    if (protectedTrackingLossConfirmed(now)) {
-      endGame();
+    if (formTrackingInterruptionConfirmed(gameplayFormCheck, now)) {
+      endGame(gameplayFormCheck.valid ? 'tracking' : 'form');
       return;
     }
 
@@ -748,6 +750,8 @@ function loop(now) {
             : 'Tracking lost<br><br><b>Re-center in frame</b><br>Return to your hang — game resumes automatically.'
           : CONFIG.exercise === 'pushups' && usesExperimentalFormTracking()
             ? 'Tracking lost<br><br><b>Return to your push-up position quickly</b><br><small>Sustained tracking loss ends this run</small>'
+          : usesExperimentalFormTracking()
+            ? 'Tracking lost<br><br><b>Re-center quickly</b><br><small>Sustained tracking loss ends this run</small>'
           : isWristEx2
             ? 'Tracking lost<br><br><b>Re-center in frame</b><br>Face camera and hold still — game resumes automatically.'
             : 'Tracking lost<br><br><b>Re-center in frame</b><br>Hold your position — game resumes automatically.';
@@ -780,10 +784,10 @@ function loop(now) {
       ? validateExperimentalGameplay(norm)
       : { valid: true, message: '' };
     if (fatalFormFailureConfirmed(resumeFormCheck, now)) {
-      endGame();
+      endGame('form');
       return;
-    } else if (protectedTrackingLossConfirmed(now)) {
-      endGame();
+    } else if (formTrackingInterruptionConfirmed(resumeFormCheck, now)) {
+      endGame(resumeFormCheck.valid ? 'tracking' : 'form');
       return;
     } else if (trackingFresh() && resumeFormCheck.valid) {
       resumeEnd = now + 1200;

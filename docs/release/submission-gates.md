@@ -53,7 +53,7 @@ final review decisions.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [x] The September 16 audit-hardening candidate passes TypeScript, 77 automated tests and repository
+- [x] The September 16 audit-hardening candidate passes TypeScript, 78 automated tests and repository
       lint. Current-source offline iOS and Android JavaScript exports passed on commit `207a685`;
       signed native packaging and physical tests remain pending.
 - [x] Persisted-state hydration does not overwrite unreadable saved progress with defaults. Slow
@@ -68,6 +68,8 @@ final review decisions.
 - [x] Production EAS validation fails closed while the hardened tracker remains unapproved: Form
       Test must be promoted and `FLAPFIT_APPROVED_TRACKER_RULES_VERSION` must exactly match the
       versioned rules marker. Development and preview testing remain available.
+- [x] Form Test now bounds sustained stale tracking and nonfatal invalid-form pauses across all six
+      exercises; a brief interruption can recover. Physical tolerance remains to be approved.
 - [x] Production EAS validation also fails closed while the agreed AdMob and RevenueCat integration
       is absent. The current Expo/preview checkpoint remains intentionally ad-free.
 - [ ] Rerun the same checks after tomorrow's physical testing and any resulting source changes.

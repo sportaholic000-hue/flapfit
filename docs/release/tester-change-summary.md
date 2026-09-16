@@ -50,7 +50,10 @@ branch. It describes implemented behavior, not planned marketing claims.
   the known baseline tracker prematurely.
 - Form Test evaluates both pull-up feet separately, permits bent knees and a slight elbow bend,
   distinguishes brief wrist/foot occlusion from a visible bar release, detects planted support, and
-  ends protected runs after sustained unverifiable tracking.
+  ends a run after sustained unverifiable tracking. Brief camera glitches can recover, but sustained
+  stale tracking or invalid form cannot become an unlimited rest pause.
+- The game-over card now names an unverified-form or lost-camera ending so it does not look like an
+  unexplained pipe collision.
 - Added protected Push-up checks for hand support/head bobbing and Squat checks for waist-only
   bending while preserving reasonable movement ranges.
 - Kept all form checks invisible. No skeleton or landmark overlay is shown.
@@ -133,7 +136,7 @@ branch. It describes implemented behavior, not planned marketing claims.
 - Copied the project to a local development folder and synchronized the private GitHub repository.
 - Verified no targeted private credentials exist in the current tree or any reachable Git commit.
 - Public marketing, Privacy, Terms, and deletion pages now load signed out over HTTPS.
-- Current automated result is 77 of 77 tests passing, plus TypeScript and repository lint.
+- Current automated result is 78 of 78 tests passing, plus TypeScript and repository lint.
   This includes real empty-storage and low-frame-rate training-time regressions.
 
 ## Deliberately not complete yet
