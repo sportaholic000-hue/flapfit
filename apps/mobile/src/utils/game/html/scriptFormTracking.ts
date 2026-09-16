@@ -2,7 +2,7 @@
 // so physical A/B testing can happen without replacing the launch baseline.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-09-15.7';
+export const FORM_TRACKING_RULES_VERSION = '2026-09-15.8';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -11,7 +11,6 @@ var formCurrentMetrics = null;
 var formTrackY = null, formTrackYSmooth = null;
 var lastFormTrackTime = 0;
 var formTopMetrics = null, formBottomMetrics = null;
-var pullupTopReferenceMetrics = null;
 var pullupFootAnchorEvidence = { left: [], right: [] };
 var pullupWristMissingAt = 0;
 var PULLUP_EVIDENCE_GRACE_MS = 1200;
@@ -30,7 +29,6 @@ function resetExperimentalFormTracking() {
   lastFormTrackTime = 0;
   formTopMetrics = null;
   formBottomMetrics = null;
-  pullupTopReferenceMetrics = null;
   pullupFootAnchorEvidence = { left: [], right: [] };
   pullupWristMissingAt = 0;
 }
@@ -85,13 +83,14 @@ function formAverageAngle(triples, minVisibility) {
 
 function collectExperimentalFormMetrics() {
   if (!formPoseLandmarks) { return null; }
+  var pullupVisibility = CONFIG.exercise === 'pullups' ? 0.15 : 0.24;
+  var eyes = formMeanPoint([2, 5], pullupVisibility, 1);
   var shoulders = formMeanPoint(
     [11, 12],
-    CONFIG.exercise === 'pullups' ? 0.15 : 0.24,
+    pullupVisibility,
     1
   );
   var elbows = formMeanPoint([13, 14], 0.24, 1);
-  var pullupVisibility = CONFIG.exercise === 'pullups' ? 0.15 : 0.24;
   var leftWrist = formPoint(15, pullupVisibility);
   var rightWrist = formPoint(16, pullupVisibility);
   var wrists = leftWrist && rightWrist
@@ -133,6 +132,7 @@ function collectExperimentalFormMetrics() {
 
   return {
     controllerY: controller ? controller.y : null,
+    eyes: eyes,
     shoulders: shoulders,
     elbows: elbows,
     wrists: wrists,
@@ -162,18 +162,6 @@ function updateExperimentalFormPose(landmarks, now) {
   if (formTrackYSmooth === null) { formTrackYSmooth = formTrackY; }
   formTrackYSmooth = formTrackYSmooth + (formTrackY - formTrackYSmooth) * 0.55;
   lastFormTrackTime = now;
-  if (
-    CONFIG.exercise === 'pullups' &&
-    !formTopMetrics &&
-    now <= calibrationReadyAt &&
-    formCurrentMetrics.shoulders &&
-    (
-      !pullupTopReferenceMetrics ||
-      formCurrentMetrics.controllerY > pullupTopReferenceMetrics.controllerY
-    )
-  ) {
-    pullupTopReferenceMetrics = formCurrentMetrics;
-  }
 }
 
 function getExperimentalTrackY() { return formTrackY; }
@@ -289,10 +277,11 @@ function validateExperimentalCalibration(position) {
   }
 
   if (CONFIG.exercise === 'pullups') {
-    var pullupTopMessage = 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull your shoulders <b>UP</b> to your highest point<br><br>Hold still…';
+    var pullupTopMessage = 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull until your <b>EYE LINE</b> reaches the bar<br><br>Hold your highest point…';
     var pullupBottomMessage = 'STEP 2 OF 2<br><br>Lower to a comfortable <b>BOTTOM</b> position<br>A slight elbow bend is fine<br>Keep both hands on the bar<br><br>Hold still…';
     if (position === 'top') {
       if (
+        !metrics.eyes ||
         !metrics.shoulders ||
         !metrics.wrists ||
         metrics.elbowAngle === null ||
@@ -302,17 +291,9 @@ function validateExperimentalCalibration(position) {
       ) {
         return formInvalid(pullupTopMessage);
       }
-      if (!pullupTopReferenceMetrics) {
-        pullupTopReferenceMetrics = metrics;
-        return formInvalid('STEP 1 OF 2<br><br>Hands set. Now pull your shoulders <b>UP</b> toward the bar<br><br>Hold your highest point…');
-      }
-      if (metrics.controllerY > pullupTopReferenceMetrics.controllerY + 0.01) {
-        pullupTopReferenceMetrics = metrics;
+      var eyeLineToBar = metrics.eyes.y - metrics.wrists.y;
+      if (eyeLineToBar > 0.07) {
         return formInvalid(pullupTopMessage);
-      }
-      var topShoulderRise = pullupTopReferenceMetrics.controllerY - metrics.controllerY;
-      if (topShoulderRise < 0.025) {
-        return formInvalid('STEP 1 OF 2<br><br>Pull your shoulders <b>UP</b> toward the bar<br>Keep both hands on the bar<br><br>Hold your highest point…');
       }
       return formValid();
     }

@@ -248,6 +248,7 @@ describe('experimental form tracking', () => {
     for (let now = 0; now <= 1900; now += 100) harness.update(preparationPose, now);
 
     const top = pose([
+      ...mirroredPair(2, 5, 0.47, 0.16),
       ...mirroredPair(11, 12, 0.43, 0.35),
       ...mirroredPair(13, 14, 0.39, 0.25),
       ...mirroredPair(15, 16, 0.44, 0.14),
@@ -258,6 +259,7 @@ describe('experimental form tracking', () => {
     harness.save('top');
 
     const bottom = pose([
+      ...mirroredPair(2, 5, 0.47, 0.25),
       ...mirroredPair(11, 12, 0.44, 0.44),
       ...mirroredPair(13, 14, 0.44, 0.28),
       ...mirroredPair(15, 16, 0.44, 0.14),
@@ -269,9 +271,10 @@ describe('experimental form tracking', () => {
     expect(harness.validateGameplay(0).valid).toBe(true);
   });
 
-  it('rejects a bent-arm bar grab without upward shoulder travel in pull-up step 1', () => {
+  it('rejects a bent-arm bar grab when the eye line has not reached the bar', () => {
     const harness = makeHarness('pullups');
     const bentArmBarGrab = pose([
+      ...mirroredPair(2, 5, 0.47, 0.26),
       ...mirroredPair(11, 12, 0.43, 0.43),
       ...mirroredPair(13, 14, 0.36, 0.29),
       ...mirroredPair(15, 16, 0.44, 0.14),
@@ -282,13 +285,40 @@ describe('experimental form tracking', () => {
     harness.update(bentArmBarGrab, 2100);
     expect(harness.validateCalibration('top')).toMatchObject({
       valid: false,
-      message: expect.stringMatching(/shoulders.*up/i),
+      message: expect.stringMatching(/eye line.*bar/i),
+    });
+  });
+
+  it('rejects going onto the toes without bringing the eye line to the pull-up bar', () => {
+    const harness = makeHarness('pullups');
+    const barGrab = pose([
+      ...mirroredPair(2, 5, 0.47, 0.27),
+      ...mirroredPair(11, 12, 0.43, 0.43),
+      ...mirroredPair(13, 14, 0.36, 0.29),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.64),
+    ]);
+    for (let now = 0; now <= 1900; now += 100) harness.update(barGrab, now);
+
+    const oneInchToeRise = pose([
+      ...mirroredPair(2, 5, 0.47, 0.24),
+      ...mirroredPair(11, 12, 0.43, 0.4),
+      ...mirroredPair(13, 14, 0.36, 0.26),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.61),
+    ]);
+    harness.update(oneInchToeRise, 2100);
+
+    expect(harness.validateCalibration('top')).toMatchObject({
+      valid: false,
+      message: expect.stringMatching(/eye line.*bar/i),
     });
   });
 
   it('accepts bent knees and a switch to straight airborne legs during pull-ups', () => {
     const harness = makeHarness('pullups');
     const setup = pose([
+      ...mirroredPair(2, 5, 0.47, 0.26),
       ...mirroredPair(11, 12, 0.43, 0.43),
       ...mirroredPair(13, 14, 0.42, 0.29),
       ...mirroredPair(15, 16, 0.44, 0.14),
@@ -298,6 +328,7 @@ describe('experimental form tracking', () => {
     for (let now = 0; now <= 2000; now += 200) harness.update(setup, now);
 
     const deadHang = pose([
+      ...mirroredPair(2, 5, 0.47, 0.27),
       ...mirroredPair(11, 12, 0.44, 0.44),
       ...mirroredPair(13, 14, 0.44, 0.28),
       ...mirroredPair(15, 16, 0.44, 0.14),
@@ -311,6 +342,7 @@ describe('experimental form tracking', () => {
     });
 
     const top = pose([
+      ...mirroredPair(2, 5, 0.47, 0.16),
       ...mirroredPair(11, 12, 0.43, 0.35),
       ...mirroredPair(13, 14, 0.39, 0.25),
       ...mirroredPair(15, 16, 0.44, 0.14),
@@ -322,6 +354,7 @@ describe('experimental form tracking', () => {
     harness.save('top');
 
     const bottom = pose([
+      ...mirroredPair(2, 5, 0.47, 0.25),
       ...mirroredPair(11, 12, 0.44, 0.44),
       ...mirroredPair(13, 14, 0.44, 0.28),
       ...mirroredPair(15, 16, 0.44, 0.14),
@@ -450,6 +483,7 @@ describe('experimental form tracking', () => {
   it('accepts a comfortable pull-up bottom position with a slight elbow bend', () => {
     const harness = makeHarness('pullups');
     const setup = pose([
+      ...mirroredPair(2, 5, 0.47, 0.26),
       ...mirroredPair(11, 12, 0.43, 0.43),
       ...mirroredPair(13, 14, 0.42, 0.29),
       ...mirroredPair(15, 16, 0.44, 0.14),
@@ -459,6 +493,7 @@ describe('experimental form tracking', () => {
     for (let now = 0; now <= 2000; now += 200) harness.update(setup, now);
 
     const top = pose([
+      ...mirroredPair(2, 5, 0.47, 0.16),
       ...mirroredPair(11, 12, 0.43, 0.35),
       ...mirroredPair(13, 14, 0.39, 0.25),
       ...mirroredPair(15, 16, 0.44, 0.14),

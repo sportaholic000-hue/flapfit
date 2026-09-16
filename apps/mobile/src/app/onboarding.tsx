@@ -428,7 +428,15 @@ export default function OnboardingScreen() {
               <Cloud top={height - 145} left={-32} scale={0.7} opacity={0.44} />
               <Cloud top={height - 112} left={width - 86} scale={0.82} opacity={0.4} />
               {step === 2 ? (
-                <Cloud top={insets.top + 18} left={width / 2 - 60} scale={0.78} opacity={0.46} />
+                <>
+                  <Cloud top={insets.top + 18} left={width / 2 - 60} scale={0.78} opacity={0.46} />
+                  <Cloud
+                    top={height - insets.bottom - 190}
+                    left={Math.max(22, width * 0.2)}
+                    scale={0.66}
+                    opacity={0.4}
+                  />
+                </>
               ) : (
                 <>
                   <Cloud
@@ -443,6 +451,18 @@ export default function OnboardingScreen() {
                     scale={0.73}
                     opacity={0.48}
                   />
+                  <Cloud
+                    top={insets.top + 8}
+                    left={Math.max(24, width * 0.58)}
+                    scale={0.56}
+                    opacity={0.42}
+                  />
+                  <Cloud
+                    top={height - insets.bottom - 170}
+                    left={Math.max(20, width * 0.18)}
+                    scale={0.62}
+                    opacity={0.44}
+                  />
                 </>
               )}
             </>
@@ -454,10 +474,10 @@ export default function OnboardingScreen() {
           pointerEvents="none"
           style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, overflow: 'hidden' }}
         >
-          <PipeDecoration direction="down" height={116} top={12} left={pipeHorizontalInset} />
-          <PipeDecoration direction="down" height={158} top={12} right={pipeHorizontalInset} />
-          <PipeDecoration direction="up" height={142} bottom={12} left={pipeHorizontalInset} />
-          <PipeDecoration direction="up" height={102} bottom={12} right={pipeHorizontalInset} />
+          <PipeDecoration direction="down" height={116} top={0} left={pipeHorizontalInset} />
+          <PipeDecoration direction="down" height={158} top={0} right={pipeHorizontalInset} />
+          <PipeDecoration direction="up" height={142} bottom={0} left={pipeHorizontalInset} />
+          <PipeDecoration direction="up" height={102} bottom={0} right={pipeHorizontalInset} />
         </View>
       ) : null}
       <View
