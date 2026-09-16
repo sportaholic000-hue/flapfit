@@ -8,6 +8,8 @@ final review decisions.
 ## Technical source gates
 
 - [x] App name is Flap Fit; iOS bundle ID and Android package are `com.flapfit.game`.
+- [x] A September 16 full mobile/backend source scan found no `anything.com`, `Flappy Push`,
+      or superseded support-email references in launch code. Old Expo ownership remains only in historical release notes.
 - [x] Flap Fit 1.0 is an iPhone app on Apple (`ios.supportsTablet: false`), so the approved launch
       asset plan does not require a separate iPad screenshot set. iPad Expo Go checks remain useful
       compatibility evidence but do not expand the App Store device family.
