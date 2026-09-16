@@ -51,11 +51,11 @@ final review decisions.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [x] The current pre-test candidate passes TypeScript, 50 automated tests, repository formatting,
-      lint, and production-style local Expo exports for both iOS and Android.
-- [x] Persisted-state hydration no longer leaves a blank Home screen after a read failure. Slow
-      hydration shows branded loading and a retry control; an actual hydration error opens the app
-      through a logged fallback without explicitly deleting the stored value.
+- [x] The September 16 audit-hardening candidate passes TypeScript, 71 automated tests and repository
+      lint. Earlier production-style local Expo exports covered the pre-audit candidate only.
+- [x] Persisted-state hydration does not overwrite unreadable saved progress with defaults. Slow
+      hydration shows branded loading and retry; a read error blocks writes and offers a retry. A real
+      AsyncStorage regression preserves the original bytes and restores progress.
 - [x] Production EAS validation fails closed while the hardened tracker remains unapproved: Form
       Test must be promoted and `FLAPFIT_APPROVED_TRACKER_RULES_VERSION` must exactly match the
       versioned rules marker. Development and preview testing remain available.
@@ -103,17 +103,20 @@ Owner/legal inputs still required:
       backup/availability decision remains below.
 - [x] Dedicated Flap Fit project is healthy in AWS US East (Ohio), `us-east-2`.
 - [x] Anonymous authentication is enabled.
-- [x] All checked-in migrations are live and `flapfit-game` version 3 is deployed with JWT
-      verification enabled.
+- [x] All checked-in migrations through `202609160001_enforce_run_timing` are live and `flapfit-game`
+      version 4 is deployed with JWT verification enabled.
 - [x] Live verification covers Terms enforcement, leaderboard read, legacy claimed-score rejection,
       verified-run creation/finalization, idempotent retry, replay rejection, implausible-result
-      rejection, all-exercise challenges, and profile deletion.
+      rejection (including the audit's 125/30-second and 60/13.75-second cases), all-exercise
+      challenges, and profile deletion.
 - [x] Every public application table has RLS enabled. Protected score writes are service-only.
 - [x] Define and document source-controlled retention for expired challenges and moderation reports.
 - [x] The checked-in retention migration deletes expired 30-day challenges daily, removes resolved
       moderation reports after 180 days, minimizes account-deletion records, and prunes Cron history.
 - [x] Retention migrations and the daily cleanup job are live. The public privacy draft records the
       current Free-plan observability and backup limitations.
+- [x] The daily retention job succeeded after the verified-run migration; the September 16 check
+      found no run more than seven days past expiry.
 - [x] Supabase security and performance advisors were rerun after the verified-run migrations. The
       challenge foreign-key index was added; remaining notices concern Supabase-managed Cron tables,
       password protection unused by anonymous-only Auth, and expected unused indexes on empty data.
@@ -123,15 +126,13 @@ Owner/legal inputs still required:
 
 ## Website and legal gates shared by both stores
 
-- [ ] Public marketing site loads signed out over HTTPS.
-- [ ] Remove the current access-control gate only after explicit owner approval. On September 15,
-      `flapfitapp.com` resolved to its Cloudflare front end, but the marketing, Privacy, Terms, and
-      deletion URLs all returned HTTP 401 to the signed-out release checker.
-- [ ] Public privacy policy is linked in the app and both store listings.
+- [x] Public marketing site loads signed out over HTTPS; the existing Site was made public without a
+      duplicate or DNS change. Marketing, Privacy, Terms, and deletion URLs return HTTP 200.
+- [ ] Public privacy policy is linked in the app; store listings await final setup.
 - [ ] Public Terms of Use is linked in the app and covers the competition community rules.
-- [ ] Public account/data deletion page works without requiring the app to be installed.
-- [ ] Run `yarn workspace mobile release:links` against the production environment and confirm every
-      public page returns HTML containing the expected Flap Fit page label.
+- [x] Public account/data deletion page works without requiring the app to be installed, with the
+      September 16 support-ID and run-retention copy.
+- [x] `yarn workspace mobile release:links` passed against all four signed-out HTTPS pages.
 - [x] Production EAS builds fail closed when any required public link or online-service value is
       missing.
 - [x] The release validator rejects reserved/private placeholder domains and requires separate
@@ -151,8 +152,8 @@ Owner/legal inputs still required:
 - [x] Root Git and EAS upload rules exclude Apple API/signing keys, provisioning profiles, Android
       keystores, and store service-account files regardless of where they are downloaded inside the
       repository. Production validation fails if those EAS exclusions are removed.
-- [x] The app is linked to the existing `@sportaholic/flapfit` EAS project and the checked-in project
-      ID matches the remote project.
+- [x] The app is linked to the existing `@flapfitapp/flapfit` EAS project; the checked-in project ID
+      matches the transferred project and the stale owner validator is corrected.
 - [x] EAS build profiles contain the seven validated public release values. No service-role secret is
       present in the mobile configuration.
 - [ ] Support email/form is visible and functional.

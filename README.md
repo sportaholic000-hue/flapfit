@@ -8,7 +8,7 @@ Private source repository for the Flap Fit iOS and Android fitness game.
 - The Expo application is in `apps/mobile`.
 - Do not use an old downloaded ZIP or the historical release/experiment branches as the current
   source. Confirm the expected `main` commit before testing or building.
-- The app is linked to EAS project `@sportaholic/flapfit`
+- The app is linked to EAS project `@flapfitapp/flapfit`
   (`bbbfea4f-3047-46f6-a5ba-6286356e4718`) and dedicated Supabase project
   `yhrleungvipsqlmayrfg`.
 

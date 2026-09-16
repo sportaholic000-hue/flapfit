@@ -5,6 +5,11 @@ Verified: 2026-09-15
 This file records non-secret release evidence for the active Flap Fit mobile app. Re-run the checks
 immediately before producing the final store artifacts.
 
+September 16 update: the same EAS project ID was transferred from `sportaholic` to the
+`flapfitapp` organization. The current `app.json` owner and release validator both use
+`@flapfitapp/flapfit`. The September 15 account listing below is historical evidence,
+not the current owner.
+
 ## Linked project
 
 - Expo account: `sportaholic`
