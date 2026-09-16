@@ -85,12 +85,32 @@ type PendingCompetitionResult = {
   playerName: string;
   score: number;
   durationMs: number;
+  expiresAt: string;
   createdAt: string;
 };
 
+export type CompetitionSubmissionNotice = {
+  runId: string;
+  status: number;
+  message: string;
+};
+
+export type CompetitionFlushResult = {
+  submitted: number;
+  pending: number;
+  submittedRunIds: string[];
+  pendingRunIds: string[];
+  rejected: CompetitionSubmissionNotice[];
+};
+
+export type CompetitionSubmissionOutcome = {
+  status: 'accepted' | 'pending' | 'rejected';
+  message: string;
+};
+
 const COMPETITION_OUTBOX_KEY = '@flapfit/competition-result-outbox-v1';
+const COMPETITION_NOTICE_KEY = '@flapfit/competition-result-notices-v1';
 const MAX_PENDING_RESULTS = 25;
-const MAX_PENDING_RESULT_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 let outboxOperation = Promise.resolve();
 
 export class CompetitionRequestError extends Error {
@@ -114,11 +134,31 @@ export function normalizeCompetitionPlayerName(value: string): string {
     .replace(/\s+/g, ' ');
 }
 
+function isBlockedCompetitionPlayerName(name: string): boolean {
+  const moderationName = name
+    .normalize('NFKD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/[0@]/g, 'o')
+    .replace(/[1!|]/g, 'i')
+    .replace(/[3]/g, 'e')
+    .replace(/[4]/g, 'a')
+    .replace(/[5$]/g, 's')
+    .replace(/[7+]/g, 't')
+    .replace(/[^a-z0-9]/g, '');
+  return /(?:fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i.test(
+    moderationName
+  );
+}
+
 export function competitionPlayerNameError(value: string): string | null {
   const name = normalizeCompetitionPlayerName(value);
   if (name.length < 2 || name.length > 20) return 'Player names must be 2 to 20 characters.';
   if (!/^[\p{L}\p{N}][\p{L}\p{N} _.\-']+$/u.test(name)) {
     return 'Use letters, numbers, spaces, apostrophes, periods, underscores, or hyphens.';
+  }
+  if (isBlockedCompetitionPlayerName(name)) {
+    return 'Choose a different player name.';
   }
   return null;
 }
@@ -129,19 +169,32 @@ async function readCompetitionOutbox(): Promise<PendingCompetitionResult[]> {
   try {
     const parsed = JSON.parse(stored) as unknown;
     if (!Array.isArray(parsed)) return [];
-    const oldestAllowed = Date.now() - MAX_PENDING_RESULT_AGE_MS;
-    return parsed.filter((entry): entry is PendingCompetitionResult => {
-      if (!entry || typeof entry !== 'object') return false;
-      const candidate = entry as Partial<PendingCompetitionResult>;
-      return (
-        typeof candidate.runId === 'string' &&
-        typeof candidate.playerName === 'string' &&
-        Number.isInteger(candidate.score) &&
-        Number.isInteger(candidate.durationMs) &&
-        typeof candidate.createdAt === 'string' &&
-        Date.parse(candidate.createdAt) >= oldestAllowed
+    return parsed
+      .map((entry): PendingCompetitionResult | null => {
+        if (!entry || typeof entry !== 'object') return null;
+        const candidate = entry as Partial<PendingCompetitionResult>;
+        const createdAt = typeof candidate.createdAt === 'string' ? candidate.createdAt : '';
+        const createdAtMs = Date.parse(createdAt);
+        const legacyExpiry = Number.isFinite(createdAtMs)
+          ? new Date(createdAtMs + 6 * 60 * 60 * 1000).toISOString()
+          : '';
+        return {
+          ...candidate,
+          expiresAt: typeof candidate.expiresAt === 'string' ? candidate.expiresAt : legacyExpiry,
+        } as PendingCompetitionResult;
+      })
+      .filter(
+        (candidate): candidate is PendingCompetitionResult =>
+          candidate !== null &&
+          typeof candidate.runId === 'string' &&
+          typeof candidate.playerName === 'string' &&
+          Number.isInteger(candidate.score) &&
+          Number.isInteger(candidate.durationMs) &&
+          typeof candidate.createdAt === 'string' &&
+          Number.isFinite(Date.parse(candidate.createdAt)) &&
+          typeof candidate.expiresAt === 'string' &&
+          Number.isFinite(Date.parse(candidate.expiresAt))
       );
-    });
   } catch {
     return [];
   }
@@ -156,6 +209,45 @@ async function writeCompetitionOutbox(entries: PendingCompetitionResult[]) {
     COMPETITION_OUTBOX_KEY,
     JSON.stringify(entries.slice(-MAX_PENDING_RESULTS))
   );
+}
+
+async function appendCompetitionSubmissionNotices(notices: CompetitionSubmissionNotice[]) {
+  if (notices.length === 0) return;
+  let existing: CompetitionSubmissionNotice[] = [];
+  try {
+    const stored = await AsyncStorage.getItem(COMPETITION_NOTICE_KEY);
+    const parsed = stored ? (JSON.parse(stored) as unknown) : [];
+    if (Array.isArray(parsed)) {
+      existing = parsed.filter(
+        (notice): notice is CompetitionSubmissionNotice =>
+          !!notice &&
+          typeof notice === 'object' &&
+          typeof (notice as CompetitionSubmissionNotice).runId === 'string' &&
+          typeof (notice as CompetitionSubmissionNotice).status === 'number' &&
+          typeof (notice as CompetitionSubmissionNotice).message === 'string'
+      );
+    }
+  } catch {
+    existing = [];
+  }
+  await AsyncStorage.setItem(
+    COMPETITION_NOTICE_KEY,
+    JSON.stringify([...existing, ...notices].slice(-10))
+  );
+}
+
+export async function consumeCompetitionSubmissionNotices(): Promise<
+  CompetitionSubmissionNotice[]
+> {
+  const stored = await AsyncStorage.getItem(COMPETITION_NOTICE_KEY);
+  if (!stored) return [];
+  await AsyncStorage.removeItem(COMPETITION_NOTICE_KEY);
+  try {
+    const parsed = JSON.parse(stored) as CompetitionSubmissionNotice[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 function withOutboxLock<T>(operation: () => Promise<T>): Promise<T> {
@@ -180,44 +272,67 @@ export async function competitionRequest<T>(
     throw new CompetitionTermsRequiredError();
   }
 
-  const { client: supabase } = await anonymousUser();
-  const sessionResult = await supabase.auth.getSession();
-  const accessToken = sessionResult.data.session?.access_token;
-  if (!accessToken) throw new CompetitionUnavailableError('Online session could not be started.');
-
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 15000);
-  let response: Response;
+  let didTimeout = false;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeout = setTimeout(() => {
+      didTimeout = true;
+      controller.abort();
+      reject(new CompetitionRequestError('Online request timed out. It will be retried.', 408));
+    }, options.timeoutMs ?? 15000);
+  });
+
   try {
-    response = await fetch(`${ONLINE_SERVICES.supabaseUrl}/functions/v1/${FUNCTION_NAME}${path}`, {
-      method,
-      headers: {
-        apikey: ONLINE_SERVICES.supabasePublishableKey,
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-        ...(requiresCurrentTerms ? { 'X-FlapFit-Terms-Version': COMPETITION_TERMS_VERSION } : {}),
-      },
-      body: options.body === undefined ? undefined : JSON.stringify(options.body),
-      signal: controller.signal,
-    });
+    return await Promise.race([
+      (async () => {
+        const { client: supabase } = await anonymousUser();
+        const sessionResult = await supabase.auth.getSession();
+        const accessToken = sessionResult.data.session?.access_token;
+        if (!accessToken) {
+          throw new CompetitionUnavailableError('Online session could not be started.');
+        }
+
+        const response = await fetch(
+          `${ONLINE_SERVICES.supabaseUrl}/functions/v1/${FUNCTION_NAME}${path}`,
+          {
+            method,
+            headers: {
+              apikey: ONLINE_SERVICES.supabasePublishableKey,
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+              ...(requiresCurrentTerms
+                ? { 'X-FlapFit-Terms-Version': COMPETITION_TERMS_VERSION }
+                : {}),
+            },
+            body: options.body === undefined ? undefined : JSON.stringify(options.body),
+            signal: controller.signal,
+          }
+        );
+
+        const payload = (await response.json().catch(() => null)) as
+          | (T & { error?: string })
+          | null;
+        if (!response.ok) {
+          throw new CompetitionRequestError(
+            payload?.error || `Online request failed (${response.status}).`,
+            response.status
+          );
+        }
+        if (payload == null) throw new Error('Online service returned an empty response.');
+        return payload;
+      })(),
+      timeoutPromise,
+    ]);
   } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
+    if (didTimeout || (error instanceof Error && error.name === 'AbortError')) {
       throw new CompetitionRequestError('Online request timed out. It will be retried.', 408);
     }
     throw error;
   } finally {
-    clearTimeout(timeout);
+    if (timeout) clearTimeout(timeout);
+    controller.abort();
   }
-
-  const payload = (await response.json().catch(() => null)) as (T & { error?: string }) | null;
-  if (!response.ok) {
-    throw new CompetitionRequestError(
-      payload?.error || `Online request failed (${response.status}).`,
-      response.status
-    );
-  }
-  if (payload == null) throw new Error('Online service returned an empty response.');
-  return payload;
 }
 
 export async function beginCompetitionRun(input: {
@@ -236,48 +351,84 @@ export async function beginCompetitionRun(input: {
   return { runId: response.run_id, expiresAt: response.expires_at };
 }
 
-export async function flushPendingCompetitionResults(): Promise<number> {
-  if (!competitionIsConfigured) return 0;
-  if (useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION) return 0;
+function emptyCompetitionFlushResult(): CompetitionFlushResult {
+  return {
+    submitted: 0,
+    pending: 0,
+    submittedRunIds: [],
+    pendingRunIds: [],
+    rejected: [],
+  };
+}
+
+export async function flushPendingCompetitionResults(): Promise<CompetitionFlushResult> {
+  if (!competitionIsConfigured) return emptyCompetitionFlushResult();
+  if (useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION) {
+    return emptyCompetitionFlushResult();
+  }
 
   return withOutboxLock(async () => {
     const pending = await readCompetitionOutbox();
-    if (pending.length === 0) return 0;
+    if (pending.length === 0) return emptyCompetitionFlushResult();
 
     const remaining: PendingCompetitionResult[] = [];
-    let submitted = 0;
+    const submittedRunIds: string[] = [];
+    const rejected: CompetitionSubmissionNotice[] = [];
     let retryLater = false;
     for (const entry of pending) {
+      if (Date.parse(entry.expiresAt) <= Date.now()) {
+        rejected.push({
+          runId: entry.runId,
+          status: 410,
+          message: 'This online run expired before it could be published.',
+        });
+        continue;
+      }
       if (retryLater) {
         remaining.push(entry);
         continue;
       }
       try {
         await competitionRequest('/runs/finalize', { method: 'POST', body: entry });
-        submitted += 1;
+        submittedRunIds.push(entry.runId);
       } catch (error) {
         const permanent =
           error instanceof CompetitionRequestError &&
           [400, 404, 409, 410, 422].includes(error.status);
-        if (!permanent) {
+        if (permanent) {
+          rejected.push({
+            runId: entry.runId,
+            status: error.status,
+            message: error.message,
+          });
+        } else {
           remaining.push(entry);
           retryLater = true;
         }
       }
     }
     await writeCompetitionOutbox(remaining);
-    return submitted;
+    await appendCompetitionSubmissionNotices(rejected);
+    return {
+      submitted: submittedRunIds.length,
+      pending: remaining.length,
+      submittedRunIds,
+      pendingRunIds: remaining.map((entry) => entry.runId),
+      rejected,
+    };
   });
 }
 
 export async function submitCompetitionRunResult(input: {
   runId: string;
+  expiresAt: string;
   playerName: string;
   score: number;
   durationMs: number;
-}): Promise<number> {
+}): Promise<CompetitionSubmissionOutcome> {
   const entry: PendingCompetitionResult = {
     runId: input.runId,
+    expiresAt: input.expiresAt,
     playerName: normalizeCompetitionPlayerName(input.playerName),
     score: Math.max(0, Math.trunc(input.score)),
     durationMs: Math.max(0, Math.trunc(input.durationMs)),
@@ -288,11 +439,26 @@ export async function submitCompetitionRunResult(input: {
     const withoutDuplicate = pending.filter((item) => item.runId !== entry.runId);
     await writeCompetitionOutbox([...withoutDuplicate, entry]);
   });
-  return flushPendingCompetitionResults();
+  const result = await flushPendingCompetitionResults();
+  if (result.submittedRunIds.includes(entry.runId)) {
+    return { status: 'accepted', message: 'Online result saved.' };
+  }
+  const rejection = result.rejected.find((notice) => notice.runId === entry.runId);
+  if (rejection) {
+    return {
+      status: 'rejected',
+      message: `Online result was not published: ${rejection.message}`,
+    };
+  }
+  return {
+    status: 'pending',
+    message: 'Online result queued and will retry automatically.',
+  };
 }
 
 export async function clearPendingCompetitionResults(): Promise<void> {
   await withOutboxLock(() => writeCompetitionOutbox([]));
+  await AsyncStorage.removeItem(COMPETITION_NOTICE_KEY);
 }
 
 export async function deleteCompetitionIdentity(): Promise<void> {

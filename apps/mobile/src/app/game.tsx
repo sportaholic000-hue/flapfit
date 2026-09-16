@@ -69,6 +69,11 @@ type GameResult = {
   tutSeconds: number;
 };
 
+type CompetitionResultState = {
+  status: 'accepted' | 'pending' | 'rejected';
+  message: string;
+};
+
 type LoadedBirdImage = {
   key: string;
   dataUri: string;
@@ -224,6 +229,8 @@ export default function GameScreen() {
   const [recordWithoutAudio, setRecordWithoutAudio] = useState(false);
   const [runKey, setRunKey] = useState(0);
   const [result, setResult] = useState<GameResult | null>(null);
+  const [competitionResultState, setCompetitionResultState] =
+    useState<CompetitionResultState | null>(null);
   const [evolvedTo, setEvolvedTo] = useState<number | null>(null);
   const [showEvolutionCeremony, setShowEvolutionCeremony] = useState(false);
   const [loadedBirdImage, setLoadedBirdImage] = useState<LoadedBirdImage | null>(null);
@@ -558,28 +565,52 @@ export default function GameScreen() {
   }, [ceremonyOpacity, ceremonyScale, confettiProgress, showEvolutionCeremony]);
 
   const submitScores = useCallback(
-    async (score: number, tutSeconds: number) => {
-      if (!competitionIsConfigured) return;
+    async (score: number, durationMs: number) => {
+      const leaderboardEligible =
+        isEndless &&
+        competitionPlayerNameError(playerName) === null &&
+        ['pushups', 'squats', 'pullups'].includes(exerciseMode);
+      if (!competitionIsConfigured || (!challengeCode && !leaderboardEligible)) return;
+
+      setCompetitionResultState({
+        status: 'pending',
+        message: 'Publishing online result…',
+      });
       try {
         const session = await competitionRunPromiseRef.current;
-        if (!session) return;
+        if (!session) {
+          setCompetitionResultState({
+            status: 'rejected',
+            message: 'Online verification did not start, so this result was not published.',
+          });
+          return;
+        }
         const validPlayerName =
           competitionPlayerNameError(playerName) === null ? playerName : 'Anonymous';
-        await submitCompetitionRunResult({
+        const outcome = await submitCompetitionRunResult({
           runId: session.runId,
+          expiresAt: session.expiresAt,
           playerName: validPlayerName,
           score,
-          durationMs: Math.round(Math.max(0, tutSeconds) * 1000),
+          durationMs: Math.round(Math.max(0, durationMs)),
         });
-        if (isEndless) queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
-        if (challengeCode) {
-          queryClient.invalidateQueries({ queryKey: ['challenge', challengeCode] });
+        setCompetitionResultState(outcome);
+        if (outcome.status === 'accepted') {
+          if (isEndless) queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
+          if (challengeCode) {
+            queryClient.invalidateQueries({ queryKey: ['challenge', challengeCode] });
+          }
         }
       } catch (error) {
-        console.warn('Competition result is queued for retry', error);
+        console.warn('Competition result could not be queued', error);
+        setCompetitionResultState({
+          status: 'rejected',
+          message:
+            'Online result could not be queued. Your local level and training progress are safe.',
+        });
       }
     },
-    [isEndless, playerName, challengeCode, queryClient]
+    [challengeCode, exerciseMode, isEndless, playerName, queryClient]
   );
 
   const beginVideoRecording = useCallback(
@@ -741,6 +772,7 @@ export default function GameScreen() {
         pushups?: number;
         tutSeconds?: number;
         unreportedTutSeconds?: number;
+        runDurationMs?: number;
         seconds?: number;
         asset?: string;
         sessionId?: string;
@@ -853,7 +885,7 @@ export default function GameScreen() {
         });
         if (mode === 'daily' && score >= target) completeDaily(dayKey());
         if (challengeCode && score >= target) addChallengeWon();
-        void submitScores(score, tutSecs);
+        void submitScores(score, Math.max(0, msg.runDurationMs ?? tutSecs * 1000));
         const newStage = computeEvolutionStage(
           useGameStore.getState().totalTutSeconds,
           useGameStore.getState().lastActivityDate
@@ -897,6 +929,7 @@ export default function GameScreen() {
     runStartEvoStage.current = computeEvolutionStage(state.totalTutSeconds, state.lastActivityDate);
     gameOverHandled.current = false;
     setResult(null);
+    setCompetitionResultState(null);
     setEvolvedTo(null);
     setShowEvolutionCeremony(false);
     setRunKey((k) => k + 1);
@@ -922,6 +955,7 @@ export default function GameScreen() {
     unlockedBefore.current = state.unlockedLevel;
     gameOverHandled.current = false;
     setResult(null);
+    setCompetitionResultState(null);
     setEvolvedTo(null);
     setShowEvolutionCeremony(false);
     setRunKey((k) => k + 1);
@@ -1443,6 +1477,39 @@ export default function GameScreen() {
               <Text style={{ color: '#64748B', fontSize: 13, marginTop: 12 }}>
                 Target: {target} pipes — keep pushing!
               </Text>
+            ) : null}
+            {competitionResultState ? (
+              <View
+                style={{
+                  width: '100%',
+                  marginTop: 14,
+                  borderRadius: 12,
+                  paddingHorizontal: 12,
+                  paddingVertical: 10,
+                  backgroundColor:
+                    competitionResultState.status === 'accepted'
+                      ? '#F0FDF4'
+                      : competitionResultState.status === 'pending'
+                        ? '#EFF6FF'
+                        : '#FEF2F2',
+                }}
+              >
+                <Text
+                  style={{
+                    color:
+                      competitionResultState.status === 'accepted'
+                        ? '#166534'
+                        : competitionResultState.status === 'pending'
+                          ? '#1E3A8A'
+                          : '#991B1B',
+                    fontSize: 12,
+                    fontWeight: '800',
+                    textAlign: 'center',
+                  }}
+                >
+                  {competitionResultState.message}
+                </Text>
+              </View>
             ) : null}
             {recordRun && recordingPhase === 'preparing' ? (
               <View

@@ -25,6 +25,7 @@ export const SCRIPT_GAME = `
 // This is active gameplay time, not pose/form-verified physiological TUT.
 var tutSeconds = 0;
 var tutReportedSeconds = 0;
+var competitionDurationMs = 0;
 var fatalFormKey = '';
 var fatalFormSince = 0;
 var FATAL_FORM_GRACE_MS = 350;
@@ -372,6 +373,7 @@ function endGame() {
     score: score,
     pushups: pushups,
     tutSeconds: tutSeconds,
+    runDurationMs: Math.round(competitionDurationMs),
     unreportedTutSeconds: Math.max(0, tutSeconds - tutReportedSeconds)
   });
   // Give React Native the result first. Recorder finalization and base64 transfer
@@ -578,7 +580,8 @@ function topCalibrationMessage() {
 }
 
 function loop(now) {
-  var dt = lastFrame ? Math.min(0.035, (now - lastFrame) / 1000) : 0.016;
+  var rawFrameMs = lastFrame ? Math.max(0, now - lastFrame) : 16;
+  var dt = Math.min(0.035, rawFrameMs / 1000);
   var drewPlayableRecordingFrame = false;
   lastFrame = now;
 
@@ -714,6 +717,9 @@ function loop(now) {
       endGame();
       return;
     }
+
+    // Independent wall-clock evidence for online score plausibility.
+    competitionDurationMs += Math.min(rawFrameMs, 250);
 
     // Active training/play time after calibration and any enabled form checks above.
     tutSeconds += dt;

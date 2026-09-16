@@ -5,6 +5,7 @@ import { ENDLESS_UNLOCK_LEVEL, LEVELS } from './levels';
 
 const STORE_NAME = 'flap-fit-store';
 const LEGACY_STORE_NAME = ['flappy', 'push', 'store'].join('-');
+let persistedWritesBlocked = false;
 
 // Bump this value whenever the competition/community rules materially change.
 // Players must accept the current version before publishing names, scores, or
@@ -21,9 +22,12 @@ const migratingStorage = {
     return legacyValue;
   },
   setItem(name: string, value: string) {
+    // Never replace unreadable saved progress with default state.
+    if (persistedWritesBlocked) return Promise.resolve();
     return AsyncStorage.setItem(name, value);
   },
   removeItem(name: string) {
+    if (persistedWritesBlocked) return Promise.resolve();
     return AsyncStorage.removeItem(name);
   },
 };
@@ -55,12 +59,19 @@ export type ExerciseMode =
 export type DailyExerciseTut = Record<string, Partial<Record<ExerciseMode, number>>>;
 
 export function finishPersistedStoreHydration(
-  state: { setHydrated: () => void } | undefined,
+  state: { setHydrated: () => void; setHydrationError?: (failed: boolean) => void } | undefined,
   error: unknown,
   fallback: () => void
 ): void {
-  if (error) console.error('Flap Fit saved progress could not be loaded', error);
+  if (error) {
+    persistedWritesBlocked = true;
+    console.error('Flap Fit saved progress could not be loaded', error);
+    fallback();
+    return;
+  }
+  persistedWritesBlocked = false;
   if (state) {
+    state.setHydrationError?.(false);
     state.setHydrated();
     return;
   }
@@ -217,6 +228,7 @@ type RecordSessionInput = {
 
 type GameStore = {
   hydrated: boolean;
+  hydrationError: boolean;
   hasOnboarded: boolean;
   // Kept in persisted state for backwards compatibility. Camera tracking is
   // now the only supported control mode.
@@ -244,6 +256,7 @@ type GameStore = {
   lastActivityDate: string | null;
   // Actions
   setHydrated: () => void;
+  setHydrationError: (failed: boolean) => void;
   setOnboarded: () => void;
   setExerciseMode: (mode: ExerciseMode) => void;
   setBird: (id: string) => void;
@@ -260,6 +273,7 @@ export const useGameStore = create<GameStore>()(
   persist(
     (set, get) => ({
       hydrated: false,
+      hydrationError: false,
       hasOnboarded: false,
       controlMode: 'camera',
       exerciseMode: 'pushups',
@@ -283,6 +297,7 @@ export const useGameStore = create<GameStore>()(
       lastActivityDate: null,
 
       setHydrated: () => set({ hydrated: true }),
+      setHydrationError: (failed) => set({ hydrationError: failed }),
       setOnboarded: () => set({ hasOnboarded: true }),
       setExerciseMode: (mode) => set({ exerciseMode: mode }),
       setBird: (id) => set({ birdId: id }),
@@ -381,7 +396,7 @@ export const useGameStore = create<GameStore>()(
       name: STORE_NAME,
       storage: createJSONStorage(() => migratingStorage),
       partialize: (state) => {
-        const { hydrated: _h, ...rest } = state;
+        const { hydrated: _h, hydrationError: _he, ...rest } = state;
         return rest;
       },
       // Old installs may have persisted controlMode: 'sensor'. Force that
@@ -402,12 +417,24 @@ export const useGameStore = create<GameStore>()(
       },
       onRehydrateStorage: () => (state, error) => {
         finishPersistedStoreHydration(state, error, () =>
-          useGameStore.setState({ hydrated: true })
+          useGameStore.setState({ hydrated: true, hydrationError: true })
         );
       },
     }
   )
 );
+
+export async function retryPersistedStoreHydration(): Promise<void> {
+  persistedWritesBlocked = true;
+  useGameStore.setState({ hydrated: false, hydrationError: false });
+  try {
+    await useGameStore.persist.rehydrate();
+  } catch (error) {
+    persistedWritesBlocked = true;
+    console.error('Flap Fit saved-progress retry failed', error);
+    useGameStore.setState({ hydrated: true, hydrationError: true });
+  }
+}
 
 export function isEndlessUnlocked(unlockedLevel: number): boolean {
   return unlockedLevel > ENDLESS_UNLOCK_LEVEL;

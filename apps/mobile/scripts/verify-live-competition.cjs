@@ -98,8 +98,8 @@ async function main() {
         body: {
           runId: impossibleRun.payload?.run_id,
           playerName: 'LaunchTest',
-          score: 1000,
-          durationMs: 1000,
+          score: 125,
+          durationMs: 30000,
         },
       }),
       422
@@ -119,6 +119,19 @@ async function main() {
       },
     });
     expectStatus('All-exercise challenge run created', challengeRun, 201);
+    expectStatus(
+      'Implausibly fast challenge result rejected',
+      await request('/runs/finalize', {
+        method: 'POST',
+        body: {
+          runId: challengeRun.payload?.run_id,
+          playerName: 'LaunchTest',
+          score: 60,
+          durationMs: 13750,
+        },
+      }),
+      422
+    );
     expectStatus(
       'Challenge run finalized',
       await request('/runs/finalize', {

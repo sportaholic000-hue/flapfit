@@ -28,6 +28,7 @@ import {
   EVO_NAMES,
   EVO_THRESHOLDS,
   isEndlessUnlocked,
+  retryPersistedStoreHydration,
   useGameStore,
 } from '@/utils/game/store';
 
@@ -86,6 +87,7 @@ export default function HomeScreen() {
   const [hydrationSlow, setHydrationSlow] = useState(false);
 
   const hydrated = useGameStore((s) => s.hydrated);
+  const hydrationError = useGameStore((s) => s.hydrationError);
   const hasOnboarded = useGameStore((s) => s.hasOnboarded);
   const birdId = useGameStore((s) => s.birdId);
   const setBird = useGameStore((s) => s.setBird);
@@ -100,15 +102,15 @@ export default function HomeScreen() {
   const lastActivityDate = useGameStore((s) => s.lastActivityDate);
 
   useEffect(() => {
-    if (hydrated) {
+    if (hydrated || hydrationError) {
       setHydrationSlow(false);
       return;
     }
     const timeout = setTimeout(() => setHydrationSlow(true), 8_000);
     return () => clearTimeout(timeout);
-  }, [hydrated]);
+  }, [hydrated, hydrationError]);
 
-  if (!hydrated) {
+  if (!hydrated || hydrationError) {
     return (
       <View
         style={{
@@ -126,17 +128,23 @@ export default function HomeScreen() {
           contentFit="contain"
           transition={0}
         />
-        <ActivityIndicator color="#FFFFFF" size="large" style={{ marginTop: 14 }} />
-        <Text style={{ color: '#FFFFFF', fontWeight: '800', marginTop: 14 }}>
-          Loading your bird…
+        {!hydrationError ? (
+          <ActivityIndicator color="#FFFFFF" size="large" style={{ marginTop: 14 }} />
+        ) : null}
+        <Text
+          style={{ color: '#FFFFFF', fontWeight: '800', marginTop: 14, textAlign: 'center' }}
+        >
+          {hydrationError
+            ? 'Your saved progress could not be read. It has not been replaced.'
+            : 'Loading your bird…'}
         </Text>
-        {hydrationSlow ? (
+        {hydrationSlow || hydrationError ? (
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel="Try loading saved progress again"
             onPress={() => {
               setHydrationSlow(false);
-              Promise.resolve(useGameStore.persist.rehydrate()).catch((error) =>
+              void retryPersistedStoreHydration().catch((error) =>
                 console.error('Flap Fit saved-progress retry failed', error)
               );
             }}

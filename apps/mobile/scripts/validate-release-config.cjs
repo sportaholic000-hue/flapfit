@@ -93,11 +93,11 @@ if (supabaseKey && !supabaseKey.startsWith('sb_publishable_')) {
   failures.push('EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: use a modern sb_publishable_ key');
 }
 
-if (appJson.owner !== 'sportaholic') {
-  failures.push('app.json: Expo owner must remain sportaholic');
+if (appJson.owner !== 'flapfitapp') {
+  failures.push('app.json: Expo owner must remain flapfitapp');
 }
 if (appJson.extra?.eas?.projectId !== 'bbbfea4f-3047-46f6-a5ba-6286356e4718') {
-  failures.push('app.json: EAS project ID must remain linked to @sportaholic/flapfit');
+  failures.push('app.json: EAS project ID must remain linked to @flapfitapp/flapfit');
 }
 
 if (appJson.name !== 'Flap Fit' || appJson.slug !== 'flapfit') {

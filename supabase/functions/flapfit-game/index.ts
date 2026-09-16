@@ -29,7 +29,7 @@ const ALLOWED_CONTEXT_TYPES = new Set(['leaderboard', 'challenge', 'challenge_at
 const BLOCKED_NAME_PATTERN =
   /(?:fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i;
 const CURRENT_TERMS_VERSION = '2026-09-14';
-const CURRENT_RUN_RULES_VERSION = '2026-09-15.1';
+const CURRENT_RUN_RULES_VERSION = '2026-09-16.1';
 const ALLOWED_RUN_KINDS = new Set(['leaderboard', 'challenge']);
 
 class ApiError extends Error {

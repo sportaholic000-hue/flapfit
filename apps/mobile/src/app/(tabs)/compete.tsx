@@ -31,6 +31,7 @@ import {
   competitionIsConfigured,
   competitionPlayerNameError,
   competitionRequest,
+  consumeCompetitionSubmissionNotices,
   flushPendingCompetitionResults,
   normalizeCompetitionPlayerName,
 } from '@/services/competitionApi';
@@ -572,11 +573,21 @@ export default function CompeteScreen() {
 
   useEffect(() => {
     if (!competitionIsConfigured || !hasAcceptedCompetitionTerms) return;
+    void consumeCompetitionSubmissionNotices().then((notices) => {
+      const first = notices[0];
+      if (first) {
+        setError(`An earlier online result was not published: ${first.message}`);
+      }
+    });
     void flushPendingCompetitionResults()
-      .then((submitted) => {
-        if (submitted > 0) {
+      .then((result) => {
+        if (result.submitted > 0) {
           queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
           queryClient.invalidateQueries({ queryKey: ['challenge'] });
+        }
+        const firstRejection = result.rejected[0];
+        if (firstRejection) {
+          setError(`Online result was not published: ${firstRejection.message}`);
         }
       })
       .catch((flushError) => console.warn('Competition results remain queued', flushError));
