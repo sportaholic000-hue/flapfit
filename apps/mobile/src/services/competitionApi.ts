@@ -205,10 +205,7 @@ async function writeCompetitionOutbox(entries: PendingCompetitionResult[]) {
     await AsyncStorage.removeItem(COMPETITION_OUTBOX_KEY);
     return;
   }
-  await AsyncStorage.setItem(
-    COMPETITION_OUTBOX_KEY,
-    JSON.stringify(entries.slice(-MAX_PENDING_RESULTS))
-  );
+  await AsyncStorage.setItem(COMPETITION_OUTBOX_KEY, JSON.stringify(entries));
 }
 
 async function appendCompetitionSubmissionNotices(notices: CompetitionSubmissionNotice[]) {
@@ -434,11 +431,19 @@ export async function submitCompetitionRunResult(input: {
     durationMs: Math.max(0, Math.trunc(input.durationMs)),
     createdAt: new Date().toISOString(),
   };
-  await withOutboxLock(async () => {
+  const queued = await withOutboxLock(async () => {
     const pending = await readCompetitionOutbox();
     const withoutDuplicate = pending.filter((item) => item.runId !== entry.runId);
+    if (withoutDuplicate.length >= MAX_PENDING_RESULTS) return false;
     await writeCompetitionOutbox([...withoutDuplicate, entry]);
+    return true;
   });
+  if (!queued) {
+    const message =
+      'Online result was not published: the offline queue is full. Your local training progress is safe.';
+    await appendCompetitionSubmissionNotices([{ runId: entry.runId, status: 429, message }]);
+    return { status: 'rejected', message };
+  }
   const result = await flushPendingCompetitionResults();
   if (result.submittedRunIds.includes(entry.runId)) {
     return { status: 'accepted', message: 'Online result saved.' };

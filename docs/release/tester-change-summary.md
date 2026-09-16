@@ -113,6 +113,8 @@ branch. It describes implemented behavior, not planned marketing claims.
   idempotent retry.
 - Added a bounded persistent result outbox and request timeouts so eligible results can recover after
   a temporary connection failure without duplicate credit.
+- A full offline queue now keeps all 25 pending results intact instead of silently discarding the oldest;
+  a new result is visibly rejected until space is available, and retries cannot create duplicates.
 - Added run/challenge abuse limits, row-level security, service-only protected writes, database
   indexes, retention cleanup, and a dedicated Flap Fit Supabase project.
 
@@ -131,7 +133,7 @@ branch. It describes implemented behavior, not planned marketing claims.
 - Copied the project to a local development folder and synchronized the private GitHub repository.
 - Verified no targeted private credentials exist in the current tree or any reachable Git commit.
 - Public marketing, Privacy, Terms, and deletion pages now load signed out over HTTPS.
-- Current automated result is 74 of 74 tests passing, plus TypeScript and repository lint.
+- Current automated result is 77 of 77 tests passing, plus TypeScript and repository lint.
   This includes real empty-storage and low-frame-rate training-time regressions.
 
 ## Deliberately not complete yet

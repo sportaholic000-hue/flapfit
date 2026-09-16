@@ -45,13 +45,15 @@ final review decisions.
       light styling without adding an unnecessary native dependency.
 - [x] Online competition has shared client/server name validation, report, block, deletion, run and
       challenge rate limits, replay protection, plausibility checks, and a durable result outbox.
+- [x] A full 25-result offline queue preserves existing submissions, rejects a new result visibly,
+      and still permits an idempotent retry of an already-queued run. Deleting the online profile clears the queue.
 - [x] Online-profile deletion clears pending submissions, cached competition results, the local
       player name, and prior Terms acceptance while preserving bird and workout progress. A new
       anonymous profile cannot be recreated until the player accepts the current Terms again.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [x] The September 16 audit-hardening candidate passes TypeScript, 74 automated tests and repository
+- [x] The September 16 audit-hardening candidate passes TypeScript, 77 automated tests and repository
       lint. Current-source offline iOS and Android JavaScript exports passed on commit `207a685`;
       signed native packaging and physical tests remain pending.
 - [x] Persisted-state hydration does not overwrite unreadable saved progress with defaults. Slow

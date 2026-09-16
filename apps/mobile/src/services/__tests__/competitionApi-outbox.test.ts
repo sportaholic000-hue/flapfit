@@ -4,6 +4,7 @@ import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
 import {
   competitionRequest,
   consumeCompetitionSubmissionNotices,
+  deleteCompetitionIdentity,
   flushPendingCompetitionResults,
   getCompetitionSupportId,
   submitCompetitionRunResult,
@@ -21,6 +22,7 @@ jest.mock('@supabase/supabase-js', () => ({ createClient: jest.fn() }));
 const auth = {
   getSession: jest.fn(),
   signInAnonymously: jest.fn(),
+  signOut: jest.fn(),
   startAutoRefresh: jest.fn(),
   stopAutoRefresh: jest.fn(),
 };
@@ -97,6 +99,62 @@ describe('online result delivery', () => {
     auth.getSession.mockResolvedValueOnce({ data: { session: null }, error: null });
     expect(await getCompetitionSupportId()).toBeNull();
     expect(auth.signInAnonymously).not.toHaveBeenCalled();
+  });
+
+  test('a full offline queue keeps earlier results and visibly rejects the new run', async () => {
+    const key = '@flapfit/competition-result-outbox-v1';
+    const pending = Array.from({ length: 25 }, (_, index) => ({
+      ...run(`queued-${index}`),
+      createdAt: new Date().toISOString(),
+    }));
+    await AsyncStorage.setItem(key, JSON.stringify(pending));
+    const savedBefore = await AsyncStorage.getItem(key);
+
+    const result = await submitCompetitionRunResult(run('new-run'));
+
+    expect(result.status).toBe('rejected');
+    expect(result.message).toContain('queue is full');
+    expect(await AsyncStorage.getItem(key)).toBe(savedBefore);
+    expect((await consumeCompetitionSubmissionNotices())[0]?.status).toBe(429);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  test('retrying an existing run does not evict another entry at capacity', async () => {
+    const key = '@flapfit/competition-result-outbox-v1';
+    const pending = Array.from({ length: 25 }, (_, index) => ({
+      ...run(`queued-${index}`),
+      createdAt: new Date().toISOString(),
+    }));
+    await AsyncStorage.setItem(key, JSON.stringify(pending));
+    (global.fetch as jest.Mock).mockResolvedValue(reply(500));
+
+    const result = await submitCompetitionRunResult(run('queued-0'));
+    const saved = JSON.parse((await AsyncStorage.getItem(key)) ?? '[]') as { runId: string }[];
+
+    expect(result.status).toBe('pending');
+    expect(saved).toHaveLength(25);
+    expect(saved.filter((entry) => entry.runId === 'queued-0')).toHaveLength(1);
+    expect(saved.some((entry) => entry.runId === 'queued-1')).toBe(true);
+  });
+
+  test('deleting the online identity clears pending results and notices', async () => {
+    const key = '@flapfit/competition-result-outbox-v1';
+    const noticesKey = '@flapfit/competition-result-notices-v1';
+    await AsyncStorage.setItem(
+      key,
+      JSON.stringify([{ ...run('delete-me'), createdAt: new Date().toISOString() }])
+    );
+    await AsyncStorage.setItem(
+      noticesKey,
+      JSON.stringify([{ runId: 'old', status: 400, message: 'Old' }])
+    );
+    (global.fetch as jest.Mock).mockResolvedValue(reply(200, { deleted: true }));
+
+    await deleteCompetitionIdentity();
+
+    expect(await AsyncStorage.getItem(key)).toBeNull();
+    expect(await AsyncStorage.getItem(noticesKey)).toBeNull();
+    expect(auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
   });
 });
 
