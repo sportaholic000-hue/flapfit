@@ -344,6 +344,108 @@ describe('experimental form tracking', () => {
     });
   });
 
+  it('rejects a head tilt even after enough shoulder travel to pass the movement check', () => {
+    const harness = makeHarness('pullups');
+    const setup = pose([
+      ...mirroredPair(2, 5, 0.47, 0.27),
+      ...mirroredPair(11, 12, 0.43, 0.43),
+      ...mirroredPair(13, 14, 0.42, 0.29),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+    ]);
+    for (let now = 0; now <= 1900; now += 100) harness.update(setup, now);
+
+    const tiltedHead = pose([
+      ...mirroredPair(2, 5, 0.47, 0.10),
+      ...mirroredPair(11, 12, 0.43, 0.35),
+      ...mirroredPair(13, 14, 0.39, 0.25),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+    ]);
+    harness.update(tiltedHead, 2100);
+    expect(harness.validateCalibration('top').valid).toBe(false);
+  });
+
+  it('blocks pull-up step 1 when visible feet stay planted even with bent knees', () => {
+    const harness = makeHarness('pullups');
+    const setup = pose([
+      ...mirroredPair(2, 5, 0.47, 0.27),
+      ...mirroredPair(11, 12, 0.43, 0.43),
+      ...mirroredPair(13, 14, 0.42, 0.29),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.64),
+      ...mirroredPair(25, 26, 0.445, 0.78),
+      ...mirroredPair(27, 28, 0.45, 0.92),
+    ]);
+    for (let now = 0; now <= 1900; now += 100) {
+      harness.update(setup, now);
+      harness.validateCalibration('top');
+    }
+
+    const feetStillPlanted = pose([
+      ...mirroredPair(2, 5, 0.47, 0.16),
+      ...mirroredPair(11, 12, 0.43, 0.35),
+      ...mirroredPair(13, 14, 0.39, 0.25),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.56),
+      ...mirroredPair(25, 26, 0.38, 0.74),
+      ...mirroredPair(27, 28, 0.45, 0.92),
+    ]);
+    harness.update(feetStillPlanted, 2100);
+    expect(harness.validateCalibration('top')).toMatchObject({
+      valid: false,
+      message: expect.stringMatching(/feet off the floor/i),
+    });
+  });
+
+  it('blocks pull-up step 2 when a visible foot anchors as the body lowers', () => {
+    const harness = makeHarness('pullups');
+    const setup = pose([
+      ...mirroredPair(2, 5, 0.47, 0.27),
+      ...mirroredPair(11, 12, 0.43, 0.43),
+      ...mirroredPair(13, 14, 0.42, 0.29),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.64),
+      ...mirroredPair(25, 26, 0.445, 0.68),
+      ...mirroredPair(27, 28, 0.45, 0.72),
+    ]);
+    for (let now = 0; now <= 1900; now += 100) {
+      harness.update(setup, now);
+      harness.validateCalibration('top');
+    }
+    const top = pose([
+      ...mirroredPair(2, 5, 0.47, 0.16),
+      ...mirroredPair(11, 12, 0.43, 0.35),
+      ...mirroredPair(13, 14, 0.39, 0.25),
+      ...mirroredPair(15, 16, 0.44, 0.14),
+      ...mirroredPair(23, 24, 0.44, 0.56),
+      ...mirroredPair(25, 26, 0.445, 0.64),
+      ...mirroredPair(27, 28, 0.45, 0.62),
+    ]);
+    harness.update(top, 2100);
+    expect(harness.validateCalibration('top').valid).toBe(true);
+    harness.save('top');
+
+    for (let now = 4000; now <= 5200; now += 100) {
+      const shoulderY = 0.37 + (now - 4000) / 1200 * 0.07;
+      const groundedBottom = pose([
+        ...mirroredPair(2, 5, 0.47, shoulderY - 0.19),
+        ...mirroredPair(11, 12, 0.44, shoulderY),
+        ...mirroredPair(13, 14, 0.44, 0.28),
+        ...mirroredPair(15, 16, 0.44, 0.14),
+        ...mirroredPair(23, 24, 0.44, shoulderY + 0.21),
+        ...mirroredPair(25, 26, 0.445, 0.79),
+        ...mirroredPair(27, 28, 0.45, 0.92),
+      ]);
+      harness.update(groundedBottom, now);
+      const result = harness.validateCalibration('bottom');
+      if (now === 5200) {
+        expect(result).toMatchObject({
+          valid: false,
+          message: expect.stringMatching(/feet off the floor/i),
+        });
+      }
+    }
+  });
+
   it('accepts bent knees and a switch to straight airborne legs during pull-ups', () => {
     const harness = makeHarness('pullups');
     const setup = pose([

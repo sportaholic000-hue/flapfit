@@ -844,6 +844,10 @@ export default function GameScreen() {
         );
         return;
       }
+      if (msg.type === 'formdebug') {
+        if (__DEV__) console.info('Pull-up calibration:', msg.message ?? 'No measurements');
+        return;
+      }
 
       // `tut` is the legacy persisted field/event name. It currently means
       // tracked active gameplay time, not pose/form-verified physiological TUT.

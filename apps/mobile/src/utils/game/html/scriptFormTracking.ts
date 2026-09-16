@@ -2,7 +2,7 @@
 // so physical A/B testing can happen without replacing the launch baseline.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-09-16.2';
+export const FORM_TRACKING_RULES_VERSION = '2026-09-16.3';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -14,6 +14,7 @@ var formTopMetrics = null, formBottomMetrics = null;
 var pullupFootAnchorEvidence = { left: [], right: [] };
 var pullupWristMissingAt = 0;
 var pullupHangReference = null;
+var pullupCalibrationPlantedFoot = null;
 var PULLUP_EVIDENCE_GRACE_MS = 1200;
 var PULLUP_FOOT_EVIDENCE_WINDOW_MS = 1800;
 var PULLUP_PLANTED_FOOT_HOLD_MS = 1000;
@@ -33,6 +34,7 @@ function resetExperimentalFormTracking() {
   pullupFootAnchorEvidence = { left: [], right: [] };
   pullupWristMissingAt = 0;
   pullupHangReference = null;
+  pullupCalibrationPlantedFoot = null;
 }
 
 function formPoint(index, minVisibility) {
@@ -166,7 +168,12 @@ function updateExperimentalFormPose(landmarks, now) {
     // shoulder position before top calibration, including during the buffer.
     var hangGap = formCurrentMetrics.shoulders.y - formCurrentMetrics.wrists.y;
     if (hangGap > 0.08 && (!pullupHangReference || hangGap > pullupHangReference.gap)) {
-      pullupHangReference = { gap: hangGap };
+      pullupHangReference = {
+        gap: hangGap,
+        eyeToShoulder: formCurrentMetrics.eyes
+          ? formCurrentMetrics.shoulders.y - formCurrentMetrics.eyes.y
+          : null
+      };
     }
   }
   if (!formCurrentMetrics || formCurrentMetrics.controllerY === null) { return; }
@@ -188,13 +195,13 @@ function formFatal(message, key) {
   return { valid: false, message: message, fatal: true, fatalKey: key };
 }
 
-function pullupFootAppearsPlanted(side, foot, shoulders, kneeAngle, now) {
-  if (!foot || !shoulders || kneeAngle === null || kneeAngle < 145) {
+function pullupFootAppearsPlanted(side, foot, shoulders, kneeAngle, now, allowKneeChange) {
+  if (!foot || !shoulders) {
     pullupFootAnchorEvidence[side] = [];
     return false;
   }
   var evidence = pullupFootAnchorEvidence[side];
-  evidence.push({ t: now, footY: foot.y, shoulderY: shoulders.y });
+  evidence.push({ t: now, footY: foot.y, shoulderY: shoulders.y, kneeAngle: kneeAngle });
   while (evidence.length && now - evidence[0].t > PULLUP_FOOT_EVIDENCE_WINDOW_MS) {
     evidence.shift();
   }
@@ -202,12 +209,18 @@ function pullupFootAppearsPlanted(side, foot, shoulders, kneeAngle, now) {
     return false;
   }
   var footMinY = 1, footMaxY = 0, shoulderMinY = 1, shoulderMaxY = 0;
+  var kneeMin = 180, kneeMax = 0, kneeSamples = 0;
   for (var pei = 0; pei < evidence.length; pei++) {
     var sample = evidence[pei];
     footMinY = Math.min(footMinY, sample.footY);
     footMaxY = Math.max(footMaxY, sample.footY);
     shoulderMinY = Math.min(shoulderMinY, sample.shoulderY);
     shoulderMaxY = Math.max(shoulderMaxY, sample.shoulderY);
+    if (sample.kneeAngle !== null) {
+      kneeMin = Math.min(kneeMin, sample.kneeAngle);
+      kneeMax = Math.max(kneeMax, sample.kneeAngle);
+      kneeSamples += 1;
+    }
   }
   var footTravel = footMaxY - footMinY;
   var shoulderTravel = shoulderMaxY - shoulderMinY;
@@ -216,7 +229,8 @@ function pullupFootAppearsPlanted(side, foot, shoulders, kneeAngle, now) {
     : 0.05;
   var requiredShoulderTravel = Math.max(0.02, Math.min(0.045, calibratedShoulderTravel * 0.45));
   return shoulderTravel >= requiredShoulderTravel &&
-    footTravel <= Math.max(0.012, shoulderTravel * 0.3);
+    footTravel <= Math.max(0.012, shoulderTravel * 0.3) &&
+    (!allowKneeChange || kneeSamples < 2 || kneeMax - kneeMin < 20);
 }
 
 function formAnchoredPushupHandCount(metrics, tolerance) {
@@ -291,6 +305,31 @@ function validateExperimentalCalibration(position) {
   if (CONFIG.exercise === 'pullups') {
     var pullupTopMessage = 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull until your <b>EYE LINE</b> reaches the bar<br><br>Hold your highest point…';
     var pullupBottomMessage = 'STEP 2 OF 2<br><br>Lower to a comfortable <b>BOTTOM</b> position<br>A slight elbow bend is fine<br>Keep both hands on the bar<br><br>Hold still…';
+    var pullupCalibrationNow = performance.now();
+    var leftFootPlanted = pullupFootAppearsPlanted(
+      'left', metrics.leftFoot, metrics.shoulders, metrics.leftKneeAngle, pullupCalibrationNow, false
+    );
+    var rightFootPlanted = pullupFootAppearsPlanted(
+      'right', metrics.rightFoot, metrics.shoulders, metrics.rightKneeAngle, pullupCalibrationNow, false
+    );
+    if (leftFootPlanted || rightFootPlanted) {
+      var plantedSide = leftFootPlanted ? 'left' : 'right';
+      if (!pullupCalibrationPlantedFoot && typeof postRN === 'function') {
+        postRN({ type: 'formdebug', message: 'Pull-up calibration blocked: visible foot anchored while shoulders moved' });
+      }
+      pullupCalibrationPlantedFoot = {
+        side: plantedSide,
+        y: metrics[plantedSide + 'Foot'].y
+      };
+    }
+    if (pullupCalibrationPlantedFoot) {
+      var blockedFoot = metrics[pullupCalibrationPlantedFoot.side + 'Foot'];
+      if (!blockedFoot || blockedFoot.y < pullupCalibrationPlantedFoot.y - 0.04) {
+        pullupCalibrationPlantedFoot = null;
+      } else {
+        return formInvalid('Lift your visible feet off the floor before calibrating<br><br>Keep both hands on the bar.');
+      }
+    }
     if (position === 'top') {
       if (
         !metrics.eyes ||
@@ -304,7 +343,13 @@ function validateExperimentalCalibration(position) {
         return formInvalid(pullupTopMessage);
       }
       var eyeLineToBar = metrics.eyes.y - metrics.wrists.y;
-      if (eyeLineToBar > 0.035) {
+      if (eyeLineToBar > 0.025) {
+        return formInvalid(pullupTopMessage);
+      }
+      var eyeToShoulder = metrics.shoulders.y - metrics.eyes.y;
+      if (pullupHangReference && pullupHangReference.eyeToShoulder !== null &&
+          eyeToShoulder - pullupHangReference.eyeToShoulder >
+            Math.max(0.04, pullupHangReference.eyeToShoulder * 0.3)) {
         return formInvalid(pullupTopMessage);
       }
       var shoulderToBar = metrics.shoulders.y - metrics.wrists.y;
@@ -398,6 +443,22 @@ function saveExperimentalCalibration(position) {
   if (!usesExperimentalFormTracking() || !formCurrentMetrics) { return; }
   if (position === 'top') { formTopMetrics = formCurrentMetrics; }
   else { formBottomMetrics = formCurrentMetrics; }
+  if (CONFIG.exercise === 'pullups' && typeof postRN === 'function') {
+    var m = formCurrentMetrics;
+    postRN({
+      type: 'formdebug',
+      message: JSON.stringify({
+        position: position,
+        eyeToGrip: m.eyes && m.wrists ? +(m.eyes.y - m.wrists.y).toFixed(3) : null,
+        shoulderToGrip: m.shoulders && m.wrists ? +(m.shoulders.y - m.wrists.y).toFixed(3) : null,
+        hangReference: pullupHangReference ? +pullupHangReference.gap.toFixed(3) : null,
+        leftFootY: m.leftFoot ? +m.leftFoot.y.toFixed(3) : null,
+        rightFootY: m.rightFoot ? +m.rightFoot.y.toFixed(3) : null,
+        leftKnee: m.leftKneeAngle === null ? null : +m.leftKneeAngle.toFixed(0),
+        rightKnee: m.rightKneeAngle === null ? null : +m.rightKneeAngle.toFixed(0)
+      })
+    });
+  }
 }
 
 function formExpected(topValue, bottomValue, norm) {
@@ -512,14 +573,16 @@ function validateExperimentalGameplay(norm) {
       metrics.leftFoot,
       metrics.shoulders,
       metrics.leftKneeAngle,
-        pullupNow
+        pullupNow,
+        true
     );
     var rightFootAnchored = pullupFootAppearsPlanted(
       'right',
       metrics.rightFoot,
       metrics.shoulders,
       metrics.rightKneeAngle,
-        pullupNow
+        pullupNow,
+        true
     );
     if (leftFootAnchored || rightFootAnchored) {
       return formFatal('A planted foot was detected<br><br>Your run is ending.', 'pullup-feet');
