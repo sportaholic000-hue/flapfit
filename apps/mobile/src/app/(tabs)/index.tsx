@@ -263,16 +263,16 @@ export default function HomeScreen() {
 
   const exDescriptions: Record<string, string> = {
     squats:
-      'Stand tall = top, deep squat = bottom. Phone on the floor or a chair, 1.5–2m in front.',
+      'Stand tall = top, deep squat = bottom. Phone on the floor or a chair, 3–6 ft in front.',
     pullups:
-      'Eye line at the bar = top, comfortable hang with a slight elbow bend = bottom. Phone on a chair or higher, 1.5–2m in front; keep both hands on the bar.',
+      'Eye line at the bar = top, comfortable hang with a slight elbow bend = bottom. Phone on a chair or higher, 4–6 ft in front; keep both hands on the bar.',
     lateralraise:
-      'Arms at shoulder height = top, arms at sides = bottom. Phone on a chair or higher, about 2m in front.',
+      'Arms at shoulder height = top, arms at sides = bottom. Phone on a chair or higher, 4–6 ft in front.',
     biceps:
-      'Wrists at shoulders = top, arms extended = bottom. Phone on a chair or higher, 1–1.5m in front.',
+      'Wrists at shoulders = top, arms extended = bottom. Phone on a chair or higher, 3–6 ft in front.',
     shoulderpress:
-      'Arms overhead = top, wrists at shoulders = bottom. Phone on a chair or higher, 1.5–2m in front.',
-    pushups: 'Arms extended = top, chest to floor = bottom. Phone 1–1.5m in front on the floor.',
+      'Arms overhead = top, wrists at shoulders = bottom. Phone on a chair or higher, 4–6 ft in front.',
+    pushups: 'Arms extended = top, chest to floor = bottom. Phone 3 ft in front on the floor.',
   };
 
   return (

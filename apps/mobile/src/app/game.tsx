@@ -689,7 +689,8 @@ export default function GameScreen() {
       sessionId: string,
       mimeType: string | undefined,
       extension: string | undefined,
-      chunkCount: number
+      chunkCount: number,
+      byteLength: number | undefined
     ) => {
       if (!recordRun || sessionId !== recordingSessionIdRef.current) return;
 
@@ -712,6 +713,10 @@ export default function GameScreen() {
         const file = recordingFileRef.current;
         if (!file?.exists || file.size <= 0) {
           throw new Error('The recorded video was empty.');
+        }
+
+        if (!Number.isSafeInteger(byteLength) || byteLength !== file.size) {
+          throw new Error('The recorded video size changed during transfer. Please record again.');
         }
 
         const startMetadata = recordingMetadataRef.current;
@@ -783,6 +788,7 @@ export default function GameScreen() {
         index?: number;
         data?: string;
         chunkCount?: number;
+        byteLength?: number;
         message?: string;
         requestId?: string;
         simd?: boolean;
@@ -827,7 +833,7 @@ export default function GameScreen() {
           failRecording('The gameplay recorder could not finish the temporary video.');
           return;
         }
-        completeVideoRecording(msg.sessionId, msg.mimeType, msg.extension, msg.chunkCount);
+        completeVideoRecording(msg.sessionId, msg.mimeType, msg.extension, msg.chunkCount, msg.byteLength);
         return;
       }
       if (msg.type === 'recordingerror') {
@@ -842,6 +848,10 @@ export default function GameScreen() {
           'Camera tracker failed inside the game WebView',
           msg.message ?? 'Unknown error'
         );
+        return;
+      }
+      if (msg.type === 'recordingdebug') {
+        if (__DEV__) console.info('Video finalization:', msg.message ?? 'No measurements');
         return;
       }
 

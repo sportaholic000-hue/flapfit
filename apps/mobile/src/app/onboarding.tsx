@@ -262,7 +262,7 @@ export default function OnboardingScreen() {
               textAlign: 'center',
             }}
           >
-            Place phone on the floor, propped facing you, 1–1.5m away.
+            Place phone on the floor, propped facing you, 3 ft away.
           </Text>
         </View>
         <View style={{ gap: 3 }}>
@@ -278,7 +278,7 @@ export default function OnboardingScreen() {
               textAlign: 'center',
             }}
           >
-            Place phone on the floor or a chair, propped facing you, 1.5–2m away.
+            Place phone on the floor or a chair, propped facing you, 3–6 ft away.
           </Text>
         </View>
         <View style={{ gap: 3 }}>
@@ -303,6 +303,8 @@ export default function OnboardingScreen() {
             }}
           >
             Place phone on a chair or higher, facing you with the full movement visible.
+            Bicep curls: 3–6 ft away.
+            Pull-ups, lateral raises, shoulder press: 4–6 ft away.
           </Text>
         </View>
         <View>

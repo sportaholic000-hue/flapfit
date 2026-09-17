@@ -1,3 +1,5 @@
+import { SCRIPT_RECORDING_MP4 } from './scriptRecordingMp4';
+
 // Game logic script for the in-WebView game: pipes, bird (with evolution), HUD,
 // the main state machine loop, and kickoff. Injected after SCRIPT_CORE.
 // Must NOT contain backticks.
@@ -61,7 +63,7 @@ function formTrackingInterruptionConfirmed(check, now) {
   return now - formTrackingInterruptionSince >= FORM_TRACKING_INTERRUPTION_GRACE_MS;
 }
 
-// ---------- Composed-run recording ----------
+// ---------- Composed-run recording ----------${SCRIPT_RECORDING_MP4}
 // The live camera is painted into the game canvas below. A smaller hidden canvas
 // mirrors completed frames so clips contain the player, bird, pipes, and HUD
 // without recording an unnecessarily large device-resolution surface.
@@ -75,6 +77,8 @@ var recordingExtension = 'webm';
 var recordingChunkIndex = 0;
 var recordingReadChain = Promise.resolve();
 var recordingReadFailed = false;
+var recordingBlobs = [];
+var recordingFramesFinished = false;
 var recordingActive = false;
 var recordingAwaitingPlayFrame = false;
 var lastRecordingFrameTime = 0;
@@ -97,6 +101,8 @@ function recordingDimensions() {
 
 function supportedRecordingTypes() {
   var candidates = [
+    'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+    'video/mp4;codecs=avc1,mp4a.40.2',
     'video/mp4;codecs=avc1.42E01E',
     'video/mp4;codecs=h264',
     'video/mp4',
@@ -140,8 +146,10 @@ function blobToBase64(blob) {
     var reader = new FileReader();
     reader.onload = function() {
       var result = String(reader.result || '');
-      var comma = result.indexOf(',');
-      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+      // Codec lists can contain commas; only the base64 marker ends the header.
+      var marker = result.indexOf(';base64,');
+      if (marker < 0) { reject(new Error('Invalid recorded video data URL.')); return; }
+      resolve(result.slice(marker + 8));
     };
     reader.onerror = function() {
       reject(reader.error || new Error('Unable to read a recorded video chunk.'));
@@ -227,11 +235,13 @@ function startRunRecording() {
     recordingChunkIndex = 0;
     recordingReadChain = Promise.resolve();
     recordingReadFailed = false;
+    recordingBlobs = [];
+    recordingFramesFinished = false;
     recordingAwaitingPlayFrame = true;
     lastRecordingFrameTime = 0;
 
     runRecorder.ondataavailable = function(event) {
-      queueRecordingBlob(event.data);
+      if (event.data && event.data.size > 0) { recordingBlobs.push(event.data); }
     };
     runRecorder.onerror = function(event) {
       recordingReadFailed = true;
@@ -241,28 +251,42 @@ function startRunRecording() {
       var completedSessionId = recordingSessionId;
       var completedMimeType = recordingMimeType;
       var completedExtension = recordingExtension;
-      var completedChunkCount = recordingChunkIndex;
+      var completeBlob = new Blob(recordingBlobs, { type: completedMimeType });
+      recordingBlobs = [];
       recordingActive = false;
       recordingAwaitingPlayFrame = false;
       releaseRecordingStream();
-      recordingReadChain.then(function() {
-        if (!recordingReadFailed) {
-          postRN({
-            type: 'recordingcomplete',
-            sessionId: completedSessionId,
-            mimeType: completedMimeType,
-            extension: completedExtension,
-            chunkCount: completedChunkCount
-          });
-        }
+      var finalized = completedExtension === 'mp4'
+        ? finalizeRecordedMp4(completeBlob)
+        : Promise.resolve({ blob: completeBlob, report: { format: completedExtension, action: 'unverified' } });
+      finalized.then(function(result) {
+        if (recordingReadFailed) { return; }
+        if (!result.blob.size) { throw new Error('The recorded video was empty.'); }
+        postRN({ type: 'recordingdebug', message: JSON.stringify(result.report) });
+        queueRecordingBlob(result.blob);
+        return recordingReadChain.then(function() {
+          if (!recordingReadFailed) {
+            postRN({
+              type: 'recordingcomplete',
+              sessionId: completedSessionId,
+              mimeType: completedMimeType,
+              extension: completedExtension,
+              chunkCount: recordingChunkIndex,
+              byteLength: result.blob.size
+            });
+          }
+        });
+      }).catch(function(err) {
+        recordingReadFailed = true;
+        recordingError(err);
+      }).then(function() {
         runRecorder = null;
         recordingCanvas = null;
         recordingCtx = null;
       });
     };
 
-    // One complete recorder blob preserves the container's real duration.
-    // It is sliced into bridge-sized chunks only after recording stops.
+    // Keep the complete recorder blob intact until it is split for the native bridge.
     runRecorder.start();
     recordingActive = true;
     postRN({
@@ -283,13 +307,13 @@ function startRunRecording() {
   }
 }
 
-function copyComposedRecordingFrame(now, isPlayableFrame) {
-  if (!recordingActive || !recordingCtx || !recordingCanvas) { return; }
+function copyComposedRecordingFrame(now, isPlayableFrame, force) {
+  if (!recordingActive || recordingFramesFinished || !recordingCtx || !recordingCanvas) { return; }
   if (recordingAwaitingPlayFrame) {
     if (!isPlayableFrame) { return; }
     recordingAwaitingPlayFrame = false;
   }
-  if (lastRecordingFrameTime && now - lastRecordingFrameTime < 1000 / 24) { return; }
+  if (!force && lastRecordingFrameTime && now - lastRecordingFrameTime < 1000 / 24) { return; }
   lastRecordingFrameTime = now;
   recordingCtx.drawImage(
     canvas,
@@ -369,6 +393,13 @@ function endGame(reason) {
   beep(140, 0.4, 'sawtooth', 0.1);
   burst(birdX(), birdScreenY(), CONFIG.bird.body, 26);
   var recorderWasRunning = !!runRecorder;
+  if (recorderWasRunning) {
+    // Freeze the terminal gameplay frame while the recorder drains its encoder.
+    // The result overlay and subsequent camera frames never enter the clip.
+    drawBackground(); drawPipes(); drawBird(performance.now()); drawHUD();
+    copyComposedRecordingFrame(performance.now(), true, true);
+    recordingFramesFinished = true;
+  }
   postRN({
     type: 'gameover',
     reason: reason || '',
@@ -378,8 +409,6 @@ function endGame(reason) {
     runDurationMs: Math.round(competitionDurationMs),
     unreportedTutSeconds: Math.max(0, tutSeconds - tutReportedSeconds)
   });
-  // Give React Native the result first. Recorder finalization and base64 transfer
-  // continue asynchronously while the visible card says Preparing video.
   if (recorderWasRunning) {
     setTimeout(stopRunRecording, 50);
   } else {
@@ -679,19 +708,19 @@ function loop(now) {
     } else {
       var frameMsg;
       if (CONFIG.exercise === 'squats') {
-        frameMsg = 'Get your head and body in frame<br><small>Place phone on the floor or a chair, 1.5–2m in front</small>';
+        frameMsg = 'Get your head and body in frame<br><small>Place phone on the floor or a chair, 3–6 ft in front</small>';
       } else if (CONFIG.exercise === 'pullups') {
         frameMsg = usesExperimentalFormTracking()
-          ? 'Get your upper body in frame<br><small>Both hands, elbows, and shoulders must stay visible</small>'
-          : 'Get in frame — head and arms visible<br><small>Place phone on a chair or higher, facing you</small>';
+          ? 'Get your upper body in frame<br><small>Both hands, elbows, and shoulders must stay visible; place phone 4–6 ft away</small>'
+          : 'Get in frame — head and arms visible<br><small>Place phone on a chair or higher, 4–6 ft in front</small>';
       } else if (CONFIG.exercise === 'lateralraise') {
-        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, about 2m in front</small>';
+        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, 4–6 ft in front</small>';
       } else if (CONFIG.exercise === 'biceps') {
-        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, 1–1.5m in front</small>';
+        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, 3–6 ft in front</small>';
       } else if (CONFIG.exercise === 'shoulderpress') {
-        frameMsg = 'Get in frame — arms raised must be visible<br><small>Place phone on a chair or higher, 1.5–2m in front</small>';
+        frameMsg = 'Get in frame — arms raised must be visible<br><small>Place phone on a chair or higher, 4–6 ft in front</small>';
       } else {
-        frameMsg = 'Get your head and shoulders in frame<br><small>Place phone 1–1.5m in front of you on the floor</small>';
+        frameMsg = 'Get your head and shoulders in frame<br><small>Place phone 3 ft in front of you on the floor</small>';
       }
       showOverlay(frameMsg, false);
     }
@@ -703,7 +732,10 @@ function loop(now) {
     if (now >= countdownEnd) {
       state = 'play';
       lastSpawn = now - currentSpawnMs() + 600;
+      // Replace the final countdown frame before beginning camera/game capture.
+      drawBackground(); drawPipes(); drawBird(now); drawHUD();
       startRunRecording();
+      copyComposedRecordingFrame(now, true, true);
       beep(990, 0.2, 'sine', 0.08);
     }
   } else if (state === 'play') {

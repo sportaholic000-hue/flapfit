@@ -51,15 +51,15 @@ const AMBER = '#F59E0B';
 type ModalPage = 'privacy' | 'safety' | 'terms' | null;
 
 const EXERCISE_SETUP = [
-  ['Push-ups', 'Phone on the floor, 1–1.5 m in front; keep your full body visible.'],
-  ['Squats', 'Phone on the floor or a stable chair, 1.5–2 m in front.'],
+  ['Push-ups', 'Phone on the floor, 3 ft in front; keep your full body visible.'],
+  ['Squats', 'Phone on the floor or a stable chair, 3–6 ft in front.'],
   [
     'Pull-ups',
-    'Phone on a stable chair or higher, 1.5–2 m in front; keep both hands on the bar and bring your eye line to the bar for the top position.',
+    'Phone on a stable chair or higher, 4–6 ft in front; keep both hands on the bar and bring your eye line to the bar for the top position.',
   ],
-  ['Bicep curls', 'Phone on a chair or higher, 1–1.5 m in front; keep both wrists visible.'],
-  ['Lateral raises', 'Phone on a chair or higher, about 2 m in front; keep both arms visible.'],
-  ['Shoulder press', 'Phone on a chair or higher, 1.5–2 m in front; keep hands visible overhead.'],
+  ['Bicep curls', 'Phone on a chair or higher, 3–6 ft in front; keep both wrists visible.'],
+  ['Lateral raises', 'Phone on a chair or higher, 4–6 ft in front; keep both arms visible.'],
+  ['Shoulder press', 'Phone on a chair or higher, 4–6 ft in front; keep hands visible overhead.'],
 ] as const;
 
 function clock(seconds: number): string {

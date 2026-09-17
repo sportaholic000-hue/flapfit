@@ -108,7 +108,7 @@ describe('level run rules', () => {
   it('records one complete media container before slicing it for the native bridge', () => {
     expect(SCRIPT_GAME).toContain('runRecorder.start();');
     expect(SCRIPT_GAME).not.toContain('runRecorder.start(1000);');
-    expect(SCRIPT_GAME).toContain('queueRecordingBlob(event.data);');
+    expect(SCRIPT_GAME).toContain('queueRecordingBlob(result.blob);');
     expect(SCRIPT_GAME).toContain('RECORDING_BRIDGE_CHUNK_BYTES');
   });
 
