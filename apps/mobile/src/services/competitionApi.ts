@@ -71,6 +71,8 @@ type CompetitionRequestOptions = {
   method?: 'GET' | 'POST' | 'DELETE';
   body?: unknown;
   timeoutMs?: number;
+  // Deletion must use the existing identity, never create a replacement guest.
+  existingSession?: { access_token: string; user: { id: string } };
 };
 
 export type CompetitionRunKind = 'leaderboard';
@@ -110,6 +112,7 @@ export type CompetitionSubmissionOutcome = {
 
 const COMPETITION_OUTBOX_KEY = '@flapfit/competition-result-outbox-v1';
 const COMPETITION_NOTICE_KEY = '@flapfit/competition-result-notices-v1';
+const COMPETITION_DELETION_KEY = '@flapfit/competition-deletion-v1';
 const MAX_PENDING_RESULTS = 25;
 let outboxOperation = Promise.resolve();
 
@@ -283,9 +286,22 @@ export async function competitionRequest<T>(
   try {
     return await Promise.race([
       (async () => {
-        const { client: supabase } = await anonymousUser();
-        const sessionResult = await supabase.auth.getSession();
-        const accessToken = sessionResult.data.session?.access_token;
+        const session =
+          options.existingSession ??
+          (await (async () => {
+            if (await AsyncStorage.getItem(COMPETITION_DELETION_KEY)) {
+              throw new CompetitionUnavailableError(
+                'Finish deleting your online profile from Info before using Compete.'
+              );
+            }
+            const { client: supabase } = await anonymousUser();
+            const sessionResult = await supabase.auth.getSession();
+            if (sessionResult.error) throw sessionResult.error;
+            return sessionResult.data.session;
+          })());
+        if (controller.signal.aborted)
+          throw new CompetitionRequestError('Online request timed out. It will be retried.', 408);
+        const accessToken = session?.access_token;
         if (!accessToken) {
           throw new CompetitionUnavailableError('Online session could not be started.');
         }
@@ -356,13 +372,13 @@ function emptyCompetitionFlushResult(): CompetitionFlushResult {
   };
 }
 
-export async function flushPendingCompetitionResults(): Promise<CompetitionFlushResult> {
+async function flushCompetitionOutbox(): Promise<CompetitionFlushResult> {
   if (!competitionIsConfigured) return emptyCompetitionFlushResult();
   if (useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION) {
     return emptyCompetitionFlushResult();
   }
 
-  return withOutboxLock(async () => {
+  {
     const pending = await readCompetitionOutbox();
     if (pending.length === 0) return emptyCompetitionFlushResult();
 
@@ -411,7 +427,36 @@ export async function flushPendingCompetitionResults(): Promise<CompetitionFlush
       pendingRunIds: remaining.map((entry) => entry.runId),
       rejected,
     };
+  }
+}
+
+export function flushPendingCompetitionResults(): Promise<CompetitionFlushResult> {
+  return withOutboxLock(async () => {
+    if (await AsyncStorage.getItem(COMPETITION_DELETION_KEY)) return emptyCompetitionFlushResult();
+    return flushCompetitionOutbox();
   });
+}
+
+// One foreground attempt, plus the visible refresh control, avoids unbounded polling.
+export function startCompetitionForegroundRetry(onSubmitted: () => void): () => void {
+  let active = true;
+  let inFlight = false;
+  const subscription = AppState.addEventListener('change', (state) => {
+    if (state !== 'active' || inFlight || !useGameStore.getState().hydrated) return;
+    inFlight = true;
+    void flushPendingCompetitionResults()
+      .then((result) => {
+        if (active && result.submitted > 0) onSubmitted();
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        inFlight = false;
+      });
+  });
+  return () => {
+    active = false;
+    subscription.remove();
+  };
 }
 
 export async function submitCompetitionRunResult(input: {
@@ -421,6 +466,12 @@ export async function submitCompetitionRunResult(input: {
   score: number;
   durationMs: number;
 }): Promise<CompetitionSubmissionOutcome> {
+  if (await AsyncStorage.getItem(COMPETITION_DELETION_KEY)) {
+    return {
+      status: 'rejected',
+      message: 'Online profile deletion is pending. Your local training progress is safe.',
+    };
+  }
   const entry: PendingCompetitionResult = {
     runId: input.runId,
     expiresAt: input.expiresAt,
@@ -429,34 +480,42 @@ export async function submitCompetitionRunResult(input: {
     durationMs: Math.max(0, Math.trunc(input.durationMs)),
     createdAt: new Date().toISOString(),
   };
-  const queued = await withOutboxLock(async () => {
-    const pending = await readCompetitionOutbox();
-    if (pending.some((item) => item.runId === entry.runId)) return true;
-    if (pending.length >= MAX_PENDING_RESULTS) return false;
-    await writeCompetitionOutbox([...pending, entry]);
-    return true;
-  });
-  if (!queued) {
-    const message =
-      'Online result was not published: the offline queue is full. Your local training progress is safe.';
-    await appendCompetitionSubmissionNotices([{ runId: entry.runId, status: 429, message }]);
-    return { status: 'rejected', message };
-  }
-  const result = await flushPendingCompetitionResults();
-  if (result.submittedRunIds.includes(entry.runId)) {
-    return { status: 'accepted', message: 'Online result saved.' };
-  }
-  const rejection = result.rejected.find((notice) => notice.runId === entry.runId);
-  if (rejection) {
+  // Enqueue and resolve this run under the same lock: another flush cannot consume its outcome.
+  return withOutboxLock(async () => {
+    // Recheck inside the lock: deletion may have completed while this submission waited.
+    if (useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION ||
+        await AsyncStorage.getItem(COMPETITION_DELETION_KEY)) {
+      return { status: 'rejected', message: 'Online profile is unavailable. Your local training progress is safe.' };
+    }
+    const queued = await (async () => {
+      const pending = await readCompetitionOutbox();
+      if (pending.some((item) => item.runId === entry.runId)) return true;
+      if (pending.length >= MAX_PENDING_RESULTS) return false;
+      await writeCompetitionOutbox([...pending, entry]);
+      return true;
+    })();
+    if (!queued) {
+      const message =
+        'Online result was not published: the offline queue is full. Your local training progress is safe.';
+      await appendCompetitionSubmissionNotices([{ runId: entry.runId, status: 429, message }]);
+      return { status: 'rejected', message };
+    }
+    const result = await flushCompetitionOutbox();
+    if (result.submittedRunIds.includes(entry.runId)) {
+      return { status: 'accepted', message: 'Online result saved.' };
+    }
+    const rejection = result.rejected.find((notice) => notice.runId === entry.runId);
+    if (rejection) {
+      return {
+        status: 'rejected',
+        message: `Online result was not published: ${rejection.message}`,
+      };
+    }
     return {
-      status: 'rejected',
-      message: `Online result was not published: ${rejection.message}`,
+      status: 'pending',
+      message: 'Online result queued. Return to Flap Fit or tap Refresh in Compete to retry.',
     };
-  }
-  return {
-    status: 'pending',
-    message: 'Online result queued and will retry automatically.',
-  };
+  });
 }
 
 export async function clearPendingCompetitionResults(): Promise<void> {
@@ -472,17 +531,62 @@ export async function getCompetitionSupportId(): Promise<string | null> {
   return sessionResult.data.session?.user.id ?? null;
 }
 
+/** Reconcile a lost DELETE acknowledgement without interpreting a generic 401 as deletion. */
 export async function deleteCompetitionIdentity(): Promise<void> {
   if (!competitionIsConfigured) return;
-  const supabase = getClient();
-  const sessionResult = await supabase.auth.getSession();
-  if (sessionResult.error) throw sessionResult.error;
-  if (!sessionResult.data.session?.user) {
-    await clearPendingCompetitionResults();
-    return;
-  }
+  return withOutboxLock(async () => {
+    const supabase = getClient();
+    const saved = await AsyncStorage.getItem(COMPETITION_DELETION_KEY);
+    let pending = saved ? (JSON.parse(saved) as { userId: string; confirmed: boolean }) : null;
+    const sessionResult = await supabase.auth.getSession();
+    if (sessionResult.error) throw sessionResult.error;
+    const session = sessionResult.data.session;
+    if (pending && session && pending.userId !== session.user.id) {
+      throw new Error(
+        'The online profile changed. Contact support to reconcile the deletion request.'
+      );
+    }
+    if (!pending?.confirmed && session) {
+      pending = { userId: session.user.id, confirmed: false };
+      await AsyncStorage.setItem(COMPETITION_DELETION_KEY, JSON.stringify(pending));
+      try {
+        const response = await competitionRequest<{ deleted: boolean }>('/me', {
+          method: 'DELETE',
+          existingSession: session,
+        });
+        if (response.deleted !== true) throw new Error('The server did not confirm deletion.');
+      } catch (error) {
+        // The Auth server explicitly distinguishes a missing user from an expired token,
+        // revoked session, server outage or network failure. Only missing-user proves removal.
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        const verification = await Promise.race([
+          supabase.auth.getUser(session.access_token),
+          new Promise<never>((_, reject) => {
+            timer = setTimeout(
+              () => reject(new Error('Deletion verification timed out. Please retry.')),
+              15000
+            );
+          }),
+        ]).finally(() => {
+          if (timer) clearTimeout(timer);
+        });
+        if (verification.error?.code !== 'user_not_found') throw error;
+      }
+      pending.confirmed = true;
+      await AsyncStorage.setItem(COMPETITION_DELETION_KEY, JSON.stringify(pending));
+    } else if (pending && !pending.confirmed) {
+      throw new Error(
+        'Deletion could not be confirmed. Contact support; do not create a new profile yet.'
+      );
+    }
 
-  await competitionRequest<{ deleted: true }>('/me', { method: 'DELETE' });
-  await clearPendingCompetitionResults();
-  await supabase.auth.signOut({ scope: 'local' });
+    await writeCompetitionOutbox([]);
+    await AsyncStorage.removeItem(COMPETITION_NOTICE_KEY);
+    if (session || pending) {
+      const signedOut = await supabase.auth.signOut({ scope: 'local' });
+      if (signedOut?.error) throw signedOut.error;
+    }
+    useGameStore.getState().resetCompetitionProfile();
+    await AsyncStorage.removeItem(COMPETITION_DELETION_KEY);
+  });
 }

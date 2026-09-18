@@ -1,21 +1,21 @@
 # Flap Fit launch monetization integration plan
 
-Status: approved product strategy, implementation intentionally waits for the current gameplay and
-Form Test candidate to pass the morning Expo Go test. Do not add packages or change the lockfile
-without the user's explicit approval.
+Status September 17: the user approved the four native packages and ad frequency. The exact
+approved versions are installed and the integration is implemented. Native testing, the iOS
+RevenueCat registration/key, and publication gates remain. See `launch-audit-2026-09-17.md`.
+Further dependency changes still require a concrete reviewed proposal.
 
 ## Smallest package set
 
-Install only:
+Approved ad SDK versions installed:
 
 - `react-native-google-mobile-ads@16.5.0` for iOS and Android AdMob interstitials, UMP privacy
   choices, and impression-level revenue callbacks; and
 - `react-native-purchases@10.9.1` for RevenueCat configuration and ad-event tracking. RevenueCat
   requires 10.2.0 or newer for React Native ad monetization.
 
-Those were the current registry versions in a read-only check on September 15, 2026. Reconfirm them
-and present the resulting package/lockfile diff before installation; this note is not authorization
-to install or upgrade anything.
+These exact versions were installed with the user-approved package/lockfile proposal.
+The same approval included expo-sms 57.0.2 and expo-mail-composer 57.0.2 for iOS sharing.
 
 Do not add `react-native-purchases-ui` for the first ad-funded candidate. A paywall and paid ad-free
 entitlement are a later product step, so its native UI package is unnecessary now.
@@ -33,13 +33,34 @@ testing there.
 - One iOS interstitial ad-unit ID.
 - One Android interstitial ad-unit ID.
 - UMP privacy messages configured in AdMob for applicable regions.
-- RevenueCat project with Ad Monetization enabled.
+- RevenueCat project with Ad Monetization beta access granted and enabled.
 - RevenueCat iOS and Android public SDK keys.
-- AdMob impression-level revenue enabled and the AdMob account connected to RevenueCat.
+- AdMob impression-level revenue enabled in the AdMob account. Connecting AdMob to RevenueCat is
+  useful for readable ad-unit names in charts, but is not a prerequisite for manual event tracking.
+
+The React Native plan uses RevenueCat's manual `AdTracker` API and AdMob's JavaScript callbacks.
+The native RevenueCat AdMob adapter is not required for this path.
 
 App IDs, ad-unit IDs, and RevenueCat public SDK keys may be present in the built client. AdMob or
 RevenueCat account credentials, service-account files, private keys, and store shared secrets must
 never be committed or bundled.
+
+## AdMob ownership verification before live serving
+
+The developer website `https://flapfitapp.com/` must serve a real publisher-specific
+`/app-ads.txt` at its root. It returned HTTP 404 on September 16, 2026. Obtain the exact seller
+line and publisher ID from the Flap Fit AdMob account; never publish a sample ID. Link that domain
+as the developer website in the public store listing, then request the AdMob app verification check
+and wait for app-readiness approval. Google says new apps cannot fully serve ads until verification
+and app-readiness review are complete.
+
+The existing Site supports a root-level text file. On September 16 its `robots.txt` was changed
+from a site-wide crawl ban to `User-agent: *` / `Disallow:`; the published file returned HTTP 200
+and no longer blocks the Google app-ads crawler. The publisher-specific `app-ads.txt` remains
+unpublished (HTTP 404). Verify its content and HTTP 200 through both HTTP and HTTPS after publishing.
+
+Official setup: https://support.google.com/admob/answer/9363762
+Official verification: https://support.google.com/admob/answer/14538460
 
 ## Runtime design
 
@@ -58,15 +79,25 @@ Create one typed monetization service with these behaviors:
 7. Track only the ad lifecycle and impression-level fields RevenueCat requires: mediator, format,
    placement, ad-unit ID, impression ID, network, revenue micros, currency, and precision.
 8. Keep the RevenueCat anonymous identifier separate from the Supabase competition player ID.
+9. Assign one stable, unique impression ID per loaded ad and reuse it for every event from that ad.
+   Confirm the approved AdMob package's paid-event value units before converting to RevenueCat's
+   revenue-micros field; do not assume a floating-point value is already in micros.
+
+Documentation checked September 16, 2026:
+https://www.revenuecat.com/docs/ad-monetization/manual-integration and
+https://docs.page/invertase/react-native-google-mobile-ads/impression-level-ad-revenue.
 
 ## Approved placement state machine
 
 An interstitial is eligible only after the player deliberately taps Done, Try Again, or Next Level on
 a result screen. Never show an ad automatically when the result appears.
 
-- Normal run: action tap -> show a ready eligible ad -> ad close/failure -> perform the action once.
-- Record & Play run: share flow -> return to Flap Fit -> action tap -> show a ready eligible ad -> ad
-  close/failure -> perform the action once.
+- No recording or no sharing: result screen -> Done/Try Again/Next Level -> show a ready eligible
+  ad -> ad close/failure -> perform the selected action once.
+- Recorded but sharing skipped: use the same result-action path; sharing is optional and must not
+  be required to continue.
+- Sharing opened: complete or cancel the share flow -> return to the Flap Fit result screen ->
+  Done/Try Again/Next Level -> show a ready eligible ad -> ad close/failure -> perform the action once.
 - No ready ad, no consent, offline, SDK error, or timeout: perform the action immediately.
 
 Use a single completion guard so close, dismissal, timeout, error, and component cleanup cannot run

@@ -1,6 +1,6 @@
 # Apple App Privacy worksheet
 
-Last source review: 2026-09-15
+Last source review: 2026-09-17 — monetized candidate; native privacy report still required
 
 This worksheet describes the current Flap Fit 1.0 source. Re-check it against the exact production
 binary and live Supabase configuration before publishing the App Privacy answers.
@@ -14,15 +14,16 @@ Official references:
 ## Top-level answer
 
 Select **Yes, we collect data from this app** because the optional online competition feature sends
-data to the Flap Fit Supabase service. The camera and normal training history remain on-device.
+data to the Flap Fit Supabase service, and the native ad SDKs process advertising data. The camera
+and normal training history remain on-device.
 
 ## Data types to declare
 
 | Apple data type       | Current source behavior                                                                                                         | Linked to user?                           | Tracking? | Apple purpose     |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | --------- | ----------------- |
 | User ID               | Supabase anonymous user ID and player screen name/handle                                                                        | Yes, to the anonymous competition profile | No        | App Functionality |
-| Gameplay Content      | Exercise category, leaderboard score, active run duration, challenge target/code, and challenge attempts                        | Yes                                       | No        | App Functionality |
-| Fitness               | Exercise category and active run duration attached to an online score or challenge result                                       | Yes                                       | No        | App Functionality |
+| Gameplay Content      | Exercise category, leaderboard score and active run duration                        | Yes                                       | No        | App Functionality |
+| Fitness               | Exercise category and active run duration attached to an online score                                       | Yes                                       | No        | App Functionality |
 | Other User Content    | Player-entered competition content plus reports and blocks                                                                      | Yes                                       | No        | App Functionality |
 | Other Diagnostic Data | Ordinary request, error, and security logs retained by the production service provider, if the final Supabase plan retains them | Confirm after provisioning                | No        | App Functionality |
 
@@ -30,8 +31,8 @@ Apple's privacy taxonomy places account management, fraud prevention, and securi
 the feature under **App Functionality**. Do not enter the Google Data Safety purpose labels in App
 Store Connect.
 
-All online categories are optional because a user can play levels, Endless, use camera tracking,
-record locally, and retain local progress without using Compete.
+The competition categories above are optional. Ad-related collection below is separate and must
+not be described as optional solely because Compete is optional.
 
 ## Do not declare as collected by Flap Fit
 
@@ -39,10 +40,10 @@ record locally, and retain local progress without using Compete.
   local composed video. Flap Fit does not upload it.
 - Audio Data: Record & Play can request microphone access and add sound to the temporary local
   video, but Flap Fit does not upload or receive that audio. It is not collected by Flap Fit.
-- Precise or Approximate Location: the app does not request location and does not use IP addresses
-  to infer location.
-- Contacts, email, phone number, payment information, purchases, advertising data, or browsing
-  history: not collected by the current source.
+- Precise Location: no location permission or precise-location feature. Approximate location from
+  AdMob IP processing must be included in the advertising disclosures.
+- Contacts, email, phone number, payment card information, or browsing history: not requested by
+  Flap Fit. Advertising data is collected by the native SDK integration.
 - Local bird choice, level progress, training history, and tracked training time: stored only in
   AsyncStorage on the device.
 
@@ -54,11 +55,38 @@ video or message under that destination's terms; Flap Fit does not receive a cop
 - Privacy Policy URL: **https://flapfitapp.com/privacy/**
 - User Privacy Choices URL: use the public deletion/privacy-controls page once live.
 - Data used for tracking: **No**
-- Third-party advertising and related SDK data: **Do not submit these answers yet. Re-evaluate from
-  the exact monetized build after the approved AdMob and RevenueCat integration.**
+- Third-party advertising: **Yes.** Use the additional declarations below and reconcile the final
+  Xcode privacy report before saving store answers.
 - Payments, purchases, and subscriptions: **None in Flap Fit 1.0.** RevenueCat is used only for
   ad-event reporting; there is no product, paywall, purchase, restore, or remove-ads interface.
 - HealthKit: **Not used**
+
+## Additional native ad declarations
+
+| Apple data type | Integration evidence | Purpose |
+| --- | --- | --- |
+| Coarse Location | AdMob can infer approximate location from IP | Third-Party Advertising, Analytics |
+| Device ID | AdMob app/device-scoped identifiers; IDFA is not requested | Third-Party Advertising, Analytics |
+| Advertising Data | Ad impressions, interactions and paid-impression events in AdMob/RevenueCat | Third-Party Advertising, Analytics |
+| Product Interaction | Ad clicks and SDK interaction signals | Third-Party Advertising, Analytics |
+| Crash Data, Performance Data, Other Diagnostic Data | Google SDK operational signals; RevenueCat diagnostics disabled | App Functionality, Analytics, Third-Party Advertising |
+| User ID | Separate anonymous RevenueCat customer identifier for ad reporting | Analytics |
+
+Treat persistent app/device-associated advertising records as linked to the user/device unless the
+final provider evidence demonstrates de-identification before collection. The competition User ID
+remains linked to its public profile. No exercise/fitness data is passed to either monetization SDK.
+Tracking remains No only while the shipped build and dashboard settings preserve the current
+non-personalized, no-IDFA, no-cross-app-attribution design; NPA alone is not proof of no tracking.
+
+RevenueCat's general SDK disclosure guide requires Purchase History (App Functionality, Analytics).
+There are no IAP products in Flap Fit, but do not infer an SDK exemption from that fact. Include the
+vendor-required declaration unless RevenueCat confirms an ads-only exemption for this integration
+and the signed build demonstrates it. This does not create or advertise an in-app purchase.
+
+Sources checked September 17, 2026:
+- https://developers.google.com/admob/ios/privacy/data-disclosure
+- https://www.revenuecat.com/docs/platform-resources/apple-platform-resources/apple-app-privacy
+- https://www.revenuecat.com/docs/ad-monetization/manual-integration
 
 ## Apple review-specific checks
 
@@ -66,8 +94,7 @@ video or message under that destination's terms; Flap Fit does not receive a cop
 - Public privacy policy link: Info > Full privacy policy.
 - In-app account deletion: Info > Delete online profile.
 - UGC filtering: server-side player-name validation and moderation filter.
-- UGC reporting/blocking: clearly labeled Report / Block action on public leaderboard results,
-  challenges, and challenge attempts.
+- UGC reporting/blocking: clearly labeled Report / Block action on public leaderboard results.
 - UGC contact information: **support@flapfitapp.com**
 - Timely moderation: **Flap Fit operator; targets and urgent escalation are documented in
   `moderation-runbook.md`.**

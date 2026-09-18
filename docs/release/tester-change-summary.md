@@ -1,5 +1,36 @@
 # Flap Fit current candidate change summary
 
+> **Latest physical result: FAILED.** After testing Form Test `2026-09-17.3-floor-reference`, the owner could still plant toes and continue playing. New logs confirm that version, a retained floor reference, and visible high-confidence feet misclassified as airborne. Earlier automated passes and pending-acceptance notes below do not approve this candidate. See `docs/release/pullup-floor-reference-failure-2026-09-17.md` for the evidence. No replacement runtime patch has been applied.
+
+## Current pull-up candidate — September 17
+
+Development Form Test **2026-09-17.3-floor-reference** is installed and awaits physical acceptance.
+The previous .2 rules failed. Stand under the bar with flat feet and relaxed arms to capture the
+floor, then jump/grip if needed and settle into a hang. The usual top-first and bottom-second
+positions follow. A fixed body/bar reference checks actual shoulder rise, and fresh camera poses
+check the demonstrated floor through countdown and gameplay. Confirmed contact causes normal
+fall-to-collision with pipes and recording continuing. Straight/bent suspended legs, narrow grips
+and full lockout remain supported. Cropped-foot setups explicitly cannot check floor contact.
+
+The clean automated rerun reports 28 suites / 267 tests passed; TypeScript and lint pass.
+This does not establish phone correctness. Production remains original and the physical-approval
+marker remains unset. Use `physical-test-matrix.md` and
+`pullup-floor-reference-2026-09-17.md` for the current test sequence and limitations.
+
+## September 17 launch scope: friend codes retired
+
+The owner removed friend challenge codes from the launch app. Daily Challenge, its local completion
+and achievement, top-50 bodyweight leaderboards, complete gameplay video sharing and the approved
+result-action ad sequence remain. Create/join/compare screens, friend-code helpers, friend game mode
+and Duelist achievement are removed. The implementation is preserved under
+`archive/friend-challenges/2026-09-17/`, outside the app and excluded from EAS uploads.
+Older dated code-binding and friend-code test entries below are historical, not launch requirements.
+No database records are purged: existing retention, moderation and account deletion remain supported.
+Verification for this revision is recorded in `friend-code-retirement-2026-09-17.md`; older export
+hashes and test totals do not describe this revised source. Physical calibration approval and the
+other native/account/store gates remain outstanding.
+
+
 Prepared September 15, 2026. This is the tester-facing summary for the current private `main`
 branch. It describes implemented behavior, not planned marketing claims.
 
@@ -48,10 +79,11 @@ branch. It describes implemented behavior, not planned marketing claims.
   bird, pipes, and game UI overlaid.
 - Added an isolated development Form Test tracker for physical anti-cheat testing without replacing
   the known baseline tracker prematurely.
-- Form Test evaluates both pull-up feet separately, permits bent knees and a slight elbow bend,
-  distinguishes brief wrist/foot occlusion from a visible bar release, detects planted support, and
-  ends a run after sustained unverifiable tracking. Brief camera glitches can recover, but sustained
-  stale tracking or invalid form cannot become an unlimited rest pause.
+- Current Form Test compares visible heel/toe observations with the floor demonstrated during
+  setup. It does not infer ground contact merely from stationary feet or knee angle. Both bent and
+  straight suspended legs and a comfortable bottom are supported; physical acceptance remains open.
+  Confirmed contact or sustained unverifiable tracking releases the bird into normal fall and
+  collision. Missing feet in a cropped setup cannot establish ground-contact verification.
 - The game-over card now names an unverified-form or lost-camera ending so it does not look like an
   unexplained pipe collision.
 - Added protected Push-up checks for hand support/head bobbing and Squat checks for waist-only
@@ -63,8 +95,9 @@ branch. It describes implemented behavior, not planned marketing claims.
 ## Recording and sharing
 
 - Added Record & Play to Live Camera mode.
-- Recording starts with the playable countdown, captures the camera/game composition, stops at the
-  result, and opens the native share sheet only when the player chooses Share.
+- Recording begins after 3-2-1 and before gameplay, captures the full camera/game composition, and
+  ends at collision or level completion. Countdown and result overlays are excluded. The native
+  share sheet opens only when the player chooses Share.
 - Added optional microphone sound with a clear Continue without sound path after denial.
 - Added a persistent red RECORDING indicator while capture is active.
 - Kept videos temporary and local. Flap Fit has no video upload or in-app recording library.
@@ -136,14 +169,15 @@ branch. It describes implemented behavior, not planned marketing claims.
 - Copied the project to a local development folder and synchronized the private GitHub repository.
 - Verified no targeted private credentials exist in the current tree or any reachable Git commit.
 - Public marketing, Privacy, Terms, and deletion pages now load signed out over HTTPS.
-- Current automated result is 78 of 78 tests passing, plus TypeScript and repository lint.
-  This includes real empty-storage and low-frame-rate training-time regressions.
+- Current September 17 automated result is 267 tests in 28 suites passing, plus TypeScript and
+  strict lint. The earlier six-exercise friend-code API audit is historical; friend codes have
+  since been removed from launch. Automated tracker checks do not replace physical acceptance.
 
 ## Deliberately not complete yet
 
-- AdMob and RevenueCat Ads are not installed in the Expo checkpoint. They require explicit
-  dependency approval after gameplay testing and must be tested in signed native builds, not Expo
-  Go.
+- The approved AdMob and RevenueCat packages are installed and the ad/result flow is implemented.
+  Expo Go safely skips these SDKs. Native ad tests, RevenueCat event evidence, iOS credentials, and
+  matching public disclosures remain; see `launch-audit-2026-09-17.md`.
 - The hardened Form Test tracker is not yet the production tracker. Physical approval comes first.
 - The optional recorded top-five leaderboard celebration is not implemented. Recording and sharing
   are implemented; changing recording finalization this close to release is intentionally deferred.

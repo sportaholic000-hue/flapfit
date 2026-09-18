@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Redirect, useRouter } from 'expo-router';
+import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
   Camera,
@@ -11,7 +11,8 @@ import {
   Sun,
   Video,
 } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { prepareMonetization } from '@/services/monetization';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
@@ -22,7 +23,7 @@ import { getDailyChallenge, LEVELS } from '@/utils/game/levels';
 import {
   computeBirdMorphology,
   computeEvolutionStage,
-  computeStreak,
+  computeTutStreak,
   dayKey,
   EVO_EMOJIS,
   EVO_NAMES,
@@ -89,15 +90,23 @@ export default function HomeScreen() {
   const hydrated = useGameStore((s) => s.hydrated);
   const hydrationError = useGameStore((s) => s.hydrationError);
   const hasOnboarded = useGameStore((s) => s.hasOnboarded);
+  useFocusEffect(useCallback(() => {
+    let focused = true;
+    if (hydrated && !hydrationError && hasOnboarded) {
+      void prepareMonetization(() => focused);
+    }
+    return () => { focused = false; };
+  }, [hydrated, hydrationError, hasOnboarded]));
   const birdId = useGameStore((s) => s.birdId);
   const setBird = useGameStore((s) => s.setBird);
   const unlockedLevel = useGameStore((s) => s.unlockedLevel);
-  const sessions = useGameStore((s) => s.sessions);
+
   const dailyCompleted = useGameStore((s) => s.dailyCompleted);
   const endlessBest = useGameStore((s) => s.endlessBest);
   const exerciseMode = useGameStore((s) => s.exerciseMode);
   const setExerciseMode = useGameStore((s) => s.setExerciseMode);
   const totalTutSeconds = useGameStore((s) => s.totalTutSeconds);
+  const dailyTut = useGameStore((s) => s.dailyTut);
   const exerciseTut = useGameStore((s) => s.exerciseTut);
   const lastActivityDate = useGameStore((s) => s.lastActivityDate);
 
@@ -164,7 +173,7 @@ export default function HomeScreen() {
   }
   if (!hasOnboarded) return <Redirect href={'/onboarding' as never} />;
 
-  const streak = computeStreak(sessions);
+  const streak = computeTutStreak(dailyTut);
   const skin = getBird(birdId);
   const today = dayKey();
   const daily = getDailyChallenge(unlockedLevel, today);
@@ -263,16 +272,16 @@ export default function HomeScreen() {
 
   const exDescriptions: Record<string, string> = {
     squats:
-      'Stand tall = top, deep squat = bottom. Phone on the floor or a chair, 1.5–2m in front.',
+      'Stand tall = top, deep squat = bottom. Phone on the floor or a chair, 3–6 ft in front.',
     pullups:
-      'Eye line at the bar = top, comfortable hang with a slight elbow bend = bottom. Phone on a chair or higher, 1.5–2m in front; keep both hands on the bar.',
+      'Eye line at the bar = top, comfortable hang with a slight elbow bend = bottom. Phone on a chair or higher, 4–6 ft in front; keep both hands on the bar.',
     lateralraise:
-      'Arms at shoulder height = top, arms at sides = bottom. Phone on a chair or higher, about 2m in front.',
+      'Arms at shoulder height = top, arms at sides = bottom. Phone on a chair or higher, 4–6 ft in front.',
     biceps:
-      'Wrists at shoulders = top, arms extended = bottom. Phone on a chair or higher, 1–1.5m in front.',
+      'Wrists at shoulders = top, arms extended = bottom. Phone on a chair or higher, 3–6 ft in front.',
     shoulderpress:
-      'Arms overhead = top, wrists at shoulders = bottom. Phone on a chair or higher, 1.5–2m in front.',
-    pushups: 'Arms extended = top, chest to floor = bottom. Phone 1–1.5m in front on the floor.',
+      'Arms overhead = top, wrists at shoulders = bottom. Phone on a chair or higher, 4–6 ft in front.',
+    pushups: 'Arms extended = top, chest to floor = bottom. Phone 3 ft in front on the floor.',
   };
 
   return (
@@ -587,22 +596,6 @@ export default function HomeScreen() {
                 );
               })}
             </View>
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel="Review onboarding"
-              onPress={() => router.push('/onboarding' as never)}
-              style={{
-                minHeight: 44,
-                borderRadius: 14,
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderWidth: 1,
-                borderColor: '#94A3B8',
-                backgroundColor: '#F8FAFC',
-              }}
-            >
-              <Text style={{ color: NAVY, fontWeight: '900' }}>Review Onboarding</Text>
-            </TouchableOpacity>
           </View>
         ) : null}
 

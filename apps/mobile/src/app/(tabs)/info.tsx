@@ -20,7 +20,8 @@ import {
   X,
 } from 'lucide-react-native';
 import type { ReactNode } from 'react';
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
+import { isAdPrivacyRequired, showAdPrivacyOptions, subscribeAdPrivacy } from '@/services/monetization';
 import {
   Alert,
   Linking,
@@ -51,15 +52,15 @@ const AMBER = '#F59E0B';
 type ModalPage = 'privacy' | 'safety' | 'terms' | null;
 
 const EXERCISE_SETUP = [
-  ['Push-ups', 'Phone on the floor, 1–1.5 m in front; keep your full body visible.'],
-  ['Squats', 'Phone on the floor or a stable chair, 1.5–2 m in front.'],
+  ['Push-ups', 'Phone on the floor, 3 ft in front; keep your full body visible.'],
+  ['Squats', 'Phone on the floor or a chair, 3–6 ft in front.'],
   [
     'Pull-ups',
-    'Phone on a stable chair or higher, 1.5–2 m in front; keep both hands on the bar and bring your eye line to the bar for the top position.',
+    'Keep the phone still on a chair or higher, 4–6 ft in front. Start by grabbing the bar with both feet flat on the floor and visible. If the bar is too high, reach both hands up during setup, then jump to grab it. Lift your feet, settle into a hang, and pull your eye line to the bar for step 1. Lower to your comfortable hang for step 2. Straight or bent legs are fine while your feet stay off the floor.',
   ],
-  ['Bicep curls', 'Phone on a chair or higher, 1–1.5 m in front; keep both wrists visible.'],
-  ['Lateral raises', 'Phone on a chair or higher, about 2 m in front; keep both arms visible.'],
-  ['Shoulder press', 'Phone on a chair or higher, 1.5–2 m in front; keep hands visible overhead.'],
+  ['Bicep curls', 'Phone on a chair or higher, 3–6 ft in front; keep both wrists visible.'],
+  ['Lateral raises', 'Phone on a chair or higher, 4–6 ft in front; keep both arms visible.'],
+  ['Shoulder press', 'Phone on a chair or higher, 4–6 ft in front; elbows must always be visible.'],
 ] as const;
 
 function clock(seconds: number): string {
@@ -197,6 +198,20 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
                 security logs. Your camera frames, gameplay recordings, and full local training
                 history are not included.
               </Text>
+              <Text style={styles.modalHeading}>Advertising and ad reporting</Text>
+              <Text style={styles.modalText}>
+                The installed app uses Google AdMob to show ads after eligible result-screen
+                actions. AdMob may process device and app information, IP address and approximate
+                location, diagnostics, and ad interactions. Flap Fit requests non-personalized ads
+                and does not request access to your advertising identifier.
+              </Text>
+              <Text style={styles.modalText}>
+                RevenueCat receives ad events such as loads, displays, clicks, and revenue, linked
+                to a separate anonymous app identifier. Flap Fit does not attach your exercise,
+                player name, scores, camera footage, recordings, or training history to these events.
+                Where required, you can review advertising choices through Ad privacy settings in
+                Info. Camera and microphone permissions remain separate from advertising choices.
+              </Text>
               <Text style={styles.modalHeading}>Public content and moderation</Text>
               <Text style={styles.modalText}>
                 Player names and competition results can be visible to other players. You can report
@@ -296,6 +311,15 @@ export default function InfoScreen() {
   const router = useRouter();
   const [modalPage, setModalPage] = useState<ModalPage>(null);
   const [onlineDeleteBusy, setOnlineDeleteBusy] = useState(false);
+  const adPrivacyRequired = useSyncExternalStore(subscribeAdPrivacy, isAdPrivacyRequired, () => false);
+  const [adPrivacyBusy, setAdPrivacyBusy] = useState(false);
+  const openAdPrivacy = async () => {
+    if (adPrivacyBusy) return;
+    setAdPrivacyBusy(true);
+    try { await showAdPrivacyOptions(); }
+    catch { Alert.alert('Privacy settings unavailable', 'Please try again when online. Gameplay is still available.'); }
+    finally { setAdPrivacyBusy(false); }
+  };
   const queryClient = useQueryClient();
   const birdId = useGameStore((state) => state.birdId);
   const resetCompetitionProfile = useGameStore((state) => state.resetCompetitionProfile);
@@ -405,7 +429,7 @@ export default function InfoScreen() {
         title: 'Flap Fit online profile support ID',
         message: [
           `Flap Fit online profile support ID: ${supportId}`,
-          'Only share this identifier with Flap Fit Support for an account or deletion request.',
+          'This reference identifies a profile; it is not secret and does not prove ownership. Use Info > Delete online profile on the original device to authorize deletion.',
         ].join('\n\n'),
       });
     } catch {
@@ -439,8 +463,8 @@ export default function InfoScreen() {
               })
               .catch(() =>
                 Alert.alert(
-                  'Profile not deleted',
-                  'Please try again or contact support from this page.'
+                  'Deletion not confirmed',
+                  'The connection may have been interrupted. Try Delete online profile again to check and finish cleanup, or contact support. Your local game progress is safe.'
                 )
               )
               .finally(() => setOnlineDeleteBusy(false));
@@ -486,14 +510,14 @@ export default function InfoScreen() {
             frame.
           </NumberedStep>
           <NumberedStep number={3}>
-            The first position appears for two seconds before calibration can begin. Get into that
-            position, hold it until the bar fills, then hold the second position. After the 3-second
-            countdown, the bird follows that calibrated range.
+            Calibration Step 1 is always the top position of your exercise, and Step 2 is always the
+            bottom position. The first position appears for two seconds before calibration can begin.
+            Hold the first position until the bar fills, then hold the second position until the bar
+            fills again. After the 3-second countdown, the bird follows that calibrated range.
           </NumberedStep>
           <NumberedStep number={4}>
-            If tracking briefly pauses, return to the center of the frame and hold still. The game
-            can resume when tracking is reliable again. Sustained loss of required hand evidence,
-            releasing the bar, or a detected planted foot can end a protected pull-up run.
+            Keep the required joints in frame during play. Pipes keep moving if tracking is lost.
+            Sustained tracking loss or a detected form failure makes the bird fall until it crashes.
           </NumberedStep>
           <View style={styles.tipBox}>
             <Text style={styles.tipTitle}>Fast calibration tip</Text>
@@ -586,6 +610,14 @@ export default function InfoScreen() {
             subtitle={RELEASE_LINKS.privacyUrl || 'Public link required before release'}
             onPress={() => void openReleasePage('Privacy policy', RELEASE_LINKS.privacyUrl)}
           />
+          {adPrivacyRequired ? (
+            <ActionRow
+              icon={<ShieldCheck size={21} color="#2563EB" />}
+              title="Ad privacy settings"
+              subtitle={adPrivacyBusy ? 'Opening privacy settings…' : 'Review or change your advertising choices'}
+              onPress={() => void openAdPrivacy()}
+            />
+          ) : null}
           <ActionRow
             icon={<TriangleAlert size={21} color="#EA580C" />}
             title="Fitness safety"

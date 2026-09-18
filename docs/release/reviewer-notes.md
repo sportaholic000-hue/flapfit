@@ -12,7 +12,7 @@ Fast equipment-free review path:
 
 1. On Home, select Squats and Sky.
 2. Tap Play and grant camera access.
-3. Place the phone upright on the floor or a stable chair about 1.5 to 2 metres away so the full body
+3. Place the phone upright on the floor or a chair about 1.5 to 2 metres away so the full body
    is visible.
 4. The first two seconds are a reading/setup buffer. Stand comfortably for the top calibration,
    then use a comfortable squat for the lower calibration.
@@ -31,20 +31,30 @@ Camera processing:
 
 Pose estimation runs on-device using a bundled MediaPipe model. Normal Play does not record or upload
 camera video or request microphone access. Record & Play requests microphone access so the temporary
-composed gameplay video can include the user's voice and workout sounds. The file remains in the app
-cache, and the iOS share sheet appears only when the user chooses Share. Flap Fit never receives the
-video or audio.
+composed gameplay video can include the user's voice and workout sounds. The complete file remains
+in the app cache. Share gameplay video opens the system share sheet; on a supported iPhone, Messages
+and Mail open their native composers. The player chooses the destination or recipients. Dismissing
+a native composer leaves the same result available. A receiving social app controls its own Send
+screen, so automatic return from every social app is not promised. Video and audio are never sent
+to Flap Fit's servers. Verify full-duration delivery and send/cancel return on the submitted build.
 
-Compete is optional and uses an anonymous Supabase account. Before publishing a name, score,
-challenge, or attempt, the player must accept the current Terms and community rules. Public
+Compete is optional and uses an anonymous Supabase account. Before publishing a name or score, the player must accept the current Terms and community rules. Public
 competition rows have a clearly labeled Report / Block control. The in-app deletion path is
 Info > Delete online profile. No reviewer credentials are required.
 
 The app has no HealthKit, location, or contact access. Microphone access is optional and used only
 for Record & Play. Fitness and score estimates are not medical measurements. The fitness safety
-notice is available at Info > Fitness safety. Replace this paragraph with the exact final ads,
-consent, and RevenueCat ad-reporting disclosure after monetization is integrated. Flap Fit 1.0 has
-no purchase, subscription, paywall, or remove-ads product.
+notice is available at Info > Fitness safety.
+
+The native build contains Google AdMob interstitials and RevenueCat ad-event reporting. The first
+completed-run exit in a session is ad-free; eligibility is limited to one ad per two exits and at
+least 90 seconds between displayed ads. Ads are requested only after applicable consent handling,
+and appear only after Done, Try Again, or Next Level. Sharing, returning from another app, and
+arriving at results never trigger an ad by themselves. Google UMP supplies regional consent and
+Info > Advertising privacy choices when required. Requests are non-personalized; the app does not
+request ATT or Android advertising-ID permission. RevenueCat receives anonymous ad events and
+revenue, with no exercise, score, player name, camera, or training-history attributes.
+Flap Fit 1.0 has no purchase, subscription, paywall, or remove-ads product.
 
 Support: **Troy Reardon, support@flapfitapp.com; [REQUIRED INPUT: review phone number]**
 
@@ -71,12 +81,12 @@ UGC test:
 1. Open Compete.
 2. Review and accept Online Competition Terms.
 3. Set a player name.
-4. View leaderboards or create/find a challenge.
-5. Use Report / Block beside another player's leaderboard result, challenge, or challenge attempt.
+4. View the exercise leaderboards. Friend challenge codes are not included in this release.
+5. Use Report / Block beside another player's leaderboard result.
 6. Use Info > Delete online profile to remove the anonymous account and associated competition data.
 
-Before submission, add the exact final ads and RevenueCat ad-reporting disclosure from the tested
-production build. Declare that Flap Fit 1.0 has no in-app purchases or subscriptions.
+The advertising flow and restrictions described in the Apple notes also apply to Android.
+Confirm them in the signed production build before submitting these notes.
 
 Public account-deletion page: **https://flapfitapp.com/delete-account/**
 

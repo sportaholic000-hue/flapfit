@@ -1,5 +1,6 @@
 'use client';
 
+import { startCompetitionForegroundRetry } from '@/services/competitionApi';
 import { AppErrorBoundary } from '@/components/AppErrorBoundary';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Image } from 'expo-image';
@@ -26,6 +27,9 @@ const queryClient = new QueryClient({
 
 export default function RootLayout() {
   const [showAppSplash, setShowAppSplash] = useState(true);
+  useEffect(() => startCompetitionForegroundRetry(() => {
+    void queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
+  }), []);
 
   useEffect(() => {
     void SplashScreen.hideAsync();

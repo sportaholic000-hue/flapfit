@@ -1,8 +1,10 @@
+import { SCRIPT_PULLUP_SUPPORT } from './scriptPullupSupport';
+
 // Optional development-only form tracking. The normal tracker remains available
 // so physical A/B testing can happen without replacing the launch baseline.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-09-16.2';
+export const FORM_TRACKING_RULES_VERSION = '2026-09-17.4-grab-reference';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -11,12 +13,18 @@ var formCurrentMetrics = null;
 var formTrackY = null, formTrackYSmooth = null;
 var lastFormTrackTime = 0;
 var formTopMetrics = null, formBottomMetrics = null;
-var pullupFootAnchorEvidence = { left: [], right: [] };
+var pullupCalibrationPoseHistory = [];
+var pullupSetupStarted = false;
 var pullupWristMissingAt = 0;
 var pullupHangReference = null;
+${SCRIPT_PULLUP_SUPPORT}
+var pullupPoseTrace = [];
+var pullupTraceLastSampleAt = -Infinity;
+var pullupTraceLastExportAt = 0;
+var pullupTraceSession = '';
+var lastPullupGameDebugAt = 0;
+var pullupRunContactLogged = false;
 var PULLUP_EVIDENCE_GRACE_MS = 1200;
-var PULLUP_FOOT_EVIDENCE_WINDOW_MS = 1800;
-var PULLUP_PLANTED_FOOT_HOLD_MS = 1000;
 
 function usesExperimentalFormTracking() {
   return CONFIG.trackingMode === 'form-test';
@@ -30,9 +38,18 @@ function resetExperimentalFormTracking() {
   lastFormTrackTime = 0;
   formTopMetrics = null;
   formBottomMetrics = null;
-  pullupFootAnchorEvidence = { left: [], right: [] };
+  pullupCalibrationPoseHistory = [];
+  pullupSetupStarted = false;
+  resetPullupSupportReference();
   pullupWristMissingAt = 0;
-  pullupHangReference = null;
+  resetPullupTopReference();
+
+  pullupPoseTrace = [];
+  pullupTraceLastSampleAt = -Infinity;
+  pullupTraceLastExportAt = 0;
+  pullupTraceSession = String(Date.now()) + '-' + String(Math.random()).slice(2, 8);
+  lastPullupGameDebugAt = 0;
+  pullupRunContactLogged = false;
 }
 
 function formPoint(index, minVisibility) {
@@ -60,8 +77,10 @@ function formDistance(a, b) {
 
 function formJointAngle(a, b, c) {
   if (!a || !b || !c) { return null; }
-  var abx = a.x - b.x, aby = a.y - b.y;
-  var cbx = c.x - b.x, cby = c.y - b.y;
+  var aspect = CONFIG.exercise === 'pullups' && typeof video !== 'undefined' &&
+    video.videoWidth > 0 && video.videoHeight > 0 ? video.videoWidth / video.videoHeight : 1;
+  var abx = (a.x - b.x) * aspect, aby = a.y - b.y;
+  var cbx = (c.x - b.x) * aspect, cby = c.y - b.y;
   var ab = Math.sqrt(abx * abx + aby * aby);
   var cb = Math.sqrt(cbx * cbx + cby * cby);
   if (ab < 0.0001 || cb < 0.0001) { return null; }
@@ -83,18 +102,69 @@ function formAverageAngle(triples, minVisibility) {
   return { value: count ? total / count : null, count: count };
 }
 
+function formVisibleFoot(indices) {
+  var points = indices.map(function(index) { return formPoint(index, 0.12); })
+    .filter(function(point) {
+      return point && point.x >= 0 && point.x <= 1 && point.y >= 0 && point.y <= 1;
+    });
+  if (!points.length) { return null; }
+  return {
+    x: points.reduce(function(sum, point) { return sum + point.x; }, 0) / points.length,
+    y: points.reduce(function(sum, point) { return sum + point.y; }, 0) / points.length
+  };
+}
+
+function formInFramePoint(index, minVisibility) {
+  var point = formPoint(index, minVisibility);
+  return point && point.x >= 0 && point.x <= 1 && point.y >= 0 && point.y <= 1 ? point : null;
+}
+
+function collectShoulderPressArm(shoulderIndex, elbowIndex, wristIndex) {
+  var shoulder = formInFramePoint(shoulderIndex, 0.24);
+  var elbow = formInFramePoint(elbowIndex, 0.24);
+  var wrist = formInFramePoint(wristIndex, 0.24);
+  if (!shoulder || !elbow) { return null; }
+  var upperArmLength = formDistance(shoulder, elbow);
+  if (upperArmLength < 0.035) { return null; }
+  return {
+    shoulder: shoulder,
+    elbow: elbow,
+    wrist: wrist,
+    upperArmLength: upperArmLength,
+    lift: (shoulder.y - elbow.y) / upperArmLength,
+    elbowAngle: formJointAngle(shoulder, elbow, wrist)
+  };
+}
+
+function shoulderPressArms(metrics) {
+  return metrics && metrics.leftPressArm && metrics.rightPressArm
+    ? [metrics.leftPressArm, metrics.rightPressArm] : null;
+}
+
+function shoulderPressBottomVisible(arm) {
+  return arm.wrist && arm.elbowAngle !== null && arm.elbowAngle >= 35 && arm.elbowAngle <= 140 &&
+    Math.abs(arm.wrist.y - arm.shoulder.y) <= Math.max(0.09, arm.upperArmLength * 0.85) &&
+    arm.wrist.y < arm.elbow.y;
+}
+
 function collectExperimentalFormMetrics() {
   if (!formPoseLandmarks) { return null; }
-  var pullupVisibility = CONFIG.exercise === 'pullups' ? 0.15 : 0.24;
-  var eyes = formMeanPoint([2, 5], pullupVisibility, 1);
+  var isPullup = CONFIG.exercise === 'pullups';
+  var pullupVisibility = isPullup ? 0.35 : 0.24;
+  var leftEye = isPullup ? formInFramePoint(2, 0.5) : null;
+  var rightEye = isPullup ? formInFramePoint(5, 0.5) : null;
+  var eyes = isPullup
+    ? (leftEye && rightEye ? { x: (leftEye.x + rightEye.x) / 2, y: (leftEye.y + rightEye.y) / 2 } : null)
+    : formMeanPoint([2, 5], pullupVisibility, 1);
   var shoulders = formMeanPoint(
     [11, 12],
     pullupVisibility,
     1
   );
   var elbows = formMeanPoint([13, 14], 0.24, 1);
-  var leftWrist = formPoint(15, pullupVisibility);
-  var rightWrist = formPoint(16, pullupVisibility);
+  // Off-image or weak hand estimates cannot establish the bar position.
+  var leftWrist = isPullup ? formInFramePoint(15, pullupVisibility) : formPoint(15, pullupVisibility);
+  var rightWrist = isPullup ? formInFramePoint(16, pullupVisibility) : formPoint(16, pullupVisibility);
   var wrists = leftWrist && rightWrist
     ? { x: (leftWrist.x + rightWrist.x) / 2, y: (leftWrist.y + rightWrist.y) / 2 }
     : null;
@@ -102,8 +172,8 @@ function collectExperimentalFormMetrics() {
     ? wrists
     : (leftWrist || rightWrist);
   var hips = formMeanPoint([23, 24], 0.24, 1);
-  var leftFoot = formMeanPoint([27, 29, 31], CONFIG.exercise === 'pullups' ? 0.12 : 0.22, 1);
-  var rightFoot = formMeanPoint([28, 30, 32], CONFIG.exercise === 'pullups' ? 0.12 : 0.22, 1);
+  var leftFoot = CONFIG.exercise === 'pullups' ? formVisibleFoot([27, 29, 31]) : formMeanPoint([27, 29, 31], 0.22, 1);
+  var rightFoot = CONFIG.exercise === 'pullups' ? formVisibleFoot([28, 30, 32]) : formMeanPoint([28, 30, 32], 0.22, 1);
   var feet = CONFIG.exercise === 'pullups'
     ? (leftFoot && rightFoot
       ? { x: (leftFoot.x + rightFoot.x) / 2, y: Math.max(leftFoot.y, rightFoot.y) }
@@ -122,20 +192,43 @@ function collectExperimentalFormMetrics() {
     formPoint(28, 0.22)
   );
   var abduction = formAverageAngle([[23, 11, 13], [24, 12, 14]], 0.24);
+  var leftPressArm = CONFIG.exercise === 'shoulderpress' ? collectShoulderPressArm(11, 13, 15) : null;
+  var rightPressArm = CONFIG.exercise === 'shoulderpress' ? collectShoulderPressArm(12, 14, 16) : null;
   var controller = null;
 
   if (CONFIG.exercise === 'pushups' || CONFIG.exercise === 'pullups') {
     controller = shoulders;
   } else if (CONFIG.exercise === 'squats') {
     controller = hips;
+  } else if (CONFIG.exercise === 'shoulderpress') {
+    // Use one stable control signal throughout the press, including while wrists
+    // cross the top edge. Relative upper-arm elevation excludes torso translation.
+    controller = leftPressArm && rightPressArm
+      ? { y: 0.5 - (leftPressArm.lift + rightPressArm.lift) * 0.125 } : null;
   } else {
     controller = wrists;
   }
 
   return {
     controllerY: controller ? controller.y : null,
+    leftPressArm: leftPressArm,
+    rightPressArm: rightPressArm,
     eyes: eyes,
+    leftEye: leftEye,
+    rightEye: rightEye,
+    leftAnkle: isPullup ? formInFramePoint(27, 0.35) : null,
+    rightAnkle: isPullup ? formInFramePoint(28, 0.35) : null,
+    leftHeel: isPullup ? formInFramePoint(29, 0.35) : null,
+    rightHeel: isPullup ? formInFramePoint(30, 0.35) : null,
+    leftToe: isPullup ? formInFramePoint(31, 0.35) : null,
+    rightToe: isPullup ? formInFramePoint(32, 0.35) : null,
     shoulders: shoulders,
+    leftShoulder: isPullup ? formInFramePoint(11, 0.35) : null,
+    rightShoulder: isPullup ? formInFramePoint(12, 0.35) : null,
+    leftElbow: isPullup ? formInFramePoint(13, 0.35) : null,
+    rightElbow: isPullup ? formInFramePoint(14, 0.35) : null,
+    leftElbowAngle: isPullup ? formJointAngle(formInFramePoint(11, 0.35), formInFramePoint(13, 0.35), leftWrist) : null,
+    rightElbowAngle: isPullup ? formJointAngle(formInFramePoint(12, 0.35), formInFramePoint(14, 0.35), rightWrist) : null,
     elbows: elbows,
     wrists: wrists,
     leftWrist: leftWrist,
@@ -156,17 +249,76 @@ function collectExperimentalFormMetrics() {
   };
 }
 
+// Temporary development diagnostics: numbers only, no images or video. The
+// ring buffer is bounded and discarded when the camera session resets.
+function samplePullupCalibrationTrace(landmarks, now) {
+  if (!usesExperimentalFormTracking() || CONFIG.exercise !== 'pullups' ||
+      now <= pullupTraceLastSampleAt) { return; }
+  pullupTraceLastSampleAt = now;
+  var indices = [2, 5, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32];
+  pullupPoseTrace.push({ t: Math.round(now), phase: typeof state === 'undefined' ? null : state, p: indices.map(function(index) {
+    var p = landmarks && landmarks[index];
+    return p ? [index, +p.x.toFixed(4), +p.y.toFixed(4),
+      p.visibility === undefined ? null : +p.visibility.toFixed(3),
+      p.z === undefined ? null : +p.z.toFixed(4)] : [index];
+  }) });
+  while (pullupPoseTrace.length > 240) { pullupPoseTrace.shift(); }
+}
+
+function exportPullupCalibrationTrace(event) {
+  if (!usesExperimentalFormTracking() || CONFIG.exercise !== 'pullups' ||
+      typeof postRN !== 'function' || !pullupPoseTrace.length) { return; }
+  var now = performance.now();
+  if (event === 'observing' && now - pullupTraceLastExportAt < 2500) { return; }
+  pullupTraceLastExportAt = now;
+  postRN({ type: 'formdebug', message: 'PULLUP_TRACE ' + JSON.stringify({
+    version: '2026-09-17.4-grab-reference', session: pullupTraceSession, event: event,
+    videoSize: typeof video !== 'undefined' ? [video.videoWidth, video.videoHeight] : null,
+    calibrationReadyAt: typeof calibrationReadyAt !== 'undefined' ? calibrationReadyAt : null,
+    hangReference: pullupHangReference, support: pullupSupportDebug(), frames: pullupPoseTrace
+  }) });
+  pullupPoseTrace = [];
+}
+
 function updateExperimentalFormPose(landmarks, now) {
+  samplePullupCalibrationTrace(landmarks, now);
   formPoseLandmarks = landmarks;
   formCurrentMetrics = collectExperimentalFormMetrics();
-  if (CONFIG.exercise === 'pullups' && !formTopMetrics && formCurrentMetrics &&
-      formCurrentMetrics.shoulders && formCurrentMetrics.wrists &&
-      formCurrentMetrics.elbowCount === 2) {
-    // Hands on the bar provide a fixed reference. Remember the lowest visible
-    // shoulder position before top calibration, including during the buffer.
-    var hangGap = formCurrentMetrics.shoulders.y - formCurrentMetrics.wrists.y;
-    if (hangGap > 0.08 && (!pullupHangReference || hangGap > pullupHangReference.gap)) {
-      pullupHangReference = { gap: hangGap };
+  if (CONFIG.exercise === 'pullups') {
+    // Observation belongs to the camera clock across setup, calibration,
+    // countdown and play. Rendering cannot manufacture new contact evidence.
+    updatePullupSupportReference(formCurrentMetrics, now);
+    var setup = getPullupSupportSetup();
+    if (setup.ready && !pullupSetupStarted) {
+      pullupSetupStarted = true;
+      resetPullupTopReference();
+      if (typeof calibrationReadyAt !== 'undefined') { calibrationReadyAt = now + 2000; }
+      exportPullupCalibrationTrace(setup.mode === 'floor' ? 'floor-reference-saved' : 'feet-out-of-frame');
+    }
+    if (formCurrentMetrics && (!pullupCalibrationPoseHistory.length ||
+        now > pullupCalibrationPoseHistory[pullupCalibrationPoseHistory.length - 1].t)) {
+      pullupCalibrationPoseHistory.push({ t: now, metrics: formCurrentMetrics });
+      while (pullupCalibrationPoseHistory.length > 8 && now - pullupCalibrationPoseHistory[0].t > 1800) {
+        pullupCalibrationPoseHistory.shift();
+      }
+    }
+    exportPullupCalibrationTrace('observing');
+  }
+  if (CONFIG.exercise === 'pullups' && pullupSetupStarted && !formTopMetrics) {
+    // A grounded overhead setup must not become the hang baseline, otherwise
+    // jumping to the bar could be counted as the pull. Use the same suspension
+    // evidence that permits calibration, including the explicit cropped route.
+    if (pullupFloorCalibrationCheck().valid) {
+      observePullupStartingHang(formCurrentMetrics, now);
+    } else {
+      // Planting a foot ends the suspension used to establish this baseline.
+      // A subsequent jump must first settle into a new hang before a real pull.
+      if (pullupFloorHasContactEvidence()) { resetPullupTopReference(); }
+      else {
+        // Unknown support cannot join partial observations across the gap, but
+        // does not prove contact. Existing freshness limits still apply.
+        pullupHangSamples = [];
+      }
     }
   }
   if (!formCurrentMetrics || formCurrentMetrics.controllerY === null) { return; }
@@ -174,6 +326,114 @@ function updateExperimentalFormPose(landmarks, now) {
   if (formTrackYSmooth === null) { formTrackYSmooth = formTrackY; }
   formTrackYSmooth = formTrackYSmooth + (formTrackY - formTrackYSmooth) * 0.55;
   lastFormTrackTime = now;
+}
+
+// Pull-up-only reference observation. This runs once per fresh camera pose.
+// A wrist displacement is never evidence that the body rose.
+var pullupHangSamples = [];
+var pullupHangLastSeenAt = null;
+
+function resetPullupTopReference() {
+  pullupHangReference = null;
+  pullupHangSamples = [];
+  pullupHangLastSeenAt = null;
+}
+
+function pullupMedian(values) {
+  var sorted = values.slice().sort(function(a, b) { return a - b; });
+  var middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+function pullupUpperBodyVisible(m) {
+  return m && m.leftEye && m.rightEye && m.leftShoulder && m.rightShoulder &&
+    m.leftElbow && m.rightElbow && m.leftWrist && m.rightWrist &&
+    Number.isFinite(m.leftElbowAngle) && Number.isFinite(m.rightElbowAngle);
+}
+
+function pullupArmLength(m) {
+  return (formDistance(m.leftShoulder, m.leftElbow) + formDistance(m.leftElbow, m.leftWrist) +
+    formDistance(m.rightShoulder, m.rightElbow) + formDistance(m.rightElbow, m.rightWrist)) / 2;
+}
+
+function observePullupStartingHang(m, now) {
+  if (pullupHangLastSeenAt !== null && now - pullupHangLastSeenAt > 1200) {
+    resetPullupTopReference();
+  }
+  if (!pullupUpperBodyVisible(m)) {
+    pullupHangSamples = [];
+    return;
+  }
+  pullupHangLastSeenAt = now;
+  var armLength = pullupArmLength(m);
+  // A comfortable starting bend is allowed. Projected elbow angles differ
+  // substantially with grip and camera view, so no extended-arm threshold is
+  // used to acquire this observation.
+  if (armLength < 0.08 || m.wrists.y >= m.shoulders.y - 0.04 ||
+      m.eyes.y - m.wrists.y < 0.025) {
+    pullupHangSamples = [];
+    return;
+  }
+  var last = pullupHangSamples.length ? pullupHangSamples[pullupHangSamples.length - 1] : null;
+  if (last && now - last.t > 700) { pullupHangSamples = []; }
+  pullupHangSamples.push({t: now, m: m});
+  // Preserve five independent observations at slower fresh camera rates. A
+  // strict 650ms window can never contain five samples at 4–5 fps.
+  while (pullupHangSamples.length > 5 && now - pullupHangSamples[0].t > 650) {
+    pullupHangSamples.shift();
+  }
+  if (pullupHangSamples.length < 5 || now - pullupHangSamples[0].t < 400) { return; }
+  var median = function(read) {
+    return pullupMedian(pullupHangSamples.map(function(sample) { return read(sample.m); }));
+  };
+  var leftY = median(function(p) { return p.leftShoulder.y; });
+  var rightY = median(function(p) { return p.rightShoulder.y; });
+  var barY = median(function(p) { return p.wrists.y; });
+  var referenceArmLength = median(pullupArmLength);
+  var tolerance = Math.max(0.008, Math.min(0.025, referenceArmLength * 0.06));
+  // Use the majority of a sustained observation; one distorted estimate must
+  // not create a lower-body reference or move the saved bar.
+  var inliers = pullupHangSamples.filter(function(sample) {
+    var p = sample.m;
+    return Math.abs(p.leftShoulder.y - leftY) <= tolerance &&
+      Math.abs(p.rightShoulder.y - rightY) <= tolerance &&
+      Math.abs(p.wrists.y - barY) <= tolerance * 1.5;
+  });
+  if (inliers.length < Math.ceil(pullupHangSamples.length * 0.8) ||
+      inliers[inliers.length - 1].t - inliers[0].t < 400) { return; }
+  var shoulderY = (leftY + rightY) / 2;
+  // Once the shoulders have risen, do not walk the reference upwards with the
+  // pull. A later stable lower starting position can replace it.
+  if (pullupHangReference && (leftY < pullupHangReference.leftShoulder.y + tolerance ||
+      rightY < pullupHangReference.rightShoulder.y + tolerance)) { return; }
+  // Settling lower changes the body baseline, never the fixed bar target.
+  // Otherwise wrist-estimate drift could move the target down towards the eyes.
+  if (pullupHangReference) { barY = pullupHangReference.barY; }
+  pullupHangReference = {
+    leftShoulder: {y: leftY}, rightShoulder: {y: rightY}, shoulderY: shoulderY,
+    barY: barY, gap: shoulderY - barY,
+    armLength: referenceArmLength,
+    eyeToShoulder: median(function(p) { return p.shoulders.y - p.eyes.y; }),
+    acquiredAt: now
+  };
+}
+
+function pullupTopBodyRiseValid(metrics) {
+  if (!pullupUpperBodyVisible(metrics) || !pullupHangReference) { return false; }
+  var reference = pullupHangReference;
+  var requiredLift = Math.max(0.04, Math.min(0.08, reference.armLength * 0.2));
+  if (reference.leftShoulder.y - metrics.leftShoulder.y < requiredLift ||
+      reference.rightShoulder.y - metrics.rightShoulder.y < requiredLift) { return false; }
+  // The bar reference remains where it was observed before the pull. Lowered
+  // or mislocalized wrists cannot lower the top target towards the face.
+  if (metrics.leftEye.y - reference.barY > 0.025 ||
+      metrics.rightEye.y - reference.barY > 0.025) { return false; }
+  var eyeToShoulder = metrics.shoulders.y - metrics.eyes.y;
+  if (eyeToShoulder - reference.eyeToShoulder > Math.max(0.04, reference.eyeToShoulder * 0.3)) {
+    return false;
+  }
+  return metrics.wrists.y < metrics.shoulders.y - 0.015 &&
+    metrics.leftElbowAngle <= 145 && metrics.rightElbowAngle <= 145;
 }
 
 function getExperimentalTrackY() { return formTrackY; }
@@ -186,37 +446,6 @@ function formValid() { return { valid: true, message: '', fatal: false, fatalKey
 function formInvalid(message) { return { valid: false, message: message, fatal: false, fatalKey: '' }; }
 function formFatal(message, key) {
   return { valid: false, message: message, fatal: true, fatalKey: key };
-}
-
-function pullupFootAppearsPlanted(side, foot, shoulders, kneeAngle, now) {
-  if (!foot || !shoulders || kneeAngle === null || kneeAngle < 145) {
-    pullupFootAnchorEvidence[side] = [];
-    return false;
-  }
-  var evidence = pullupFootAnchorEvidence[side];
-  evidence.push({ t: now, footY: foot.y, shoulderY: shoulders.y });
-  while (evidence.length && now - evidence[0].t > PULLUP_FOOT_EVIDENCE_WINDOW_MS) {
-    evidence.shift();
-  }
-  if (!evidence.length || now - evidence[0].t < PULLUP_PLANTED_FOOT_HOLD_MS) {
-    return false;
-  }
-  var footMinY = 1, footMaxY = 0, shoulderMinY = 1, shoulderMaxY = 0;
-  for (var pei = 0; pei < evidence.length; pei++) {
-    var sample = evidence[pei];
-    footMinY = Math.min(footMinY, sample.footY);
-    footMaxY = Math.max(footMaxY, sample.footY);
-    shoulderMinY = Math.min(shoulderMinY, sample.shoulderY);
-    shoulderMaxY = Math.max(shoulderMaxY, sample.shoulderY);
-  }
-  var footTravel = footMaxY - footMinY;
-  var shoulderTravel = shoulderMaxY - shoulderMinY;
-  var calibratedShoulderTravel = formTopMetrics && formBottomMetrics
-    ? Math.abs(formBottomMetrics.controllerY - formTopMetrics.controllerY)
-    : 0.05;
-  var requiredShoulderTravel = Math.max(0.02, Math.min(0.045, calibratedShoulderTravel * 0.45));
-  return shoulderTravel >= requiredShoulderTravel &&
-    footTravel <= Math.max(0.012, shoulderTravel * 0.3);
 }
 
 function formAnchoredPushupHandCount(metrics, tolerance) {
@@ -289,33 +518,16 @@ function validateExperimentalCalibration(position) {
   }
 
   if (CONFIG.exercise === 'pullups') {
+    if (position === 'top') { exportPullupCalibrationTrace('observing'); }
     var pullupTopMessage = 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull until your <b>EYE LINE</b> reaches the bar<br><br>Hold your highest point…';
     var pullupBottomMessage = 'STEP 2 OF 2<br><br>Lower to a comfortable <b>BOTTOM</b> position<br>A slight elbow bend is fine<br>Keep both hands on the bar<br><br>Hold still…';
+    var floorCalibration = pullupFloorCalibrationCheck();
+    if (!floorCalibration.valid) { return floorCalibration; }
     if (position === 'top') {
-      if (
-        !metrics.eyes ||
-        !metrics.shoulders ||
-        !metrics.wrists ||
-        metrics.elbowAngle === null ||
-        metrics.elbowCount < 2 ||
-        metrics.wrists.y > metrics.shoulders.y - 0.015 ||
-        metrics.elbowAngle > 145
-      ) {
-        return formInvalid(pullupTopMessage);
+      if (!pullupHangReference) {
+        return formInvalid('STEP 1 OF 2<br><br>Settle into a <b>HANG</b> with both hands on the bar and both feet off the floor<br>A slight elbow bend is fine<br><br>Then pull until your <b>EYE LINE</b> reaches the bar.');
       }
-      var eyeLineToBar = metrics.eyes.y - metrics.wrists.y;
-      if (eyeLineToBar > 0.035) {
-        return formInvalid(pullupTopMessage);
-      }
-      var shoulderToBar = metrics.shoulders.y - metrics.wrists.y;
-      var requiredShoulderLift = pullupHangReference
-        ? Math.max(0.04, Math.min(0.08, pullupHangReference.gap * 0.25))
-        : 0.04;
-      if (!pullupHangReference ||
-          pullupHangReference.gap - shoulderToBar < requiredShoulderLift) {
-        return formInvalid(pullupTopMessage);
-      }
-      return formValid();
+      return pullupTopBodyRiseValid(metrics) ? formValid() : formInvalid(pullupTopMessage);
     }
     if (
       !metrics.shoulders ||
@@ -327,7 +539,10 @@ function validateExperimentalCalibration(position) {
     }
     if (formTopMetrics) {
       var bodyTravel = metrics.controllerY - formTopMetrics.controllerY;
-      var wristTravel = formDistance(metrics.wrists, formTopMetrics.wrists);
+      var wristTravel = Math.max(
+        formDistance(metrics.leftWrist, formTopMetrics.leftWrist),
+        formDistance(metrics.rightWrist, formTopMetrics.rightWrist)
+      );
       if (metrics.elbowAngle < 115 || metrics.elbowAngle - formTopMetrics.elbowAngle < 10) {
         return formInvalid(pullupBottomMessage);
       }
@@ -376,28 +591,88 @@ function validateExperimentalCalibration(position) {
     return formValid();
   }
 
-  if (!metrics.shoulders || !metrics.hips || !metrics.wrists || metrics.elbowAngle === null || metrics.elbowCount < 2) {
-    return formInvalid('Form check<br><br>Keep your torso, elbows, and both wrists visible.');
+  var pressArms = shoulderPressArms(metrics);
+  if (!pressArms) {
+    return formInvalid('Form check<br><br>Keep both shoulders and elbows in view.<br>Your hands can leave the top of the frame.');
   }
-  if (!formTorsoIsUpright(metrics)) {
+  if (metrics.hips && !formTorsoIsUpright(metrics)) {
     return formInvalid('Form check<br><br>Keep your torso comfortably upright.');
   }
-  if (position === 'top' && (metrics.elbowAngle < 130 || metrics.wrists.y > metrics.shoulders.y - 0.04)) {
-    return formInvalid('Form check<br><br>Press your hands overhead and straighten your elbows.');
+  for (var pai = 0; pai < pressArms.length; pai++) {
+    var pressArm = pressArms[pai];
+    if (position === 'top' && (pressArm.lift < 0.65 ||
+        (pressArm.elbowAngle !== null && pressArm.elbowAngle < 130))) {
+      return formInvalid('Press both arms up<br><br>Keep your shoulders and elbows visible.<br>Your hands can leave the top of the frame.');
+    }
+    if (position === 'bottom' && (pressArm.lift > 0.35 || !shoulderPressBottomVisible(pressArm))) {
+      return formInvalid('Lower both hands near your shoulders<br><br>Bend your elbows and hold still.');
+    }
   }
-  if (position === 'bottom' && formTopMetrics && formTopMetrics.elbowAngle - metrics.elbowAngle < 15) {
-    return formInvalid('Form check<br><br>Lower your hands and bend your elbows toward shoulder height.');
-  }
-  if (position === 'bottom' && formTopMetrics && !formHasBilateralWristRange(metrics, 0.05)) {
-    return formInvalid('Form check<br><br>Lower both hands through the full press range.');
+  if (position === 'bottom' && formTopMetrics) {
+    var topPressArms = shoulderPressArms(formTopMetrics);
+    if (!topPressArms || pressArms.some(function(arm, index) {
+      return topPressArms[index].lift - arm.lift < 0.35;
+    })) {
+      return formInvalid('Lower both elbows through the press range<br><br>Bring your hands near your shoulders.');
+    }
   }
   return formValid();
 }
 
-function saveExperimentalCalibration(position) {
+function pullupStableCalibrationMetrics(since, controllerY) {
+  var samples = pullupCalibrationPoseHistory.filter(function(sample) { return sample.t >= since; });
+  if (!samples.length) { return formCurrentMetrics; }
+  var result = Object.assign({}, formCurrentMetrics);
+  // References come from the same stable camera observations as the controller,
+  // not whichever noisier landmark frame happened to close the progress bar.
+  Object.keys(result).forEach(function(key) {
+    var values = samples.map(function(sample) { return sample.metrics[key]; });
+    if (values.every(function(value) { return typeof value === 'number' && Number.isFinite(value); })) {
+      result[key] = values.reduce(function(sum, value) { return sum + value; }, 0) / values.length;
+    } else if (values.every(function(value) { return value && Number.isFinite(value.x) && Number.isFinite(value.y); })) {
+      result[key] = Object.assign({}, values[values.length - 1], {
+        x: values.reduce(function(sum, value) { return sum + value.x; }, 0) / values.length,
+        y: values.reduce(function(sum, value) { return sum + value.y; }, 0) / values.length
+      });
+    }
+  });
+  if (Number.isFinite(controllerY)) { result.controllerY = controllerY; }
+  return result;
+}
+
+function saveExperimentalCalibration(position, stableSince, controllerY) {
   if (!usesExperimentalFormTracking() || !formCurrentMetrics) { return; }
-  if (position === 'top') { formTopMetrics = formCurrentMetrics; }
-  else { formBottomMetrics = formCurrentMetrics; }
+  var snapshot = CONFIG.exercise === 'pullups' && Number.isFinite(stableSince)
+    ? pullupStableCalibrationMetrics(stableSince, controllerY) : formCurrentMetrics;
+  if (position === 'top') {
+    exportPullupCalibrationTrace('accepted-top');
+    formTopMetrics = snapshot;
+  }
+  else {
+    formBottomMetrics = snapshot;
+    if (CONFIG.exercise === 'pullups') {
+      resetPullupSupportRun();
+      pullupRunContactLogged = false;
+      exportPullupCalibrationTrace('accepted-bottom');
+    }
+  }
+  if (CONFIG.exercise === 'pullups' && typeof postRN === 'function') {
+    var m = formCurrentMetrics;
+    postRN({
+      type: 'formdebug',
+      message: JSON.stringify({
+        position: position,
+        eyeToGrip: m.eyes && m.wrists ? +(m.eyes.y - m.wrists.y).toFixed(3) : null,
+        shoulderToGrip: m.shoulders && m.wrists ? +(m.shoulders.y - m.wrists.y).toFixed(3) : null,
+        hangReference: pullupHangReference ? +pullupHangReference.gap.toFixed(3) : null,
+        leftFootY: m.leftFoot ? +m.leftFoot.y.toFixed(3) : null,
+        rightFootY: m.rightFoot ? +m.rightFoot.y.toFixed(3) : null,
+        leftKnee: m.leftKneeAngle === null ? null : +m.leftKneeAngle.toFixed(0),
+        rightKnee: m.rightKneeAngle === null ? null : +m.rightKneeAngle.toFixed(0),
+        observedSupport: pullupSupportDebug(m)
+      })
+    });
+  }
 }
 
 function formExpected(topValue, bottomValue, norm) {
@@ -406,6 +681,12 @@ function formExpected(topValue, bottomValue, norm) {
 
 function formMetricMatches(value, topValue, bottomValue, norm, tolerance) {
   if (value === null || topValue === null || bottomValue === null) { return false; }
+  // The controller clamps at the calibrated endpoints. Continuing in the same
+  // joint direction (including full extension) is still valid endpoint input.
+  var direction = topValue - bottomValue;
+  if (direction !== 0 && (
+      (norm >= 0.98 && (value - topValue) * direction >= 0) ||
+      (norm <= 0.02 && (value - bottomValue) * direction <= 0))) { return true; }
   return Math.abs(value - formExpected(topValue, bottomValue, norm)) <= tolerance;
 }
 
@@ -427,7 +708,7 @@ function formHasBilateralWristRange(metrics, minimumTravel) {
 function formWristProgress(value, topValue, bottomValue) {
   var range = bottomValue - topValue;
   if (Math.abs(range) < 0.04) { return null; }
-  return (bottomValue - value) / range;
+  return Math.max(0, Math.min(1, (bottomValue - value) / range));
 }
 
 function formBilateralWristMotionMatches(metrics) {
@@ -488,8 +769,15 @@ function validateExperimentalGameplay(norm) {
 
   if (CONFIG.exercise === 'pullups') {
     var pullupNow = performance.now();
+    var floorGameplay = pullupFloorGameplayCheck();
+    if (!floorGameplay.valid) {
+      if (floorGameplay.fatal && !pullupRunContactLogged) {
+        pullupRunContactLogged = true;
+        exportPullupCalibrationTrace('confirmed-ground-contact');
+      }
+      return floorGameplay;
+    }
     if (!metrics.leftWrist || !metrics.rightWrist || !metrics.wrists) {
-      pullupFootAnchorEvidence = { left: [], right: [] };
       if (!pullupWristMissingAt) { pullupWristMissingAt = pullupNow; }
       if (pullupNow - pullupWristMissingAt >= PULLUP_EVIDENCE_GRACE_MS) {
         return formFatal('Grip can no longer be verified<br><br>Your run is ending.', 'pullup-grip-unverified');
@@ -500,29 +788,32 @@ function validateExperimentalGameplay(norm) {
     if (!metrics.shoulders || metrics.elbowAngle === null || metrics.elbowCount < 2) {
       return formInvalid('Form check<br><br>Keep both shoulders, elbows, and hands visible.');
     }
-    var wristAnchor = {
-      x: (formTopMetrics.wrists.x + formBottomMetrics.wrists.x) / 2,
-      y: (formTopMetrics.wrists.y + formBottomMetrics.wrists.y) / 2
-    };
-    if (formDistance(metrics.wrists, wristAnchor) > 0.075) {
+    var gripMoved = ['leftWrist', 'rightWrist'].some(function(key) {
+      var top = formTopMetrics[key], bottom = formBottomMetrics[key];
+      if (!top || !bottom) { return true; }
+      var anchor = { x: (top.x + bottom.x) / 2, y: (top.y + bottom.y) / 2 };
+      return formDistance(metrics[key], anchor) > 0.075;
+    });
+    if (gripMoved) {
       return formFatal('Bar released<br><br>Your run is ending.', 'pullup-bar');
     }
-      var leftFootAnchored = pullupFootAppearsPlanted(
-      'left',
-      metrics.leftFoot,
-      metrics.shoulders,
-      metrics.leftKneeAngle,
-        pullupNow
-    );
-    var rightFootAnchored = pullupFootAppearsPlanted(
-      'right',
-      metrics.rightFoot,
-      metrics.shoulders,
-      metrics.rightKneeAngle,
-        pullupNow
-    );
-    if (leftFootAnchored || rightFootAnchored) {
-      return formFatal('A planted foot was detected<br><br>Your run is ending.', 'pullup-feet');
+
+    if (typeof postRN === 'function' &&
+        (lastPullupGameDebugAt === 0 || pullupNow - lastPullupGameDebugAt >= 2000)) {
+      lastPullupGameDebugAt = pullupNow;
+
+      postRN({
+        type: 'formdebug',
+        message: JSON.stringify({
+          phase: 'gameplay',
+          shoulderY: +metrics.shoulders.y.toFixed(3),
+          leftFootY: metrics.leftFoot ? +metrics.leftFoot.y.toFixed(3) : null,
+          rightFootY: metrics.rightFoot ? +metrics.rightFoot.y.toFixed(3) : null,
+          leftKnee: metrics.leftKneeAngle === null ? null : +metrics.leftKneeAngle.toFixed(0),
+          rightKnee: metrics.rightKneeAngle === null ? null : +metrics.rightKneeAngle.toFixed(0),
+          observedSupport: pullupSupportDebug(metrics)
+        })
+      });
     }
     if (!formMetricMatches(metrics.elbowAngle, formTopMetrics.elbowAngle, formBottomMetrics.elbowAngle, norm, 55)) {
       return formInvalid('Form check<br><br>Let your elbows bend and straighten with your body.');
@@ -569,18 +860,30 @@ function validateExperimentalGameplay(norm) {
     return formValid();
   }
 
-  if (!metrics.leftWrist || !metrics.rightWrist || metrics.elbowCount < 2) {
-    return formFatal('Both arms can no longer be verified.', 'shoulderpress-both-arms');
+  var pressArms = shoulderPressArms(metrics);
+  var topPressArms = shoulderPressArms(formTopMetrics);
+  var bottomPressArms = shoulderPressArms(formBottomMetrics);
+  if (!pressArms || !topPressArms || !bottomPressArms) {
+    return formInvalid('Form check<br><br>Keep both shoulders and elbows in view.');
   }
-  if (!formTorsoIsUpright(metrics) || metrics.elbowAngle === null) {
-    return formInvalid('Form check<br><br>Keep your torso and elbows visible.');
+  if (metrics.hips && !formTorsoIsUpright(metrics)) {
+    return formInvalid('Form check<br><br>Keep your torso comfortably upright.');
   }
-  if (!formBilateralWristMotionMatches(metrics)) {
+  var pressProgress = pressArms.map(function(arm, index) {
+    var range = topPressArms[index].lift - bottomPressArms[index].lift;
+    // Match the game controller: both arms beyond the same calibrated endpoint
+    // are at that endpoint, even when the two calibration ranges differ.
+    return range >= 0.35
+      ? Math.max(0, Math.min(1, (arm.lift - bottomPressArms[index].lift) / range)) : null;
+  });
+  if (pressProgress[0] === null || pressProgress[1] === null ||
+      Math.abs(pressProgress[0] - pressProgress[1]) > 0.3) {
     return formFatal('Both-arm shoulder press could not be verified.', 'shoulderpress-both-arms');
   }
-  if (!formMetricMatches(metrics.elbowAngle, formTopMetrics.elbowAngle, formBottomMetrics.elbowAngle, norm, 55)) {
-    return formInvalid('Form check<br><br>Press by bending and straightening your elbows.');
-  }
+  // Calibration verifies the starting press positions. During play, shoulder
+  // and elbow motion controls the entire range, including full lockout above
+  // or below it. Wrist estimates near the frame edge must not reject that input.
+  // Holding an endpoint keeps the bird there while normal collisions continue.
   return formValid();
 }
 `;

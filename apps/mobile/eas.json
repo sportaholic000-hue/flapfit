@@ -17,7 +17,16 @@
         "EXPO_PUBLIC_MARKETING_URL": "https://flapfitapp.com/",
         "EXPO_PUBLIC_SUPABASE_URL": "https://yhrleungvipsqlmayrfg.supabase.co",
         "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_e9j7eYYJA-H-TLBne995Mw_43I24Klh",
+        "EXPO_PUBLIC_ADS_MODE": "test",
+        "EXPO_PUBLIC_ADMOB_IOS_APP_ID": "ca-app-pub-5933597810180440~5139925774",
+        "EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID": "ca-app-pub-5933597810180440/2284241303",
+        "EXPO_PUBLIC_ADMOB_ANDROID_APP_ID": "ca-app-pub-5933597810180440~7891791204",
+        "EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL_ID": "ca-app-pub-5933597810180440/4539316666",
+        "EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY": "goog_jbNYYZFXcnLaloZEWOvQrTQcmwS",
         "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_ceexQTnHXavsTnEfdRrQyiCtFuY"
+      },
+      "ios": {
+        "image": "macos-tahoe-26.5-xcode-26.6"
       }
     },
     "preview": {
@@ -32,7 +41,16 @@
         "EXPO_PUBLIC_MARKETING_URL": "https://flapfitapp.com/",
         "EXPO_PUBLIC_SUPABASE_URL": "https://yhrleungvipsqlmayrfg.supabase.co",
         "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_e9j7eYYJA-H-TLBne995Mw_43I24Klh",
+        "EXPO_PUBLIC_ADS_MODE": "test",
+        "EXPO_PUBLIC_ADMOB_IOS_APP_ID": "ca-app-pub-5933597810180440~5139925774",
+        "EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID": "ca-app-pub-5933597810180440/2284241303",
+        "EXPO_PUBLIC_ADMOB_ANDROID_APP_ID": "ca-app-pub-5933597810180440~7891791204",
+        "EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL_ID": "ca-app-pub-5933597810180440/4539316666",
+        "EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY": "goog_jbNYYZFXcnLaloZEWOvQrTQcmwS",
         "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_ceexQTnHXavsTnEfdRrQyiCtFuY"
+      },
+      "ios": {
+        "image": "macos-tahoe-26.5-xcode-26.6"
       }
     },
     "production": {
@@ -42,7 +60,8 @@
         "buildType": "app-bundle"
       },
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "image": "macos-tahoe-26.5-xcode-26.6"
       },
       "env": {
         "EXPO_USE_PRECOMPILED_MODULES": "0",
@@ -53,7 +72,23 @@
         "EXPO_PUBLIC_MARKETING_URL": "https://flapfitapp.com/",
         "EXPO_PUBLIC_SUPABASE_URL": "https://yhrleungvipsqlmayrfg.supabase.co",
         "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_e9j7eYYJA-H-TLBne995Mw_43I24Klh",
+        "EXPO_PUBLIC_ADS_MODE": "live",
+        "EXPO_PUBLIC_ADMOB_IOS_APP_ID": "ca-app-pub-5933597810180440~5139925774",
+        "EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID": "ca-app-pub-5933597810180440/2284241303",
+        "EXPO_PUBLIC_ADMOB_ANDROID_APP_ID": "ca-app-pub-5933597810180440~7891791204",
+        "EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL_ID": "ca-app-pub-5933597810180440/4539316666",
+        "EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY": "goog_jbNYYZFXcnLaloZEWOvQrTQcmwS",
         "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_ceexQTnHXavsTnEfdRrQyiCtFuY"
+      }
+    },
+    "ios-compile-check": {
+      "extends": "preview",
+      "developmentClient": false,
+      "autoIncrement": false,
+      "ios": {
+        "simulator": true,
+        "image": "macos-tahoe-26.5-xcode-26.6",
+        "resourceClass": "m-medium"
       }
     }
   },

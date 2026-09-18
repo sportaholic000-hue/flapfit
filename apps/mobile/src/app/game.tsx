@@ -1,11 +1,11 @@
-import { isLaunchGameMode } from '@/utils/game/gameModes';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
 import { File, Paths, type FileHandle } from 'expo-file-system';
 import * as Haptics from 'expo-haptics';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
-import * as Sharing from 'expo-sharing';
+import { getVideoShareAvailability, shareGameplayVideo, type VideoShareDestination } from '@/services/videoSharing';
 import { StatusBar } from 'expo-status-bar';
+import { adEnvironment, prepareResultInterstitial, resultAdGate, settlePrivacyBeforeGameplay } from '@/services/monetization';
 import {
   ArrowRight,
   Camera,
@@ -24,6 +24,7 @@ import {
   Linking,
   Platform,
   Share,
+  ScrollView,
   Text,
   TouchableOpacity,
   useWindowDimensions,
@@ -43,12 +44,14 @@ import {
 import { getBirdStageArt } from '@/utils/game/birdStageArt';
 import { loadBirdAssetDataUri } from '@/utils/game/birdWebAsset';
 import { getBird } from '@/utils/game/birds';
+import { isLaunchGameMode } from '@/utils/game/gameModes';
 import {
   GAME_WEB_BASE_URL,
   GAME_WEB_ORIGIN_WHITELIST,
   isAllowedGameNavigation,
 } from '@/utils/game/game-web-navigation';
 import { buildGameHtml } from '@/utils/game/gameHtml';
+import { FORM_TRACKING_RULES_VERSION } from '@/utils/game/html/scriptFormTracking';
 import { ENDLESS_BASE, getLevel, LEVELS } from '@/utils/game/levels';
 import {
   prepareMediaPipeAssets,
@@ -160,17 +163,33 @@ function normalizeVideoExtension(extension?: string, mimeType?: string) {
   return 'webm';
 }
 
-function videoUti(mimeType: string, extension: string) {
-  if (mimeType.includes('mp4') || extension === 'mp4') return 'public.mpeg-4';
-  if (mimeType.includes('quicktime') || extension === 'mov') return 'com.apple.quicktime-movie';
-  if (mimeType.includes('webm') || extension === 'webm') return 'org.webmproject.webm';
-  return 'public.movie';
-}
 
 export default function GameScreen() {
   const { mode } = useLocalSearchParams<{ mode?: string }>();
-  if (!isLaunchGameMode(mode)) return <Redirect href="/(tabs)" />;
-  return <GameContent />;
+  const supportedMode = isLaunchGameMode(mode);
+  const router = useRouter();
+  const [privacySettled, setPrivacySettled] = useState(false);
+  useEffect(() => {
+    if (!supportedMode) return;
+    let mounted = true;
+    void settlePrivacyBeforeGameplay().then(() => {
+      if (mounted) setPrivacySettled(true);
+    });
+    return () => { mounted = false; };
+  }, [supportedMode]);
+  if (!supportedMode) return <Redirect href="/(tabs)" />;
+  if (privacySettled) return <GameContent />;
+  return (
+    <View style={{ flex: 1, backgroundColor: '#0F172A', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
+      <ActivityIndicator color="#FFFFFF" size="large" />
+      <Text accessibilityRole="text" style={{ color: '#FFFFFF', marginTop: 18, textAlign: 'center' }}>
+        Finishing privacy choices before your game…
+      </Text>
+      <TouchableOpacity accessibilityRole="button" onPress={() => router.back()} style={{ padding: 20 }}>
+        <Text style={{ color: '#7DD3FC', fontWeight: '700' }}>Back</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 function GameContent() {
@@ -233,6 +252,8 @@ function GameContent() {
   const [microphonePermission, requestMicrophonePermission] = useMicrophonePermissions();
   const [recordWithoutAudio, setRecordWithoutAudio] = useState(false);
   const [runKey, setRunKey] = useState(0);
+  const resultSubmissionGeneration = useRef(0);
+  useEffect(() => () => { resultSubmissionGeneration.current += 1; }, []);
   const [result, setResult] = useState<GameResult | null>(null);
   const [competitionResultState, setCompetitionResultState] =
     useState<CompetitionResultState | null>(null);
@@ -247,6 +268,38 @@ function GameContent() {
   const [recordingError, setRecordingError] = useState<string | null>(null);
   const [recordedVideo, setRecordedVideo] = useState<RecordedVideo | null>(null);
   const [shareBusy, setShareBusy] = useState(false);
+  const shareBusyRef = useRef(false);
+  const resultExitRef = useRef<ReturnType<typeof resultAdGate.createResult> | null>(null);
+  const resultActionClaimed = useRef(false);
+  const [resultActionBusy, setResultActionBusy] = useState(false);
+  const recordingIsFinalizing = recordingPhase === 'recording' || recordingPhase === 'preparing';
+  useEffect(() => {
+    resultActionClaimed.current = false;
+    setResultActionBusy(false);
+    if (!result) return;
+    const opportunity = resultAdGate.createResult(
+      recordingIsFinalizing ? null : prepareResultInterstitial(),
+      adEnvironment,
+    );
+    resultExitRef.current = opportunity;
+    return () => { opportunity.dispose(); resultExitRef.current = null; };
+  }, [result, runKey, recordingIsFinalizing]);
+  const performResultAction = (action: () => void) => {
+    if (!result || shareBusyRef.current || resultActionClaimed.current || !adEnvironment.isActive()) return;
+    resultActionClaimed.current = true;
+    setResultActionBusy(true);
+    const opportunity = resultExitRef.current;
+    if (opportunity) opportunity.exit(false, action);
+    else action();
+  };
+  const [videoShareAvailability, setVideoShareAvailability] = useState({ messages: false, mail: false });
+  useEffect(() => {
+    let active = true;
+    void getVideoShareAvailability().then((available) => {
+      if (active) setVideoShareAvailability(available);
+    });
+    return () => { active = false; };
+  }, []);
   const gameOverHandled = useRef(false);
   const recordingPhaseRef = useRef<RecordingPhase>('idle');
   const recordingSessionIdRef = useRef<string | null>(null);
@@ -433,6 +486,7 @@ function GameContent() {
         trackingMode,
         exercise: exerciseMode,
         endless: isEndless,
+        brandFirstPipe: mode === 'level' && level.id === 1,
         speed: level.speed,
         gapFrac: level.gapFrac,
         spawnMs: level.spawnMs,
@@ -458,6 +512,7 @@ function GameContent() {
       exerciseMode,
       isEndless,
       level.id,
+      mode,
       recordRun,
       recordWithoutAudio,
       microphonePermission?.granted,
@@ -519,6 +574,7 @@ function GameContent() {
         const detail =
           error instanceof Error ? error.message : 'The bundled camera tracker could not be read.';
         console.error('Failed to transfer bundled camera tracker', error);
+        if (trackerTransferTokenRef.current !== transferToken) return;
         setTrackerLoadError(detail);
         webViewRef.current?.injectJavaScript(
           `window.__rejectTrackerAssets(${JSON.stringify(detail)});true;`
@@ -575,14 +631,18 @@ function GameContent() {
         ['pushups', 'squats', 'pullups'].includes(exerciseMode);
       if (!competitionIsConfigured || !leaderboardEligible) return;
 
-      setCompetitionResultState({
+      const generation = resultSubmissionGeneration.current;
+      const publishStatus = (state: CompetitionResultState) => {
+        if (resultSubmissionGeneration.current === generation) setCompetitionResultState(state);
+      };
+      publishStatus({
         status: 'pending',
         message: 'Publishing online result…',
       });
       try {
         const session = await competitionRunPromiseRef.current;
         if (!session) {
-          setCompetitionResultState({
+          publishStatus({
             status: 'rejected',
             message: 'Online verification did not start, so this result was not published.',
           });
@@ -597,13 +657,13 @@ function GameContent() {
           score,
           durationMs: Math.round(Math.max(0, durationMs)),
         });
-        setCompetitionResultState(outcome);
+        publishStatus(outcome);
         if (outcome.status === 'accepted') {
           if (isEndless) queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
         }
       } catch (error) {
         console.warn('Competition result could not be queued', error);
-        setCompetitionResultState({
+        publishStatus({
           status: 'rejected',
           message:
             'Online result could not be queued. Your local level and training progress are safe.',
@@ -688,7 +748,8 @@ function GameContent() {
       sessionId: string,
       mimeType: string | undefined,
       extension: string | undefined,
-      chunkCount: number
+      chunkCount: number,
+      byteLength: number | undefined
     ) => {
       if (!recordRun || sessionId !== recordingSessionIdRef.current) return;
 
@@ -711,6 +772,10 @@ function GameContent() {
         const file = recordingFileRef.current;
         if (!file?.exists || file.size <= 0) {
           throw new Error('The recorded video was empty.');
+        }
+
+        if (!Number.isSafeInteger(byteLength) || byteLength !== file.size) {
+          throw new Error('The recorded video size changed during transfer. Please record again.');
         }
 
         const startMetadata = recordingMetadataRef.current;
@@ -739,20 +804,14 @@ function GameContent() {
     [failRecording, flushRecordingChunks, recordRun, updateRecordingPhase]
   );
 
-  const shareRecordedVideo = useCallback(async () => {
-    if (!recordedVideo || shareBusy) return;
+  const shareRecordedVideo = useCallback(async (destination: VideoShareDestination = 'apps') => {
+    if (!recordedVideo || shareBusyRef.current || resultActionClaimed.current) return;
+    shareBusyRef.current = true;
     setShareBusy(true);
     setRecordingError(null);
 
     try {
-      if (!(await Sharing.isAvailableAsync())) {
-        throw new Error('Sharing is not available on this device.');
-      }
-      await Sharing.shareAsync(recordedVideo.uri, {
-        dialogTitle: 'Share your Flap Fit gameplay video',
-        mimeType: recordedVideo.mimeType,
-        UTI: videoUti(recordedVideo.mimeType, recordedVideo.extension),
-      });
+      await shareGameplayVideo(recordedVideo, destination);
     } catch (error) {
       setRecordingError(
         error instanceof Error
@@ -760,9 +819,10 @@ function GameContent() {
           : 'The video is ready, but it could not be shared. Please try again.'
       );
     } finally {
+      shareBusyRef.current = false;
       setShareBusy(false);
     }
-  }, [recordedVideo, shareBusy]);
+  }, [recordedVideo]);
 
   const onMessage = useCallback(
     (event: { nativeEvent: { data: string } }) => {
@@ -782,6 +842,7 @@ function GameContent() {
         index?: number;
         data?: string;
         chunkCount?: number;
+        byteLength?: number;
         message?: string;
         requestId?: string;
         simd?: boolean;
@@ -826,7 +887,7 @@ function GameContent() {
           failRecording('The gameplay recorder could not finish the temporary video.');
           return;
         }
-        completeVideoRecording(msg.sessionId, msg.mimeType, msg.extension, msg.chunkCount);
+        completeVideoRecording(msg.sessionId, msg.mimeType, msg.extension, msg.chunkCount, msg.byteLength);
         return;
       }
       if (msg.type === 'recordingerror') {
@@ -841,6 +902,14 @@ function GameContent() {
           'Camera tracker failed inside the game WebView',
           msg.message ?? 'Unknown error'
         );
+        return;
+      }
+      if (msg.type === 'recordingdebug') {
+        if (__DEV__) console.info('Video finalization:', msg.message ?? 'No measurements');
+        return;
+      }
+      if (msg.type === 'formdebug') {
+        if (__DEV__) console.info('Pull-up calibration:', msg.message ?? 'No measurements');
         return;
       }
 
@@ -922,6 +991,7 @@ function GameContent() {
   );
 
   const retry = () => {
+    resultSubmissionGeneration.current += 1;
     discardRecording();
     // A retry gets the newest evolution; an in-progress run never reloads for it.
     runBirdEvo.current = birdEvo;
@@ -945,6 +1015,7 @@ function GameContent() {
       return;
     }
 
+    resultSubmissionGeneration.current += 1;
     discardRecording();
     // Prepare a clean run before replacing this route with the next standard
     // level. This also keeps the newest bird evolution without reloading an
@@ -971,6 +1042,7 @@ function GameContent() {
     });
   };
   const leaveGame = useCallback(() => {
+    resultSubmissionGeneration.current += 1;
     discardRecording();
     router.back();
   }, [discardRecording, router]);
@@ -1122,7 +1194,7 @@ function GameContent() {
   return (
     <View style={{ flex: 1, backgroundColor: level.sky1 }}>
       <StatusBar style="light" hidden={Platform.OS === 'ios'} />
-      {webSource ? (
+      {webSource && !trackerLoadError ? (
         <WebView
           ref={webViewRef}
           key={runKey}
@@ -1173,7 +1245,13 @@ function GameContent() {
                 if (birdImageErrorKey === birdImageRequestKey) {
                   setRunKey((key) => key + 1);
                 }
-                if (trackerLoadError) setTrackerRetryKey((key) => key + 1);
+                if (trackerLoadError) {
+                  trackerTransferTokenRef.current += 1;
+                  trackerRequestIdRef.current = null;
+                  setTrackerAssets(null);
+                  setTrackerLoadError(null);
+                  setTrackerRetryKey((key) => key + 1);
+                }
               }}
               style={{
                 borderRadius: 14,
@@ -1204,6 +1282,18 @@ function GameContent() {
         >
           <X size={20} color="#FFFFFF" />
         </TouchableOpacity>
+      ) : null}
+
+      {__DEV__ && !result ? (
+        <View
+          pointerEvents="none"
+          style={{ position: 'absolute', top: insets.top + 55, left: 14, borderRadius: 8,
+            backgroundColor: 'rgba(15,23,42,0.8)', paddingHorizontal: 8, paddingVertical: 4 }}
+        >
+          <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '700' }}>
+            {trackingMode === 'form-test' ? 'Form Test ' + FORM_TRACKING_RULES_VERSION : 'Original tracking'}
+          </Text>
+        </View>
       ) : null}
 
       {!result && recordingPhase === 'recording' ? (
@@ -1290,6 +1380,11 @@ function GameContent() {
             ))}
           </View>
 
+          <ScrollView
+            style={{ width: '100%', maxWidth: 390, flexGrow: 0 }}
+            contentContainerStyle={{ alignItems: 'center', paddingVertical: 8 }}
+            showsVerticalScrollIndicator={false}
+          >
           <Animated.View
             style={{
               width: '100%',
@@ -1406,6 +1501,7 @@ function GameContent() {
               </Text>
             </TouchableOpacity>
           </Animated.View>
+          </ScrollView>
         </View>
       ) : null}
 
@@ -1421,8 +1517,15 @@ function GameContent() {
             alignItems: 'center',
             justifyContent: 'center',
             paddingHorizontal: 28,
+            paddingTop: insets.top,
+            paddingBottom: insets.bottom,
           }}
         >
+          <ScrollView
+            style={{ width: '100%', maxWidth: 380, flexGrow: 0 }}
+            contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}
+            showsVerticalScrollIndicator={false}
+          >
           <View
             style={{
               backgroundColor: '#FFFFFF',
@@ -1549,7 +1652,7 @@ function GameContent() {
                 <TouchableOpacity
                   accessibilityRole="button"
                   accessibilityLabel="Share gameplay video"
-                  disabled={shareBusy}
+                  disabled={shareBusy || resultActionBusy}
                   onPress={() => void shareRecordedVideo()}
                   style={{
                     marginTop: 16,
@@ -1573,6 +1676,17 @@ function GameContent() {
                     {shareBusy ? 'Opening share options…' : 'Share gameplay video'}
                   </Text>
                 </TouchableOpacity>
+                {Platform.OS === 'ios' && videoShareAvailability.messages ? (
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    accessibilityLabel="Send video with Messages"
+                    disabled={shareBusy || resultActionBusy}
+                    onPress={() => void shareRecordedVideo('messages')}
+                    style={{ width: '100%', marginTop: 10, minHeight: 44, borderRadius: 12, backgroundColor: '#EFF6FF', alignItems: 'center', justifyContent: 'center', opacity: shareBusy ? 0.6 : 1 }}
+                  >
+                    <Text style={{ color: '#1D4ED8', fontWeight: '800' }}>Messages</Text>
+                  </TouchableOpacity>
+                ) : null}
                 <Text
                   style={{
                     color: '#64748B',
@@ -1627,7 +1741,8 @@ function GameContent() {
               <TouchableOpacity
                 accessibilityRole="button"
                 accessibilityLabel={`Start Level ${level.id + 1}`}
-                onPress={goToNextLevel}
+                disabled={shareBusy || resultActionBusy}
+                onPress={() => performResultAction(goToNextLevel)}
                 style={{
                   marginTop: recordRun ? 12 : 18,
                   backgroundColor: '#F59E0B',
@@ -1647,7 +1762,8 @@ function GameContent() {
               </TouchableOpacity>
             ) : null}
             <TouchableOpacity
-              onPress={retry}
+              disabled={shareBusy || resultActionBusy}
+              onPress={() => performResultAction(retry)}
               style={{
                 marginTop: canGoNextLevel ? 10 : 18,
                 backgroundColor: canGoNextLevel ? '#FFF7ED' : '#F59E0B',
@@ -1674,7 +1790,8 @@ function GameContent() {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={leaveGame}
+              disabled={shareBusy || resultActionBusy}
+              onPress={() => performResultAction(leaveGame)}
               style={{
                 marginTop: 10,
                 backgroundColor: '#F1F5F9',
@@ -1691,6 +1808,7 @@ function GameContent() {
               <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 15 }}>Done</Text>
             </TouchableOpacity>
           </View>
+          </ScrollView>
         </View>
       ) : null}
     </View>
