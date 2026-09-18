@@ -1,0 +1,70 @@
+-- Preserve existing codes as legacy any-exercise challenges.
+alter table public.challenges add column exercise text;
+alter table public.challenges add constraint challenges_exercise_allowed check (
+  exercise is null or exercise in ('pushups', 'squats', 'pullups', 'biceps', 'lateralraise', 'shoulderpress')
+);
+
+-- Reuse the existing transactional quota/name/profile logic. Only the trusted
+-- Edge Function's service role can call either overload.
+create function public.create_challenge_limited(
+  p_user_id uuid,
+  p_player_name text,
+  p_terms_version text,
+  p_target_score integer,
+  p_code text,
+  p_exercise text
+) returns table(code text)
+language plpgsql
+security invoker
+set search_path = public, pg_temp
+as $$
+begin
+  if p_exercise is null or p_exercise not in (
+    'pushups', 'squats', 'pullups', 'biceps', 'lateralraise', 'shoulderpress'
+  ) then
+    raise exception 'Exercise is invalid.' using errcode = '22023';
+  end if;
+
+  perform public.create_challenge_limited(
+    p_user_id, p_player_name, p_terms_version, p_target_score, p_code
+  );
+  update public.challenges c
+  set exercise = p_exercise
+  where c.code = p_code and c.creator_id = p_user_id;
+  if not found then
+    raise exception 'Challenge not found.';
+  end if;
+  return query select p_code;
+end;
+$$;
+revoke all on function public.create_challenge_limited(uuid, text, text, integer, text, text)
+  from public, anon, authenticated;
+grant execute on function public.create_challenge_limited(uuid, text, text, integer, text, text)
+  to service_role;
+
+-- Enforce the exercise at the server run boundary, including direct service-role
+-- writes. The nullable legacy exercise deliberately preserves existing codes.
+create function public.flapfit_enforce_challenge_exercise()
+returns trigger
+language plpgsql
+security invoker
+set search_path = public, pg_temp
+as $$
+declare
+  required_exercise text;
+begin
+  if new.run_kind = 'challenge' then
+    select c.exercise into required_exercise
+    from public.challenges c where c.id = new.challenge_id;
+    if not found then raise exception 'Challenge not found.'; end if;
+    if required_exercise is not null and new.exercise is distinct from required_exercise then
+      raise exception 'Exercise does not match this challenge.' using errcode = '22023';
+    end if;
+  end if;
+  return new;
+end;
+$$;
+revoke all on function public.flapfit_enforce_challenge_exercise() from public, anon, authenticated;
+create trigger flapfit_challenge_exercise_guard
+  before insert or update of exercise, challenge_id, run_kind on public.game_runs
+  for each row execute function public.flapfit_enforce_challenge_exercise();

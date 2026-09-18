@@ -1,0 +1,70 @@
+# Flap Fit Shipaton entry draft
+
+Status: editable draft, **not a submitted entry**. Replace bracketed fields and remove any sentence
+not verified against the exact publicly released build. The owner should add their own build story,
+first-person perspective, and real post-launch feedback before submission. Do not invent metrics,
+reviews, revenue, live players, or customer quotes.
+
+Official rules: https://revenuecat-shipaton-2026.devpost.com/rules
+
+## Project card
+
+- Name: Flap Fit
+- Tagline: Your body is the controller.
+- Public iOS store URL: [ONLY AFTER THE APP IS LIVE]
+- Public demo video URL: [ONLY AFTER THE VIDEO IS WATCHABLE WITHOUT SIGN-IN]
+- RevenueCat project ID: `proja58d3dbd` (verified in Flap Fit Project Settings on September 17, 2026; dashboard URL segment: `a58d3dbd`)
+- Released version and build: [VERIFY AGAINST STORE LISTING]
+- Final 1024 x 1024 icon: `apps/mobile/assets/images/icon.png` (approved app icon; dimensions verified)
+- Final frameless 1179 x 2556-or-larger screenshot: [GENUINE RELEASED-BUILD CAPTURE]
+
+## Story draft
+
+I wanted exercise to feel less like counting seconds and more like playing for one more try. Flap
+Fit is a camera-controlled fitness game: choose a workout, calibrate two positions, and move your
+body to guide your bird through obstacles. The bird you fly is also the bird you grow. Training
+time unlocks ten increasingly muscular evolution stages, making progress visible inside the game.
+
+The launch workouts are push-ups, squats, pull-ups, bicep curls, lateral raises, and shoulder
+press. Players can use the illustrated Sky background or place the bird and obstacles over their
+live camera view. Record & Play captures a temporary clip on the phone for the player to share
+through the device's normal share sheet. Optional Compete features include scoreboards and
+friend-code challenges without an email-and-password signup.
+
+Camera pose estimation runs on the device. The game does not upload workout video, and normal Play
+does not record it. Training-time and movement estimates are game feedback, not medical
+measurements or perfect-form certification.
+
+Flap Fit is free to play. [FINAL BUILD ONLY: Once verified, describe how AdMob interstitials are
+eligible only after the player taps Done, Try Again, or Next Level, never during exercise, recording,
+or sharing. State how actual ad events are sent to RevenueCat Ads. Remove this paragraph if the
+released build does not do this; without RevenueCat Ads or a RevenueCat-powered purchase, the
+standard Shipaton entry is not eligible.]
+
+## Best Game category draft
+
+The core loop ties a player's physical effort to a readable arcade challenge: calibrate, fly,
+avoid obstacles, finish a run, and return with a stronger bird. Six stylized exercise birds make
+workout selection distinct; the evolving bird gives long-term progress a visible character. Sky
+and Live Camera offer two visual treatments without changing the movement rules. The planned
+monetization keeps the exercise itself uninterrupted, with an optional interstitial opportunity
+only after a deliberate result-screen exit. Verify that behavior in the published build before
+using this paragraph.
+
+## Catvertising category draft
+
+[USE ONLY AFTER REAL REVENUECAT ADS INTEGRATION IS VERIFIED] Flap Fit's ad break is placed after
+a result and a deliberate Done, Try Again, or Next Level choice. A recorded run must finish its
+share flow first. An unavailable ad never blocks the next action. RevenueCat Ads receives ad-event
+and impression-revenue data, not camera frames, exercise choice, training time, score, player
+name, or recording content. Replace these statements with the exact tested implementation and
+real RevenueCat evidence.
+
+## Growth and proof fields
+
+- First public release date and store territory: [VERIFY; UNITED STATES MUST BE INCLUDED]
+- Post-release experiments and outcomes: [REAL ACTIONS AND NUMBERS ONLY]
+- RevenueCat Ads event evidence: [REAL DASHBOARD OR EXPORT, NO MOCKUP]
+- Player feedback incorporated after launch: [ATTRIBUTED WITH PERMISSION]
+- Judge access: Flap Fit 1.0 has no premium purchase to unlock. If the form still requires a promo
+  code or trial value, seek official clarification instead of inventing one.

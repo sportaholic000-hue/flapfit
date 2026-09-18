@@ -13,7 +13,6 @@ export type StatsSnapshot = {
   bestSingleScore: number;
   unlockedLevel: number;
   sessionsCount: number;
-  challengesWon: number;
   dailiesCompleted: number;
   totalTutSeconds: number;
   birdEvolutionStage: number;
@@ -231,7 +230,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     category: 'global',
     progress: (s) => s.unlockedLevel,
   },
-  // Daily / Challenge
+  // Daily Challenge
   {
     id: 'daily-5',
     title: 'Daily Grinder',
@@ -240,15 +239,6 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     goal: 5,
     category: 'global',
     progress: (s) => s.dailiesCompleted,
-  },
-  {
-    id: 'challenge-1',
-    title: 'Duelist',
-    desc: 'Win a friend challenge',
-    emoji: '⚔️',
-    goal: 1,
-    category: 'global',
-    progress: (s) => s.challengesWon,
   },
 
   // ─── Push-ups ────────────────────────────────────────────────────────────

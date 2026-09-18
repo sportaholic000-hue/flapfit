@@ -8,8 +8,8 @@ const LEGACY_STORE_NAME = ['flappy', 'push', 'store'].join('-');
 let persistedWritesBlocked = false;
 
 // Bump this value whenever the competition/community rules materially change.
-// Players must accept the current version before publishing names, scores, or
-// challenge attempts to the online service.
+// Players must accept the current version before publishing names or scores
+// to the online service.
 export const COMPETITION_TERMS_VERSION = '2026-09-14';
 
 const migratingStorage = {
@@ -244,7 +244,6 @@ type GameStore = {
   bestSingleScore: number;
   totalPushups: number;
   totalPipes: number;
-  challengesWon: number;
   dailyCompleted: string[];
   sessions: SessionRecord[];
   // Tracked training/play time. Field names stay unchanged so existing
@@ -266,7 +265,6 @@ type GameStore = {
   recordSession: (input: RecordSessionInput) => void;
   recordTut: (seconds: number, exercise: ExerciseMode) => void;
   completeDaily: (day: string) => void;
-  addChallengeWon: () => void;
 };
 
 export const useGameStore = create<GameStore>()(
@@ -287,7 +285,6 @@ export const useGameStore = create<GameStore>()(
       bestSingleScore: 0,
       totalPushups: 0,
       totalPipes: 0,
-      challengesWon: 0,
       dailyCompleted: [],
       sessions: [],
       totalTutSeconds: 0,
@@ -390,7 +387,6 @@ export const useGameStore = create<GameStore>()(
           set({ dailyCompleted: [...state.dailyCompleted, day].slice(-90) });
         }
       },
-      addChallengeWon: () => set({ challengesWon: get().challengesWon + 1 }),
     }),
     {
       name: STORE_NAME,

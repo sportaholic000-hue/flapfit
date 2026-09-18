@@ -1,8 +1,9 @@
+import { isLaunchGameMode } from '@/utils/game/gameModes';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
 import { File, Paths, type FileHandle } from 'expo-file-system';
 import * as Haptics from 'expo-haptics';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -167,6 +168,12 @@ function videoUti(mimeType: string, extension: string) {
 }
 
 export default function GameScreen() {
+  const { mode } = useLocalSearchParams<{ mode?: string }>();
+  if (!isLaunchGameMode(mode)) return <Redirect href="/(tabs)" />;
+  return <GameContent />;
+}
+
+function GameContent() {
   const insets = useSafeAreaInsets();
   const { height: viewportHeight } = useWindowDimensions();
   const router = useRouter();
@@ -175,7 +182,6 @@ export default function GameScreen() {
     mode?: string;
     levelId?: string;
     target?: string;
-    challengeCode?: string;
     backgroundMode?: string;
     record?: string;
     trackingMode?: string;
@@ -184,7 +190,6 @@ export default function GameScreen() {
   const mode = typeof params.mode === 'string' ? params.mode : 'level';
   const levelId = params.levelId ? parseInt(String(params.levelId), 10) : 1;
   const paramTarget = params.target ? parseInt(String(params.target), 10) : 0;
-  const challengeCode = typeof params.challengeCode === 'string' ? params.challengeCode : null;
   const backgroundMode = params.backgroundMode === 'camera' ? 'camera' : 'sky';
   const recordRun = params.record === 'true' || params.record === '1';
   const trackingMode =
@@ -192,7 +197,7 @@ export default function GameScreen() {
 
   const isEndless = mode === 'endless';
   const level = isEndless ? ENDLESS_BASE : getLevel(levelId);
-  const target = isEndless ? 0 : paramTarget > 0 ? paramTarget : level.targetScore;
+  const target = isEndless ? 0 : mode === 'daily' && paramTarget > 0 ? paramTarget : level.targetScore;
 
   const birdId = useGameStore((s) => s.birdId);
   const exerciseMode = useGameStore((s) => s.exerciseMode);
@@ -200,7 +205,6 @@ export default function GameScreen() {
   const recordSession = useGameStore((s) => s.recordSession);
   const recordTut = useGameStore((s) => s.recordTut);
   const completeDaily = useGameStore((s) => s.completeDaily);
-  const addChallengeWon = useGameStore((s) => s.addChallengeWon);
   const totalTutSeconds = useGameStore((s) => s.totalTutSeconds);
   const exerciseTut = useGameStore((s) => s.exerciseTut);
   const lastActivityDate = useGameStore((s) => s.lastActivityDate);
@@ -339,9 +343,8 @@ export default function GameScreen() {
       isEndless &&
       competitionPlayerNameError(playerName) === null &&
       boardableExercises.includes(exerciseMode);
-    const kind = challengeCode ? 'challenge' : leaderboardEligible ? 'leaderboard' : null;
 
-    if (!competitionIsConfigured || !hasCompetitionTerms || !kind) {
+    if (!competitionIsConfigured || !hasCompetitionTerms || !leaderboardEligible) {
       competitionRunPromiseRef.current = Promise.resolve(null);
       return;
     }
@@ -350,14 +353,13 @@ export default function GameScreen() {
       console.warn('Pending competition results will retry later', error);
     });
     competitionRunPromiseRef.current = beginCompetitionRun({
-      kind,
+      kind: 'leaderboard',
       exercise: exerciseMode,
-      challengeCode,
     }).catch((error) => {
       console.warn('This run could not start an online verification session', error);
       return null;
     });
-  }, [challengeCode, exerciseMode, isEndless, playerName, runKey]);
+  }, [exerciseMode, isEndless, playerName, runKey]);
 
   // Resolve exactly one bundled PNG for this run. The request key changes only
   // for a deliberate retry/next-level run, never for five-second TUT updates.
@@ -571,7 +573,7 @@ export default function GameScreen() {
         isEndless &&
         competitionPlayerNameError(playerName) === null &&
         ['pushups', 'squats', 'pullups'].includes(exerciseMode);
-      if (!competitionIsConfigured || (!challengeCode && !leaderboardEligible)) return;
+      if (!competitionIsConfigured || !leaderboardEligible) return;
 
       setCompetitionResultState({
         status: 'pending',
@@ -598,9 +600,6 @@ export default function GameScreen() {
         setCompetitionResultState(outcome);
         if (outcome.status === 'accepted') {
           if (isEndless) queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
-          if (challengeCode) {
-            queryClient.invalidateQueries({ queryKey: ['challenge', challengeCode] });
-          }
         }
       } catch (error) {
         console.warn('Competition result could not be queued', error);
@@ -611,7 +610,7 @@ export default function GameScreen() {
         });
       }
     },
-    [challengeCode, exerciseMode, isEndless, playerName, queryClient]
+    [exerciseMode, isEndless, playerName, queryClient]
   );
 
   const beginVideoRecording = useCallback(
@@ -886,7 +885,6 @@ export default function GameScreen() {
           tutSeconds: tutSecs,
         });
         if (mode === 'daily' && score >= target) completeDaily(dayKey());
-        if (challengeCode && score >= target) addChallengeWon();
         void submitScores(score, Math.max(0, msg.runDurationMs ?? tutSecs * 1000));
         const newStage = computeEvolutionStage(
           useGameStore.getState().totalTutSeconds,
@@ -907,12 +905,10 @@ export default function GameScreen() {
       level.id,
       isEndless,
       target,
-      challengeCode,
       exerciseMode,
       recordSession,
       recordTut,
       completeDaily,
-      addChallengeWon,
       submitScores,
       birdImageRequestKey,
       recordRun,
@@ -1442,9 +1438,7 @@ export default function GameScreen() {
               {cleared
                 ? mode === 'daily'
                   ? 'Daily done!'
-                  : challengeCode
-                    ? 'Challenge beaten!'
-                    : 'Level cleared!'
+                  : 'Level cleared!'
                 : 'Run over'}
             </Text>
             {result.endReason ? (

@@ -1,0 +1,21 @@
+import { challengeExerciseName, challengeShareMessage, resolveGameExercise } from '../challengeRules';
+import type { ExerciseMode } from '../store';
+
+const exercises: ExerciseMode[] = ['pushups', 'squats', 'pullups', 'biceps', 'lateralraise', 'shoulderpress'];
+test.each(exercises)('a saved %s challenge wins over a different lobby selection', (exercise) => {
+  for (const lobby of exercises) expect(resolveGameExercise('challenge', exercise, lobby)).toBe(exercise);
+});
+test('legacy any-exercise codes retain their original meaning', () => {
+  expect(challengeExerciseName(null)).toBe('Any exercise');
+  expect(resolveGameExercise('challenge', undefined, 'squats')).toBe('squats');
+});
+test('ordinary games use the lobby exercise and malformed challenge types are rejected', () => {
+  expect(resolveGameExercise('level', 'pullups', 'biceps')).toBe('biceps');
+  for (const value of ['toString', 'invalid', '', ['pullups']]) {
+    expect(() => resolveGameExercise('challenge', value, 'pushups')).toThrow('invalid exercise');
+  }
+});
+test('share text describes the stored target and exercise', () => {
+  expect(challengeShareMessage({code:'ABC234',target_score:25,exercise:'pullups'}))
+    .toBe('I challenge you to score 25 pipes with Pull-ups in Flap Fit! Enter code ABC234 in the Compete tab.');
+});

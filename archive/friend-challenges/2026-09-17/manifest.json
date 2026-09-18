@@ -1,0 +1,155 @@
+{
+  "date": "2026-09-17",
+  "sourceHead": "089bcd297ddbf8a02a6656b2c260b866ff04b0ea",
+  "note": "Snapshot of working files, including uncommitted fixes, before friend-code retirement.",
+  "files": [
+    {
+      "file": "apps/mobile/src/app/(tabs)/compete.tsx",
+      "sha256": "d426f5cdd329d3f2e9233ccec7f732a32642a1ba651d209c1c37f1e0d57595d0"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/info.tsx",
+      "sha256": "f8ef9c3f436ea911ce8095b11f65d8cb0e06e35280eed475767e4489a89a308d"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/stats.tsx",
+      "sha256": "e79863d3c5f77182ac39803108dae0ff4995a77428d74329fc46b245a63b36a2"
+    },
+    {
+      "file": "apps/mobile/src/app/game.tsx",
+      "sha256": "a7ee7e4bae03ffb72333410bf180429e524dcb397e4604c07a08e48a4736f3ae"
+    },
+    {
+      "file": "apps/mobile/src/services/competitionApi.ts",
+      "sha256": "ab643c74e3884107e90806bc089b2b7643ed498ffd7c730592d2a99dae9e8930"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/store.ts",
+      "sha256": "bb970abe510313605c9a90e5b4c5f27e087a7bca60eb474685684aaec3114317"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/achievements.ts",
+      "sha256": "e192536aee35d5b997f54a45ac100be45714350b629a961fe5753b745a8bd83a"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/challengeRules.ts",
+      "sha256": "5e29ef64ca2581dde5f06b381fd7702c13ba7625f42e820224cd4ebfe59f9e37"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/challengeInput.ts",
+      "sha256": "bb909156ea034653a99be61cabf1f43e552ca7c106fc9cf19865d228356700ec"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/challenge-exercise.test.ts",
+      "sha256": "c8121ce81005054cec0e9c01de809318e2b011be6dc3cece9cc46d8645c402df"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/challenge-input.test.ts",
+      "sha256": "9f8ad9c0da9bfca2e9eb55cba66623ddc19286d34e479b88cfcfff87e68531cb"
+    },
+    {
+      "file": "apps/mobile/scripts/verify-live-competition.cjs",
+      "sha256": "c0b89dbb1c2413a4fcd02bcafd34336f9618e96d4b575de237960da80f906c54"
+    },
+    {
+      "file": "supabase/functions/flapfit-game/index.ts",
+      "sha256": "0c308678929b9088fa4592adb4c3f9a85eaba7d7c6849d80c1c30fac04b1d6dc"
+    },
+    {
+      "file": "supabase/migrations/202609140001_flapfit_competition.sql",
+      "sha256": "596ec20be19b9ca9b1e9d8645069838d864b48f742f2f0c9b61ea4f68f333905"
+    },
+    {
+      "file": "supabase/migrations/202609140002_flapfit_retention.sql",
+      "sha256": "39d851c9cb2cbc3aa9ef7931734f1e2fc4b58c3e898378e3dd8c0dcc7aa8528e"
+    },
+    {
+      "file": "supabase/migrations/202609140003_flapfit_advisor_hardening.sql",
+      "sha256": "27786ea0efb9fb5e8108c8198489668d95e3455b52a427fe5efe607383c91094"
+    },
+    {
+      "file": "supabase/migrations/202609150001_verified_game_runs.sql",
+      "sha256": "08cc63c930432a6ee39e164073fcbff73a8b54b0d1000554541bf2a7b1366642"
+    },
+    {
+      "file": "supabase/migrations/202609150002_fix_challenge_run_lookup.sql",
+      "sha256": "02affb7492fe64dd9cbb5e570c9db461a7ca7840b661309e136a11316997c34c"
+    },
+    {
+      "file": "supabase/migrations/202609150003_index_game_run_challenges.sql",
+      "sha256": "c27c93f2b416e2829ec56b26169f4c45536af11d8b41fc39fe9f67345aec13a9"
+    },
+    {
+      "file": "supabase/migrations/202609160001_enforce_run_timing.sql",
+      "sha256": "cd1afe5f545d125f2c723f1e2486d3e5d0373930009b5fc35d403fa787f85514"
+    },
+    {
+      "file": "supabase/migrations/20260917072007_bind_challenges_to_exercise.sql",
+      "sha256": "a712cc791f8af881000c63674b0463f51f4ffb72d550879538b167128969e2ac"
+    },
+    {
+      "file": "docs/release/store-listing-draft.md",
+      "sha256": "06fb94ba9506409e3e98af4253299d26bca251083fdaf6c04b5f72363764acd4"
+    },
+    {
+      "file": "docs/release/reviewer-notes.md",
+      "sha256": "3496c027ef21df27d9f5b156b0d913ffd22e81b1d09f8717a22f1e75563fbb6f"
+    },
+    {
+      "file": "docs/release/physical-test-matrix.md",
+      "sha256": "ea710d1fd79624e4d558947b5d9dcc44d52c2d22c82f9837c1897fd2c50f137d"
+    },
+    {
+      "file": "docs/legal/privacy-policy-draft.md",
+      "sha256": "0d9289253383cf08f486567e9b851ecf0f571684b3d60fa1aeb0424cea5096e8"
+    },
+    {
+      "file": "docs/legal/terms-of-use-draft.md",
+      "sha256": "b7edfe2d33a90b5e2313f3d58bd50edecc62ffae15ca15baa074c2e5c8f3cd23"
+    },
+    {
+      "file": "docs/legal/account-deletion-page-draft.md",
+      "sha256": "1d495ba3470c69f56e067a74c882aed4ed24d1c78a3fb606d354091b8c07d64f"
+    },
+    {
+      "file": "docs/release/shipaton-entry-draft.md",
+      "sha256": "0e5b7a51418428d6229da0a58c09d7894f7d486e3e87f4b630b53e156dc0ebcf"
+    },
+    {
+      "file": "docs/release/shipaton-submission.md",
+      "sha256": "e9b89995b7da6eb55eccd22cf7347828451427828e1f127c9ddeb87f3ff73aa9"
+    },
+    {
+      "file": "docs/release/shipaton-demo-script.md",
+      "sha256": "2aab8f60bea93b1ebf94ff2ec623b793c7c9fb4ac20195286198deaecec9510b"
+    },
+    {
+      "file": "docs/release/apple-age-rating.md",
+      "sha256": "8c68035ed080d9d4627c0c88db12a67e280bb47869d24b5a39d7165ea3de38a5"
+    },
+    {
+      "file": "docs/release/apple-app-privacy.md",
+      "sha256": "0b9182db368194526eb7011e585a52cb1c90781d15a533ae5053fe6fc9b511a4"
+    },
+    {
+      "file": "docs/release/launch-audit-2026-09-17.md",
+      "sha256": "df387f11788a5e714b5746ddb5cfd92c871f718ad1c4a80e8743398e794d8504"
+    },
+    {
+      "file": "docs/release/submission-gates.md",
+      "sha256": "d73e408f615cce423507d5c71e93d892d7997ac7a63eccd3b05733c030cf9a55"
+    },
+    {
+      "file": "docs/release/tester-change-summary.md",
+      "sha256": "38f852288871b4cb67ee1ab10435f66a3af2151a2efaac412e621821bef55939"
+    },
+    {
+      "file": "docs/release/google-data-safety.md",
+      "sha256": "7ba57b920c0033e2e2c2db63e39b2f3cb2fac2af6ce2cccc43206af139d5dfb8"
+    },
+    {
+      "file": "docs/release/moderation-runbook.md",
+      "sha256": "f82ad865178d2c4b4db16ed17c939de0a87490cf17cc1c7d9976d4cb80e3e200"
+    }
+  ]
+}

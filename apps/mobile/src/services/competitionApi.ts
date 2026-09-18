@@ -73,7 +73,7 @@ type CompetitionRequestOptions = {
   timeoutMs?: number;
 };
 
-export type CompetitionRunKind = 'leaderboard' | 'challenge';
+export type CompetitionRunKind = 'leaderboard';
 
 export type CompetitionRunSession = {
   runId: string;
@@ -335,14 +335,12 @@ export async function competitionRequest<T>(
 export async function beginCompetitionRun(input: {
   kind: CompetitionRunKind;
   exercise: string;
-  challengeCode?: string | null;
 }): Promise<CompetitionRunSession> {
   const response = await competitionRequest<{ run_id: string; expires_at: string }>('/runs', {
     method: 'POST',
     body: {
       kind: input.kind,
       exercise: input.exercise,
-      ...(input.challengeCode ? { challengeCode: input.challengeCode } : {}),
     },
   });
   return { runId: response.run_id, expiresAt: response.expires_at };

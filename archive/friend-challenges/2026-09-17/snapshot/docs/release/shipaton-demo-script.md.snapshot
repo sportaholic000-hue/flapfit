@@ -1,0 +1,53 @@
+# Flap Fit Shipaton demo: capture and edit plan
+
+Status: production outline only. Do not publish until the final signed build has been physically
+tested, the released app matches the footage, and the RevenueCat Ads segment is real.
+
+The official rules require a video under two minutes showing the project working on its intended
+device, hosted publicly on YouTube or Vimeo. Do not use unlicensed music, footage, or marks.
+
+Sources: https://revenuecat-shipaton-2026.devpost.com/rules and
+https://www.shipaton.com/blog/how-to-submit-your-app-for-shipaton
+
+## 1:54 target timeline
+
+The first shot is a real workout controlling the game, not an animated trailer. Capture the final
+signed iPhone build on a physical device. A camera filming the player and a screen recording from
+the same run may be composed side by side; retain the unedited originals. Add captions for viewers
+watching without sound. The narration below is a draft, not a claim of verification.
+
+| Time | Picture to capture | Draft narration/caption |
+| --- | --- | --- |
+| 0:00–0:12 | Real player exercising beside the same run's bird navigating pipes. Show enough body and screen to make the connection unmistakable. | “This is Flap Fit. Your body is the controller.” |
+| 0:12–0:24 | Home screen, six exercise birds, then Sky and Live Camera backgrounds. | “Choose a workout and a world to play in.” |
+| 0:24–0:42 | Two-position camera calibration, countdown, then continuous obstacle gameplay. Use an exercise that passes final physical testing. | “Your movement keeps the bird flying. The camera tracks the exercise without a wearable.” |
+| 0:42–0:57 | Live Camera background; explicitly choose Record & Play; show the recording indicator and game overlay over live video. | “Live Camera makes the workout part of the game. Record & Play captures the moment.” |
+| 0:57–1:08 | Actual result card and native share sheet from the same recorded run. Hide personal contacts and other private content. | “When the run ends, share your own game clip.” |
+| 1:08–1:22 | Training Stats and a real unlocked evolution stage, with actual on-device time-under-tension values. | “Training time is visible, and your bird evolves with your work.” |
+| 1:22–1:36 | Real Compete leaderboard and player-code challenge flow if both are live and tested; otherwise spend this time on a second exercise. Blur private identifiers. | “Compare runs or challenge a friend.” |
+| 1:36–1:49 | On a final native build, tap Done, Try Again, or Next Level and show a real test ad only if one appears. Include truthful on-screen RevenueCat Ads proof in the written submission, not an invented dashboard composite. | “Flap Fit stays free, with ads only after a player chooses to leave a result.” |
+| 1:49–1:54 | Flap Fit end card and the verified public store name. | “Flap Fit. Move. Fly. Evolve.” |
+
+The target is 114 seconds, leaving six seconds of margin under the two-minute limit. If a real ad is
+not available during capture, do not splice in an unrelated ad; recapture later or revise the script
+and contest claim. If the final build does not support a feature shown above, remove that claim and
+replace the shot with verified gameplay. Do not imply that a demo leaderboard contains live players
+if it is test data.
+
+## Capture order and acceptance
+
+1. Record one real workout and its full in-app screen capture at the same time. Note the build
+   number, device, exercise, run ID, and date in the private production log.
+2. Capture clean native screen recordings for Home, exercise choice, calibration, gameplay, result,
+   Live Camera recording/share, Stats/evolution, and Compete. Avoid recording a third party's face,
+   contacts, notifications, or identifiable leaderboard name without permission.
+3. Only after native ad integration is approved and tested, capture the result-action-to-ad path
+   and preserve the corresponding RevenueCat event evidence separately. Do not click a live ad.
+4. Edit to 1:54 or less. Keep the gameplay visible at normal speed for at least one uninterrupted
+   portion so the mechanics are credible. Caption all spoken claims. Use only owned or licensed
+   audio. Verify the exported file duration rather than trusting the share-sheet duration label.
+5. Compare every visible feature and statement against the exact published build. Confirm that the
+   public store link works from the United States and the final video is publicly viewable before
+   pasting either into Devpost.
+
+This plan is not a completed contest video or proof of a store release.

@@ -16,21 +16,13 @@ const RESPONSE_HEADERS = {
 };
 
 const ALLOWED_EXERCISES = new Set(['pushups', 'squats', 'pullups']);
-const ALLOWED_GAME_EXERCISES = new Set([
-  'pushups',
-  'squats',
-  'pullups',
-  'biceps',
-  'lateralraise',
-  'shoulderpress',
-]);
 const ALLOWED_REPORT_REASONS = new Set(['inappropriate_name', 'cheating', 'harassment_or_other']);
 const ALLOWED_CONTEXT_TYPES = new Set(['leaderboard', 'challenge', 'challenge_attempt']);
 const BLOCKED_NAME_PATTERN =
   /(?:fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i;
 const CURRENT_TERMS_VERSION = '2026-09-14';
 const CURRENT_RUN_RULES_VERSION = '2026-09-16.1';
-const ALLOWED_RUN_KINDS = new Set(['leaderboard', 'challenge']);
+const ALLOWED_RUN_KINDS = new Set(['leaderboard']);
 
 class ApiError extends Error {
   constructor(
@@ -46,9 +38,6 @@ function databaseApiError(error: { message?: string }): ApiError | null {
   const message = error.message ?? '';
   if (/run limit/i.test(message))
     return new ApiError(429, 'Too many game runs. Try again shortly.');
-  if (/challenge limit/i.test(message)) {
-    return new ApiError(429, 'Challenge limit reached. Try again later.');
-  }
   if (/already finalized/i.test(message))
     return new ApiError(409, 'This game run was already submitted.');
   if (/expired/i.test(message))
@@ -131,19 +120,6 @@ function uuid(value: unknown, label: string): string {
   return value;
 }
 
-function challengeCode(value: unknown): string {
-  if (typeof value !== 'string') throw new ApiError(400, 'Challenge code is invalid.');
-  const code = value.trim().toUpperCase();
-  if (!/^[A-Z2-9]{6}$/.test(code)) throw new ApiError(400, 'Challenge code is invalid.');
-  return code;
-}
-
-function randomCode(): string {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const bytes = crypto.getRandomValues(new Uint8Array(6));
-  return Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join('');
-}
-
 function requireCurrentTerms(req: Request): string {
   const termsVersion = req.headers.get('X-FlapFit-Terms-Version');
   if (termsVersion !== CURRENT_TERMS_VERSION) {
@@ -159,6 +135,15 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS_HEADERS });
 
   try {
+    const url = new URL(req.url);
+    const marker = '/flapfit-game';
+    const markerIndex = url.pathname.indexOf(marker);
+    const route = markerIndex >= 0 ? url.pathname.slice(markerIndex + marker.length) || '/' : '/';
+    // Closed before authentication/database work; clients should share gameplay videos.
+    if (route === '/challenges' || route.startsWith('/challenges/')) {
+      return json({ error: 'Friend challenge codes are no longer available. Share a gameplay video instead.' }, 410);
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     if (!supabaseUrl || !serviceRoleKey) return json({ error: 'Service is not configured.' }, 503);
@@ -176,10 +161,6 @@ Deno.serve(async (req) => {
       return json({ error: 'Anonymous game session required.' }, 401);
     }
 
-    const url = new URL(req.url);
-    const marker = '/flapfit-game';
-    const markerIndex = url.pathname.indexOf(marker);
-    const route = markerIndex >= 0 ? url.pathname.slice(markerIndex + marker.length) || '/' : '/';
     const requestTermsVersion =
       req.method === 'DELETE' && route === '/me' ? null : requireCurrentTerms(req);
 
@@ -203,7 +184,7 @@ Deno.serve(async (req) => {
       const scores = (scoresResult.data ?? [])
         .map((row, index) => ({ row, rank: index + 1 }))
         .filter(({ row }) => !blocked.has(row.user_id))
-        .slice(0, 20)
+        .slice(0, 50)
         .map(({ row, rank }) => ({
           id: row.id,
           profile_id: row.user_id,
@@ -223,18 +204,13 @@ Deno.serve(async (req) => {
       const kind = typeof body.kind === 'string' ? body.kind : '';
       const exercise = typeof body.exercise === 'string' ? body.exercise : '';
       if (!ALLOWED_RUN_KINDS.has(kind)) return json({ error: 'Game run type is invalid.' }, 400);
-      const exerciseAllowed =
-        kind === 'leaderboard'
-          ? ALLOWED_EXERCISES.has(exercise)
-          : ALLOWED_GAME_EXERCISES.has(exercise);
-      if (!exerciseAllowed) return json({ error: 'Exercise is invalid.' }, 400);
-      const code = kind === 'challenge' ? challengeCode(body.challengeCode) : null;
+      if (!ALLOWED_EXERCISES.has(exercise)) return json({ error: 'Exercise is invalid.' }, 400);
       const runResult = await admin
         .rpc('begin_game_run', {
           p_user_id: user.id,
           p_kind: kind,
           p_exercise: exercise,
-          p_challenge_code: code,
+          p_challenge_code: null,
           p_rules_version: CURRENT_RUN_RULES_VERSION,
         })
         .single();
@@ -273,89 +249,6 @@ Deno.serve(async (req) => {
 
     if (req.method === 'POST' && route === '/leaderboard') {
       return json({ error: 'Update Flap Fit to submit verified leaderboard runs.' }, 410);
-    }
-
-    if (req.method === 'POST' && route === '/challenges') {
-      const body = await bodyJson(req);
-      const playerName = cleanPlayerName(body.creatorName);
-      const targetScore = integer(body.targetScore, 1, 60, 'Target score');
-
-      for (let attempt = 0; attempt < 5; attempt += 1) {
-        const code = randomCode();
-        const result = await admin
-          .rpc('create_challenge_limited', {
-            p_user_id: user.id,
-            p_player_name: playerName,
-            p_terms_version: requestTermsVersion ?? CURRENT_TERMS_VERSION,
-            p_target_score: targetScore,
-            p_code: code,
-          })
-          .single();
-        if (!result.error) return json({ code: result.data.code }, 201);
-        if (result.error.code !== '23505') throw databaseApiError(result.error) ?? result.error;
-      }
-      return json({ error: 'Could not create a unique challenge code.' }, 503);
-    }
-
-    if (req.method === 'GET' && route === '/challenges') {
-      const code = challengeCode(url.searchParams.get('code'));
-      const challengeResult = await admin
-        .from('challenges')
-        .select('id,code,creator_id,target_score,level_id,expires_at,profiles!inner(player_name)')
-        .eq('code', code)
-        .gt('expires_at', new Date().toISOString())
-        .maybeSingle();
-      if (challengeResult.error) throw challengeResult.error;
-      if (!challengeResult.data) return json({ error: 'Challenge not found.' }, 404);
-
-      const blockedResult = await admin
-        .from('player_blocks')
-        .select('blocked_id')
-        .eq('blocker_id', user.id);
-      if (blockedResult.error) throw blockedResult.error;
-      const blocked = new Set((blockedResult.data ?? []).map((row) => row.blocked_id));
-      if (blocked.has(challengeResult.data.creator_id))
-        return json({ error: 'Challenge not found.' }, 404);
-
-      const attemptsResult = await admin
-        .from('challenge_attempts')
-        .select('id,user_id,score,updated_at,profiles!inner(player_name)')
-        .eq('challenge_id', challengeResult.data.id)
-        .order('score', { ascending: false })
-        .order('updated_at', { ascending: true })
-        .limit(50);
-      if (attemptsResult.error) throw attemptsResult.error;
-      const attempts = (attemptsResult.data ?? [])
-        .filter((row) => !blocked.has(row.user_id))
-        .slice(0, 10)
-        .map((row) => ({
-          id: row.id,
-          profile_id: row.user_id,
-          player_name: Array.isArray(row.profiles)
-            ? row.profiles[0]?.player_name
-            : row.profiles?.player_name,
-          score: row.score,
-          is_me: row.user_id === user.id,
-        }));
-      const creatorProfile = challengeResult.data.profiles;
-      return json({
-        challenge: {
-          id: challengeResult.data.id,
-          code: challengeResult.data.code,
-          creator_profile_id: challengeResult.data.creator_id,
-          creator_is_me: challengeResult.data.creator_id === user.id,
-          creator_name: Array.isArray(creatorProfile)
-            ? creatorProfile[0]?.player_name
-            : creatorProfile?.player_name,
-          target_score: challengeResult.data.target_score,
-          level_id: challengeResult.data.level_id,
-        },
-        attempts,
-      });
-    }
-
-    if (req.method === 'POST' && route === '/challenges/attempts') {
-      return json({ error: 'Update Flap Fit to submit verified challenge runs.' }, 410);
     }
 
     if (req.method === 'POST' && route === '/reports') {

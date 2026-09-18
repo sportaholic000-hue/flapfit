@@ -105,46 +105,16 @@ async function main() {
       422
     );
 
-    const challenge = await request('/challenges', {
-      method: 'POST',
-      body: { creatorName: 'LaunchTest', targetScore: 5 },
-    });
-    expectStatus('Challenge created', challenge, 201);
-    const challengeRun = await request('/runs', {
-      method: 'POST',
-      body: {
-        kind: 'challenge',
-        exercise: 'shoulderpress',
-        challengeCode: challenge.payload?.code,
-      },
-    });
-    expectStatus('All-exercise challenge run created', challengeRun, 201);
-    expectStatus(
-      'Implausibly fast challenge result rejected',
-      await request('/runs/finalize', {
-        method: 'POST',
-        body: {
-          runId: challengeRun.payload?.run_id,
-          playerName: 'LaunchTest',
-          score: 60,
-          durationMs: 13750,
-        },
-      }),
-      422
-    );
-    expectStatus(
-      'Challenge run finalized',
-      await request('/runs/finalize', {
-        method: 'POST',
-        body: {
-          runId: challengeRun.payload?.run_id,
-          playerName: 'LaunchTest',
-          score: 1,
-          durationMs: 1000,
-        },
-      }),
-      200
-    );
+    expectStatus('Retired code creation rejected', await request('/challenges', {
+      method: 'POST', body: { creatorName: 'LaunchTest', targetScore: 10, exercise: 'pushups' },
+    }), 410);
+    expectStatus('Retired code lookup rejected', await request('/challenges?code=ABC234'), 410);
+    expectStatus('Retired attempt submission rejected', await request('/challenges/attempts', {
+      method: 'POST', body: {},
+    }), 410);
+    expectStatus('Retired game mode rejected', await request('/runs', {
+      method: 'POST', body: { kind: 'challenge', exercise: 'pushups', challengeCode: 'ABC234' },
+    }), 400);
   } finally {
     const deletion = await request('/me', { method: 'DELETE', includeTerms: false });
     expectStatus('Temporary verification profile deleted', deletion, 200);

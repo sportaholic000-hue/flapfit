@@ -88,7 +88,6 @@ export default function StatsScreen() {
   const totalPipes = useGameStore((s) => s.totalPipes);
   const bestSingle = useGameStore((s) => s.bestSingleScore);
   const unlockedLevel = useGameStore((s) => s.unlockedLevel);
-  const challengesWon = useGameStore((s) => s.challengesWon);
   const dailyCompleted = useGameStore((s) => s.dailyCompleted);
   const totalTut = useGameStore((s) => s.totalTutSeconds);
   const dailyTut = useGameStore((s) => s.dailyTut);
@@ -159,7 +158,6 @@ export default function StatsScreen() {
     bestSingleScore: bestSingle,
     unlockedLevel,
     sessionsCount: sessions.length,
-    challengesWon,
     dailiesCompleted: dailyCompleted.length,
     totalTutSeconds: totalTut,
     birdEvolutionStage: evoStage,
@@ -651,11 +649,9 @@ export default function StatsScreen() {
             const modeLabel =
               s.mode === 'daily'
                 ? 'Daily'
-                : s.mode === 'challenge'
-                  ? 'Challenge'
-                  : s.mode === 'endless'
-                    ? 'Endless'
-                    : levelName;
+                : s.mode === 'endless'
+                  ? 'Endless'
+                  : levelName;
             return (
               <View
                 key={`${s.iso}-${idx}`}

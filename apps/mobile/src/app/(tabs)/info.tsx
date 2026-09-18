@@ -189,9 +189,9 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
               <Text style={styles.modalHeading}>Progress data</Text>
               <Text style={styles.modalText}>
                 Your bird choice, training history, scores, and level progress are stored locally on
-                your phone. If you use online leaderboards or challenges, Flap Fit creates a private
+                your phone. If you use online leaderboards, Flap Fit creates a private
                 anonymous online identifier and sends your chosen player name, exercise, scores,
-                active run duration, competition rules version, challenge details, reports, and
+                active run duration, competition rules version, reports, and
                 blocks to its Supabase-hosted game service. Active run duration is used to validate
                 an eligible competition result. The service also processes ordinary connection and
                 security logs. Your camera frames, gameplay recordings, and full local training
@@ -200,9 +200,8 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
               <Text style={styles.modalHeading}>Public content and moderation</Text>
               <Text style={styles.modalText}>
                 Player names and competition results can be visible to other players. You can report
-                or block another player from the options beside public leaderboard results,
-                challenges, and challenge attempts. Reported content may be removed and abusive
-                access may be restricted. Challenges are removed after they expire. Pending
+                or block another player from the options beside public leaderboard results. Reported content may be removed and abusive
+                access may be restricted. Pending
                 moderation reports remain until review, then resolved reports are kept for up to 180
                 days. If an associated account is deleted sooner, its user identifier is removed
                 from the report.
@@ -252,8 +251,8 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
               <Text style={styles.modalHeading}>Acceptable use</Text>
               <Text style={styles.modalText}>
                 Use Flap Fit lawfully and safely. Online competition requires acceptance of the
-                current Terms of Use and community rules before you can publish a player name,
-                leaderboard score, challenge, or challenge result.
+                current Terms of Use and community rules before you can publish a player name or
+                leaderboard score.
               </Text>
               <Text style={styles.modalHeading}>Competition community rules</Text>
               <Text style={styles.modalText}>
@@ -266,8 +265,8 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
               <Text style={styles.modalHeading}>Reporting and blocking</Text>
               <Text style={styles.modalText}>
                 Clearly labeled Report / Block controls are available beside other players' public
-                leaderboard results, challenges, and challenge attempts. Reports may be reviewed and
-                actioned, and blocked players are hidden from your leaderboard and challenge views.
+                leaderboard results. Reports may be reviewed and
+                actioned, and blocked players are hidden from your leaderboards.
                 Contact support if an urgent safety issue or illegal content needs attention.
               </Text>
               <Text style={styles.modalHeading}>Service changes</Text>
@@ -421,7 +420,7 @@ export default function InfoScreen() {
     if (!competitionIsConfigured || onlineDeleteBusy) return;
     Alert.alert(
       'Delete online profile?',
-      'This permanently deletes your anonymous leaderboard scores, challenges, attempts, blocks, and player name. Moderation reports may remain until review and for up to 180 days after resolution for safety, with your user identifier removed. Local game progress stays on this phone.',
+      'This permanently deletes your anonymous leaderboard scores, blocks, player name, and any older online game data. Moderation reports may remain until review and for up to 180 days after resolution for safety, with your user identifier removed. Local game progress stays on this phone.',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -433,7 +432,6 @@ export default function InfoScreen() {
               .then(() => {
                 resetCompetitionProfile();
                 queryClient.removeQueries({ queryKey: ['leaderboard'] });
-                queryClient.removeQueries({ queryKey: ['challenge'] });
                 Alert.alert(
                   'Online profile deleted',
                   'Your local game progress was not removed. To use Compete again, you must accept the current Terms and create a new player name.'
@@ -658,7 +656,7 @@ export default function InfoScreen() {
               subtitle={
                 onlineDeleteBusy
                   ? 'Deleting online competition data…'
-                  : 'Permanently remove leaderboard and challenge data'
+                  : 'Permanently remove your online profile and scores'
               }
               onPress={deleteOnlineProfile}
             />
