@@ -73,3 +73,6 @@ node_modules.reparse-backup-*/
 # playwright
 playwright-report
 test-results
+
+# local Supabase CLI state
+supabase/.temp/

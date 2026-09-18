@@ -9,6 +9,11 @@ const unsupportedPackages = [
 
 function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile }) {
   const failures = [];
+  const platform = env.EAS_BUILD_PLATFORM;
+  const platforms = platform === 'ios' || platform === 'android' ? [platform] : ['ios', 'android'];
+  if (buildProfile === 'production' && env.EXPO_PUBLIC_ADS_MODE !== 'live') {
+    failures.push('EXPO_PUBLIC_ADS_MODE: production requires live ads; test/off modes are preview only');
+  }
   const packageNames = new Set([
     ...Object.keys(mobilePackage.dependencies ?? {}),
     ...Object.keys(mobilePackage.devDependencies ?? {}),
@@ -70,7 +75,7 @@ function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile 
       'app.json: monetized builds require the react-native-google-mobile-ads config plugin'
     );
   } else {
-    const appIds = [adsPlugin[1]?.androidAppId, adsPlugin[1]?.iosAppId];
+    const appIds = platforms.map((name) => adsPlugin[1]?.[name === 'ios' ? 'iosAppId' : 'androidAppId']);
     if (appIds.some((id) => !/^ca-app-pub-\d+~\d+$/.test(String(id ?? '')))) {
       failures.push('app.json: monetized builds require valid iOS and Android AdMob app IDs');
     }
@@ -109,6 +114,9 @@ function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile 
     ],
   ];
   for (const [key, pattern, label] of monetizationValues) {
+    if (platform === 'ios' && key.includes('_ANDROID_')) continue;
+    if (platform === 'android' && key.includes('_IOS_')) continue;
+    if (buildProfile !== 'production' && env.EXPO_PUBLIC_ADS_MODE === 'test') continue;
     const value = String(env[key] ?? '').trim();
     if (!pattern.test(value)) failures.push(`${key}: missing or invalid ${label}`);
     if (buildProfile === 'production' && value.startsWith('ca-app-pub-3940256099942544')) {

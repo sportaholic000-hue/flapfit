@@ -179,8 +179,8 @@ function CompetitionTermsModal({
               What becomes public
             </Text>
             <Text style={{ color: '#475569', lineHeight: 20, marginTop: 5 }}>
-              After you accept and use Compete, Flap Fit creates a private anonymous online
-              identifier. Your chosen player name and leaderboard scores may be visible to other
+              After you accept and use Compete, Flap Fit creates an anonymous online
+              profile. Its identifier may appear with leaderboard results. Your chosen player name and leaderboard scores may be visible to other
               Flap Fit players. Your camera feed and
               recordings are never uploaded to competition services.
             </Text>
@@ -312,6 +312,19 @@ function LeaderboardPanel({
     staleTime: 30000,
   });
 
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = async () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    try {
+      const flushed = await flushPendingCompetitionResults();
+      await queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
+      if (flushed.pending > 0) Alert.alert('Scores still pending', 'Check your connection and tap Refresh to try again. Your local progress is safe.');
+      if (flushed.rejected.length > 0) Alert.alert('Some scores were not published', flushed.rejected.map((notice) => notice.message).join('\n'));
+    } catch {
+      Alert.alert('Could not refresh', 'Check your connection and try again. Your saved results remain on this device.');
+    } finally { setRefreshing(false); }
+  };
   const rows = data ?? [];
   const myRow = rows.find((r) => r.is_me) ?? null;
 
@@ -385,7 +398,10 @@ function LeaderboardPanel({
           <Text style={{ color: '#94A3B8', fontSize: 11 }}>{tab.desc}</Text>
         </View>
         <TouchableOpacity
-          onPress={() => queryClient.invalidateQueries({ queryKey: ['leaderboard', exercise] })}
+          accessibilityRole="button"
+          accessibilityLabel="Refresh scores and retry pending results"
+          disabled={refreshing}
+          onPress={() => void refresh()}
         >
           <RefreshCw size={15} color="#94A3B8" />
         </TouchableOpacity>
@@ -419,7 +435,7 @@ function LeaderboardPanel({
         <Text style={{ color: '#94A3B8', paddingVertical: 12, fontSize: 13 }}>Loading…</Text>
       ) : isError ? (
         <Text style={{ color: '#DC2626', fontSize: 12, paddingVertical: 12 }}>
-          Could not load scores — pull to refresh.
+          Could not load scores — tap Refresh to retry.
         </Text>
       ) : rows.length === 0 ? (
         <Text style={{ color: '#94A3B8', paddingVertical: 12, fontSize: 13, lineHeight: 18 }}>

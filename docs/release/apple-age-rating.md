@@ -1,6 +1,6 @@
 # Apple age-rating worksheet
 
-Last source review: 2026-09-15
+Last source review: 2026-09-17
 
 Use this with the exact questions shown in App Store Connect. Apple calculates the public rating
 from the submitted answers; do not select a lower rating merely because Flap Fit's own Terms require
@@ -18,15 +18,15 @@ Official references:
 - Fitness and exercise: **Yes.** Flap Fit is a camera-controlled fitness game with tracked training
   time. It is not medical advice and does not diagnose, treat, cure, or prevent a condition.
 - User-generated content: **Yes.** Optional Compete features display player-entered names with
-  leaderboard scores, challenges, and attempts.
+  leaderboard scores.
 - Content moderation: **Yes.** Names are filtered before publication, each public player row has
   Report / Block, and support contact plus a documented moderation process exist.
 - Messaging or chat: **No.** Players cannot send free-form messages, comments, direct messages, or
   media to one another.
 - Social media capabilities under Apple's July 2026 definition: **No.** Flap Fit has no social feed,
-  following, reactions, reposting, content redistribution, or content amplification. A leaderboard
-  and a private six-character challenge lookup display structured game results only.
-- Contests, sweepstakes, or prizes: **No.** Scores and friend challenges do not award money,
+  following, reactions, reposting, content redistribution, or content amplification. Leaderboards
+  display structured game results only.
+- Contests, sweepstakes, or prizes: **No.** Scores and Daily Challenge do not award money,
   merchandise, randomized prizes, or anything of real-world value.
 - Gambling, simulated gambling, or loot boxes: **No.**
 - Unrestricted web access: **No.** Legal/support links open fixed public Flap Fit URLs; players cannot
@@ -37,16 +37,16 @@ Official references:
   developer-provided content.** Objectionable player names are prohibited and filtered.
 - Age assurance: **Do not claim it.** The Terms require age 13 or older, but the current app does not
   verify identity or birth date.
-- Advertising: answer from the exact submitted binary. The Expo test checkpoint has none. The final
-  monetized candidate will contain interstitial advertising only after the approved integration is
-  present and tested.
+- Advertising: **Yes in the implemented native candidate.** Result-action interstitials use a PG
+  content-rating cap. Expo Go skips the native ad SDK and cannot verify the final ad experience;
+  confirm the exact signed binary and served ad content before completing the questionnaire.
 
 ## September 2026 social-media questions
 
 Apple now requires answers about social media capabilities for new app submissions. The relevant
 definition is the ability to redistribute, amplify, or interact with user-generated content through
-a social feed or similar discovery method. Flap Fit's current structured leaderboard and private
-challenge-code flow do not provide those capabilities, so answer **No** unless the feature set
+a social feed or similar discovery method. Flap Fit's current structured leaderboards
+do not provide those capabilities, so answer **No** unless the feature set
 changes before submission.
 
 Do not answer No to the separate user-generated-content question. Player names and competition

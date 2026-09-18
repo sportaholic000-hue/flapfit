@@ -1,6 +1,25 @@
 # Flap Fit dual-store submission gates
 
+> **Latest physical result: FAILED.** After testing Form Test `2026-09-17.3-floor-reference`, the owner could still plant toes and continue playing. New logs confirm that version, a retained floor reference, and visible high-confidence feet misclassified as airborne. Earlier automated passes and pending-acceptance notes below do not approve this candidate. See `docs/release/pullup-floor-reference-failure-2026-09-17.md` for the evidence. No replacement runtime patch has been applied.
+
+## September 17 launch scope: friend codes retired
+
+The owner removed friend challenge codes from the launch app. Daily Challenge, its local completion
+and achievement, top-50 bodyweight leaderboards, complete gameplay video sharing and the approved
+result-action ad sequence remain. Create/join/compare screens, friend-code helpers, friend game mode
+and Duelist achievement are removed. The implementation is preserved under
+`archive/friend-challenges/2026-09-17/`, outside the app and excluded from EAS uploads.
+Older dated code-binding and friend-code test entries below are historical, not launch requirements.
+No database records are purged: existing retention, moderation and account deletion remain supported.
+Verification for this revision is recorded in `friend-code-retirement-2026-09-17.md`; older export
+hashes and test totals do not describe this revised source. Physical calibration approval and the
+other native/account/store gates remain outstanding.
+
+
 Target: one universal iPhone and iPad app on Apple first, while preserving Google Play readiness.
+
+Current evidence: September 17, 2026. See `launch-audit-2026-09-17.md` for the latest
+implemented changes, checks, and remaining owner/device gates. No store upload is authorized yet.
 
 This file is a release gate, not a claim that store approval is guaranteed. Apple and Google make the
 final review decisions.
@@ -19,23 +38,35 @@ final review decisions.
 - [x] Release validation locks the approved app icon and adaptive icon plus the transparent Flap Fit
       splash logo at 340 px on a solid `#0F172A` native background. Pixel inspection confirms the
       exposed splash background matches exactly, with no light-blue field or contrasting square.
-- [x] Expo SDK 57 dependencies pass Expo dependency checks.
+- [x] Review the current Expo patch recommendations. Exact diffs were inspected: sharing 57.0.20
+      changes metadata; Expo 57.0.23 and build-properties 57.0.20 add optional Xcode 27 scene support.
+      The existing package versions are retained and the iOS build image is pinned to Xcode 26.6.
+      Native compilation remains a separate gate; warnings have not been hidden.
+- [x] The approved expo-sms 57.0.2 has a reproducible Yarn patch for Apple's attachment UTI.
+      Immutable installation passed without unrelated dependency changes. Expo Go retains system
+      sharing; the native composer requires an installed-build attachment and return test.
 - [x] The locked dependency graph has a documented reachability review; current registry advisories
       are non-critical and predominantly Expo/Jest build tooling, not untrusted-data paths in the
       shipped game.
-- [x] Expo Doctor 1.20.4 passes all 21 checks on the current candidate. It ran as a temporary Yarn
-      download and left the dependency lockfile unchanged.
+- [x] Current-source Expo Doctor completed 20/21 using the unchanged official SDK 57 schema
+      response to recover Node's failed network transport. Schema/assets pass. The only finding
+      is the reviewed patch-version recommendation above; no warning exclusions were added.
+      Native integration compatibility still requires the separate compile and device gates.
 - [x] Android compile SDK and target SDK are 36.
 - [x] Android production profile is configured to build an AAB.
-- [x] Expo SDK 57's automatic EAS iOS image uses Xcode 26.6, meeting Apple's current upload
-      toolchain requirement.
+- [x] iOS EAS profiles pin macos-tahoe-26.5-xcode-26.6, the supported SDK 57 image meeting
+      Apple's current upload toolchain requirement. The private simulator compile awaits approval.
 - [x] iOS export compliance declares no non-exempt encryption.
 - [x] iOS permission surface is camera plus optional microphone access requested only for Record &
       Play.
-- [x] The app-level iOS privacy manifest declares no tracking, the optional competition data types,
-      and the required-reason APIs used by the locked native SDKs.
-- [x] Android permission surface is INTERNET, VIBRATE, CAMERA, and RECORD_AUDIO. Microphone access
-      is requested only for Record & Play.
+- [x] The app-level iOS privacy manifest declares no tracking, competition data types, and required
+      reasons for the original native APIs.
+- [ ] Review the final merged native privacy report, including AdMob and RevenueCat manifests,
+      against the updated Apple privacy worksheet.
+- [x] App-requested Android permissions are INTERNET, VIBRATE, CAMERA, and RECORD_AUDIO;
+      microphone access is requested only for Record & Play. Advertising-ID and AdServices ID/
+      attribution permissions are explicitly blocked in the generated configuration.
+- [ ] Inspect the merged signed Android manifest for additional SDK permissions.
 - [x] MediaPipe model/runtime assets and exercise/evolution art are bundled locally.
 - [x] Camera recording is local, temporary, and user-shared. It can include the user's voice and
       workout sounds when microphone permission is granted.
@@ -56,9 +87,13 @@ final review decisions.
 - [x] Competition publishing requires versioned Terms acceptance.
 - [x] The Competition acceptance screen links directly to the full Terms and Privacy Policy when the
       required production URLs are configured.
-- [x] The September 16 audit-hardening candidate passes TypeScript, 78 automated tests and repository
-      lint. Current-source offline iOS and Android JavaScript exports passed on commit `207a685`;
-      signed native packaging and physical tests remain pending.
+- [x] Current September 17 source passes TypeScript, strict lint, and 267 tests in 28 suites.
+      These software results do not complete physical acceptance of Form Test
+      2026-09-17.3-floor-reference or any native-build/store gate.
+- [x] Current production-env Android and iOS JavaScript exports pass after the latest sharing,
+      challenge, consent, and Android RevenueCat changes. Source fingerprints stayed unchanged
+      during export. Re-export if later device testing or release changes modify the candidate;
+      signed native packaging and physical testing remain separate gates.
 - [x] Persisted-state hydration does not overwrite unreadable saved progress with defaults. Slow
       hydration shows branded loading and retry; a read error blocks writes and offers a retry. A real
       AsyncStorage regression preserves the original bytes and restores progress.
@@ -71,15 +106,21 @@ final review decisions.
 - [x] Production EAS validation fails closed while the hardened tracker remains unapproved: Form
       Test must be promoted and `FLAPFIT_APPROVED_TRACKER_RULES_VERSION` must exactly match the
       versioned rules marker. Development and preview testing remain available.
-- [x] Form Test now bounds sustained stale tracking and nonfatal invalid-form pauses across all six
-      exercises; a brief interruption can recover. Physical tolerance remains to be approved.
-- [x] Production EAS validation also fails closed while the agreed AdMob and RevenueCat integration
-      is absent. The current Expo/preview checkpoint remains intentionally ad-free.
+- [x] Form Test keeps pipes moving. Sustained invalid form or missing tracking releases the bird
+      to fall and crash; there is no recovery countdown. Full lockout is a valid movement endpoint.
+      Physical pull-up floor-contact/calf-raise rejection remains to be approved.
+- [x] Approved AdMob and RevenueCat SDK integration is implemented. Expo Go safely skips the native
+      SDKs; preview uses test ads and production uses real ad units. Production validation still
+      fails closed for missing platform RevenueCat keys and unapproved tracking.
 - [ ] Rerun the same checks after tomorrow's physical testing and any resulting source changes.
-- [ ] Physically approve Form Test tracking for all six exercises, then promote it from the
-      development-only comparison toggle to the production tracker before enabling global
-      leaderboards. A server-issued run prevents fabricated/replayed submissions, but it cannot by
-      itself prove exercise form on a modified client.
+- [ ] Physically approve Form Test 2026-09-17.3-floor-reference on iPhone/iPad and Android,
+      including the explicit arms-relaxed floor observation before jumping/gripping, straight and
+      bent suspended legs, grip-only rejection, planted feet during countdown/play, calf raises,
+      narrow grips, full lockout, and continuous pipes/recording. Verify the other five exercises
+      too. Then deliberately promote the accepted version and set its exact approval marker.
+      Production still selects original; no marker is set. A cropped-foot setup cannot verify
+      ground contact, and the demonstrated image reference is not a 3D floor or weight-bearing
+      measurement. A server-issued run cannot itself prove form on a modified client.
 - [ ] Build the production iOS artifact and test through TestFlight on a physical iPhone.
 - [ ] Build the production Android AAB and test on Play internal testing / physical Android.
 - [ ] Test camera denial/re-enable, low light, interrupted recording, offline mode, API failure,
@@ -117,13 +158,18 @@ Owner/legal inputs still required:
       backup/availability decision remains below.
 - [x] Dedicated Flap Fit project is healthy in AWS US East (Ohio), `us-east-2`.
 - [x] Anonymous authentication is enabled.
-- [x] All checked-in migrations through `202609160001_enforce_run_timing` are live and `flapfit-game`
-      version 4 is deployed with JWT verification enabled.
+- [x] Challenge exercise binding is live in addition to the prior migrations. `flapfit-game`
+      version 6 is deployed with JWT verification enabled. Local migration names match hosted
+      names; hosted migration timestamps differ, so do not blindly reapply with CLI db push.
 - [x] Live verification covers Terms enforcement, leaderboard read, legacy claimed-score rejection,
       verified-run creation/finalization, idempotent retry, replay rejection, implausible-result
       rejection (including the audit's 125/30-second and 60/13.75-second cases), all-exercise
-      challenges, and profile deletion.
-- [x] Every public application table has RLS enabled. Protected score writes are service-only.
+      challenges, and profile deletion. September 17 real API checks also pass for all six bound
+      exercises, matching-run acceptance, wrong-exercise rejection, invalid-input rejection, and
+      old-client compatibility. All temporary profile data was deleted; three original codes remain.
+- [x] Every public application table has RLS enabled and direct anon/authenticated table access is
+      denied. New and existing privileged RPCs are unavailable to those client roles. Supabase Cron
+      schema USAGE is also denied to both roles despite generic policy advisories.
 - [x] Define and document source-controlled retention for expired challenges and moderation reports.
 - [x] The checked-in retention migration deletes expired 30-day challenges daily, removes resolved
       moderation reports after 180 days, minimizes account-deletion records, and prunes Cron history.
@@ -142,8 +188,13 @@ Owner/legal inputs still required:
 
 - [x] Public marketing site loads signed out over HTTPS; the existing Site was made public without a
       duplicate or DNS change. Marketing, Privacy, Terms, and deletion URLs return HTTP 200.
-- [ ] Public privacy policy is linked in the app; store listings await final setup.
-- [ ] Public Terms of Use is linked in the app and covers the competition community rules.
+- [x] The public homepage returned HTTP 200 with `index,follow`, no `noindex` meta or
+      `X-Robots-Tag`, and a permissive `robots.txt` in an independent September 16 check.
+- [x] Public Privacy Policy is linked from Info and the Competition acceptance screen. The
+      production URL passed the September 16 public-link check; store-listing setup remains open.
+- [x] Public Terms of Use is linked from Info and the Competition acceptance screen. The live page
+      includes leaderboard/challenge rules, prohibited content, cheating, reporting, and blocking.
+      Final ad-related legal copy remains open below.
 - [x] Public account/data deletion page works without requiring the app to be installed, with the
       September 16 support-ID and run-retention copy.
 - [x] `yarn workspace mobile release:links` passed against all four signed-out HTTPS pages.
@@ -177,12 +228,22 @@ Owner/legal inputs still required:
       records. A real signed-out send-and-reply test is still required before the support gate above
       can be marked complete.
 - [ ] Privacy policy identifies data, purposes, providers, retention, deletion, user rights, and
-      international transfers where applicable.
-- [ ] All public pages use the final legal operator and contact details.
+      international transfers where applicable. Its current public text explicitly says there is
+      no advertising SDK; after the native ad implementation is tested, update that statement and
+      the related provider/data disclosures before either store submission.
+- [x] The public Privacy Policy identifies Troy Reardon as operator; the account-deletion page
+      names him for privacy contact; Privacy, Terms, Support, and deletion pages all publish
+      support@flapfitapp.com. The Terms intentionally omit his full name as requested. These
+      passages and HTTP 200 responses were rechecked signed out on September 16. Recheck after
+      the final advertising disclosure update.
 
 ## Apple submission gates
 
-- [ ] Apple Developer membership and agreements are active.
+- [x] Apple Business shows Free Apps Agreement Active, effective September 13, 2026 to
+      September 14, 2027. Paid Apps Agreement is New/unsigned and is optional for this free app
+      with no IAP, per Apple's agreement guidance. No agreement was accepted in this task.
+- [ ] Verify membership/signing access during the authorized native build; complete the owner DSA
+      declaration below before submission.
 - [ ] App Store Connect app record exists with the exact bundle ID.
 - [ ] Complete App Privacy using `apple-app-privacy.md`.
 - [ ] Complete age rating honestly for fitness/wellness and user-generated competition content,
@@ -236,7 +297,7 @@ Approved placement strategy:
 
 - no automatic ad when a result screen appears;
 - eligible only after Done, Try Again, or Next Level;
-- if Record & Play was used, only after the share flow returns to Flap Fit;
+- if sharing was opened, only after the share flow returns to Flap Fit; recording without sharing follows the normal result-action path;
 - never during recording or sharing;
 - ad failure never blocks the selected action; and
 - prevent stale or duplicate ad displays.
@@ -256,12 +317,24 @@ Privacy and review constraints for the final implementation:
 - keep AdMob and RevenueCat initialization independent from camera calibration and gameplay so a
   network, consent, or SDK failure cannot block exercise play.
 
-- [ ] After tomorrow's Expo gameplay approval, integrate the approved ad and RevenueCat design in a
-      native build, add consent/privacy handling for selected launch countries, and test ad-ready,
-      no-ad, offline, failure, and consent paths in TestFlight and Play internal testing.
-- [ ] Update the store listing, privacy policy, reviewer notes, Apple App Privacy, Google Data Safety,
-      and Ads declaration from the exact monetized build. Confirm both stores say no in-app
-      purchases or subscriptions for Flap Fit 1.0.
+- [x] Native result-action placement, UMP handling, independent RevenueCat event reporting, iOS
+      Messages/Mail composers, and the first-exit-free / every-two-exits / 90-second cap are implemented.
+- [x] Both AdMob app/unit pairs are configured and impression-level ad revenue is enabled.
+      Flap Fit European and US messages are saved drafts; European refusal is available in all regions.
+- [ ] Finish the RevenueCat store registration and public SDK keys; verify real ad events.
+- [ ] Publish the final consent messages after reviewing provider wording and the matching public
+      privacy policy. Native ad-ready, no-ad, offline, failure, consent, and share-return tests remain
+      required on iPhone and Android after gameplay approval.
+- [x] Local store listing, privacy policy, reviewer notes, Apple App Privacy, and Google Data Safety
+      drafts describe the implemented ad integration and no purchases/subscriptions.
+- [ ] Reconcile those drafts with the exact signed build and publish the approved website changes;
+      then complete the store declarations.
+- [x] The existing public site can serve a root-level text file. Its updated `robots.txt` returned
+      HTTP 200 and permits the Google app-ads crawler in a signed-out September 16 check.
+- [ ] Publish the real AdMob publisher's `app-ads.txt` at `https://flapfitapp.com/app-ads.txt`
+      (HTTP 404 on September 16), link `flapfitapp.com` as the store-listing developer website,
+      and complete AdMob ownership verification and app-readiness review before claiming live ads.
+      Verify that both HTTP and HTTPS return the exact publisher-specific file.
 
 ## Shipaton 2026 gate
 

@@ -1,6 +1,5 @@
 import { Asset } from 'expo-asset';
 import { Directory, File, Paths } from 'expo-file-system';
-import { isAndroidEmbeddedResource } from './birdWebAsset';
 
 type TrackerAssetSpec = {
   module: number;
@@ -82,16 +81,15 @@ async function stageTrackerAssets(): Promise<PreparedMediaPipeAssets> {
     }
 
     const sourceAsset = Asset.fromModule(spec.module);
-    const bundledAsset = isAndroidEmbeddedResource(sourceAsset.uri)
-      ? new Asset({
-          name: sourceAsset.name,
-          type: sourceAsset.type,
-          hash: sourceAsset.hash,
-          uri: sourceAsset.uri,
-          width: sourceAsset.width,
-          height: sourceAsset.height,
-        })
-      : sourceAsset;
+    // A fresh Asset also recovers when expo-asset's cached localUri was evicted.
+    const bundledAsset = new Asset({
+      name: sourceAsset.name,
+      type: sourceAsset.type,
+      hash: sourceAsset.hash,
+      uri: sourceAsset.uri,
+      width: sourceAsset.width,
+      height: sourceAsset.height,
+    });
 
     await bundledAsset.downloadAsync();
     const sourceUri = bundledAsset.localUri ?? bundledAsset.uri;
@@ -112,9 +110,9 @@ async function stageTrackerAssets(): Promise<PreparedMediaPipeAssets> {
 
 export function prepareMediaPipeAssets(): Promise<PreparedMediaPipeAssets> {
   if (!preparationPromise) {
-    preparationPromise = stageTrackerAssets().catch((error) => {
+    // Deduplicate in-flight work only. Every new preparation checks staged files.
+    preparationPromise = stageTrackerAssets().finally(() => {
       preparationPromise = null;
-      throw error;
     });
   }
   return preparationPromise;
@@ -132,16 +130,24 @@ export async function readMediaPipeAssetPayload(
   const loaderName = useSimd ? 'vision_wasm_internal.js' : 'vision_wasm_nosimd_internal.js';
   const wasmName = useSimd ? 'vision_wasm_internal.wasm' : 'vision_wasm_nosimd_internal.wasm';
 
-  const [module, loader, wasm, model] = await Promise.all([
-    new File(assets.fileUris['vision_bundle.mjs']).base64(),
-    new File(assets.fileUris[loaderName]).base64(),
-    new File(assets.fileUris[wasmName]).base64(),
-    new File(assets.fileUris['pose_landmarker_lite.task']).base64(),
-  ]);
+  const read = async (prepared: PreparedMediaPipeAssets) => {
+    const [module, loader, wasm, model] = await Promise.all([
+      new File(prepared.fileUris['vision_bundle.mjs']).base64(),
+      new File(prepared.fileUris[loaderName]).base64(),
+      new File(prepared.fileUris[wasmName]).base64(),
+      new File(prepared.fileUris['pose_landmarker_lite.task']).base64(),
+    ]);
 
-  if (!module || !loader || !wasm || !model) {
-    throw new Error('One or more bundled tracker files were empty.');
+    if (!module || !loader || !wasm || !model) {
+      throw new Error('One or more bundled tracker files were empty.');
+    }
+
+    return { module, loader, wasm, model };
+  };
+  try {
+    return await read(assets);
+  } catch {
+    // One bounded restage/read attempt; persistent failures reach the visible Retry UI.
+    return read(await prepareMediaPipeAssets());
   }
-
-  return { module, loader, wasm, model };
 }

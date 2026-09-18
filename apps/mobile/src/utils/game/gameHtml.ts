@@ -19,6 +19,7 @@ export type GameHtmlConfig = {
   recordRun: boolean;
   recordAudio: boolean;
   endless: boolean;
+  brandFirstPipe?: boolean;
   speed: number;
   gapFrac: number;
   spawnMs: number;

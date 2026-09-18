@@ -14,27 +14,32 @@ you accept the Competition Terms and use Compete.
 4. Confirm Delete.
 
 This permanently deletes the anonymous Supabase authentication user and associated player name,
-leaderboard scores, challenges, challenge attempts, and blocks. A minimized moderation report may
+leaderboard scores, blocks, and any challenge data retained from earlier testing. A minimized moderation report may
 remain until review and for up to 180 days after resolution for safety, abuse prevention, and legal
 obligations, but the deleted account's user identifier is removed from it. Local bird, level, score,
 and training history stored only on the phone are not deleted by this action.
 
-If you want a record that support can use to identify the correct anonymous profile, open Info and
-select Online profile support ID before deleting the app. Keep that identifier private and share it
-only with Flap Fit Support.
+The Online profile support ID in Info helps support locate a profile. It is not a secret:
+the same identifier can appear in leaderboard responses. It is not proof of ownership.
 
 ## Request deletion without the app
 
-Email support@flapfitapp.com with the subject "Flap Fit account deletion" and include the exact
-Online profile support ID previously shared from the app's Info tab. You may also include your player
-name to help us check the request, but a player name, score, challenge code, date, or screenshot alone
-is not proof that you own the profile. Do not send camera images, workout videos, passwords,
-government identification, or other sensitive information.
+Email support@flapfitapp.com with the subject "Flap Fit account deletion". You may include your
+Online profile support ID or player name to help locate the profile. Those details, scores and
+screenshots do not authorize deletion or disclosure.
 
-We will acknowledge the request within seven calendar days and complete a verified request within 30
-calendar days, unless applicable law requires a faster response. If you no longer have the app and
-did not save the support ID, contact support for the privacy-safe options that remain available. Flap
-Fit will not disclose or delete another player's data based only on public competition details.
+Ownership is verified through the original app's authenticated anonymous session. If you still
+have Flap Fit on the original device, use Info > Delete online profile; that request is bound to
+your authenticated account. Support can guide you through this process. Support must not request
+your access token, refresh token, passwords, camera images, workout videos or government ID.
+
+If you no longer have that session, say so in your email. Because no email/password is linked to
+the anonymous profile, support may be unable to verify ownership or recover access. We will explain
+the available options, but will not delete or disclose someone else's data solely on a public ID
+or player name. A public identifier must never be treated as a recovery password.
+
+We acknowledge requests within seven calendar days and complete verified requests within 30
+calendar days, unless applicable law requires a faster response.
 
 ## Retention after deletion
 

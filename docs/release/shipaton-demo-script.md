@@ -24,7 +24,7 @@ watching without sound. The narration below is a draft, not a claim of verificat
 | 0:42–0:57 | Live Camera background; explicitly choose Record & Play; show the recording indicator and game overlay over live video. | “Live Camera makes the workout part of the game. Record & Play captures the moment.” |
 | 0:57–1:08 | Actual result card and native share sheet from the same recorded run. Hide personal contacts and other private content. | “When the run ends, share your own game clip.” |
 | 1:08–1:22 | Training Stats and a real unlocked evolution stage, with actual on-device time-under-tension values. | “Training time is visible, and your bird evolves with your work.” |
-| 1:22–1:36 | Real Compete leaderboard and player-code challenge flow if both are live and tested; otherwise spend this time on a second exercise. Blur private identifiers. | “Compare runs or challenge a friend.” |
+| 1:22–1:36 | Real Compete leaderboard and complete gameplay video sharing if live and tested; otherwise spend this time on a second exercise. Blur private identifiers. | “Compare runs or challenge a friend.” |
 | 1:36–1:49 | On a final native build, tap Done, Try Again, or Next Level and show a real test ad only if one appears. Include truthful on-screen RevenueCat Ads proof in the written submission, not an invented dashboard composite. | “Flap Fit stays free, with ads only after a player chooses to leave a result.” |
 | 1:49–1:54 | Flap Fit end card and the verified public store name. | “Flap Fit. Move. Fly. Evolve.” |
 

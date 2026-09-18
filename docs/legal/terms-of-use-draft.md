@@ -35,15 +35,14 @@ interfere with, or exploit the app or service except where applicable law expres
 
 ## Online competition and public content
 
-Compete is optional. Player names, leaderboard scores, challenges, and challenge results may be
+Compete is optional. Player names and leaderboard scores may be
 visible to other players. You are responsible for the player name and competition content you
 submit. Do not submit sexual or obscene content, hate or discrimination, threats, harassment,
 bullying, impersonation, fraud, spam, illegal content, or content that violates another person's
 rights. Do not cheat, manipulate scores, obtain unauthorized access, evade limits, or disrupt the
 service.
 
-You can report or block another player beside that player's public leaderboard result, challenge,
-or challenge attempt. We may filter, restrict, hide, or remove content; suspend online access;
+You can report or block another player beside that player's public leaderboard result. We may filter, restrict, hide, or remove content; suspend online access;
 preserve evidence; and contact appropriate authorities when reasonably necessary to enforce these
 rules or protect users. Contact support@flapfitapp.com for urgent safety or illegal-content reports.
 

@@ -136,7 +136,8 @@
       ],
       "expo-asset",
       "expo-image",
-      "expo-status-bar"
+      "expo-status-bar",
+      "./plugins/with-share-return.cjs"
     ],
     "web": {
       "bundler": "metro",

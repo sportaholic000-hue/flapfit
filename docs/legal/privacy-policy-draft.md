@@ -1,10 +1,11 @@
 # Flap Fit Privacy Policy
 
-Status: release candidate. The live Supabase settings were verified on September 15, 2026.
+Status: monetized release draft updated September 17, 2026. Not yet published to the website.
+Verify the final native build, consent messages, and provider retention settings before publication.
 
-Effective date: September 16, 2026
+Effective date: set to the actual publication date
 
-Flap Fit is operated in Canada ("Flap Fit," "we," "us"). Questions and privacy requests may be sent
+Flap Fit is operated by Troy Reardon in Canada ("Flap Fit," "we," "us"). Questions and privacy requests may be sent
 to support@flapfitapp.com.
 
 ## Information kept on your device
@@ -34,11 +35,10 @@ Flap Fit creates an anonymous Supabase authentication identifier and processes:
 
 - your chosen player name;
 - the exercise category, score, and active run duration submitted to a leaderboard;
-- challenge codes, targets, attempts, and active run duration;
 - reports and blocks you submit; and
 - ordinary service, security, and error logs generated when the service handles a request.
 
-We use this information to operate leaderboards and challenges, keep your anonymous competition
+We use this information to operate leaderboards, keep your anonymous competition
 profile working, enforce community rules, prevent abuse, investigate reports, secure the service,
 and comply with law. Player names and competition results can be public to other players. The app
 does not send camera images, Record & Play videos, or your complete local training history to the
@@ -55,17 +55,46 @@ https://supabase.com/legal/subprocessors. Information transferred outside Canada
 laws of the jurisdiction where it is processed and to the contractual safeguards available through
 the provider.
 
-We do not sell personal information. Flap Fit 1.0 contains no advertising SDK and does not use
-health or fitness information for advertising, marketing profiles, or data brokerage. We do not
-permit cross-app tracking.
+## Advertising and ad measurement
+
+Flap Fit uses Google AdMob to show occasional interstitial advertisements after you choose Done,
+Try Again, or Next Level on a completed run. Sharing a recording or returning to the app does not
+by itself trigger an advertisement. Flap Fit requests non-personalized advertisements and does
+not request permission to access Apple's advertising identifier. Android advertising-ID access
+is blocked in the app configuration.
+
+AdMob may process IP-derived approximate location, app/device identifiers, ad interactions,
+and performance or diagnostic information for advertising, measurement, and abuse prevention.
+Non-personalized advertising still involves data processing. Google explains its practices at
+https://policies.google.com/technologies/ads.
+
+RevenueCat receives ad load, display, click, failure, and revenue events, including the ad unit,
+impression identifier, result-exit placement, currency, and revenue amount. These events use a
+separate anonymous RevenueCat identifier. We do not send RevenueCat your competition name,
+Supabase account identifier, exercise category, scores, camera images, recordings, or training
+history. Automatic device-identifier collection and diagnostic reporting are disabled in the
+RevenueCat configuration. RevenueCat's privacy information is at https://www.revenuecat.com/privacy.
+Flap Fit 1.0 does not offer purchases, subscriptions, a paywall, or a paid remove-ads option.
+
+We do not use health or fitness information to target advertisements, build marketing profiles,
+or broker data. We do not configure cross-app attribution integrations or sell player records.
+Advertising disclosures and regional choices apply to data processed by our advertising providers.
+Where required, Google's consent form provides choices before ads can be requested; the Info tab
+provides Advertising privacy choices when the consent service requires that entry point. Refusing
+consent does not prevent playing the game. Depending on the region and permitted processing,
+Google may serve limited ads or no ads.
+
+Google and RevenueCat may process information outside Canada under their applicable terms and
+privacy practices. Provider retention periods are distinct from the competition retention periods
+below; Flap Fit does not claim that deleting a competition profile erases provider records.
 
 ## Retention
 
 Local information remains until you clear app data or delete the app. Online profiles and current
 leaderboard scores remain until you delete the online profile. Online run-verification records expire
 six hours after they are created. The daily production cleanup removes those run records after they
-have been expired for seven days. Challenges expire after 30 days and are removed with their attempts
-by the daily production cleanup process. Pending reports remain until reviewed. Resolved moderation
+have been expired for seven days. Friend challenge codes are retired. Any challenge records from
+earlier testing expire after 30 days and are removed with their attempts by daily cleanup. Pending reports remain until reviewed. Resolved moderation
 reports are removed 180 days after resolution. If either party deletes their account before then,
 the report is retained without that account's user identifier. The
 current Supabase Free plan exposes service reports for up to the preceding 24 hours. Supabase may
@@ -78,17 +107,18 @@ will be updated before that change applies to user data.
 
 You may decline camera permission, use normal Play instead of Record & Play, avoid Compete, or stop
 using Compete at any time. In the app, open Info and select Delete online profile to permanently
-delete the anonymous competition account and its associated profile, scores, challenges, attempts,
-and blocks. A minimized moderation report may remain until review and for up to 180 days after
+delete the anonymous competition account and its associated profile, scores, blocks, and any challenge data retained from earlier testing. A minimized moderation report may remain until review and for up to 180 days after
 resolution, but the deleted account's user identifier is removed from it. Local game progress stays
-on the device.
+on the device. This action deletes the competition profile; it does not automatically delete
+separate advertising-provider records. Contact support@flapfitapp.com for advertising-data requests.
 
 If you no longer have the app, visit https://flapfitapp.com/delete-account/ and follow the request
 instructions. Privacy questions and applicable access, correction, objection, restriction, or
 deletion requests may be sent to support@flapfitapp.com. For a remote deletion request, use the
-Online profile support ID that you can share from the app's Info tab. A public player name, score,
-challenge code, or screenshot is not enough to prove ownership. Flap Fit will not disclose or delete
-another player's data when ownership cannot be verified.
+Online profile support ID from Info only as a lookup reference. That ID can also appear in public
+leaderboard responses and is not proof of ownership. Deletion is authorized through the original
+app's authenticated session. If that session is lost, support may be unable to verify ownership;
+we do not delete or disclose data based solely on an ID, name, score or screenshot.
 
 ## Children
 

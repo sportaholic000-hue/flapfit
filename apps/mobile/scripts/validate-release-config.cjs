@@ -5,7 +5,8 @@ const { validateTrackerReleaseConfig } = require('./validate-tracker-release.cjs
 
 const appRoot = path.resolve(__dirname, '..');
 const repoRoot = path.resolve(appRoot, '..', '..');
-const appJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'app.json'), 'utf8')).expo;
+const baseAppJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'app.json'), 'utf8')).expo;
+const appJson = require('../app.config.js')({ config: baseAppJson });
 const easJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'eas.json'), 'utf8'));
 const mobilePackage = JSON.parse(fs.readFileSync(path.join(appRoot, 'package.json'), 'utf8'));
 const easIgnore = fs.readFileSync(path.join(repoRoot, '.easignore'), 'utf8');

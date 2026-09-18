@@ -917,7 +917,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.18.6, @babel/runtime@npm:^7.20.0, @babel/runtime@npm:^7.25.0":
+"@babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.6, @babel/runtime@npm:^7.20.0, @babel/runtime@npm:^7.25.0":
   version: 7.29.7
   resolution: "@babel/runtime@npm:7.29.7"
   checksum: 10c0/ca11572f7146b21e0bde6a9ed4bb6a89eafbee5f0944c7eb54d0d8a2dac962c33638a1d611e14faa71dfbb92b4b5f9236232208568a6b7d5c6f3f39ddb91771e
@@ -1806,6 +1806,13 @@ __metadata:
   version: 0.4.3
   resolution: "@humanwhocodes/retry@npm:0.4.3"
   checksum: 10c0/3775bb30087d4440b3f7406d5a057777d90e4b9f435af488a4923ef249e93615fb78565a85f173a186a076c7706a81d0d57d563a2624e4de2c5c9c66c486ce42
+  languageName: node
+  linkType: hard
+
+"@iabtcf/core@npm:^1.5.6":
+  version: 1.5.6
+  resolution: "@iabtcf/core@npm:1.5.6"
+  checksum: 10c0/e7bb104fab82c5c2a051986b51bf31577f6cc9ca84b5561612d649d4503aa7db21113e667c241cb9ec93c8fe9ce65e1266396174e2f64dd1105f91a097ffa85c
   languageName: node
   linkType: hard
 
@@ -2995,6 +3002,29 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/eee86f802cda4e95dc414ff27f7283a505e19d58d2f00d1a577c0d6b33b3d25439d239ea3c24033dd5820cebf970162f458c710695991bfe5794b9f8f1129159
+  languageName: node
+  linkType: hard
+
+"@revenuecat/purchases-js-hybrid-mappings@npm:18.37.0":
+  version: 18.37.0
+  resolution: "@revenuecat/purchases-js-hybrid-mappings@npm:18.37.0"
+  dependencies:
+    "@revenuecat/purchases-js": "npm:1.59.0"
+  checksum: 10c0/2d578814ab8836819f77790c489a9e14aba461a0b77170ed04c851b0b81995565df6292b8b65aa5d717bc274840d9bdcf794f3604cd74bd468bdca539b408e8e
+  languageName: node
+  linkType: hard
+
+"@revenuecat/purchases-js@npm:1.59.0":
+  version: 1.59.0
+  resolution: "@revenuecat/purchases-js@npm:1.59.0"
+  checksum: 10c0/dc0a3404d1549f86efef92dcf8cd4190a0f2592caf4c7616420cd057af3ec5f4d8b53128bf8eaf29ac7422f49831374c220baed039ec8480d17d037e98f28940
+  languageName: node
+  linkType: hard
+
+"@revenuecat/purchases-typescript-internal@npm:18.37.0":
+  version: 18.37.0
+  resolution: "@revenuecat/purchases-typescript-internal@npm:18.37.0"
+  checksum: 10c0/93a5f100fb82eba25bd561344a6ab6bbbeac53725b53d340dfba37141956421125614c518710b1639fd9dcfbced183da3c6d6c3dacec920084445abc75397e17
   languageName: node
   linkType: hard
 
@@ -4984,6 +5014,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dequal@npm:^2.0.2":
+  version: 2.0.3
+  resolution: "dequal@npm:2.0.3"
+  checksum: 10c0/f98860cdf58b64991ae10205137c0e97d384c3a4edc7f807603887b7c4b850af1224a33d88012009f150861cbee4fa2d322c4cc04b9313bee312e47f6ecaa888
+  languageName: node
+  linkType: hard
+
 "destroy@npm:1.2.0":
   version: 1.2.0
   resolution: "destroy@npm:1.2.0"
@@ -5620,6 +5657,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-mail-composer@npm:57.0.2":
+  version: 57.0.2
+  resolution: "expo-mail-composer@npm:57.0.2"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/3488be5bf1e775f49a6b5ac4e6d79b4a487e48b02ae7fc6761ea5a46699d40cf46c97e2a9521ba39935f9d79aff73edd17d49cefb44f2d057986af1b3116d0ae
+  languageName: node
+  linkType: hard
+
 "expo-modules-autolinking@npm:~57.0.13":
   version: 57.0.13
   resolution: "expo-modules-autolinking@npm:57.0.13"
@@ -5744,6 +5790,24 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/2b673ae8f75f16377312acdc3327e9afdf547e476689351934e4cabd582cccf6d3456eb2b6a13ee70ffadcb0744b25ec6587b0f325f7824142bdb7b036da62a2
+  languageName: node
+  linkType: hard
+
+"expo-sms@npm:57.0.2":
+  version: 57.0.2
+  resolution: "expo-sms@npm:57.0.2"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/7781eac4b4f3aef61844d4a25e462081fe172d5dc0be2b783b96e9a0e43f2e762441733f3076928ef373295f167af5a481eb23d194e439a9ddcf85e68d1d965c
+  languageName: node
+  linkType: hard
+
+"expo-sms@patch:expo-sms@npm%3A57.0.2#~/.yarn/patches/expo-sms-npm-57.0.2-32281c0cc4.patch":
+  version: 57.0.2
+  resolution: "expo-sms@patch:expo-sms@npm%3A57.0.2#~/.yarn/patches/expo-sms-npm-57.0.2-32281c0cc4.patch::version=57.0.2&hash=b9e8b6"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/0ff13f274f7ec919e0fbbbda6d33eb043df363e38105fd979d4d38bc1c12f2cad6db1e9c30c75b41a83b47871e4f504e6716541f975d90cbc6df5032858ce89d
   languageName: node
   linkType: hard
 
@@ -8523,8 +8587,10 @@ __metadata:
     expo-image: "npm:~57.0.5"
     expo-linear-gradient: "npm:~57.0.2"
     expo-linking: "npm:~57.0.10"
+    expo-mail-composer: "npm:57.0.2"
     expo-router: "npm:~57.0.21"
     expo-sharing: "npm:~57.0.19"
+    expo-sms: "patch:expo-sms@npm%3A57.0.2#~/.yarn/patches/expo-sms-npm-57.0.2-32281c0cc4.patch"
     expo-splash-screen: "npm:~57.0.9"
     expo-status-bar: "npm:~57.0.1"
     jest: "npm:29.7.0"
@@ -8535,6 +8601,8 @@ __metadata:
     react-dom: "npm:19.2.3"
     react-native: "npm:0.86.3"
     react-native-gesture-handler: "npm:~2.32.0"
+    react-native-google-mobile-ads: "npm:16.5.0"
+    react-native-purchases: "npm:10.9.1"
     react-native-reanimated: "npm:4.5.1"
     react-native-safe-area-context: "npm:~5.7.0"
     react-native-screens: "npm:~4.26.0"
@@ -9565,6 +9633,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-google-mobile-ads@npm:16.5.0":
+  version: 16.5.0
+  resolution: "react-native-google-mobile-ads@npm:16.5.0"
+  dependencies:
+    "@iabtcf/core": "npm:^1.5.6"
+    use-deep-compare-effect: "npm:^1.8.1"
+  peerDependencies:
+    expo: ">=47.0.0"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+  checksum: 10c0/b2ca84a51aa5db536e8027ba4c7b938870c4dccf8da588169d2c516bd2a0d447540c7fe56122f8b034510fbb20d602491043f6164e4653fe0c5fc7b2b7c9d10d
+  languageName: node
+  linkType: hard
+
 "react-native-is-edge-to-edge@npm:^1.3.1":
   version: 1.3.1
   resolution: "react-native-is-edge-to-edge@npm:1.3.1"
@@ -9572,6 +9655,23 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/28cebd5f1f3632864ff5e342278721d1e5e38627ae73859a8814012116ef15c629fee7137a6c9c97bb05d94bbe639b0b47e69b36fc2735ab53ed31570140663f
+  languageName: node
+  linkType: hard
+
+"react-native-purchases@npm:10.9.1":
+  version: 10.9.1
+  resolution: "react-native-purchases@npm:10.9.1"
+  dependencies:
+    "@revenuecat/purchases-js-hybrid-mappings": "npm:18.37.0"
+    "@revenuecat/purchases-typescript-internal": "npm:18.37.0"
+  peerDependencies:
+    react: ">= 16.6.3"
+    react-native: ">= 0.73.0"
+    react-native-web: "*"
+  peerDependenciesMeta:
+    react-native-web:
+      optional: true
+  checksum: 10c0/560917c6c5f070acefb9b83f5c2ffbc2727f10c3624edd79fcd6d6cbd301e0eaab8962813ee2c7524612241266faf0da78942fcc8c3dd2c05d094e172ab7e0d9
   languageName: node
   linkType: hard
 
@@ -11001,6 +11101,18 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/f887488c6e6075cdad4962979da1714b217bcb1ee009a9e57ce9a844bcfc4c3a99e93983dfc2e5af9e0913824d24e730090ff255e902c516dcb58d2d3837e01c
+  languageName: node
+  linkType: hard
+
+"use-deep-compare-effect@npm:^1.8.1":
+  version: 1.8.1
+  resolution: "use-deep-compare-effect@npm:1.8.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.12.5"
+    dequal: "npm:^2.0.2"
+  peerDependencies:
+    react: ">=16.13"
+  checksum: 10c0/f21f4239d774182e5389172321f00db487b415a97f5835abbe99d228eec45e3fd97803a52a25db6216ae6e1e1203b3f523336d94695dc683c661bad36a318891
   languageName: node
   linkType: hard
 
