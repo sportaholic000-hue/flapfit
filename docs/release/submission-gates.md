@@ -1,6 +1,6 @@
 # Flap Fit dual-store submission gates
 
-Target: iPhone submission first, while preserving Google Play readiness.
+Target: one universal iPhone and iPad app on Apple first, while preserving Google Play readiness.
 
 This file is a release gate, not a claim that store approval is guaranteed. Apple and Google make the
 final review decisions.
@@ -10,9 +10,10 @@ final review decisions.
 - [x] App name is Flap Fit; iOS bundle ID and Android package are `com.flapfit.game`.
 - [x] A September 16 full mobile/backend source scan found no `anything.com`, `Flappy Push`,
       or superseded support-email references in launch code. Old Expo ownership remains only in historical release notes.
-- [x] Flap Fit 1.0 is an iPhone app on Apple (`ios.supportsTablet: false`), so the approved launch
-      asset plan does not require a separate iPad screenshot set. iPad Expo Go checks remain useful
-      compatibility evidence but do not expand the App Store device family.
+- [x] Flap Fit 1.0 targets both iPhone and iPad (`ios.supportsTablet: true`) in one iOS app.
+      Full-screen camera gameplay is retained.
+- [ ] Verify the installed native build on both device families and capture the separate genuine
+      13-inch iPad screenshot set; Expo Go testing alone does not clear native-device acceptance.
 - [x] The 1024 x 1024 source app icon is fully opaque; Android's adaptive foreground correctly uses
       transparency.
 - [x] Release validation locks the approved app icon and adaptive icon plus the transparent Flap Fit

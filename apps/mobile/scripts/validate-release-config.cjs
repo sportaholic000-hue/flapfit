@@ -131,10 +131,11 @@ if (
 if (appJson.ios?.bundleIdentifier !== 'com.flapfit.game') {
   failures.push('app.json: iOS bundle identifier must be com.flapfit.game');
 }
-if (appJson.ios?.supportsTablet !== false) {
-  failures.push(
-    'app.json: iOS tablet support must remain disabled for the approved iPhone-only 1.0 listing and screenshot set'
-  );
+if (appJson.ios?.supportsTablet !== true || appJson.ios?.isTabletOnly === true) {
+  failures.push('app.json: Flap Fit must support both iPhone and iPad');
+}
+if (appJson.ios?.requireFullScreen !== true) {
+  failures.push('app.json: iPad must retain the full-screen exercise-camera experience');
 }
 if (appJson.android?.package !== 'com.flapfit.game') {
   failures.push('app.json: Android package must be com.flapfit.game');

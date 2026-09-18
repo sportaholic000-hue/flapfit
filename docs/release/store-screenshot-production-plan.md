@@ -11,8 +11,13 @@ scores, camera behavior, and feature state shown inside the capture must be genu
 - Produce eight portrait PNG or JPEG images at `1320 x 2868` with no transparency.
 - Save them under `apps/mobile/store-assets/app-store/iphone-6.9`.
 - Use the same approved iPhone build and visual sequence for every image.
-- Flap Fit 1.0 has `ios.supportsTablet: false`; do not create or upload a separate iPad screenshot
-  set for this release. Expo Go testing on an iPad does not change the production device family.
+- Flap Fit 1.0 supports both iPhone and iPad. Produce a separate set of eight genuine iPad
+  screenshots at `2064 x 2752`, with no transparency, under
+  `apps/mobile/store-assets/app-store/ipad-13`. Use the same eight filenames and visual sequence.
+  Capture the native iPad build; do not stretch iPhone captures into tablet screenshots.
+- Apple requires the 13-inch iPad screenshot slot for apps supporting iPad. The selected
+  `2064 x 2752` portrait size is accepted by the current screenshot specifications:
+  https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/
 - Apple permits 1 to 10 screenshots. The eight-image set below tells the complete Flap Fit story
   while keeping the first three focused on the core product.
 
@@ -64,7 +69,7 @@ scores, camera behavior, and feature state shown inside the capture must be genu
 
 ## Final validation
 
-- Run `corepack yarn workspace mobile release:assets` after both image sets are saved.
+- Run `corepack yarn workspace mobile release:assets` after the iPhone, iPad and Android image sets are saved.
 - Review the first three images at small thumbnail size. The logo, exercise birds, core mechanic,
   and live-camera difference must still be immediately understandable.
 - Verify no image includes private notifications, unrelated apps, temporary developer controls,

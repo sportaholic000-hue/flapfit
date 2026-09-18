@@ -119,3 +119,11 @@ Repeat all applicable checks above on the exact signed binaries, then verify:
 - [ ] Remove personal notifications and test-account identifiers from captures.
 - [ ] Run `corepack yarn workspace mobile release:assets` and resolve every failure.
 - [ ] Save the completed matrix and final screenshot set in the private repository before submission.
+
+## Universal iPhone and iPad release acceptance
+
+- [ ] Install the native candidate on both an iPhone and an iPad; verify native device-family support.
+- [ ] On iPad, check full-screen portrait camera calibration, game aspect ratio, touch targets, results scrolling and safe areas.
+- [ ] On iPad, send/cancel the system share sheet and Messages where available; confirm the complete clip and result-screen controls.
+- [ ] Check consent and eligible result-exit ads on both device families, including background/foreground transitions.
+- [ ] Capture the separate genuine iPad App Store screenshot set only after the exact build passes.

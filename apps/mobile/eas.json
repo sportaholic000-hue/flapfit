@@ -16,7 +16,8 @@
         "EXPO_PUBLIC_ACCOUNT_DELETION_URL": "https://flapfitapp.com/delete-account/",
         "EXPO_PUBLIC_MARKETING_URL": "https://flapfitapp.com/",
         "EXPO_PUBLIC_SUPABASE_URL": "https://yhrleungvipsqlmayrfg.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_e9j7eYYJA-H-TLBne995Mw_43I24Klh"
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_e9j7eYYJA-H-TLBne995Mw_43I24Klh",
+        "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_ceexQTnHXavsTnEfdRrQyiCtFuY"
       }
     },
     "preview": {
@@ -30,7 +31,8 @@
         "EXPO_PUBLIC_ACCOUNT_DELETION_URL": "https://flapfitapp.com/delete-account/",
         "EXPO_PUBLIC_MARKETING_URL": "https://flapfitapp.com/",
         "EXPO_PUBLIC_SUPABASE_URL": "https://yhrleungvipsqlmayrfg.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_e9j7eYYJA-H-TLBne995Mw_43I24Klh"
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_e9j7eYYJA-H-TLBne995Mw_43I24Klh",
+        "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_ceexQTnHXavsTnEfdRrQyiCtFuY"
       }
     },
     "production": {
@@ -50,7 +52,8 @@
         "EXPO_PUBLIC_ACCOUNT_DELETION_URL": "https://flapfitapp.com/delete-account/",
         "EXPO_PUBLIC_MARKETING_URL": "https://flapfitapp.com/",
         "EXPO_PUBLIC_SUPABASE_URL": "https://yhrleungvipsqlmayrfg.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_e9j7eYYJA-H-TLBne995Mw_43I24Klh"
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_e9j7eYYJA-H-TLBne995Mw_43I24Klh",
+        "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_ceexQTnHXavsTnEfdRrQyiCtFuY"
       }
     }
   },

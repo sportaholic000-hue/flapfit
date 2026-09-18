@@ -166,6 +166,7 @@ requireImage('google-play/feature-graphic-1024x500.png', (info) => {
 });
 
 validateScreenshotSet('app-store/iphone-6.9', 1320, 2868, 'App Store');
+validateScreenshotSet('app-store/ipad-13', 2064, 2752, 'App Store iPad');
 validateScreenshotSet('google-play/phone', 1440, 2560, 'Google Play');
 
 if (failures.length) {
