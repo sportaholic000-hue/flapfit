@@ -1,3 +1,4 @@
+import './crypto-compat.ts';
 import { Buffer } from 'node:buffer';
 import {
   Environment, SignedDataVerifier, VerificationException, VerificationStatus,

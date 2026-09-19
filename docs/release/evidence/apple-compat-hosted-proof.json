@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-09-19T22:09:06.323Z",
+  "environment": "Sandbox",
+  "officialAppleType": "TEST",
+  "officialAppleVersion": "2.0",
+  "appleDeliveryAttempts": [
+    {
+      "attemptDate": 1789855251096,
+      "sendAttemptResult": "SUCCESS"
+    }
+  ],
+  "hostedReplay": 200,
+  "hostedTamper": 400,
+  "hostedMalformed": 400,
+  "productionRejectsSandbox": 400,
+  "temporaryDiagnosticsRemoved": true
+}

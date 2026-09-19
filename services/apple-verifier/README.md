@@ -1,3 +1,5 @@
+**Superseded for launch:** the owner rejected adding a backend/hosting bill. The compatibility correction now runs successfully inside the existing Supabase receivers. This service remains undeployed and is not required. See docs/release/apple-consent-receiver-2026-09-19.md.
+
 # Apple signature verification on Node
 
 Prepared locally; **not deployed or connected to the app**. The approved Supabase

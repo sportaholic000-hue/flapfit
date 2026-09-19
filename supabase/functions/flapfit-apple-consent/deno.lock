@@ -2,7 +2,8 @@
   "version": "5",
   "specifiers": {
     "npm:@apple/app-store-server-library@3.1.0": "3.1.0",
-    "npm:@supabase/supabase-js@2.109.0": "2.109.0"
+    "npm:@supabase/supabase-js@2.109.0": "2.109.0",
+    "npm:jsrsasign@11.1.5": "11.1.5"
   },
   "npm": {
     "@apple/app-store-server-library@3.1.0": {
@@ -311,7 +312,8 @@
   "workspace": {
     "dependencies": [
       "npm:@apple/app-store-server-library@3.1.0",
-      "npm:@supabase/supabase-js@2.109.0"
+      "npm:@supabase/supabase-js@2.109.0",
+      "npm:jsrsasign@11.1.5"
     ]
   }
 }

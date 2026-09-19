@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-09-19T22:09:06.323Z",
+  "project": "yhrleungvipsqlmayrfg",
+  "production": {
+    "name": "flapfit-apple-consent",
+    "version": 3,
+    "hash": "c7186321d71a6514dc9156b115c9bd842fdd409ff5bfd6e9e2d444042ab646b6",
+    "readBackMatchesUploadedFiles": true
+  },
+  "sandbox": {
+    "name": "flapfit-apple-consent-sandbox",
+    "version": 8,
+    "hash": "0a8b8bf4397fb702f9abe43a146e6daabfc38aaea13711ee129bb401c1ac67e9",
+    "readBackMatchesUploadedFiles": true
+  },
+  "gameVersionUnchanged": 8,
+  "privateCredentialsIncluded": false,
+  "additionalHostingService": false,
+  "officialAppleDeliveryEstablishedOnSandboxVersion": 7,
+  "finalSandboxReplayVerifiedOnVersion": 8
+}

@@ -85,3 +85,7 @@ All ten exact-version source transformations, idempotence, drift rejection, endp
 ## Review successor
 
 The reconciled full run now passes 44 suites / 811 tests, with 32 receiver/database tests. See review-reconciliation-2026-09-19.md for F1, current deployment/signing evidence and open worldwide/runtime/device requirements. No revised consent interface has been added.
+
+## Later September 19 verification
+
+The hosted Apple verification-runtime issue is resolved inside the existing Supabase project: Production v3, Sandbox v8, genuine Apple Sandbox TEST delivery SUCCESS, forged inputs rejected, 39 backend tests passed. No extra backend or hosting purchase. See apple-consent-receiver-2026-09-19.md for exact evidence and limits. The signed internal candidate 710512ba was inspected directly: both device families and the age-range entitlement exist in the signed binary and embedded profile. Remaining gate 3's compile/build portion is complete; installed Apple handling, worldwide coordinator/interface decisions, real revocation/linkage and RevenueCat receipt remain open. No audience, territory or interface approval is implied.

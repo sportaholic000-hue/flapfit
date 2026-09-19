@@ -1,6 +1,6 @@
 # Apple consent rescission receiver
 
-Source and live deployment checkpoint: both migrations applied, Production receiver version 1 and Sandbox receiver version 4 active, and flapfit-game version 8 active after explicit owner deployment approval. Live malformed-signature/status checks return 400, missing link/game authentication returns 401. Genuine Apple TEST delivery FAILED on the hosted Deno runtime; see the runtime blocker below. Installed linkage remains unverified.
+Source and live deployment checkpoint: Production receiver version 3, Sandbox receiver version 8, and unchanged flapfit-game version 8. Genuine Apple Sandbox TEST delivery is now SUCCESS; hosted valid replay returns 200, signature tampering/malformed messages return 400, and Production rejects Sandbox messages. The prior hosted-runtime blocker is resolved within the existing Supabase project. Installed rescission/linkage remains unverified.
 This records Apple's `RESCIND_CONSENT` independently of age, parental permission, advertising,
 RevenueCat and competition decisions. A valid download or absence of a denial never grants consent.
 Local gameplay, accepted calibration, recording, sharing and result-exit ad placement are unchanged.
@@ -121,6 +121,14 @@ app's separate Apple/legal policy; this backend does not make that worldwide dec
 - [Supabase authentication headers](https://supabase.com/docs/guides/functions/auth-headers)
 - [Supabase changelog](https://supabase.com/changelog.md), checked September 19, 2026.
 
-## Hosted runtime blocker discovered by genuine delivery
+## Hosted runtime compatibility resolved in existing Supabase
 
-Both App Store notification URLs are saved. Official Sandbox TEST delivery failed despite local signature verification succeeding. The hosted runtime is compatible with Deno 2.1.4 and lacks required X509Certificate APIs. Temporary redacted diagnostics were removed; current Sandbox version 4 has the original reviewed source hash. The current endpoint fails closed but cannot yet verify genuine notifications. This is a release blocker. See services/apple-verifier for the locally tested, undeployed Node execution option. Do not claim that 400/401 rejection checks established valid delivery.
+Both App Store notification URLs are saved. The original genuine TEST exposed missing X509 methods in Supabase edge runtime 1.76.0 / Deno 2.1.4. The bounded crypto-compat.ts adapter retains native certificate parsing, names, dates, CA flags and public keys; it supplies missing serialization/AIA/signature operations through the exact jsrsasign 11.1.5 already used by Apple's pinned 3.1.0 library. Deno curve aliases are normalized only when actual JWK curves agree. The official Apple verifier, JWT algorithm/curve checks, trust roots, Apple OIDs, fixed environment/bundle/app checks and online OCSP remain enabled. Newer runtimes retain native methods. The actual hosted version string is covered by a regression.
+
+Production version 3 and Sandbox version 8 were read back and match the reviewed uploaded files. Temporary redacted diagnostics are removed. Apple reports SUCCESS for a fresh Sandbox TEST; valid hosted replay 200, tampered/malformed 400, and Production rejects Sandbox 400. Evidence: evidence/apple-compat-hosted-proof.json and evidence/apple-compat-deployment.json.
+
+Verification: 39 backend/database/compatibility tests passed, including actual Apple chain/OID/date rejection. Apple's additional 12 upstream chain assertions passed with the local adapter. The exact staged receiver also accepted genuine Apple TEST and rejected four invalid cases on local Deno 2.1.4; both function entrypoints pass Deno type checking.
+
+No new backend, Railway deployment, subscription or hosting destination was added. The owner rejected additional hosting; services/apple-verifier remains an unused local fallback and is not required for this solution. Existing Supabase usage remains subject to its existing plan.
+
+A TEST proves signed delivery and verification, not a real parent revocation, account linkage, device gating or RevenueCat receipt. Those installed-flow checks remain. The separate Production TEST-request API returned 401 earlier; its cause remains unestablished, and successful Sandbox delivery is not represented as Production TEST delivery.
