@@ -255,3 +255,62 @@ test('invalid adjacent gates do not invoke Apple or retain previous eligibility'
   expect(native.requestAppleAgeRange).not.toHaveBeenCalled();
   expect(runtime.getProcessingInputs().verification).toBeNull();
 });
+
+
+test('a mandatory Apple check works before any country is selected and cannot authorize processing', async () => {
+  await readyControl(); await runtime.setPrivacyRegion('unknown'); await control.prepareAppleAgeControl();
+  const result = await control.requestAppleAgeEvidence();
+  expect(result.status).toBe('processed'); expect(result.regional).toBeNull();
+  expect(native.requestAppleAgeRange).toHaveBeenCalledWith();
+  expect(runtime.getProcessingInputs().verification?.mandatoryCheckSatisfied).toBe(true);
+  expect(runtime.getProcessingInputs().region).toBe('unknown');
+  expect(runtime.getProcessingInputs().requirements).toEqual({ ads: 'unresolved', analytics: 'unresolved', competition: 'unresolved' });
+  for (const purpose of ['ads', 'revenueCat', 'competition'] as const) expect(result.access[purpose].allowed).toBe(false);
+  expect(JSON.stringify(result)).not.toMatch(/"(?:source|lowerBound|upperBound|assurance|communicationLimits)"/);
+});
+
+test('a context-free check is unavailable when Apple does not require it', async () => {
+  await readyControl(); runtime.setAppleAgeRequirement('not-required'); native.requestAppleAgeRange.mockClear();
+  expect((await control.requestAppleAgeEvidence()).status).toBe('unavailable');
+  expect(native.requestAppleAgeRange).not.toHaveBeenCalled();
+});
+
+test('mandatory-only Apple information does not supply missing notices, choices or regional legal assessments', async () => {
+  await readyControl();
+  await runtime.setProcessingChoice('analytics', 'denied');
+  runtime.markProcessingNoticePresented(1);
+  const before = runtime.getProcessingInputs().choices;
+  const result = await control.requestAppleAgeEvidence();
+  expect(result.status).toBe('processed');
+  expect(runtime.getProcessingInputs().choices).toEqual(before);
+  expect(result.access.ads.allowed).toBe(false);
+  expect(result.access.revenueCat.allowed).toBe(false);
+  expect(result.access.competition.allowed).toBe(false);
+});
+
+test('declining the mandatory Apple request is never an adult or completed-age classification', async () => {
+  await readyControl(); native.requestAppleAgeRange.mockResolvedValue({ ...sharedAdult(), status: 'declined' });
+  const result = await control.requestAppleAgeEvidence();
+  expect(result.access.ads.allowed).toBe(false);
+  expect(runtime.getProcessingInputs().verification?.mandatoryCheckSatisfied).toBe(false);
+});
+
+test('a late mandatory Apple rejection after account invalidation is stale, not a completed new attempt', async () => {
+  await readyControl(); let reject!: (error: Error) => void;
+  native.requestAppleAgeRange.mockReturnValue(new Promise((_yes, no) => { reject = no; }));
+  const pending = control.requestAppleAgeEvidence(); control.invalidateAppleAgeEvidence();
+  reject(new Error('old account unavailable'));
+  expect((await pending).status).toBe('stale');
+  expect(runtime.getProcessingInputs().verification).toBeNull();
+});
+
+
+test('mandatory coordinator joins an existing regional Apple request without invalidating it', async () => {
+  await readyControl(); const pending = deferred<ReturnType<typeof sharedAdult>>();
+  native.requestAppleAgeRange.mockReturnValue(pending.promise);
+  const regional = control.requestAppleAgeEvidence(context());
+  const mandatory = control.requestAppleAgeEvidence();
+  expect(mandatory).toBe(regional); expect(native.requestAppleAgeRange).toHaveBeenCalledTimes(1);
+  pending.resolve(sharedAdult()); expect((await regional).status).toBe('processed');
+  expect(runtime.getProcessingInputs().verification?.mandatoryCheckSatisfied).toBe(true);
+});

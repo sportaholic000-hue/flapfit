@@ -1,12 +1,17 @@
 const originalEnv = { ...process.env };
-function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: boolean; adsAllowed?: boolean; rcAllowed?: boolean; treatment?: string; underAgeOfConsent?: boolean; nativeFence?: boolean; umpBridge?: boolean } = {}) {
+function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: boolean; adsAllowed?: boolean; rcAllowed?: boolean; treatment?: string; underAgeOfConsent?: boolean; nativeFence?: boolean; umpBridge?: boolean; appleRequired?: boolean } = {}) {
   jest.resetModules();
   process.env.EXPO_PUBLIC_ADS_MODE = 'test';
   process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = 'appl_unit_test_only';
   let access = { ads: { allowed: options.adsAllowed ?? true, treatment: options.treatment ?? 'unspecified', underAgeOfConsent: options.underAgeOfConsent ?? false }, revenueCat: { allowed: options.rcAllowed ?? true }, competition: { allowed: true }, revision: 1 };
   const accessListeners = new Set<() => void>();
   const changeAccess = (change: Partial<typeof access>) => { access = { ...access, ...change, revision: access.revision + 1 }; accessListeners.forEach((listener) => listener()); };
-  jest.doMock('../privacy/processingAccess', () => ({ getProcessingAccess: () => access, subscribeProcessingAccess: (listener: () => void) => { accessListeners.add(listener); return () => accessListeners.delete(listener); } }));
+  let ageRevision = 0;
+  const privacyInput = { appleRequirement: options.appleRequired ? 'required' : 'not-required', verification: null as { mandatoryCheckSatisfied: boolean } | null };
+  const ageRequest = jest.fn(async () => { ++ageRevision; return { status: 'processed', access, regional: null }; });
+  jest.doMock('../privacy/appleAgeControl', () => ({ requestAppleAgeEvidence: ageRequest }));
+  const invalidateAge = () => { ++ageRevision; privacyInput.verification = null; };
+  jest.doMock('../privacy/processingAccess', () => ({ getProcessingInputs: () => privacyInput, getAgeVerificationRevision: () => ageRevision, getProcessingAccess: () => access, subscribeProcessingAccess: (listener: () => void) => { accessListeners.add(listener); return () => accessListeners.delete(listener); } }));
   const nativeFence = jest.fn().mockResolvedValue(true);
   const events = new Map<string, (value?: unknown) => void>();
   const consent = { canRequestAds: true, privacyOptionsRequirementStatus: 'required' };
@@ -40,7 +45,7 @@ function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: b
   jest.doMock('react-native-google-mobile-ads', () => nativeLoad());
   jest.doMock('react-native-purchases', () => purchasesLoad());
   const adapter = require('../monetization') as typeof import('../monetization');
-  return { adapter, sdk, purchases, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativeModules, changeState, ump, umpInfo };
+  return { adapter, sdk, purchases, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativeModules, changeState, ump, umpInfo, ageRequest, privacyInput, invalidateAge };
 }
 
 afterEach(() => { process.env = { ...originalEnv }; jest.useRealTimers(); });
@@ -631,4 +636,87 @@ test('lobby re-entry during an unresolved rights query cannot bypass its later r
   await Promise.all([options, setup]);
   expect(f.mobileAds.initialize).not.toHaveBeenCalled();
   expect(f.adapter.prepareResultInterstitial()).toBeNull();
+});
+
+
+test('positive Apple duty invokes the system check with no location question or invented processing grant', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, appleRequired: true });
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.ageRequest).toHaveBeenCalledWith();
+  expect(f.nativeLoad).not.toHaveBeenCalled(); expect(f.purchasesLoad).not.toHaveBeenCalled();
+  expect(f.getAccess().ads.allowed).toBe(false); expect(f.getAccess().revenueCat.allowed).toBe(false);
+});
+
+test.each(['pending', 'error', 'not-required', 'unsupported'])('Apple duty %s never automatically presents the age sheet', async (duty) => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false }); f.privacyInput.appleRequirement = duty;
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.ageRequest).not.toHaveBeenCalled();
+});
+
+test('an already satisfied Apple check is reused and no repeated system sheet is requested', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, appleRequired: true });
+  f.privacyInput.verification = { mandatoryCheckSatisfied: true };
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.ageRequest).not.toHaveBeenCalled();
+});
+
+test('Apple refusal is not automatically re-requested on ordinary lobby return', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, appleRequired: true });
+  await f.adapter.prepareMonetization(() => true);
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.ageRequest).toHaveBeenCalledTimes(1);
+  f.invalidateAge(); await f.adapter.prepareMonetization(() => true);
+  expect(f.ageRequest).toHaveBeenCalledTimes(2);
+});
+
+test('game entry waits for an Apple system sheet already dispatched, without allowing ads', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, appleRequired: true });
+  let resolve!: (value: unknown) => void;
+  f.ageRequest.mockReturnValue(new Promise(done => { resolve = done; }) as never);
+  const first = f.adapter.prepareMonetization(() => true);
+  const second = f.adapter.prepareMonetization(() => true); expect(first).toBe(second);
+  for (let i = 0; i < 8; ++i) await Promise.resolve();
+  expect(f.ageRequest).toHaveBeenCalledTimes(1);
+  const start = jest.fn(); const entry = f.adapter.settlePrivacyBeforeGameplay().then(start);
+  for (let i = 0; i < 8; ++i) await Promise.resolve();
+  expect(start).not.toHaveBeenCalled();
+  resolve({ status: 'processed', access: f.getAccess(), regional: null });
+  await Promise.all([first, entry]); expect(start).toHaveBeenCalledTimes(1);
+  expect(f.mobileAds.initialize).not.toHaveBeenCalled();
+});
+
+test('leaving the lobby before native dispatch cannot show an Apple sheet over the next screen', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, appleRequired: true }); let focused = true;
+  const request = f.adapter.prepareMonetization(() => focused); focused = false;
+  await request; expect(f.ageRequest).not.toHaveBeenCalled();
+});
+
+test('an invalidated Apple response cannot consume the fresh account check attempt', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, appleRequired: true });
+  f.ageRequest.mockResolvedValueOnce({ status: 'stale', access: f.getAccess(), regional: null });
+  await f.adapter.prepareMonetization(() => true);
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.ageRequest).toHaveBeenCalledTimes(2);
+});
+
+test('the lobby key changes when required Apple information is satisfied, without exposing any range', () => {
+  const f = loadAdapter({ appleRequired: true });
+  expect(f.adapter.getAppleLobbyPrivacyKey()).toBe('required:false');
+  f.privacyInput.verification = { mandatoryCheckSatisfied: true };
+  expect(f.adapter.getAppleLobbyPrivacyKey()).toBe('required:true');
+});
+
+
+test('required Apple sheet waits for an already pending Google rights lookup and form', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, appleRequired: true, umpBridge: true });
+  let resolve!: (value: typeof f.umpInfo) => void;
+  f.ump.getConsentInfo.mockReturnValueOnce(new Promise(done => { resolve = done; }));
+  const rights = f.adapter.showAdPrivacyOptions();
+  const age = f.adapter.prepareMonetization(() => true);
+  for (let i = 0; i < 10; ++i) await Promise.resolve();
+  expect(f.ageRequest).not.toHaveBeenCalled();
+  resolve(f.umpInfo); await Promise.all([rights, age]);
+  expect(f.ump.showPrivacyOptionsForm).toHaveBeenCalledTimes(1);
+  expect(f.ageRequest).toHaveBeenCalledTimes(1);
+  expect(f.ump.showPrivacyOptionsForm.mock.invocationCallOrder[0]).toBeLessThan(f.ageRequest.mock.invocationCallOrder[0]);
 });

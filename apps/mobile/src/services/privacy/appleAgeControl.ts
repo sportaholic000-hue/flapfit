@@ -5,7 +5,7 @@ import {
 } from '../../../modules/flap-fit-age-range';
 import {
   getProcessingAccess, getProcessingInputs, getAgeVerificationRevision, hydrateProcessingAccess,
-  clearAgeVerification, verifyTransientAgeEvidence, setAppleAgeRequirement,
+  clearAgeVerification, verifyTransientAgeEvidence, verifyMandatoryAppleAgeEvidence, setAppleAgeRequirement,
 } from './processingAccess';
 import { AgeEvidence, AppleRequirement, ProcessingAccess } from './processingPolicy';
 import { resolveRegionalPolicy, RegionalPolicyInputs, RegionalPolicyResolution } from './regionalPolicy';
@@ -59,11 +59,12 @@ export function prepareAppleAgeControl(): Promise<AppleRequirement> {
   })().finally(() => { preparation = null; });
   return preparation;
 }
-/** Called at the reviewed privacy entry point, after the coarse jurisdiction is known.
- * Apple's own sheet may appear. A response is synchronously reduced to purpose decisions
- * and ad protections, then discarded. Neither this promise nor runtime snapshots retain it. */
+/** Apple's mandatory check can run before a jurisdiction questionnaire or ad policy.
+ * With no context, only a positive Apple duty permits a request and no processing
+ * is cleared. A supplied regional context still requires an established match.
+ * Apple's own sheet may appear; raw bounds are consumed then discarded. */
 export function requestAppleAgeEvidence(
-  context: AppleAgeVerificationContext,
+  context?: AppleAgeVerificationContext,
   ageGates?: readonly number[],
 ): Promise<AppleAgeVerificationResult> {
   if (ageGates !== undefined && !validateAppleAgeGates(ageGates)) {
@@ -71,17 +72,20 @@ export function requestAppleAgeEvidence(
     return Promise.resolve({ status: 'unavailable', access: getProcessingAccess(), regional: null });
   }
   const gates = [...(ageGates ?? DEFAULT_APPLE_AGE_GATES)];
-  const gatesKey = gates.join(',');
+  const gatesKey = (context ? 'regional:' : 'mandatory:') + gates.join(',');
   if (request) {
-    if (gatesKey === requestGatesKey) return request;
+    // The mandatory-only coordinator can join a more specific native request.
+    // It must not invalidate a legitimate regional check already in flight.
+    if (!context || gatesKey === requestGatesKey) return request;
     // Do not reuse a response requested for different distinctions or present two sheets.
     clearAgeVerification();
     return Promise.resolve({ status: 'unavailable', access: getProcessingAccess(), regional: null });
   }
-  const coarse = resolveRegionalPolicy({
+  const coarse = context ? resolveRegionalPolicy({
     ...context, age: { source: 'none', status: 'unknown', lowerBound: null, upperBound: null },
-  }).region;
-  if (coarse === 'unknown' || coarse !== getProcessingInputs().region) {
+  }).region : null;
+  if (context ? coarse === 'unknown' || coarse !== getProcessingInputs().region :
+    getProcessingInputs().appleRequirement !== 'required') {
     clearAgeVerification();
     return Promise.resolve({ status: 'unavailable', access: getProcessingAccess(), regional: null });
   }
@@ -89,11 +93,11 @@ export function requestAppleAgeEvidence(
   const token = generation;
   const verificationToken = getAgeVerificationRevision();
   // Snapshot only non-Apple policy facts. A caller changing them must invalidate/reverify.
-  const policy = {
+  const policy = context ? {
     ...context,
     flows: { ads: { ...context.flows.ads }, analytics: { ...context.flows.analytics } },
     choices: { ...context.choices },
-  };
+  } : null;
   requestGatesKey = gatesKey;
   request = (async (): Promise<AppleAgeVerificationResult> => {
     let response: AppleAgeRangeResult | null = null;
@@ -110,6 +114,10 @@ export function requestAppleAgeEvidence(
         lowerBound: response.status === 'shared' ? response.lowerBound : null,
         upperBound: response.status === 'shared' ? response.upperBound : null,
       };
+      if (!policy) {
+        const accepted = verifyMandatoryAppleAgeEvidence(age, verificationToken);
+        return { status: accepted ? 'processed' : 'stale', access: getProcessingAccess(), regional: null };
+      }
       const regional = resolveRegionalPolicy({ ...policy, age });
       if (regional.region !== getProcessingInputs().region || regional.region === 'unknown') {
         clearAgeVerification();
@@ -123,8 +131,9 @@ export function requestAppleAgeEvidence(
         regional: accepted ? regional : null,
       };
     } catch {
-      if (token === generation && verificationToken === getAgeVerificationRevision()) clearAgeVerification();
-      return { status: 'unavailable', access: getProcessingAccess(), regional: null };
+      const stale = token !== generation || verificationToken !== getAgeVerificationRevision();
+      if (!stale) clearAgeVerification();
+      return { status: stale ? 'stale' : 'unavailable', access: getProcessingAccess(), regional: null };
     } finally {
       // Deliberately drop the raw response, including assurance/communication fields.
       // No range/source/band is written to shared state, storage, logs, or return values.

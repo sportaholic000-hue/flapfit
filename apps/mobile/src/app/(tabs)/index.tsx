@@ -11,8 +11,9 @@ import {
   Sun,
   Video,
 } from 'lucide-react-native';
-import { useCallback, useEffect, useState } from 'react';
-import { prepareMonetization } from '@/services/monetization';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
+import { getAppleLobbyPrivacyKey, prepareMonetization } from '@/services/monetization';
+import { subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
@@ -89,13 +90,15 @@ export default function HomeScreen() {
   const hydrated = useGameStore((s) => s.hydrated);
   const hydrationError = useGameStore((s) => s.hydrationError);
   const hasOnboarded = useGameStore((s) => s.hasOnboarded);
+  const applePrivacyKey = useSyncExternalStore(subscribeProcessingAccess, getAppleLobbyPrivacyKey, () => 'pending:false');
   useFocusEffect(useCallback(() => {
     let focused = true;
-    if (hydrated && !hydrationError && hasOnboarded) {
+    const dutyResolved = !applePrivacyKey.startsWith('pending:') && !applePrivacyKey.startsWith('error:');
+    if (hydrated && !hydrationError && hasOnboarded && dutyResolved) {
       void prepareMonetization(() => focused);
     }
     return () => { focused = false; };
-  }, [hydrated, hydrationError, hasOnboarded]));
+  }, [hydrated, hydrationError, hasOnboarded, applePrivacyKey]));
   const birdId = useGameStore((s) => s.birdId);
   const setBird = useGameStore((s) => s.setBird);
   const unlockedLevel = useGameStore((s) => s.unlockedLevel);

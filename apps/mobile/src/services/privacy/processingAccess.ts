@@ -141,6 +141,18 @@ export function verifyTransientAgeEvidence(
     requirements: requirements ? { ...requirements } : input.requirements });
   return expectedRevision === verificationRevision;
 }
+/** Satisfy only the mandatory Apple check before a regional processing policy
+ * is known. The raw response is consumed immediately. This deliberately records
+ * no regional policy, notice, purpose grant, location or parental data-use consent. */
+export function verifyMandatoryAppleAgeEvidence(age: AgeEvidence, expectedRevision: number): boolean {
+  if (expectedRevision !== verificationRevision || input.appleRequirement !== 'required') return false;
+  const verification = verifyTransientAge({
+    ...input, region: 'unknown', age, appleAgeCheckSatisfied: age.status === 'shared',
+  });
+  publish({ ...input, verification,
+    requirements: { ads: 'unresolved', analytics: 'unresolved', competition: 'unresolved' } });
+  return expectedRevision === verificationRevision;
+}
 export function setAppleRescissionPending(pending: boolean): void {
   if (input.appleRescissionPending === pending) return;
   publish({ ...input, appleRescissionPending: pending });

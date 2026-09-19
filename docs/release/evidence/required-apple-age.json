@@ -1,0 +1,59 @@
+{
+  "recordedAt": "2026-09-19T23:32:57.550Z",
+  "baseline": "85f787b7053a3c59df8ee9b81167e21d66ee1e20",
+  "scope": "Production lobby invokes positively required Apple system age check without first requiring a country questionnaire; independent processing stays gated",
+  "sourceSha256LfNormalized": {
+    "apps/mobile/src/app/(tabs)/index.tsx": "3f6393a599ac35fa9ba80f66f2bccb40dacc5c742dcc71b405ba0bbd08e15dd3",
+    "apps/mobile/src/services/monetization/index.ts": "036dc06c249394f09ea78a5eb0925ca6411a5d5ef9cb1369f4c6f1753a7e50c3",
+    "apps/mobile/src/services/privacy/processingAccess.ts": "d065f390175408067b153a54269ab897034fce110d88bfee0032a617650129ce",
+    "apps/mobile/src/services/privacy/appleAgeControl.ts": "08e4d254b6492b09bd5c0f36dba413aa57e6ed4ceec23748fa2a9c82d6e50471",
+    "apps/mobile/src/services/__tests__/monetization.test.ts": "c4199e8049615596fdb000e3337f66b5a102fc4d0fbdfeee30db3b2066792d48",
+    "apps/mobile/src/services/privacy/__tests__/appleAgeControl.test.ts": "71e5527a6d8466eb83014429f502137d85bc9bf62cb0812a56630307e9b3ab86"
+  },
+  "validation": {
+    "fullMobileJest": {
+      "exitCode": 0,
+      "suites": 47,
+      "tests": 875,
+      "durationSeconds": 125.406,
+      "output": "PASS src/services/__tests__/monetization.test.ts (19.072 s)\nPASS src/utils/game/__tests__/bird-stage-assets.test.ts (5.449 s)\n(node:119048) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n(Use `node --trace-deprecation ...` to show where the warning was created)\nPASS src/services/__tests__/competitionApi-outbox.test.ts (8.576 s)\nPASS scripts/launch-competition.test.js (6.058 s)\nPASS src/utils/game/__tests__/pullup-gameplay-flow.test.js (6.656 s)\nPASS modules/flap-fit-age-range/__tests__/bridge.test.ts\nPASS src/services/privacy/__tests__/appleAgeControl.test.ts\nPASS scripts/share-return.test.js\nPASS src/services/__tests__/competitionApi.test.ts\nPASS src/utils/game/birdWebAsset.test.ts\nPASS src/services/__tests__/competition-processing-access.test.ts (5.33 s)\nPASS src/utils/game/__tests__/pullup-standing-reach.test.js\nPASS src/services/privacy/__tests__/processingAccess.test.ts\nPASS src/utils/game/__tests__/pullup-top-first.test.js\nPASS src/services/privacy/__tests__/privacyRights.test.ts\nPASS src/utils/game/game-web-navigation.test.ts\nPASS src/services/privacy/__tests__/regionalPolicy.test.ts\nPASS src/utils/game/__tests__/pullup-support-reference.test.ts\nPASS src/utils/game/__tests__/form-tracking.test.ts\nPASS src/utils/game/__tests__/recording-mp4.test.ts\nPASS src/services/privacy/__tests__/appleRescission.test.ts\nPASS src/utils/game/__tests__/pullup-top-reference.test.ts\nPASS src/services/privacy/__tests__/privacyStartup.test.ts\nPASS scripts/ad-sdk-lifecycle.test.js\nPASS src/utils/game/__tests__/pullup-grab-entry.test.js\nPASS src/utils/game/__tests__/game-modes.test.ts\nPASS src/services/privacy/__tests__/umpStoredSignals.test.ts\nPASS src/services/__tests__/videoSharing.test.ts\nPASS src/utils/game/__tests__/stats-history.test.ts\nPASS src/utils/game/__tests__/store-hydration.test.ts\nPASS src/utils/game/__tests__/pullup-elbow-clearance.test.js\nPASS src/services/privacy/__tests__/processingPolicy.test.ts\nPASS scripts/validate-tracker-release.test.js\nPASS src/utils/game/__tests__/competition-profile-reset.test.ts\nPASS src/utils/game/__tests__/evolution-core.test.ts\nPASS src/utils/game/birdVisual.test.ts\nPASS src/utils/game/__tests__/mediapipe-recovery.test.ts\nPASS src/utils/game/__tests__/level-rules.test.ts\nPASS src/utils/game/__tests__/pullup-top-entry.test.ts\nPASS src/utils/game/__tests__/continuous-gameplay.test.ts\nPASS src/services/privacy/__tests__/umpPrivacyControls.test.ts\nPASS src/utils/game/__tests__/camera-preview.test.ts\nPASS src/services/__tests__/settingsPermissionRecovery.test.ts\nPASS modules/flap-fit-age-range/__tests__/app-transaction.test.ts\nPASS scripts/validate-monetization-config.test.js\nPASS src/utils/game/__tests__/recording-boundaries.test.ts\nPASS src/services/__tests__/resultAdGate.test.ts\n\nTest Suites: 47 passed, 47 total\nTests:       875 passed, 875 total\nSnapshots:   0 total\nTime:        125.406 s, estimated 187 s\nRan all test suites.\n"
+    },
+    "typeScript": {
+      "exitCode": 0,
+      "command": "tsc --noEmit",
+      "finalLobbyGuardIncluded": true
+    },
+    "strictScopedOxlint": {
+      "exitCode": 0,
+      "noIgnore": true,
+      "denyWarnings": true,
+      "files": [
+        "apps/mobile/src/app/(tabs)/index.tsx",
+        "apps/mobile/src/services/monetization/index.ts",
+        "apps/mobile/src/services/privacy/processingAccess.ts",
+        "apps/mobile/src/services/privacy/appleAgeControl.ts",
+        "apps/mobile/src/services/__tests__/monetization.test.ts",
+        "apps/mobile/src/services/privacy/__tests__/appleAgeControl.test.ts"
+      ]
+    },
+    "gitDiffCheck": {
+      "exitCode": 0
+    }
+  },
+  "verifiedSourceCases": [
+    "Root duty resolution updates a stable lobby subscription key; setup starts only after existing onboarding and usable duty information.",
+    "Positive required duty can invoke Apple without a regional context; other duty states do not automatically show this sheet.",
+    "Mandatory-only result stores no raw bounds/source/account/parental fields, and supplies no region, notice, consent or purpose assessment.",
+    "All independent purposes remain off for an unresolved processing policy even if Apple returns a valid adult range.",
+    "Ordinary lobby return does not automatically repeat a declined/completed attempt; account/duty invalidation can allow a fresh attempt.",
+    "Native ad dismissal, Google rights lookup/form, and Apple sheet ownership are serialized; game entry waits for a dispatched sheet and cancels a not-yet-dispatched one.",
+    "Mandatory caller joins an existing regional request instead of invalidating it; late failures after account change remain stale."
+  ],
+  "limitations": [
+    "Automated native boundaries are mocked. No physical iPhone/iPad sheet or signed-candidate acceptance is proved here.",
+    "This is the mandatory Apple portion, not the completed worldwide age/location/purpose-policy coordinator.",
+    "Existing rescission monitoring is not yet mounted by the production root; actual revocation/linkage and required access enforcement remain open.",
+    "Genuine installed RevenueCat event receipt and withdrawal through background/foreground/relaunch remain outstanding.",
+    "No new signed build, install link, store metadata change, territory change, backend deployment, or store submission occurred."
+  ]
+}

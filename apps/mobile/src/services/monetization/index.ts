@@ -3,7 +3,7 @@ import { AppState, NativeModules, Platform } from 'react-native';
 import type { AgeRestrictedTreatment, PaidEvent } from 'react-native-google-mobile-ads';
 import type { AdRevenueData, PurchasesAdTracker } from 'react-native-purchases';
 import { ResultAdGate, type InterstitialCallbacks, type ReadyInterstitial } from './resultAdGate';
-import { getProcessingAccess, subscribeProcessingAccess } from '../privacy/processingAccess';
+import { getAgeVerificationRevision, getProcessingAccess, getProcessingInputs, subscribeProcessingAccess } from '../privacy/processingAccess';
 import { getUmpPrivacyControls } from '../privacy/umpPrivacyControls';
 
 type AdsSdk = typeof import('react-native-google-mobile-ads');
@@ -27,6 +27,8 @@ let init: Promise<void> | null = null;
 let consentEpoch = 0;
 let privacyPresentation: Promise<unknown> | null = null;
 let impressionSequence = 0;
+let mandatoryAppleRequest: Promise<void> | null = null;
+let mandatoryAppleAttemptRevision: number | null = null;
 let processingAccess = getProcessingAccess();
 let revenueCatEpoch = 0;
 let revenueCatConfigured = false;
@@ -249,7 +251,48 @@ export async function settlePrivacyBeforeGameplay(): Promise<void> {
 
 // Only lobby focus can start consent setup. The game-entry barrier also covers
 // a native form that has already begun loading when the user selects Play.
+/** A stable subscription key lets lobby focus react when the root duty lookup
+ * finishes, without rerunning setup on every unrelated purpose revision. */
+export function getAppleLobbyPrivacyKey(): string {
+  const input = getProcessingInputs();
+  return input.appleRequirement + ':' + Boolean(input.verification?.mandatoryCheckSatisfied);
+}
+
 export function prepareMonetization(canPresent: () => boolean): Promise<void> {
+  const input = getProcessingInputs();
+  if (input.appleRequirement === 'required' && !input.verification?.mandatoryCheckSatisfied) {
+    if (mandatoryAppleRequest) return mandatoryAppleRequest;
+    if (!supported || Platform.OS !== 'ios' || mandatoryAppleAttemptRevision === getAgeVerificationRevision()) return Promise.resolve();
+    const epoch = consentEpoch;
+    const operation = (async () => {
+      await settleResultPresentations();
+      if (privacyOptionsRequest) {
+        try { await privacyOptionsRequest; } catch { /* Rights failure grants nothing. */ }
+      }
+      if (privacyPresentation) {
+        try { await privacyPresentation; } catch { /* Recheck ownership below. */ }
+      }
+      if (epoch !== consentEpoch || !canPresent() || !adEnvironment.isActive()) return;
+      const current = getProcessingInputs();
+      if (current.appleRequirement !== 'required' || current.verification?.mandatoryCheckSatisfied) return;
+      const control = require('../privacy/appleAgeControl') as typeof import('../privacy/appleAgeControl');
+      const result = await presentPrivacy(() => control.requestAppleAgeEvidence());
+      if (result.status === 'stale') return;
+      // No repeated automatic sheet on each lobby return after a refusal/error.
+      // A new launch or an explicit account/duty invalidation permits a new check.
+      mandatoryAppleAttemptRevision = getAgeVerificationRevision();
+      if (epoch === consentEpoch && canPresent() && adEnvironment.isActive()) {
+        await preparePermittedMonetization(canPresent);
+      }
+    })().catch(() => undefined);
+    mandatoryAppleRequest = operation;
+    void operation.then(() => { if (mandatoryAppleRequest === operation) mandatoryAppleRequest = null; });
+    return operation;
+  }
+  return preparePermittedMonetization(canPresent);
+}
+
+function preparePermittedMonetization(canPresent: () => boolean): Promise<void> {
   // Analytics permission is independent of ad eligibility and UMP. This also
   // covers loading this module after a permitted decision was already restored.
   // Its own native fence/generation checks apply without delaying gameplay.
