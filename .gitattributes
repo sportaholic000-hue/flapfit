@@ -1,0 +1,2 @@
+# Preserve retired feature snapshots byte-for-byte for their SHA-256 manifest.
+archive/friend-challenges/** -text
