@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-09-19T22:35:45.695Z",
+  "baseline": "63aa060010f1e20c4909b4efbb141140fc298348",
+  "sourceSha256": {
+    "apps/mobile/src/app/_layout.tsx": "068e68210202baaa980a5c0b5993a395f6d03f8a837ed06b4b3a10a98d405838",
+    "apps/mobile/src/services/privacy/privacyStartup.ts": "e5ae4b874131a94fdc8887815c40a9927c237cf522c7e9a70b69814a2377eed8",
+    "apps/mobile/src/services/privacy/__tests__/privacyStartup.test.ts": "9b04ba2a7652dce908a0685006b98e9146e0cd72a3d5f1bf79f9d32ddc737a7d"
+  },
+  "fullSuite": {
+    "suites": 45,
+    "passed": 819,
+    "failed": 0,
+    "seconds": 202.717
+  },
+  "subsequentStartupSuite": {
+    "passed": 9,
+    "failed": 0,
+    "additionalTestBeyondFullRun": 1
+  },
+  "typeScript": {
+    "exitCode": 0
+  },
+  "scopedOxlint": {
+    "exitCode": 0,
+    "files": [
+      "apps/mobile/src/app/_layout.tsx",
+      "apps/mobile/src/services/privacy/privacyStartup.ts",
+      "apps/mobile/src/services/privacy/__tests__/privacyStartup.test.ts"
+    ]
+  },
+  "verificationScope": "JavaScript lifecycle and real processing/Apple-control modules with mocked native/storage boundaries; not an installed-device test.",
+  "userInterfaceAdded": false,
+  "installedCandidateIncludesThisChange": false,
+  "completeWorldwidePrivacyIntegration": false,
+  "remaining": [
+    "Approved minimal consent interface and worldwide runtime decisions",
+    "Independently reachable privacy controls in Info",
+    "Installed device and genuine RevenueCat receipt verification"
+  ]
+}

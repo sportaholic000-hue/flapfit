@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-09-19T22:35:45.718Z",
+  "appId": "6813280704",
+  "version": "1.0",
+  "localization": "English (U.S.)",
+  "evidence": "Read-only App Store Connect version form after owner reported Save; Save disabled, current fields populated.",
+  "ownerCopyPreserved": true,
+  "descriptionPresent": true,
+  "promotionalTextPresent": true,
+  "keywordsPresent": true,
+  "supportUrl": "https://flapfitapp.com/support/",
+  "marketingUrl": "https://flapfitapp.com/",
+  "releaseSelectionObserved": "Automatically release this version after approval",
+  "iPhoneScreenshotsObserved": 0,
+  "buildAttached": false,
+  "editsPerformed": false,
+  "submittedForReview": false
+}

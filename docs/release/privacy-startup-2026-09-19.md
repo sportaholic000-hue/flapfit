@@ -1,0 +1,11 @@
+# Privacy startup integration — September 19, 2026
+
+The app root now starts the existing privacy hydration and Apple regional-duty lookup. Previously these functions existed but had no production startup caller. Stored purpose decisions are restored even when Home/Compete and the advertising SDK have not opened.
+
+This is a background preparation step: it does not request or retain an Apple age range, display any new sheet, select a jurisdiction, resolve the worldwide policy, or initialize advertising or RevenueCat. An Apple response of not-required means only that the queried Apple obligation is absent; it is never evidence of adult age or processing permission. Failed lookups remain unresolved and retry on a later foreground transition. Ordinary share/ad/system-sheet returns preserve established evidence. Concurrent consumers and effect remounts share the in-flight query and lifecycle listener.
+
+Verification: the full mobile suite passed 45 suites / 819 tests, TypeScript passed, and strict scoped oxlint passed. A subsequent focused startup suite passed nine tests, adding one integration case that uses the real processing-access and Apple-control modules with mocked native/storage boundaries. It proves restoration of an analytics refusal without an age prompt, new persisted writes, or permission for any purpose. The full suite was not rerun after adding that test-only case. Existing punycode deprecation output remains visible. See evidence/privacy-startup.json for source hashes and scope.
+
+No gameplay, calibration, recording, sharing, ad placement, or consent interface was changed. This is not installed-device evidence and does not clear the incomplete worldwide coordinator/Info controls. Build 710512ba (1.0.0 build 2, source 0be68de) predates this change. Per the owner, no further preliminary build links or installation requests should be sent to the brother; finish the integration and checks before the consolidated candidate test.
+
+The owner's Apple description, promotional text and keywords were read back as populated with Save disabled. Their copy, including time-under-tension wording, was retained exactly as requested. Required screenshots and a processed App Store build remain absent. No Add for Review/Submit action was performed. Final review notes and data disclosures still need to match the completed privacy integration.
