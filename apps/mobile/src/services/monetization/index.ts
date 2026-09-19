@@ -40,6 +40,12 @@ let revenueCatWithdrawal: Promise<RevenueCatWithdrawalStatus> = Promise.resolve(
 void requestRevenueCatWithdrawal();
 const privacyListeners = new Set<() => void>();
 const activeResultAds = new Set<() => void>();
+// Retain native presentation ownership until close/failure, including after a
+// result unmount. Resolving show() only acknowledges handoff, not dismissal.
+const resultPresentations = new Set<Promise<void>>();
+async function settleResultPresentations(): Promise<void> {
+  await Promise.all([...resultPresentations]);
+}
 function disposeResultAds() {
   for (const dispose of [...activeResultAds]) {
     try { dispose(); } catch { /* Cleanup cannot interrupt consent or gameplay. */ }
@@ -213,6 +219,7 @@ function presentPrivacy<T>(operation: () => Promise<T>): Promise<T> {
 export async function settlePrivacyBeforeGameplay(): Promise<void> {
   ++consentEpoch; // A pending info request may finish, but must never start a new form.
   disposeResultAds();
+  await settleResultPresentations();
   const presentation = privacyPresentation;
   if (presentation) {
     try { await presentation; } catch { /* Consent failure does not prevent playing. */ }
@@ -240,7 +247,8 @@ export function prepareMonetization(canPresent: () => boolean): Promise<void> {
       if (!currentAdPermission(epoch)) return;
       privacyRequired = info.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED;
       notifyPrivacy();
-      if (!canPresent() || !adEnvironment.isActive()) return;
+      await settleResultPresentations();
+      if (!currentAdPermission(epoch) || !canPresent() || !adEnvironment.isActive()) return;
       const consent = await presentPrivacy(() => sdk.AdsConsent.loadAndShowConsentFormIfRequired());
       if (!currentAdPermission(epoch)) return;
       privacyRequired = consent.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED;
@@ -270,6 +278,8 @@ export async function showAdPrivacyOptions(): Promise<void> {
   const access = getProcessingAccess();
   disposeResultAds();
   try {
+    await settleResultPresentations();
+    if (epoch !== consentEpoch || !adEnvironment.isActive()) return;
     const consent = await presentPrivacy(() => sdk.AdsConsent.showPrivacyOptionsForm());
     if (epoch !== consentEpoch) return;
     privacyRequired = consent.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED;
@@ -313,65 +323,100 @@ function track(send: (value: PurchasesAdTracker) => Promise<void>) {
 export function prepareResultInterstitial(): ReadyInterstitial | null {
   const sdk = ads;
   const access = getProcessingAccess();
-  if (!supported || !sdk || !adsReady || mode === 'off' || !access.ads.allowed) return null;
+  if (!supported || !sdk || !adsReady || mode === 'off' || !access.ads.allowed || resultPresentations.size > 0) return null;
   const adUnitId = mode === 'live' ? liveUnit : sdk.TestIds.INTERSTITIAL;
   if (!adUnitId) return null;
   const epoch = consentEpoch;
   const impressionId = `ff-${Date.now().toString(36)}-${(++impressionSequence).toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
   const base = { mediatorName: 'AdMob', adFormat: 'interstitial', placement: 'result_exit', adUnitId, impressionId };
   let loaded = false;
-  let disposed = false;
+  let invalidated = false;
+  let released = false;
   let shown = false;
+  let opened = false;
+  let terminal = false;
   let callbacks: InterstitialCallbacks | null = null;
+  let acknowledgePresentation: (() => void) | undefined;
   let release: (() => void) | undefined;
   try {
     const ad = sdk.InterstitialAd.createForAdRequest(adUnitId, { requestNonPersonalizedAdsOnly: true, networkExtras: { rdp: '1' } });
+    const destroy = () => {
+      if (released) return;
+      released = true;
+      activeResultAds.delete(dispose);
+      try { ad.destroy(); } catch { /* Confirmed native completion still releases the result. */ }
+    };
     const dispose = () => {
-      if (disposed) return;
-      disposed = true;
+      invalidated = true;
+      loaded = false;
+      // destroy() removes the native delegate and JS listeners; it is NOT a
+      // cancellation/dismissal acknowledgement. Keep terminal callbacks alive
+      // after native handoff, but reject reuse and optional reporting at once.
+      if (!shown || terminal) destroy();
+    };
+    const finish = (outcome: 'closed' | 'failed') => {
+      if (terminal || released) return;
+      terminal = true;
+      invalidated = true;
       loaded = false;
       const pending = callbacks;
       callbacks = null;
-      activeResultAds.delete(dispose);
-      ad.destroy();
-      if (shown) pending?.failed();
+      destroy();
+      acknowledgePresentation?.();
+      acknowledgePresentation = undefined;
+      pending?.[outcome]();
     };
     release = dispose;
     activeResultAds.add(dispose);
     ad.addAdEventListener(sdk.AdEventType.LOADED, () => {
-      if (disposed) return;
+      if (invalidated || released || shown) return;
       loaded = true;
       track((value) => value.trackAdLoaded(base));
     });
     ad.addAdEventListener(sdk.AdEventType.OPENED, () => {
-      if (disposed) return;
-      track((value) => value.trackAdDisplayed(base));
+      if (released || !shown || opened) return;
+      opened = true;
+      if (!invalidated) track((value) => value.trackAdDisplayed(base));
+      // Lifecycle accounting must survive withdrawal; this sends no analytics.
       callbacks?.opened();
     });
     ad.addAdEventListener(sdk.AdEventType.CLICKED, () => {
-      if (!disposed) track((value) => value.trackAdOpened(base));
+      if (!invalidated && !released) track((value) => value.trackAdOpened(base));
     });
     ad.addAdEventListener(sdk.AdEventType.PAID, (payload) => {
-      if (disposed) return;
+      if (invalidated || released) return;
       const revenue = toRevenueData(base, payload as unknown as PaidEvent);
       if (revenue) track((value) => value.trackAdRevenue(revenue));
     });
     ad.addAdEventListener(sdk.AdEventType.ERROR, () => {
-      if (disposed) return;
-      loaded = false;
-      if (!shown) track((value) => value.trackAdFailedToLoad({ mediatorName: base.mediatorName, adFormat: base.adFormat, placement: base.placement, adUnitId }));
-      callbacks?.failed();
+      if (released) return;
+      if (!shown && !invalidated) track((value) => value.trackAdFailedToLoad({ mediatorName: base.mediatorName, adFormat: base.adFormat, placement: base.placement, adUnitId }));
+      // On this one-shot request, an error after show is the native full-screen
+      // presentation failure callback. Disposal never synthesizes this event.
+      finish('failed');
     });
-    ad.addAdEventListener(sdk.AdEventType.CLOSED, () => { if (!disposed) callbacks?.closed(); });
+    ad.addAdEventListener(sdk.AdEventType.CLOSED, () => { if (shown) finish('closed'); });
     ad.load();
     return {
-      isReady: () => loaded && !disposed && !shown && adsReady && currentAdPermission(epoch),
+      isReady: () => loaded && !invalidated && !released && !shown && adsReady && currentAdPermission(epoch) && resultPresentations.size === 0,
       show: async (next) => {
-        if (!loaded || disposed || shown || !adsReady || !currentAdPermission(epoch) || !adEnvironment.isActive()) { next.failed(); return; }
+        if (!loaded || invalidated || released || shown || !adsReady || !currentAdPermission(epoch) || !adEnvironment.isActive() || resultPresentations.size > 0) { next.failed(); return; }
         shown = true;
         loaded = false;
         callbacks = next;
-        await ad.show();
+        const presentation = new Promise<void>((resolve) => {
+          acknowledgePresentation = () => { resultPresentations.delete(presentation); resolve(); };
+        });
+        resultPresentations.add(presentation);
+        try {
+          await ad.show();
+          // This promise resolves as soon as native present() is invoked.
+          // Only CLOSED/ERROR may settle a successfully handed-off presentation.
+        } catch {
+          // The locked SDK rejects before present() (not-ready/no controller),
+          // or JS validation throws before dispatch. Neither can present later.
+          finish('failed');
+        }
       },
       dispose,
     };

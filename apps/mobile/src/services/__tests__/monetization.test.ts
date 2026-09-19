@@ -23,7 +23,12 @@ function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: b
     InterstitialAd: { createForAdRequest: jest.fn(() => nativeAd) },
   };
   const purchases = { configure: jest.fn(() => { if (options.rcFails) throw new Error('RevenueCat unavailable'); }), adTracker: tracker };
-  const state = { currentState: 'active', addEventListener: jest.fn(() => ({ remove: jest.fn() })) };
+  const stateListeners = new Set<(state: string) => void>();
+  const state = { currentState: 'active', addEventListener: jest.fn((_event: string, listener: (state: string) => void) => {
+    stateListeners.add(listener);
+    return { remove: jest.fn(() => stateListeners.delete(listener)) };
+  }) };
+  const changeState = (next: string) => { state.currentState = next; [...stateListeners].forEach((listener) => listener(next)); };
   const nativeLoad = jest.fn(() => sdk);
   const purchasesLoad = jest.fn(() => ({ default: purchases }));
   jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: options.expoGo ? 'storeClient' : 'standalone' }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
@@ -32,7 +37,7 @@ function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: b
   jest.doMock('react-native-google-mobile-ads', () => nativeLoad());
   jest.doMock('react-native-purchases', () => purchasesLoad());
   const adapter = require('../monetization') as typeof import('../monetization');
-  return { adapter, sdk, purchases, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativeModules };
+  return { adapter, sdk, purchases, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativeModules, changeState };
 }
 
 afterEach(() => { process.env = { ...originalEnv }; jest.useRealTimers(); });
@@ -313,13 +318,15 @@ test('withdrawal followed by a later grant does not replay old queued events', a
 });
 
 
-test('withdrawal of ad permission completes an active result exit once', async () => {
+test('withdrawal waits for native close before completing an active result exit once', async () => {
   const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
   f.adapter.resultAdGate.createResult(null, f.adapter.adEnvironment).exit(false, jest.fn());
   const ad = f.adapter.prepareResultInterstitial()!; f.events.get('loaded')!();
   const result = f.adapter.resultAdGate.createResult(ad, f.adapter.adEnvironment);
   const action = jest.fn(); result.exit(false, action); await Promise.resolve();
   f.changeAccess({ ads: { ...f.getAccess().ads, allowed: false } });
+  expect(action).not.toHaveBeenCalled();
+  expect(f.nativeAd.destroy).not.toHaveBeenCalled();
   f.events.get('closed')!();
   expect(action).toHaveBeenCalledTimes(1); expect(f.nativeAd.destroy).toHaveBeenCalledTimes(1);
 });
@@ -414,4 +421,86 @@ test('a restored RevenueCat grant initializes independently when ads are denied 
   expect(f.purchases.configure).toHaveBeenCalledTimes(1);
   expect(f.nativeFence).toHaveBeenLastCalledWith(true);
   expect(f.adapter.prepareResultInterstitial()).toBeNull();
+});
+
+// F1: exercise the real adapter and gate together. Native presentation is mocked;
+// these tests do not claim physical-device or complete Google SDK shutdown proof.
+test.each(['ios', 'android'])('withdrawal during pending %s presentation retains terminal ownership', async (platform) => {
+  const f = loadAdapter({ platform }); await f.adapter.prepareMonetization(() => true);
+  let acknowledgeShow!: () => void;
+  f.nativeAd.show.mockReturnValue(new Promise<void>((done) => { acknowledgeShow = done; }));
+  f.adapter.resultAdGate.createResult(null, f.adapter.adEnvironment).exit(false, jest.fn());
+  const ad = f.adapter.prepareResultInterstitial()!; f.events.get('loaded')!();
+  const result = f.adapter.resultAdGate.createResult(ad, f.adapter.adEnvironment);
+  const action = jest.fn(); result.exit(false, action);
+  f.changeAccess({ ads: { ...f.getAccess().ads, allowed: false }, revenueCat: { allowed: false } });
+  await f.adapter.settleRevenueCatWithdrawal();
+  expect(action).not.toHaveBeenCalled(); expect(f.nativeAd.destroy).not.toHaveBeenCalled();
+  expect(ad.isReady()).toBe(false); expect(f.adapter.prepareResultInterstitial()).toBeNull();
+  // A resolved show promise means handoff, NOT dismissal. A late opening stays on results.
+  acknowledgeShow(); await Promise.resolve(); f.events.get('opened')!();
+  f.events.get('paid')!({ value: 1, currency: 'USD', precision: 3 });
+  await Promise.resolve();
+  expect(action).not.toHaveBeenCalled(); expect(f.tracker.trackAdRevenue).not.toHaveBeenCalled();
+  f.events.get('closed')!(); f.events.get('error')!();
+  expect(action).toHaveBeenCalledTimes(1); expect(f.nativeAd.destroy).toHaveBeenCalledTimes(1);
+});
+
+test.each(['close', 'error', 'reject'])('withdrawal while displayed/pending releases only after native %s and foreground', async (terminal) => {
+  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
+  let rejectShow!: (error: Error) => void;
+  if (terminal === 'reject') f.nativeAd.show.mockReturnValue(new Promise<void>((_yes, no) => { rejectShow = no; }));
+  f.adapter.resultAdGate.createResult(null, f.adapter.adEnvironment).exit(false, jest.fn());
+  const ad = f.adapter.prepareResultInterstitial()!; f.events.get('loaded')!();
+  const action = jest.fn(); const result = f.adapter.resultAdGate.createResult(ad, f.adapter.adEnvironment);
+  result.exit(false, action); if (terminal === 'close') f.events.get('opened')!();
+  f.changeState('background');
+  f.changeAccess({ ads: { ...f.getAccess().ads, allowed: false } });
+  f.changeState('active'); expect(action).not.toHaveBeenCalled();
+  f.changeState('background');
+  if (terminal === 'reject') rejectShow(new Error('native refused presentation'));
+  else f.events.get(terminal === 'close' ? 'closed' : 'error')!();
+  for (let i = 0; i < 6; i++) await Promise.resolve();
+  expect(action).not.toHaveBeenCalled(); expect(f.nativeAd.destroy).toHaveBeenCalledTimes(1);
+  f.changeState('active'); f.changeState('active'); f.events.get('closed')!();
+  expect(action).toHaveBeenCalledTimes(1); expect(result.exit(false, action)).toBe(false);
+});
+
+test('withdrawal before show destroys the preload and continues without native presentation', async () => {
+  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
+  f.adapter.resultAdGate.createResult(null, f.adapter.adEnvironment).exit(false, jest.fn());
+  const ad = f.adapter.prepareResultInterstitial()!; f.events.get('loaded')!();
+  f.changeAccess({ ads: { ...f.getAccess().ads, allowed: false } });
+  const action = jest.fn(); f.adapter.resultAdGate.createResult(ad, f.adapter.adEnvironment).exit(false, action);
+  expect(action).toHaveBeenCalledTimes(1); expect(f.nativeAd.show).not.toHaveBeenCalled();
+  expect(f.nativeAd.destroy).toHaveBeenCalledTimes(1);
+});
+
+test.each(['closed', 'error', 'reject'])('unmount retains the native %s barrier but never replays the old result action', async (terminal) => {
+  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
+  let rejectShow!: (error: Error) => void;
+  if (terminal === 'reject') f.nativeAd.show.mockReturnValue(new Promise<void>((_yes, no) => { rejectShow = no; }));
+  f.adapter.resultAdGate.createResult(null, f.adapter.adEnvironment).exit(false, jest.fn());
+  const ad = f.adapter.prepareResultInterstitial()!; f.events.get('loaded')!();
+  const action = jest.fn(); const result = f.adapter.resultAdGate.createResult(ad, f.adapter.adEnvironment);
+  result.exit(false, action); result.dispose(); result.dispose();
+  const startCamera = jest.fn(); const entry = f.adapter.settlePrivacyBeforeGameplay().then(startCamera);
+  for (let i = 0; i < 6; i++) await Promise.resolve();
+  expect(startCamera).not.toHaveBeenCalled(); expect(f.nativeAd.destroy).not.toHaveBeenCalled();
+  if (terminal === 'reject') rejectShow(new Error('not ready'));
+  else f.events.get(terminal)!();
+  await entry; f.changeState('active');
+  expect(startCamera).toHaveBeenCalledTimes(1); expect(action).not.toHaveBeenCalled();
+  expect(f.nativeAd.destroy).toHaveBeenCalledTimes(1);
+});
+
+test('privacy form cannot cover an unsettled native result ad', async () => {
+  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
+  const ad = f.adapter.prepareResultInterstitial()!; f.events.get('loaded')!();
+  await ad.show({ opened: jest.fn(), closed: jest.fn(), failed: jest.fn() });
+  const options = f.adapter.showAdPrivacyOptions();
+  for (let i = 0; i < 6; i++) await Promise.resolve();
+  expect(f.sdk.AdsConsent.showPrivacyOptionsForm).not.toHaveBeenCalled();
+  f.events.get('closed')!(); await options;
+  expect(f.sdk.AdsConsent.showPrivacyOptionsForm).toHaveBeenCalledTimes(1);
 });
