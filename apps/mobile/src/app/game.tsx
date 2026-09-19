@@ -19,6 +19,8 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
+  AppState,
   Animated,
   Easing,
   Linking,
@@ -44,7 +46,8 @@ import {
 import { getBirdStageArt } from '@/utils/game/birdStageArt';
 import { loadBirdAssetDataUri } from '@/utils/game/birdWebAsset';
 import { getBird } from '@/utils/game/birds';
-import { isLaunchGameMode } from '@/utils/game/gameModes';
+import { canEnterLaunchGame } from '@/utils/game/gameModes';
+import { createSettingsPermissionRecovery, type SettingsPermission } from '@/services/settingsPermissionRecovery';
 import {
   GAME_WEB_BASE_URL,
   GAME_WEB_ORIGIN_WHITELIST,
@@ -165,8 +168,11 @@ function normalizeVideoExtension(extension?: string, mimeType?: string) {
 
 
 export default function GameScreen() {
-  const { mode } = useLocalSearchParams<{ mode?: string }>();
-  const supportedMode = isLaunchGameMode(mode);
+  const { mode, levelId } = useLocalSearchParams<{ mode?: string; levelId?: string }>();
+  const hydrated = useGameStore((s) => s.hydrated);
+  const hydrationError = useGameStore((s) => s.hydrationError);
+  const unlockedLevel = useGameStore((s) => s.unlockedLevel);
+  const supportedMode = hydrated && !hydrationError && canEnterLaunchGame(mode, levelId, unlockedLevel);
   const router = useRouter();
   const [privacySettled, setPrivacySettled] = useState(false);
   useEffect(() => {
@@ -177,13 +183,13 @@ export default function GameScreen() {
     });
     return () => { mounted = false; };
   }, [supportedMode]);
-  if (!supportedMode) return <Redirect href="/(tabs)" />;
-  if (privacySettled) return <GameContent />;
+  if (hydrated && !supportedMode) return <Redirect href="/(tabs)" />;
+  if (supportedMode && privacySettled) return <GameContent />;
   return (
     <View style={{ flex: 1, backgroundColor: '#0F172A', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
       <ActivityIndicator color="#FFFFFF" size="large" />
       <Text accessibilityRole="text" style={{ color: '#FFFFFF', marginTop: 18, textAlign: 'center' }}>
-        Finishing privacy choices before your game…
+        {hydrated ? 'Finishing privacy choices before your game…' : 'Loading your saved progress…'}
       </Text>
       <TouchableOpacity accessibilityRole="button" onPress={() => router.back()} style={{ padding: 20 }}>
         <Text style={{ color: '#7DD3FC', fontWeight: '700' }}>Back</Text>
@@ -245,8 +251,22 @@ function GameContent() {
   // Changing the HTML source reloads the WebView and used to restart active games.
   const runBirdEvo = useRef(birdEvo);
 
-  const [permission, requestPermission] = useCameraPermissions();
-  const [microphonePermission, requestMicrophonePermission] = useMicrophonePermissions();
+  const [permission, requestPermission, getCameraPermission] = useCameraPermissions();
+  const [microphonePermission, requestMicrophonePermission, getMicrophonePermission] = useMicrophonePermissions();
+  const settingsPermissionRecovery = useMemo(() => createSettingsPermissionRecovery(
+    (kind) => kind === 'camera' ? getCameraPermission() : getMicrophonePermission()
+  ), [getCameraPermission, getMicrophonePermission]);
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') void settingsPermissionRecovery.onActive();
+    });
+    return () => subscription.remove();
+  }, [settingsPermissionRecovery]);
+  const openPermissionSettings = (kind: SettingsPermission) => {
+    void settingsPermissionRecovery.open(kind, () => Linking.openSettings()).catch(() => {
+      Alert.alert('Settings unavailable', 'Open your device settings and enable access for Flap Fit, then return here.');
+    });
+  };
   const [recordWithoutAudio, setRecordWithoutAudio] = useState(false);
   const [runKey, setRunKey] = useState(0);
   const resultSubmissionGeneration = useRef(0);
@@ -1093,7 +1113,7 @@ function GameContent() {
           accessibilityLabel={permission.canAskAgain ? 'Allow camera' : 'Open camera settings'}
           onPress={() => {
             if (permission.canAskAgain) void requestPermission();
-            else void Linking.openSettings();
+            else openPermissionSettings('camera');
           }}
           style={{
             backgroundColor: '#F59E0B',
@@ -1150,7 +1170,7 @@ function GameContent() {
           }
           onPress={() => {
             if (microphonePermission.canAskAgain) void requestMicrophonePermission();
-            else void Linking.openSettings();
+            else openPermissionSettings('microphone');
           }}
           style={{
             backgroundColor: '#F59E0B',

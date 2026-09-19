@@ -1,0 +1,275 @@
+diff --git a/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt b/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt
+index 968fdd1..8ea0a6d 100644
+--- a/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt
++++ b/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule.kt
+@@ -21,6 +21,7 @@ import android.app.Activity
+ import android.util.Log
+ import android.util.SparseArray
+ import com.facebook.react.bridge.*
++import com.google.android.gms.ads.AdError
+ import com.google.android.gms.ads.AdLoadCallback
+ import com.google.android.gms.ads.FullScreenContentCallback
+ import com.google.android.gms.ads.LoadAdError
+@@ -39,6 +40,15 @@ abstract class ReactNativeGoogleMobileAdsFullScreenAdModule<T>(
+   moduleName: String
+ ) : ReactNativeModule(reactContext, moduleName) {
+   private val adArray = SparseArray<T>()
++  // All request ownership changes run on the UI thread, including late load callbacks.
++  private val activeRequests = mutableSetOf<Int>()
++
++  fun destroy(requestId: Int) {
++    UiThreadUtil.runOnUiThread {
++      activeRequests.remove(requestId)
++      adArray.remove(requestId)
++    }
++  }
+ 
+   abstract fun getAdEventName(): String
+ 
+@@ -93,6 +103,8 @@ abstract class ReactNativeGoogleMobileAdsFullScreenAdModule<T>(
+       adRequestOptions
+     )
+     activity.runOnUiThread {
++      activeRequests.add(requestId)
++      adArray.remove(requestId)
+       loadAd(
+         activity,
+         adUnitId,
+@@ -116,6 +128,10 @@ abstract class ReactNativeGoogleMobileAdsFullScreenAdModule<T>(
+     }
+     activity.runOnUiThread {
+       val ad = adArray[requestId]
++      if (!activeRequests.contains(requestId) || ad == null) {
++        rejectPromiseWithCodeAndMessage(promise, "not-ready", "Ad was disposed or is not ready.")
++        return@runOnUiThread
++      }
+       val adHelper = ReactNativeGoogleMobileAdsAdHelper(ad)
+ 
+       var immersiveModeEnabled = false
+@@ -146,6 +162,7 @@ abstract class ReactNativeGoogleMobileAdsFullScreenAdModule<T>(
+     private val adRequestOptions: ReadableMap
+   ) : AdLoadCallback<T>() {
+     override fun onAdLoaded(ad: T & Any) {
++      if (!activeRequests.contains(requestId)) return
+       try {
+         val adHelper = ReactNativeGoogleMobileAdsAdHelper(ad)
+         var eventType = ReactNativeGoogleMobileAdsEvent.GOOGLE_MOBILE_ADS_EVENT_LOADED
+@@ -216,9 +233,24 @@ abstract class ReactNativeGoogleMobileAdsFullScreenAdModule<T>(
+             }
+ 
+             override fun onAdDismissedFullScreenContent() {
++              activeRequests.remove(requestId)
++              adArray.remove(requestId)
+               sendAdEvent(ReactNativeGoogleMobileAdsEvent.GOOGLE_MOBILE_ADS_EVENT_CLOSED)
+             }
+ 
++            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
++              activeRequests.remove(requestId)
++              adArray.remove(requestId)
++              val error = Arguments.createMap()
++              val codeAndMessage = ReactNativeGoogleMobileAdsCommon.getCodeAndMessageFromAdError(adError)
++              error.putString("code", codeAndMessage[0])
++              error.putString("message", codeAndMessage[1])
++              sendAdEvent(
++                ReactNativeGoogleMobileAdsEvent.GOOGLE_MOBILE_ADS_EVENT_ERROR,
++                requestId, adUnitId, error, null
++              )
++            }
++
+             override fun onAdClicked() {
+               sendAdEvent(ReactNativeGoogleMobileAdsEvent.GOOGLE_MOBILE_ADS_EVENT_CLICKED)
+             }
+@@ -251,6 +283,8 @@ abstract class ReactNativeGoogleMobileAdsFullScreenAdModule<T>(
+           data
+         )
+       } catch (e: Exception) {
++          activeRequests.remove(requestId)
++          adArray.remove(requestId)
+           Log.w("RNGoogleMobileAds", "Unknown error on load")
+           Log.w("RNGoogleMobileAds", e)
+         val error = Arguments.createMap()
+@@ -268,6 +302,8 @@ abstract class ReactNativeGoogleMobileAdsFullScreenAdModule<T>(
+     }
+ 
+     override fun onAdFailedToLoad(loadAdError: LoadAdError) {
++      if (!activeRequests.remove(requestId)) return
++      adArray.remove(requestId)
+       val error = Arguments.createMap()
+       val codeAndMessage =
+         ReactNativeGoogleMobileAdsCommon.getCodeAndMessageFromAdError(loadAdError)
+diff --git a/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsInterstitialModule.kt b/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsInterstitialModule.kt
+index 079ecb9..53102ec 100644
+--- a/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsInterstitialModule.kt
++++ b/android/src/main/java/io/invertase/googlemobileads/ReactNativeGoogleMobileAdsInterstitialModule.kt
+@@ -35,6 +35,11 @@ class ReactNativeGoogleMobileAdsInterstitialModule(reactContext: ReactApplicatio
+     return ReactNativeGoogleMobileAdsEvent.GOOGLE_MOBILE_ADS_EVENT_INTERSTITIAL
+   }
+ 
++  @ReactMethod
++  fun interstitialDestroy(requestId: Int) {
++    destroy(requestId)
++  }
++
+   @ReactMethod
+   fun interstitialLoad(requestId: Int, adUnitId: String, adRequestOptions: ReadableMap) {
+     load(requestId, adUnitId, adRequestOptions)
+diff --git a/ios/RNGoogleMobileAds/RNGoogleMobileAdsFullScreenAd.h b/ios/RNGoogleMobileAds/RNGoogleMobileAdsFullScreenAd.h
+index 055429b..8d3f0d8 100644
+--- a/ios/RNGoogleMobileAds/RNGoogleMobileAdsFullScreenAd.h
++++ b/ios/RNGoogleMobileAds/RNGoogleMobileAdsFullScreenAd.h
+@@ -30,6 +30,7 @@
+ 
+ - (instancetype)init;
+ - (void)invalidate;
++- (void)destroyWithRequestId:(int)requestId;
+ - (NSString *)getAdEventName;
+ - (void)loadAd:(NSString *)adUnitId
+             adRequest:(GAMRequest *)adRequest
+diff --git a/ios/RNGoogleMobileAds/RNGoogleMobileAdsFullScreenAd.mm b/ios/RNGoogleMobileAds/RNGoogleMobileAdsFullScreenAd.mm
+index 23741e7..0a94c51 100644
+--- a/ios/RNGoogleMobileAds/RNGoogleMobileAdsFullScreenAd.mm
++++ b/ios/RNGoogleMobileAds/RNGoogleMobileAdsFullScreenAd.mm
+@@ -39,6 +39,11 @@
+   [_delegateMap removeAllObjects];
+ }
+ 
++- (void)destroyWithRequestId:(int)requestId {
++  [_adMap removeObjectForKey:@(requestId)];
++  [_delegateMap removeObjectForKey:@(requestId)];
++}
++
+ - (NSString *)getAdEventName {
+   @throw [NSException exceptionWithName:@"MethodNotImplemented"
+                                  reason:@"Method `getAdEventName` must be overridden"
+@@ -76,11 +81,16 @@
+                                                                     requestId:requestId
+                                                                      adUnitId:adUnitId];
+ 
++  // Register ownership before loading so disposal also invalidates unfinished requests.
++  self.delegateMap[@(requestId)] = delegate;
++  [self.adMap removeObjectForKey:@(requestId)];
+   __weak __typeof(self) weakSelf = self;
+   [self loadAd:adUnitId
+               adRequest:adRequest
+       completionHandler:^(id<GADFullScreenPresentingAd> ad, NSError *error) {
++        if (!weakSelf || weakSelf.delegateMap[@(requestId)] != delegate) return;
+         if (error) {
++          [weakSelf destroyWithRequestId:requestId];
+           NSDictionary *codeAndMessage =
+               [RNGoogleMobileAdsCommon getCodeAndMessageFromAdError:error];
+           [weakSelf sendAdEvent:GOOGLE_MOBILE_ADS_EVENT_ERROR
+diff --git a/ios/RNGoogleMobileAds/RNGoogleMobileAdsInterstitialModule.mm b/ios/RNGoogleMobileAds/RNGoogleMobileAdsInterstitialModule.mm
+index 03cacbe..de9f899 100644
+--- a/ios/RNGoogleMobileAds/RNGoogleMobileAdsInterstitialModule.mm
++++ b/ios/RNGoogleMobileAds/RNGoogleMobileAdsInterstitialModule.mm
+@@ -60,6 +60,10 @@ RCT_EXPORT_MODULE();
+   return YES;
+ }
+ 
++RCT_EXPORT_METHOD(interstitialDestroy : (double)requestId) {
++  [_ad destroyWithRequestId:requestId];
++}
++
+ RCT_EXPORT_METHOD(interstitialLoad
+                   : (double)requestId adUnitId
+                   : (NSString *)adUnitId requestOptions
+diff --git a/lib/commonjs/ads/InterstitialAd.js b/lib/commonjs/ads/InterstitialAd.js
+index 334877d..c1c2d7b 100644
+--- a/lib/commonjs/ads/InterstitialAd.js
++++ b/lib/commonjs/ads/InterstitialAd.js
+@@ -104,6 +104,15 @@ class InterstitialAd extends _MobileAd.MobileAd {
+     const requestId = InterstitialAd._interstitialRequest++;
+     return new InterstitialAd('interstitial', requestId, adUnitId, _NativeInterstitialModule.default.interstitialLoad.bind(this), _NativeInterstitialModule.default.interstitialShow.bind(this), options);
+   }
++  destroy() {
++    if (this._destroyed) return;
++    this._destroyed = true;
++    this._loaded = false;
++    this._isLoadCalled = true;
++    this.removeAllListeners();
++    this._nativeListener.remove();
++    _NativeInterstitialModule.default.interstitialDestroy(this._requestId);
++  }
+   addAdEventsListener(listener) {
+     return this._addAdEventsListener(listener);
+   }
+diff --git a/lib/module/ads/InterstitialAd.js b/lib/module/ads/InterstitialAd.js
+index 153398e..92df6a2 100644
+--- a/lib/module/ads/InterstitialAd.js
++++ b/lib/module/ads/InterstitialAd.js
+@@ -100,6 +100,15 @@ export class InterstitialAd extends MobileAd {
+     const requestId = InterstitialAd._interstitialRequest++;
+     return new InterstitialAd('interstitial', requestId, adUnitId, NativeInterstitialModule.interstitialLoad.bind(this), NativeInterstitialModule.interstitialShow.bind(this), options);
+   }
++  destroy() {
++    if (this._destroyed) return;
++    this._destroyed = true;
++    this._loaded = false;
++    this._isLoadCalled = true;
++    this.removeAllListeners();
++    this._nativeListener.remove();
++    NativeInterstitialModule.interstitialDestroy(this._requestId);
++  }
+   addAdEventsListener(listener) {
+     return this._addAdEventsListener(listener);
+   }
+diff --git a/lib/typescript/ads/InterstitialAd.d.ts b/lib/typescript/ads/InterstitialAd.d.ts
+index 0ffcd8b..53aa6d3 100644
+--- a/lib/typescript/ads/InterstitialAd.d.ts
++++ b/lib/typescript/ads/InterstitialAd.d.ts
+@@ -44,6 +44,8 @@ import { RequestOptions } from '../types/RequestOptions';
+  */
+ export declare class InterstitialAd extends MobileAd {
+     protected static _interstitialRequest: number;
++    private _destroyed;
++    destroy(): void;
+     /**
+      * Creates a new InterstitialAd instance.
+      *
+diff --git a/lib/typescript/specs/modules/NativeInterstitialModule.d.ts b/lib/typescript/specs/modules/NativeInterstitialModule.d.ts
+index a067032..25968a6 100644
+--- a/lib/typescript/specs/modules/NativeInterstitialModule.d.ts
++++ b/lib/typescript/specs/modules/NativeInterstitialModule.d.ts
+@@ -17,6 +17,7 @@
+ import { TurboModule } from 'react-native';
+ import { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
+ export interface Spec extends TurboModule {
++  interstitialDestroy(requestId: number): void;
+     interstitialLoad(requestId: number, adUnitId: string, requestOptions: UnsafeObject): void;
+     interstitialShow(requestId: number, adUnitId: string, showOptions?: UnsafeObject): Promise<void>;
+ }
+diff --git a/src/ads/InterstitialAd.ts b/src/ads/InterstitialAd.ts
+index 1dcf5ca..5f7c87e 100644
+--- a/src/ads/InterstitialAd.ts
++++ b/src/ads/InterstitialAd.ts
+@@ -65,6 +65,18 @@ import NativeInterstitialModule from '../specs/modules/NativeInterstitialModule'
+  */
+ export class InterstitialAd extends MobileAd {
+   protected static _interstitialRequest = 0;
++  private _destroyed = false;
++
++  /** Permanently release this request, including pending native loads. */
++  destroy(): void {
++    if (this._destroyed) return;
++    this._destroyed = true;
++    this._loaded = false;
++    this._isLoadCalled = true;
++    this.removeAllListeners();
++    this._nativeListener.remove();
++    NativeInterstitialModule.interstitialDestroy(this._requestId);
++  }
+   /**
+    * Creates a new InterstitialAd instance.
+    *
+diff --git a/src/specs/modules/NativeInterstitialModule.ts b/src/specs/modules/NativeInterstitialModule.ts
+index bcf8f1b..a37c270 100644
+--- a/src/specs/modules/NativeInterstitialModule.ts
++++ b/src/specs/modules/NativeInterstitialModule.ts
+@@ -19,6 +19,7 @@ import { TurboModule, TurboModuleRegistry } from 'react-native';
+ import { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
+ 
+ export interface Spec extends TurboModule {
++  interstitialDestroy(requestId: number): void;
+   interstitialLoad(requestId: number, adUnitId: string, requestOptions: UnsafeObject): void;
+   interstitialShow(requestId: number, adUnitId: string, showOptions?: UnsafeObject): Promise<void>;
+ }

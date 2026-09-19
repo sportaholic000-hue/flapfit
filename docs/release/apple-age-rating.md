@@ -66,3 +66,9 @@ Flap Fit is a fitness game and has no medical purpose, clearance, registration, 
   the functional facts above rather than guessing from the desired 13+ audience.
 - Recheck this worksheet if messaging, social feeds, public sharing inside Flap Fit, prizes, medical
   claims, or new user-generated fields are added.
+
+## Minimum age override
+
+Flap Fit's Terms require users to be at least 13. Answer the content questionnaire truthfully; if Apple's calculated rating is below that minimum, select **Override to Higher Age Rating** and choose the appropriate offered rating that meets the Terms. Do not select Made for Kids or claim age verification that the app does not perform. Confirm regional ratings in App Store Connect.
+
+Source checked September 19, 2026: [Apple's age-rating override instructions](https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating).

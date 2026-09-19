@@ -6,12 +6,17 @@ node_modules/
 
 apps/web/
 apps/mobile/store-assets/
+# EAS checks directory paths without a trailing slash before traversing them.
 supabase/*
 !supabase/config.toml
+!supabase/functions
 !supabase/functions/
+supabase/functions/*
+!supabase/functions/flapfit-game
 !supabase/functions/flapfit-game/
+supabase/functions/flapfit-game/*
 !supabase/functions/flapfit-game/index.ts
-config/
+/config/
 shared/
 !apps/mobile/polyfills/shared/
 examples/
@@ -47,3 +52,15 @@ README.md
 
 # Reference-only retired features never enter native build uploads.
 /archive/
+
+# Local recovery/tooling files are not native-build inputs.
+/.asset-backups/
+/.dependency-backups/
+/.codex-bin/
+/node_modules.reparse-backup-*/
+**/.expo/
+**/.expo-shared/
+**/.codex/
+**/.env
+**/.env.*
+!/apps/mobile/.env.example

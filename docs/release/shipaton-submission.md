@@ -14,7 +14,7 @@ Official sources:
 - A normal-category entry needs a fully published public App Store, Google Play, or Samsung Galaxy
   Store listing by the deadline. TestFlight, Play internal testing, or an App Store submission still
   waiting for review does not count.
-- The first public store release must occur during the August 1 to September 30, 2026 submission
+- The first public store release must occur during the July 31 to September 30, 2026 submission
   window.
 - The published app must be downloadable in the United States.
 - Flap Fit's qualifying integration is RevenueCat Ads. Version 1.0 has no purchase, subscription,
@@ -34,7 +34,7 @@ must be checked against the released build before use.
 - [ ] Video shows Flap Fit running on a supported physical device and matches the released build.
 - [ ] Video uses only owned/licensed visuals, music, and sound.
 - [ ] 1024 x 1024 Flap Fit app icon.
-- [ ] At least one screenshot at 1179 x 2556 or higher without a device frame. The approved App
+- [ ] At least one screenshot at exactly 1179 x 2556 without a device frame. The approved App
       Store set at 1320 x 2868 satisfies this when the image itself has no added device frame.
 - [ ] App is verified downloadable from the United States before the Devpost submission is finalized.
 
@@ -66,3 +66,5 @@ minutes and film the exact released native build on a physical device:
 Do not claim that pose tracking proves perfect form, that calories or complete repetitions are
 measured, that recordings are uploaded, or that a leaderboard contains live users when demo data is
 being shown.
+
+Rules rechecked September 19, 2026: [controlling Devpost rules](https://revenuecat-shipaton-2026.devpost.com/rules). Prepare the exact frameless screenshot dimensions above; a larger store screenshot is not the contest deliverable.

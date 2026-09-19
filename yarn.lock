@@ -8601,7 +8601,7 @@ __metadata:
     react-dom: "npm:19.2.3"
     react-native: "npm:0.86.3"
     react-native-gesture-handler: "npm:~2.32.0"
-    react-native-google-mobile-ads: "npm:16.5.0"
+    react-native-google-mobile-ads: "patch:react-native-google-mobile-ads@npm%3A16.5.0#~/.yarn/patches/react-native-google-mobile-ads-npm-16.5.0-flapfit.patch"
     react-native-purchases: "npm:10.9.1"
     react-native-reanimated: "npm:4.5.1"
     react-native-safe-area-context: "npm:~5.7.0"
@@ -9645,6 +9645,21 @@ __metadata:
     expo:
       optional: true
   checksum: 10c0/b2ca84a51aa5db536e8027ba4c7b938870c4dccf8da588169d2c516bd2a0d447540c7fe56122f8b034510fbb20d602491043f6164e4653fe0c5fc7b2b7c9d10d
+  languageName: node
+  linkType: hard
+
+"react-native-google-mobile-ads@patch:react-native-google-mobile-ads@npm%3A16.5.0#~/.yarn/patches/react-native-google-mobile-ads-npm-16.5.0-flapfit.patch":
+  version: 16.5.0
+  resolution: "react-native-google-mobile-ads@patch:react-native-google-mobile-ads@npm%3A16.5.0#~/.yarn/patches/react-native-google-mobile-ads-npm-16.5.0-flapfit.patch::version=16.5.0&hash=ff2ad4"
+  dependencies:
+    "@iabtcf/core": "npm:^1.5.6"
+    use-deep-compare-effect: "npm:^1.8.1"
+  peerDependencies:
+    expo: ">=47.0.0"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+  checksum: 10c0/fdcf220086388daa9f0e6fb158fb914dd28daf5ee965fa03b6333228f6232f234e9e1b6ff3dedfeb716f9b5b2cc32fd2e34c1df92302590c4f3d0b966ce18e95
   languageName: node
   linkType: hard
 

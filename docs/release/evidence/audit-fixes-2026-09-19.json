@@ -1,0 +1,74 @@
+{
+  "baseline": "453e363f0b2fcbbe0d522777f92fe2888946addd",
+  "date": "2026-09-19",
+  "verification": {
+    "tests": {
+      "suites": 35,
+      "passed": 406,
+      "failed": 0
+    },
+    "typescript": "passed",
+    "strictLint": "passed",
+    "yarnImmutable": "passed (Yarn 4.12.0)"
+  },
+  "archive": {
+    "easCli": "24.7.0",
+    "method": "GitClient.makeShallowCopyAsync (build:inspect archive path)",
+    "files": 585,
+    "assetsVerified": 87,
+    "runtimeFilesVerified": 97,
+    "requiredFilesVerified": 9,
+    "forbiddenFiles": [],
+    "validations": [
+      {
+        "platform": "ios",
+        "status": 0
+      },
+      {
+        "platform": "android",
+        "status": 0
+      }
+    ]
+  },
+  "nativeBindings": {
+    "reactNative": "0.86.3",
+    "adSdk": "16.5.0",
+    "generatedFiles": 20,
+    "interstitialDestroyBindings": [
+      "java\\io\\invertase\\googlemobileads\\NativeInterstitialModuleSpec.java",
+      "jni\\RNGoogleMobileAdsSpec-generated.cpp",
+      "RNGoogleMobileAdsSpec\\RNGoogleMobileAdsSpec-generated.mm",
+      "RNGoogleMobileAdsSpec\\RNGoogleMobileAdsSpec.h",
+      "RNGoogleMobileAdsSpecJSI.h"
+    ],
+    "nativeCompile": false
+  },
+  "publicLinkAvailability": {
+    "status": 0,
+    "scope": "HTTP availability, HTML type and expected page labels only; not full policy/account verification"
+  },
+  "unchangedSource": [
+    {
+      "name": "apps/mobile/src/utils/game/html/scriptCore.ts",
+      "sha256": "ba12862d9192d97ae6f374de0c6c7f16705d976eb45518e03c50cfd9ee585e24"
+    },
+    {
+      "name": "apps/mobile/src/utils/game/html/scriptFormTracking.ts",
+      "sha256": "d0dabe46f881fae43aff784a5f0c4543c9a0c0236cad954546ca51d4811821bf"
+    },
+    {
+      "name": "apps/mobile/src/utils/game/html/scriptPullupSupport.ts",
+      "sha256": "dc3cd6397ab3f4f69601142505d14286a49f2b4fdd2d021ce812136131b19baf"
+    },
+    {
+      "name": "apps/mobile/src/utils/game/html/scriptGame.ts",
+      "sha256": "55055246457ab00d2ca76296c9c63655af80e694068cf142ba00bc088dc23d37"
+    },
+    {
+      "name": "apps/mobile/src/utils/game/html/scriptRecordingMp4.ts",
+      "sha256": "e4d5ab846558d9d6655892aa3ce58c4db0f867ae53e796ff1998adc1db8e2030"
+    }
+  ],
+  "nativeBuild": false,
+  "storeSubmission": false
+}

@@ -16,7 +16,7 @@ Official rules: https://revenuecat-shipaton-2026.devpost.com/rules
 - RevenueCat project ID: `proja58d3dbd` (verified in Flap Fit Project Settings on September 17, 2026; dashboard URL segment: `a58d3dbd`)
 - Released version and build: [VERIFY AGAINST STORE LISTING]
 - Final 1024 x 1024 icon: `apps/mobile/assets/images/icon.png` (approved app icon; dimensions verified)
-- Final frameless 1179 x 2556-or-larger screenshot: [GENUINE RELEASED-BUILD CAPTURE]
+- Final frameless 1179 x 2556 screenshot: [GENUINE RELEASED-BUILD CAPTURE]
 
 ## Story draft
 

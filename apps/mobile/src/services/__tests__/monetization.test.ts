@@ -6,7 +6,7 @@ function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: b
   const events = new Map<string, (value?: unknown) => void>();
   const consent = { canRequestAds: true, privacyOptionsRequirementStatus: 'required' };
   const tracker = Object.fromEntries(['trackAdLoaded', 'trackAdDisplayed', 'trackAdOpened', 'trackAdRevenue', 'trackAdFailedToLoad'].map((name) => [name, jest.fn().mockResolvedValue(undefined)]));
-  const nativeAd = { load: jest.fn(), show: jest.fn().mockResolvedValue(undefined), addAdEventListener: jest.fn((name, listener) => events.set(name, listener)), removeAllListeners: jest.fn() };
+  const nativeAd = { load: jest.fn(), show: jest.fn().mockResolvedValue(undefined), addAdEventListener: jest.fn((name, listener) => events.set(name, listener)), removeAllListeners: jest.fn(), destroy: jest.fn() };
   const mobileAds = { setRequestConfiguration: jest.fn().mockResolvedValue(undefined), initialize: jest.fn().mockResolvedValue(undefined) };
   const sdk = {
     default: () => mobileAds,
@@ -174,4 +174,47 @@ test('granting privacy choices later applies the PG cap before the first SDK ini
   await f.adapter.showAdPrivacyOptions();
   expect(f.mobileAds.initialize).toHaveBeenCalledTimes(1);
   expect(f.adapter.prepareResultInterstitial()).not.toBeNull();
+});
+
+
+test('discarding an unused result destroys its native request exactly once', async () => {
+  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
+  const ad = f.adapter.prepareResultInterstitial()!;
+  ad.dispose(); ad.dispose(); f.events.get('loaded')!();
+  expect(f.nativeAd.destroy).toHaveBeenCalledTimes(1);
+  expect(ad.isReady()).toBe(false);
+  expect(f.tracker.trackAdLoaded).not.toHaveBeenCalled();
+});
+
+test('load startup exceptions still dispose the created SDK instance', async () => {
+  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
+  f.nativeAd.load.mockImplementation(() => { throw new Error('native request failed'); });
+  expect(f.adapter.prepareResultInterstitial()).toBeNull();
+  expect(f.nativeAd.destroy).toHaveBeenCalledTimes(1);
+});
+
+test('consent invalidation destroys unfinished ads and ignores their late revenue/load events', async () => {
+  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
+  const ad = f.adapter.prepareResultInterstitial()!;
+  await f.adapter.showAdPrivacyOptions();
+  f.events.get('loaded')!(); f.events.get('paid')!({ value: 1, currency: 'USD', precision: 3 });
+  expect(ad.isReady()).toBe(false);
+  expect(f.nativeAd.destroy).toHaveBeenCalledTimes(1);
+  expect(f.tracker.trackAdLoaded).not.toHaveBeenCalled();
+  expect(f.tracker.trackAdRevenue).not.toHaveBeenCalled();
+});
+
+test('a forwarded Android presentation failure completes the selected result action once', async () => {
+  const f = loadAdapter({ platform: 'android' }); await f.adapter.prepareMonetization(() => true);
+  f.adapter.resultAdGate.createResult(null, f.adapter.adEnvironment).exit(false, jest.fn());
+  const ad = f.adapter.prepareResultInterstitial()!; f.events.get('loaded')!();
+  const result = f.adapter.resultAdGate.createResult(ad, f.adapter.adEnvironment);
+  const action = jest.fn();
+  expect(result.exit(false, action)).toBe(true);
+  await Promise.resolve();
+  expect(action).not.toHaveBeenCalled();
+  f.events.get('error')!(); f.events.get('closed')!();
+  expect(action).toHaveBeenCalledTimes(1);
+  expect(result.exit(false, action)).toBe(false);
+  expect(f.nativeAd.destroy).toHaveBeenCalledTimes(1);
 });

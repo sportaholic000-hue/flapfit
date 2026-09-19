@@ -150,7 +150,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   {
     id: 'evo-1',
     title: 'Fledgling',
-    desc: 'Evolve to Stage 1',
+    desc: 'Evolve to Stage 2',
     emoji: '🐤',
     goal: 1,
     category: 'global',
@@ -159,7 +159,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   {
     id: 'evo-3',
     title: 'Athlete Bird',
-    desc: 'Evolve to Stage 3',
+    desc: 'Evolve to Stage 4',
     emoji: '💪',
     goal: 3,
     category: 'global',
@@ -168,7 +168,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   {
     id: 'evo-5',
     title: 'Legendary Bird',
-    desc: 'Evolve to Stage 5',
+    desc: 'Evolve to Stage 6',
     emoji: '🏆',
     goal: 5,
     category: 'global',

@@ -25,7 +25,7 @@ function validMonetizedFixture() {
     },
     mobilePackage: {
       dependencies: {
-        'react-native-google-mobile-ads': '16.5.0',
+        'react-native-google-mobile-ads': 'patch:react-native-google-mobile-ads@npm%3A16.5.0#~/.yarn/patches/react-native-google-mobile-ads-npm-16.5.0-flapfit.patch',
         'react-native-purchases': '10.9.1',
       },
     },
@@ -114,7 +114,7 @@ describe('validateMonetizationConfig', () => {
 
     expect(validateMonetizationConfig({ ...fixture, buildProfile: 'production' })).toEqual(
       expect.arrayContaining([
-        'package.json: react-native-google-mobile-ads must use the explicitly approved 16.5.0 release',
+        'package.json: react-native-google-mobile-ads must use the approved 16.5.0 release with the Flap Fit lifecycle patch',
         'package.json: react-native-purchases must use the explicitly approved 10.9.1 release',
       ])
     );

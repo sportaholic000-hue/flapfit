@@ -4,10 +4,11 @@ Source repository for the Flap Fit iOS and Android fitness game.
 
 ## Current audit candidate
 
-Start with [`docs/release/audit-handoff-2026-09-18.md`](docs/release/audit-handoff-2026-09-18.md).
+Start with [`docs/release/audit-fixes-2026-09-19.md`](docs/release/audit-fixes-2026-09-19.md).
 The owner accepted tracking `2026-09-18.9-foot-return` for all six exercises. The current source
-passes 391 tests in 33 suites and production configuration validation. Native build/device evidence,
-store screenshots, and final store/privacy requirements remain open; this is not a submission approval.
+passes 406 tests in 35 suites, typecheck, strict lint, immutable installation and production
+validation from an actual EAS archive. Native build/device evidence, store screenshots and final
+store/privacy requirements remain open; this is not a submission approval.
 
 ## Authoritative source
 

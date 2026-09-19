@@ -29,11 +29,15 @@ Camera processing:
 4. Hold the two displayed calibration poses.
 5. Complete the countdown and move through the calibrated range to control the bird.
 
+For pull-ups, first stand on tiptoes and reach as high as possible without touching the bar.
+Then grab the bar and hold the TOP position for Step 1, followed by the BOTTOM position for Step 2.
+The equipment-free Squats path above remains sufficient to review the game.
+
 Pose estimation runs on-device using a bundled MediaPipe model. Normal Play does not record or upload
 camera video or request microphone access. Record & Play requests microphone access so the temporary
 composed gameplay video can include the user's voice and workout sounds. The complete file remains
 in the app cache. Share gameplay video opens the system share sheet; on a supported iPhone, Messages
-and Mail open their native composers. The player chooses the destination or recipients. Dismissing
+opens its native composer. The player chooses the destination or recipients. Dismissing
 a native composer leaves the same result available. A receiving social app controls its own Send
 screen, so automatic return from every social app is not promised. Video and audio are never sent
 to Flap Fit's servers. Verify full-duration delivery and send/cancel return on the submitted build.
@@ -51,12 +55,14 @@ completed-run exit in a session is ad-free; eligibility is limited to one ad per
 least 90 seconds between displayed ads. Ads are requested only after applicable consent handling,
 and appear only after Done, Try Again, or Next Level. Sharing, returning from another app, and
 arriving at results never trigger an ad by themselves. Google UMP supplies regional consent and
-Info > Advertising privacy choices when required. Requests are non-personalized; the app does not
+Info > Ad privacy settings when required. Requests are non-personalized; the app does not
 request ATT or Android advertising-ID permission. RevenueCat receives anonymous ad events and
 revenue, with no exercise, score, player name, camera, or training-history attributes.
 Flap Fit 1.0 has no purchase, subscription, paywall, or remove-ads product.
 
-Support: **Troy Reardon, support@flapfitapp.com; [REQUIRED INPUT: review phone number]**
+Support: **Troy Reardon, support@flapfitapp.com**
+
+Before submission, enter the owner's review-contact phone privately in App Store Connect. It is not a public repository field.
 
 Privacy policy: **https://flapfitapp.com/privacy/**
 

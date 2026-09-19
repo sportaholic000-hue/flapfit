@@ -48,9 +48,9 @@ function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile 
 
   if (!hasAdMob || !hasRevenueCat) return failures;
 
-  if (mobilePackage.dependencies?.['react-native-google-mobile-ads'] !== '16.5.0') {
+  if (mobilePackage.dependencies?.['react-native-google-mobile-ads'] !== 'patch:react-native-google-mobile-ads@npm%3A16.5.0#~/.yarn/patches/react-native-google-mobile-ads-npm-16.5.0-flapfit.patch') {
     failures.push(
-      'package.json: react-native-google-mobile-ads must use the explicitly approved 16.5.0 release'
+      'package.json: react-native-google-mobile-ads must use the approved 16.5.0 release with the Flap Fit lifecycle patch'
     );
   }
   if (mobilePackage.dependencies?.['react-native-purchases'] !== '10.9.1') {

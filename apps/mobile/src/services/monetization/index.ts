@@ -24,6 +24,12 @@ let consentEpoch = 0;
 let privacyPresentation: Promise<unknown> | null = null;
 let impressionSequence = 0;
 const privacyListeners = new Set<() => void>();
+const activeResultAds = new Set<() => void>();
+function disposeResultAds() {
+  for (const dispose of [...activeResultAds]) {
+    try { dispose(); } catch { /* Cleanup cannot interrupt consent or gameplay. */ }
+  }
+}
 export const resultAdGate = new ResultAdGate();
 export const adEnvironment = {
   isActive: () => AppState.currentState === 'active',
@@ -80,6 +86,7 @@ function presentPrivacy<T>(operation: () => Promise<T>): Promise<T> {
 
 export async function settlePrivacyBeforeGameplay(): Promise<void> {
   ++consentEpoch; // A pending info request may finish, but must never start a new form.
+  disposeResultAds();
   const presentation = privacyPresentation;
   if (presentation) {
     try { await presentation; } catch { /* Consent failure does not prevent playing. */ }
@@ -93,6 +100,7 @@ export function prepareMonetization(canPresent: () => boolean): Promise<void> {
   const sdk = loadAdsSdk();
   if (!sdk) return Promise.resolve();
   adsReady = false; // Revalidate prior permission before any new request.
+  disposeResultAds();
   const epoch = consentEpoch;
   init = (async () => {
     try {
@@ -127,6 +135,7 @@ export async function showAdPrivacyOptions(): Promise<void> {
   if (privacyPresentation) { await privacyPresentation; return; }
   adsReady = false;
   const epoch = ++consentEpoch; // Invalidate old ads and in-flight initialization.
+  disposeResultAds();
   try {
     const consent = await presentPrivacy(() => sdk.AdsConsent.showPrivacyOptionsForm());
     if (epoch !== consentEpoch) return;
@@ -172,8 +181,19 @@ export function prepareResultInterstitial(): ReadyInterstitial | null {
   let disposed = false;
   let shown = false;
   let callbacks: InterstitialCallbacks | null = null;
+  let release: (() => void) | undefined;
   try {
     const ad = sdk.InterstitialAd.createForAdRequest(adUnitId, { requestNonPersonalizedAdsOnly: true });
+    const dispose = () => {
+      if (disposed) return;
+      disposed = true;
+      loaded = false;
+      callbacks = null;
+      activeResultAds.delete(dispose);
+      ad.destroy();
+    };
+    release = dispose;
+    activeResultAds.add(dispose);
     ad.addAdEventListener(sdk.AdEventType.LOADED, () => {
       if (disposed) return;
       loaded = true;
@@ -209,7 +229,10 @@ export function prepareResultInterstitial(): ReadyInterstitial | null {
         callbacks = next;
         await ad.show();
       },
-      dispose: () => { disposed = true; callbacks = null; ad.removeAllListeners(); },
+      dispose,
     };
-  } catch { return null; }
+  } catch {
+    try { release?.(); } catch { /* A failed request still returns the no-ad path. */ }
+    return null;
+  }
 }

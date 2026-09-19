@@ -1,5 +1,7 @@
 # Flap Fit current audit handoff — September 18, 2026
 
+**Follow-up:** [September 19 audit corrections and current verification](audit-fixes-2026-09-19.md) supersede the test counts and corrected behavior below. This document preserves the accepted baseline.
+
 This is the complete accepted source candidate for backup and independent audit. Read this before older release notes. The owner explicitly authorized publishing the entire current app to the existing GitHub repository. No Apple, Google, TestFlight, website, or contest submission is authorized by that instruction.
 
 ## Included scope
