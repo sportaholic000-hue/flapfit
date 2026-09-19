@@ -1,0 +1,23 @@
+{
+  "verifiedAt": "2026-09-19",
+  "buildId": "168235db-6728-4956-a9bc-77dc5109fa19",
+  "status": "FINISHED",
+  "buildProfile": "ios-compile-check",
+  "isForIosSimulator": true,
+  "sourceCommit": "cbd26dfd2deaf8efb1165a460582d2007f05509b",
+  "bundleIdentifier": "com.flapfit.game",
+  "appVersion": "1.0.0",
+  "buildVersion": "2",
+  "completedAt": "2026-09-19T13:53:07.172Z",
+  "dashboardUrl": "https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/168235db-6728-4956-a9bc-77dc5109fa19",
+  "signingImportedToExpo": true,
+  "signingTeam": "KM48R8T97P",
+  "certificateId": "T52XJ7FQY5",
+  "profileId": "6PM6ANBRSV",
+  "limitations": [
+    "Simulator compile is not an installable distribution candidate.",
+    "Current compile predates required age-policy implementation.",
+    "Native device consent, sharing and ad/RevenueCat acceptance remain pending.",
+    "No App Store upload or review submission performed."
+  ]
+}

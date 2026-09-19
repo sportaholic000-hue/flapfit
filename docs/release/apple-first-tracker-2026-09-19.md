@@ -5,10 +5,10 @@ Source checklist: FlapFit_Apple_First_Launch_Checklist.md supplied September 19;
 
 ## Candidate and boundaries
 
-- Original audit-fix baseline: 5f5d69c1540e8c5b40c21b155ce9ded514884e94. The next candidate also includes the verified URI-decoder security backport. Final built commit must be recorded after signing and the pending consent-policy decision; no completed binary is claimed.
+- Original audit-fix baseline: 5f5d69c1540e8c5b40c21b155ce9ded514884e94. The next candidate also includes the verified URI-decoder security backport. Simulator compile passed for cbd26dfd2deaf8efb1165a460582d2007f05509b. Signed distribution candidate still needs the final age/processing policy and native acceptance.
 - Bundle: com.flapfit.game; App Store ID 6813280704; SKU flapfit-ios; Expo project bbbfea4f-3047-46f6-a5ba-6286356e4718.
 - Owner-confirmed Apple title: **Flap Fit Workout Game** (no colon). Subtitle: **Home Fitness & Tracking**. Saved fields observed in App Store Connect.
-- App version 1.0.0; App Store version record 1.0. Remote build number initialized to 1, then incremented to 2 on the interactive attempt. No completed artifact yet.
+- App version 1.0.0; App Store version record 1.0. Remote build number initialized to 1, then incremented to 2 on the interactive attempt. Simulator artifact completed; no installable distribution artifact yet.
 - Accepted tracker 2026-09-18.9-foot-return and protected recorder/gameplay sources unchanged. No new calibration experiments.
 - No final Apple submission or public release authorized by this tracker.
 
@@ -24,7 +24,7 @@ Source checklist: FlapFit_Apple_First_Launch_Checklist.md supplied September 19;
 | A6 unlock and Daily Challenge | Verified | Hydration/current unlock guard; Endless after level 5; Daily Challenge cases pass. |
 | B1 locked source checks | Verified | Immutable Yarn install, 406 tests in 35 suites, TypeScript, strict lint, packaged release validation. |
 | B2 integrity/advisories | Verified — runtime mitigation added | Known credential pattern scan and asset checks passed at prior baseline. The runtime malformed-URL DoS is now mitigated with the compatible upstream scanner backport: 35 legacy and 135 upstream cases, actual query-string integration, bounded performance reproduction, immutable install and TypeScript passed. Version-only scanners can still flag the patched 0.2.2. Other build/test advisories remain separately documented. |
-| B3 signed iOS build | In progress — signing files created | Approved Apple Distribution certificate T52XJ7FQY5 and App Store profile 6PM6ANBRSV (Flap Fit App Store) created for com.flapfit.game, expiry September 19, 2027. Certificate downloaded; profile download is failing in browser automation, so owner asked to save the generated profile. The explicit Generate approval resolved automatic-review rejection. CSR/key/profile match will be verified on import; encrypted private material remains outside Git. Unused private Expo login window closed. No revocation or build artifact yet. |
+| B3 signed iOS build | In progress — compile passed, signing imported | Native simulator build 168235db-6728-4956-a9bc-77dc5109fa19 FINISHED for cbd26df, version 1.0.0 build 2. Apple certificate/profile/private-key matches verified; approved encrypted credentials imported into Expo and reported ready. No owner download/login action remains. Distribution candidate remains pending age/processing implementation; adding DAR requires capability/profile compatibility. See evidence/ios-compile-2026-09-19.json. |
 | B4 final native privacy/permissions | Blocked — artifact | Inspect signed artifact, native manifests, privacy report and actual upload diagnostics after B3. Source declarations alone are insufficient. |
 | B5 installed artifact identity | Blocked — artifact | Record actual build UUID, version/build, checksum and installation once available. |
 | C1 startup/play | Blocked — device candidate | Owner confirms iPhone + iPad available. Use equipment-free Squats/Sky, no additional pull-up experiments. |
@@ -44,7 +44,7 @@ Source checklist: FlapFit_Apple_First_Launch_Checklist.md supplied September 19;
 | E3 App Privacy | In progress — URLs saved, draft prepared | Privacy Policy and Privacy Choices URLs saved in App Store Connect as https://flapfitapp.com/privacy/. Current-source category/purpose/linkage/tracking draft prepared in privacy-remaining-review-2026-09-19.md. Other Diagnostic Data resolved from authenticated API requests and documented Supabase logging: App Functionality, linked, no tracking. Questionnaire draft entry and final native SDK/privacy-report reconciliation remain pending. No questionnaire publication is claimed. |
 | E4 account/regional declarations | In progress | Developer membership active through Sep 14, 2027 and developer agreements accepted Sep 13, 2026. Age ratings, applicable trader/territory, export and medical-device declarations still need verification. Do not invent or sign owner-only legal declarations. |
 | E5 reviewer instructions/contact | In progress | No-login selected and Squats/Sky reviewer notes entered; owner authorized using phone from Apple membership page. Private review contact visually verified and saved in Apple; no phone/address committed. |
-| E6 free/territory/release | Blocked — owner choice | Free app intended; console currently defaults automatic release. Confirm intended territories/release choice before changing. |
+| E6 free/territory/release | In progress — owner priorities confirmed | Owner states Canada and USA, especially USA, are priority 1; asks about worldwide. This is not exclusive-country approval. Final saved console list remains unverified because browser control timed out. No country or release setting changed. |
 | E7 processed build attachment | Blocked — build | No build attached. Upload/processing is distinct from final review submission. |
 | F1 release evidence sheet | In progress | This tracker plus audit evidence records known checks and missing proof. |
 | F2 go/no-go | Blocked | NOT APPLE SUBMISSION-READY until signed artifact, acceptance and required store/privacy/account fields complete. |
@@ -61,3 +61,5 @@ Android store/testing work, contest media/write-up and cosmetic polish. Existing
 - Website source: 229fb8f5f8a00b2ce6147ccfd124f868670e3d97; existing public Site appgprj_6aa368d995348191b4206fa03f951b3a, version 27. Deployment appgdep_6aae207df8388191820ca89850fde156 succeeded. Provider URL https://flap-fit.sportaholic000.chatgpt.site; custom domain https://flapfitapp.com verified against served content.
 - Google disclosure source checked Sep 19: https://developers.google.com/admob/ios/privacy/data-disclosure
 - RevenueCat disclosure source checked Sep 19: https://www.revenuecat.com/docs/platform-resources/apple-platform-resources/apple-app-privacy
+
+Age/consent follow-up: see age-processing-policy-2026-09-19.md. Keep 13+; separate AdMob, RevenueCat and competition authorization. No blanket minor/unknown permanent ad-free policy approved. Working RevenueCat Ads in the released app remains a Shipaton acceptance requirement.

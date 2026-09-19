@@ -66,7 +66,9 @@ Supabase automatically retains authentication events in external log storage; op
 
 Thus operational/security metadata is collected off-device and linkable to a pseudonymous profile/device. Its demonstrated purpose is running, securing and debugging the online service: **Other Diagnostic Data, App Functionality, linked Yes, tracking No**. No evidence supports advertising or behavioral-analytics purposes for these Supabase records. Exact retention days remain unknown but do not block the disclosure. No customer log contents were inspected, and no code/account settings changed.
 
-## Age-treatment implementation choices
+## Age-treatment implementation choices — superseded proposal
+
+See age-processing-policy-2026-09-19.md for the owner-directed 13+ policy analysis. The options below were preliminary, not approved: no blanket minor/unknown ad-free policy or universal four-band question is authorized.
 
 Google now supports CHILD, TEEN and UNSPECIFIED request treatment. CHILD restricts personalization, third-party ad-vendor requests and advertising identifiers. This is an ad-treatment setting. PG separately limits creative maturity. [Google age treatment](https://support.google.com/admob/answer/6219315?hl=en-GB).
 
