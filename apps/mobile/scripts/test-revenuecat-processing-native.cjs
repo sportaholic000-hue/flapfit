@@ -41,6 +41,7 @@ func fileIsEmpty(_ url: URL) -> Bool { (try? Data(contentsOf: url))?.isEmpty == 
 
 @main struct FenceCheck {
   static func main() async throws {
+    precondition(!FFRevenueCatProcessingGate.allowsNonAdProcessing, "purchase, feature and configuration processing must remain disabled")
     let base = DirectoryHelper.defaultPersistenceBaseUrl!.appendingPathComponent("revenuecat")
     try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
     let file = base.appendingPathComponent("ad_event_store")
