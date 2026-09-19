@@ -32,3 +32,7 @@ Do not force transitive resolutions or broadly upgrade the SDK immediately befor
 native packages are version-coupled, and an untested override presents greater camera, recording,
 and build risk than the current non-critical, mostly build-time findings. Re-run this audit before
 each release and apply Expo-supported patch updates when available.
+
+## September 19 candidate recheck
+
+Fresh locked-graph registry check: 29 advisory rows and 6 deprecation rows; no critical severity. Exit status 1 is retained, not described as a clean dependency audit. All affected package families and exposure paths match the earlier assessment. The moderate decode-uri-component malformed-URL denial-of-service remains reachable through Expo Router and is not claimed fixed. No blanket upgrades or forced transitive major-version changes were made. Detailed scope is in evidence/dependency-audit-2026-09-19.json.

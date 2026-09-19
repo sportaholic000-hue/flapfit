@@ -6,12 +6,12 @@ accuracy, guaranteed results, or live global usage numbers without evidence.
 ## Name and positioning
 
 - Installed app name and brand: Flap Fit
-- Apple App Store listing title: Flap Fit: Fitness Game (22/30 characters)
+- Apple App Store listing title: Flap Fit Workout Game (21/30 characters)
 - Apple app ID: 6813280704; bundle ID: com.flapfit.game; SKU: flapfit-ios
 - Apple record: https://appstoreconnect.apple.com/apps/6813280704/distribution/ios/version/inflight
 - Apple status when created: Prepare for Submission, version 1.0; no build uploaded or submitted
 - Google listing name remains Flap Fit
-- Apple subtitle: Fun Home Workouts & Tracking (28/30 characters)
+- Apple subtitle: Home Fitness & Tracking (23/30 characters)
 - Apple promotional text: Turn exercise into a flying game, build tracked training time, and evolve
   the bird you control. (95/170 characters)
 - Apple keywords:
@@ -20,7 +20,7 @@ accuracy, guaranteed results, or live global usage numbers without evidence.
 - Google short description: Move your body, guide your bird, and make workout progress visible.
   (67/80 characters)
 - Primary category: Health & Fitness
-- Secondary Apple category: Games, Casual
+- Secondary Apple category: Games, Action (saved by owner in App Store Connect)
 - Google tags: Fitness, Exercise, Casual
 
 ## Description

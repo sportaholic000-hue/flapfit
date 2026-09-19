@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-19T05:49:38.558Z",
+  "command": "yarn npm audit --recursive --all --json",
+  "exitCode": 1,
+  "totalRows": 35,
+  "securityRows": 29,
+  "deprecationRows": 6,
+  "critical": 0,
+  "packages": [
+    "@xmldom/xmldom",
+    "abab",
+    "decode-uri-component",
+    "domexception",
+    "eslint",
+    "glob",
+    "inflight",
+    "js-yaml",
+    "postcss",
+    "uuid",
+    "whatwg-encoding"
+  ],
+  "runtimeRisk": "decode-uri-component 0.2.2 via query-string in Expo Router: moderate malformed-URL denial of service; no data disclosure/RCE. Retained and explicitly recorded, not falsely marked fixed. Other listed packages are build/test/tunnel tooling; source does not parse user XML/YAML/CSS.",
+  "source": "https://github.com/advisories/GHSA-vcc3-ghjq-m6fr"
+}

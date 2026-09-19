@@ -1,0 +1,73 @@
+{
+  "date": "2026-09-19T05:46:45.842Z",
+  "siteCommit": "229fb8f5f8a00b2ce6147ccfd124f868670e3d97",
+  "version": 27,
+  "rows": [
+    {
+      "url": "https://flapfitapp.com/",
+      "status": 200,
+      "contentType": "text/html",
+      "matchesSource": false,
+      "sha256": "624726fdbc5aea26b6159cb5348bda7be312b61d5d2ab80b390dab1198836858",
+      "staleNoAds": false,
+      "mainContentMatchesSource": true,
+      "transportDifference": "Cloudflare injects a challenge-platform script after the unchanged authored content."
+    },
+    {
+      "url": "https://flapfitapp.com/privacy/",
+      "status": 200,
+      "contentType": "text/html",
+      "matchesSource": false,
+      "sha256": "28c98943654c76e2de2f8ec6c0ac4491a1d0853c4f3c4518003d10710f24ab66",
+      "staleNoAds": false,
+      "mainContentMatchesSource": true,
+      "transportDifference": "Cloudflare injects a challenge-platform script after the unchanged authored content."
+    },
+    {
+      "url": "https://flapfitapp.com/terms/",
+      "status": 200,
+      "contentType": "text/html",
+      "matchesSource": false,
+      "sha256": "31f01b2055893e813bfa0f14091607a3a7d24ef9d3a48289c8bd4f400027442b",
+      "staleNoAds": false,
+      "mainContentMatchesSource": true,
+      "transportDifference": "Cloudflare injects a challenge-platform script after the unchanged authored content."
+    },
+    {
+      "url": "https://flapfitapp.com/delete-account/",
+      "status": 200,
+      "contentType": "text/html",
+      "matchesSource": false,
+      "sha256": "c624dcff780751738513c59271d975fe28905b30a193164a3ab46fc49e9a9941",
+      "staleNoAds": false,
+      "mainContentMatchesSource": true,
+      "transportDifference": "Cloudflare injects a challenge-platform script after the unchanged authored content."
+    },
+    {
+      "url": "https://flapfitapp.com/support/",
+      "status": 200,
+      "contentType": "text/html",
+      "matchesSource": false,
+      "sha256": "d06b6ce3180fcae82de9ba804c7b11e70edb05fdfe0bb51a93f14b3392f52e30",
+      "staleNoAds": false,
+      "mainContentMatchesSource": true,
+      "transportDifference": "Cloudflare injects a challenge-platform script after the unchanged authored content."
+    },
+    {
+      "url": "https://flapfitapp.com/app-ads.txt",
+      "status": 200,
+      "contentType": "text/plain",
+      "matchesSource": true,
+      "sha256": "f8beaab9ecc7df66310dd7f6a1477a0c8f86d9173726ec791a7d93653505c913",
+      "staleNoAds": false
+    },
+    {
+      "url": "https://flapfitapp.com/site-config.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "matchesSource": true,
+      "sha256": "80e408f05adbbbfe08c78930dab0ae6cce943069956253c91d001d9ef7286d56",
+      "staleNoAds": false
+    }
+  ]
+}
