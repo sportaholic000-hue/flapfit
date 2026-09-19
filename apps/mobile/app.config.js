@@ -4,6 +4,9 @@ module.exports = ({ config }) => ({
   ...config,
   plugins: [
     ...(config.plugins ?? []),
+    './modules/flap-fit-age-range/app.plugin.js',
+    './plugins/withRevenueCatProcessing.cjs',
+    './plugins/withAdMobPrivacy.cjs',
     ['react-native-google-mobile-ads', {
       // Sample application IDs keep preview builds installable. Production
       // validation rejects them for the platform actually being built.

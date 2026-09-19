@@ -36,12 +36,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import BirdAvatar from '@/components/BirdAvatar';
 import {
-  beginCompetitionRun,
+  prepareCompetitionRun,
   competitionIsConfigured,
   competitionPlayerNameError,
   flushPendingCompetitionResults,
-  submitCompetitionRunResult,
-  type CompetitionRunSession,
+  submitPreparedCompetitionRunResult,
+  type CompetitionRunDisposition,
+  type CompetitionSubmissionOutcome,
 } from '@/services/competitionApi';
 import { getBirdStageArt } from '@/utils/game/birdStageArt';
 import { loadBirdAssetDataUri } from '@/utils/game/birdWebAsset';
@@ -76,10 +77,7 @@ type GameResult = {
   endReason?: 'form' | 'tracking';
 };
 
-type CompetitionResultState = {
-  status: 'accepted' | 'pending' | 'rejected';
-  message: string;
-};
+type CompetitionResultState = CompetitionSubmissionOutcome;
 
 type LoadedBirdImage = {
   key: string;
@@ -328,8 +326,8 @@ function GameContent() {
   const webViewRef = useRef<WebView>(null);
   const trackerTransferTokenRef = useRef(0);
   const trackerRequestIdRef = useRef<string | null>(null);
-  const competitionRunPromiseRef = useRef<Promise<CompetitionRunSession | null>>(
-    Promise.resolve(null)
+  const competitionRunPromiseRef = useRef<Promise<CompetitionRunDisposition>>(
+    Promise.resolve({ kind: 'local' })
   );
   const ceremonyOpacity = useRef(new Animated.Value(0)).current;
   const ceremonyScale = useRef(new Animated.Value(0.55)).current;
@@ -415,19 +413,16 @@ function GameContent() {
       boardableExercises.includes(exerciseMode);
 
     if (!competitionIsConfigured || !hasCompetitionTerms || !leaderboardEligible) {
-      competitionRunPromiseRef.current = Promise.resolve(null);
+      competitionRunPromiseRef.current = Promise.resolve({ kind: 'local' });
       return;
     }
 
     void flushPendingCompetitionResults().catch((error) => {
       console.warn('Pending competition results will retry later', error);
     });
-    competitionRunPromiseRef.current = beginCompetitionRun({
+    competitionRunPromiseRef.current = prepareCompetitionRun({
       kind: 'leaderboard',
       exercise: exerciseMode,
-    }).catch((error) => {
-      console.warn('This run could not start an online verification session', error);
-      return null;
     });
   }, [exerciseMode, isEndless, playerName, runKey]);
 
@@ -651,28 +646,18 @@ function GameContent() {
       const publishStatus = (state: CompetitionResultState) => {
         if (resultSubmissionGeneration.current === generation) setCompetitionResultState(state);
       };
-      publishStatus({
-        status: 'pending',
-        message: 'Publishing online result…',
-      });
       try {
-        const session = await competitionRunPromiseRef.current;
-        if (!session) {
-          publishStatus({
-            status: 'rejected',
-            message: 'Online verification did not start, so this result was not published.',
-          });
-          return;
-        }
+        const run = await competitionRunPromiseRef.current;
         const validPlayerName =
           competitionPlayerNameError(playerName) === null ? playerName : 'Anonymous';
-        const outcome = await submitCompetitionRunResult({
-          runId: session.runId,
-          expiresAt: session.expiresAt,
+        const outcome = await submitPreparedCompetitionRunResult(run, {
           playerName: validPlayerName,
           score,
           durationMs: Math.round(Math.max(0, durationMs)),
-        });
+        }, () => publishStatus({
+          status: 'pending',
+          message: 'Publishing online result…',
+        }));
         publishStatus(outcome);
         if (outcome.status === 'accepted') {
           if (isEndless) queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
@@ -1609,7 +1594,9 @@ function GameContent() {
                       ? '#F0FDF4'
                       : competitionResultState.status === 'pending'
                         ? '#EFF6FF'
-                        : '#FEF2F2',
+                        : competitionResultState.status === 'local'
+                          ? '#F1F5F9'
+                          : '#FEF2F2',
                 }}
               >
                 <Text
@@ -1619,7 +1606,9 @@ function GameContent() {
                         ? '#166534'
                         : competitionResultState.status === 'pending'
                           ? '#1E3A8A'
-                          : '#991B1B',
+                          : competitionResultState.status === 'local'
+                            ? '#475569'
+                            : '#991B1B',
                     fontSize: 12,
                     fontWeight: '800',
                     textAlign: 'center',

@@ -18,6 +18,11 @@ jest.mock('@/config/release', () => ({
   },
 }));
 
+jest.mock('../privacy/processingAccess', () => ({
+  getProcessingAccess: () => ({ competition: { allowed: true }, revision: 1 }),
+  subscribeProcessingAccess: () => () => undefined,
+}));
+
 jest.mock('@supabase/supabase-js', () => ({ createClient: jest.fn() }));
 
 const auth = {
@@ -330,7 +335,7 @@ test('a submission waiting behind deletion cannot recreate a guest or repopulate
   const deletion = deleteCompetitionIdentity();
   const submission = submitCompetitionRunResult(run('stale-after-delete'));
   await deletion;
-  expect(await submission).toMatchObject({ status: 'rejected' });
+  expect(await submission).toMatchObject({ status: 'local' });
   expect(auth.signInAnonymously).not.toHaveBeenCalled();
   expect(global.fetch).toHaveBeenCalledTimes(1);
   expect(await AsyncStorage.getItem('@flapfit/competition-result-outbox-v1')).toBeNull();

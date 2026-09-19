@@ -1,13 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createClient, type SupabaseClient, type User } from '@supabase/supabase-js';
+import { createClient, type Session, type SupabaseClient, type User } from '@supabase/supabase-js';
 import { AppState, type AppStateStatus } from 'react-native';
 import 'react-native-url-polyfill/auto';
 import { ONLINE_SERVICES } from '@/config/release';
+import { getProcessingAccess, subscribeProcessingAccess } from './privacy/processingAccess';
 import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
 
 const FUNCTION_NAME = 'flapfit-game';
 
 let client: SupabaseClient | null = null;
+let privacyRightsClient: SupabaseClient | null = null;
 let appStateSubscription: ReturnType<typeof AppState.addEventListener> | null = null;
 
 export class CompetitionUnavailableError extends Error {
@@ -28,43 +30,213 @@ export const competitionIsConfigured = Boolean(
   ONLINE_SERVICES.supabaseUrl && ONLINE_SERVICES.supabasePublishableKey
 );
 
+export class CompetitionAccessRequiredError extends CompetitionUnavailableError {
+  constructor() {
+    super('Online competition is unavailable until its privacy requirements are satisfied. Local progress is safe.');
+    this.name = 'CompetitionAccessRequiredError';
+  }
+}
+
+function competitionAccessAllowed() {
+  return getProcessingAccess().competition.allowed &&
+    useGameStore.getState().competitionTermsVersion === COMPETITION_TERMS_VERSION;
+}
+
+// An analytics-only choice must not interrupt competition. Invalidate only this
+// purpose's access, including a brief withdrawal followed by a new grant.
+let accessGeneration = 0;
+let observedAccess = competitionAccessAllowed();
+const activeRequests = new Set<() => void>();
+function processingAccessChanged() {
+  const allowed = competitionAccessAllowed();
+  if (allowed !== observedAccess) {
+    observedAccess = allowed;
+    ++accessGeneration;
+    for (const invalidate of [...activeRequests]) invalidate();
+    updateAutoRefresh(AppState.currentState);
+  }
+}
+subscribeProcessingAccess(processingAccessChanged);
+useGameStore.subscribe((state, previous) => {
+  if (state.competitionTermsVersion !== previous.competitionTermsVersion) processingAccessChanged();
+});
+
+type CompetitionAccess = { assert: () => void; signal: AbortSignal };
+async function withCompetitionAccess<T>(operation: (access: CompetitionAccess) => Promise<T>): Promise<T> {
+  if (!competitionAccessAllowed()) throw new CompetitionAccessRequiredError();
+  const generation = accessGeneration;
+  const controller = new AbortController();
+  const assert = () => {
+    if (generation !== accessGeneration || !competitionAccessAllowed()) throw new CompetitionAccessRequiredError();
+  };
+  let invalidate: () => void = () => undefined;
+  const revoked = new Promise<never>((_, reject) => {
+    invalidate = () => {
+      controller.abort();
+      reject(new CompetitionAccessRequiredError());
+    };
+  });
+  activeRequests.add(invalidate);
+  try {
+    const result = await Promise.race([operation({ assert, signal: controller.signal }), revoked]);
+    assert();
+    return result;
+  } finally {
+    activeRequests.delete(invalidate);
+    controller.abort();
+  }
+}
+
+// Supabase can refresh an expired session inside getSession(), even when its
+// periodic refresh timer is stopped. Gate its transport as well as Edge calls.
+const competitionFetch: typeof fetch = (input, init) => withCompetitionAccess(async (access) => {
+  const abort = () => controller.abort();
+  const controller = new AbortController();
+  const callerSignal = init?.signal;
+  const identityOperation = pendingAnonymousIdentity;
+  access.signal.addEventListener('abort', abort);
+  callerSignal?.addEventListener('abort', abort);
+  identityOperation?.controller.signal.addEventListener('abort', abort);
+  if (callerSignal?.aborted || access.signal.aborted) controller.abort();
+  try {
+    access.assert();
+    identityOperation?.assert();
+    const response = await fetch(input, { ...init, signal: controller.signal });
+    access.assert();
+    identityOperation?.assert();
+    // Auth reads the body after fetch resolves. Keep that second asynchronous
+    // boundary revocable as well, so a late refresh cannot install a session.
+    const protectBody = <T,>(read: () => Promise<T>) => () => withCompetitionAccess(async (bodyAccess) => {
+      access.assert();
+      identityOperation?.assert();
+      bodyAccess.signal.addEventListener('abort', abort);
+      identityOperation?.controller.signal.addEventListener('abort', abort);
+      try {
+        const body = await read();
+        access.assert();
+        bodyAccess.assert();
+        identityOperation?.assert();
+        return body;
+      } finally {
+        bodyAccess.signal.removeEventListener('abort', abort);
+        identityOperation?.controller.signal.removeEventListener('abort', abort);
+      }
+    });
+    response.json = protectBody(response.json.bind(response));
+    response.text = protectBody(response.text.bind(response));
+    return response;
+  } finally {
+    access.signal.removeEventListener('abort', abort);
+    callerSignal?.removeEventListener('abort', abort);
+    identityOperation?.controller.signal.removeEventListener('abort', abort);
+  }
+});
+
 function updateAutoRefresh(state: AppStateStatus) {
   if (!client) return;
-  if (state === 'active') client.auth.startAutoRefresh();
+  if (state === 'active' && competitionAccessAllowed()) client.auth.startAutoRefresh();
   else client.auth.stopAutoRefresh();
 }
 
-function getClient(): SupabaseClient {
+function getClient(privacyRights = false): SupabaseClient {
   if (!competitionIsConfigured) throw new CompetitionUnavailableError();
-  if (client) return client;
+  if (!privacyRights && !competitionAccessAllowed()) throw new CompetitionAccessRequiredError();
+  const existing = privacyRights ? privacyRightsClient : client;
+  if (existing) return existing;
 
-  client = createClient(ONLINE_SERVICES.supabaseUrl, ONLINE_SERVICES.supabasePublishableKey, {
+  const created = createClient(ONLINE_SERVICES.supabaseUrl, ONLINE_SERVICES.supabasePublishableKey, {
     auth: {
       storage: AsyncStorage,
-      autoRefreshToken: true,
+      autoRefreshToken: false,
       persistSession: true,
       detectSessionInUrl: false,
     },
+    ...(privacyRights ? {} : { global: { fetch: competitionFetch } }),
   });
 
+  // Only explicit privacy-rights actions use this client. It never starts an
+  // automatic refresh or creates an anonymous user, even after withdrawal.
+  if (privacyRights) { privacyRightsClient = created; return created; }
+  client = created;
   appStateSubscription ??= AppState.addEventListener('change', updateAutoRefresh);
   updateAutoRefresh(AppState.currentState);
   return client;
 }
 
-async function anonymousUser(): Promise<{ client: SupabaseClient; user: User }> {
+type AnonymousCompetitionIdentity = { client: SupabaseClient; user: User; session: Session };
+type PendingAnonymousIdentity = {
+  promise: Promise<AnonymousCompetitionIdentity>;
+  controller: AbortController;
+  assert: () => void;
+  waiters: number;
+};
+let pendingAnonymousIdentity: PendingAnonymousIdentity | null = null;
+
+function createAnonymousIdentityOperation(): PendingAnonymousIdentity {
+  const controller = new AbortController();
+  const generation = accessGeneration;
+  const assert = () => {
+    if (generation !== accessGeneration || !competitionAccessAllowed()) throw new CompetitionAccessRequiredError();
+    if (controller.signal.aborted) throw new CompetitionRequestError('Online request timed out. It will be retried.', 408);
+  };
+  const operation: PendingAnonymousIdentity = {
+    controller, assert, waiters: 0,
+    promise: Promise.resolve(null as unknown as AnonymousCompetitionIdentity),
+  };
+  // Install the shared operation before Auth can enter the guarded transport.
+  pendingAnonymousIdentity = operation;
+  operation.promise = readAnonymousIdentity(assert).finally(() => {
+    if (pendingAnonymousIdentity === operation) pendingAnonymousIdentity = null;
+  });
+  return operation;
+}
+
+async function anonymousUser(
+  assertAccess: () => void,
+  callerSignal: AbortSignal
+): Promise<AnonymousCompetitionIdentity> {
+  assertAccess();
+  if (callerSignal.aborted) throw new CompetitionRequestError('Online request timed out. It will be retried.', 408);
+  // Concurrent first-use reads/runs share one session read and signup. A caller
+  // timing out releases only its own wait; the last caller cancels stale Auth.
+  const operation = pendingAnonymousIdentity ?? createAnonymousIdentityOperation();
+  ++operation.waiters;
+  let abort: () => void = () => undefined;
+  const cancelled = new Promise<never>((_, reject) => {
+    abort = () => reject(new CompetitionRequestError('Online request timed out. It will be retried.', 408));
+    callerSignal.addEventListener('abort', abort);
+    if (callerSignal.aborted) abort();
+  });
+  try {
+    const identity = await Promise.race([operation.promise, cancelled]);
+    assertAccess();
+    return identity;
+  } finally {
+    callerSignal.removeEventListener('abort', abort);
+    if (--operation.waiters === 0) {
+      operation.controller.abort();
+      if (pendingAnonymousIdentity === operation) pendingAnonymousIdentity = null;
+    }
+  }
+}
+
+async function readAnonymousIdentity(assertAccess: () => void): Promise<AnonymousCompetitionIdentity> {
+  assertAccess();
   const supabase = getClient();
   const sessionResult = await supabase.auth.getSession();
+  assertAccess();
   if (sessionResult.error) throw sessionResult.error;
   if (sessionResult.data.session?.user) {
-    return { client: supabase, user: sessionResult.data.session.user };
+    return { client: supabase, user: sessionResult.data.session.user, session: sessionResult.data.session };
   }
 
+  assertAccess();
   const signInResult = await supabase.auth.signInAnonymously();
+  assertAccess();
   if (signInResult.error || !signInResult.data.user || !signInResult.data.session) {
     throw signInResult.error ?? new Error('Could not create an anonymous game profile.');
   }
-  return { client: supabase, user: signInResult.data.user };
+  return { client: supabase, user: signInResult.data.user, session: signInResult.data.session };
 }
 
 type CompetitionRequestOptions = {
@@ -106,7 +278,7 @@ export type CompetitionFlushResult = {
 };
 
 export type CompetitionSubmissionOutcome = {
-  status: 'accepted' | 'pending' | 'rejected';
+  status: 'accepted' | 'pending' | 'rejected' | 'local';
   message: string;
 };
 
@@ -263,6 +435,22 @@ export async function competitionRequest<T>(
   path: string,
   options: CompetitionRequestOptions = {}
 ): Promise<T> {
+  if ((options.method ?? 'GET') === 'DELETE' && path === '/me') {
+    // A privacy-rights exception must never fall through to guest creation.
+    if (!options.existingSession) throw new CompetitionUnavailableError('An existing online session is required for deletion.');
+    return performCompetitionRequest<T>(path, options);
+  }
+  if (useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION) {
+    throw new CompetitionTermsRequiredError();
+  }
+  return withCompetitionAccess((access) => performCompetitionRequest<T>(path, options, access));
+}
+
+async function performCompetitionRequest<T>(
+  path: string,
+  options: CompetitionRequestOptions,
+  access?: CompetitionAccess
+): Promise<T> {
   const method = options.method ?? 'GET';
   const requiresCurrentTerms = !(method === 'DELETE' && path === '/me');
   if (
@@ -273,6 +461,9 @@ export async function competitionRequest<T>(
   }
 
   const controller = new AbortController();
+  const abort = () => controller.abort();
+  access?.signal.addEventListener('abort', abort);
+  access?.assert();
   let didTimeout = false;
   let timeout: ReturnType<typeof setTimeout> | undefined;
   const timeoutPromise = new Promise<never>((_, reject) => {
@@ -294,11 +485,11 @@ export async function competitionRequest<T>(
                 'Finish deleting your online profile from Info before using Compete.'
               );
             }
-            const { client: supabase } = await anonymousUser();
-            const sessionResult = await supabase.auth.getSession();
-            if (sessionResult.error) throw sessionResult.error;
-            return sessionResult.data.session;
+            access?.assert();
+            const identity = await anonymousUser(() => access?.assert(), controller.signal);
+            return identity.session;
           })());
+        access?.assert();
         if (controller.signal.aborted)
           throw new CompetitionRequestError('Online request timed out. It will be retried.', 408);
         const accessToken = session?.access_token;
@@ -326,6 +517,7 @@ export async function competitionRequest<T>(
         const payload = (await response.json().catch(() => null)) as
           | (T & { error?: string })
           | null;
+        access?.assert();
         if (!response.ok) {
           throw new CompetitionRequestError(
             payload?.error || `Online request failed (${response.status}).`,
@@ -338,12 +530,14 @@ export async function competitionRequest<T>(
       timeoutPromise,
     ]);
   } catch (error) {
+    access?.assert();
     if (didTimeout || (error instanceof Error && error.name === 'AbortError')) {
       throw new CompetitionRequestError('Online request timed out. It will be retried.', 408);
     }
     throw error;
   } finally {
     if (timeout) clearTimeout(timeout);
+    access?.signal.removeEventListener('abort', abort);
     controller.abort();
   }
 }
@@ -360,6 +554,50 @@ export async function beginCompetitionRun(input: {
     },
   });
   return { runId: response.run_id, expiresAt: response.expires_at };
+}
+
+// Keep an intentional local run distinct from an online session that failed.
+// This disposition is captured once per run and never promoted after a later grant.
+export type CompetitionRunDisposition =
+  | { kind: 'local' }
+  | { kind: 'online'; session: CompetitionRunSession }
+  | { kind: 'unavailable'; error: unknown };
+
+const localCompetitionOutcome = (): CompetitionSubmissionOutcome => ({
+  status: 'local',
+  message: 'Result saved on this device.',
+});
+
+export async function prepareCompetitionRun(input: {
+  kind: CompetitionRunKind;
+  exercise: string;
+}): Promise<CompetitionRunDisposition> {
+  if (!competitionIsConfigured || !competitionAccessAllowed()) return { kind: 'local' };
+  try {
+    return { kind: 'online', session: await beginCompetitionRun(input) };
+  } catch (error) {
+    if (error instanceof CompetitionAccessRequiredError || error instanceof CompetitionTermsRequiredError) {
+      return { kind: 'local' };
+    }
+    return { kind: 'unavailable', error };
+  }
+}
+
+export async function submitPreparedCompetitionRunResult(
+  run: CompetitionRunDisposition,
+  input: { playerName: string; score: number; durationMs: number },
+  onPublishing: () => void
+): Promise<CompetitionSubmissionOutcome> {
+  if (run.kind === 'local') return localCompetitionOutcome();
+  if (run.kind === 'unavailable') {
+    return competitionAccessAllowed()
+      ? { status: 'rejected', message: 'Online verification did not start, so this result was not published.' }
+      : localCompetitionOutcome();
+  }
+  // A previously requested online run can remain in the local outbox after
+  // withdrawal, but must not show upload activity while processing is off.
+  if (competitionAccessAllowed()) onPublishing();
+  return submitCompetitionRunResult({ ...run.session, ...input });
 }
 
 function emptyCompetitionFlushResult(): CompetitionFlushResult {
@@ -382,11 +620,16 @@ async function flushCompetitionOutbox(): Promise<CompetitionFlushResult> {
     const pending = await readCompetitionOutbox();
     if (pending.length === 0) return emptyCompetitionFlushResult();
 
+    if (!competitionAccessAllowed()) {
+      return { ...emptyCompetitionFlushResult(), pending: pending.length, pendingRunIds: pending.map((entry) => entry.runId) };
+    }
+    const generation = accessGeneration;
     const remaining: PendingCompetitionResult[] = [];
     const submittedRunIds: string[] = [];
     const rejected: CompetitionSubmissionNotice[] = [];
     let retryLater = false;
     for (const entry of pending) {
+      if (!competitionAccessAllowed() || generation !== accessGeneration) { remaining.push(entry); continue; }
       if (Date.parse(entry.expiresAt) <= Date.now()) {
         rejected.push({
           runId: entry.runId,
@@ -401,6 +644,7 @@ async function flushCompetitionOutbox(): Promise<CompetitionFlushResult> {
       }
       try {
         await competitionRequest('/runs/finalize', { method: 'POST', body: entry });
+        if (!competitionAccessAllowed() || generation !== accessGeneration) { remaining.push(entry); continue; }
         submittedRunIds.push(entry.runId);
       } catch (error) {
         const permanent =
@@ -442,11 +686,12 @@ export function startCompetitionForegroundRetry(onSubmitted: () => void): () => 
   let active = true;
   let inFlight = false;
   const subscription = AppState.addEventListener('change', (state) => {
-    if (state !== 'active' || inFlight || !useGameStore.getState().hydrated) return;
+    if (state !== 'active' || inFlight || !useGameStore.getState().hydrated || !competitionAccessAllowed()) return;
+    const generation = accessGeneration;
     inFlight = true;
     void flushPendingCompetitionResults()
       .then((result) => {
-        if (active && result.submitted > 0) onSubmitted();
+        if (active && competitionAccessAllowed() && generation === accessGeneration && result.submitted > 0) onSubmitted();
       })
       .catch(() => undefined)
       .finally(() => {
@@ -468,8 +713,8 @@ export async function submitCompetitionRunResult(input: {
 }): Promise<CompetitionSubmissionOutcome> {
   if (await AsyncStorage.getItem(COMPETITION_DELETION_KEY)) {
     return {
-      status: 'rejected',
-      message: 'Online profile deletion is pending. Your local training progress is safe.',
+      status: 'local',
+      message: 'Result saved on this device. Online profile deletion is pending.',
     };
   }
   const entry: PendingCompetitionResult = {
@@ -485,7 +730,7 @@ export async function submitCompetitionRunResult(input: {
     // Recheck inside the lock: deletion may have completed while this submission waited.
     if (useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION ||
         await AsyncStorage.getItem(COMPETITION_DELETION_KEY)) {
-      return { status: 'rejected', message: 'Online profile is unavailable. Your local training progress is safe.' };
+      return localCompetitionOutcome();
     }
     const queued = await (async () => {
       const pending = await readCompetitionOutbox();
@@ -495,12 +740,14 @@ export async function submitCompetitionRunResult(input: {
       return true;
     })();
     if (!queued) {
+      if (!competitionAccessAllowed()) return localCompetitionOutcome();
       const message =
         'Online result was not published: the offline queue is full. Your local training progress is safe.';
       await appendCompetitionSubmissionNotices([{ runId: entry.runId, status: 429, message }]);
       return { status: 'rejected', message };
     }
     const result = await flushCompetitionOutbox();
+    if (!competitionAccessAllowed()) return localCompetitionOutcome();
     if (result.submittedRunIds.includes(entry.runId)) {
       return { status: 'accepted', message: 'Online result saved.' };
     }
@@ -511,10 +758,9 @@ export async function submitCompetitionRunResult(input: {
         message: `Online result was not published: ${rejection.message}`,
       };
     }
-    return {
-      status: 'pending',
-      message: 'Online result queued. Return to Flap Fit or tap Refresh in Compete to retry.',
-    };
+    return competitionAccessAllowed()
+      ? { status: 'pending', message: 'Online result queued. Return to Flap Fit or tap Refresh in Compete to retry.' }
+      : localCompetitionOutcome();
   });
 }
 
@@ -525,7 +771,7 @@ export async function clearPendingCompetitionResults(): Promise<void> {
 
 export async function getCompetitionSupportId(): Promise<string | null> {
   if (!competitionIsConfigured) return null;
-  const supabase = getClient();
+  const supabase = getClient(true);
   const sessionResult = await supabase.auth.getSession();
   if (sessionResult.error) throw sessionResult.error;
   return sessionResult.data.session?.user.id ?? null;
@@ -535,7 +781,7 @@ export async function getCompetitionSupportId(): Promise<string | null> {
 export async function deleteCompetitionIdentity(): Promise<void> {
   if (!competitionIsConfigured) return;
   return withOutboxLock(async () => {
-    const supabase = getClient();
+    const supabase = getClient(true);
     const saved = await AsyncStorage.getItem(COMPETITION_DELETION_KEY);
     let pending = saved ? (JSON.parse(saved) as { userId: string; confirmed: boolean }) : null;
     const sessionResult = await supabase.auth.getSession();
@@ -586,6 +832,9 @@ export async function deleteCompetitionIdentity(): Promise<void> {
       const signedOut = await supabase.auth.signOut({ scope: 'local' });
       if (signedOut?.error) throw signedOut.error;
     }
+    client?.auth.stopAutoRefresh();
+    client = null;
+    privacyRightsClient = null;
     useGameStore.getState().resetCompetitionProfile();
     await AsyncStorage.removeItem(COMPETITION_DELETION_KEY);
   });

@@ -1,8 +1,9 @@
 import Constants, { ExecutionEnvironment } from 'expo-constants';
-import { AppState, Platform } from 'react-native';
-import type { PaidEvent } from 'react-native-google-mobile-ads';
+import { AppState, NativeModules, Platform } from 'react-native';
+import type { AgeRestrictedTreatment, PaidEvent } from 'react-native-google-mobile-ads';
 import type { AdRevenueData, PurchasesAdTracker } from 'react-native-purchases';
 import { ResultAdGate, type InterstitialCallbacks, type ReadyInterstitial } from './resultAdGate';
+import { getProcessingAccess, subscribeProcessingAccess } from '../privacy/processingAccess';
 
 type AdsSdk = typeof import('react-native-google-mobile-ads');
 type PurchasesSdk = typeof import('react-native-purchases');
@@ -23,12 +24,56 @@ let init: Promise<void> | null = null;
 let consentEpoch = 0;
 let privacyPresentation: Promise<unknown> | null = null;
 let impressionSequence = 0;
+let processingAccess = getProcessingAccess();
+let revenueCatEpoch = 0;
+let revenueCatConfigured = false;
+let revenueCatInit: Promise<void> | null = null;
+export type RevenueCatWithdrawalStatus = Readonly<{
+  state: 'not-requested' | 'pending' | 'stopped' | 'failed';
+  error: string | null;
+}>;
+let nativeRevenueCatMayBeActive = false;
+let withdrawalSequence = 0;
+let withdrawalStatus: RevenueCatWithdrawalStatus = { state: 'not-requested', error: null };
+const withdrawalListeners = new Set<() => void>();
+let revenueCatWithdrawal: Promise<RevenueCatWithdrawalStatus> = Promise.resolve(withdrawalStatus);
+void requestRevenueCatWithdrawal();
 const privacyListeners = new Set<() => void>();
 const activeResultAds = new Set<() => void>();
 function disposeResultAds() {
   for (const dispose of [...activeResultAds]) {
     try { dispose(); } catch { /* Cleanup cannot interrupt consent or gameplay. */ }
   }
+}
+// Every native continuation also reads the current decision. This listener makes
+// already loaded requests unusable immediately, without waiting for lobby focus.
+subscribeProcessingAccess(() => {
+  const next = getProcessingAccess();
+  const sameAdTreatment = next.ads.allowed === processingAccess.ads.allowed
+    && next.ads.treatment === processingAccess.ads.treatment
+    && next.ads.underAgeOfConsent === processingAccess.ads.underAgeOfConsent;
+  const sameAnalytics = next.revenueCat.allowed === processingAccess.revenueCat.allowed;
+  processingAccess = next;
+  if (!sameAdTreatment) {
+    ++consentEpoch;
+    adsReady = false;
+    disposeResultAds();
+  }
+  if (!sameAnalytics) {
+    ++revenueCatEpoch;
+    tracker = null;
+    if (!next.revenueCat.allowed) {
+      // Native transport cancellation and persistent-event purge are required;
+      // clearing the JavaScript tracker alone cannot stop an initialized SDK.
+      void requestRevenueCatWithdrawal();
+    } else {
+      void initializeRevenueCat();
+    }
+  }
+});
+
+function currentAdPermission(epoch: number) {
+  return getProcessingAccess().ads.allowed && epoch === consentEpoch;
 }
 export const resultAdGate = new ResultAdGate();
 export const adEnvironment = {
@@ -53,18 +98,99 @@ function loadAdsSdk(): AdsSdk | null {
   return ads;
 }
 
-function initializeRevenueCat() {
-  if (!supported || !revenueCatKey || tracker) return;
+async function setNativeRevenueCatProcessing(allowed: boolean): Promise<boolean> {
+  // The iOS bridge is provided by the version-pinned consent fence. A build
+  // without a proven native stop path never initializes RevenueCat.
+  if (!supported || Platform.OS !== 'ios') return false;
   try {
-    const sdk = require('react-native-purchases') as PurchasesSdk;
-    sdk.default.configure({
-      apiKey: revenueCatKey,
-      automaticDeviceIdentifierCollectionEnabled: false,
-      diagnosticsEnabled: false,
-      shouldShowInAppMessagesAutomatically: false,
-    });
-    tracker = sdk.default.adTracker;
-  } catch { /* Ads and gameplay remain available if RevenueCat fails. */ }
+    const apply = NativeModules.RNPurchases?.flapFitSetProcessingAllowed;
+    if (typeof apply !== 'function') return false;
+    return (await apply(allowed)) === true;
+  } catch { return false; }
+}
+
+function publishWithdrawalStatus(status: RevenueCatWithdrawalStatus) {
+  withdrawalStatus = status;
+  for (const listener of withdrawalListeners) {
+    try { listener(); } catch { /* A view cannot interrupt stopping native processing. */ }
+  }
+}
+
+export function getRevenueCatWithdrawalStatus(): RevenueCatWithdrawalStatus { return withdrawalStatus; }
+export function subscribeRevenueCatWithdrawal(listener: () => void) {
+  withdrawalListeners.add(listener);
+  return () => { withdrawalListeners.delete(listener); };
+}
+
+function requestRevenueCatWithdrawal(): Promise<RevenueCatWithdrawalStatus> {
+  const sequence = ++withdrawalSequence;
+  const nativeStopRequired = nativeRevenueCatMayBeActive;
+  publishWithdrawalStatus({ state: 'pending', error: null });
+  const operation = setNativeRevenueCatProcessing(false).then((acknowledged): RevenueCatWithdrawalStatus => {
+    // A never-started SDK needs no native shutdown. Once processing may have
+    // begun, bridge absence/rejection/false must remain a visible failure.
+    if (acknowledged && sequence === withdrawalSequence) nativeRevenueCatMayBeActive = false;
+    const status: RevenueCatWithdrawalStatus = acknowledged || !nativeStopRequired
+      ? { state: 'stopped', error: null }
+      : { state: 'failed', error: 'RevenueCat could not confirm that native processing stopped. Please retry.' };
+    if (sequence === withdrawalSequence) publishWithdrawalStatus(status);
+    return status;
+  });
+  revenueCatWithdrawal = operation;
+  return operation;
+}
+
+export function settleRevenueCatWithdrawal(): Promise<RevenueCatWithdrawalStatus> { return revenueCatWithdrawal; }
+export function retryRevenueCatWithdrawal(): Promise<RevenueCatWithdrawalStatus> {
+  return getProcessingAccess().revenueCat.allowed ? Promise.resolve(withdrawalStatus) : requestRevenueCatWithdrawal();
+}
+
+function initializeRevenueCat(): Promise<void> {
+  if (!supported || !revenueCatKey || tracker || !getProcessingAccess().revenueCat.allowed) return Promise.resolve();
+  if (revenueCatInit) return revenueCatInit;
+  const epoch = revenueCatEpoch;
+  revenueCatInit = (async () => {
+    try {
+      let withdrawal = await revenueCatWithdrawal;
+      if (withdrawal.state === 'failed') withdrawal = await requestRevenueCatWithdrawal();
+      if (withdrawal.state === 'failed') return;
+      if (epoch !== revenueCatEpoch || !getProcessingAccess().revenueCat.allowed) return;
+      // A configured native SDK remains allocated during withdrawal. Reopening
+      // its fence can resume native work before this bridge promise resolves.
+      // Track that possibility before awaiting the acknowledgement.
+      if (revenueCatConfigured) nativeRevenueCatMayBeActive = true;
+      if (!await setNativeRevenueCatProcessing(true)) {
+        if (nativeRevenueCatMayBeActive) await requestRevenueCatWithdrawal();
+        return;
+      }
+      if (epoch !== revenueCatEpoch || !getProcessingAccess().revenueCat.allowed) {
+        await requestRevenueCatWithdrawal();
+        return;
+      }
+      const sdk = require('react-native-purchases') as PurchasesSdk;
+      // Mark before configure: a throw may occur after native startup began.
+      ++withdrawalSequence; // Older acknowledgements cannot overwrite this activation.
+      nativeRevenueCatMayBeActive = true;
+      publishWithdrawalStatus({ state: 'not-requested', error: null });
+      revenueCatWithdrawal = Promise.resolve(withdrawalStatus);
+      if (!revenueCatConfigured) {
+        sdk.default.configure({
+          apiKey: revenueCatKey,
+          automaticDeviceIdentifierCollectionEnabled: false,
+          diagnosticsEnabled: false,
+          shouldShowInAppMessagesAutomatically: false,
+        });
+        revenueCatConfigured = true;
+      }
+      tracker = sdk.default.adTracker;
+    } catch {
+      await requestRevenueCatWithdrawal();
+    } finally {
+      revenueCatInit = null;
+      if (epoch !== revenueCatEpoch && getProcessingAccess().revenueCat.allowed) void initializeRevenueCat();
+    }
+  })();
+  return revenueCatInit;
 }
 
 function bounded<T>(operation: Promise<T>, milliseconds = 10_000): Promise<T> {
@@ -96,7 +222,13 @@ export async function settlePrivacyBeforeGameplay(): Promise<void> {
 // Only lobby focus can start consent setup. The game-entry barrier also covers
 // a native form that has already begun loading when the user selects Play.
 export function prepareMonetization(canPresent: () => boolean): Promise<void> {
+  // Analytics permission is independent of ad eligibility and UMP. This also
+  // covers loading this module after a permitted decision was already restored.
+  // Its own native fence/generation checks apply without delaying gameplay.
+  void initializeRevenueCat();
   if (init) return init;
+  const access = getProcessingAccess();
+  if (!access.ads.allowed) return Promise.resolve();
   const sdk = loadAdsSdk();
   if (!sdk) return Promise.resolve();
   adsReady = false; // Revalidate prior permission before any new request.
@@ -104,22 +236,22 @@ export function prepareMonetization(canPresent: () => boolean): Promise<void> {
   const epoch = consentEpoch;
   init = (async () => {
     try {
-      const info = await bounded(sdk.AdsConsent.requestInfoUpdate());
-      if (epoch !== consentEpoch) return;
+      const info = await bounded(sdk.AdsConsent.requestInfoUpdate({ tagForUnderAgeOfConsent: access.ads.underAgeOfConsent }));
+      if (!currentAdPermission(epoch)) return;
       privacyRequired = info.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED;
       notifyPrivacy();
       if (!canPresent() || !adEnvironment.isActive()) return;
       const consent = await presentPrivacy(() => sdk.AdsConsent.loadAndShowConsentFormIfRequired());
-      if (epoch !== consentEpoch) return;
+      if (!currentAdPermission(epoch)) return;
       privacyRequired = consent.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED;
       notifyPrivacy();
       if (!consent.canRequestAds) { adsReady = false; return; }
       // No IDFA collection, personalized requests, health or competition attributes.
-      await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG }));
-      if (epoch !== consentEpoch) return;
-      initializeRevenueCat();
+      await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: access.ads.treatment as AgeRestrictedTreatment }));
+      if (!currentAdPermission(epoch)) return;
+      void initializeRevenueCat();
       await bounded(sdk.default().initialize());
-      if (epoch === consentEpoch) adsReady = true;
+      if (currentAdPermission(epoch)) adsReady = true;
     } catch {
       if (epoch === consentEpoch) adsReady = false;
     } finally {
@@ -130,24 +262,25 @@ export function prepareMonetization(canPresent: () => boolean): Promise<void> {
 }
 
 export async function showAdPrivacyOptions(): Promise<void> {
-  const sdk = loadAdsSdk();
+  const sdk = ads ?? (getProcessingAccess().ads.allowed ? loadAdsSdk() : null);
   if (!sdk || !adEnvironment.isActive()) return;
   if (privacyPresentation) { await privacyPresentation; return; }
   adsReady = false;
   const epoch = ++consentEpoch; // Invalidate old ads and in-flight initialization.
+  const access = getProcessingAccess();
   disposeResultAds();
   try {
     const consent = await presentPrivacy(() => sdk.AdsConsent.showPrivacyOptionsForm());
     if (epoch !== consentEpoch) return;
     privacyRequired = consent.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED;
     notifyPrivacy();
-    if (consent.canRequestAds) {
+    if (consent.canRequestAds && currentAdPermission(epoch)) {
       // This can be the first allowed initialization after a denied/failed startup.
-      await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG }));
-      if (epoch !== consentEpoch) return;
-      initializeRevenueCat();
+      await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: access.ads.treatment as AgeRestrictedTreatment }));
+      if (!currentAdPermission(epoch)) return;
+      void initializeRevenueCat();
       await bounded(sdk.default().initialize());
-      if (epoch === consentEpoch) adsReady = true;
+      if (currentAdPermission(epoch)) adsReady = true;
     }
   } catch {
     throw new Error('Ad privacy settings could not open. Please try again when online.');
@@ -165,13 +298,22 @@ export function toRevenueData(base: Omit<AdRevenueData, 'revenueMicros' | 'curre
 
 function track(send: (value: PurchasesAdTracker) => Promise<void>) {
   const current = tracker;
-  if (!current) return;
-  try { void send(current).catch(() => undefined); } catch { /* Reporting never controls gameplay. */ }
+  const epoch = revenueCatEpoch;
+  const access = getProcessingAccess();
+  if (!current || !access.revenueCat.allowed) return;
+  // Recheck at dispatch as well as at the ad callback. A refusal in this turn
+  // must discard queued reports rather than send them with yesterday's grant.
+  void Promise.resolve().then(() => {
+    const latest = getProcessingAccess();
+    if (tracker !== current || !latest.revenueCat.allowed || revenueCatEpoch !== epoch) return;
+    return send(current);
+  }).catch(() => undefined);
 }
 
 export function prepareResultInterstitial(): ReadyInterstitial | null {
   const sdk = ads;
-  if (!supported || !sdk || !adsReady || mode === 'off') return null;
+  const access = getProcessingAccess();
+  if (!supported || !sdk || !adsReady || mode === 'off' || !access.ads.allowed) return null;
   const adUnitId = mode === 'live' ? liveUnit : sdk.TestIds.INTERSTITIAL;
   if (!adUnitId) return null;
   const epoch = consentEpoch;
@@ -183,14 +325,16 @@ export function prepareResultInterstitial(): ReadyInterstitial | null {
   let callbacks: InterstitialCallbacks | null = null;
   let release: (() => void) | undefined;
   try {
-    const ad = sdk.InterstitialAd.createForAdRequest(adUnitId, { requestNonPersonalizedAdsOnly: true });
+    const ad = sdk.InterstitialAd.createForAdRequest(adUnitId, { requestNonPersonalizedAdsOnly: true, networkExtras: { rdp: '1' } });
     const dispose = () => {
       if (disposed) return;
       disposed = true;
       loaded = false;
+      const pending = callbacks;
       callbacks = null;
       activeResultAds.delete(dispose);
       ad.destroy();
+      if (shown) pending?.failed();
     };
     release = dispose;
     activeResultAds.add(dispose);
@@ -221,9 +365,9 @@ export function prepareResultInterstitial(): ReadyInterstitial | null {
     ad.addAdEventListener(sdk.AdEventType.CLOSED, () => { if (!disposed) callbacks?.closed(); });
     ad.load();
     return {
-      isReady: () => loaded && !disposed && !shown && adsReady && epoch === consentEpoch,
+      isReady: () => loaded && !disposed && !shown && adsReady && currentAdPermission(epoch),
       show: async (next) => {
-        if (!loaded || disposed || shown || !adsReady || epoch !== consentEpoch || !adEnvironment.isActive()) { next.failed(); return; }
+        if (!loaded || disposed || shown || !adsReady || !currentAdPermission(epoch) || !adEnvironment.isActive()) { next.failed(); return; }
         shown = true;
         loaded = false;
         callbacks = next;
