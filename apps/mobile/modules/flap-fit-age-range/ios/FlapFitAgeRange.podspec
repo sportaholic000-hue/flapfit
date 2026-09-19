@@ -17,6 +17,7 @@ Pod::Spec.new do |s|
   s.source = { git: 'https://github.com/sportaholic000-hue/flapfit.git' }
   s.static_framework = true
   s.dependency 'ExpoModulesCore'
+  s.frameworks = 'StoreKit'
   s.weak_frameworks = 'DeclaredAgeRange' if sdk_version >= Gem::Version.new('26.0')
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',

@@ -8,6 +8,12 @@ public class FlapFitAgeRangeModule: Module {
   public func definition() -> ModuleDefinition {
     Name("FlapFitAgeRange")
 
+    AsyncFunction("getVerifiedAppTransaction") { (promise: Promise) in
+      Task { @MainActor in
+        promise.resolve(await FlapFitAppTransactionBridge.getVerifiedAppTransaction())
+      }
+    }
+
     AsyncFunction("getRequirements") { (promise: Promise) in
       Task { @MainActor in
         promise.resolve(await FlapFitAppleAgeBridge.getRequirements())

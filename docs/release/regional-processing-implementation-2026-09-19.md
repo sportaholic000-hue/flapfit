@@ -6,7 +6,7 @@ Updated September 19, 2026. This is an implementation checkpoint, not release cl
 
 Flap Fit remains a 13+ ad-supported app. The universal optional-ads proposal is rejected. There is no approved discretionary adult Allow ads switch, Play without ads button or free remove-ads setting. Required consent and opt-outs apply to the actual processing and jurisdiction. Restricted advertising must continue independently of RevenueCat refusal whenever its own route is permitted. RevenueCat must genuinely function for permitted users.
 
-The owner confirmed worldwide launch, with Canada and the USA priorities. App Store Connect shows 175 Available. Free download pricing (AUTO_FREE, price 0) was saved and persisted after reload on September 19. No territories were changed. The owner submitted EU trader identity documentation on September 19; Apple review is pending.
+The owner confirmed worldwide launch, with Canada and the USA priorities. App Store Connect shows 175 Available. Free download pricing (AUTO_FREE, price 0) was saved and persisted after reload on September 19. No territories were changed. The owner submitted EU trader identity documentation on September 19; Apple review is pending. Apple now has the approved not-a-regulated-medical-device declaration and a saved calculated 13+ age rating (12+ equivalent on pre-26 operating systems). The rating questionnaire flags Afghanistan and Morocco as unavailable under local rules; selected territories were not edited.
 
 The prior age-and-residence questionnaire and standalone disclosure proposal is withdrawn. No entire interface is approved, and no new consent/questionnaire UI has been added. Use sufficient Apple and provider information before proposing any narrow unresolved question; worldwide release is not yet cleared merely because worldwide availability is selected. In this intermediate source state, processing cannot start until an approved runtime coordinator supplies verified decisions. This is not a permanent global RevenueCat or teenage-ad shutdown and is not a releasable candidate.
 
@@ -50,7 +50,7 @@ The ignored local credential file points to the regenerated profile. Remote Expo
 - TypeScript, strict scoped lint and whitespace checks passed for the independent control changes.
 - Native RevenueCat and AdMob patches applied to their exact locked source versions, were idempotent, and rejected unexpected source changes in fixture checks.
 - The Swift cancellation/purge harness runs during CocoaPods installation on the macOS build host. It and the new complete native compile are not yet confirmed.
-The previous successful simulator build 168235db-6728-4956-a9bc-77dc5109fa19 predates these changes. It is not evidence for this implementation or an installable device candidate. The earlier local compile command stopped before a build was accepted; its log is empty. No new Expo build identifier is claimed. A fresh compile will be dispatched after the native patch is finalized and the implementation is committed.
+The previous successful simulator build 168235db-6728-4956-a9bc-77dc5109fa19 predates these changes. It is not evidence for this implementation or an installable device candidate. Compile 5f203f43-8b70-4c82-a189-0bb208c2ffbe, version 1.0.0 (2), source d84ea63b52009794b5dc20618e6d34bd7d420bbc, was accepted and failed during pod installation: registry pod specifications were not present in Pods/Local Podspecs. The hook now obtains exact resolved versions from CocoaPods installer targets, preserving all source hashes. A fixture without any Local Podspecs directory verifies version rejection, application, idempotence, tamper rejection and CLI arguments. The corrected hook still needs the next native compile.
 
 ## Remaining release gates
 
@@ -58,7 +58,7 @@ The previous successful simulator build 168235db-6728-4956-a9bc-77dc5109fa19 pre
 2. Complete explicit data-flow/configuration assessments. Console evidence currently confirms only the default AdMob mediation group; third-party bidding and Google-certified demand are not yet cleared merely by that fact.
 3. Finish the native compile, produce a signed installable iPhone/iPad candidate using the imported compatible profile, and verify Apple age/required-access handling on it.
 4. Actual device evidence: permitted-user RevenueCat receipt; restricted test ads with RevenueCat denied; unknown/refusal/withdrawal, in-flight work, background/foreground/relaunch; deletion/support while participation is off. Use supported test ads/registered devices, never fabricated revenue or live-ad clicks.
-5. Finalize age rating, content rights, applicable medical-device declaration, truthful App Privacy disclosures, required screenshots and a tested build. EU trader verification awaits Apple review. Worldwide availability and free download price are recorded; their privacy/legal release requirements remain separate. No App Store submission is authorized.
+5. Finalize content rights, truthful App Privacy disclosures, required screenshots and a tested build. The 13+ age rating and non-medical-device declaration are saved. EU trader verification awaits Apple review. Worldwide availability and free download price are recorded; their privacy/legal release requirements remain separate. No App Store submission is authorized.
 
 ## Sources and legal implementation boundaries
 
@@ -69,3 +69,10 @@ The previous successful simulator build 168235db-6728-4956-a9bc-77dc5109fa19 pre
 - [Google restricted data processing](https://support.google.com/admob/answer/14125907?hl=en), [limited ads](https://support.google.com/admob/answer/10105530?hl=en), [RevenueCat DPA](https://www.revenuecat.com/dpa).
 
 Gameplay, calibration, recording/audio, sharing and result-exit ad placement are unchanged. The game screen diff is limited to competition result disposition and neutral messaging for local runs.
+
+## Follow-on native and device preparation
+
+- Passive StoreKit AppTransaction reader added for Apple consent-revocation verification: native verified JWS only, no refresh/sign-in/purchase UI, storage, logging or app identifier exposure to ad/analytics SDKs. The receiving server must independently verify it. A valid download alone is not consent and must not clear revocation.
+- Focused Apple bridge tests including the new reader: 97 passed; TypeScript, scoped lint and whitespace passed. Native compilation/device testing is still required.
+- Registration-only EAS workflow for owner iPad and brother iPhone passed live EAS schema validation. It has no build or submission job. Device enrollment and the later Ad Hoc profile are needed for direct installation; the imported App Store profile cannot be sideloaded.
+- The required RESCIND_CONSENT server receiver/linkage and runtime enforcement are being implemented separately. No endpoint is configured or deployed yet; this remains a readiness gate, not future significant-update UI.

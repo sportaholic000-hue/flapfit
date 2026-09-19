@@ -38,3 +38,16 @@ Future significant app updates must honor the returned parental-consent/adult-no
 - https://developer.apple.com/support/age-assurance
 - https://developer.apple.com/documentation/storekit/testing-age-assurance-in-sandbox (explicit inclusive bounds: nil-12, 13-15, 16-17, 18-nil)
 - Apple documentation metadata, checked 2026-09-19: confirmed introduced26.5; requiredRegulatoryFeatures26.4; activeParentalControls26.0.
+
+
+## Passive app-transaction identity for consent revocation
+
+Import getVerifiedAppleAppTransaction from ./app-transaction. This separate call reads StoreKit AppTransaction.shared on iOS 16+ and returns either {status:'verified', signedAppTransaction:string} or {status:'unsupported'|'unavailable'|'unverified'|'error', signedAppTransaction:null}. The native module only exports a JWS when StoreKit reports .verified. It does not call refresh, request a purchase or sign-in, present a custom question, extract an appTransactionID, or cache/log/persist the result. Missing native methods and unsupported platforms fail closed.
+
+Forward the signed JWS directly to Flap Fit's verified server status/link endpoint and discard it. The server must separately validate its signature/certificate chain, bundle ID, app ID and environment before deriving a private revocation identity. Do not send it to analytics, RevenueCat, advertising or ordinary gameplay APIs. This bridge supplies download identity only: a valid app transaction does not establish current parental or processing consent and must never reset a stored revocation. There is no production coordinator/UI wiring in this module.
+
+- https://developer.apple.com/documentation/storekit/apptransaction/shared
+- https://developer.apple.com/documentation/storekit/verificationresult/jwsrepresentation-6ma59
+- https://developer.apple.com/documentation/storekit/apptransaction/apptransactionid
+
+Native compilation and installed Apple sandbox verification are required separately from wrapper tests.

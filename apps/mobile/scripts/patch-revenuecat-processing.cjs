@@ -70,11 +70,13 @@ function transform(name,s){
  return s+'\n'+marker+'\n';
 }
 
-function patchPods(podsRoot){
- const hybrid=JSON.parse(fs.readFileSync(path.join(podsRoot,'Local Podspecs/PurchasesHybridCommon.podspec.json'),'utf8'));
- if(hybrid.version!=='18.37.0')throw Error('RevenueCat consent fence requires PurchasesHybridCommon 18.37.0; got '+hybrid.version);
- const spec=JSON.parse(fs.readFileSync(path.join(podsRoot,'Local Podspecs/RevenueCat.podspec.json'),'utf8'));
- if(spec.version!=='5.88.0')throw Error('RevenueCat consent fence requires exactly 5.88.0; got '+spec.version);
+function patchPods(podsRoot,resolvedVersions){
+ // Registry pods need not exist in Local Podspecs. CocoaPods supplies the actual
+ // resolved root-spec versions from installer.pod_targets in post_install.
+ for(const [name,expected] of Object.entries({PurchasesHybridCommon:'18.37.0',RevenueCat:'5.88.0'})){
+  const actual=resolvedVersions && typeof resolvedVersions==='object' && !Array.isArray(resolvedVersions) ? resolvedVersions[name] : undefined;
+  if(actual!==expected)throw Error('RevenueCat consent fence requires resolved '+name+' '+expected+'; got '+(actual??'missing'));
+ }
  const changes=[];
  for(const [name,expected]of Object.entries(hashes)){
   const file=path.join(podsRoot,'RevenueCat',name);const source=fs.readFileSync(file,'utf8');
@@ -90,6 +92,7 @@ function patchPods(podsRoot){
   finally{fs.chmodSync(file,mode);}
  }
  console.log('RevenueCat 5.88.0 consent fence verified ('+changes.length+' files patched).');
+ return changes.length;
 }
 
 function patchBridge(projectRoot){
@@ -117,5 +120,9 @@ RCT_EXPORT_METHOD(flapFitSetProcessingAllowed:(BOOL)allowed
  fs.writeFileSync(file,source);
 }
 
-module.exports={patchPods,patchBridge,transform,gate};
-if(require.main===module)patchPods(process.argv[2]);
+module.exports={patchPods,patchBridge,transform,gate,sourceFiles:Object.keys(hashes)};
+if(require.main===module){
+ let versions;
+ try{versions=JSON.parse(process.argv[3]??'null');}catch{throw Error('RevenueCat consent fence requires CocoaPods resolved-version JSON');}
+ patchPods(process.argv[2],versions);
+}

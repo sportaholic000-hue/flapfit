@@ -1,0 +1,14 @@
+name: Register Flap Fit Apple test devices
+on:
+  workflow_dispatch: {}
+jobs:
+  owner_ipad:
+    name: Owner iPad
+    type: apple-device-registration-request
+    params:
+      apple_team_identifier: KM48R8T97P
+  brother_iphone:
+    name: Brother iPhone
+    type: apple-device-registration-request
+    params:
+      apple_team_identifier: KM48R8T97P

@@ -1,0 +1,36 @@
+/* Usage: node scripts/test-revenuecat-processing-patch.cjs <locked-RevenueCat-source-root> */
+const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict');
+const {patchPods,sourceFiles}=require('./patch-revenuecat-processing.cjs');
+const {patchPodfile,oldBlock,block}=require('../plugins/withRevenueCatProcessing.cjs');
+const sourceRoot=process.argv[2];
+if(!sourceRoot) throw Error('Provide the cached official RevenueCat 5.88.0 source root');
+const pods=fs.mkdtempSync(path.join(os.tmpdir(),'flapfit-rc-pods-'));
+for(const name of sourceFiles){const target=path.join(pods,'RevenueCat',name);fs.mkdirSync(path.dirname(target),{recursive:true});fs.copyFileSync(path.join(sourceRoot,name),target);}
+assert.equal(fs.existsSync(path.join(pods,'Local Podspecs')),false);
+const versions={RevenueCat:'5.88.0',PurchasesHybridCommon:'18.37.0'};
+for(const invalid of [undefined,null,{},[],{...versions,RevenueCat:'5.88.1'},{...versions,PurchasesHybridCommon:'18.37.1'}]) assert.throws(()=>patchPods(pods,invalid),/requires resolved/);
+assert.equal(patchPods(pods,versions),7);
+assert.equal(patchPods(pods,versions),0);
+const {spawnSync}=require('node:child_process');
+const cli=spawnSync(process.execPath,[path.join(__dirname,'patch-revenuecat-processing.cjs'),pods,JSON.stringify(versions)],{encoding:'utf8'});
+assert.equal(cli.status,0,cli.stderr);
+assert.match(cli.stdout,/0 files patched/);
+const missing=spawnSync(process.execPath,[path.join(__dirname,'patch-revenuecat-processing.cjs'),pods],{encoding:'utf8'});
+assert.notEqual(missing.status,0);
+assert.match(missing.stderr,/requires resolved/);
+const target=path.join(pods,'RevenueCat',sourceFiles[0]),good=fs.readFileSync(target,'utf8');
+fs.writeFileSync(target,good+'// tamper');
+assert.throws(()=>patchPods(pods,versions),/Modified RevenueCat consent fence/);
+fs.writeFileSync(target,good);
+const input="target 'FlapFit' do\n  post_install do |installer|\n    react_native_post_install(installer)\n  end\nend\n";
+const result=patchPodfile(input);
+assert.equal(patchPodfile(result),result);
+const old=input.replace('post_install do |installer|','post_install do |installer|\n    '+oldBlock);
+assert.equal(patchPodfile(old),result);
+assert.ok(result.includes('installer.pod_targets.each'));
+assert.ok(result.includes('spec = target.root_spec'));
+assert.ok(result.includes('spec.version.to_s'));
+assert.ok(result.includes('JSON.generate(ff_rc_versions)'));
+assert.throws(()=>patchPodfile(result.replace('JSON.generate(ff_rc_versions)',"'wrong'")),/modified Podfile integration/);
+assert.ok(!block.includes('Local Podspecs'));
+console.log('RC patch checks passed: no Local Podspecs directory, exact resolved versions, missing/mismatched versions rejected, seven pinned patches, idempotence, tamper rejection, Podfile migration and safe JSON argument.');
