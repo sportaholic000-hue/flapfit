@@ -1,0 +1,20 @@
+{
+  "target": "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\decode-uri-component\\index.js",
+  "legacyCases": 35,
+  "upstreamCases": 135,
+  "upstreamCalls": 165,
+  "queryStringChecks": 2,
+  "performance": {
+    "before": {
+      "timedOut": true,
+      "timeoutMs": 3000,
+      "repetitions": 2000
+    },
+    "after": {
+      "elapsedMs": 447.72710000000006,
+      "bytes": 600000,
+      "unchanged": true
+    }
+  },
+  "at": "2026-09-19T12:17:27.884Z"
+}

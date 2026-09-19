@@ -4942,10 +4942,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"decode-uri-component@npm:^0.2.2":
+"decode-uri-component@npm:0.2.2":
   version: 0.2.2
   resolution: "decode-uri-component@npm:0.2.2"
   checksum: 10c0/1f4fa54eb740414a816b3f6c24818fbfcabd74ac478391e9f4e2282c994127db02010ce804f3d08e38255493cfe68608b3f5c8e09fd6efc4ae46c807691f7a31
+  languageName: node
+  linkType: hard
+
+"decode-uri-component@patch:decode-uri-component@npm%3A0.2.2#~/.yarn/patches/decode-uri-component-npm-0.2.2-flapfit.patch":
+  version: 0.2.2
+  resolution: "decode-uri-component@patch:decode-uri-component@npm%3A0.2.2#~/.yarn/patches/decode-uri-component-npm-0.2.2-flapfit.patch::version=0.2.2&hash=5d4b6e"
+  checksum: 10c0/3dba041a47a8bc9cbd938ff0dfd5c2ec6b6228449e7d32a9bff81e40c665807ea868955600adfc1f4b511f2a14ecbd26492347ce4343b4356c3864e77c4e7823
   languageName: node
   linkType: hard
 

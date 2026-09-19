@@ -36,3 +36,8 @@ each release and apply Expo-supported patch updates when available.
 ## September 19 candidate recheck
 
 Fresh locked-graph registry check: 29 advisory rows and 6 deprecation rows; no critical severity. Exit status 1 is retained, not described as a clean dependency audit. All affected package families and exposure paths match the earlier assessment. The moderate decode-uri-component malformed-URL denial-of-service remains reachable through Expo Router and is not claimed fixed. No blanket upgrades or forced transitive major-version changes were made. Detailed scope is in evidence/dependency-audit-2026-09-19.json.
+
+
+## URI decoder backport completed — September 19, 2026
+
+The previously recorded runtime malformed-URL DoS is now mitigated by a narrow, verified Yarn backport of the official fixed scanner. See uri-decoder-backport-2026-09-19.md and evidence/uri-decoder-verification-2026-09-19.json. The package version stays 0.2.2 to preserve the CommonJS consumer contract; version-only registry alerts may remain. Other advisories are not claimed fixed.
