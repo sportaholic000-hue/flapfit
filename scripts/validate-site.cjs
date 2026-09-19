@@ -58,7 +58,7 @@ const allText = fs.readdirSync(dist, { recursive: true })
   .filter((entry) => /\.(?:html|js|txt)$/i.test(entry))
   .map((entry) => fs.readFileSync(path.join(dist, entry), 'utf8'))
   .join('\n');
-for (const staleText of ['[REQUIRED]', 'Not configured', 'private draft', 'tracking software download', 'device identifier']) {
+for (const staleText of ['[REQUIRED]', 'Not configured', 'private draft', 'tracking software download', 'no advertising SDK']) {
   check(!allText.includes(staleText), `stale launch text remains: ${staleText}`);
 }
 
@@ -66,13 +66,13 @@ const config = read('dist/site-config.js');
 check(config.includes('developerName: "Flap Fit"'), 'app identity is not configured');
 check(config.includes('supportEmail: "support@flapfitapp.com"'), 'support email is not configured');
 check(config.includes('privacyEmail: "support@flapfitapp.com"'), 'privacy email is not configured');
-check(config.includes('privacyEffectiveDate: "September 16, 2026"'), 'privacy effective date is not configured');
+check(config.includes('privacyEffectiveDate: "September 19, 2026"'), 'privacy effective date is not configured');
 check(config.includes('releaseStatus: "development"'), 'release status must remain development until store URLs exist');
 
 const homepage = read('dist/index.html');
 check(!homepage.includes('\u2014'), 'homepage contains an em dash');
 const privacy = read('dist/privacy/index.html');
-for (const phrase of ['bundled with the app', 'Supabase', 'Delete online profile', 'aged 13 and older', 'no advertising SDK']) {
+for (const phrase of ['bundled with the app', 'Supabase', 'Delete online profile', 'aged 13 and older', 'Google AdMob', 'RevenueCat', 'not proof of ownership', 'Ad privacy settings']) {
   check(privacy.includes(phrase), `privacy policy is missing: ${phrase}`);
 }
 const terms = read('dist/terms/index.html');
