@@ -1,6 +1,7 @@
 const { validateMonetizationConfig } = require('./validate-monetization-config.cjs');
 
 const validEnv = {
+  EXPO_PUBLIC_ADS_MODE: 'live',
   EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID: 'ca-app-pub-1234567890123456/1111111111',
   EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL_ID: 'ca-app-pub-1234567890123456/2222222222',
   EXPO_PUBLIC_REVENUECAT_IOS_API_KEY: 'appl_publicIosKey_1',
@@ -28,7 +29,7 @@ function validMonetizedFixture() {
         'react-native-purchases': '10.9.1',
       },
     },
-    env: validEnv,
+    env: { ...validEnv },
   };
 }
 

@@ -1,3 +1,5 @@
+import { SCRIPT_RECORDING_MP4 } from './scriptRecordingMp4';
+
 // Game logic script for the in-WebView game: pipes, bird (with evolution), HUD,
 // the main state machine loop, and kickoff. Injected after SCRIPT_CORE.
 // Must NOT contain backticks.
@@ -31,6 +33,8 @@ var fatalFormSince = 0;
 var FATAL_FORM_GRACE_MS = 350;
 var formTrackingInterruptionSince = 0;
 var FORM_TRACKING_INTERRUPTION_GRACE_MS = 1600;
+var crashReason = '';
+var crashFallVelocity = 0;
 
 function fatalFormFailureConfirmed(check, now) {
   if (!check || !check.fatal) {
@@ -38,6 +42,9 @@ function fatalFormFailureConfirmed(check, now) {
     fatalFormSince = 0;
     return false;
   }
+  // The floor observer already confirmed this using fresh camera observations.
+  // Do not add a second timer or require contact to be observed twice.
+  if (check.fatalKey === 'pullup-feet' && check.contactConfirmed === true) { return true; }
   var key = check.fatalKey || check.message;
   if (fatalFormKey !== key) {
     fatalFormKey = key;
@@ -48,7 +55,7 @@ function fatalFormFailureConfirmed(check, now) {
 }
 
 function formTrackingInterruptionConfirmed(check, now) {
-  if (!usesExperimentalFormTracking() || (trackingFresh() && check.valid)) {
+  if (trackingFresh() && check.valid) {
     formTrackingInterruptionSince = 0;
     return false;
   }
@@ -61,7 +68,7 @@ function formTrackingInterruptionConfirmed(check, now) {
   return now - formTrackingInterruptionSince >= FORM_TRACKING_INTERRUPTION_GRACE_MS;
 }
 
-// ---------- Composed-run recording ----------
+// ---------- Composed-run recording ----------${SCRIPT_RECORDING_MP4}
 // The live camera is painted into the game canvas below. A smaller hidden canvas
 // mirrors completed frames so clips contain the player, bird, pipes, and HUD
 // without recording an unnecessarily large device-resolution surface.
@@ -75,6 +82,8 @@ var recordingExtension = 'webm';
 var recordingChunkIndex = 0;
 var recordingReadChain = Promise.resolve();
 var recordingReadFailed = false;
+var recordingBlobs = [];
+var recordingFramesFinished = false;
 var recordingActive = false;
 var recordingAwaitingPlayFrame = false;
 var lastRecordingFrameTime = 0;
@@ -97,6 +106,8 @@ function recordingDimensions() {
 
 function supportedRecordingTypes() {
   var candidates = [
+    'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+    'video/mp4;codecs=avc1,mp4a.40.2',
     'video/mp4;codecs=avc1.42E01E',
     'video/mp4;codecs=h264',
     'video/mp4',
@@ -140,8 +151,10 @@ function blobToBase64(blob) {
     var reader = new FileReader();
     reader.onload = function() {
       var result = String(reader.result || '');
-      var comma = result.indexOf(',');
-      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+      // Codec lists can contain commas; only the base64 marker ends the header.
+      var marker = result.indexOf(';base64,');
+      if (marker < 0) { reject(new Error('Invalid recorded video data URL.')); return; }
+      resolve(result.slice(marker + 8));
     };
     reader.onerror = function() {
       reject(reader.error || new Error('Unable to read a recorded video chunk.'));
@@ -227,11 +240,13 @@ function startRunRecording() {
     recordingChunkIndex = 0;
     recordingReadChain = Promise.resolve();
     recordingReadFailed = false;
+    recordingBlobs = [];
+    recordingFramesFinished = false;
     recordingAwaitingPlayFrame = true;
     lastRecordingFrameTime = 0;
 
     runRecorder.ondataavailable = function(event) {
-      queueRecordingBlob(event.data);
+      if (event.data && event.data.size > 0) { recordingBlobs.push(event.data); }
     };
     runRecorder.onerror = function(event) {
       recordingReadFailed = true;
@@ -241,28 +256,42 @@ function startRunRecording() {
       var completedSessionId = recordingSessionId;
       var completedMimeType = recordingMimeType;
       var completedExtension = recordingExtension;
-      var completedChunkCount = recordingChunkIndex;
+      var completeBlob = new Blob(recordingBlobs, { type: completedMimeType });
+      recordingBlobs = [];
       recordingActive = false;
       recordingAwaitingPlayFrame = false;
       releaseRecordingStream();
-      recordingReadChain.then(function() {
-        if (!recordingReadFailed) {
-          postRN({
-            type: 'recordingcomplete',
-            sessionId: completedSessionId,
-            mimeType: completedMimeType,
-            extension: completedExtension,
-            chunkCount: completedChunkCount
-          });
-        }
+      var finalized = completedExtension === 'mp4'
+        ? finalizeRecordedMp4(completeBlob)
+        : Promise.resolve({ blob: completeBlob, report: { format: completedExtension, action: 'unverified' } });
+      finalized.then(function(result) {
+        if (recordingReadFailed) { return; }
+        if (!result.blob.size) { throw new Error('The recorded video was empty.'); }
+        postRN({ type: 'recordingdebug', message: JSON.stringify(result.report) });
+        queueRecordingBlob(result.blob);
+        return recordingReadChain.then(function() {
+          if (!recordingReadFailed) {
+            postRN({
+              type: 'recordingcomplete',
+              sessionId: completedSessionId,
+              mimeType: completedMimeType,
+              extension: completedExtension,
+              chunkCount: recordingChunkIndex,
+              byteLength: result.blob.size
+            });
+          }
+        });
+      }).catch(function(err) {
+        recordingReadFailed = true;
+        recordingError(err);
+      }).then(function() {
         runRecorder = null;
         recordingCanvas = null;
         recordingCtx = null;
       });
     };
 
-    // One complete recorder blob preserves the container's real duration.
-    // It is sliced into bridge-sized chunks only after recording stops.
+    // Keep the complete recorder blob intact until it is split for the native bridge.
     runRecorder.start();
     recordingActive = true;
     postRN({
@@ -283,13 +312,13 @@ function startRunRecording() {
   }
 }
 
-function copyComposedRecordingFrame(now, isPlayableFrame) {
-  if (!recordingActive || !recordingCtx || !recordingCanvas) { return; }
+function copyComposedRecordingFrame(now, isPlayableFrame, force) {
+  if (!recordingActive || recordingFramesFinished || !recordingCtx || !recordingCanvas) { return; }
   if (recordingAwaitingPlayFrame) {
     if (!isPlayableFrame) { return; }
     recordingAwaitingPlayFrame = false;
   }
-  if (lastRecordingFrameTime && now - lastRecordingFrameTime < 1000 / 24) { return; }
+  if (!force && lastRecordingFrameTime && now - lastRecordingFrameTime < 1000 / 24) { return; }
   lastRecordingFrameTime = now;
   recordingCtx.drawImage(
     canvas,
@@ -330,13 +359,16 @@ function currentSpawnMs() {
   return base * (CONFIG.speed / currentSpeed());
 }
 
+// Branding belongs to the first spawned pair, even after old pipes leave the screen.
+var pipeSpawnCount = 0;
 function spawnPipe(now) {
   var gapH = currentGapFrac() * H;
   var margin = gapH * 0.6 + 30;
   var gapC = margin + Math.random() * Math.max(40, H - margin * 2);
   var moving = CONFIG.endless ? score >= 20 : CONFIG.movingPipes;
   var amp = CONFIG.endless ? Math.min(90, Math.max(0, (score - 20) * 4)) : CONFIG.moveAmp;
-  pipes.push({ x: W + 50, w: Math.max(60, W * 0.09), gapC0: gapC, gapC: gapC, gapH: gapH, passed: false, moving: moving, amp: amp, phase: Math.random() * Math.PI * 2, born: now });
+  pipes.push({ x: W + 50, w: Math.max(60, W * 0.09), gapC0: gapC, gapC: gapC, gapH: gapH, passed: false, moving: moving, amp: amp, phase: Math.random() * Math.PI * 2, born: now, branded: CONFIG.brandFirstPipe === true && pipeSpawnCount === 0 });
+  pipeSpawnCount += 1;
 }
 
 function burst(x, y, color, n) {
@@ -369,6 +401,13 @@ function endGame(reason) {
   beep(140, 0.4, 'sawtooth', 0.1);
   burst(birdX(), birdScreenY(), CONFIG.bird.body, 26);
   var recorderWasRunning = !!runRecorder;
+  if (recorderWasRunning) {
+    // Freeze the terminal gameplay frame while the recorder drains its encoder.
+    // The result overlay and subsequent camera frames never enter the clip.
+    drawBackground(); drawPipes(); drawBird(performance.now()); drawHUD();
+    copyComposedRecordingFrame(performance.now(), true, true);
+    recordingFramesFinished = true;
+  }
   postRN({
     type: 'gameover',
     reason: reason || '',
@@ -378,8 +417,6 @@ function endGame(reason) {
     runDurationMs: Math.round(competitionDurationMs),
     unreportedTutSeconds: Math.max(0, tutSeconds - tutReportedSeconds)
   });
-  // Give React Native the result first. Recorder finalization and base64 transfer
-  // continue asynchronously while the visible card says Preparing video.
   if (recorderWasRunning) {
     setTimeout(stopRunRecording, 50);
   } else {
@@ -434,6 +471,34 @@ function drawBackground() {
   ctx.fillRect(0, H - 14, W, 14);
 }
 
+// Draw on the game canvas so the same lettering is included in shared recordings.
+function drawPipeBrandWord(word, p, y, height) {
+  var padding = 6;
+  var available = height - padding * 2;
+  if (available <= 0) { return; }
+  var fontSize = Math.min(36, p.w * 0.54, available / (word.length * 1.05));
+  var lineHeight = fontSize * 1.05;
+  var firstY = y + height / 2 - (word.length - 1) * lineHeight / 2;
+  ctx.save();
+  // Keep outlines inside the pipe body, clear of both the cap and the opening.
+  ctx.beginPath();
+  ctx.rect(p.x + 3, y, p.w - 6, height);
+  ctx.clip();
+  ctx.font = '900 ' + fontSize + 'px -apple-system, BlinkMacSystemFont, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = Math.max(1, fontSize * 0.11);
+  ctx.strokeStyle = '#102A19';
+  ctx.fillStyle = '#FFFFFF';
+  for (var letter = 0; letter < word.length; letter++) {
+    var letterY = firstY + letter * lineHeight;
+    ctx.strokeText(word.charAt(letter), p.x + p.w / 2, letterY);
+    ctx.fillText(word.charAt(letter), p.x + p.w / 2, letterY);
+  }
+  ctx.restore();
+}
+
 function drawPipes() {
   var capH = 16;
   for (var i = 0; i < pipes.length; i++) {
@@ -449,6 +514,10 @@ function drawPipes() {
     ctx.fillStyle = 'rgba(255,255,255,0.18)';
     ctx.fillRect(p.x + 6, 0, 8, Math.max(0, topEnd - capH));
     ctx.fillRect(p.x + 6, botStart + capH, 8, Math.max(0, H - botStart - capH));
+    if (p.branded) {
+      drawPipeBrandWord('FLAP', p, 0, Math.max(0, topEnd - capH));
+      drawPipeBrandWord('FIT', p, botStart + capH, Math.max(0, H - botStart - capH));
+    }
   }
 }
 
@@ -537,6 +606,9 @@ function drawCountdownNumber(now) {
 function collides() {
   // Evolution changes the drawing only. Every stage keeps the same fair hitbox.
   var bx = birdX(), by = birdScreenY(), r = birdCollisionRadius();
+  // Controlled endpoints stay inside these bounds. A bird that loses control
+  // continues falling until it actually hits a pipe or the edge of the playfield.
+  if (by - r <= 0 || by + r >= H) { return true; }
   for (var i = 0; i < pipes.length; i++) {
     var p = pipes[i];
     if (bx + r < p.x || bx - r > p.x + p.w) { continue; }
@@ -565,7 +637,7 @@ function topCalibrationMessage() {
   }
   if (CONFIG.exercise === 'pullups') {
       if (usesExperimentalFormTracking()) {
-        return 'STEP 1 OF 2<br><br>Keep both hands on the bar and pull your shoulders <b>UP</b> until your eye line reaches the bar<br><br>Hold still…';
+        return 'STEP 1 OF 2<br><br>Pull your <b>EYE LINE TO THE BAR</b>.<br>Hold until the bar fills.';
       }
     return 'STEP 1 OF 2<br><br>Pull to your <b>HIGHEST</b> point<br>Chin at or above the bar<br><br>Hold still…';
   }
@@ -576,6 +648,9 @@ function topCalibrationMessage() {
     return 'STEP 1 OF 2<br><br>Curl to the <b>TOP</b><br>Wrists near your shoulders<br><br>Hold still…';
   }
   if (CONFIG.exercise === 'shoulderpress') {
+    if (usesExperimentalFormTracking()) {
+      return 'STEP 1 OF 2<br><br>Press both arms <b>UP</b><br>Keep shoulders and elbows visible<br>Hands can leave the top of the frame<br><br>Hold still…';
+    }
     return 'STEP 1 OF 2<br><br>Press <b>OVERHEAD</b> fully<br>Arms locked straight above you<br><br>Hold still…';
   }
   return 'STEP 1 OF 2<br><br>Hold the <b>TOP</b> of a push-up<br>Arms fully extended<br><br>Hold still…';
@@ -601,17 +676,28 @@ function loop(now) {
     var calibrationFormCheck = usesExperimentalFormTracking()
       ? validateExperimentalCalibration(state === 'waitTop' ? 'top' : 'bottom')
       : { valid: true, message: '' };
-    if (state === 'waitTop' && now < calibrationReadyAt) {
+    var pullupSetup = usesExperimentalFormTracking() && CONFIG.exercise === 'pullups'
+      ? getPullupSupportSetup() : null;
+    if (pullupSetup && !pullupSetup.ready) {
+      showOverlay(pullupSetup.message, false);
+      setProgress(0);
+      stabBuf = [];
+    } else if (state === 'waitTop' && now < calibrationReadyAt) {
       var delaySeconds = Math.max(1, Math.ceil((calibrationReadyAt - now) / 1000));
       var preparationMessage = CONFIG.exercise === 'pullups' && usesExperimentalFormTracking()
-        ? 'STEP 1 OF 2<br><br>Grip the bar and settle into a comfortable hang<br>Pull up after the countdown<br><br><small>Calibration begins in ' + delaySeconds + '…</small>'
+        ? 'STEP 1 OF 2<br><br>Feet off floor. Eyes to bar.<br><small>Starting in ' + delaySeconds + '…</small>' +
+          (pullupSetup.mode === 'unverified' ? '<br><small>Feet outside view: floor contact cannot be checked.</small>' : '')
         : topCalibrationMessage() +
           '<br><small>Calibration begins in ' + delaySeconds + '…</small>';
       showOverlay(preparationMessage, true);
       setProgress(0);
       stabBuf = [];
     } else if (!calibrationFormCheck.valid) {
-      showOverlay(calibrationFormCheck.message, false);
+      var calibrationIssue = calibrationFormCheck.message;
+      if (pullupSetup && calibrationIssue.indexOf('STEP ') !== 0) {
+        calibrationIssue = (state === 'waitTop' ? 'STEP 1 OF 2' : 'STEP 2 OF 2') + '<br><br>' + calibrationIssue;
+      }
+      showOverlay(calibrationIssue, false);
       setProgress(0);
       stabBuf = [];
     } else if (getTrackY() !== null && trackingFresh()) {
@@ -620,8 +706,9 @@ function loop(now) {
         showOverlay(topCalibrationMessage(), true);
         setProgress(prog);
         if (prog >= 1) {
-          topY = stabAverage(); stabBuf = [];
-          saveExperimentalCalibration('top');
+          topY = stabAverage();
+          saveExperimentalCalibration('top', stabBuf.length ? stabBuf[0].t : now, topY);
+          stabBuf = [];
           beep(660, 0.15, 'sine', 0.08);
           state = 'waitBottom';
         }
@@ -631,7 +718,7 @@ function loop(now) {
           botMsg = 'STEP 2 OF 2<br><br>Lower to a <b>DEEP SQUAT</b><br>Thighs parallel to the floor<br><br>Hold still…';
         } else if (CONFIG.exercise === 'pullups') {
           botMsg = usesExperimentalFormTracking()
-            ? 'STEP 2 OF 2<br><br>Lower to a comfortable <b>HANG</b><br>Slight elbow bend is fine<br>Keep both hands on the bar<br><br>Hold still…'
+            ? 'STEP 2 OF 2<br><br>Lower to a comfortable <b>HANG</b>.<br>Hold until the bar fills.'
             : 'STEP 2 OF 2<br><br>Lower to a full <b>DEAD HANG</b><br>Arms completely locked straight<br><br>Hold still…';
         } else if (CONFIG.exercise === 'lateralraise') {
           botMsg = 'STEP 2 OF 2<br><br>Lower arms to your <b>SIDES</b><br>Hands near hips<br><br>Hold still…';
@@ -646,14 +733,18 @@ function loop(now) {
         setProgress(prog);
         if (prog >= 1) {
           var candidate = stabAverage();
-          if (candidate !== null && topY !== null && candidate - topY > 0.06) {
-            bottomY = candidate; stabBuf = [];
-            saveExperimentalCalibration('bottom');
+          var minimumRange = CONFIG.exercise === 'pullups' && usesExperimentalFormTracking()
+            ? pullupMinimumCalibrationRange() : 0.06;
+          if (candidate !== null && topY !== null && candidate - topY > minimumRange) {
+            bottomY = candidate;
+            saveExperimentalCalibration('bottom', stabBuf.length ? stabBuf[0].t : now, bottomY);
+            stabBuf = [];
             beep(880, 0.18, 'sine', 0.08);
             postRN({ type: 'calibrated' });
             countdownEnd = now + 3000;
             hideOverlay();
             state = 'countdown';
+            hideCameraPreview();
           } else {
             stabBuf = [];
             var tooSmallMsg;
@@ -677,21 +768,27 @@ function loop(now) {
         }
       }
     } else {
+      if (usesExperimentalFormTracking() && CONFIG.exercise === 'pullups') {
+        stabBuf = [];
+        setProgress(0);
+      }
       var frameMsg;
       if (CONFIG.exercise === 'squats') {
-        frameMsg = 'Get your head and body in frame<br><small>Place phone on the floor or a chair, 1.5–2m in front</small>';
+        frameMsg = 'Get your head and body in frame<br><small>Place phone on the floor or a chair, 3–6 ft in front</small>';
       } else if (CONFIG.exercise === 'pullups') {
         frameMsg = usesExperimentalFormTracking()
-          ? 'Get your upper body in frame<br><small>Both hands, elbows, and shoulders must stay visible</small>'
-          : 'Get in frame — head and arms visible<br><small>Place phone on a chair or higher, facing you</small>';
+          ? 'Get your upper body in frame<br><small>Both hands, elbows, and shoulders must stay visible; place phone 4–6 ft away</small>'
+          : 'Get in frame — head and arms visible<br><small>Place phone on a chair or higher, 4–6 ft in front</small>';
       } else if (CONFIG.exercise === 'lateralraise') {
-        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, about 2m in front</small>';
+        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, 4–6 ft in front</small>';
       } else if (CONFIG.exercise === 'biceps') {
-        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, 1–1.5m in front</small>';
+        frameMsg = 'Get in frame — arms and torso visible<br><small>Place phone on a chair or higher, 3–6 ft in front</small>';
       } else if (CONFIG.exercise === 'shoulderpress') {
-        frameMsg = 'Get in frame — arms raised must be visible<br><small>Place phone on a chair or higher, 1.5–2m in front</small>';
+        frameMsg = usesExperimentalFormTracking()
+          ? 'Keep both shoulders and elbows in frame<br><small>Hands can leave the top of the frame; move close enough to see the game</small>'
+          : 'Get in frame — arms raised must be visible<br><small>Place phone on a chair or higher, 4–6 ft in front</small>';
       } else {
-        frameMsg = 'Get your head and shoulders in frame<br><small>Place phone 1–1.5m in front of you on the floor</small>';
+        frameMsg = 'Get your head and shoulders in frame<br><small>Place phone 3 ft in front of you on the floor</small>';
       }
       showOverlay(frameMsg, false);
     }
@@ -703,23 +800,31 @@ function loop(now) {
     if (now >= countdownEnd) {
       state = 'play';
       lastSpawn = now - currentSpawnMs() + 600;
+      // Replace the final countdown frame before beginning camera/game capture.
+      drawBackground(); drawPipes(); drawBird(now); drawHUD();
       startRunRecording();
+      copyComposedRecordingFrame(now, true, true);
       beep(990, 0.2, 'sine', 0.08);
     }
   } else if (state === 'play') {
     prevBirdNorm = birdNorm;
-    birdNorm += (norm - birdNorm) * Math.min(1, dt * 16);
-    updatePushups(norm);
-    var gameplayFormCheck = usesExperimentalFormTracking()
-      ? validateExperimentalGameplay(norm)
-      : { valid: true, message: '' };
-    if (fatalFormFailureConfirmed(gameplayFormCheck, now)) {
-      endGame('form');
-      return;
+    if (!crashReason) {
+      var gameplayFormCheck = usesExperimentalFormTracking()
+        ? validateExperimentalGameplay(norm)
+        : { valid: true, message: '' };
+      if (fatalFormFailureConfirmed(gameplayFormCheck, now)) {
+        crashReason = 'form';
+      } else if (formTrackingInterruptionConfirmed(gameplayFormCheck, now)) {
+        crashReason = gameplayFormCheck.valid ? 'tracking' : 'form';
+      }
     }
-    if (formTrackingInterruptionConfirmed(gameplayFormCheck, now)) {
-      endGame(gameplayFormCheck.valid ? 'tracking' : 'form');
-      return;
+    if (crashReason) {
+      // Confirmed loss releases control; only a physical collision ends the run.
+      crashFallVelocity += 2.8 * dt;
+      birdNorm -= crashFallVelocity * dt;
+    } else {
+      birdNorm += (norm - birdNorm) * Math.min(1, dt * 16);
+      updatePushups(norm);
     }
 
     // Independent wall-clock evidence for online score plausibility.
@@ -739,70 +844,27 @@ function loop(now) {
       return;
     }
 
-    // Fatal anti-cheat failures keep the game moving during the short camera-noise
-    // confirmation window, then end the run. They must never become a rest pause.
-    if (!trackingFresh() || (!gameplayFormCheck.valid && !gameplayFormCheck.fatal)) {
-      state = 'lost';
-      var isWristEx2 = CONFIG.exercise === 'lateralraise' || CONFIG.exercise === 'biceps' || CONFIG.exercise === 'shoulderpress';
-      var lostMsg = !gameplayFormCheck.valid
-        ? gameplayFormCheck.message
-        : CONFIG.exercise === 'pullups'
-          ? usesExperimentalFormTracking()
-            ? 'Tracking lost<br><br><b>Return to your hang quickly</b><br><small>Sustained tracking loss ends this run</small>'
-            : 'Tracking lost<br><br><b>Re-center in frame</b><br>Return to your hang — game resumes automatically.'
-          : CONFIG.exercise === 'pushups' && usesExperimentalFormTracking()
-            ? 'Tracking lost<br><br><b>Return to your push-up position quickly</b><br><small>Sustained tracking loss ends this run</small>'
-          : usesExperimentalFormTracking()
-            ? 'Tracking lost<br><br><b>Re-center quickly</b><br><small>Sustained tracking loss ends this run</small>'
-          : isWristEx2
-            ? 'Tracking lost<br><br><b>Re-center in frame</b><br>Face camera and hold still — game resumes automatically.'
-            : 'Tracking lost<br><br><b>Re-center in frame</b><br>Hold your position — game resumes automatically.';
-      showOverlay(lostMsg, false);
-    } else {
-      if (now - lastSpawn > currentSpawnMs()) { lastSpawn = now; spawnPipe(now); }
-      var speed = currentSpeed();
-      for (var pi = pipes.length - 1; pi >= 0; pi--) {
-        var p = pipes[pi];
-        p.x -= speed * dt;
-        if (p.moving && p.amp > 0) {
-          var mrange = p.gapH * 0.55;
-          p.gapC = p.gapC0 + Math.sin((now - p.born) / 1000 * 1.6 + p.phase) * Math.min(p.amp, mrange);
-        }
-        if (!p.passed && p.x + p.w < birdX()) {
-          p.passed = true; score += 1;
-          beep(760 + Math.min(score * 6, 300), 0.1, 'sine', 0.07);
-          burst(birdX() + 20, birdScreenY(), '#FFFFFF', 10);
-          postRN({ type: 'score', score: score });
-        }
-        if (p.x + p.w < -60) { pipes.splice(pi, 1); }
+    // Every tracking mode keeps pipes, scoring, recording, and collisions moving.
+    if (now - lastSpawn > currentSpawnMs()) { lastSpawn = now; spawnPipe(now); }
+    var speed = currentSpeed();
+    for (var pi = pipes.length - 1; pi >= 0; pi--) {
+      var p = pipes[pi];
+      p.x -= speed * dt;
+      if (p.moving && p.amp > 0) {
+        var mrange = p.gapH * 0.55;
+        p.gapC = p.gapC0 + Math.sin((now - p.born) / 1000 * 1.6 + p.phase) * Math.min(p.amp, mrange);
       }
-      if (collides()) { endGame(); }
+      if (!p.passed && p.x + p.w < birdX()) {
+        p.passed = true; score += 1;
+        beep(760 + Math.min(score * 6, 300), 0.1, 'sine', 0.07);
+        burst(birdX() + 20, birdScreenY(), '#FFFFFF', 10);
+        postRN({ type: 'score', score: score });
+      }
+      if (p.x + p.w < -60) { pipes.splice(pi, 1); }
     }
+    if (collides()) { endGame(crashReason); }
     drawPipes(); drawParticles(dt); drawBird(now); drawHUD();
     drewPlayableRecordingFrame = true;
-  } else if (state === 'lost') {
-    drawPipes(); drawParticles(0); drawBird(now); drawHUD();
-    var resumeFormCheck = usesExperimentalFormTracking()
-      ? validateExperimentalGameplay(norm)
-      : { valid: true, message: '' };
-    if (fatalFormFailureConfirmed(resumeFormCheck, now)) {
-      endGame('form');
-      return;
-    } else if (formTrackingInterruptionConfirmed(resumeFormCheck, now)) {
-      endGame(resumeFormCheck.valid ? 'tracking' : 'form');
-      return;
-    } else if (trackingFresh() && resumeFormCheck.valid) {
-      resumeEnd = now + 1200;
-      state = 'resume';
-      showOverlay('Locked on!<br>Resuming…', false);
-    } else if (trackingFresh() && !resumeFormCheck.valid) {
-      showOverlay(resumeFormCheck.message, false);
-    }
-  } else if (state === 'resume') {
-    prevBirdNorm = birdNorm;
-    birdNorm += (norm - birdNorm) * Math.min(1, dt * 16);
-    drawPipes(); drawBird(now); drawHUD();
-    if (now >= resumeEnd) { hideOverlay(); lastSpawn = now; state = 'play'; }
   } else if (state === 'over') {
     drawPipes(); drawParticles(dt); drawHUD();
     ctx.fillStyle = 'rgba(0,0,0,0.35)';

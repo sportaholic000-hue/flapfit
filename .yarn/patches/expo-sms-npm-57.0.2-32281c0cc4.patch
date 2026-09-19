@@ -1,0 +1,29 @@
+diff --git a/ios/ExpoSMSModule.swift b/ios/ExpoSMSModule.swift
+index 02813bf635b7b01c69e3cad7a30494e30270c942..3f1a21dbda2dad5fa0a3c45f41cc823132940229 100644
+--- a/ios/ExpoSMSModule.swift
++++ b/ios/ExpoSMSModule.swift
+@@ -43,12 +43,11 @@ public class ExpoSMSModule: Module, SMSResultHandler {
+     messageComposeViewController.body = message
+ 
+     for attachment in options.attachments {
+-      let utiRef = UTTypeCreatePreferredIdentifierForTag(
+-        kUTTagClassMIMEType, attachment.mimeType as CFString, nil)
+-
+-      if utiRef == nil {
++      guard let utiRef = UTTypeCreatePreferredIdentifierForTag(
++        kUTTagClassMIMEType, attachment.mimeType as CFString, nil) else {
+         throw SMSMimeTypeException(attachment.mimeType)
+       }
++      let typeIdentifier = utiRef.takeRetainedValue() as String
+ 
+       guard let url = URL(string: attachment.uri) else {
+         throw SMSUriException(attachment.uri)
+@@ -58,7 +57,7 @@ public class ExpoSMSModule: Module, SMSResultHandler {
+         let data = try Data(contentsOf: url, options: .mappedIfSafe)
+         let attached = messageComposeViewController.addAttachmentData(
+           data,
+-          typeIdentifier: attachment.mimeType,
++          typeIdentifier: typeIdentifier,
+           filename: attachment.filename)
+         if !attached {
+           throw SMSFileException(attachment.uri)

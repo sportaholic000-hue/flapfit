@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Redirect, useRouter } from 'expo-router';
+import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
   Camera,
@@ -11,7 +11,8 @@ import {
   Sun,
   Video,
 } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { prepareMonetization } from '@/services/monetization';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
@@ -22,7 +23,7 @@ import { getDailyChallenge, LEVELS } from '@/utils/game/levels';
 import {
   computeBirdMorphology,
   computeEvolutionStage,
-  computeStreak,
+  computeTutStreak,
   dayKey,
   EVO_EMOJIS,
   EVO_NAMES,
@@ -83,21 +84,28 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [backgroundMode, setBackgroundMode] = useState<'sky' | 'camera'>('sky');
-  const [trackingMode, setTrackingMode] = useState<'original' | 'form-test'>('form-test');
   const [hydrationSlow, setHydrationSlow] = useState(false);
 
   const hydrated = useGameStore((s) => s.hydrated);
   const hydrationError = useGameStore((s) => s.hydrationError);
   const hasOnboarded = useGameStore((s) => s.hasOnboarded);
+  useFocusEffect(useCallback(() => {
+    let focused = true;
+    if (hydrated && !hydrationError && hasOnboarded) {
+      void prepareMonetization(() => focused);
+    }
+    return () => { focused = false; };
+  }, [hydrated, hydrationError, hasOnboarded]));
   const birdId = useGameStore((s) => s.birdId);
   const setBird = useGameStore((s) => s.setBird);
   const unlockedLevel = useGameStore((s) => s.unlockedLevel);
-  const sessions = useGameStore((s) => s.sessions);
+
   const dailyCompleted = useGameStore((s) => s.dailyCompleted);
   const endlessBest = useGameStore((s) => s.endlessBest);
   const exerciseMode = useGameStore((s) => s.exerciseMode);
   const setExerciseMode = useGameStore((s) => s.setExerciseMode);
   const totalTutSeconds = useGameStore((s) => s.totalTutSeconds);
+  const dailyTut = useGameStore((s) => s.dailyTut);
   const exerciseTut = useGameStore((s) => s.exerciseTut);
   const lastActivityDate = useGameStore((s) => s.lastActivityDate);
 
@@ -164,7 +172,7 @@ export default function HomeScreen() {
   }
   if (!hasOnboarded) return <Redirect href={'/onboarding' as never} />;
 
-  const streak = computeStreak(sessions);
+  const streak = computeTutStreak(dailyTut);
   const skin = getBird(birdId);
   const today = dayKey();
   const daily = getDailyChallenge(unlockedLevel, today);
@@ -194,7 +202,6 @@ export default function HomeScreen() {
   const withGameOptions = (params: Record<string, string>, record = false) => ({
     ...params,
     backgroundMode,
-    ...(__DEV__ && trackingMode === 'form-test' ? { trackingMode: 'form-test' } : {}),
     ...(record && backgroundMode === 'camera' ? { record: '1' } : {}),
   });
 
@@ -263,16 +270,16 @@ export default function HomeScreen() {
 
   const exDescriptions: Record<string, string> = {
     squats:
-      'Stand tall = top, deep squat = bottom. Phone on the floor or a chair, 1.5–2m in front.',
+      'Stand tall = top, deep squat = bottom. Phone on the floor or a chair, 3–6 ft in front.',
     pullups:
-      'Eye line at the bar = top, comfortable hang with a slight elbow bend = bottom. Phone on a chair or higher, 1.5–2m in front; keep both hands on the bar.',
+      'Eye line at the bar = top, comfortable hang with a slight elbow bend = bottom. Phone on a chair or higher, 4–6 ft in front; keep both hands on the bar.',
     lateralraise:
-      'Arms at shoulder height = top, arms at sides = bottom. Phone on a chair or higher, about 2m in front.',
+      'Arms at shoulder height = top, arms at sides = bottom. Phone on a chair or higher, 4–6 ft in front.',
     biceps:
-      'Wrists at shoulders = top, arms extended = bottom. Phone on a chair or higher, 1–1.5m in front.',
+      'Wrists at shoulders = top, arms extended = bottom. Phone on a chair or higher, 3–6 ft in front.',
     shoulderpress:
-      'Arms overhead = top, wrists at shoulders = bottom. Phone on a chair or higher, 1.5–2m in front.',
-    pushups: 'Arms extended = top, chest to floor = bottom. Phone 1–1.5m in front on the floor.',
+      'Arms overhead = top, wrists at shoulders = bottom. Phone on a chair or higher, 4–6 ft in front.',
+    pushups: 'Arms extended = top, chest to floor = bottom. Phone 3 ft in front on the floor.',
   };
 
   return (
@@ -541,70 +548,6 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
         </View>
-
-        {__DEV__ ? (
-          <View
-            style={{
-              marginTop: 12,
-              padding: 16,
-              borderRadius: 20,
-              backgroundColor: 'rgba(255,255,255,0.96)',
-              gap: 10,
-            }}
-          >
-            <View style={{ gap: 3 }}>
-              <Text style={{ fontWeight: '900', color: NAVY, fontSize: 16 }}>
-                Camera Tracking Test
-              </Text>
-              <Text style={{ color: '#64748B', fontSize: 12, lineHeight: 17 }}>
-                Compare the current tracker with invisible form checks. No skeleton is displayed.
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-              {(['original', 'form-test'] as const).map((option) => {
-                const selected = trackingMode === option;
-                return (
-                  <TouchableOpacity
-                    key={option}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected }}
-                    onPress={() => setTrackingMode(option)}
-                    style={{
-                      flex: 1,
-                      minHeight: 48,
-                      borderRadius: 14,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 2,
-                      borderColor: selected ? ACCENT_BLUE : '#CBD5E1',
-                      backgroundColor: selected ? '#E0F2FE' : '#F8FAFC',
-                    }}
-                  >
-                    <Text style={{ color: selected ? '#0369A1' : '#475569', fontWeight: '900' }}>
-                      {option === 'original' ? 'Original' : 'Form Test'}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel="Review onboarding"
-              onPress={() => router.push('/onboarding' as never)}
-              style={{
-                minHeight: 44,
-                borderRadius: 14,
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderWidth: 1,
-                borderColor: '#94A3B8',
-                backgroundColor: '#F8FAFC',
-              }}
-            >
-              <Text style={{ color: NAVY, fontWeight: '900' }}>Review Onboarding</Text>
-            </TouchableOpacity>
-          </View>
-        ) : null}
 
         {/* Current level start */}
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>

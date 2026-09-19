@@ -36,7 +36,6 @@ export default function LevelsScreen() {
   const withGameOptions = (params: Record<string, string>, record = false) => ({
     ...params,
     backgroundMode,
-    ...(__DEV__ ? { trackingMode: 'form-test' } : {}),
     ...(record && backgroundMode === 'camera' ? { record: '1' } : {}),
   });
 

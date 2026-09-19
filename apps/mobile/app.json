@@ -8,7 +8,8 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
+      "requireFullScreen": true,
       "bundleIdentifier": "com.flapfit.game",
       "buildNumber": "1",
       "infoPlist": {
@@ -135,7 +136,8 @@
       ],
       "expo-asset",
       "expo-image",
-      "expo-status-bar"
+      "expo-status-bar",
+      "./plugins/with-share-return.cjs"
     ],
     "web": {
       "bundler": "metro",

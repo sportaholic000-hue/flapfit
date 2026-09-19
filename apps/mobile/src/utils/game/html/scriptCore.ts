@@ -19,6 +19,20 @@ function usesCameraBackground() {
   return CONFIG.backgroundMode === 'camera';
 }
 
+function hideCameraPreview() {
+  // Leave a tiny invisible video surface alive for pose tracking and canvas
+  // composition while removing the old thumbnail and camera toggle from view.
+  previewEl.style.display = 'block';
+  previewEl.style.opacity = '0';
+  previewEl.style.pointerEvents = 'none';
+  previewEl.style.width = '1px';
+  previewEl.style.height = '1px';
+  previewEl.style.right = '-4px';
+  previewEl.style.bottom = '-4px';
+  previewEl.style.border = 'none';
+  if (camBtnEl) { camBtnEl.style.display = 'none'; }
+}
+
 var W = 0, H = 0;
 function resize() {
   W = window.innerWidth; H = window.innerHeight;
@@ -73,7 +87,7 @@ var topY = null, bottomY = null;
 var birdNorm = 0.5, prevBirdNorm = 0.5;
 var score = 0, pushups = 0, ppPhase = 'up';
 var pipes = [], particles = [], clouds = [];
-var lastSpawn = 0, lastFrame = 0, countdownEnd = 0, resumeEnd = 0;
+var lastSpawn = 0, lastFrame = 0, countdownEnd = 0;
 var gameOverSent = false;
 var lastVideoTime = -1;
 var calibrationReadyAt = 0;
@@ -87,8 +101,22 @@ for (var ci = 0; ci < 5; ci++) {
 // ---------- Calibration stability ----------
 var stabBuf = [];
 function stabilityProgress(y, now) {
+  if (usesExperimentalFormTracking() && CONFIG.exercise === 'pullups') {
+    // Count camera observations, not repeated renders of the same pose.
+    var poseTime = lastFormTrackTime;
+    if (!experimentalTrackingFresh()) { stabBuf = []; return 0; }
+    var previous = stabBuf.length ? stabBuf[stabBuf.length - 1] : null;
+    if (previous && (poseTime < previous.t || poseTime - previous.t > 700)) {
+      stabBuf = []; previous = null;
+    }
+    if (previous && poseTime === previous.t) {
+      return stabBuf.length >= 8 ? Math.min(1, (previous.t - stabBuf[0].t) / 1300) : 0;
+    }
+    now = poseTime;
+  }
   stabBuf.push({ t: now, y: y });
-  while (stabBuf.length && now - stabBuf[0].t > 1600) { stabBuf.shift(); }
+  var minimumKept = usesExperimentalFormTracking() && CONFIG.exercise === 'pullups' ? 8 : 1;
+  while (stabBuf.length > minimumKept && now - stabBuf[0].t > 1600) { stabBuf.shift(); }
   if (stabBuf.length < 8) { return 0; }
   var mn = 1, mx = 0;
   for (var i = 0; i < stabBuf.length; i++) {
@@ -274,7 +302,14 @@ function loadTrackerRuntime() {
   });
 }
 
+function reportPullupCameraStartup(stage) {
+  if (CONFIG.exercise === 'pullups' && usesExperimentalFormTracking()) {
+    postRN({ type: 'formdebug', message: 'PULLUP_STARTUP ' + stage });
+  }
+}
+
 function initCameraFlow() {
+  reportPullupCameraStartup('loading-tracker');
   showOverlay(CONFIG.trackerAssetMode === 'remote' ? 'Loading camera tracking engine…' : 'Loading on-device tracking engine…', CONFIG.trackerAssetMode !== 'remote');
   loadTrackerRuntime().then(function (runtime) {
       var makeOpts = function (delegate) {
@@ -301,21 +336,12 @@ function initCameraFlow() {
       });
   }).then(function (lm) {
     landmarker = lm;
+    reportPullupCameraStartup('starting-camera');
     showOverlay('Starting camera…', false);
     return startCamera();
   }).then(function () {
     if (usesCameraBackground()) {
-      // Leave a tiny invisible video surface alive for pose tracking and canvas
-      // composition while removing the old thumbnail and camera toggle from view.
-      previewEl.style.display = 'block';
-      previewEl.style.opacity = '0';
-      previewEl.style.pointerEvents = 'none';
-      previewEl.style.width = '1px';
-      previewEl.style.height = '1px';
-      previewEl.style.right = '-4px';
-      previewEl.style.bottom = '-4px';
-      previewEl.style.border = 'none';
-      if (camBtnEl) { camBtnEl.style.display = 'none'; }
+      hideCameraPreview();
     } else {
       if (!camHidden) { previewEl.style.display = 'block'; }
       if (camBtnEl) { camBtnEl.style.display = 'block'; }
@@ -323,10 +349,12 @@ function initCameraFlow() {
     calibrationReadyAt = performance.now() + CALIBRATION_START_DELAY_MS;
     if (usesExperimentalFormTracking()) { resetExperimentalFormTracking(); }
     state = 'waitTop';
+    reportPullupCameraStartup('camera-ready');
     stabBuf = [];
     trackingLoopActive = true;
     requestAnimationFrame(trackLoop);
   }).catch(function (err) {
+    reportPullupCameraStartup('camera-error');
     console.error(err);
     var detail = err && (err.stack || err.message) ? String(err.stack || err.message) : String(err);
     showOverlay('Could not start camera tracking.<br><br><small>The tracking engine or camera could not initialize. Please try again.</small>', false);
@@ -431,7 +459,7 @@ function updatePushups(norm) {
 
 // ---------- Camera toggle ----------
 function _toggleCam() {
-  if (usesCameraBackground()) { return; }
+  if (usesCameraBackground() || (state !== 'waitTop' && state !== 'waitBottom')) { return; }
   camHidden = !camHidden;
   previewEl.style.display = camHidden ? 'none' : 'block';
   camBtnEl.textContent = camHidden ? '🚫📷' : '📷';

@@ -44,3 +44,6 @@ README.md
 /apps/mobile/.env.*
 !/apps/mobile/.env.example
 .DS_Store
+
+# Reference-only retired features never enter native build uploads.
+/archive/

@@ -2,9 +2,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
 import { File, Paths, type FileHandle } from 'expo-file-system';
 import * as Haptics from 'expo-haptics';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import * as Sharing from 'expo-sharing';
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
+import { getVideoShareAvailability, shareGameplayVideo, type VideoShareDestination } from '@/services/videoSharing';
 import { StatusBar } from 'expo-status-bar';
+import { adEnvironment, prepareResultInterstitial, resultAdGate, settlePrivacyBeforeGameplay } from '@/services/monetization';
 import {
   ArrowRight,
   Camera,
@@ -23,6 +24,7 @@ import {
   Linking,
   Platform,
   Share,
+  ScrollView,
   Text,
   TouchableOpacity,
   useWindowDimensions,
@@ -42,6 +44,7 @@ import {
 import { getBirdStageArt } from '@/utils/game/birdStageArt';
 import { loadBirdAssetDataUri } from '@/utils/game/birdWebAsset';
 import { getBird } from '@/utils/game/birds';
+import { isLaunchGameMode } from '@/utils/game/gameModes';
 import {
   GAME_WEB_BASE_URL,
   GAME_WEB_ORIGIN_WHITELIST,
@@ -96,7 +99,8 @@ const CONFETTI_COLORS = ['#F59E0B', '#FDE047', '#4ADE80', '#38BDF8', '#A78BFA', 
 // Store builds continue to use the tracker files bundled inside the app.
 const USE_REMOTE_TRACKER = __DEV__;
 const TRACKER_TRANSFER_CHUNK_SIZE = 96_000;
-const PRODUCTION_TRACKING_MODE: 'original' | 'form-test' = 'original';
+// Accepted form tracking is the single method for every exercise and game mode.
+const PRODUCTION_TRACKING_MODE = 'form-test' as const;
 const CONFETTI_PIECES = Array.from({ length: 22 }, (_, index) => ({
   id: index,
   left: `${4 + ((index * 37) % 92)}%` as `${number}%`,
@@ -159,14 +163,36 @@ function normalizeVideoExtension(extension?: string, mimeType?: string) {
   return 'webm';
 }
 
-function videoUti(mimeType: string, extension: string) {
-  if (mimeType.includes('mp4') || extension === 'mp4') return 'public.mpeg-4';
-  if (mimeType.includes('quicktime') || extension === 'mov') return 'com.apple.quicktime-movie';
-  if (mimeType.includes('webm') || extension === 'webm') return 'org.webmproject.webm';
-  return 'public.movie';
-}
 
 export default function GameScreen() {
+  const { mode } = useLocalSearchParams<{ mode?: string }>();
+  const supportedMode = isLaunchGameMode(mode);
+  const router = useRouter();
+  const [privacySettled, setPrivacySettled] = useState(false);
+  useEffect(() => {
+    if (!supportedMode) return;
+    let mounted = true;
+    void settlePrivacyBeforeGameplay().then(() => {
+      if (mounted) setPrivacySettled(true);
+    });
+    return () => { mounted = false; };
+  }, [supportedMode]);
+  if (!supportedMode) return <Redirect href="/(tabs)" />;
+  if (privacySettled) return <GameContent />;
+  return (
+    <View style={{ flex: 1, backgroundColor: '#0F172A', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
+      <ActivityIndicator color="#FFFFFF" size="large" />
+      <Text accessibilityRole="text" style={{ color: '#FFFFFF', marginTop: 18, textAlign: 'center' }}>
+        Finishing privacy choices before your game…
+      </Text>
+      <TouchableOpacity accessibilityRole="button" onPress={() => router.back()} style={{ padding: 20 }}>
+        <Text style={{ color: '#7DD3FC', fontWeight: '700' }}>Back</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function GameContent() {
   const insets = useSafeAreaInsets();
   const { height: viewportHeight } = useWindowDimensions();
   const router = useRouter();
@@ -175,24 +201,19 @@ export default function GameScreen() {
     mode?: string;
     levelId?: string;
     target?: string;
-    challengeCode?: string;
     backgroundMode?: string;
     record?: string;
-    trackingMode?: string;
   }>();
 
   const mode = typeof params.mode === 'string' ? params.mode : 'level';
   const levelId = params.levelId ? parseInt(String(params.levelId), 10) : 1;
   const paramTarget = params.target ? parseInt(String(params.target), 10) : 0;
-  const challengeCode = typeof params.challengeCode === 'string' ? params.challengeCode : null;
   const backgroundMode = params.backgroundMode === 'camera' ? 'camera' : 'sky';
   const recordRun = params.record === 'true' || params.record === '1';
-  const trackingMode =
-    __DEV__ && params.trackingMode === 'form-test' ? 'form-test' : PRODUCTION_TRACKING_MODE;
 
   const isEndless = mode === 'endless';
   const level = isEndless ? ENDLESS_BASE : getLevel(levelId);
-  const target = isEndless ? 0 : paramTarget > 0 ? paramTarget : level.targetScore;
+  const target = isEndless ? 0 : mode === 'daily' && paramTarget > 0 ? paramTarget : level.targetScore;
 
   const birdId = useGameStore((s) => s.birdId);
   const exerciseMode = useGameStore((s) => s.exerciseMode);
@@ -200,7 +221,6 @@ export default function GameScreen() {
   const recordSession = useGameStore((s) => s.recordSession);
   const recordTut = useGameStore((s) => s.recordTut);
   const completeDaily = useGameStore((s) => s.completeDaily);
-  const addChallengeWon = useGameStore((s) => s.addChallengeWon);
   const totalTutSeconds = useGameStore((s) => s.totalTutSeconds);
   const exerciseTut = useGameStore((s) => s.exerciseTut);
   const lastActivityDate = useGameStore((s) => s.lastActivityDate);
@@ -229,6 +249,8 @@ export default function GameScreen() {
   const [microphonePermission, requestMicrophonePermission] = useMicrophonePermissions();
   const [recordWithoutAudio, setRecordWithoutAudio] = useState(false);
   const [runKey, setRunKey] = useState(0);
+  const resultSubmissionGeneration = useRef(0);
+  useEffect(() => () => { resultSubmissionGeneration.current += 1; }, []);
   const [result, setResult] = useState<GameResult | null>(null);
   const [competitionResultState, setCompetitionResultState] =
     useState<CompetitionResultState | null>(null);
@@ -243,6 +265,38 @@ export default function GameScreen() {
   const [recordingError, setRecordingError] = useState<string | null>(null);
   const [recordedVideo, setRecordedVideo] = useState<RecordedVideo | null>(null);
   const [shareBusy, setShareBusy] = useState(false);
+  const shareBusyRef = useRef(false);
+  const resultExitRef = useRef<ReturnType<typeof resultAdGate.createResult> | null>(null);
+  const resultActionClaimed = useRef(false);
+  const [resultActionBusy, setResultActionBusy] = useState(false);
+  const recordingIsFinalizing = recordingPhase === 'recording' || recordingPhase === 'preparing';
+  useEffect(() => {
+    resultActionClaimed.current = false;
+    setResultActionBusy(false);
+    if (!result) return;
+    const opportunity = resultAdGate.createResult(
+      recordingIsFinalizing ? null : prepareResultInterstitial(),
+      adEnvironment,
+    );
+    resultExitRef.current = opportunity;
+    return () => { opportunity.dispose(); resultExitRef.current = null; };
+  }, [result, runKey, recordingIsFinalizing]);
+  const performResultAction = (action: () => void) => {
+    if (!result || shareBusyRef.current || resultActionClaimed.current || !adEnvironment.isActive()) return;
+    resultActionClaimed.current = true;
+    setResultActionBusy(true);
+    const opportunity = resultExitRef.current;
+    if (opportunity) opportunity.exit(false, action);
+    else action();
+  };
+  const [videoShareAvailability, setVideoShareAvailability] = useState({ messages: false, mail: false });
+  useEffect(() => {
+    let active = true;
+    void getVideoShareAvailability().then((available) => {
+      if (active) setVideoShareAvailability(available);
+    });
+    return () => { active = false; };
+  }, []);
   const gameOverHandled = useRef(false);
   const recordingPhaseRef = useRef<RecordingPhase>('idle');
   const recordingSessionIdRef = useRef<string | null>(null);
@@ -339,9 +393,8 @@ export default function GameScreen() {
       isEndless &&
       competitionPlayerNameError(playerName) === null &&
       boardableExercises.includes(exerciseMode);
-    const kind = challengeCode ? 'challenge' : leaderboardEligible ? 'leaderboard' : null;
 
-    if (!competitionIsConfigured || !hasCompetitionTerms || !kind) {
+    if (!competitionIsConfigured || !hasCompetitionTerms || !leaderboardEligible) {
       competitionRunPromiseRef.current = Promise.resolve(null);
       return;
     }
@@ -350,14 +403,13 @@ export default function GameScreen() {
       console.warn('Pending competition results will retry later', error);
     });
     competitionRunPromiseRef.current = beginCompetitionRun({
-      kind,
+      kind: 'leaderboard',
       exercise: exerciseMode,
-      challengeCode,
     }).catch((error) => {
       console.warn('This run could not start an online verification session', error);
       return null;
     });
-  }, [challengeCode, exerciseMode, isEndless, playerName, runKey]);
+  }, [exerciseMode, isEndless, playerName, runKey]);
 
   // Resolve exactly one bundled PNG for this run. The request key changes only
   // for a deliberate retry/next-level run, never for five-second TUT updates.
@@ -428,9 +480,10 @@ export default function GameScreen() {
       if (!birdImageDataUri) return null;
       return buildGameHtml({
         trackerAssetMode: USE_REMOTE_TRACKER ? 'remote' : 'bundled',
-        trackingMode,
+        trackingMode: PRODUCTION_TRACKING_MODE,
         exercise: exerciseMode,
         endless: isEndless,
+        brandFirstPipe: mode === 'level' && level.id === 1,
         speed: level.speed,
         gapFrac: level.gapFrac,
         spawnMs: level.spawnMs,
@@ -456,12 +509,12 @@ export default function GameScreen() {
       exerciseMode,
       isEndless,
       level.id,
+      mode,
       recordRun,
       recordWithoutAudio,
       microphonePermission?.granted,
       skin.id,
       target,
-      trackingMode,
       runKey,
     ]
   );
@@ -517,6 +570,7 @@ export default function GameScreen() {
         const detail =
           error instanceof Error ? error.message : 'The bundled camera tracker could not be read.';
         console.error('Failed to transfer bundled camera tracker', error);
+        if (trackerTransferTokenRef.current !== transferToken) return;
         setTrackerLoadError(detail);
         webViewRef.current?.injectJavaScript(
           `window.__rejectTrackerAssets(${JSON.stringify(detail)});true;`
@@ -571,16 +625,20 @@ export default function GameScreen() {
         isEndless &&
         competitionPlayerNameError(playerName) === null &&
         ['pushups', 'squats', 'pullups'].includes(exerciseMode);
-      if (!competitionIsConfigured || (!challengeCode && !leaderboardEligible)) return;
+      if (!competitionIsConfigured || !leaderboardEligible) return;
 
-      setCompetitionResultState({
+      const generation = resultSubmissionGeneration.current;
+      const publishStatus = (state: CompetitionResultState) => {
+        if (resultSubmissionGeneration.current === generation) setCompetitionResultState(state);
+      };
+      publishStatus({
         status: 'pending',
         message: 'Publishing online result…',
       });
       try {
         const session = await competitionRunPromiseRef.current;
         if (!session) {
-          setCompetitionResultState({
+          publishStatus({
             status: 'rejected',
             message: 'Online verification did not start, so this result was not published.',
           });
@@ -595,23 +653,20 @@ export default function GameScreen() {
           score,
           durationMs: Math.round(Math.max(0, durationMs)),
         });
-        setCompetitionResultState(outcome);
+        publishStatus(outcome);
         if (outcome.status === 'accepted') {
           if (isEndless) queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
-          if (challengeCode) {
-            queryClient.invalidateQueries({ queryKey: ['challenge', challengeCode] });
-          }
         }
       } catch (error) {
         console.warn('Competition result could not be queued', error);
-        setCompetitionResultState({
+        publishStatus({
           status: 'rejected',
           message:
             'Online result could not be queued. Your local level and training progress are safe.',
         });
       }
     },
-    [challengeCode, exerciseMode, isEndless, playerName, queryClient]
+    [exerciseMode, isEndless, playerName, queryClient]
   );
 
   const beginVideoRecording = useCallback(
@@ -689,7 +744,8 @@ export default function GameScreen() {
       sessionId: string,
       mimeType: string | undefined,
       extension: string | undefined,
-      chunkCount: number
+      chunkCount: number,
+      byteLength: number | undefined
     ) => {
       if (!recordRun || sessionId !== recordingSessionIdRef.current) return;
 
@@ -712,6 +768,10 @@ export default function GameScreen() {
         const file = recordingFileRef.current;
         if (!file?.exists || file.size <= 0) {
           throw new Error('The recorded video was empty.');
+        }
+
+        if (!Number.isSafeInteger(byteLength) || byteLength !== file.size) {
+          throw new Error('The recorded video size changed during transfer. Please record again.');
         }
 
         const startMetadata = recordingMetadataRef.current;
@@ -740,20 +800,14 @@ export default function GameScreen() {
     [failRecording, flushRecordingChunks, recordRun, updateRecordingPhase]
   );
 
-  const shareRecordedVideo = useCallback(async () => {
-    if (!recordedVideo || shareBusy) return;
+  const shareRecordedVideo = useCallback(async (destination: VideoShareDestination = 'apps') => {
+    if (!recordedVideo || shareBusyRef.current || resultActionClaimed.current) return;
+    shareBusyRef.current = true;
     setShareBusy(true);
     setRecordingError(null);
 
     try {
-      if (!(await Sharing.isAvailableAsync())) {
-        throw new Error('Sharing is not available on this device.');
-      }
-      await Sharing.shareAsync(recordedVideo.uri, {
-        dialogTitle: 'Share your Flap Fit gameplay video',
-        mimeType: recordedVideo.mimeType,
-        UTI: videoUti(recordedVideo.mimeType, recordedVideo.extension),
-      });
+      await shareGameplayVideo(recordedVideo, destination);
     } catch (error) {
       setRecordingError(
         error instanceof Error
@@ -761,9 +815,10 @@ export default function GameScreen() {
           : 'The video is ready, but it could not be shared. Please try again.'
       );
     } finally {
+      shareBusyRef.current = false;
       setShareBusy(false);
     }
-  }, [recordedVideo, shareBusy]);
+  }, [recordedVideo]);
 
   const onMessage = useCallback(
     (event: { nativeEvent: { data: string } }) => {
@@ -783,6 +838,7 @@ export default function GameScreen() {
         index?: number;
         data?: string;
         chunkCount?: number;
+        byteLength?: number;
         message?: string;
         requestId?: string;
         simd?: boolean;
@@ -827,7 +883,7 @@ export default function GameScreen() {
           failRecording('The gameplay recorder could not finish the temporary video.');
           return;
         }
-        completeVideoRecording(msg.sessionId, msg.mimeType, msg.extension, msg.chunkCount);
+        completeVideoRecording(msg.sessionId, msg.mimeType, msg.extension, msg.chunkCount, msg.byteLength);
         return;
       }
       if (msg.type === 'recordingerror') {
@@ -842,6 +898,10 @@ export default function GameScreen() {
           'Camera tracker failed inside the game WebView',
           msg.message ?? 'Unknown error'
         );
+        return;
+      }
+      if (msg.type === 'recordingdebug') {
+        if (__DEV__) console.info('Video finalization:', msg.message ?? 'No measurements');
         return;
       }
       if (msg.type === 'formdebug') {
@@ -890,7 +950,6 @@ export default function GameScreen() {
           tutSeconds: tutSecs,
         });
         if (mode === 'daily' && score >= target) completeDaily(dayKey());
-        if (challengeCode && score >= target) addChallengeWon();
         void submitScores(score, Math.max(0, msg.runDurationMs ?? tutSecs * 1000));
         const newStage = computeEvolutionStage(
           useGameStore.getState().totalTutSeconds,
@@ -911,12 +970,10 @@ export default function GameScreen() {
       level.id,
       isEndless,
       target,
-      challengeCode,
       exerciseMode,
       recordSession,
       recordTut,
       completeDaily,
-      addChallengeWon,
       submitScores,
       birdImageRequestKey,
       recordRun,
@@ -930,6 +987,7 @@ export default function GameScreen() {
   );
 
   const retry = () => {
+    resultSubmissionGeneration.current += 1;
     discardRecording();
     // A retry gets the newest evolution; an in-progress run never reloads for it.
     runBirdEvo.current = birdEvo;
@@ -953,6 +1011,7 @@ export default function GameScreen() {
       return;
     }
 
+    resultSubmissionGeneration.current += 1;
     discardRecording();
     // Prepare a clean run before replacing this route with the next standard
     // level. This also keeps the newest bird evolution without reloading an
@@ -974,11 +1033,11 @@ export default function GameScreen() {
         levelId: String(nextLevelId),
         backgroundMode,
         record: recordRun ? 'true' : 'false',
-        ...(trackingMode === 'form-test' ? { trackingMode: 'form-test' } : {}),
       },
     });
   };
   const leaveGame = useCallback(() => {
+    resultSubmissionGeneration.current += 1;
     discardRecording();
     router.back();
   }, [discardRecording, router]);
@@ -1130,7 +1189,7 @@ export default function GameScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: level.sky1 }}>
       <StatusBar style="light" hidden={Platform.OS === 'ios'} />
-      {webSource ? (
+      {webSource && !trackerLoadError ? (
         <WebView
           ref={webViewRef}
           key={runKey}
@@ -1181,7 +1240,13 @@ export default function GameScreen() {
                 if (birdImageErrorKey === birdImageRequestKey) {
                   setRunKey((key) => key + 1);
                 }
-                if (trackerLoadError) setTrackerRetryKey((key) => key + 1);
+                if (trackerLoadError) {
+                  trackerTransferTokenRef.current += 1;
+                  trackerRequestIdRef.current = null;
+                  setTrackerAssets(null);
+                  setTrackerLoadError(null);
+                  setTrackerRetryKey((key) => key + 1);
+                }
               }}
               style={{
                 borderRadius: 14,
@@ -1298,6 +1363,11 @@ export default function GameScreen() {
             ))}
           </View>
 
+          <ScrollView
+            style={{ width: '100%', maxWidth: 390, flexGrow: 0 }}
+            contentContainerStyle={{ alignItems: 'center', paddingVertical: 8 }}
+            showsVerticalScrollIndicator={false}
+          >
           <Animated.View
             style={{
               width: '100%',
@@ -1414,6 +1484,7 @@ export default function GameScreen() {
               </Text>
             </TouchableOpacity>
           </Animated.View>
+          </ScrollView>
         </View>
       ) : null}
 
@@ -1429,8 +1500,15 @@ export default function GameScreen() {
             alignItems: 'center',
             justifyContent: 'center',
             paddingHorizontal: 28,
+            paddingTop: insets.top,
+            paddingBottom: insets.bottom,
           }}
         >
+          <ScrollView
+            style={{ width: '100%', maxWidth: 380, flexGrow: 0 }}
+            contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}
+            showsVerticalScrollIndicator={false}
+          >
           <View
             style={{
               backgroundColor: '#FFFFFF',
@@ -1446,9 +1524,7 @@ export default function GameScreen() {
               {cleared
                 ? mode === 'daily'
                   ? 'Daily done!'
-                  : challengeCode
-                    ? 'Challenge beaten!'
-                    : 'Level cleared!'
+                  : 'Level cleared!'
                 : 'Run over'}
             </Text>
             {result.endReason ? (
@@ -1559,7 +1635,7 @@ export default function GameScreen() {
                 <TouchableOpacity
                   accessibilityRole="button"
                   accessibilityLabel="Share gameplay video"
-                  disabled={shareBusy}
+                  disabled={shareBusy || resultActionBusy}
                   onPress={() => void shareRecordedVideo()}
                   style={{
                     marginTop: 16,
@@ -1583,6 +1659,17 @@ export default function GameScreen() {
                     {shareBusy ? 'Opening share options…' : 'Share gameplay video'}
                   </Text>
                 </TouchableOpacity>
+                {Platform.OS === 'ios' && videoShareAvailability.messages ? (
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    accessibilityLabel="Send video with Messages"
+                    disabled={shareBusy || resultActionBusy}
+                    onPress={() => void shareRecordedVideo('messages')}
+                    style={{ width: '100%', marginTop: 10, minHeight: 44, borderRadius: 12, backgroundColor: '#EFF6FF', alignItems: 'center', justifyContent: 'center', opacity: shareBusy ? 0.6 : 1 }}
+                  >
+                    <Text style={{ color: '#1D4ED8', fontWeight: '800' }}>Messages</Text>
+                  </TouchableOpacity>
+                ) : null}
                 <Text
                   style={{
                     color: '#64748B',
@@ -1637,7 +1724,8 @@ export default function GameScreen() {
               <TouchableOpacity
                 accessibilityRole="button"
                 accessibilityLabel={`Start Level ${level.id + 1}`}
-                onPress={goToNextLevel}
+                disabled={shareBusy || resultActionBusy}
+                onPress={() => performResultAction(goToNextLevel)}
                 style={{
                   marginTop: recordRun ? 12 : 18,
                   backgroundColor: '#F59E0B',
@@ -1657,7 +1745,8 @@ export default function GameScreen() {
               </TouchableOpacity>
             ) : null}
             <TouchableOpacity
-              onPress={retry}
+              disabled={shareBusy || resultActionBusy}
+              onPress={() => performResultAction(retry)}
               style={{
                 marginTop: canGoNextLevel ? 10 : 18,
                 backgroundColor: canGoNextLevel ? '#FFF7ED' : '#F59E0B',
@@ -1684,7 +1773,8 @@ export default function GameScreen() {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={leaveGame}
+              disabled={shareBusy || resultActionBusy}
+              onPress={() => performResultAction(leaveGame)}
               style={{
                 marginTop: 10,
                 backgroundColor: '#F1F5F9',
@@ -1701,6 +1791,7 @@ export default function GameScreen() {
               <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 15 }}>Done</Text>
             </TouchableOpacity>
           </View>
+          </ScrollView>
         </View>
       ) : null}
     </View>

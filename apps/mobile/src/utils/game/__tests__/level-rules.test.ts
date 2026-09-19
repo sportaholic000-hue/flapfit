@@ -28,37 +28,34 @@ describe('level run rules', () => {
     expect(ENDLESS_BASE.maxScore).toBe(0);
   });
 
-  it('only ends runs for score cap, collision, confirmed form failure, or sustained tracking interruption', () => {
+  it('only ends runs at level completion or a physical collision', () => {
     const endGameCalls = SCRIPT_GAME.match(/\bendGame\(/g) ?? [];
     const criticalFormChecks = SCRIPT_GAME.match(/fatalFormFailureConfirmed\(/g) ?? [];
     const interruptionChecks = SCRIPT_GAME.match(/formTrackingInterruptionConfirmed\(/g) ?? [];
 
-    expect(endGameCalls).toHaveLength(7); // One definition and six ending paths.
-    expect(SCRIPT_GAME).toContain("endGame(gameplayFormCheck.valid ? 'tracking' : 'form')");
-    expect(SCRIPT_GAME).toContain("endGame(resumeFormCheck.valid ? 'tracking' : 'form')");
-    expect(criticalFormChecks).toHaveLength(3);
-    expect(interruptionChecks).toHaveLength(3);
+    expect(endGameCalls).toHaveLength(3); // One definition, level completion, collision.
+    expect(criticalFormChecks).toHaveLength(2);
+    expect(interruptionChecks).toHaveLength(2);
     expect(SCRIPT_GAME).toContain('var FATAL_FORM_GRACE_MS = 350;');
     expect(SCRIPT_GAME).toContain('var FORM_TRACKING_INTERRUPTION_GRACE_MS = 1600;');
     expect(SCRIPT_GAME).toContain('if (CONFIG.maxScore > 0 && score >= CONFIG.maxScore) {');
-    expect(SCRIPT_GAME).toContain('if (collides()) { endGame(); }');
+    expect(SCRIPT_GAME).toContain('if (collides()) { endGame(crashReason); }');
     expect(SCRIPT_GAME).not.toContain('score >= CONFIG.target) { endGame(); }');
-    expect(SCRIPT_GAME).toContain("state = 'lost';");
-    expect(SCRIPT_GAME).toContain("state = 'resume';");
+    expect(SCRIPT_GAME).not.toContain("state = 'lost';");
+    expect(SCRIPT_GAME).not.toContain("state = 'resume';");
+    expect(SCRIPT_CORE).not.toContain('resumeEnd');
   });
 
-  it('briefly pauses on stale camera tracking from the exercise-specific landmark', () => {
+  it('keeps original tracking sources without any recovery pause', () => {
     expect(SCRIPT_CORE).toContain('lastHeadTrackTime');
     expect(SCRIPT_CORE).toContain('lastWristTrackTime');
     expect(SCRIPT_CORE).toContain('usesWristTracking() ? wristY : headY');
     expect(SCRIPT_CORE).not.toContain('wristY !== null ? wristY : headY');
-    expect(SCRIPT_GAME).toContain(
-      'if (!trackingFresh() || (!gameplayFormCheck.valid && !gameplayFormCheck.fatal)) {'
-    );
-    expect(SCRIPT_GAME).toContain('Fatal anti-cheat failures keep the game moving');
+    expect(SCRIPT_GAME).not.toContain("state === 'lost'");
+    expect(SCRIPT_GAME).not.toContain("state === 'resume'");
   });
 
-  it('ends sustained Form Test interruption but permits a brief recovery', () => {
+  it('confirms sustained interruption in every mode but permits brief tracking noise', () => {
     const helperStart = SCRIPT_GAME.indexOf('var formTrackingInterruptionSince');
     const helperEnd = SCRIPT_GAME.indexOf('// ---------- Composed-run recording', helperStart);
     const factory = new Function(
@@ -87,7 +84,7 @@ describe('level run rules', () => {
     fresh = false;
     expect(interrupted(valid, 3500)).toBe(true);
     formTest = false;
-    expect(interrupted(invalid, 3600)).toBe(false);
+    expect(interrupted(invalid, 3600)).toBe(true);
   });
 
   it('reports game over before deferring expensive camera cleanup', () => {
@@ -105,11 +102,10 @@ describe('level run rules', () => {
     expect(endGameScript).not.toContain('else { stopCameraAndTracking(); }');
   });
 
-  it('records one complete media container before slicing it for the native bridge', () => {
+  it('splits the completed recorder blob into bounded native bridge messages', () => {
     expect(SCRIPT_GAME).toContain('runRecorder.start();');
-    expect(SCRIPT_GAME).not.toContain('runRecorder.start(1000);');
-    expect(SCRIPT_GAME).toContain('queueRecordingBlob(event.data);');
     expect(SCRIPT_GAME).toContain('RECORDING_BRIDGE_CHUNK_BYTES');
+    expect(SCRIPT_GAME).toContain('queueRecordingBlob(result.blob);');
   });
 
   it('uses camera tracking exclusively', () => {

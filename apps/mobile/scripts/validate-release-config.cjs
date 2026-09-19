@@ -5,7 +5,8 @@ const { validateTrackerReleaseConfig } = require('./validate-tracker-release.cjs
 
 const appRoot = path.resolve(__dirname, '..');
 const repoRoot = path.resolve(appRoot, '..', '..');
-const appJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'app.json'), 'utf8')).expo;
+const baseAppJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'app.json'), 'utf8')).expo;
+const appJson = require('../app.config.js')({ config: baseAppJson });
 const easJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'eas.json'), 'utf8'));
 const mobilePackage = JSON.parse(fs.readFileSync(path.join(appRoot, 'package.json'), 'utf8'));
 const easIgnore = fs.readFileSync(path.join(repoRoot, '.easignore'), 'utf8');
@@ -131,10 +132,11 @@ if (
 if (appJson.ios?.bundleIdentifier !== 'com.flapfit.game') {
   failures.push('app.json: iOS bundle identifier must be com.flapfit.game');
 }
-if (appJson.ios?.supportsTablet !== false) {
-  failures.push(
-    'app.json: iOS tablet support must remain disabled for the approved iPhone-only 1.0 listing and screenshot set'
-  );
+if (appJson.ios?.supportsTablet !== true || appJson.ios?.isTabletOnly === true) {
+  failures.push('app.json: Flap Fit must support both iPhone and iPad');
+}
+if (appJson.ios?.requireFullScreen !== true) {
+  failures.push('app.json: iPad must retain the full-screen exercise-camera experience');
 }
 if (appJson.android?.package !== 'com.flapfit.game') {
   failures.push('app.json: Android package must be com.flapfit.game');

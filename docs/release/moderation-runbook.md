@@ -47,8 +47,18 @@ removal, and full online-profile deletion. Test the published support and deleti
 signed-out browser.
 
 Use two clearly temporary player names such as `FFReviewA` and `FFReviewB` for the release test.
-Have A create a challenge and B find it by the six-character code. From B, submit one report against
-A and block A. Confirm the report appears in the moderator queue and the blocked content disappears
+Have A complete an eligible Endless run and locate A's result on B's exercise leaderboard.
+From B, submit one report against A's leaderboard result and block A. Confirm the report appears in the moderator queue and the blocked content disappears
 without changing surviving global ranks. Mark the test report `dismissed`, record the resolution
 evidence, then delete both temporary online profiles from the app. Confirm their public competition
 rows are gone; retain only the minimized resolved test report under the normal 180-day policy.
+
+## Remote deletion ownership check (September 18, 2026)
+
+The Info support ID equals the public leaderboard profile_id. It is a lookup reference only.
+Never delete or disclose data on the strength of that ID, a name, a score or a screenshot.
+Verification uses the authenticated DELETE /me action from the original app installation; guide
+the requester to Info > Delete online profile. Never ask users to send auth tokens or sensitive
+identity/workout documents. If the original anonymous session is lost, explain that ownership
+cannot currently be established from public details and escalate the request; do not improvise
+an administrative deletion. The website deletion-page draft describes this limitation explicitly.

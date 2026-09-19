@@ -1,0 +1,26 @@
+import type { ExerciseMode } from './store';
+
+export const CHALLENGE_EXERCISE_NAMES: Record<ExerciseMode, string> = {
+  pushups: 'Push-ups', squats: 'Squats', pullups: 'Pull-ups', biceps: 'Bicep curls',
+  lateralraise: 'Lateral raises', shoulderpress: 'Shoulder press',
+};
+export type SavedChallenge = {
+  code: string;
+  target_score: number;
+  exercise: ExerciseMode | null;
+};
+export function challengeExerciseName(exercise: ExerciseMode | null | undefined): string {
+  return exercise == null ? 'Any exercise' : CHALLENGE_EXERCISE_NAMES[exercise];
+}
+export function resolveGameExercise(mode: string, requested: unknown, lobbyExercise: ExerciseMode): ExerciseMode {
+  if (mode !== 'challenge' || requested == null) return lobbyExercise;
+  if (typeof requested !== 'string' || !Object.prototype.hasOwnProperty.call(CHALLENGE_EXERCISE_NAMES, requested)) {
+    throw new Error('This challenge has an invalid exercise. Reload the challenge from Compete.');
+  }
+  return requested as ExerciseMode;
+}
+export function challengeShareMessage(challenge: SavedChallenge): string {
+  return 'I challenge you to score ' + challenge.target_score + ' pipes with ' +
+    challengeExerciseName(challenge.exercise) + ' in Flap Fit! Enter code ' +
+    challenge.code + ' in the Compete tab.';
+}

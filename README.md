@@ -1,6 +1,13 @@
 # Flap Fit
 
-Private source repository for the Flap Fit iOS and Android fitness game.
+Source repository for the Flap Fit iOS and Android fitness game.
+
+## Current audit candidate
+
+Start with [`docs/release/audit-handoff-2026-09-18.md`](docs/release/audit-handoff-2026-09-18.md).
+The owner accepted tracking `2026-09-18.9-foot-return` for all six exercises. The current source
+passes 391 tests in 33 suites and production configuration validation. Native build/device evidence,
+store screenshots, and final store/privacy requirements remain open; this is not a submission approval.
 
 ## Authoritative source
 
@@ -55,10 +62,9 @@ The full physical and store-release gates are in
 
 ## Release safeguards
 
-- Production builds intentionally fail until the hardened Form Test tracker is physically approved,
-  promoted, and matched to its approved rules version.
-- The Expo Go checkpoint intentionally has no native ad SDK. Add AdMob and RevenueCat only after
-  gameplay approval and explicit dependency approval, following
+- Production builds require the selected tracker and its exact approved rules version to match.
+- The approved AdMob and RevenueCat native integrations are included. Expo Go skips native
+  monetization; installed-build verification is still required. See
   [`docs/release/monetization-integration-plan.md`](docs/release/monetization-integration-plan.md).
 - Never commit a Supabase service-role/secret key, Apple signing credential, Google service account,
   AdMob account credential, or RevenueCat secret. Only public client values belong in the app.

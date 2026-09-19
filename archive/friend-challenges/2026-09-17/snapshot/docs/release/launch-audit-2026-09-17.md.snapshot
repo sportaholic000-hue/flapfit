@@ -1,0 +1,123 @@
+# Flap Fit launch readiness — September 17, 2026
+
+The launch goal is blocked pending owner approvals and real-device evidence; it is not complete. No Apple, Google Play, or Shipaton submission has been made.
+Use this status with the physical test matrix; older dated audit notes describe earlier candidates.
+
+## Implemented and checked
+
+- The approved sharing and ad packages are installed at their approved versions. iOS Messages and
+  Mail use native composers; social sharing still uses the system share sheet and the full video file.
+  The user confirmed full-duration text delivery, correct video duration and audio, and long iPhone
+  Snapchat clips. No claim is made that a receiving social app automatically returns control.
+- Fixed the iOS attachment type bug in the approved expo-sms 57.0.2 source using a checked-in
+  Yarn patch. Apple's composer now receives the computed UTI instead of a MIME string. Yarn's
+  immutable install passed; only the SMS patch entry changed in the existing dependency graph.
+  Expo Go retains the complete-file system share path because its bundled native SDK cannot use
+  this patch. The native Messages shortcut still requires an installed-build send/cancel test.
+- Ads are eligible only after Done, Try Again, or Next Level, with the app foregrounded and sharing
+  finished. First exit is free, at most one ad per two exits, at least 90 seconds between displays.
+  Result arrival, a share callback, and returning to the foreground do not trigger ads.
+- Consent setup cannot open a late form over active gameplay. Native ads are skipped in Expo Go;
+  preview uses test units, production uses the configured live units. SDK failure and unavailable
+  ads preserve the selected result action. A started native presentation waits for close/failure
+  rather than navigating under a delayed ad.
+- RevenueCat manual AdTracker integration sends ad lifecycle/revenue events with a separate
+  anonymous identifier. It does not receive camera, fitness, score, player-name, or challenge data.
+  No purchases, subscriptions, paywalls, or remove-ads product were added.
+- Both Flap Fit AdMob apps and result-exit interstitials exist. Impression-level ad revenue is on.
+  European and US privacy messages are saved drafts for the two Flap Fit apps. European refusal is
+  enabled in all regions. Ad partner settings are account-wide and were not changed; the account
+  also contains another app. Google states those partners can apply to non-personalized ads too.
+- New challenge codes save the selected exercise and pipe-score target. Opening one uses its saved
+  exercise regardless of the lobby. The server rejects mismatched attempts. Level 3 is retained;
+  challenges were not silently changed to Endless. Three existing codes remain Any exercise.
+  Sharing a saved code uses its saved target, so editing the next draft cannot change its message.
+- The lobby onboarding-preview button is removed. First-use onboarding and Info access remain.
+  Top-50 exercise leaderboards and the hidden Sky-mode camera preview are retained.
+
+## Verification evidence
+
+- Full mobile Jest after the iOS attachment patch and Expo Go routing guard: **24 suites,
+  176 tests passed**. TypeScript and strict oxlint passed. This includes the PG re-consent regression.
+- Yarn immutable install passed. Installed native source uses the correct UTI; the patch is included
+  by EAS source rules; the lockfile has no unrelated dependency changes. The pre-existing staged
+  Git patch still matches its saved baseline. These checks do not substitute for Swift compilation.
+- Live API: all six challenge exercise bindings passed create/read/matching-run/wrong-exercise
+  checks; invalid input was rejected; old clients still work. Terms, run timing, replay protection,
+  idempotent retries, and deletion also passed. Temporary test profile deletion returned 200.
+  Post-test database query confirmed zero LaunchTest profiles and exactly three original codes.
+- `flapfit-game` version **6** is active with JWT verification enabled. Additive exercise migration
+  is live. Local file: `20260917072007_bind_challenges_to_exercise.sql`; hosted version:
+  `20260917072148`. Earlier local/hosted timestamps also differ; names match. Do not blindly run
+  a CLI database push against this history.
+- Public tables have RLS and deny direct client access. Privileged RPCs, including the new one,
+  deny anon/authenticated execution. Cron schema usage is denied to both roles. Security advisors
+  still list generic Cron policies and disabled leaked-password protection; the app uses anonymous
+  auth without a password flow. These are recorded rather than hidden or called fixed.
+- Production-environment native configuration inspection passed: correct bundle/app IDs, delayed
+  AdMob measurement, no ATT description, 50 SKAdNetwork entries, blocked Android advertising-ID
+  and AdServices ID/attribution permissions.
+- Current production-environment JavaScript exports passed for both platforms after the SMS
+  patch, sharing guard, challenge binding, PG fix, and Android RevenueCat configuration. iOS:
+  3,724 modules / 106 assets; Android: 3,818 modules / 110 assets. Input fingerprints were unchanged
+  across export. Logs, bundle hashes, and evidence are in current-bundles under the local audit
+  folder. These are local bundles, not native builds, device tests, or store uploads.
+- Latest Expo Doctor: **20/21 checks passed**. Node's schema fetch failed, but the unchanged
+  official SDK 57 schema response downloaded through verified PowerShell HTTPS passed the same
+  validator. The transport fallback is logged explicitly; other checks remain unchanged. The only
+  finding is the three reviewed Expo patch recommendations. No warnings were excluded.
+- Four public release pages passed HTTPS/content checks. Public policy copy still needs the
+  prepared advertising update; working URLs do not prove accurate disclosures.
+
+## Remaining launch gates
+
+1. **Pull-up and exercise acceptance:** physically test Form Test 2026-09-16.9 on iPhone/iPad and
+   Android, including planted feet, calf raises, actual hanging/reps, full lockout, close shoulder
+   press with elbows visible, and uninterrupted pipes. Production promotion and the approval marker
+   remain unset. Camera landmarks cannot independently prove physical contact with a floor or bar.
+2. **RevenueCat credentials:** Flap Fit project `proja58d3dbd` has Ads access
+   (dashboard URL segment `a58d3dbd`; full ID verified in Project Settings). The App Store registration
+   still needs its private Apple key upload and public iOS SDK key. The Android configuration
+   `app5d011c6989` is saved and its public SDK key is wired into all three EAS profiles.
+   Google purchase-service credentials were not created or uploaded; no purchase products exist.
+   Apple shows original key `5QBW7NBXRG` as downloaded, but no local private .p8 was recovered.
+   Replacement-key creation was rejected by automatic approval review; an explicit replacement
+   approval is pending. No existing key was revoked or changed.
+3. **Native verification:** compile the exact final source and test consent, ad pacing/failures,
+   sharing send/cancel/return, camera/audio permissions, backgrounding and repeat runs. Confirm
+   RevenueCat receives real events and inspect merged privacy manifests/Android permissions.
+   The private EAS simulator compile attempt was rejected before execution by automatic approval
+   review because it uploads source to Expo. Explicit approval for that one private compile is
+   pending. No build was started, and no signing credentials were changed.
+4. **Website and consent publication:** prepared app-ads.txt and advertising policy updates need
+   approval in the separate website work. Then publish matching consent messages and verify AdMob
+   ownership/readiness after the store listings exist. AdMob also warns of account inactivity.
+   Fresh public checks still find the obsolete no-advertising-SDK statement and no AdMob or
+   RevenueCat disclosure; app-ads.txt returns the site's missing-page response. Website editing
+   remains with the user's separate task, as instructed in the original handoff.
+5. **Dependencies/build image:** exact patch diffs were reviewed. Sharing 57.0.20 changes metadata;
+   Expo/build-properties mainly add opt-in Xcode 27 scene support. The tested app versions remain
+   unchanged and iOS profiles now pin the supported Xcode 26.6 image. A simulator compile profile
+   is prepared. Expo patch warnings are recorded; final native compilation is still required.
+6. **Store material/account inputs:** genuine screenshots, review phone number, mailbox send/reply
+   check, account agreements/compliance, final privacy/age/health/access declarations, and actual
+   build testing remain. iPhone launch is first; Android remains a separate release gate.
+   Apple Business now verifies the Free Apps Agreement is Active, September 13, 2026 through
+   September 14, 2027. Paid Apps Agreement is New/unsigned; Apple states it is optional for free
+   apps. No paid app or IAP is planned. The DSA compliance declaration is still outstanding and
+   requires the owner's self-assessment and launch-region decision; no declaration or agreement
+   was accepted. Private account address details are not copied into this report.
+7. **Shipaton evidence:** a public US store release during the contest window and real RevenueCat
+   Ads evidence are required. SDK installation alone is insufficient. No contest entry was sent.
+
+## Sources for the account/release checks
+
+- [Shipaton submission requirements](https://www.shipaton.com/blog/how-to-submit-your-app-for-shipaton)
+- [Apple Messages attachment type API](https://developer.apple.com/documentation/messageui/mfmessagecomposeviewcontroller/addattachmentdata%28_%3Atypeidentifier%3Afilename%3A%29)
+- [RevenueCat manual ad tracking](https://www.revenuecat.com/docs/ad-monetization/manual-integration)
+- [Google CMP settings and ad partners](https://support.google.com/admob/answer/7666519?hl=en)
+- [Supabase anonymous-policy advisory](https://supabase.com/docs/guides/database/database-advisors?queryGroups=lint&lint=0012_auth_allow_anonymous_sign_ins)
+- [Supabase password protection advisory](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection)
+
+- [Apple free-app agreement scope](https://developer.apple.com/help/glossary/paid-apps-agreement/)
+- [Apple DSA owner declaration](https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements)

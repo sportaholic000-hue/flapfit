@@ -1,0 +1,190 @@
+# Flap Fit physical release test matrix
+
+Use this checklist on the exact commit named at the top of the test session. Record the device,
+operating-system version, app source (Expo Go, TestFlight, or Play internal), result, and a short note
+for every failure. Record Form Test rules version `2026-09-16.9` with the exact commit; the
+continuous gameplay and collision-only endings changed in version `2026-09-16.8`. Retest any later commit before submission.
+
+## Expo Go gameplay approval
+
+Run Expo Go on an Android phone and any iOS device that already has an SDK 57-compatible Expo Go.
+This verifies JavaScript behavior and the remote development tracker, but does not replace
+signed-build testing of native permissions, recording, ads, RevenueCat ad-event reporting, or the
+bundled production tracker. A physical iPhone test remains mandatory before Apple submission.
+
+As of September 3, 2026, the App Store version of Expo Go supports SDK 57. Update Expo Go on
+physical iPhone/iPad devices before testing. For a live development server, iOS Expo Go requires
+the exact same Expo account as the CLI; membership in the project organization alone is not
+sufficient. See [Expo's current login requirements](https://expo.dev/changelog/expo-go-57-login).
+The CLI currently signs in as `sportaholic`. An independent tester can use that same authorized
+account on the device, or a separately authenticated server under the tester's own account.
+Do not request passwords in chat or modify Expo's account checks. Browser CLI login uses a
+localhost callback and must complete on the computer running that login process.
+
+Remote devices also require an internet-reachable tunnel; a LAN QR only works on the local
+network. The September 16 earlier tunnel attempt timed out. A new tunnel launch initially required explicit approval from automatic review. The user has
+approved the temporary Expo/ngrok tunnel and chosen to use the existing sportaholic Expo login
+on the brother's iPhone. The tunnel is connected on port 8082; the public iOS manifest, signed Expo Go manifest, and
+launch redirect returned HTTP 200/200/307 respectively. The complete iPhone bundle downloaded successfully through the public tunnel (HTTP 200,
+14,354,573 bytes); the first build/download took 190 seconds. Subsequent starts use the warmed
+Metro cache. Physical opening and gameplay on the brother's iPhone still require confirmation. The test URL is https://bcvv0gu-sportaholic-8082.exp.direct/_expo/link?platform=ios;
+the existing LAN server remains on port 8081. Flap Fit player sessions are separate from Expo
+login and stored on each device, so the brother can choose jrjrjr1 inside Flap Fit and exchange
+challenge codes with the owner while both use the same Expo login.
+
+A signed internal iOS build is another route and does not have Expo Go's account-match rule.
+The existing EAS `preview` profile requires registering the tester's device with an Apple
+Developer account. It runs the bundled production tracker, so it does not test Form Test unless
+a separate development candidate is prepared. Do not treat it as an equivalent Form Test build.
+
+Use `start:expo-go` for compatible devices on the computer's Wi-Fi. Use `start:expo-go:tunnel` only
+for a compatible Expo Go tester on another network. Share the direct Expo Go deep link returned by
+Metro's `/_expo/open?runtime=expo` endpoint, not an Expo dashboard/project URL. Do not clear `.expo`
+or Metro caches during a working session merely to generate another QR; keep the same process
+running so Fast Refresh stays active.
+
+- [ ] Open Info > View introduction again and verify all four onboarding screens, all six exercise
+      names, phone-placement copy, two-second setup buffer, bird selection, and the return to Info.
+      Confirm replaying the introduction does not reset local progress.
+- [ ] Cold-open an existing install and confirm the native splash moves to Home without a blank
+      app-controlled screen. If saved progress takes more than eight seconds, confirm branded loading
+      exposes Try loading again and never erases progress merely because it is slow.
+
+For each of Push-ups, Squats, Pull-ups, Bicep Curls, Lateral Raise, and Shoulder Press:
+
+- [ ] Original tracking calibrates both positions after the two-second reading/setup buffer.
+- [ ] Form Test calibrates both positions without requiring unsafe or unrealistic range of motion.
+- [ ] The phone-placement instructions match the actual usable setup.
+- [ ] Sky mode moves the bird correctly and a pipe collision immediately ends the run.
+- [ ] Live Camera mode keeps the complete camera background framed correctly.
+- [ ] In Original and Form Test, pipes never freeze during tracking loss and no recovery countdown appears.
+      Sustained loss releases the bird into a fall; only an actual collision ends the run.
+- [ ] Level completion occurs at the configured target and never randomly before 60 pipes.
+- [ ] Next Level preserves the selected background, recording choice, exercise, and Form Test mode.
+
+Additional protected-form checks:
+
+- [ ] Pull-ups allow bent knees and a slight elbow bend at the bottom.
+- [ ] Pull-ups do not accept planted feet, one planted foot, head bobbing, or releasing the bar.
+      FAILED September 16: user could place feet on the floor after calibration and continue.
+      Further failure: calf raises with planted feet and the head well below the bar could start/play.
+      Version .9 now checks individual toe/heel contact, reliable eye positions, and separate grips.
+      Retest the calf-raise case and real suspended pull-ups on both Android and iPad; confirm the
+      on-screen development label says Form Test 2026-09-16.9. Automated coverage is not phone approval.
+- [ ] Shoulder press calibrates and plays close to the camera with both shoulders/elbows visible,
+      wrists cropped overhead, and hands near shoulders at the bottom. Reject one-arm movement;
+      whole-body bobbing must not move the controller.
+- [ ] Full extension in all six exercises holds the bird at the corresponding top/bottom endpoint,
+      including beyond the calibrated range. No warning pause or forced fall occurs for lockout alone.
+      Pipes keep moving and cause normal collisions.
+- [ ] Both tracking modes keep gameplay and recording moving through brief tracking/form loss.
+      Tracking resumes immediately without a countdown. Confirmed failure makes the bird fall
+      while pipes and recording keep moving until impact; the results overlay is excluded.
+- [ ] Brief camera or landmark loss allows recovery; confirmed form failure or sustained stale
+      tracking/invalid form releases control and causes a crash. Confirm this for all six exercises.
+- [ ] The result card identifies a crash caused by unverified form or lost tracking.
+- [ ] Push-ups work from a view where the player can still see the screen.
+- [ ] Push-ups do not accept head bobbing or hands leaving the supporting surface.
+- [ ] Squats do not accept bending only at the waist.
+
+## Recording and sharing
+
+September 16 Android Expo Go candidate observation: the user confirmed full-video delivery through
+text, working video sound, and a correctly displayed video duration. Snapchat accepted the full
+25-second item and delivered 10 + 10 + 5-second Snaps. In the latest Snapchat test, the first
+Android Back returned to Snapchat's video screen and the second returned to Flap Fit. Manual
+return is confirmed for that test; automatic return remains unresolved and the extra Back step
+is a reported usability problem. These observations do not complete the signed-build or
+other-destination checks below. Prioritize TikTok
+posts, Instagram Reels, and Facebook Reels for the next social tests.
+
+- [ ] Record & Play asks for microphone permission only after the user chooses it.
+- [ ] Continue without sound works after microphone denial.
+- [ ] The red RECORDING indicator appears only while capture is active.
+- [ ] Recording starts after 3-2-1 and before gameplay, ends at collision or level completion, and
+      includes the full camera/game composition without the countdown or result overlay.
+- [ ] Time from collision or 60th pipe to the visible result card on a recorded and an unrecorded
+      run. The result must appear promptly while video preparation continues, with no frozen game.
+- [ ] Share a timed 30–60 second run to another device. Play the received file and inspect its
+      actual duration, audio sync, orientation, and complete gameplay. Record separately whether
+      a share-sheet preview says 0–1 seconds despite the received file having the correct duration.
+- [ ] Shared video contains understandable game audio and microphone audio when permission is granted.
+- [ ] In an installed iPhone build, send and cancel a full 25–60 second clip with the Messages
+      shortcut. Confirm the attachment is accepted, duration/audio are intact on the receiving
+      device, and dismissing the composer returns to the same Flap Fit result. Repeat with Mail.
+      Expo Go intentionally uses system sharing for Messages because its native SDK cannot load
+      the checked-in attachment-type fix; Expo Go cannot approve this native shortcut.
+- [ ] Cancelled and completed share flows return safely to Flap Fit.
+      For each destination, record Back steps after send/cancel, launcher/Recents behavior, and
+      whether the same result and video survive. Test standalone Android separately from Expo Go.
+      The local Android launcher-return plugin requires a fresh installed build. Test Home ->
+      Flap Fit icon after sending: it should restore the result, not Snapchat. This does not claim
+      an automatic return when Send is tapped. Repeat iOS share/return tests independently.
+- [ ] A recording or share failure never loses the game result or blocks Done, Try Again, or Next
+      Level.
+- [ ] No old recording appears on a later result screen and no recording is stored in an in-app
+      library.
+
+## Progress, evolution, and Stats
+
+- [ ] The selected bird and color survive a cold restart, including Onyx/black.
+- [ ] The same evolution artwork appears on Home, Stats, and in flight.
+- [ ] Stage changes occur at the documented tracked-time thresholds and Legend is unmistakably the
+      strongest stage.
+- [ ] Five-day and seven-day inactivity regression behaves as disclosed without deleting earned time.
+- [ ] Total Stats bars show combined daily time.
+- [ ] Each exercise filter shows only that exercise's daily and monthly time.
+- [ ] New sessions show exercise, pipes, and tracked time without calories or misleading rep totals.
+
+## Compete and player codes
+
+- [ ] Main gameplay works before Competition Terms acceptance and while offline.
+- [ ] Compete requires the current Terms before publishing a name, result, or challenge.
+- [ ] Invalid, offensive, one-character, and over-20-character names are rejected; a valid name
+      persists after restart.
+- [ ] Endless results appear only for Push-ups, Squats, and Pull-ups and display true global rank.
+- [ ] A six-character player challenge code can be created, shared, found on another device, played,
+      and refreshed for all six exercises.
+- [ ] Create a code for each exercise, select a different lobby exercise on the receiving device,
+      then open the code: its saved exercise and pipe target must win. Challenges use Level 3;
+      the three older Any exercise codes preserve their legacy behavior.
+- [ ] Replaying the same server run does not duplicate or alter the result.
+- [ ] A lower score does not replace a player's existing best result.
+- [ ] Report and Block are visible and work; blocking does not renumber the displayed global ranks.
+- [ ] With networking disabled at game-over, the result remains queued and appears after reconnection.
+- [ ] Expired or invalid challenge codes fail clearly without crashing.
+- [ ] Info > Delete online profile removes the online identity and competition rows while local game
+      progress remains.
+
+## Signed TestFlight and Play internal approval
+
+Repeat all applicable checks above on the exact signed binaries, then verify:
+
+- [ ] Splash, icon, bird art, exercise art, and the bundled MediaPipe tracker load on a clean install
+      with no development server.
+- [ ] Camera denial, microphone denial, Settings re-enable, interruption, background/foreground, low
+      light, and cold start recover cleanly.
+- [ ] Record & Play output opens and shares from the signed iOS and Android builds.
+- [ ] Consent appears before any ad request where required and can be reopened from Info.
+- [ ] Ads appear only after an eligible result action, never during gameplay, recording, or sharing.
+- [ ] Closing or failing an ad always completes Done, Try Again, or Next Level exactly once.
+- [ ] RevenueCat receives only the approved ad lifecycle and paid-impression events; RevenueCat
+      failure never blocks free gameplay. Flap Fit 1.0 has no purchase, subscription, paywall, or
+      remove-ads UI.
+- [ ] Public marketing, Privacy, Terms, deletion, and support links open signed out over HTTPS.
+- [ ] Apple privacy and Google Data Safety answers match the exact SDK/network behavior observed.
+
+## Store evidence
+
+- [ ] Capture 1 to 10 genuine 6.9-inch iPhone screenshots from the approved production candidate.
+- [ ] Capture 4 to 8 genuine Android phone screenshots from the approved production candidate.
+- [ ] Remove personal notifications and test-account identifiers from captures.
+- [ ] Run `corepack yarn workspace mobile release:assets` and resolve every failure.
+- [ ] Save the completed matrix and final screenshot set in the private repository before submission.
+
+## September 17 follow-up
+
+- Confirmed by the user: brother opened the iPhone tunnel and both players exchanged working challenge codes. Flap Fit identities stayed separate despite using the same Expo login.
+- Confirmed by the user: brother sent intact 25-second and over-30-second Snapchat clips from iPhone; recipient-app return still required manual navigation. Earlier Android Snapchat delivery split 25 seconds into 10+10+5. Do not generalize either delivery behavior across platforms.
+- Candidate: after reloading, Sky mode hides its mini camera and toggle at successful calibration completion, before 3-2-1, while tracking stays active. Test Android, iPhone, and iPad; confirm unsuccessful calibration still has a preview, a fresh retry shows it again, and full-screen Camera mode still displays and records correctly.
+- Live: existing exercise leaderboards support up to 50 entries (mobile cap 50; Supabase flapfit-game version 6 cap 50). Current population can be fewer than 50. Score limits are unchanged; new friend challenges now bind their saved exercise.

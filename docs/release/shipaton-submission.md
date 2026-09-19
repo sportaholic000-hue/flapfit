@@ -24,8 +24,11 @@ Official sources:
 
 ## Required submission material
 
+The editable text draft is in `shipaton-entry-draft.md`. It is not a completed submission and
+must be checked against the released build before use.
+
 - [ ] Public store URL for the released Flap Fit listing.
-- [ ] RevenueCat project ID from RevenueCat project settings.
+- [x] RevenueCat project ID from Flap Fit Project Settings: `proja58d3dbd` (verified September 17, 2026). The dashboard URL uses the shorter `a58d3dbd` segment.
 - [ ] Text description explaining the working product and RevenueCat Ads integration.
 - [ ] Public YouTube or Vimeo demonstration video under two minutes.
 - [ ] Video shows Flap Fit running on a supported physical device and matches the released build.
@@ -57,7 +60,7 @@ minutes and film the exact released native build on a physical device:
 2. Show two-position calibration followed by continuous camera-controlled gameplay.
 3. Live Camera Record & Play and the resulting native share action.
 4. Bird evolution and tracked-training Stats.
-5. Optional real Compete leaderboard and player-code challenge if physically verified.
+5. Optional real Compete leaderboard, Daily Challenge and complete gameplay video sharing, if physically verified.
 6. A brief, truthful RevenueCat Ads result-action demonstration from the released candidate.
 
 Do not claim that pose tracking proves perfect form, that calories or complete repetitions are

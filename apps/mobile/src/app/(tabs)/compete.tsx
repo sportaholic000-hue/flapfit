@@ -1,15 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Image, type ImageSource } from 'expo-image';
-import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
   CheckCircle2,
   FileText,
   Medal,
   RefreshCw,
-  Search,
-  Share2,
-  Swords,
   Trophy,
 } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
@@ -18,7 +14,6 @@ import {
   Linking,
   Modal,
   ScrollView,
-  Share,
   Text,
   TextInput,
   TouchableOpacity,
@@ -35,11 +30,6 @@ import {
   flushPendingCompetitionResults,
   normalizeCompetitionPlayerName,
 } from '@/services/competitionApi';
-import {
-  isCompleteChallengeCode,
-  normalizeChallengeCode,
-  normalizeChallengeTarget,
-} from '@/utils/game/challengeInput';
 import { EXERCISE_IMAGES } from '@/utils/game/exerciseImages';
 import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
 
@@ -52,25 +42,6 @@ type LeaderboardRow = {
   exercise: string;
   is_me: boolean;
   rank: number;
-};
-
-type ChallengeData = {
-  challenge: {
-    id: string;
-    code: string;
-    creator_name: string;
-    creator_profile_id: string;
-    creator_is_me: boolean;
-    target_score: number;
-    level_id: number | null;
-  };
-  attempts: {
-    id: string;
-    profile_id: string;
-    player_name: string;
-    score: number;
-    is_me: boolean;
-  }[];
 };
 
 type LeaderboardExercise = 'pushups' | 'squats' | 'pullups';
@@ -104,7 +75,7 @@ const BOARD_TABS: {
 type ModerationTarget = {
   profileId: string;
   playerName: string;
-  contextType: 'leaderboard' | 'challenge' | 'challenge_attempt';
+  contextType: 'leaderboard';
   contextId: string;
 };
 
@@ -134,7 +105,7 @@ function openPlayerActions(target: ModerationTarget, onUpdated: () => void) {
   const confirmBlock = () => {
     Alert.alert(
       `Block ${target.playerName}?`,
-      'Their scores and challenge attempts will be hidden from you. You can reset your online identity from Info if needed.',
+      'Their leaderboard scores will be hidden from you. You can reset your online identity from Info if needed.',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -208,9 +179,9 @@ function CompetitionTermsModal({
               What becomes public
             </Text>
             <Text style={{ color: '#475569', lineHeight: 20, marginTop: 5 }}>
-              After you accept and use Compete, Flap Fit creates a private anonymous online
-              identifier. Your chosen player name, leaderboard score, challenge target, and
-              challenge result may be visible to other Flap Fit players. Your camera feed and
+              After you accept and use Compete, Flap Fit creates an anonymous online
+              profile. Its identifier may appear with leaderboard results. Your chosen player name and leaderboard scores may be visible to other
+              Flap Fit players. Your camera feed and
               recordings are never uploaded to competition services.
             </Text>
 
@@ -228,7 +199,7 @@ function CompetitionTermsModal({
             </Text>
             <Text style={{ color: '#475569', lineHeight: 20, marginTop: 5 }}>
               You can report or block other players from clearly labeled controls beside public
-              leaderboard results, challenges, and challenge attempts. Flap Fit may filter, hide,
+              leaderboard results. Flap Fit may filter, hide,
               remove, or restrict content or accounts that break these rules. You can permanently
               delete your online profile from the Info tab.
             </Text>
@@ -341,6 +312,19 @@ function LeaderboardPanel({
     staleTime: 30000,
   });
 
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = async () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    try {
+      const flushed = await flushPendingCompetitionResults();
+      await queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
+      if (flushed.pending > 0) Alert.alert('Scores still pending', 'Check your connection and tap Refresh to try again. Your local progress is safe.');
+      if (flushed.rejected.length > 0) Alert.alert('Some scores were not published', flushed.rejected.map((notice) => notice.message).join('\n'));
+    } catch {
+      Alert.alert('Could not refresh', 'Check your connection and try again. Your saved results remain on this device.');
+    } finally { setRefreshing(false); }
+  };
   const rows = data ?? [];
   const myRow = rows.find((r) => r.is_me) ?? null;
 
@@ -414,7 +398,10 @@ function LeaderboardPanel({
           <Text style={{ color: '#94A3B8', fontSize: 11 }}>{tab.desc}</Text>
         </View>
         <TouchableOpacity
-          onPress={() => queryClient.invalidateQueries({ queryKey: ['leaderboard', exercise] })}
+          accessibilityRole="button"
+          accessibilityLabel="Refresh scores and retry pending results"
+          disabled={refreshing}
+          onPress={() => void refresh()}
         >
           <RefreshCw size={15} color="#94A3B8" />
         </TouchableOpacity>
@@ -448,14 +435,14 @@ function LeaderboardPanel({
         <Text style={{ color: '#94A3B8', paddingVertical: 12, fontSize: 13 }}>Loading…</Text>
       ) : isError ? (
         <Text style={{ color: '#DC2626', fontSize: 12, paddingVertical: 12 }}>
-          Could not load scores — pull to refresh.
+          Could not load scores — tap Refresh to retry.
         </Text>
       ) : rows.length === 0 ? (
         <Text style={{ color: '#94A3B8', paddingVertical: 12, fontSize: 13, lineHeight: 18 }}>
           No scores yet.{'\n'}Play Endless with {tab.label} to be first!
         </Text>
       ) : (
-        rows.slice(0, 20).map((row, idx) => {
+        rows.slice(0, 50).map((row, idx) => {
           const isMe = row.is_me;
           return (
             <View
@@ -464,7 +451,7 @@ function LeaderboardPanel({
                 flexDirection: 'row',
                 alignItems: 'center',
                 paddingVertical: 9,
-                borderBottomWidth: idx < Math.min(rows.length, 20) - 1 ? 1 : 0,
+                borderBottomWidth: idx < Math.min(rows.length, 50) - 1 ? 1 : 0,
                 borderColor: '#F8FAFC',
                 gap: 10,
                 backgroundColor: isMe ? '#FFFBEB' : 'transparent',
@@ -539,7 +526,6 @@ function LeaderboardPanel({
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function CompeteScreen() {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
   const queryClient = useQueryClient();
   const playerName = useGameStore((s) => s.playerName);
   const setPlayerName = useGameStore((s) => s.setPlayerName);
@@ -550,10 +536,6 @@ export default function CompeteScreen() {
   const [nameDraft, setNameDraft] = useState(playerName);
   const hasLoadedNameDraft = useRef(false);
   const [nameSaveState, setNameSaveState] = useState<'idle' | 'saved' | 'invalid'>('idle');
-  const [targetDraft, setTargetDraft] = useState('10');
-  const [joinCode, setJoinCode] = useState('');
-  const [activeCode, setActiveCode] = useState<string | null>(null);
-  const [createdCode, setCreatedCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [boardTab, setBoardTab] = useState<LeaderboardExercise>('pushups');
   const [showCompetitionTerms, setShowCompetitionTerms] = useState(false);
@@ -583,7 +565,6 @@ export default function CompeteScreen() {
       .then((result) => {
         if (result.submitted > 0) {
           queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
-          queryClient.invalidateQueries({ queryKey: ['challenge'] });
         }
         const firstRejection = result.rejected[0];
         if (firstRejection) {
@@ -592,39 +573,6 @@ export default function CompeteScreen() {
       })
       .catch((flushError) => console.warn('Competition results remain queued', flushError));
   }, [hasAcceptedCompetitionTerms, queryClient]);
-
-  // Challenge queries
-  const challengeQuery = useQuery({
-    queryKey: ['challenge', activeCode],
-    enabled: competitionIsConfigured && hasAcceptedCompetitionTerms && !!activeCode,
-    queryFn: async (): Promise<ChallengeData> => {
-      return competitionRequest<ChallengeData>(
-        `/challenges?code=${encodeURIComponent(activeCode ?? '')}`
-      );
-    },
-  });
-
-  const createChallenge = useMutation({
-    mutationFn: async (): Promise<{ code: string }> => {
-      const target = normalizeChallengeTarget(targetDraft);
-      return competitionRequest<{ code: string }>('/challenges', {
-        method: 'POST',
-        body: {
-          creatorName: playerName,
-          targetScore: target,
-        },
-      });
-    },
-    onSuccess: (data) => {
-      setCreatedCode(data.code);
-      setActiveCode(data.code);
-      setError(null);
-    },
-    onError: (e) => {
-      console.error(e);
-      setError('Could not create challenge. Try again.');
-    },
-  });
 
   const saveName = () => {
     if (!hydrated) return;
@@ -637,54 +585,6 @@ export default function CompeteScreen() {
     setPlayerName(nextName);
     setNameSaveState('saved');
   };
-
-  const shareChallenge = async (code: string, target: number) => {
-    try {
-      await Share.share({
-        message: `I challenge you to score ${target} in Flap Fit! 💪🐦 Enter code ${code} in the Compete tab.`,
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const lookupChallenge = () => {
-    if (!competitionIsConfigured) {
-      setError('Online competition is temporarily unavailable.');
-      return;
-    }
-    if (!hasAcceptedCompetitionTerms) {
-      setShowCompetitionTerms(true);
-      return;
-    }
-    const code = normalizeChallengeCode(joinCode);
-    setJoinCode(code);
-    if (!isCompleteChallengeCode(code)) {
-      setError('Enter the complete six-character challenge code.');
-      return;
-    }
-    setActiveCode(code);
-    setError(null);
-  };
-
-  const playChallenge = (data: ChallengeData) => {
-    if (!hasAcceptedCompetitionTerms) {
-      setShowCompetitionTerms(true);
-      return;
-    }
-    router.push({
-      pathname: '/game' as never,
-      params: {
-        mode: 'challenge',
-        levelId: String(data.challenge.level_id ?? 3),
-        target: String(data.challenge.target_score),
-        challengeCode: data.challenge.code,
-        ...(__DEV__ ? { trackingMode: 'form-test' } : {}),
-      },
-    });
-  };
-
-  const challengeData = challengeQuery.data;
 
   return (
     <KeyboardAvoidingAnimatedView
@@ -704,7 +604,7 @@ export default function CompeteScreen() {
       >
         <Text style={{ fontSize: 28, fontWeight: '900', color: '#0F172A' }}>Compete</Text>
         <Text style={{ color: '#64748B', marginTop: 2, marginBottom: 16 }}>
-          Leaderboards · Friend Challenges
+          Global leaderboards
         </Text>
 
         {/* ── Player name ─────────────────────────────────────────────────── */}
@@ -817,7 +717,7 @@ export default function CompeteScreen() {
             </Text>
           </View>
           <Text style={{ color: '#475569', fontSize: 12, lineHeight: 18, marginTop: 7 }}>
-            Player names, leaderboard scores, and challenge results can be public. Competition posts
+            Player names and leaderboard scores can be public. Competition posts
             stay disabled until you accept the Terms of Use and community rules.
           </Text>
           <TouchableOpacity
@@ -900,278 +800,6 @@ export default function CompeteScreen() {
           </View>
 
           <LeaderboardPanel exercise={boardTab} termsAccepted={hasAcceptedCompetitionTerms} />
-        </View>
-
-        {/* ── Create challenge ────────────────────────────────────────────── */}
-        <View
-          style={{
-            backgroundColor: '#FFFFFF',
-            borderRadius: 18,
-            padding: 16,
-            marginTop: 18,
-            borderWidth: 1,
-            borderColor: '#F1F5F9',
-          }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Swords size={18} color="#1D4ED8" />
-            <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 15 }}>
-              Challenge a friend
-            </Text>
-          </View>
-          <Text style={{ color: '#64748B', fontSize: 12, marginTop: 4 }}>
-            Set a target score, share the code, then compare results.
-          </Text>
-          <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
-            <TextInput
-              value={targetDraft}
-              onChangeText={(value) => setTargetDraft(value.replace(/\D/g, '').slice(0, 2))}
-              keyboardType="number-pad"
-              placeholder="Target score"
-              placeholderTextColor="#94A3B8"
-              style={{
-                flex: 1,
-                backgroundColor: '#F8FAFC',
-                borderRadius: 12,
-                paddingHorizontal: 14,
-                paddingVertical: 10,
-                borderWidth: 1,
-                borderColor: '#E2E8F0',
-                color: '#0F172A',
-                fontWeight: '600',
-              }}
-            />
-            <TouchableOpacity
-              onPress={() =>
-                !competitionIsConfigured
-                  ? setError('Online competition is temporarily unavailable.')
-                  : !hasName
-                    ? setError('Set your player name first.')
-                    : !hasAcceptedCompetitionTerms
-                      ? setShowCompetitionTerms(true)
-                      : createChallenge.mutate()
-              }
-              disabled={!competitionIsConfigured || createChallenge.isPending}
-              style={{
-                backgroundColor: '#1D4ED8',
-                borderRadius: 12,
-                paddingHorizontal: 16,
-                justifyContent: 'center',
-                opacity: !competitionIsConfigured || createChallenge.isPending ? 0.6 : 1,
-              }}
-            >
-              <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>
-                {createChallenge.isPending ? '…' : 'Create'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {createdCode && (
-            <View
-              style={{
-                marginTop: 10,
-                backgroundColor: '#EFF6FF',
-                borderRadius: 12,
-                padding: 12,
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 10,
-              }}
-            >
-              <Text
-                style={{
-                  flex: 1,
-                  fontWeight: '900',
-                  fontSize: 20,
-                  color: '#1E3A8A',
-                  letterSpacing: 3,
-                }}
-              >
-                {createdCode}
-              </Text>
-              <TouchableOpacity
-                onPress={() => shareChallenge(createdCode, normalizeChallengeTarget(targetDraft))}
-                style={{
-                  backgroundColor: '#1D4ED8',
-                  borderRadius: 10,
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 6,
-                }}
-              >
-                <Share2 size={14} color="#FFFFFF" />
-                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 12 }}>Share</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-
-        {/* ── Join challenge ──────────────────────────────────────────────── */}
-        <View
-          style={{
-            backgroundColor: '#FFFFFF',
-            borderRadius: 18,
-            padding: 16,
-            marginTop: 12,
-            borderWidth: 1,
-            borderColor: '#F1F5F9',
-          }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Search size={18} color="#0EA5E9" />
-            <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 15 }}>
-              Enter a challenge code
-            </Text>
-          </View>
-          <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
-            <TextInput
-              value={joinCode}
-              onChangeText={(value) => setJoinCode(normalizeChallengeCode(value))}
-              autoCapitalize="characters"
-              placeholder="e.g. AB27CD"
-              placeholderTextColor="#94A3B8"
-              maxLength={6}
-              style={{
-                flex: 1,
-                backgroundColor: '#F8FAFC',
-                borderRadius: 12,
-                paddingHorizontal: 14,
-                paddingVertical: 10,
-                borderWidth: 1,
-                borderColor: '#E2E8F0',
-                color: '#0F172A',
-                fontWeight: '700',
-                letterSpacing: 2,
-              }}
-            />
-            <TouchableOpacity
-              onPress={lookupChallenge}
-              disabled={!competitionIsConfigured}
-              style={{
-                backgroundColor: '#0EA5E9',
-                borderRadius: 12,
-                paddingHorizontal: 16,
-                justifyContent: 'center',
-                opacity: competitionIsConfigured ? 1 : 0.6,
-              }}
-            >
-              <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>Find</Text>
-            </TouchableOpacity>
-          </View>
-
-          {activeCode && challengeQuery.isLoading && (
-            <Text style={{ color: '#94A3B8', marginTop: 12, fontSize: 13 }}>
-              Looking up {activeCode}…
-            </Text>
-          )}
-          {activeCode && challengeQuery.isError && (
-            <Text style={{ color: '#DC2626', marginTop: 12, fontSize: 12 }}>
-              Could not find a challenge with that code.
-            </Text>
-          )}
-          {challengeData && (
-            <View
-              style={{
-                marginTop: 12,
-                backgroundColor: '#F0F9FF',
-                borderRadius: 12,
-                padding: 12,
-              }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Text style={{ flex: 1, fontWeight: '800', color: '#0F172A' }}>
-                  {challengeData.challenge.creator_name}'s challenge · Target{' '}
-                  {challengeData.challenge.target_score}
-                </Text>
-                {!challengeData.challenge.creator_is_me ? (
-                  <TouchableOpacity
-                    accessibilityRole="button"
-                    accessibilityLabel={`Report or block ${challengeData.challenge.creator_name}`}
-                    onPress={() =>
-                      openPlayerActions(
-                        {
-                          profileId: challengeData.challenge.creator_profile_id,
-                          playerName: challengeData.challenge.creator_name,
-                          contextType: 'challenge',
-                          contextId: challengeData.challenge.id,
-                        },
-                        () => {
-                          setActiveCode(null);
-                          queryClient.removeQueries({ queryKey: ['challenge'] });
-                        }
-                      )
-                    }
-                    style={{ paddingHorizontal: 6, paddingVertical: 7 }}
-                  >
-                    <Text style={{ color: '#B91C1C', fontWeight: '800', fontSize: 9 }}>
-                      Report / Block
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
-              </View>
-              {challengeData.attempts.length > 0 ? (
-                <View style={{ marginTop: 8 }}>
-                  {challengeData.attempts.slice(0, 10).map((a) => (
-                    <View key={a.id} style={{ flexDirection: 'row', paddingVertical: 4 }}>
-                      <Text style={{ flex: 1, color: '#334155', fontWeight: '600', fontSize: 13 }}>
-                        {a.player_name}
-                        {a.is_me ? ' (you)' : ''}
-                      </Text>
-                      {!a.is_me ? (
-                        <TouchableOpacity
-                          accessibilityRole="button"
-                          accessibilityLabel={`Report or block ${a.player_name}`}
-                          onPress={() =>
-                            openPlayerActions(
-                              {
-                                profileId: a.profile_id,
-                                playerName: a.player_name,
-                                contextType: 'challenge_attempt',
-                                contextId: a.id,
-                              },
-                              () => queryClient.invalidateQueries({ queryKey: ['challenge'] })
-                            )
-                          }
-                          style={{ paddingHorizontal: 6, paddingVertical: 5 }}
-                        >
-                          <Text style={{ color: '#B91C1C', fontWeight: '800', fontSize: 9 }}>
-                            Report / Block
-                          </Text>
-                        </TouchableOpacity>
-                      ) : null}
-                      <Text
-                        style={{
-                          fontWeight: '800',
-                          fontSize: 13,
-                          color:
-                            a.score >= challengeData.challenge.target_score ? '#16A34A' : '#64748B',
-                        }}
-                      >
-                        {a.score}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              ) : (
-                <Text style={{ color: '#64748B', fontSize: 12, marginTop: 6 }}>
-                  No attempts yet — be first!
-                </Text>
-              )}
-              <TouchableOpacity
-                onPress={() => playChallenge(challengeData)}
-                style={{
-                  marginTop: 10,
-                  backgroundColor: '#0EA5E9',
-                  borderRadius: 12,
-                  paddingVertical: 10,
-                  alignItems: 'center',
-                }}
-              >
-                <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>Play this challenge</Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
 
         {error && <Text style={{ color: '#DC2626', marginTop: 12, fontSize: 13 }}>{error}</Text>}

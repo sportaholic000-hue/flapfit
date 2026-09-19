@@ -13,12 +13,13 @@ export type BirdEvolution = {
 
 export type GameHtmlConfig = {
   trackerAssetMode: 'bundled' | 'remote';
-  trackingMode: 'original' | 'form-test';
+  trackingMode: 'form-test';
   exercise: 'pushups' | 'squats' | 'pullups' | 'lateralraise' | 'biceps' | 'shoulderpress';
   backgroundMode: 'sky' | 'camera';
   recordRun: boolean;
   recordAudio: boolean;
   endless: boolean;
+  brandFirstPipe?: boolean;
   speed: number;
   gapFrac: number;
   spawnMs: number;

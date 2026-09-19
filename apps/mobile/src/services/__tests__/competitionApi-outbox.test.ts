@@ -8,6 +8,7 @@ import {
   flushPendingCompetitionResults,
   getCompetitionSupportId,
   submitCompetitionRunResult,
+  startCompetitionForegroundRetry,
 } from '../competitionApi';
 
 jest.mock('@/config/release', () => ({
@@ -21,6 +22,7 @@ jest.mock('@supabase/supabase-js', () => ({ createClient: jest.fn() }));
 
 const auth = {
   getSession: jest.fn(),
+  getUser: jest.fn(),
   signInAnonymously: jest.fn(),
   signOut: jest.fn(),
   startAutoRefresh: jest.fn(),
@@ -45,6 +47,8 @@ beforeEach(async () => {
     error: null,
   });
   (createClient as jest.Mock).mockReturnValue({ auth });
+  auth.getUser.mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null });
+  auth.signOut.mockResolvedValue({ error: null });
   global.fetch = jest.fn();
 });
 
@@ -182,4 +186,152 @@ describe('whole-request timeout', () => {
     await jest.advanceTimersByTimeAsync(100);
     await rejection;
   });
+});
+
+describe('launch audit regressions', () => {
+  test('overlapping successful submissions each report their own accepted result', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue(reply(200, { accepted: true }));
+    const results = await Promise.all([
+      submitCompetitionRunResult(run('overlap-a')),
+      submitCompetitionRunResult(run('overlap-b')),
+      flushPendingCompetitionResults(),
+    ]);
+    expect(results[0]).toMatchObject({ status: 'accepted' });
+    expect(results[1]).toMatchObject({ status: 'accepted' });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect((await flushPendingCompetitionResults()).pending).toBe(0);
+  });
+
+  test("an overlapping rejection never borrows another run's successful status", async () => {
+    (global.fetch as jest.Mock).mockImplementation(async (_url: string, options: RequestInit) => {
+      const entry = JSON.parse(String(options.body));
+      return entry.runId === 'rejected-overlap'
+        ? reply(422, { error: 'Score invalid' })
+        : reply(200);
+    });
+    const results = await Promise.all([
+      submitCompetitionRunResult(run('accepted-overlap')),
+      submitCompetitionRunResult(run('rejected-overlap')),
+    ]);
+    expect(results.map((result) => result.status)).toEqual(['accepted', 'rejected']);
+  });
+
+  test('a lost deletion acknowledgement is reconciled only after Auth confirms user removal', async () => {
+    await AsyncStorage.setItem(
+      '@flapfit/competition-result-outbox-v1',
+      JSON.stringify([{ ...run('pending-deletion'), createdAt: new Date().toISOString() }])
+    );
+    const progress = { totalPipes: 73, totalTutSeconds: 615, unlockedLevel: 6 };
+    useGameStore.setState(progress);
+    (global.fetch as jest.Mock).mockRejectedValue(
+      new Error('Connection lost after server deletion')
+    );
+    auth.getUser.mockResolvedValue({ data: { user: null }, error: { code: 'user_not_found' } });
+    await deleteCompetitionIdentity();
+    expect(auth.getUser).toHaveBeenCalledWith('test-token');
+    expect(auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
+    expect(await AsyncStorage.getItem('@flapfit/competition-result-outbox-v1')).toBeNull();
+    expect(useGameStore.getState()).toMatchObject(progress);
+    expect(auth.signInAnonymously).not.toHaveBeenCalled();
+  });
+
+  test('retry completes cleanup after an ambiguous delete followed by a 401', async () => {
+    (global.fetch as jest.Mock)
+      .mockRejectedValueOnce(new Error('Connection lost'))
+      .mockResolvedValueOnce(reply(401, { error: 'Anonymous game session required.' }));
+    auth.getUser
+      .mockResolvedValueOnce({ data: { user: null }, error: { code: 'unexpected_failure' } })
+      .mockResolvedValueOnce({ data: { user: null }, error: { code: 'user_not_found' } });
+    await expect(deleteCompetitionIdentity()).rejects.toThrow('Connection lost');
+    expect(auth.signOut).not.toHaveBeenCalled();
+    await deleteCompetitionIdentity();
+    expect(auth.signOut).toHaveBeenCalledTimes(1);
+    expect(await AsyncStorage.getItem('@flapfit/competition-deletion-v1')).toBeNull();
+  });
+
+  test('a 401 or expired session is not proof of deletion and does not clear pending scores', async () => {
+    const pending = JSON.stringify([
+      { ...run('keep-pending'), createdAt: new Date().toISOString() },
+    ]);
+    await AsyncStorage.setItem('@flapfit/competition-result-outbox-v1', pending);
+    (global.fetch as jest.Mock).mockResolvedValue(reply(401, { error: 'Expired session' }));
+    auth.getUser.mockResolvedValue({ data: { user: null }, error: { code: 'bad_jwt' } });
+    await expect(deleteCompetitionIdentity()).rejects.toMatchObject({ status: 401 });
+    expect(await AsyncStorage.getItem('@flapfit/competition-result-outbox-v1')).toBe(pending);
+    expect(auth.signOut).not.toHaveBeenCalled();
+    await expect(competitionRequest('/leaderboard')).rejects.toThrow('Finish deleting');
+    expect(auth.signInAnonymously).not.toHaveBeenCalled();
+  });
+
+  test('a confirmed deletion survives local signout failure and does not resend DELETE', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue(reply(200, { deleted: true }));
+    auth.signOut
+      .mockResolvedValueOnce({ error: new Error('Local storage failed') })
+      .mockResolvedValueOnce({ error: null });
+    await expect(deleteCompetitionIdentity()).rejects.toThrow('Local storage failed');
+    await deleteCompetitionIdentity();
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(auth.signOut).toHaveBeenCalledTimes(2);
+    expect(await AsyncStorage.getItem('@flapfit/competition-deletion-v1')).toBeNull();
+  });
+
+  test('a missing session after an uncertain deletion cannot create a new guest or claim success', async () => {
+    await AsyncStorage.setItem(
+      '@flapfit/competition-deletion-v1',
+      JSON.stringify({ userId: 'test-user', confirmed: false })
+    );
+    auth.getSession.mockResolvedValue({ data: { session: null }, error: null });
+    await expect(deleteCompetitionIdentity()).rejects.toThrow('could not be confirmed');
+    expect(auth.signInAnonymously).not.toHaveBeenCalled();
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+});
+
+describe('bounded foreground recovery', () => {
+  test('returning to the app retries pending scores once and refreshes rankings', async () => {
+    const { AppState } = require('react-native');
+    let changed: (state: string) => void = () => undefined;
+    const remove = jest.fn();
+    const listener = jest.spyOn(AppState, 'addEventListener').mockImplementation((_event: unknown, callback: unknown) => {
+      changed = callback as (state: string) => void;
+      return { remove };
+    });
+    useGameStore.setState({ hydrated: true });
+    await AsyncStorage.setItem('@flapfit/competition-result-outbox-v1', JSON.stringify([{ ...run('foreground'), createdAt: new Date().toISOString() }]));
+    (global.fetch as jest.Mock).mockResolvedValue(reply(200));
+    const refreshed = jest.fn();
+    const stop = startCompetitionForegroundRetry(refreshed);
+    changed('background');
+    expect(global.fetch).not.toHaveBeenCalled();
+    changed('active');
+    changed('active');
+    await flushPendingCompetitionResults();
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(refreshed).toHaveBeenCalledTimes(1);
+    stop();
+    expect(remove).toHaveBeenCalledTimes(1);
+    listener.mockRestore();
+  });
+
+  test('deletion verification times out without claiming success or discarding the session', async () => {
+    jest.useFakeTimers();
+    (global.fetch as jest.Mock).mockResolvedValue(reply(401));
+    auth.getUser.mockImplementation(() => new Promise(() => undefined));
+    const deleting = deleteCompetitionIdentity();
+    const expected = expect(deleting).rejects.toThrow('verification timed out');
+    await jest.advanceTimersByTimeAsync(15001);
+    await expected;
+    expect(auth.signOut).not.toHaveBeenCalled();
+  });
+});
+
+test('a submission waiting behind deletion cannot recreate a guest or repopulate the outbox', async () => {
+  (global.fetch as jest.Mock).mockResolvedValue(reply(200, { deleted: true }));
+  const deletion = deleteCompetitionIdentity();
+  const submission = submitCompetitionRunResult(run('stale-after-delete'));
+  await deletion;
+  expect(await submission).toMatchObject({ status: 'rejected' });
+  expect(auth.signInAnonymously).not.toHaveBeenCalled();
+  expect(global.fetch).toHaveBeenCalledTimes(1);
+  expect(await AsyncStorage.getItem('@flapfit/competition-result-outbox-v1')).toBeNull();
 });
