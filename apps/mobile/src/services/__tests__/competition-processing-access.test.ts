@@ -17,6 +17,8 @@ let appleStatus: { status: string; revision: number };
 let appleFresh = false;
 let appleCheck: jest.Mock;
 let appleLink: jest.Mock;
+let startAppleMonitor: jest.Mock;
+let stopAppleMonitor: jest.Mock;
 let auth: Record<string, jest.Mock>;
 let listeners: Set<() => void>;
 let appListeners: Set<(state: string) => void>;
@@ -33,6 +35,8 @@ beforeEach(async () => {
   appleStatus = { status: 'no-revocation-recorded', revision: 1 };
   appleCheck = jest.fn().mockImplementation(async () => appleStatus);
   appleLink = jest.fn().mockImplementation(async () => { appleStatus = { ...appleStatus, revision: appleStatus.revision + 1 }; return appleStatus; });
+  stopAppleMonitor = jest.fn();
+  startAppleMonitor = jest.fn(() => stopAppleMonitor);
   listeners = new Set();
   appListeners = new Set();
   policy = { competition: { allowed: false }, revenueCat: { allowed: false }, revision: 1 };
@@ -59,7 +63,7 @@ beforeEach(async () => {
     getAppleRescissionStatus: () => appleStatus,
     isAppleRescissionStatusFresh: () => appleFresh,
     linkAppleRescissionToExistingAccount: (token: string) => appleLink(token),
-    startAppleRescissionMonitoring: () => () => undefined,
+    startAppleRescissionMonitoring: () => startAppleMonitor(),
   }));
   jest.doMock('@/config/release', () => ({ ONLINE_SERVICES: {
     supabaseUrl: 'https://test.supabase.co', supabasePublishableKey: 'public-test',
@@ -572,4 +576,35 @@ test('required Apple denial still permits authenticated deletion and support wit
   expect(appleCheck).not.toHaveBeenCalled();expect(appleLink).not.toHaveBeenCalled();
   expect(auth.signInAnonymously).not.toHaveBeenCalled();
   expect((global.fetch as jest.Mock).mock.calls[0][1].method).toBe('DELETE');
+});
+
+
+test('the existing root foreground service already starts required Apple monitoring without competition participation', () => {
+  store.useGameStore.setState({ competitionTermsVersion: null });
+  const stop = api.startCompetitionForegroundRetry(jest.fn());
+  expect(startAppleMonitor).not.toHaveBeenCalled();
+  appleRequired = true; listeners.forEach(listener => listener());
+  expect(startAppleMonitor).toHaveBeenCalledTimes(1);
+  expect(createClient).not.toHaveBeenCalled(); expect(auth.signInAnonymously).not.toHaveBeenCalled();
+  expect(global.fetch).not.toHaveBeenCalled();
+  listeners.forEach(listener => listener()); expect(startAppleMonitor).toHaveBeenCalledTimes(1);
+  stop(); expect(stopAppleMonitor).toHaveBeenCalledTimes(1);
+});
+
+test('an already-required duty starts monitoring at root-service mount without an Auth session', () => {
+  appleRequired = true;
+  const stop = api.startCompetitionForegroundRetry(jest.fn());
+  expect(startAppleMonitor).toHaveBeenCalledTimes(1); expect(createClient).not.toHaveBeenCalled();
+  stop(); listeners.forEach(listener => listener());
+  expect(startAppleMonitor).toHaveBeenCalledTimes(1);
+});
+
+test('required monitoring is not duplicated by synchronous restriction publication and stops when the duty clears', () => {
+  startAppleMonitor.mockImplementation(() => { listeners.forEach(listener => listener()); return stopAppleMonitor; });
+  const stop = api.startCompetitionForegroundRetry(jest.fn());
+  appleRequired = true; listeners.forEach(listener => listener());
+  expect(startAppleMonitor).toHaveBeenCalledTimes(1);
+  appleRequired = false; listeners.forEach(listener => listener());
+  expect(stopAppleMonitor).toHaveBeenCalledTimes(1);
+  stop(); expect(stopAppleMonitor).toHaveBeenCalledTimes(1);
 });

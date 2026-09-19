@@ -52,8 +52,16 @@
   "limitations": [
     "Automated native boundaries are mocked. No physical iPhone/iPad sheet or signed-candidate acceptance is proved here.",
     "This is the mandatory Apple portion, not the completed worldwide age/location/purpose-policy coordinator.",
-    "Existing rescission monitoring is not yet mounted by the production root; actual revocation/linkage and required access enforcement remain open.",
+    "CORRECTION: monitoring was already mounted by the production root through startCompetitionForegroundRetry. Actual native revocation/linkage evidence remains open.",
     "Genuine installed RevenueCat event receipt and withdrawal through background/foreground/relaunch remain outstanding.",
     "No new signed build, install link, store metadata change, territory change, backend deployment, or store submission occurred."
+  ],
+  "corrections": [
+    {
+      "recordedAt": "2026-09-19T23:53:29.738Z",
+      "subject": "Existing monitor mounting",
+      "note": "required-apple-age.json claimed monitoring was not mounted. Corrected in that record with an explicit correction note.",
+      "supersedingEvidence": "processing-readiness.json"
+    }
   ]
 }

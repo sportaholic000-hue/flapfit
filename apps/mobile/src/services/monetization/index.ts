@@ -23,9 +23,12 @@ let adsReady = false;
 let privacyRequired = false;
 let privacyStatusRevision = 0;
 let privacyOptionsRequest: Promise<void> | null = null;
+let privacyOptionsEpoch: number | null = null;
 let init: Promise<void> | null = null;
+let initEpoch: number | null = null;
 let consentEpoch = 0;
 let privacyPresentation: Promise<unknown> | null = null;
+let privacyPresentationEpoch: number | null = null;
 let impressionSequence = 0;
 let mandatoryAppleRequest: Promise<void> | null = null;
 let mandatoryAppleAttemptRevision: number | null = null;
@@ -234,8 +237,9 @@ function bounded<T>(operation: Promise<T>, milliseconds = 10_000): Promise<T> {
 function presentPrivacy<T>(operation: () => Promise<T>): Promise<T> {
   const presentation = operation();
   privacyPresentation = presentation;
+  privacyPresentationEpoch = consentEpoch;
   return presentation.finally(() => {
-    if (privacyPresentation === presentation) privacyPresentation = null;
+    if (privacyPresentation === presentation) { privacyPresentation = null; privacyPresentationEpoch = null; }
   });
 }
 
@@ -251,11 +255,14 @@ export async function settlePrivacyBeforeGameplay(): Promise<void> {
 
 // Only lobby focus can start consent setup. The game-entry barrier also covers
 // a native form that has already begun loading when the user selects Play.
-/** A stable subscription key lets lobby focus react when the root duty lookup
- * finishes, without rerunning setup on every unrelated purpose revision. */
-export function getAppleLobbyPrivacyKey(): string {
+/** React to effective processing changes after Apple/status/consent resolution,
+ * not every raw store revision. No returned field contains an age or identifier. */
+export function getLobbyPrivacyKey(): string {
   const input = getProcessingInputs();
-  return input.appleRequirement + ':' + Boolean(input.verification?.mandatoryCheckSatisfied);
+  const access = getProcessingAccess();
+  return [input.appleRequirement, Boolean(input.verification?.mandatoryCheckSatisfied),
+    access.ads.allowed, access.ads.treatment, access.ads.underAgeOfConsent,
+    access.revenueCat.allowed].join(':');
 }
 
 export function prepareMonetization(canPresent: () => boolean): Promise<void> {
@@ -292,6 +299,19 @@ export function prepareMonetization(canPresent: () => boolean): Promise<void> {
   return preparePermittedMonetization(canPresent);
 }
 
+/** A new effective policy may arrive while an older setup/form is finishing.
+ * Resume once under the latest policy, but never retry an unchanged failure or
+ * reopen privacy after a later game-entry/withdrawal invalidates this waiter. */
+function resumeAfterPreparation(pending: Promise<unknown>, ownedEpoch: number | null, canPresent: () => boolean): Promise<void> {
+  const waitingEpoch = consentEpoch;
+  return pending.catch(() => undefined).then(() => {
+    if (ownedEpoch !== null && ownedEpoch !== waitingEpoch && waitingEpoch === consentEpoch &&
+      canPresent() && adEnvironment.isActive() && getProcessingAccess().ads.allowed && !adsReady) {
+      return preparePermittedMonetization(canPresent);
+    }
+  });
+}
+
 function preparePermittedMonetization(canPresent: () => boolean): Promise<void> {
   // Analytics permission is independent of ad eligibility and UMP. This also
   // covers loading this module after a permitted decision was already restored.
@@ -299,9 +319,9 @@ function preparePermittedMonetization(canPresent: () => boolean): Promise<void> 
   void initializeRevenueCat();
   // A lobby focus change must not launch a second UMP form while the existing
   // settings request owns native presentation (or is checking its status).
-  if (privacyOptionsRequest) return privacyOptionsRequest.catch(() => undefined);
-  if (privacyPresentation) return privacyPresentation.then(() => undefined, () => undefined);
-  if (init) return init;
+  if (privacyOptionsRequest) return resumeAfterPreparation(privacyOptionsRequest, privacyOptionsEpoch, canPresent);
+  if (init) return resumeAfterPreparation(init, initEpoch, canPresent);
+  if (privacyPresentation) return resumeAfterPreparation(privacyPresentation, privacyPresentationEpoch, canPresent);
   const access = getProcessingAccess();
   if (!access.ads.allowed) return Promise.resolve();
   const sdk = loadAdsSdk();
@@ -309,6 +329,7 @@ function preparePermittedMonetization(canPresent: () => boolean): Promise<void> 
   adsReady = false; // Revalidate prior permission before any new request.
   disposeResultAds();
   const epoch = consentEpoch;
+  initEpoch = epoch;
   init = (async () => {
     try {
       const info = await bounded(sdk.AdsConsent.requestInfoUpdate({ tagForUnderAgeOfConsent: access.ads.underAgeOfConsent }));
@@ -330,6 +351,7 @@ function preparePermittedMonetization(canPresent: () => boolean): Promise<void> 
       if (epoch === consentEpoch) adsReady = false;
     } finally {
       init = null;
+      initEpoch = null;
     }
   })();
   return init;
@@ -339,7 +361,10 @@ export function showAdPrivacyOptions(canPresent: () => boolean = () => true): Pr
   if (privacyOptionsRequest) return privacyOptionsRequest;
   const operation = openAdPrivacyOptions(canPresent);
   privacyOptionsRequest = operation;
-  const finished = () => { if (privacyOptionsRequest === operation) privacyOptionsRequest = null; };
+  privacyOptionsEpoch = privacyPresentation ? privacyPresentationEpoch : consentEpoch;
+  const finished = () => {
+    if (privacyOptionsRequest === operation) { privacyOptionsRequest = null; privacyOptionsEpoch = null; }
+  };
   void operation.then(finished, finished);
   return operation;
 }

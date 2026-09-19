@@ -12,7 +12,7 @@ import {
   Video,
 } from 'lucide-react-native';
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
-import { getAppleLobbyPrivacyKey, prepareMonetization } from '@/services/monetization';
+import { getLobbyPrivacyKey, prepareMonetization } from '@/services/monetization';
 import { subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -90,15 +90,15 @@ export default function HomeScreen() {
   const hydrated = useGameStore((s) => s.hydrated);
   const hydrationError = useGameStore((s) => s.hydrationError);
   const hasOnboarded = useGameStore((s) => s.hasOnboarded);
-  const applePrivacyKey = useSyncExternalStore(subscribeProcessingAccess, getAppleLobbyPrivacyKey, () => 'pending:false');
+  const lobbyPrivacyKey = useSyncExternalStore(subscribeProcessingAccess, getLobbyPrivacyKey, () => 'pending:false:false:child:true:false');
   useFocusEffect(useCallback(() => {
     let focused = true;
-    const dutyResolved = !applePrivacyKey.startsWith('pending:') && !applePrivacyKey.startsWith('error:');
+    const dutyResolved = !lobbyPrivacyKey.startsWith('pending:') && !lobbyPrivacyKey.startsWith('error:');
     if (hydrated && !hydrationError && hasOnboarded && dutyResolved) {
       void prepareMonetization(() => focused);
     }
     return () => { focused = false; };
-  }, [hydrated, hydrationError, hasOnboarded, applePrivacyKey]));
+  }, [hydrated, hydrationError, hasOnboarded, lobbyPrivacyKey]));
   const birdId = useGameStore((s) => s.birdId);
   const setBird = useGameStore((s) => s.setBird);
   const unlockedLevel = useGameStore((s) => s.unlockedLevel);

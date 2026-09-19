@@ -701,9 +701,9 @@ test('an invalidated Apple response cannot consume the fresh account check attem
 
 test('the lobby key changes when required Apple information is satisfied, without exposing any range', () => {
   const f = loadAdapter({ appleRequired: true });
-  expect(f.adapter.getAppleLobbyPrivacyKey()).toBe('required:false');
+  expect(f.adapter.getLobbyPrivacyKey()).toBe('required:false:true:unspecified:false:true');
   f.privacyInput.verification = { mandatoryCheckSatisfied: true };
-  expect(f.adapter.getAppleLobbyPrivacyKey()).toBe('required:true');
+  expect(f.adapter.getLobbyPrivacyKey()).toBe('required:true:true:unspecified:false:true');
 });
 
 
@@ -719,4 +719,77 @@ test('required Apple sheet waits for an already pending Google rights lookup and
   expect(f.ump.showPrivacyOptionsForm).toHaveBeenCalledTimes(1);
   expect(f.ageRequest).toHaveBeenCalledTimes(1);
   expect(f.ump.showPrivacyOptionsForm.mock.invocationCallOrder[0]).toBeLessThan(f.ageRequest.mock.invocationCallOrder[0]);
+});
+
+
+test('lobby readiness changes when permitted ads become available while analytics remains refused', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false });
+  const before = f.adapter.getLobbyPrivacyKey();
+  await f.adapter.prepareMonetization(() => true); expect(f.nativeLoad).not.toHaveBeenCalled();
+  f.changeAccess({ ads: { ...f.getAccess().ads, allowed: true, treatment: 'teen' } });
+  expect(f.adapter.getLobbyPrivacyKey()).not.toBe(before);
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.adapter.prepareResultInterstitial()).not.toBeNull();
+  expect(f.purchasesLoad).not.toHaveBeenCalled();
+});
+
+test('the lobby key ignores unrelated competition revisions but reacts to each effective SDK decision', () => {
+  const f = loadAdapter(); const initial = f.adapter.getLobbyPrivacyKey();
+  f.changeAccess({ competition: { allowed: false } });
+  expect(f.adapter.getLobbyPrivacyKey()).toBe(initial);
+  f.changeAccess({ revenueCat: { allowed: false } }); const reportingOff = f.adapter.getLobbyPrivacyKey();
+  expect(reportingOff).not.toBe(initial);
+  f.changeAccess({ ads: { ...f.getAccess().ads, treatment: 'teen', underAgeOfConsent: true } });
+  expect(f.adapter.getLobbyPrivacyKey()).not.toBe(reportingOff);
+});
+
+test('a newer eligible ad policy resumes after an old info request without waiting for another lobby visit', async () => {
+  const f = loadAdapter({ rcAllowed: false }); let resolve!: (value: typeof f.consent) => void;
+  f.sdk.AdsConsent.requestInfoUpdate.mockReturnValueOnce(new Promise(done => { resolve = done; }));
+  const old = f.adapter.prepareMonetization(() => true);
+  f.changeAccess({ ads: { ...f.getAccess().ads, treatment: 'teen', underAgeOfConsent: true } });
+  const latest = f.adapter.prepareMonetization(() => true);
+  resolve(f.consent); await Promise.all([old, latest]);
+  expect(f.sdk.AdsConsent.requestInfoUpdate).toHaveBeenCalledTimes(2);
+  expect(f.sdk.AdsConsent.requestInfoUpdate).toHaveBeenLastCalledWith({ tagForUnderAgeOfConsent: true });
+  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledTimes(1);
+  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'teen' });
+  expect(f.adapter.prepareResultInterstitial()).not.toBeNull(); expect(f.purchasesLoad).not.toHaveBeenCalled();
+});
+
+test.each(['game', 'blur', 'background'])('a queued policy refresh cannot resume after %s', async (reason) => {
+  const f = loadAdapter({ rcAllowed: false }); let focused = true;
+  let resolve!: (value: typeof f.consent) => void;
+  f.sdk.AdsConsent.requestInfoUpdate.mockReturnValueOnce(new Promise(done => { resolve = done; }));
+  const old = f.adapter.prepareMonetization(() => focused);
+  f.changeAccess({ ads: { ...f.getAccess().ads, treatment: 'teen' } });
+  const latest = f.adapter.prepareMonetization(() => focused);
+  if (reason === 'game') await f.adapter.settlePrivacyBeforeGameplay();
+  if (reason === 'blur') focused = false;
+  if (reason === 'background') f.changeState('background');
+  resolve(f.consent); await Promise.all([old, latest]);
+  expect(f.sdk.AdsConsent.requestInfoUpdate).toHaveBeenCalledTimes(1);
+  expect(f.mobileAds.initialize).not.toHaveBeenCalled();
+});
+
+test('unchanged failed setup does not become an automatic retry loop for concurrent callers', async () => {
+  const f = loadAdapter({ rcAllowed: false }); f.sdk.AdsConsent.requestInfoUpdate.mockRejectedValue(new Error('offline'));
+  await Promise.all([f.adapter.prepareMonetization(() => true), f.adapter.prepareMonetization(() => true)]);
+  expect(f.sdk.AdsConsent.requestInfoUpdate).toHaveBeenCalledTimes(1);
+  expect(f.mobileAds.initialize).not.toHaveBeenCalled();
+});
+
+test('a newer independent policy waits for the Google rights form before preparing eligible ads', async () => {
+  const f = loadAdapter({ rcAllowed: false, umpBridge: true }); let resolve!: (value: typeof f.umpInfo) => void;
+  f.ump.showPrivacyOptionsForm.mockReturnValueOnce(new Promise(done => { resolve = done; }));
+  const rights = f.adapter.showAdPrivacyOptions();
+  for (let i = 0; i < 12; ++i) await Promise.resolve();
+  expect(f.ump.showPrivacyOptionsForm).toHaveBeenCalledTimes(1);
+  f.changeAccess({ ads: { ...f.getAccess().ads, treatment: 'teen', underAgeOfConsent: true } });
+  const latest = f.adapter.prepareMonetization(() => true);
+  expect(f.sdk.AdsConsent.requestInfoUpdate).not.toHaveBeenCalled();
+  resolve(f.umpInfo); await Promise.all([rights, latest]);
+  expect(f.sdk.AdsConsent.requestInfoUpdate).toHaveBeenCalledTimes(1);
+  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'teen' });
+  expect(f.mobileAds.initialize).toHaveBeenCalledTimes(1); expect(f.purchasesLoad).not.toHaveBeenCalled();
 });

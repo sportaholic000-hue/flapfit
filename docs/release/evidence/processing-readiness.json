@@ -1,0 +1,71 @@
+{
+  "recordedAt": "2026-09-19T23:53:29.738Z",
+  "baseline": "5a956b1933d256e52f448194ddbcb494c05b8737",
+  "scope": "Resume permitted advertising after independent processing decisions resolve; preserve native presentation ownership and no analytics inference",
+  "sourceSha256LfNormalized": {
+    "apps/mobile/src/app/(tabs)/index.tsx": "3766fd9316c1c97f52d22a18202872d095f9992d2ab687d6f3204adbdff8c29f",
+    "apps/mobile/src/services/monetization/index.ts": "0dd93d32e012827c26ea1772504ed0151a074f090e60f63ca051ad2be2820e54",
+    "apps/mobile/src/services/__tests__/monetization.test.ts": "6a5ddc24f0a717961505857696a0c0c488a8f1cea466c23f112751a29c1a4693",
+    "apps/mobile/src/services/__tests__/competition-processing-access.test.ts": "f8da4f0d3465f4b19ad5179630c1a99af6ffe909c1a282f490c2ccf28dcb21d8"
+  },
+  "validation": {
+    "focused": {
+      "exitCode": 0,
+      "suites": 3,
+      "tests": 153,
+      "output": "PASS src/services/__tests__/monetization.test.ts (19.299 s)\nPASS src/services/__tests__/competition-processing-access.test.ts (8.593 s)\nPASS src/services/privacy/__tests__/appleRescission.test.ts\n\nTest Suites: 3 passed, 3 total\nTests:       153 passed, 153 total\nSnapshots:   0 total\nTime:        31.609 s\nRan all test suites within paths \"src/services/__tests__/monetization.test.ts\", \"src/services/__tests__/competition-processing-access.test.ts\", \"src/services/privacy/__tests__/appleRescission.test.ts\".\n"
+    },
+    "fullMobileJest": {
+      "exitCode": 0,
+      "suites": 47,
+      "tests": 886,
+      "durationSeconds": 116.273,
+      "output": "PASS src/services/__tests__/monetization.test.ts (9.1 s)\nPASS src/services/__tests__/competition-processing-access.test.ts (5.48 s)\n(node:123736) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n(Use `node --trace-deprecation ...` to show where the warning was created)\nPASS src/services/__tests__/competitionApi-outbox.test.ts\nPASS src/utils/game/__tests__/pullup-gameplay-flow.test.js (7.681 s)\nPASS scripts/launch-competition.test.js (5.613 s)\nPASS src/utils/game/__tests__/bird-stage-assets.test.ts\nPASS scripts/share-return.test.js\nPASS src/utils/game/birdWebAsset.test.ts\nPASS src/services/privacy/__tests__/appleAgeControl.test.ts\nPASS src/utils/game/__tests__/pullup-standing-reach.test.js\nPASS src/utils/game/__tests__/form-tracking.test.ts\nPASS src/services/__tests__/competitionApi.test.ts\nPASS src/services/privacy/__tests__/processingAccess.test.ts\nPASS src/utils/game/__tests__/pullup-elbow-clearance.test.js\nPASS scripts/ad-sdk-lifecycle.test.js\nPASS src/utils/game/__tests__/pullup-top-first.test.js\nPASS src/services/privacy/__tests__/privacyRights.test.ts\nPASS src/services/privacy/__tests__/appleRescission.test.ts\nPASS src/utils/game/__tests__/pullup-grab-entry.test.js\nPASS src/services/privacy/__tests__/regionalPolicy.test.ts\nPASS src/utils/game/__tests__/pullup-support-reference.test.ts\nPASS src/services/privacy/__tests__/umpStoredSignals.test.ts\nPASS modules/flap-fit-age-range/__tests__/bridge.test.ts\nPASS src/services/privacy/__tests__/processingPolicy.test.ts\nPASS src/services/privacy/__tests__/privacyStartup.test.ts\nPASS src/utils/game/__tests__/recording-mp4.test.ts\nPASS src/services/privacy/__tests__/umpPrivacyControls.test.ts\nPASS src/utils/game/__tests__/stats-history.test.ts\nPASS src/utils/game/__tests__/game-modes.test.ts\nPASS scripts/validate-monetization-config.test.js\nPASS src/utils/game/__tests__/mediapipe-recovery.test.ts\nPASS src/utils/game/__tests__/store-hydration.test.ts\nPASS src/utils/game/__tests__/pullup-top-reference.test.ts\nPASS modules/flap-fit-age-range/__tests__/app-transaction.test.ts\nPASS src/utils/game/__tests__/pullup-top-entry.test.ts\nPASS src/services/__tests__/resultAdGate.test.ts\nPASS src/services/__tests__/videoSharing.test.ts\nPASS src/utils/game/game-web-navigation.test.ts\nPASS src/utils/game/__tests__/recording-boundaries.test.ts\nPASS src/utils/game/__tests__/competition-profile-reset.test.ts\nPASS src/utils/game/__tests__/continuous-gameplay.test.ts\nPASS src/utils/game/birdVisual.test.ts\nPASS src/services/__tests__/settingsPermissionRecovery.test.ts\nPASS scripts/validate-tracker-release.test.js\nPASS src/utils/game/__tests__/evolution-core.test.ts\nPASS src/utils/game/__tests__/level-rules.test.ts\nPASS src/utils/game/__tests__/camera-preview.test.ts\n\nTest Suites: 47 passed, 47 total\nTests:       886 passed, 886 total\nSnapshots:   0 total\nTime:        116.273 s\nRan all test suites.\n"
+    },
+    "typeScript": {
+      "exitCode": 0,
+      "command": "tsc --noEmit",
+      "output": ""
+    },
+    "strictScopedOxlint": {
+      "exitCode": 0,
+      "noIgnore": true,
+      "denyWarnings": true,
+      "files": [
+        "apps/mobile/src/app/(tabs)/index.tsx",
+        "apps/mobile/src/services/monetization/index.ts",
+        "apps/mobile/src/services/__tests__/monetization.test.ts",
+        "apps/mobile/src/services/__tests__/competition-processing-access.test.ts"
+      ],
+      "output": ""
+    }
+  },
+  "reconciliation": {
+    "existingAppleMonitor": "Already mounted by root startCompetitionForegroundRetry, independently of participation. This patch adds regression evidence, not another monitor.",
+    "priorIncorrectRecord": "required-apple-age.json claimed monitoring was not mounted. Corrected in that record with an explicit correction note.",
+    "nativeLaunchRestriction": "Apple age-assurance guidance states Apple prevents app launch after parental app-access consent revocation. No additional app lock screen added on that basis.",
+    "appleSource": "https://developer.apple.com/support/age-assurance/"
+  },
+  "territoryReadback": {
+    "url": "https://appstoreconnect.apple.com/apps/6813280704/distribution/pricing/availability",
+    "method": "Read-only browser accessibility tree; no Manage Availability or Save action",
+    "availableCount": 172,
+    "exclusions": {
+      "China mainland": "Not Available",
+      "Hong Kong": "Not Available",
+      "Iraq": "Not Available"
+    },
+    "priorities": {
+      "Canada": "Available on App Release",
+      "United States": "Available on App Release"
+    },
+    "changedBy": "Owner",
+    "runtimePrivacyClearance": false
+  },
+  "limitations": [
+    "Native boundaries are mocked; no physical iPhone/iPad behavior or RevenueCat event receipt demonstrated.",
+    "Regional policy selection and necessary approved purpose controls remain unfinished. Test permission fixtures are not production permission grants.",
+    "Existing signed internal build 710512ba uses source 0be68de and predates this patch.",
+    "No custom interface, backend, store metadata, gameplay, calibration, recording/sharing, ad placement or submission change."
+  ]
+}
