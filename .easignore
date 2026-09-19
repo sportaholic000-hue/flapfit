@@ -64,3 +64,6 @@ README.md
 **/.env
 **/.env.*
 !/apps/mobile/.env.example
+
+# EAS local signing metadata must never be committed or included in source uploads.
+**/credentials.json

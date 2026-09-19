@@ -1,0 +1,59 @@
+{
+  "date": "2026-09-19T06:09:20.891Z",
+  "admob": {
+    "publisher": "pub-5933597810180440",
+    "european": {
+      "name": "Flap Fit European Privacy",
+      "status": "Published",
+      "apps": [
+        "Flap Fit iOS",
+        "Flap Fit Android"
+      ],
+      "unrelatedAppSelected": false,
+      "doNotConsent": "On",
+      "targeting": "EEA, UK and Switzerland"
+    },
+    "us": {
+      "name": "Flap Fit US Privacy",
+      "status": "Published",
+      "apps": [
+        "Flap Fit iOS",
+        "Flap Fit Android"
+      ],
+      "unrelatedAppSelected": false,
+      "optOut": "On",
+      "targeting": "All current and future supported US states"
+    },
+    "delivery": "Google warns publication may take up to one hour. Native UMP presentation still untested.",
+    "account": "Store-link approval remains outstanding; account reports no served ads and an inactivity warning. No artificial live-ad traffic generated."
+  },
+  "revenuecat": {
+    "project": "a58d3dbd",
+    "admobStatus": "Connected",
+    "publisher": "pub-5933597810180440",
+    "scopes": [
+      "admob.readonly",
+      "admob.report"
+    ],
+    "nativeEventReceiptVerified": false
+  },
+  "apple": {
+    "appId": "6813280704",
+    "teamId": "KM48R8T97P",
+    "membershipRenewal": "2027-09-14",
+    "developerProgramAgreementAccepted": "2026-09-13",
+    "developerAgreementAccepted": "2026-09-13",
+    "reviewContact": "Name, support email and phone from owner-authorized Apple membership page entered, visually verified and saved; private phone/address intentionally omitted from this evidence.",
+    "submission": "Prepare for Submission; no build attached, no Submit for Review performed"
+  },
+  "moderation": {
+    "pendingCount": 1,
+    "knownTestReportId": "6bf9e3d4-452f-4a03-87ca-3221e42780a3",
+    "contextId": "ef3409ae-cc16-419d-99bc-6cf3509e4888",
+    "status": "pending",
+    "reporterRemoved": true,
+    "reportedUserRemoved": true,
+    "createdAt": "2026-09-16T08:02:06.011382Z",
+    "assessment": "Exact match to documented temporary release test. No customer complaint inferred. Read-only review; no player data or report modified."
+  }
+}

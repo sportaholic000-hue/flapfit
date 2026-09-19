@@ -76,3 +76,6 @@ test-results
 
 # local Supabase CLI state
 supabase/.temp/
+
+# EAS local signing metadata must never be committed or included in source uploads.
+**/credentials.json
