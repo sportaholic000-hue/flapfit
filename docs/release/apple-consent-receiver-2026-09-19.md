@@ -1,6 +1,6 @@
 # Apple consent rescission receiver
 
-Source and live deployment checkpoint: both migrations applied, Production/Sandbox receivers version 1 active, and flapfit-game version 8 active after explicit owner deployment approval. Live malformed-signature/status checks return 400, missing link/game authentication returns 401. Genuine Apple-signed delivery and installed linkage remain unverified.
+Source and live deployment checkpoint: both migrations applied, Production receiver version 1 and Sandbox receiver version 4 active, and flapfit-game version 8 active after explicit owner deployment approval. Live malformed-signature/status checks return 400, missing link/game authentication returns 401. Genuine Apple TEST delivery FAILED on the hosted Deno runtime; see the runtime blocker below. Installed linkage remains unverified.
 This records Apple's `RESCIND_CONSENT` independently of age, parental permission, advertising,
 RevenueCat and competition decisions. A valid download or absence of a denial never grants consent.
 Local gameplay, accepted calibration, recording, sharing and result-exit ad placement are unchanged.
@@ -120,3 +120,7 @@ app's separate Apple/legal policy; this backend does not make that worldwide dec
 - [Supabase Vault](https://supabase.com/docs/guides/database/vault)
 - [Supabase authentication headers](https://supabase.com/docs/guides/functions/auth-headers)
 - [Supabase changelog](https://supabase.com/changelog.md), checked September 19, 2026.
+
+## Hosted runtime blocker discovered by genuine delivery
+
+Both App Store notification URLs are saved. Official Sandbox TEST delivery failed despite local signature verification succeeding. The hosted runtime is compatible with Deno 2.1.4 and lacks required X509Certificate APIs. Temporary redacted diagnostics were removed; current Sandbox version 4 has the original reviewed source hash. The current endpoint fails closed but cannot yet verify genuine notifications. This is a release blocker. See services/apple-verifier for the locally tested, undeployed Node execution option. Do not claim that 400/401 rejection checks established valid delivery.
