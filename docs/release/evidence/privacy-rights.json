@@ -1,0 +1,62 @@
+{
+  "recordedAt": "2026-09-19T23:12:25.988Z",
+  "baseline": "6a6ccdb10bbb2bcbea5bdc604d49ac1d553f7b70",
+  "scope": "Required Google privacy options and independent withdrawal service; no new custom consent UI",
+  "sourceSha256LfNormalized": {
+    "apps/mobile/src/app/(tabs)/info.tsx": "4decaaab194c69d8aa0724e29eceb441e3cb1b60f007d454476c6512181abf35",
+    "apps/mobile/src/services/monetization/index.ts": "15a6e2c5a918fea11eaa4ad65bdcfe936b6edc3558750fb90bbb29ea69acb19a",
+    "apps/mobile/src/services/__tests__/monetization.test.ts": "f4c43b67eee80e07b00206881b235c5d7b10326bae796c24a183625ecbbe16b3",
+    "apps/mobile/src/services/privacy/privacyRights.ts": "ccf2ada074fa592a436d0648c452da2c6161cc7c8696fcc0239895339304bf23",
+    "apps/mobile/src/services/privacy/umpPrivacyControls.ts": "ffdb0c6a1a4bd8e8f58157005d9e88cc572da8e9ed22fbc2f0dff23e10d13555",
+    "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts": "b0ed939ddd014ae97e648c6f2d71626be2a32a4eb0b193d3116834813b0d2cbb",
+    "apps/mobile/src/services/privacy/__tests__/umpPrivacyControls.test.ts": "244f6c16a1e1eaf66932545e04bfbd4b41757752c4043a52fe502ee7c53b49ea"
+  },
+  "checks": {
+    "fullMobileJest": {
+      "exitCode": 0,
+      "suites": 47,
+      "tests": 857,
+      "durationSeconds": 201.317,
+      "output": "(node:108012) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n(Use `node --trace-deprecation ...` to show where the warning was created)\nPASS src/services/__tests__/competitionApi-outbox.test.ts (15.796 s)\nPASS src/services/privacy/__tests__/privacyRights.test.ts\nPASS scripts/launch-competition.test.js (9.736 s)\nPASS src/utils/game/__tests__/bird-stage-assets.test.ts (16.977 s)\nPASS src/utils/game/__tests__/pullup-gameplay-flow.test.js (6.843 s)\nPASS src/services/privacy/__tests__/privacyStartup.test.ts\nPASS src/services/__tests__/monetization.test.ts (10.084 s)\nPASS src/utils/game/__tests__/pullup-elbow-clearance.test.js\nPASS scripts/share-return.test.js (5.313 s)\nPASS src/services/__tests__/competition-processing-access.test.ts\nPASS src/services/__tests__/competitionApi.test.ts (5.073 s)\nPASS src/utils/game/birdWebAsset.test.ts\nPASS scripts/ad-sdk-lifecycle.test.js\nPASS src/utils/game/__tests__/form-tracking.test.ts\nPASS src/services/privacy/__tests__/umpPrivacyControls.test.ts\nPASS src/services/privacy/__tests__/processingAccess.test.ts\nPASS src/utils/game/__tests__/pullup-grab-entry.test.js\nPASS src/services/privacy/__tests__/umpStoredSignals.test.ts\nPASS src/services/privacy/__tests__/appleAgeControl.test.ts\nPASS src/utils/game/__tests__/game-modes.test.ts\nPASS src/utils/game/__tests__/pullup-top-first.test.js\nPASS src/utils/game/__tests__/pullup-support-reference.test.ts\nPASS modules/flap-fit-age-range/__tests__/bridge.test.ts (6.731 s)\nPASS src/utils/game/__tests__/pullup-standing-reach.test.js\nPASS src/utils/game/__tests__/store-hydration.test.ts\nPASS src/utils/game/__tests__/pullup-top-entry.test.ts\nPASS src/utils/game/__tests__/recording-mp4.test.ts\nPASS src/utils/game/game-web-navigation.test.ts\nPASS src/services/privacy/__tests__/regionalPolicy.test.ts\nPASS src/utils/game/__tests__/level-rules.test.ts\nPASS src/utils/game/__tests__/competition-profile-reset.test.ts\nPASS src/utils/game/__tests__/mediapipe-recovery.test.ts\nPASS src/utils/game/__tests__/pullup-top-reference.test.ts\nPASS src/services/privacy/__tests__/appleRescission.test.ts\nPASS src/services/privacy/__tests__/processingPolicy.test.ts\nPASS scripts/validate-tracker-release.test.js\nPASS src/services/__tests__/settingsPermissionRecovery.test.ts\nPASS src/utils/game/birdVisual.test.ts\nPASS src/utils/game/__tests__/continuous-gameplay.test.ts\nPASS src/services/__tests__/videoSharing.test.ts\nPASS src/utils/game/__tests__/stats-history.test.ts\nPASS scripts/validate-monetization-config.test.js\nPASS src/utils/game/__tests__/camera-preview.test.ts\nPASS src/utils/game/__tests__/evolution-core.test.ts\nPASS src/utils/game/__tests__/recording-boundaries.test.ts\nPASS src/services/__tests__/resultAdGate.test.ts\nPASS modules/flap-fit-age-range/__tests__/app-transaction.test.ts\n\nTest Suites: 47 passed, 47 total\nTests:       857 passed, 857 total\nSnapshots:   0 total\nTime:        201.317 s\nRan all test suites.\n"
+    },
+    "typeScript": {
+      "exitCode": 0,
+      "command": "tsc --noEmit"
+    },
+    "scopedOxlint": {
+      "exitCode": 0,
+      "noIgnore": true,
+      "denyWarnings": true,
+      "files": [
+        "apps/mobile/src/app/(tabs)/info.tsx",
+        "apps/mobile/src/services/monetization/index.ts",
+        "apps/mobile/src/services/__tests__/monetization.test.ts",
+        "apps/mobile/src/services/privacy/privacyRights.ts",
+        "apps/mobile/src/services/privacy/umpPrivacyControls.ts",
+        "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "apps/mobile/src/services/privacy/__tests__/umpPrivacyControls.test.ts"
+      ]
+    },
+    "diffCheck": {
+      "exitCode": 0
+    },
+    "exerciseSetupTextUnchanged": true
+  },
+  "verifiedSourceBehavior": [
+    "Existing required Google entry can be recovered from its native status without ad or RevenueCat SDK initialization.",
+    "Unknown provider status cannot erase a previously known required entry or establish advertising permission.",
+    "Google rights form remains usable with both processing purposes denied; its response never grants the independent policy.",
+    "Game entry, background, Info blur, duplicate actions and lobby refocus cannot launch late or duplicate privacy forms.",
+    "Existing native interstitial dismissal/presentation-failure ownership and result-exit placement remain intact.",
+    "Reporting withdrawal denies its purpose immediately, waits separately for persistence and native stop acknowledgement, and exposes timeout/failure rather than success.",
+    "Reporting/competition actions do not change advertising choices, sign out or delete an existing account."
+  ],
+  "ownerBoundary": "Only necessary regional advertising controls authorized. No discretionary ad-free control, new questionnaire, standalone screen, or unapproved reporting/competition buttons added.",
+  "limitations": [
+    "Native bridge boundaries are mocked in these JavaScript tests; no physical iPhone/iPad completion is claimed.",
+    "Native receipt acknowledgement is not proof of post-withdrawal network silence through background/foreground/relaunch.",
+    "The worldwide production policy coordinator, age/region signal resolution, and purpose-specific notice/permission integration are unfinished.",
+    "No genuine installed RevenueCat receipt has been established, and no successor signed candidate or store submission was created.",
+    "Stored UMP status is not a fresh launch consent update, proof of age/location, or permission for RevenueCat."
+  ]
+}

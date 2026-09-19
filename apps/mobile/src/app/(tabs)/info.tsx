@@ -1,5 +1,5 @@
 import Constants from 'expo-constants';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -20,8 +20,8 @@ import {
   X,
 } from 'lucide-react-native';
 import type { ReactNode } from 'react';
-import { useState, useSyncExternalStore } from 'react';
-import { isAdPrivacyRequired, showAdPrivacyOptions, subscribeAdPrivacy } from '@/services/monetization';
+import { useCallback, useRef, useState, useSyncExternalStore } from 'react';
+import { isAdPrivacyRequired, refreshAdPrivacyRequirement, showAdPrivacyOptions, subscribeAdPrivacy } from '@/services/monetization';
 import {
   Alert,
   Linking,
@@ -313,11 +313,17 @@ export default function InfoScreen() {
   const [onlineDeleteBusy, setOnlineDeleteBusy] = useState(false);
   const adPrivacyRequired = useSyncExternalStore(subscribeAdPrivacy, isAdPrivacyRequired, () => false);
   const [adPrivacyBusy, setAdPrivacyBusy] = useState(false);
+  const privacyFocused = useRef(false);
+  useFocusEffect(useCallback(() => {
+    privacyFocused.current = true;
+    void refreshAdPrivacyRequirement();
+    return () => { privacyFocused.current = false; };
+  }, []));
   const openAdPrivacy = async () => {
     if (adPrivacyBusy) return;
     setAdPrivacyBusy(true);
-    try { await showAdPrivacyOptions(); }
-    catch { Alert.alert('Privacy settings unavailable', 'Please try again when online. Gameplay is still available.'); }
+    try { await showAdPrivacyOptions(() => privacyFocused.current); }
+    catch { if (privacyFocused.current) Alert.alert('Privacy settings unavailable', 'Please try again when online. Gameplay is still available.'); }
     finally { setAdPrivacyBusy(false); }
   };
   const queryClient = useQueryClient();

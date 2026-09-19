@@ -1,5 +1,5 @@
 const originalEnv = { ...process.env };
-function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: boolean; adsAllowed?: boolean; rcAllowed?: boolean; treatment?: string; underAgeOfConsent?: boolean; nativeFence?: boolean } = {}) {
+function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: boolean; adsAllowed?: boolean; rcAllowed?: boolean; treatment?: string; underAgeOfConsent?: boolean; nativeFence?: boolean; umpBridge?: boolean } = {}) {
   jest.resetModules();
   process.env.EXPO_PUBLIC_ADS_MODE = 'test';
   process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = 'appl_unit_test_only';
@@ -33,11 +33,14 @@ function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: b
   const purchasesLoad = jest.fn(() => ({ default: purchases }));
   jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: options.expoGo ? 'storeClient' : 'standalone' }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
   const nativeModules: { RNPurchases?: { flapFitSetProcessingAllowed?: typeof nativeFence } } = options.nativeFence === false ? {} : { RNPurchases: { flapFitSetProcessingAllowed: nativeFence } };
-  jest.doMock('react-native', () => ({ Platform: { OS: options.platform ?? 'ios' }, AppState: state, NativeModules: nativeModules }));
+  const umpInfo = { canRequestAds: true, privacyOptionsRequirementStatus: 'REQUIRED' };
+  const ump = { getConsentInfo: jest.fn().mockResolvedValue(umpInfo), showPrivacyOptionsForm: jest.fn().mockResolvedValue(umpInfo) };
+  const turbo = { get: jest.fn(() => options.umpBridge ? ump : null) };
+  jest.doMock('react-native', () => ({ TurboModuleRegistry: turbo, Platform: { OS: options.platform ?? 'ios' }, AppState: state, NativeModules: nativeModules }));
   jest.doMock('react-native-google-mobile-ads', () => nativeLoad());
   jest.doMock('react-native-purchases', () => purchasesLoad());
   const adapter = require('../monetization') as typeof import('../monetization');
-  return { adapter, sdk, purchases, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativeModules, changeState };
+  return { adapter, sdk, purchases, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativeModules, changeState, ump, umpInfo };
 }
 
 afterEach(() => { process.env = { ...originalEnv }; jest.useRealTimers(); });
@@ -236,7 +239,8 @@ test('a forwarded Android presentation failure completes the selected result act
 
 test('unresolved processing never loads either SDK', async () => {
   const f = loadAdapter({ adsAllowed: false, rcAllowed: false });
-  await f.adapter.prepareMonetization(() => true); await f.adapter.showAdPrivacyOptions();
+  await f.adapter.prepareMonetization(() => true);
+  await expect(f.adapter.showAdPrivacyOptions()).rejects.toThrow('Ad privacy settings could not open');
   expect(f.nativeLoad).not.toHaveBeenCalled(); expect(f.purchasesLoad).not.toHaveBeenCalled();
 });
 
@@ -503,4 +507,128 @@ test('privacy form cannot cover an unsettled native result ad', async () => {
   expect(f.sdk.AdsConsent.showPrivacyOptionsForm).not.toHaveBeenCalled();
   f.events.get('closed')!(); await options;
   expect(f.sdk.AdsConsent.showPrivacyOptionsForm).toHaveBeenCalledTimes(1);
+});
+
+
+test('a cold restricted session recovers the required Google entry without starting either SDK', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, umpBridge: true });
+  expect(f.adapter.isAdPrivacyRequired()).toBe(false);
+  await f.adapter.refreshAdPrivacyRequirement();
+  expect(f.adapter.isAdPrivacyRequired()).toBe(true);
+  await f.adapter.showAdPrivacyOptions();
+  expect(f.ump.showPrivacyOptionsForm).toHaveBeenCalledTimes(1);
+  expect(f.nativeLoad).not.toHaveBeenCalled(); expect(f.purchasesLoad).not.toHaveBeenCalled();
+  expect(f.mobileAds.initialize).not.toHaveBeenCalled();
+  expect(f.adapter.prepareResultInterstitial()).toBeNull();
+  expect(f.getAccess().ads.allowed).toBe(false); expect(f.getAccess().revenueCat.allowed).toBe(false);
+});
+
+test('required-entry recovery keeps known requirements on unknown/error, and clears an explicit not-required result', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, umpBridge: true });
+  await f.adapter.refreshAdPrivacyRequirement();
+  f.umpInfo.privacyOptionsRequirementStatus = 'UNKNOWN';
+  await f.adapter.refreshAdPrivacyRequirement();
+  expect(f.adapter.isAdPrivacyRequired()).toBe(true);
+  f.ump.getConsentInfo.mockRejectedValueOnce(new Error('unavailable'));
+  await f.adapter.refreshAdPrivacyRequirement();
+  expect(f.adapter.isAdPrivacyRequired()).toBe(true);
+  f.umpInfo.privacyOptionsRequirementStatus = 'NOT_REQUIRED';
+  await f.adapter.refreshAdPrivacyRequirement();
+  expect(f.adapter.isAdPrivacyRequired()).toBe(false);
+  await f.adapter.showAdPrivacyOptions();
+  expect(f.ump.showPrivacyOptionsForm).not.toHaveBeenCalled();
+  expect(f.nativeLoad).not.toHaveBeenCalled(); expect(f.purchasesLoad).not.toHaveBeenCalled();
+});
+
+test('a stale read cannot erase the privacy result from a newer form', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, umpBridge: true });
+  let resolve!: (value: typeof f.umpInfo) => void;
+  f.ump.getConsentInfo.mockReturnValueOnce(new Promise(done => { resolve = done; }));
+  const stale = f.adapter.refreshAdPrivacyRequirement();
+  await f.adapter.showAdPrivacyOptions();
+  resolve({ ...f.umpInfo, privacyOptionsRequirementStatus: 'NOT_REQUIRED' }); await stale;
+  expect(f.adapter.isAdPrivacyRequired()).toBe(true);
+});
+
+test.each(['game', 'background', 'blur'])('a late native rights query cannot open a form after %s', async (reason) => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, umpBridge: true });
+  let resolve!: (value: typeof f.umpInfo) => void; let focused = true;
+  f.ump.getConsentInfo.mockReturnValueOnce(new Promise(done => { resolve = done; }));
+  const options = f.adapter.showAdPrivacyOptions(() => focused);
+  for (let i = 0; i < 8; ++i) await Promise.resolve();
+  if (reason === 'game') await f.adapter.settlePrivacyBeforeGameplay();
+  if (reason === 'background') f.changeState('background');
+  if (reason === 'blur') focused = false;
+  resolve(f.umpInfo); await options;
+  expect(f.ump.showPrivacyOptionsForm).not.toHaveBeenCalled();
+  expect(f.nativeLoad).not.toHaveBeenCalled(); expect(f.purchasesLoad).not.toHaveBeenCalled();
+});
+
+test('repeated rights requests share one native form and game entry waits for its completion', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, umpBridge: true });
+  let resolve!: (value: typeof f.umpInfo) => void;
+  f.ump.showPrivacyOptionsForm.mockReturnValue(new Promise(done => { resolve = done; }));
+  const first = f.adapter.showAdPrivacyOptions(); const second = f.adapter.showAdPrivacyOptions();
+  expect(first).toBe(second);
+  for (let i = 0; i < 12; ++i) await Promise.resolve();
+  expect(f.ump.showPrivacyOptionsForm).toHaveBeenCalledTimes(1);
+  const start = jest.fn(); const entry = f.adapter.settlePrivacyBeforeGameplay().then(start);
+  for (let i = 0; i < 8; ++i) await Promise.resolve();
+  expect(start).not.toHaveBeenCalled();
+  resolve(f.umpInfo); await Promise.all([first, entry]);
+  expect(start).toHaveBeenCalledTimes(1);
+});
+
+test('native Google choices can restore independently permitted restricted ads without RevenueCat', async () => {
+  const f = loadAdapter({ rcAllowed: false, treatment: 'teen', underAgeOfConsent: true, umpBridge: true });
+  await f.adapter.showAdPrivacyOptions();
+  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'teen' });
+  expect(f.mobileAds.initialize).toHaveBeenCalledTimes(1);
+  expect(f.adapter.prepareResultInterstitial()).not.toBeNull();
+  expect(f.purchasesLoad).not.toHaveBeenCalled(); expect(f.nativeFence).not.toHaveBeenCalledWith(true);
+});
+
+test('native Google refusal does not erase independent RevenueCat permission or initialize ads', async () => {
+  const f = loadAdapter({ umpBridge: true }); f.umpInfo.canRequestAds = false;
+  await f.adapter.showAdPrivacyOptions();
+  expect(f.getAccess().revenueCat.allowed).toBe(true);
+  expect(f.mobileAds.initialize).not.toHaveBeenCalled();
+  expect(f.adapter.prepareResultInterstitial()).toBeNull();
+});
+
+test.each(['UNKNOWN', 'error'])('unavailable Google rights %s surface a retryable failure', async (reason) => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false, umpBridge: true });
+  if (reason === 'error') f.ump.showPrivacyOptionsForm.mockRejectedValue(new Error('failed to present'));
+  else f.umpInfo.privacyOptionsRequirementStatus = reason;
+  await expect(f.adapter.showAdPrivacyOptions()).rejects.toThrow('Ad privacy settings could not open');
+  expect(f.nativeLoad).not.toHaveBeenCalled(); expect(f.purchasesLoad).not.toHaveBeenCalled();
+});
+
+
+test('lobby re-entry cannot start a second native form while privacy options are presented', async () => {
+  const f = loadAdapter({ rcAllowed: false, umpBridge: true });
+  let resolve!: (value: typeof f.umpInfo) => void;
+  f.ump.showPrivacyOptionsForm.mockReturnValue(new Promise(done => { resolve = done; }));
+  const options = f.adapter.showAdPrivacyOptions();
+  for (let i = 0; i < 12; ++i) await Promise.resolve();
+  expect(f.ump.showPrivacyOptionsForm).toHaveBeenCalledTimes(1);
+  const setup = f.adapter.prepareMonetization(() => true);
+  expect(f.sdk.AdsConsent.requestInfoUpdate).not.toHaveBeenCalled();
+  expect(f.sdk.AdsConsent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
+  resolve(f.umpInfo); await Promise.all([options, setup]);
+  expect(f.mobileAds.initialize).toHaveBeenCalledTimes(1);
+});
+
+test('lobby re-entry during an unresolved rights query cannot bypass its later refusal', async () => {
+  const f = loadAdapter({ rcAllowed: false, umpBridge: true });
+  let resolve!: (value: typeof f.umpInfo) => void;
+  f.ump.getConsentInfo.mockReturnValueOnce(new Promise(done => { resolve = done; }));
+  const options = f.adapter.showAdPrivacyOptions();
+  const setup = f.adapter.prepareMonetization(() => true);
+  for (let i = 0; i < 8; ++i) await Promise.resolve();
+  expect(f.sdk.AdsConsent.requestInfoUpdate).not.toHaveBeenCalled();
+  f.umpInfo.canRequestAds = false; resolve(f.umpInfo);
+  await Promise.all([options, setup]);
+  expect(f.mobileAds.initialize).not.toHaveBeenCalled();
+  expect(f.adapter.prepareResultInterstitial()).toBeNull();
 });

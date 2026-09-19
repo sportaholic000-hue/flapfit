@@ -4,6 +4,7 @@ import type { AgeRestrictedTreatment, PaidEvent } from 'react-native-google-mobi
 import type { AdRevenueData, PurchasesAdTracker } from 'react-native-purchases';
 import { ResultAdGate, type InterstitialCallbacks, type ReadyInterstitial } from './resultAdGate';
 import { getProcessingAccess, subscribeProcessingAccess } from '../privacy/processingAccess';
+import { getUmpPrivacyControls } from '../privacy/umpPrivacyControls';
 
 type AdsSdk = typeof import('react-native-google-mobile-ads');
 type PurchasesSdk = typeof import('react-native-purchases');
@@ -20,6 +21,8 @@ let ads: AdsSdk | null = null;
 let tracker: PurchasesAdTracker | null = null;
 let adsReady = false;
 let privacyRequired = false;
+let privacyStatusRevision = 0;
+let privacyOptionsRequest: Promise<void> | null = null;
 let init: Promise<void> | null = null;
 let consentEpoch = 0;
 let privacyPresentation: Promise<unknown> | null = null;
@@ -96,6 +99,24 @@ export function subscribeAdPrivacy(listener: () => void) {
   return () => { privacyListeners.delete(listener); };
 }
 export function isAdPrivacyRequired() { return privacyRequired; }
+function publishPrivacyRequirement(required: boolean | null) {
+  ++privacyStatusRevision;
+  if (required === null) return; // Uncertainty cannot remove a known rights entry.
+  privacyRequired = required;
+  notifyPrivacy();
+}
+
+/** Read-only recovery of Google's existing rights entry, including after a cold
+ * start with ads ineligible. This is not a fresh advertising consent decision. */
+export async function refreshAdPrivacyRequirement(): Promise<void> {
+  const controls = getUmpPrivacyControls();
+  if (!controls) return;
+  const revision = ++privacyStatusRevision;
+  try {
+    const info = await bounded(controls.getConsentInfo());
+    if (revision === privacyStatusRevision) publishPrivacyRequirement(info.required);
+  } catch { /* Keep any known required entry usable after a failed status read. */ }
+}
 
 function loadAdsSdk(): AdsSdk | null {
   if (!supported || mode === 'off') return null;
@@ -233,6 +254,10 @@ export function prepareMonetization(canPresent: () => boolean): Promise<void> {
   // covers loading this module after a permitted decision was already restored.
   // Its own native fence/generation checks apply without delaying gameplay.
   void initializeRevenueCat();
+  // A lobby focus change must not launch a second UMP form while the existing
+  // settings request owns native presentation (or is checking its status).
+  if (privacyOptionsRequest) return privacyOptionsRequest.catch(() => undefined);
+  if (privacyPresentation) return privacyPresentation.then(() => undefined, () => undefined);
   if (init) return init;
   const access = getProcessingAccess();
   if (!access.ads.allowed) return Promise.resolve();
@@ -245,14 +270,12 @@ export function prepareMonetization(canPresent: () => boolean): Promise<void> {
     try {
       const info = await bounded(sdk.AdsConsent.requestInfoUpdate({ tagForUnderAgeOfConsent: access.ads.underAgeOfConsent }));
       if (!currentAdPermission(epoch)) return;
-      privacyRequired = info.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED;
-      notifyPrivacy();
+      publishPrivacyRequirement(info.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED);
       await settleResultPresentations();
       if (!currentAdPermission(epoch) || !canPresent() || !adEnvironment.isActive()) return;
       const consent = await presentPrivacy(() => sdk.AdsConsent.loadAndShowConsentFormIfRequired());
       if (!currentAdPermission(epoch)) return;
-      privacyRequired = consent.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED;
-      notifyPrivacy();
+      publishPrivacyRequirement(consent.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED);
       if (!consent.canRequestAds) { adsReady = false; return; }
       // No IDFA collection, personalized requests, health or competition attributes.
       await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: access.ads.treatment as AgeRestrictedTreatment }));
@@ -269,23 +292,51 @@ export function prepareMonetization(canPresent: () => boolean): Promise<void> {
   return init;
 }
 
-export async function showAdPrivacyOptions(): Promise<void> {
-  const sdk = ads ?? (getProcessingAccess().ads.allowed ? loadAdsSdk() : null);
-  if (!sdk || !adEnvironment.isActive()) return;
+export function showAdPrivacyOptions(canPresent: () => boolean = () => true): Promise<void> {
+  if (privacyOptionsRequest) return privacyOptionsRequest;
+  const operation = openAdPrivacyOptions(canPresent);
+  privacyOptionsRequest = operation;
+  const finished = () => { if (privacyOptionsRequest === operation) privacyOptionsRequest = null; };
+  void operation.then(finished, finished);
+  return operation;
+}
+
+async function openAdPrivacyOptions(canPresent: () => boolean): Promise<void> {
+  if (!adEnvironment.isActive() || !canPresent()) return;
   if (privacyPresentation) { await privacyPresentation; return; }
   adsReady = false;
   const epoch = ++consentEpoch; // Invalidate old ads and in-flight initialization.
-  const access = getProcessingAccess();
   disposeResultAds();
   try {
     await settleResultPresentations();
-    if (epoch !== consentEpoch || !adEnvironment.isActive()) return;
-    const consent = await presentPrivacy(() => sdk.AdsConsent.showPrivacyOptionsForm());
+    if (epoch !== consentEpoch || !adEnvironment.isActive() || !canPresent()) return;
+    const controls = getUmpPrivacyControls();
+    let consent: { required: boolean | null; canRequestAds: boolean };
+    if (controls) {
+      const info = await bounded(controls.getConsentInfo());
+      if (epoch !== consentEpoch || !adEnvironment.isActive() || !canPresent()) return;
+      publishPrivacyRequirement(info.required);
+      if (info.required === false) return;
+      if (info.required === null) throw new Error('Privacy requirement is unavailable');
+      consent = await presentPrivacy(() => controls.showPrivacyOptionsForm());
+    } else {
+      // Compatibility with older supported native builds. A missing bridge may
+      // never cause an ineligible session to evaluate or start the ad SDK.
+      const sdk = ads ?? (getProcessingAccess().ads.allowed ? loadAdsSdk() : null);
+      if (!sdk) throw new Error('Privacy controls are unavailable');
+      const info = await presentPrivacy(() => sdk.AdsConsent.showPrivacyOptionsForm());
+      consent = {
+        required: info.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED,
+        canRequestAds: info.canRequestAds,
+      };
+    }
     if (epoch !== consentEpoch) return;
-    privacyRequired = consent.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED;
-    notifyPrivacy();
+    publishPrivacyRequirement(consent.required);
     if (consent.canRequestAds && currentAdPermission(epoch)) {
-      // This can be the first allowed initialization after a denied/failed startup.
+      const sdk = loadAdsSdk();
+      if (!sdk) return;
+      const access = getProcessingAccess();
+      // Reapply the independent age/processing policy before any initialization.
       await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: access.ads.treatment as AgeRestrictedTreatment }));
       if (!currentAdPermission(epoch)) return;
       void initializeRevenueCat();
