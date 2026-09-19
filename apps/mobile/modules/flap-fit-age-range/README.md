@@ -44,10 +44,12 @@ Future significant app updates must honor the returned parental-consent/adult-no
 
 Import getVerifiedAppleAppTransaction from ./app-transaction. This separate call reads StoreKit AppTransaction.shared on iOS 16+ and returns either {status:'verified', signedAppTransaction:string} or {status:'unsupported'|'unavailable'|'unverified'|'error', signedAppTransaction:null}. The native module only exports a JWS when StoreKit reports .verified. It does not call refresh, request a purchase or sign-in, present a custom question, extract an appTransactionID, or cache/log/persist the result. Missing native methods and unsupported platforms fail closed.
 
-Forward the signed JWS directly to Flap Fit's verified server status/link endpoint and discard it. The server must separately validate its signature/certificate chain, bundle ID, app ID and environment before deriving a private revocation identity. Do not send it to analytics, RevenueCat, advertising or ordinary gameplay APIs. This bridge supplies download identity only: a valid app transaction does not establish current parental or processing consent and must never reset a stored revocation. There is no production coordinator/UI wiring in this module.
+Forward the signed JWS directly to Flap Fit's verified server status/link endpoint and discard it. The server must separately validate its signature/certificate chain, bundle ID, app ID and environment before deriving a private revocation identity. Do not send it to analytics, RevenueCat, advertising or ordinary gameplay APIs. This bridge supplies download identity only: a valid app transaction does not establish current parental or processing consent and must never reset a stored revocation. The native module has no UI or SDK initialization. The separate appleRescission service checks and links required Apple competition access before game requests; source wiring alone does not configure or prove Apple server-notification delivery.
 
 - https://developer.apple.com/documentation/storekit/apptransaction/shared
 - https://developer.apple.com/documentation/storekit/verificationresult/jwsrepresentation-6ma59
 - https://developer.apple.com/documentation/storekit/apptransaction/apptransactionid
 
 Native compilation and installed Apple sandbox verification are required separately from wrapper tests.
+
+Native verified AppTransaction.environment (iOS/iPadOS 16+) is exposed only as Production or Sandbox to select the matching fixed verification endpoint. Xcode/unknown values fail closed. The server independently verifies the environment; JavaScript never decodes the JWS and never retries another environment on failure. https://developer.apple.com/documentation/storekit/apptransaction/environment

@@ -1,2 +1,11 @@
 [functions.flapfit-game]
 verify_jwt = true
+
+# Apple authenticates notifications with nested signed messages, not a Supabase JWT.
+# /status requires a verified AppTransaction; /link additionally verifies a live user token.
+[functions.flapfit-apple-consent]
+verify_jwt = false
+
+# Isolated Apple-signed Sandbox receiver; does not change the launch game environment.
+[functions.flapfit-apple-consent-sandbox]
+verify_jwt = false

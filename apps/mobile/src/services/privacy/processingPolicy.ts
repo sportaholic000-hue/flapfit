@@ -23,13 +23,15 @@ export type ProcessingInputs = {
   appleRequirement: AppleRequirement;
   appleAgeCheckSatisfied: boolean;
   appleAccessRestricted: boolean;
+  /** A required Apple flow also needs a current verified rescission status. */
+  appleRescissionPending: boolean;
   choices: Record<Purpose, ProcessingChoice>;
   requirements: Record<Purpose, PurposeRequirement>;
   presentedNoticeVersion: number | null;
 };
 export type ProcessingReason =
   | 'allowed' | 'loading' | 'region-unconfirmed' | 'region-not-cleared'
-  | 'apple-check-pending' | 'apple-check-required' | 'apple-access-restricted'
+  | 'apple-check-pending' | 'apple-check-required' | 'apple-access-restricted' | 'apple-access-check-pending'
   | 'age-unresolved' | 'outside-audience' | 'parent-permission-required'
   | 'age-14-unresolved' | 'policy-unresolved' | 'notice-needed' | 'permission-needed' | 'refused' | 'notice-changed';
 export type ProcessingDecision = { allowed: boolean; reason: ProcessingReason };
@@ -60,7 +62,7 @@ export function initialProcessingInputs(): ProcessingInputs {
     hydrated: false, region: 'unknown',
     age: { source: 'none', status: 'unknown', lowerBound: null, upperBound: null },
     appleRequirement: 'pending', appleAgeCheckSatisfied: false,
-    appleAccessRestricted: false,
+    appleAccessRestricted: false, appleRescissionPending: true,
     choices: { ads: unset(), analytics: unset(), competition: unset() },
     requirements: { ads: 'unresolved', analytics: 'unresolved', competition: 'unresolved' },
     presentedNoticeVersion: null,
@@ -81,6 +83,7 @@ function eligibility(input: ProcessingInputs): ProcessingReason {
       (!input.appleAgeCheckSatisfied || input.age.source !== 'apple' || !validAge(input.age))) {
     return 'apple-check-required';
   }
+  if (input.appleRequirement === 'required' && input.appleRescissionPending) return 'apple-access-check-pending';
   if (input.region === 'unknown') return 'region-unconfirmed';
   if (input.region === 'other') return 'region-not-cleared';
   if (!validAge(input.age)) return 'age-unresolved';
@@ -130,6 +133,7 @@ function runtimeEligibility(input: ProcessingRuntimeInputs): ProcessingReason {
   if (input.appleAccessRestricted) return 'apple-access-restricted';
   if (input.appleRequirement === 'pending' || input.appleRequirement === 'error') return 'apple-check-pending';
   if (input.appleRequirement === 'required' && !input.verification?.mandatoryCheckSatisfied) return 'apple-check-required';
+  if (input.appleRequirement === 'required' && input.appleRescissionPending) return 'apple-access-check-pending';
   if (input.region === 'unknown') return 'region-unconfirmed';
   if (input.region === 'other') return 'region-not-cleared';
   return input.verification?.eligibility ?? 'age-unresolved';

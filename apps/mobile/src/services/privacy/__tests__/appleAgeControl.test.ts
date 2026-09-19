@@ -87,6 +87,7 @@ let native: { getAppleAgeRequirements: jest.Mock; requestAppleAgeRange: jest.Moc
 async function readyControl() {
   jest.resetModules();
   runtime = require('../processingAccess');
+  runtime.setAppleRescissionPending(false); // Separate server status fixture for age-only assertions.
   control = require('../appleAgeControl');
   native = require('../../../../modules/flap-fit-age-range');
   native.getAppleAgeRequirements.mockResolvedValue({ ...supported(), eligibility: true });

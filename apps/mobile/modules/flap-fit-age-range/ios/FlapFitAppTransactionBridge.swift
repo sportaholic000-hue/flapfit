@@ -17,12 +17,20 @@ enum FlapFitAppTransactionBridge {
     do {
       let verification = try await AppTransaction.shared
       switch verification {
-      case .verified(_):
+      case .verified(let transaction):
+        // Native verified environment is a route selector only. The fixed server
+        // endpoint independently verifies it; never retry a different environment.
+        let environment: String
+        switch transaction.environment {
+        case .production: environment = "Production"
+        case .sandbox: environment = "Sandbox"
+        default: return failure("unsupported")
+        }
         let signed = verification.jwsRepresentation
         guard !signed.isEmpty else { return failure("error") }
         // No identifier, age information or decoded payload is extracted here.
         // A verified download is not proof that parental consent remains active.
-        return ["status": "verified", "signedAppTransaction": signed]
+        return ["status": "verified", "signedAppTransaction": signed, "environment": environment]
       case .unverified(_, _):
         return failure("unverified")
       @unknown default:

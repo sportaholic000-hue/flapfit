@@ -15,9 +15,10 @@ function normalize(value: unknown): AppleAppTransactionResult {
   }
   // This checks the bridge shape only, not the signature. The receiving server must
   // independently verify Apple's JWS, certificate chain, bundle ID and environment.
-  if (record.status !== 'verified' || typeof record.signedAppTransaction !== 'string' ||
+  if ((record.environment !== 'Production' && record.environment !== 'Sandbox') ||
+      record.status !== 'verified' || typeof record.signedAppTransaction !== 'string' ||
       !/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(record.signedAppTransaction)) return failure('error');
-  return { status: 'verified', signedAppTransaction: record.signedAppTransaction };
+  return { status: 'verified', signedAppTransaction: record.signedAppTransaction, environment: record.environment };
 }
 
 /** Passive StoreKit read only: no refresh, sign-in, purchase, or custom age UI.

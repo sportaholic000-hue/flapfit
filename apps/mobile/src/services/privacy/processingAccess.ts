@@ -141,6 +141,10 @@ export function verifyTransientAgeEvidence(
     requirements: requirements ? { ...requirements } : input.requirements });
   return expectedRevision === verificationRevision;
 }
+export function setAppleRescissionPending(pending: boolean): void {
+  if (input.appleRescissionPending === pending) return;
+  publish({ ...input, appleRescissionPending: pending });
+}
 export function setAppleAccessRestricted(restricted: boolean): void {
   if (restricted) ++verificationRevision;
   publish({ ...input, appleAccessRestricted: restricted,

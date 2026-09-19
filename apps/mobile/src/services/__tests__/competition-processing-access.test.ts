@@ -12,6 +12,11 @@ let api: typeof import('../competitionApi');
 let storage: typeof import('@react-native-async-storage/async-storage').default;
 let store: typeof import('@/utils/game/store');
 let createClient: jest.Mock;
+let appleRequired = false;
+let appleStatus: { status: string; revision: number };
+let appleFresh = false;
+let appleCheck: jest.Mock;
+let appleLink: jest.Mock;
 let auth: Record<string, jest.Mock>;
 let listeners: Set<() => void>;
 let appListeners: Set<(state: string) => void>;
@@ -23,6 +28,11 @@ function setAccess(allowed: boolean) {
 
 beforeEach(async () => {
   jest.resetModules();
+  appleRequired = false;
+  appleFresh = true;
+  appleStatus = { status: 'no-revocation-recorded', revision: 1 };
+  appleCheck = jest.fn().mockImplementation(async () => appleStatus);
+  appleLink = jest.fn().mockImplementation(async () => { appleStatus = { ...appleStatus, revision: appleStatus.revision + 1 }; return appleStatus; });
   listeners = new Set();
   appListeners = new Set();
   policy = { competition: { allowed: false }, revenueCat: { allowed: false }, revision: 1 };
@@ -38,16 +48,24 @@ beforeEach(async () => {
   jest.doMock('@supabase/supabase-js', () => ({ createClient }));
   jest.doMock('../privacy/processingAccess', () => ({
     getProcessingAccess: () => policy,
+    getProcessingInputs: () => ({ appleRequirement: appleRequired ? 'required' : 'not-required' }),
     subscribeProcessingAccess: (listener: () => void) => {
       listeners.add(listener);
       return () => { listeners.delete(listener); };
     },
   }));
+  jest.doMock('../privacy/appleRescission', () => ({
+    ensureCurrentAppleRescissionStatus: () => appleCheck(),
+    getAppleRescissionStatus: () => appleStatus,
+    isAppleRescissionStatusFresh: () => appleFresh,
+    linkAppleRescissionToExistingAccount: (token: string) => appleLink(token),
+    startAppleRescissionMonitoring: () => () => undefined,
+  }));
   jest.doMock('@/config/release', () => ({ ONLINE_SERVICES: {
     supabaseUrl: 'https://test.supabase.co', supabasePublishableKey: 'public-test',
   } }));
   jest.doMock('react-native-url-polyfill/auto', () => ({}));
-  jest.doMock('react-native', () => ({ AppState: {
+  jest.doMock('react-native', () => ({ Platform: { OS: 'ios' }, AppState: {
     currentState: 'active',
     addEventListener: (_event: string, listener: (state: string) => void) => {
       appListeners.add(listener);
@@ -487,4 +505,71 @@ test('the last caller timing out aborts shared Auth transport and rejects its la
   } finally {
     jest.useRealTimers();
   }
+});
+
+
+test('required Apple status is checked before any anonymous identity exists', async () => {
+  appleRequired = true; setAccess(true);
+  appleStatus = { status: 'unavailable', revision: 2 }; appleFresh = false;
+  await expect(api.competitionRequest('/leaderboard')).rejects.toBeInstanceOf(api.CompetitionAccessRequiredError);
+  expect(appleCheck).toHaveBeenCalledTimes(1); expect(createClient).not.toHaveBeenCalled();
+  expect(auth.signInAnonymously).not.toHaveBeenCalled(); expect(global.fetch).not.toHaveBeenCalled();
+});
+
+test('required first use shares one identity and waits for verified link before all competition dispatches', async () => {
+  appleRequired = true; setAccess(true);
+  auth.getSession.mockResolvedValue({ data: { session: null }, error: null });
+  auth.signInAnonymously.mockResolvedValue({ data: { user: session.user, session }, error: null });
+  const started = deferred<void>(); const link = deferred<{ status: string; revision: number }>();
+  appleLink.mockImplementation(() => { started.resolve(); return link.promise; });
+  const first = api.competitionRequest('/leaderboard');
+  const second = api.competitionRequest('/leaderboard');
+  await started.promise;
+  expect(appleLink).toHaveBeenCalledWith('existing-token'); expect(auth.signInAnonymously).toHaveBeenCalledTimes(1);
+  expect(global.fetch).not.toHaveBeenCalled();
+  appleStatus = { status: 'no-revocation-recorded', revision: 3 }; link.resolve(appleStatus);
+  await expect(Promise.all([first,second])).resolves.toEqual([{},{}]);
+  expect(global.fetch).toHaveBeenCalledTimes(2); expect(appleLink).toHaveBeenCalledTimes(1);
+});
+
+test('fresh linked profile is reused without repeatedly starting link checks', async () => {
+  appleRequired = true; setAccess(true);
+  await api.competitionRequest('/leaderboard'); await api.competitionRequest('/leaderboard');
+  expect(appleLink).toHaveBeenCalledTimes(1); expect(global.fetch).toHaveBeenCalledTimes(2);
+});
+
+test.each(['revoked','unavailable'])('required link %s cannot dispatch a game request', async (status) => {
+  appleRequired = true; setAccess(true);
+  appleLink.mockImplementation(async () => { appleStatus = { status, revision: 3 }; appleFresh=false; return appleStatus; });
+  await expect(api.competitionRequest('/leaderboard')).rejects.toBeInstanceOf(api.CompetitionAccessRequiredError);
+  expect(global.fetch).not.toHaveBeenCalled();
+});
+
+test('a status invalidated during required authentication prevents linking or dispatch', async () => {
+  appleRequired = true; setAccess(true);
+  const started=deferred<void>(); const lookup=deferred<{data:{session:typeof session};error:null}>();
+  auth.getSession.mockImplementation(() => {started.resolve(); return lookup.promise;});
+  const request=api.competitionRequest('/leaderboard'); const failure=expect(request).rejects.toBeInstanceOf(api.CompetitionAccessRequiredError);
+  await started.promise; appleFresh=false; appleStatus={status:'unknown',revision:4};
+  lookup.resolve({data:{session},error:null}); await failure;
+  expect(appleLink).not.toHaveBeenCalled(); expect(global.fetch).not.toHaveBeenCalled();
+});
+
+test('stale link completion cannot dispatch or bypass an independent competition refusal', async () => {
+  appleRequired = true; setAccess(true);
+  const started=deferred<void>();const link=deferred<{status:string;revision:number}>();
+  appleLink.mockImplementation(() => {started.resolve();return link.promise;});
+  const request=api.competitionRequest('/leaderboard');const failure=expect(request).rejects.toBeInstanceOf(api.CompetitionAccessRequiredError);
+  await started.promise;setAccess(false);link.resolve(appleStatus);await failure;
+  expect(global.fetch).not.toHaveBeenCalled();
+});
+
+test('required Apple denial still permits authenticated deletion and support without status, link, or signup', async () => {
+  appleRequired=true;appleFresh=false;appleStatus={status:'revoked',revision:3};
+  expect(await api.getCompetitionSupportId()).toBe('existing-user');
+  (global.fetch as jest.Mock).mockResolvedValue(response({deleted:true}));
+  await api.deleteCompetitionIdentity();
+  expect(appleCheck).not.toHaveBeenCalled();expect(appleLink).not.toHaveBeenCalled();
+  expect(auth.signInAnonymously).not.toHaveBeenCalled();
+  expect((global.fetch as jest.Mock).mock.calls[0][1].method).toBe('DELETE');
 });

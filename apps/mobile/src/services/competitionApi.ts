@@ -1,9 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, type Session, type SupabaseClient, type User } from '@supabase/supabase-js';
-import { AppState, type AppStateStatus } from 'react-native';
+import { AppState, Platform, type AppStateStatus } from 'react-native';
 import 'react-native-url-polyfill/auto';
 import { ONLINE_SERVICES } from '@/config/release';
-import { getProcessingAccess, subscribeProcessingAccess } from './privacy/processingAccess';
+import { getProcessingAccess, getProcessingInputs, subscribeProcessingAccess } from './privacy/processingAccess';
+import { ensureCurrentAppleRescissionStatus, getAppleRescissionStatus, isAppleRescissionStatusFresh,
+  linkAppleRescissionToExistingAccount, startAppleRescissionMonitoring } from './privacy/appleRescission';
 import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
 
 const FUNCTION_NAME = 'flapfit-game';
@@ -60,6 +62,10 @@ subscribeProcessingAccess(processingAccessChanged);
 useGameStore.subscribe((state, previous) => {
   if (state.competitionTermsVersion !== previous.competitionTermsVersion) processingAccessChanged();
 });
+
+function requiresAppleRescission() {
+  return Platform.OS === 'ios' && getProcessingInputs().appleRequirement === 'required';
+}
 
 type CompetitionAccess = { assert: () => void; signal: AbortSignal };
 async function withCompetitionAccess<T>(operation: (access: CompetitionAccess) => Promise<T>): Promise<T> {
@@ -237,6 +243,46 @@ async function readAnonymousIdentity(assertAccess: () => void): Promise<Anonymou
     throw signInResult.error ?? new Error('Could not create an anonymous game profile.');
   }
   return { client: supabase, user: signInResult.data.user, session: signInResult.data.session };
+}
+
+// One required preparation covers concurrent first use: verified status, one
+// authenticated identity, verified linkage, then (and only then) game requests.
+let requiredApplePreparation: Promise<AnonymousCompetitionIdentity> | null = null;
+let linkedAppleProfile: { userId: string; revision: number } | null = null;
+function appleProfileIsCurrent(userId: string): boolean {
+  return isAppleRescissionStatusFresh() && linkedAppleProfile?.userId === userId &&
+    linkedAppleProfile.revision === getAppleRescissionStatus().revision;
+}
+async function prepareRequiredAppleIdentity(): Promise<AnonymousCompetitionIdentity> {
+  if (requiredApplePreparation) return requiredApplePreparation;
+  const operation = (async () => {
+    const checked = await ensureCurrentAppleRescissionStatus();
+    if (checked.status !== 'no-revocation-recorded' || !isAppleRescissionStatusFresh()) throw new CompetitionAccessRequiredError();
+    const identity = await withCompetitionAccess(async (access) => {
+      const controller = new AbortController();
+      const abort = () => controller.abort();
+      access.signal.addEventListener('abort', abort);
+      const timeout = setTimeout(abort, 15_000);
+      try {
+        return await anonymousUser(access.assert, controller.signal);
+      } finally {
+        clearTimeout(timeout); access.signal.removeEventListener('abort', abort); controller.abort();
+      }
+    });
+    if (!requiresAppleRescission() || !competitionAccessAllowed() || !isAppleRescissionStatusFresh()) throw new CompetitionAccessRequiredError();
+    if (!appleProfileIsCurrent(identity.user.id)) {
+      // No game operation is active during the pending link. This pause cannot
+      // invalidate its own enclosing request, and rights operations never enter here.
+      const linked = await linkAppleRescissionToExistingAccount(identity.session.access_token);
+      if (linked.status !== 'no-revocation-recorded' || !isAppleRescissionStatusFresh() ||
+          !requiresAppleRescission() || !competitionAccessAllowed()) throw new CompetitionAccessRequiredError();
+      linkedAppleProfile = { userId: identity.user.id, revision: linked.revision };
+    }
+    return identity;
+  })();
+  requiredApplePreparation = operation;
+  try { return await operation; }
+  finally { if (requiredApplePreparation === operation) requiredApplePreparation = null; }
 }
 
 type CompetitionRequestOptions = {
@@ -443,6 +489,13 @@ export async function competitionRequest<T>(
   if (useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION) {
     throw new CompetitionTermsRequiredError();
   }
+  if (requiresAppleRescission()) {
+    const identity = await prepareRequiredAppleIdentity();
+    return withCompetitionAccess((access) => {
+      if (!appleProfileIsCurrent(identity.user.id)) throw new CompetitionAccessRequiredError();
+      return performCompetitionRequest<T>(path, { ...options, existingSession: identity.session }, access);
+    });
+  }
   return withCompetitionAccess((access) => performCompetitionRequest<T>(path, options, access));
 }
 
@@ -497,6 +550,9 @@ async function performCompetitionRequest<T>(
           throw new CompetitionUnavailableError('Online session could not be started.');
         }
 
+        if (requiresCurrentTerms && requiresAppleRescission() && !appleProfileIsCurrent(session.user.id)) {
+          throw new CompetitionAccessRequiredError();
+        }
         const response = await fetch(
           `${ONLINE_SERVICES.supabaseUrl}/functions/v1/${FUNCTION_NAME}${path}`,
           {
@@ -685,22 +741,36 @@ export function flushPendingCompetitionResults(): Promise<CompetitionFlushResult
 export function startCompetitionForegroundRetry(onSubmitted: () => void): () => void {
   let active = true;
   let inFlight = false;
+  let monitoring = false;
+  let stopApple: (() => void) | null = null;
+  const syncAppleMonitor = () => {
+    const required = requiresAppleRescission();
+    if (required === monitoring) return;
+    monitoring = required;
+    if (required) stopApple = startAppleRescissionMonitoring();
+    else { stopApple?.(); stopApple = null; }
+  };
+  const unsubscribeAppleRequirement = subscribeProcessingAccess(syncAppleMonitor);
+  syncAppleMonitor();
   const subscription = AppState.addEventListener('change', (state) => {
-    if (state !== 'active' || inFlight || !useGameStore.getState().hydrated || !competitionAccessAllowed()) return;
-    const generation = accessGeneration;
+    if (state !== 'active' || inFlight || !useGameStore.getState().hydrated) return;
     inFlight = true;
-    void flushPendingCompetitionResults()
-      .then((result) => {
-        if (active && competitionAccessAllowed() && generation === accessGeneration && result.submitted > 0) onSubmitted();
-      })
-      .catch(() => undefined)
-      .finally(() => {
-        inFlight = false;
-      });
+    void (async () => {
+      if (requiresAppleRescission()) {
+        const checked = await ensureCurrentAppleRescissionStatus();
+        if (checked.status !== 'no-revocation-recorded' || !isAppleRescissionStatusFresh()) return;
+      }
+      if (!active || !competitionAccessAllowed()) return;
+      const generation = accessGeneration;
+      const result = await flushPendingCompetitionResults();
+      if (active && competitionAccessAllowed() && generation === accessGeneration && result.submitted > 0) onSubmitted();
+    })().catch(() => undefined).finally(() => { inFlight = false; });
   });
   return () => {
     active = false;
     subscription.remove();
+    unsubscribeAppleRequirement();
+    stopApple?.();
   };
 }
 
@@ -835,6 +905,7 @@ export async function deleteCompetitionIdentity(): Promise<void> {
     client?.auth.stopAutoRefresh();
     client = null;
     privacyRightsClient = null;
+    linkedAppleProfile = null;
     useGameStore.getState().resetCompetitionProfile();
     await AsyncStorage.removeItem(COMPETITION_DELETION_KEY);
   });

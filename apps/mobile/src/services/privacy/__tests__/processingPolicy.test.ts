@@ -19,7 +19,7 @@ const granted = (): ProcessingChoice => ({
 function ready(): ProcessingInputs {
   return {
     ...initialProcessingInputs(), hydrated: true, region: 'us',
-    appleRequirement: 'not-required', age: age(13, 17),
+    appleRequirement: 'not-required', appleRescissionPending: false, age: age(13, 17),
     requirements: { ads: 'express-consent', analytics: 'express-consent', competition: 'requested-service' },
     choices: { ads: granted(), analytics: granted(), competition: granted() },
   };
@@ -187,4 +187,13 @@ describe('automatic repeat-request calendar guard', () => {
     expect(mayAutomaticallyRequest(granted())).toBe(false);
     expect(mayAutomaticallyRequest(initialProcessingInputs().choices.ads)).toBe(true);
   });
+});
+
+
+test('required Apple rescission check is an independent gate even after valid age and purpose choices', () => {
+  const input: ProcessingInputs={...ready(),appleRequirement:'required',appleAgeCheckSatisfied:true,appleRescissionPending:true};
+  expect(decisions(input).every(value=>!value.allowed&&value.reason==='apple-access-check-pending')).toBe(true);
+  input.appleRescissionPending=false;expect(decisions(input).every(value=>value.allowed)).toBe(true);
+  input.choices.analytics={...input.choices.analytics,decision:'denied'};
+  expect(evaluateProcessing(input).revenueCat.allowed).toBe(false);expect(evaluateProcessing(input).ads.allowed).toBe(true);
 });

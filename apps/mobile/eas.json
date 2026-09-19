@@ -91,6 +91,17 @@
         "image": "macos-tahoe-26.5-xcode-26.6",
         "resourceClass": "m-medium"
       }
+    },
+    "ios-device-check": {
+      "extends": "preview",
+      "developmentClient": false,
+      "credentialsSource": "local",
+      "autoIncrement": false,
+      "ios": {
+        "simulator": false,
+        "image": "macos-tahoe-26.5-xcode-26.6",
+        "resourceClass": "m-medium"
+      }
     }
   },
   "submit": {

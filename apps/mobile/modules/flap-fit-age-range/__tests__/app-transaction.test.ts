@@ -24,24 +24,24 @@ beforeEach(() => {
     refresh: mockRefresh,
     requestAgeRange: mockRequestAgeRange,
   });
-  mockRead.mockResolvedValue({ status: 'verified', signedAppTransaction: signed });
+  mockRead.mockResolvedValue({ status: 'verified', signedAppTransaction: signed, environment: 'Production' });
 });
 
 test('reads only the passive StoreKit method without refreshing or requesting age UI', async () => {
-  expect(await getVerifiedAppleAppTransaction()).toEqual({ status: 'verified', signedAppTransaction: signed });
+  expect(await getVerifiedAppleAppTransaction()).toEqual({ status: 'verified', signedAppTransaction: signed, environment: 'Production' });
   expect(mockRequireNative).toHaveBeenCalledWith('FlapFitAgeRange');
   expect(mockRead).toHaveBeenCalledTimes(1);
   expect(mockRefresh).not.toHaveBeenCalled();
   expect(mockRequestAgeRange).not.toHaveBeenCalled();
 });
 
-test('only signed transport data is returned; native identifiers, age, error and consent claims are discarded', async () => {
+test('only signed transport and its verified route are returned; identifiers, age, error and consent claims are discarded', async () => {
   mockRead.mockResolvedValue({
-    status: 'verified', signedAppTransaction: signed,
+    status: 'verified', signedAppTransaction: signed, environment: 'Production',
     appTransactionId: 'private', lowerBound: 13, upperBound: 15,
-    consentGranted: true, environment: 'Production', error: 'private detail',
+    consentGranted: true, error: 'private detail',
   });
-  expect(await getVerifiedAppleAppTransaction()).toEqual({ status: 'verified', signedAppTransaction: signed });
+  expect(await getVerifiedAppleAppTransaction()).toEqual({ status: 'verified', signedAppTransaction: signed, environment: 'Production' });
 });
 
 test.each(['unverified', 'unsupported', 'unavailable', 'error'] as const)(
@@ -53,15 +53,15 @@ test.each(['unverified', 'unsupported', 'unavailable', 'error'] as const)(
 
 test.each([
   null, [], {}, { status: 'futureStatus', signedAppTransaction: signed },
-  { status: 'verified', signedAppTransaction: null },
-  { status: 'verified', signedAppTransaction: 123 },
-  { status: 'verified', signedAppTransaction: '' },
-  { status: 'verified', signedAppTransaction: 'not-a-jws' },
-  { status: 'verified', signedAppTransaction: 'a.b.' },
-  { status: 'verified', signedAppTransaction: '.b.c' },
-  { status: 'verified', signedAppTransaction: 'a.b.c.d' },
-  { status: 'verified', signedAppTransaction: 'a.b.c\n' },
-  { status: 'verified', signedAppTransaction: 'a. b.c' },
+  { status: 'verified', environment: 'Production', signedAppTransaction: null },
+  { status: 'verified', environment: 'Production', signedAppTransaction: 123 },
+  { status: 'verified', environment: 'Production', signedAppTransaction: '' },
+  { status: 'verified', environment: 'Production', signedAppTransaction: 'not-a-jws' },
+  { status: 'verified', environment: 'Production', signedAppTransaction: 'a.b.' },
+  { status: 'verified', environment: 'Production', signedAppTransaction: '.b.c' },
+  { status: 'verified', environment: 'Production', signedAppTransaction: 'a.b.c.d' },
+  { status: 'verified', environment: 'Production', signedAppTransaction: 'a.b.c\n' },
+  { status: 'verified', environment: 'Production', signedAppTransaction: 'a. b.c' },
 ].map((value) => [value]))('malformed native result %j fails closed', async (value) => {
   mockRead.mockResolvedValue(value);
   expect(await getVerifiedAppleAppTransaction()).toEqual({ status: 'error', signedAppTransaction: null });
@@ -92,9 +92,19 @@ test('native rejection fails closed without exposing localized private error dat
 
 test('does not cache an earlier signed identity across subsequent reads', async () => {
   const first = await getVerifiedAppleAppTransaction();
-  mockRead.mockResolvedValue({ status: 'verified', signedAppTransaction: 'header.changed.signature' });
+  mockRead.mockResolvedValue({ status: 'verified', signedAppTransaction: 'header.changed.signature', environment: 'Production' });
   const second = await getVerifiedAppleAppTransaction();
-  expect(first).toEqual({ status: 'verified', signedAppTransaction: signed });
-  expect(second).toEqual({ status: 'verified', signedAppTransaction: 'header.changed.signature' });
+  expect(first).toEqual({ status: 'verified', signedAppTransaction: signed, environment: 'Production' });
+  expect(second).toEqual({ status: 'verified', signedAppTransaction: 'header.changed.signature', environment: 'Production' });
   expect(mockRead).toHaveBeenCalledTimes(2);
+});
+
+
+test.each(['Production','Sandbox'] as const)('passes through native-verified %s only for server routing', async (environment) => {
+  mockRead.mockResolvedValue({status:'verified',signedAppTransaction:signed,environment});
+  expect(await getVerifiedAppleAppTransaction()).toEqual({status:'verified',signedAppTransaction:signed,environment});
+});
+test.each([undefined,'Xcode','production','unknown'])('missing or unsupported native environment %j fails closed', async (environment) => {
+  mockRead.mockResolvedValue({status:'verified',signedAppTransaction:signed,environment});
+  expect(await getVerifiedAppleAppTransaction()).toEqual({status:'error',signedAppTransaction:null});
 });

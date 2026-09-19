@@ -1,5 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.109.0';
+import { requiresAppleCompetitionCheck } from '../_shared/apple-consent-competition.ts';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -159,6 +160,19 @@ Deno.serve(async (req) => {
     const user = userResult.data.user;
     if (userResult.error || !user || !user.is_anonymous) {
       return json({ error: 'Anonymous game session required.' }, 401);
+    }
+
+    if (requiresAppleCompetitionCheck(req.method, route)) {
+      const consentEnvironment = 'Production';
+      const consent = await admin.rpc('apple_consent_user_is_revoked', {
+        p_user_id: user.id, p_environment: consentEnvironment,
+      });
+      if (consent.error || typeof consent.data !== 'boolean') {
+        return json({ error: 'Online service is temporarily unavailable.' }, 503);
+      }
+      if (consent.data) {
+        return json({ error: 'Online participation is unavailable.', code: 'APPLE_CONSENT_REVOKED' }, 403);
+      }
     }
 
     const requestTermsVersion =

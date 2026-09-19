@@ -19,6 +19,7 @@ jest.mock('@/config/release', () => ({
 }));
 
 jest.mock('../privacy/processingAccess', () => ({
+  getProcessingInputs: () => ({ appleRequirement: 'not-required' }),
   getProcessingAccess: () => ({ competition: { allowed: true }, revision: 1 }),
   subscribeProcessingAccess: () => () => undefined,
 }));

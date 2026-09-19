@@ -1,6 +1,6 @@
 /** A verified download is identity evidence, never current app-use or analytics consent. */
 export type AppleAppTransactionResult =
-  | { status: 'verified'; signedAppTransaction: string }
+  | { status: 'verified'; signedAppTransaction: string; environment: 'Production' | 'Sandbox' }
   | { status: 'unsupported' | 'unavailable' | 'unverified' | 'error'; signedAppTransaction: null };
 
 export type AppleAppTransactionNativeModule = {

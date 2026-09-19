@@ -6,7 +6,7 @@ Updated September 19, 2026. This is an implementation checkpoint, not release cl
 
 Flap Fit remains a 13+ ad-supported app. The universal optional-ads proposal is rejected. There is no approved discretionary adult Allow ads switch, Play without ads button or free remove-ads setting. Required consent and opt-outs apply to the actual processing and jurisdiction. Restricted advertising must continue independently of RevenueCat refusal whenever its own route is permitted. RevenueCat must genuinely function for permitted users.
 
-The owner confirmed worldwide launch, with Canada and the USA priorities. App Store Connect shows 175 Available. Free download pricing (AUTO_FREE, price 0) was saved and persisted after reload on September 19. No territories were changed. The owner submitted EU trader identity documentation on September 19; Apple review is pending. Apple now has the approved not-a-regulated-medical-device declaration and a saved calculated 13+ age rating (12+ equivalent on pre-26 operating systems). The rating questionnaire flags Afghanistan and Morocco as unavailable under local rules; selected territories were not edited.
+The owner personally selected worldwide availability, with Canada and the USA priorities. App Store Connect shows 175 Available. Free download pricing (AUTO_FREE, price 0) was saved and persisted after reload on September 19. No territories were changed. The owner submitted EU trader identity documentation on September 19; Apple review is pending. Apple now has the approved not-a-regulated-medical-device declaration and a saved calculated 13+ age rating (12+ equivalent on pre-26 operating systems). The rating questionnaire flags Afghanistan and Morocco as unavailable under local rules; selected territories were not edited.
 
 The prior age-and-residence questionnaire and standalone disclosure proposal is withdrawn. No entire interface is approved, and no new consent/questionnaire UI has been added. Use sufficient Apple and provider information before proposing any narrow unresolved question; worldwide release is not yet cleared merely because worldwide availability is selected. In this intermediate source state, processing cannot start until an approved runtime coordinator supplies verified decisions. This is not a permanent global RevenueCat or teenage-ad shutdown and is not a releasable candidate.
 
@@ -46,7 +46,7 @@ The ignored local credential file points to the regenerated profile. Remote Expo
 
 ## Verification already completed
 
-- Final full mobile suite: 42 suites / 718 tests passed, exit 0, including parameterized Apple age gates, purpose-specific New York applicability and presence-aware UMP signals. No production warning was suppressed.
+- Historical independent-control checkpoint: 42 suites / 718 tests passed, exit 0, including parameterized Apple age gates, purpose-specific New York applicability and presence-aware UMP signals. No production warning was suppressed.
 - TypeScript, strict scoped lint and whitespace checks passed for the independent control changes.
 - Native RevenueCat and AdMob patches applied to their exact locked source versions, were idempotent, and rejected unexpected source changes in fixture checks.
 - The Swift cancellation/purge harness runs during CocoaPods installation on the macOS build host. It and the new complete native compile are not yet confirmed.
@@ -81,3 +81,7 @@ Gameplay, calibration, recording/audio, sharing and result-exit ad placement are
 The pinned iOS profile now preserves real AdTracker event delivery and the random app identifier while suppressing unrelated customer, purchase, entitlement, offering, configuration, attribution and feature-event startup and transport. The IDFV request header is removed. This app has no purchases or subscriptions. The consent cancellation/purge fence remains independent of advertising eligibility.
 
 All ten exact-version source transformations, idempotence, drift rejection, endpoint/startup assertions, script syntax and whitespace checks passed. These follow-on native changes are newer than successful simulator build 75760bcb and still require a new compile and installed verification. In particular, demonstrate backend receipt for a fresh permitted RevenueCat app ID without a customer-info GET; SDK source alone does not establish server acceptance. Retained event IDs are pseudonymous, not anonymous data. Native objects and the random-ID cache may remain after withdrawal; the enforced stop covers transport, active tasks and queued ad events.
+
+## Review successor
+
+The reconciled full run now passes 44 suites / 811 tests, with 32 receiver/database tests. See review-reconciliation-2026-09-19.md for F1, current deployment/signing evidence and open worldwide/runtime/device requirements. No revised consent interface has been added.

@@ -25,6 +25,7 @@ function loadFreshModule() {
   return require('../processingAccess') as typeof import('../processingAccess');
 }
 function establishAgeAndFixturePolicy() {
+  api.setAppleRescissionPending(false); // Independent server-check fixture, not an age result.
   api.setAppleAgeRequirement('not-required');
   api.verifyTransientAgeEvidence({ source: 'apple', status: 'shared', lowerBound: 14, upperBound: 17 });
   // This fixture selects requirements only inside a test, never in product code.
@@ -428,4 +429,18 @@ test('removing an Apple access restriction cannot revive evidence collected befo
   api.setAppleAccessRestricted(false);
   expect(api.getProcessingInputs().verification).toBeNull();
   expect(allOff()).toBe(true);
+});
+
+
+test('pending rescission suspends required processing without erasing sanitized age or changing independent refusals', async () => {
+  await ready();await grantAll();api.setAppleAgeRequirement('required');
+  api.verifyTransientAgeEvidence({source:'apple',status:'shared',lowerBound:18,upperBound:null},true);
+  await api.setProcessingChoice('analytics','denied');
+  const verified=api.getProcessingInputs().verification;
+  api.setAppleRescissionPending(true);expect(allOff()).toBe(true);
+  expect(api.getProcessingInputs().verification).toEqual(verified);
+  api.setAppleRescissionPending(false);
+  expect(api.getProcessingAccess().ads.allowed).toBe(true);expect(api.getProcessingAccess().revenueCat.allowed).toBe(false);
+  api.setAppleAccessRestricted(true);api.setAppleRescissionPending(false);
+  expect(allOff()).toBe(true);expect(api.getProcessingInputs().verification).toBeNull();
 });
