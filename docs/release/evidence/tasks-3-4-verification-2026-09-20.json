@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-09-20T18:13:56.243021+00:00",
+  "recordedAt": "2026-09-20T18:25:41.607924+00:00",
   "startingCommit": "1ecab513c20a604511579e0df2465d2656616627",
   "preservedSourceVerificationBatch": "1ecab513c20a604511579e0df2465d2656616627",
   "task3": {
@@ -28,7 +28,7 @@
     ]
   },
   "task4": {
-    "status": "BLOCKED",
+    "status": "COMPLETE",
     "priorCredentialInventory": {
       "checkedAt": "2026-09-20T17:55:35.043Z",
       "appStoreConnectId": "6813280704",
@@ -63,22 +63,91 @@
       }
     },
     "approvedAction": "Generate Flap Fit EAS Upload with Developer access; download once; securely configure in existing Expo/EAS submission workflow for app 6813280704. Owner approved key creation and secure setup.",
-    "createdAppleKey": {
+    "authentication": {
+      "checkedAt": "2026-09-20T18:22:55.667Z",
+      "status": "COMPLETE",
+      "appStoreConnectId": "6813280704",
+      "bundleIdentifier": "com.flapfit.game",
+      "credentialName": "FLAP FIT eas UPLOAD",
+      "credentialRole": "Developer",
+      "binaryUploaded": false,
+      "localSubmissionTargetVerified": true,
+      "lastAppleHttpStatus": 200,
+      "initialAppleAuthentication": {
+        "httpStatus": 200,
+        "appId": "6813280704",
+        "bundleIdentifier": "com.flapfit.game",
+        "name": "Flap Fit Workout Game"
+      },
+      "existingEasAppleTeamAssociation": null,
+      "importedToEas": true,
+      "easAssignment": {
+        "verified": true,
+        "projectId": "bbbfea4f-3047-46f6-a5ba-6286356e4718",
+        "account": "flapfitapp",
+        "bundleIdentifier": "com.flapfit.game",
+        "name": "FLAP FIT eas UPLOAD",
+        "roles": [
+          "DEVELOPER"
+        ]
+      },
+      "easSubmissionResolverPassed": true,
+      "persistedKeyMatches": true,
+      "persistedAppleAuthentication": {
+        "httpStatus": 200,
+        "appId": "6813280704",
+        "bundleIdentifier": "com.flapfit.game",
+        "name": "Flap Fit Workout Game"
+      },
+      "completedAt": "2026-09-20T18:22:59.524Z",
+      "realUploadOnly": [
+        "Transporter transfer",
+        "Apple binary validation and processing",
+        "TestFlight build availability"
+      ]
+    },
+    "previousBlockedEvidenceCommit": "7df493232e5949a7ecc06aacef2f16f097070312",
+    "previousKey": {
       "name": "Flap Fit EAS Upload",
       "keyId": "284JCB3MXC",
       "role": "Developer",
-      "appleUiActiveCount": 1
+      "appleUiActiveCount": 1,
+      "currentState": "Revoked by owner; confirmed in Apple UI. No revocation performed by agent."
     },
-    "authentication": {
-      "status": "BLOCKED",
-      "blockedAt": "Secure download handoff",
-      "reason": "Apple key was created with action-time owner approval. The Download action was invoked and Apple removed the one-time download control. No private-key file was available in the checked Downloads/local download locations. Browser security policy prohibited inspecting the browser downloads page. Owner was asked to save AuthKey_284JCB3MXC.p8 to Downloads or report that no download appears. No substitute key was created or revoked.",
-      "configuredInEas": false,
-      "appleApiAuthenticationProved": false,
-      "binaryUploaded": false
-    }
+    "activeAppleKey": {
+      "name": "FLAP FIT eas UPLOAD",
+      "keyId": "S5XW2WN48S",
+      "role": "Developer",
+      "createdAndDownloadedBy": "Owner",
+      "appleUiActiveCount": 1,
+      "fileVerified": true
+    },
+    "localCredentialStorage": {
+      "checkedAt": "2026-09-20T18:20:58.1624676Z",
+      "privateKeyInRepository": false,
+      "allowedPrincipals": [
+        "Current Windows user",
+        "SYSTEM"
+      ],
+      "inheritanceDisabled": true,
+      "localStorage": "%LOCALAPPDATA%\\FlapFit\\credentials",
+      "privateKeyPrinted": false,
+      "temporaryDownloadCopyRemovedAfterVerifiedSecureCopy": true,
+      "secureLocalCopyRetained": true
+    },
+    "blockerResolved": "Owner created and downloaded replacement key. Actual file was found and verified; the failed browser download was not reused or described as successful.",
+    "firstAuthenticationAttempt": {
+      "appleHttpStatus": 200,
+      "stoppedBeforeRemoteMutation": true,
+      "helperCheck": "TEAM_MISMATCH",
+      "resolution": "Read-only EAS metadata showed the existing app credential has no Apple-team association. The helper was corrected to validate that exact existing record and preserve its null team association, as supported by EAS. It did not create or replace a signing identity."
+    },
+    "unresolvedDependenciesWithinTask": [],
+    "localSubmissionProfileSha256": "f87e4f15d5054dd321ca26bf9204f1eb73b9c8aeb8a6df592472de23f61eaf33"
   },
-  "changedApplicationOrSubmissionConfiguration": false,
   "priorChecksRerun": false,
-  "prohibitedActionsPerformed": []
+  "prohibitedActionsPerformed": [],
+  "task4CompletionStartingCommit": "7df493232e5949a7ecc06aacef2f16f097070312",
+  "changedApplicationOrLocalSubmissionProfile": false,
+  "remoteSubmissionCredentialConfigured": true
 }
