@@ -17,8 +17,8 @@
     "tests": 1059
   },
   "deviceAcceptance": "pending; owner iPad first, brother iPhone after fixes",
-  "testFlight": "not uploaded",
-  "appPrivacy": "draft declaration edits waiting for explicit owner confirmation after automatic approval review block",
+  "testFlight": "not uploaded; optional for registered iPhone testing",
+  "appPrivacy": "owner approved reviewed draft answers; all 12 categories saved and read back in App Store Connect, not published; final runtime reconciliation pending",
   "status": "FINISHED",
   "completionEvidence": "Expo build page showed Succeeded; downloaded IPA inspected successfully",
   "artifactInspection": "ios-artifact-2026-09-20.json",
