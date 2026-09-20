@@ -1,0 +1,87 @@
+{
+  "builds": [
+    {
+      "id": "f0870fe0-c332-4c12-b0f8-bc8a9492a105",
+      "status": "FINISHED",
+      "distribution": "STORE",
+      "buildProfile": "production",
+      "appVersion": "1.0.0",
+      "appBuildVersion": "3",
+      "gitCommitHash": "20921889c3dda24d790b9f1e5ab4706c77a77c45",
+      "createdAt": "2026-09-20T05:32:22.221Z",
+      "completedAt": "2026-09-20T05:40:29.432Z",
+      "url": "https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/f0870fe0-c332-4c12-b0f8-bc8a9492a105",
+      "artifact": {
+        "sha256": "c5ca1977ae99622b37fe0190371a2b44853f266616b6b7e67e0152025fa832d4",
+        "bundleIdentifier": "com.flapfit.game",
+        "version": "1.0.0",
+        "buildNumber": "3",
+        "distributionExpected": "store",
+        "usesNonExemptEncryption": false,
+        "deviceFamilies": [
+          1,
+          2
+        ],
+        "minimumOS": "16.4",
+        "cameraDescription": "Flap Fit uses the front camera to track exercise movement and control your bird. Camera images are processed live on your device. If you choose Record & Play, the app creates a temporary local recording for you to share; Flap Fit does not upload it.",
+        "microphoneDescription": "Flap Fit uses the microphone only when you choose Record & Play, so your voice and workout sounds can be included in the temporary video you control.",
+        "hasTrackingUsageDescription": false,
+        "delaysGoogleMeasurement": true,
+        "appManifestTracking": false,
+        "privacyManifestCount": 15,
+        "declaredAgeRangeInSignedBinary": true,
+        "declaredAgeRangeInProfile": true,
+        "provisionedDeviceCount": 0,
+        "profileExpires": "2027-09-19T12:27:37Z",
+        "revenueCatProcessingBridgePresent": true,
+        "deviceAcceptance": "not established by artifact inspection"
+      }
+    },
+    {
+      "id": "a4091cca-d32e-4856-8d32-cf3b7fccec68",
+      "status": "FINISHED",
+      "distribution": "INTERNAL",
+      "buildProfile": "ios-device-check",
+      "appVersion": "1.0.0",
+      "appBuildVersion": "3",
+      "gitCommitHash": "20921889c3dda24d790b9f1e5ab4706c77a77c45",
+      "createdAt": "2026-09-20T05:45:13.254Z",
+      "completedAt": "2026-09-20T05:52:48.494Z",
+      "url": "https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/a4091cca-d32e-4856-8d32-cf3b7fccec68",
+      "artifact": {
+        "sha256": "05ed7520726e156848001036b74a1bd2f7e6d5387a28f5f5eb68675a89614064",
+        "bundleIdentifier": "com.flapfit.game",
+        "version": "1.0.0",
+        "buildNumber": "3",
+        "distributionExpected": "ad-hoc",
+        "usesNonExemptEncryption": false,
+        "deviceFamilies": [
+          1,
+          2
+        ],
+        "minimumOS": "16.4",
+        "cameraDescription": "Flap Fit uses the front camera to track exercise movement and control your bird. Camera images are processed live on your device. If you choose Record & Play, the app creates a temporary local recording for you to share; Flap Fit does not upload it.",
+        "microphoneDescription": "Flap Fit uses the microphone only when you choose Record & Play, so your voice and workout sounds can be included in the temporary video you control.",
+        "hasTrackingUsageDescription": false,
+        "delaysGoogleMeasurement": true,
+        "appManifestTracking": false,
+        "privacyManifestCount": 15,
+        "declaredAgeRangeInSignedBinary": true,
+        "declaredAgeRangeInProfile": true,
+        "provisionedDeviceCount": 2,
+        "profileExpires": "2027-09-19T12:27:37Z",
+        "revenueCatProcessingBridgePresent": true,
+        "deviceAcceptance": "not established by artifact inspection"
+      }
+    }
+  ],
+  "installedDeviceAcceptance": "unverified",
+  "genuineRevenueCatReceipt": "unverified",
+  "appleUpload": {
+    "status": "not uploaded",
+    "attempt": "EAS Submit stopped during credentials lookup before upload",
+    "reason": "No App Store Connect API upload key configured. Apple Users and Access shows Request Access; its agreement has not been accepted or submitted.",
+    "reviewSubmission": "not performed",
+    "testerInvitations": "not sent"
+  }
+}
