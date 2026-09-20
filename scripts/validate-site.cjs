@@ -66,7 +66,7 @@ const config = read('dist/site-config.js');
 check(config.includes('developerName: "Flap Fit"'), 'app identity is not configured');
 check(config.includes('supportEmail: "support@flapfitapp.com"'), 'support email is not configured');
 check(config.includes('privacyEmail: "support@flapfitapp.com"'), 'privacy email is not configured');
-check(config.includes('privacyEffectiveDate: "September 19, 2026"'), 'privacy effective date is not configured');
+check(config.includes('privacyEffectiveDate: "September 20, 2026"'), 'privacy effective date is not configured');
 check(config.includes('releaseStatus: "development"'), 'release status must remain development until store URLs exist');
 
 const homepage = read('dist/index.html');
