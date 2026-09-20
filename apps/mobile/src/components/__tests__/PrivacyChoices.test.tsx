@@ -3,14 +3,17 @@ import type { ReactTestRenderer } from 'react-test-renderer';
 // First module load on the Windows release host can exceed Jest's default 5s.
 jest.setTimeout(20_000);
 
-async function fixture(platform = 'ios') {
+async function fixture(platform = 'ios', failChoicesRead = false) {
   jest.resetModules();
   const React: typeof import('react') = require('react');
   const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
   const { act } = React;
   const memory = new Map<string, string>();
   const storage = {
-    getItem: jest.fn(async (key: string) => memory.get(key) ?? null),
+    getItem: jest.fn(async (key: string) => {
+      if (failChoicesRead && key === '@flapfit/processing-choices-v1') throw new Error('read failed');
+      return memory.get(key) ?? null;
+    }),
     setItem: jest.fn(async (key: string, value: string) => { memory.set(key, value); }),
     removeItem: jest.fn(async (key: string) => { memory.delete(key); }),
   };
@@ -30,12 +33,19 @@ async function fixture(platform = 'ios') {
   };
   jest.doMock('@/services/monetization', () => native);
   const access: typeof import('@/services/privacy/processingAccess') = require('@/services/privacy/processingAccess');
-  await access.hydrateProcessingAccess(); await access.setPrivacyRegion('us');
+  if (failChoicesRead) {
+    const choice = (decision: string) => ({ decision, noticeVersion: 1, decidedAt: null });
+    memory.set('@flapfit/processing-choices-v1', JSON.stringify({ version: 1, region: 'unknown',
+      choices: { ads: choice('granted'), analytics: choice('denied'), competition: choice('granted') } }));
+    memory.set('@flapfit/processing-notice-v1', JSON.stringify({ version: 1, acknowledged: true, adsActivated: false, reportingActivated: false }));
+  }
+  await access.hydrateProcessingAccess();
+  if (!failChoicesRead) await access.setPrivacyRegion('us');
   access.setAppleAgeRequirement('not-required'); access.setAppleRescissionPending(false);
   access.setLaunchProcessingCountry('US', true);
   access.verifyLaunchAgeEvidence({ source: 'apple', status: 'shared', lowerBound: 18, upperBound: null }, 'US', access.getAgeVerificationRevision());
   access.setProcessingRequirements({ ads: 'express-consent', analytics: 'express-consent', competition: 'requested-service' });
-  for (const purpose of ['ads', 'analytics', 'competition'] as const) await access.setProcessingChoice(purpose, 'granted');
+  if (!failChoicesRead) for (const purpose of ['ads', 'analytics', 'competition'] as const) await access.setProcessingChoice(purpose, 'granted');
   access.markProcessingNoticePresented(1);
   const { PrivacyChoices, PrivacyChoicesSheet, usePrivacyChoicesSheet }: typeof import('../PrivacyChoices') = require('../PrivacyChoices');
   let tree: ReactTestRenderer;
@@ -61,7 +71,7 @@ async function fixture(platform = 'ios') {
   const text = () => tree.root.findAllByType('Text' as never).map(node => node.children.join('')).join('\n');
   const modal = () => tree.root.findByType('Modal' as never);
   const unmount = async () => { await act(async () => { tree.unmount(); }); };
-  return { access, storage, native, alert, act, mount, mountController, open, replaceRequest, cancel: () => controller.cancelChoices(), button, press, text, modal, unmount };
+  return { access, storage, memory, recover: () => { failChoicesRead = false; }, native, alert, act, mount, mountController, open, replaceRequest, cancel: () => controller.cancelChoices(), button, press, text, modal, unmount };
 }
 
 test.each(['save', 'native'] as const)('a failed reporting %s retains a rendered retry across remount without enabling reporting or stopping ads', async failure => {
@@ -293,4 +303,22 @@ test('competition withdrawal remains reachable without age eligibility or initia
 test('the post-result choices panel does not add an unrelated competition control', async () => {
   const f = await fixture(); await f.mount(true);
   expect(f.button('Stop online competition')).toBeUndefined(); await f.unmount();
+});
+
+test('unreadable choices retain an actionable load retry across failure and restore refusal without stopping permitted ads', async () => {
+  const f = await fixture('ios', true); await f.mount();
+  const original = f.memory.get('@flapfit/processing-choices-v1');
+  expect(f.button('Retry loading privacy choices')).toBeDefined();
+  expect(f.button('Allow reporting')).toBeUndefined();
+  expect(f.text()).toContain('Optional processing is paused');
+  await f.press('Retry loading privacy choices');
+  expect(f.alert).toHaveBeenCalledWith('Privacy choice not confirmed', expect.stringContaining('still unavailable'));
+  expect(f.button('Retry loading privacy choices')).toBeDefined();
+  expect(f.storage.setItem).not.toHaveBeenCalled();
+  f.recover(); await f.press('Retry loading privacy choices');
+  expect(f.button('Retry loading privacy choices')).toBeUndefined();
+  expect(f.text()).toContain('Off by your choice');
+  expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: false, reason: 'refused' } });
+  expect(f.memory.get('@flapfit/processing-choices-v1')).toBe(original);
+  await f.unmount();
 });

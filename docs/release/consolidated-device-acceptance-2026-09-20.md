@@ -1,14 +1,27 @@
 # Flap Fit — consolidated device acceptance (held)
 
-**Do not start yet.** Finish/dispose the source/configuration and store-preparation gaps in the current Apple-first tracker, prepare all cases below, and identify the final candidate before sending installation instructions. This restores the original acceptance requirements; it is not a testing request.
+**Do not start yet.** This is a prepared procedure, not a testing request or build authorization.
+The corrected privacy-read successor is recorded in `evidence/privacy-choice-read-recovery-2026-09-20.md`.
+Finish authorized source/configuration work and inspect its matching artifact before supplying an
+installation route. Source tests, signed artifacts, installed results and provider receipt are separate.
 
-Prior test-ad build (superseded; do not install for final acceptance): [a4091cca](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/a4091cca-d32e-4856-8d32-cf3b7fccec68), source `20921889c3dda24d790b9f1e5ab4706c77a77c45`, version **1.0.0 (3)**. It is built and artifact-inspected, but lacks implementation successor `0cea7e3f3ba4f43081573c25301e8a3c5cc0b3d5`. It is not the final acceptance candidate. The matching prior Store build is `f0870fe0-c332-4c12-b0f8-bc8a9492a105`. The earlier version (2) lacks the three corrections and cannot establish final acceptance. Runtime changes would require an identified successor and only affected rechecks.
+Existing registered-device/test-ad artifact **04cf2e97-63f0-43f2-af1a-0002414c9d13**, source
+**f4b191dbda7eb17bcb5811cafb8c34eb9b7c6657**, version **1.0.0 (4)**, is finished and inspected.
+It contains the corrected native declarations but lacks the later competition-entry/withdrawal
+changes in **30dffe4** and the subsequent privacy-choice read recovery. **It is not final acceptance.**
+The existing Store build **103c8936**, source **c05f497**, also predates the manifest correction.
+Builds 2 and 3 and their earlier installation attempts are historical, not current candidates.
 
-The corrected Store build is now **1.0.0 (4)** / **103c8936**, source **c05f497**, with signed/native/archive inspection complete. The matching registered-device test-ad build is not started: explicit Expo source/signing upload authorization is pending after automatic approval review. The Store artifact is not an Ad Hoc installation link. No testing request is made.
+The two-device signing setup and secure EAS Apple upload authentication are complete. Do not recreate
+credentials or request the Apple API agreement again. No binary has reached Apple in the retained
+readback. TestFlight is optional for registered Ad Hoc devices. The failed Safari install attempt and
+its “success” message are not installation evidence; provide one working route for a ready candidate.
 
-The earlier Safari attempt never produced an app icon. Resolve and supply one working delivery route when the candidate is ready. TestFlight is optional for registered Ad Hoc devices; neither successful compilation nor an install-page success message proves installation. Apple API access is approved, but no upload key is configured and no build has reached Apple.
-
-Use the owner's iPad A16 / iPadOS 26.5 first, then one essentially finished iPhone 16 Pro session after any iPad fixes. Squats / Sky supplies ordinary gameplay checks; do not repeat accepted pull-up experiments. Record model/OS, actual installed version/build, candidate ID/source, test-ad configuration and observations. A test cannot be marked passed because it was skipped.
+Use the owner's iPad A16 / iPadOS 26.5 first, then one essentially finished iPhone 16 Pro session
+after any iPad fixes. Squats / Sky supplies ordinary gameplay checks. All six exercises' calibration
+was accepted as `2026-09-18.9-foot-return`; do not repeat pull-up experiments. Record model/OS,
+installed version/build, candidate source, test-ad configuration and observations. A skipped or
+unavailable case is not a pass.
 
 ## Part 1 — play, permissions and layouts (C1/C5/C7, A4)
 
@@ -31,7 +44,7 @@ Use the owner's iPad A16 / iPadOS 26.5 first, then one essentially finished iPho
 
 For each case record **pass / fail / untested**, build/device, a short observation and relevant times/event evidence. Resolve a failure narrowly and repeat affected checks on a successor if needed; do not restart the entire physical session or add spaced-out brother tests by default.
 
-Submission additionally requires final accepted source/configuration pairing, aggregate/native/upload reconciliation, genuine correctly sized store assets, published accurate privacy details, content-rights/export/account declarations, processed attached Store build, and final owner review. The current tracker owns closure; this sheet only supplies the consolidated device procedure.
+Submission additionally requires final accepted source/configuration pairing; actual artifact manifests, required reasons, permissions and configured-data-flow/App Privacy reconciliation; genuine correctly sized store assets; verified accurate privacy publication; actual upload/export validation and an attached processed Store build; and final owner review. Content Rights, reviewer contacts and upload credentials are already complete. The separate Xcode Organizer PDF is not generated/deferred by owner, not a new device or Mac requirement. The current tracker owns closure; this sheet only supplies the consolidated device procedure.
 
 
 ## Prepared cases and evidence limits for the single session

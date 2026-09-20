@@ -1,0 +1,1047 @@
+{
+  "recordedAt": "2026-09-20T22:20:53.731650+00:00",
+  "reviewedBase": "f9ff7cfb029242652d1e231dfe35ce8e313cf48c",
+  "correctedSource": "Containing commit; exact runtime input coverage is in the adjacent package evidence. No source edits occurred between the focused/full checks and package comparison.",
+  "beforeProductionCodeChanged": {
+    "summary": {
+      "numPassedTestSuites": 0,
+      "numFailedTestSuites": 1,
+      "numPassedTests": 6,
+      "numFailedTests": 14,
+      "numPendingTests": 0,
+      "success": false
+    },
+    "resultSha256": "9d4ea91c9b4850398556c7640cba56c0e74556a9407d9a866d3f4fd1136d5cbd",
+    "logSha256": "042305bdfe8cf3276ae9b9dd7cdef7759c5c1be7ba9b2d036dd130047acb79bf",
+    "failures": [
+      {
+        "name": "US actual monetization configuration boundary read-error cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "US actual monetization configuration boundary invalid-json cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "US actual monetization configuration boundary invalid-record cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "US actual monetization configuration boundary empty cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "AU actual monetization configuration boundary read-error cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "AU actual monetization configuration boundary invalid-json cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "AU actual monetization configuration boundary invalid-record cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "AU actual monetization configuration boundary empty cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "MX actual monetization configuration boundary read-error cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "MX actual monetization configuration boundary invalid-json cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "MX actual monetization configuration boundary invalid-record cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "MX actual monetization configuration boundary empty cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "message": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: {\"apiKey\": \"appl_mock_hydration_regression\", \"automaticDeviceIdentifierCollectionEnabled\": false, \"diagnosticsEnabled\": false, \"shouldShowInAppMessagesAutomatically\": false}"
+      },
+      {
+        "name": "retrying an unrelated save reads the original refusal before merging its own change",
+        "message": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"denied\"\nReceived: \"unset\""
+      },
+      {
+        "name": "a refusal made during an unreadable record stays effective when recovery restores an older grant",
+        "message": "Error: expect(received).rejects.toThrow()\n\nReceived promise resolved instead of rejected\nResolved to value: undefined"
+      }
+    ]
+  },
+  "focused": {
+    "summary": {
+      "numPassedTestSuites": 4,
+      "numFailedTestSuites": 0,
+      "numPassedTests": 120,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "success": true
+    },
+    "resultSha256": "01d2a4bfe173b8262a37e7fa61941835c0c339183a26255853cbcf7a2750c0f5",
+    "logSha256": "b315727937230aa7324aed42261c16c97d8a265e03c0db23f875fb4b49eda9ae",
+    "cases": [
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary readable refusal survives notice/adult resolution while permitted Google ads initialize",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary read-error cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary invalid-json cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary invalid-record cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary empty cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary a genuinely absent first-run record still permits the reviewed notice route",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary readable refusal survives notice/adult resolution while permitted Google ads initialize",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary read-error cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary invalid-json cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary invalid-record cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary empty cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary a genuinely absent first-run record still permits the reviewed notice route",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary readable refusal survives notice/adult resolution while permitted Google ads initialize",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary read-error cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary invalid-json cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary invalid-record cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary empty cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary a genuinely absent first-run record still permits the reviewed notice route",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "retrying an unrelated save reads the original refusal before merging its own change",
+        "status": "passed"
+      },
+      {
+        "suite": "processingHydrationIntegration.test.ts",
+        "name": "a refusal made during an unreadable record stays effective when recovery restores an older grant",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "real cold startup connects trusted country and native Apple before eligibility; only actual disclosure callback unlocks adult notice route",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "analytics refusal leaves separately permitted restricted advertising functioning",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "unknown country or age {\"offline\":true} cannot initialize SDKs",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "unknown country or age {\"age\":{\"status\":\"declined\"}} cannot initialize SDKs",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "same-country foreground reuses verified plan while background immediately stops processing and preserves withdrawal",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "game entry cancels queued native privacy presentation without changing gameplay",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "a refused required country-specific Apple request never falls back to a second system sheet",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "a stale background age response does not consume the fresh same-country attempt",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "a fresh lobby caller joining an old native sheet recovers after foreground returns before the old response",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "first-play preparation requests no optional age, advertising, or reporting permission",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "a genuine required Apple check remains before play without starting optional SDKs",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "US adult post-game acknowledgement permits ads and reporting without repeated notices",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "AU adult post-game acknowledgement permits ads and reporting without repeated notices",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "MX adult post-game acknowledgement permits ads and reporting without repeated notices",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "reporting refusal through Info survives relaunch while permitted Google ads initialize",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "Canadian activation is purpose-specific and can allow ads with reporting refused",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "post-game unknown evidence {\"offline\":true} grants nothing and shows no misleading consent request",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "post-game unknown evidence {\"age\":{\"status\":\"declined\"}} grants nothing and shows no misleading consent request",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "a stale post-game alert response cannot acknowledge the notice or initialize providers",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "saved reporting refusal survives an unrelated failed competition save and restart",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "Google presentation waits for privacy dismissal; backgrounded=false",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "Google presentation waits for privacy dismissal; backgrounded=true",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "US teen result flow resolves residency and independent consent in one sheet before Google presentation",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "closing the US teen clarification continues locally without recurring prompts or SDK initialization",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "AU eligible teen: independent choices, withdrawal and restart use the production coordinator",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "CA eligible teen: independent choices, withdrawal and restart use the production coordinator",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "AU 13-14 cannot turn a personal grant into verified authority",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "MX 13-15 cannot turn a personal grant into verified authority",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "MX 16-17 cannot turn a personal grant into verified authority",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "CA 0-13 cannot turn a personal grant into verified authority",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "US adult reporting refusal and competition permission persist independently across restart",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "CA adult reporting refusal and competition permission persist independently across restart",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "AU adult reporting refusal and competition permission persist independently across restart",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "MX adult reporting refusal and competition permission persist independently across restart",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "US Compete can establish independent eligibility before any result or ad notice",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "CA Compete can establish independent eligibility before any result or ad notice",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "AU Compete can establish independent eligibility before any result or ad notice",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "MX Compete can establish independent eligibility before any result or ad notice",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "Compete eligibility does not request Apple evidence for unset competition choice",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "Compete eligibility does not request Apple evidence for denied competition choice",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "leaving Compete for gameplay cancels a queued eligibility presentation",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "AU regional under-consent threshold reaches the actual adapter without invented guardian permission",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "MX regional under-consent threshold reaches the actual adapter without invented guardian permission",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "CA regional under-consent threshold reaches the actual adapter without invented guardian permission",
+        "status": "passed"
+      },
+      {
+        "suite": "launchProcessingIntegration.test.ts",
+        "name": "visiting Compete preserves an already verified plan and independently prepared ads",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "a failed reporting save retains a rendered retry across remount without enabling reporting or stopping ads",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "a failed reporting native retains a rendered retry across remount without enabling reporting or stopping ads",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "Close waits for iOS native dismissal and completes only once",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "Save & continue waits for iOS native dismissal and completes only once",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "unmount invalidates a late native dismissal callback",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "an early Close waits for presentation then native dismissal, without a timeout",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "the result waiter remains pending through delayed native dismissal and completes exactly once",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "result cancellation and unmount release their waiter without a stale dismissal completing a successor",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "Android Close completes after the unanimated hidden commit without waiting for an iOS-only event",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "closing during a pending save cannot present a late alert or complete before dismissal",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "a replacement in the same React batch waits for the old native sheet to dismiss",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "an unsuccessful later reporting grant cannot reuse an earlier confirmed native stop",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "Info renders only the needed teen residency clarification and preserves independent reporting refusal",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "Info residency save failure keeps every answer reachable for retry and makes no permission claim",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "adult Info has no unnecessary state question",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "AU restricted age shows its actual state without a misleading Allow control",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "MX restricted age shows its actual state without a misleading Allow control",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "CA restricted age shows its actual state without a misleading Allow control",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "Info stops competition independently and a failed save remains retryable after remount",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "competition withdrawal remains reachable without age eligibility or initialized providers",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "the post-result choices panel does not add an unrelated competition control",
+        "status": "passed"
+      },
+      {
+        "suite": "PrivacyChoices.test.tsx",
+        "name": "unreadable choices retain an actionable load retry across failure and restore refusal without stopping permitted ads",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "loading or unselected policy never starts processing even after age and region become known",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "a grant is never published before its durable write completes",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "withdrawal takes effect immediately while its persistence is pending",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "a pending grant cannot re-enable its purpose after a newer refusal",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "concurrent grants remain independent and each waits for its durable operation",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "a late hydration result cannot restore a grant over a newer refusal",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "a late hydration result cannot replace a newly selected region",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "a saved refusal survives relaunch and does not refuse other independently permitted purposes",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "failed grant persistence publishes no grant and rejects the operation",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "failed persistence invalidates already queued grants instead of publishing them later",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "failed reporting withdrawal stays off and preserves independently permitted ads and competition",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "a later explicit grant can recover after storage succeeds without granting other purposes",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "a failed region write cannot make that region eligible in memory",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "malformed persisted state cannot grant access: not json",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "malformed persisted state cannot grant access: {\"version\":2,\"region\":\"us\",\"choices\":{}}",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "malformed persisted state cannot grant access: {\"version\":1,\"region\":\"us\",\"choices\":{\"ads\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"}}}",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "malformed persisted state cannot grant access: {\"version\":1,\"region\":\"unrecognized\",\"choices\":{\"ads\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"},\"analytics\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"},\"competition\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"}}}",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "unreadable storage leaves purposes off and does not invent a prior choice",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "concurrent hydration uses one read and a shared completion",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "Apple evidence and access permissions are neither persisted nor sent as purpose choices",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "a newly required Apple check invalidates a previously satisfied check",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "Apple restriction takes effect immediately without rewriting the user purpose choices",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "purpose notices enable only an explicitly selected notice-and-opt-out requirement",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "a failing subscriber cannot prevent other observers seeing a withdrawal",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "editing a returned input copy cannot forge a processing choice",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "Apple ranges and source are absent from runtime, saved choices and published snapshots after verification",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "a region change invalidates verification and rejects late evidence for the previous region",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "a finer jurisdiction change within the same coarse region invalidates verification",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "required Apple verification cannot be satisfied by self-declared adult evidence",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "unknown region rejects verification rather than retaining raw evidence for later",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "hydration whitelists purpose-choice fields and cannot restore an old embedded age profile",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "removing an Apple access restriction cannot revive evidence collected before restriction",
+        "status": "passed"
+      },
+      {
+        "suite": "processingAccess.test.ts",
+        "name": "pending rescission suspends required processing without erasing sanitized age or changing independent refusals",
+        "status": "passed"
+      }
+    ]
+  },
+  "full": {
+    "summary": {
+      "numPassedTestSuites": 60,
+      "numFailedTestSuites": 0,
+      "numPassedTests": 1154,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "success": true
+    },
+    "resultSha256": "c65d19ea7815abddca1048df34b00470a8e035878e2ef96893186f655f9be246",
+    "suites": [
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "tests": 20,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/europeanProviderProcessing.test.ts",
+        "tests": 23,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-terms-action.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/appleAgeControl.test.ts",
+        "tests": 25,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "tests": 45,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-gameplay-flow.test.js",
+        "tests": 26,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "tests": 22,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/monetization.test.ts",
+        "tests": 94,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/launch-competition.test.js",
+        "tests": 11,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "tests": 36,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "tests": 20,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/form-tracking.test.ts",
+        "tests": 67,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/bird-stage-assets.test.ts",
+        "tests": 2,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "tests": 33,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/umpPrivacyControls.test.ts",
+        "tests": 12,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-grab-entry.test.js",
+        "tests": 6,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/regionalPolicy.test.ts",
+        "tests": 103,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/share-return.test.js",
+        "tests": 1,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyCountry.test.ts",
+        "tests": 40,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-elbow-clearance.test.js",
+        "tests": 59,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "tests": 12,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/ad-sdk-lifecycle.test.js",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/birdWebAsset.test.ts",
+        "tests": 2,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx",
+        "tests": 2,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-standing-reach.test.js",
+        "tests": 8,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/umpStoredSignals.test.ts",
+        "tests": 25,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/umpProcessingControls.test.ts",
+        "tests": 8,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/regionalClarification.test.ts",
+        "tests": 13,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyStartup.test.ts",
+        "tests": 11,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-top-first.test.js",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-support-reference.test.ts",
+        "tests": 52,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/recording-mp4.test.ts",
+        "tests": 8,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/videoSharing.test.ts",
+        "tests": 6,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "tests": 11,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/camera-preview.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/modules/flap-fit-age-range/__tests__/bridge.test.ts",
+        "tests": 51,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/modules/flap-fit-age-range/__tests__/app-transaction.test.ts",
+        "tests": 33,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/appleRescission.test.ts",
+        "tests": 36,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/game-modes.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingPolicy.test.ts",
+        "tests": 47,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/store-hydration.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-top-reference.test.ts",
+        "tests": 20,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/revenueCatTestDiagnostics.test.ts",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-top-entry.test.ts",
+        "tests": 9,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/mediapipe-recovery.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/competition-profile-reset.test.ts",
+        "tests": 1,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/retain-ios-archive.test.js",
+        "tests": 1,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/level-rules.test.ts",
+        "tests": 11,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingPolicy.test.ts",
+        "tests": 46,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/resultAdGate.test.ts",
+        "tests": 8,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-monetization-config.test.js",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/recording-boundaries.test.ts",
+        "tests": 2,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-tracker-release.test.js",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/stats-history.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/birdVisual.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/continuous-gameplay.test.ts",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/game-web-navigation.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/evolution-core.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/settingsPermissionRecovery.test.ts",
+        "tests": 5,
+        "status": "passed"
+      }
+    ]
+  },
+  "checks": {
+    "recordedAt": "2026-09-20T22:13:41.675691+00:00",
+    "checks": {
+      "full": {
+        "exitCode": 0,
+        "logSha256": "7612c3b841c7d575279629f13056869850ddd4cc5355d332b9913cb00c0c5ee5"
+      },
+      "typecheck": {
+        "exitCode": 0,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "lint": {
+        "exitCode": 0,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "release": {
+        "exitCode": 0,
+        "logSha256": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4"
+      }
+    }
+  },
+  "changedSourceSha256": {
+    "apps/mobile/src/components/PrivacyChoices.tsx": "83e7439a5c712e8af78a9938a94a9487e86c68836528842d1e1aec58b8d0252b",
+    "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx": "ccf425f4364b3a44c71717bde685aba2827cd6cef155933420244db12df070f6",
+    "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts": "37d05b368e1a4552f39419bae29c674381de61a6427d99a41128c91d0aa15fe0",
+    "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts": "764e7fa3aee0bd3088aab09df4a5a021dd622d917c310bb8e87f742588037d5d",
+    "apps/mobile/src/services/privacy/processingAccess.ts": "617ff2bec6732d848cd7140e38eeaf067bfddf7285fab88e8df01c3271e32114",
+    "apps/mobile/src/services/privacy/processingNotice.ts": "5726690a671a1833e7fb385aa1ae5520149582b7253eee9093663565bc85a882"
+  },
+  "packageEvidence": "privacy-choice-read-recovery-package-2026-09-20.json",
+  "nativeOrProviderReceiptProved": false,
+  "newBuildOrUpload": false,
+  "revenueCatFeatureAccess": {
+    "project": "a58d3dbd",
+    "authenticated": true,
+    "chartsOpened": [
+      "ad_revenue_v3",
+      "ad_impressions_v3"
+    ],
+    "chartsV3Checked": true,
+    "summaryPanelsRendered": true,
+    "featureGateShown": false,
+    "settingChanged": false,
+    "genuineReceipt": false
+  }
+}

@@ -34,8 +34,9 @@ must be checked against the released build before use.
 - [ ] Video shows Flap Fit running on a supported physical device and matches the released build.
 - [ ] Video uses only owned/licensed visuals, music, and sound.
 - [ ] 1024 x 1024 Flap Fit app icon.
-- [ ] At least one screenshot at exactly 1179 x 2556 without a device frame. The approved App
-      Store set at 1320 x 2868 satisfies this when the image itself has no added device frame.
+- [ ] At least one screenshot at exactly 1179 x 2556 without a device frame. A 1320 x 2868
+      Apple screenshot does not satisfy this exact size. Prepare a separate truthful frameless
+      contest export from the accepted capture; contest media remains separately deferred.
 - [ ] App is verified downloadable from the United States before the Devpost submission is finalized.
 
 ## Flap Fit evidence to preserve

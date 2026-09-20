@@ -17,8 +17,9 @@ let writes: Promise<void> = Promise.resolve();
 export const AD_PROCESSING_DISCLOSURE = 'Google AdMob uses app and device information, IP address and approximate location, diagnostics, and ad interactions to deliver non-personalized ads. RevenueCat measures ad loads, views, clicks, and revenue using a separate random app ID and app/device information. Neither receives your camera footage, recordings, exercises, scores, or training history.';
 
 export async function restoreProcessingNotice(): Promise<void> {
+  // Notice caching must not suppress a retry of unreadable purpose choices.
+  await hydrateProcessingAccess();
   if (!hydration) hydration = (async () => {
-    await hydrateProcessingAccess();
     try {
       const raw = await AsyncStorage.getItem(KEY);
       const value = raw ? JSON.parse(raw) : null;
@@ -98,7 +99,7 @@ export async function refuseProcessingPurpose(purpose: 'ads' | 'analytics'): Pro
 export function canChooseProcessingPurpose(purpose: 'ads' | 'analytics'): boolean {
   const input = getProcessingInputs();
   const plan = input.launch?.plan;
-  return !!input.launch?.current && !!plan && plan.ageEligibility === 'allowed' &&
+  return input.hydrated && !!input.launch?.current && !!plan && plan.ageEligibility === 'allowed' &&
     !input.appleAccessRestricted && !plan.parentalAuthorityRequired[purpose] &&
     plan.requirements[purpose] !== 'unresolved';
 }
@@ -127,6 +128,7 @@ export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
         ? 'native reporting stopped' : 'Native stop not confirmed'}`;
     }
   }
+  if (!input.hydrated) return 'Saved privacy choices are unavailable · retry loading';
   if (input.choices[purpose].decision === 'denied') return 'Off by your choice';
   if (decision.allowed) return purpose === 'ads' ? 'Permitted · Google choices also apply' : 'On';
   if (needsSeparatePurposeChoice(purpose)) return 'Your permission is needed';
@@ -143,7 +145,7 @@ export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
 export function canPresentProcessingNotice(): boolean {
   const input = getProcessingInputs();
   const plan = input.launch?.plan;
-  return !!input.launch?.current && !!plan && plan.ageEligibility === 'allowed' &&
+  return input.hydrated && !!input.launch?.current && !!plan && plan.ageEligibility === 'allowed' &&
     !input.appleAccessRestricted && (['ads', 'analytics'] as Purpose[]).some(purpose =>
       input.choices[purpose].decision !== 'denied' && plan.requirements[purpose] !== 'unresolved' && !plan.parentalAuthorityRequired[purpose]);
 }

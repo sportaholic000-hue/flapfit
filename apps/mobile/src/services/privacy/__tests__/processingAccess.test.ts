@@ -160,9 +160,14 @@ test('a late hydration result cannot restore a grant over a newer refusal', asyn
   const read = deferred<string>();
   storage.getItem.mockReturnValueOnce(read.promise);
   const hydrating = api.hydrateProcessingAccess();
-  await api.setProcessingChoice('ads', 'denied');
-  read.resolve(stored('granted'));
-  await hydrating;
+  const refusing = api.setProcessingChoice('ads', 'denied');
+  expect(api.getProcessingInputs().choices.ads.decision).toBe('denied');
+  expect(storage.setItem).not.toHaveBeenCalled();
+  const prior = JSON.parse(stored('granted'));
+  prior.choices.analytics = savedChoice('denied');
+  read.resolve(JSON.stringify(prior));
+  await Promise.all([hydrating, refusing]);
+  expect(JSON.parse(memory.get(KEY)!).choices.analytics.decision).toBe('denied');
   expect(api.getProcessingInputs().choices.ads.decision).toBe('denied');
   expect(api.getProcessingAccess().ads.allowed).toBe(false);
   expect(JSON.parse(memory.get(KEY)!).choices.ads.decision).toBe('denied');
@@ -172,9 +177,10 @@ test('a late hydration result cannot replace a newly selected region', async () 
   const read = deferred<string>();
   storage.getItem.mockReturnValueOnce(read.promise);
   const hydrating = api.hydrateProcessingAccess();
-  await api.setPrivacyRegion('ca-quebec');
+  const changing = api.setPrivacyRegion('ca-quebec');
+  expect(storage.setItem).not.toHaveBeenCalled();
   read.resolve(stored('granted', 'ca-other'));
-  await hydrating;
+  await Promise.all([hydrating, changing]);
   expect(api.getProcessingInputs().region).toBe('ca-quebec');
   expect(JSON.parse(memory.get(KEY)!).region).toBe('ca-quebec');
 });
@@ -274,9 +280,12 @@ test.each([
 test('unreadable storage leaves purposes off and does not invent a prior choice', async () => {
   storage.getItem.mockRejectedValueOnce(new Error('read failed'));
   await api.hydrateProcessingAccess();
-  expect(api.getProcessingInputs().hydrated).toBe(true);
+  expect(api.getProcessingInputs().hydrated).toBe(false);
   expect(api.getProcessingInputs().choices.ads.decision).toBe('unset');
   expect(allOff()).toBe(true);
+  await api.hydrateProcessingAccess();
+  expect(storage.getItem).toHaveBeenCalledTimes(2);
+  expect(api.getProcessingInputs().hydrated).toBe(true);
 });
 
 test('concurrent hydration uses one read and a shared completion', async () => {

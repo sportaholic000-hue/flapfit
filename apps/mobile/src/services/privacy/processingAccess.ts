@@ -16,7 +16,9 @@ const listeners = new Set<() => void>();
 const purposeRevision: Record<Purpose, number> = { ads: 0, analytics: 0, competition: 0 };
 let regionRevision = 0;
 let verificationRevision = 0;
-let choicesRevision = 0;
+let choicesReadFailed = false;
+let pendingRefusals: Partial<Record<Purpose, ProcessingChoice>> = {};
+export const hasProcessingChoicesReadError = () => choicesReadFailed;
 let durable = { region: input.region, choices: input.choices };
 export const getProcessingAccess = () => snapshot;
 export function getProcessingInputs(): ProcessingRuntimeInputs {
@@ -66,7 +68,6 @@ function persist(changedPurpose?: Purpose): Promise<void> {
       const denied: ProcessingChoice = {
         decision: 'denied', noticeVersion: PROCESSING_NOTICE_VERSION, decidedAt: new Date().toISOString(),
       };
-      ++choicesRevision;
       const choices = { ...input.choices };
       (['ads', 'analytics', 'competition'] as const).forEach((purpose) => {
         // Cancel unsaved grants, but a reporting write failure cannot revoke
@@ -89,17 +90,22 @@ function persist(changedPurpose?: Purpose): Promise<void> {
   writes = operation;
   return operation;
 }
+/** A failed read is unknown state, never a first-run record. Only a valid read
+ * may open processing or supply the base for a shared-record write. */
 export function hydrateProcessingAccess(): Promise<void> {
   if (hydration) return hydration;
-  const before = choicesRevision;
   hydration = (async () => {
-    let restored: typeof durable | null = null;
     try {
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
-      const data = raw ? JSON.parse(raw) : null;
-      if (data?.version === 1 && validRegion(data.region) &&
-          validChoice(data.choices?.ads) && validChoice(data.choices?.analytics) &&
-          validChoice(data.choices?.competition)) {
+      let restored: typeof durable;
+      if (raw === null) {
+        const defaults = initialProcessingRuntimeInputs();
+        restored = { region: defaults.region, choices: defaults.choices };
+      } else {
+        const data = JSON.parse(raw);
+        if (data?.version !== 1 || !validRegion(data.region) ||
+            !validChoice(data.choices?.ads) || !validChoice(data.choices?.analytics) ||
+            !validChoice(data.choices?.competition)) throw new Error('Invalid saved privacy choices');
         const choice = (purpose: Purpose): ProcessingChoice => ({
           decision: data.choices[purpose].decision,
           noticeVersion: data.choices[purpose].noticeVersion,
@@ -109,23 +115,35 @@ export function hydrateProcessingAccess(): Promise<void> {
           ads: choice('ads'), analytics: choice('analytics'), competition: choice('competition'),
         } };
       }
-    } catch { /* Unreadable storage leaves all purposes off. */ }
-    if (before === choicesRevision && restored) {
+      // An immediate refusal made during this read overrides an older saved
+      // grant, while every unrelated saved choice remains intact.
+      restored.choices = { ...restored.choices, ...pendingRefusals };
+      pendingRefusals = {};
       const changedRegion = input.region !== restored.region;
       if (changedRegion) ++verificationRevision;
       durable = restored;
+      choicesReadFailed = false;
       publish({ ...input, ...restored, hydrated: true,
         verification: changedRegion ? null : input.verification });
-    } else {
-      publish({ ...input, hydrated: true });
+    } catch {
+      choicesReadFailed = true;
+      publish({ ...input, hydrated: false });
     }
-  })();
+  })().finally(() => {
+    // Share in-flight reads; cache only success so a real retry can recover.
+    if (!input.hydrated) hydration = null;
+  });
   return hydration;
+}
+async function requireReadableChoices(): Promise<void> {
+  await hydrateProcessingAccess();
+  if (!input.hydrated) throw new Error('Saved privacy choices could not be read. Retry loading privacy choices before saving.');
 }
 export async function setPrivacyRegion(region: PrivacyRegion): Promise<void> {
   if (!validRegion(region)) throw new Error('Invalid privacy region');
-  ++choicesRevision;
   const generation = ++regionRevision;
+  if (!input.hydrated) await requireReadableChoices();
+  if (generation !== regionRevision) return;
   ++verificationRevision;
   durable = { ...durable, region };
   publish({ ...input, region: 'unknown', verification: null, europeanProvider: undefined, launch: undefined, appleRequirement: 'pending',
@@ -185,15 +203,18 @@ export function setAppleAccessRestricted(restricted: boolean): void {
     launch: restricted && input.launch ? { ...input.launch, plan: null, resolution: null } : input.launch });
 }
 export async function setProcessingChoice(purpose: Purpose, decision: 'granted' | 'denied'): Promise<void> {
-  ++choicesRevision;
   const generation = ++purposeRevision[purpose];
   const choice: ProcessingChoice = {
     decision, noticeVersion: PROCESSING_NOTICE_VERSION, decidedAt: new Date().toISOString(),
   };
-  durable = { ...durable, choices: { ...durable.choices, [purpose]: choice } };
   if (decision === 'denied') {
+    if (!input.hydrated) pendingRefusals[purpose] = choice;
     publish({ ...input, choices: { ...input.choices, [purpose]: choice } });
   }
+  // Never overwrite unread refusals with defaults, even for an unrelated save.
+  if (!input.hydrated) await requireReadableChoices();
+  if (generation !== purposeRevision[purpose]) return;
+  durable = { ...durable, choices: { ...durable.choices, [purpose]: choice } };
   await persist(purpose);
   if (decision === 'granted' && generation === purposeRevision[purpose]) {
     publish({ ...input, choices: { ...input.choices, [purpose]: choice } });

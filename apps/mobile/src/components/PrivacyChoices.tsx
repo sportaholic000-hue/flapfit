@@ -7,7 +7,7 @@ import {
   restoreRegionalClarification, saveConnecticutResidency,
 } from '@/services/privacy/regionalClarification';
 import { getCompetitionStopState, subscribeCompetitionStop, stopOnlineCompetition, getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
-import { getProcessingAccess, getProcessingInputs, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
+import { getProcessingAccess, getProcessingInputs, hasProcessingChoicesReadError, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import {
   acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, allowProcessingPurpose, canChooseProcessingPurpose,
   needsSeparatePurposeChoice, processingPurposeStatus, refuseProcessingPurpose, restoreProcessingNotice,
@@ -46,6 +46,13 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   return <View style={styles.root}>
     <Text style={styles.heading}>Advertising & reporting</Text>
     <Text style={styles.body}>{AD_PROCESSING_DISCLOSURE}</Text>
+    {hasProcessingChoicesReadError() ? <View style={styles.group}>
+      <Text style={styles.status}>Saved privacy choices could not be read. Optional processing is paused. You can keep playing.</Text>
+      {button('Retry loading privacy choices', async () => {
+        await restoreProcessingNotice();
+        if (!getProcessingInputs().hydrated) throw new Error('Saved privacy choices are still unavailable. Please retry.');
+      })}
+    </View> : null}
     {hasConnecticutClarificationControl() ? <View style={styles.group}>
       <Text style={styles.heading}>State privacy rules</Text>
       <Text style={styles.body}>Do you live in Connecticut?</Text>
