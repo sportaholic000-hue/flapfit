@@ -1,0 +1,217 @@
+{
+  "sourceCommit": "20921889c3dda24d790b9f1e5ab4706c77a77c45",
+  "reviewReference": "1a276dd8f5930cd16f4447f738ee69e21701ee4e",
+  "remoteCorrectionShaVerified": "20921889c3dda24d790b9f1e5ab4706c77a77c45",
+  "beforeCorrection": {
+    "failedTests": 6,
+    "failureNames": [
+      "a failed reporting save retains a rendered retry across remount without enabling reporting or stopping ads",
+      "a failed reporting native retains a rendered retry across remount without enabling reporting or stopping ads",
+      "Close waits for iOS native dismissal and completes only once",
+      "Save & continue waits for iOS native dismissal and completes only once",
+      "unmount invalidates a late native dismissal callback",
+      "saved reporting refusal survives an unrelated failed competition save and restart"
+    ]
+  },
+  "finalChecks": {
+    "passedSuites": 55,
+    "passedTests": 1074,
+    "failedTests": 0,
+    "typescript": "passed",
+    "scopedStrictOxlint": "passed",
+    "productionConfiguration": "passed",
+    "packagedProductionConfiguration": "passed"
+  },
+  "uploadArchive": {
+    "stage": "EAS build:inspect archive",
+    "fileCount": 717,
+    "byteMatchedRuntimeAssetPatchFiles": 229,
+    "secretFileCount": 0,
+    "retiredArchiveFilesExcluded": true,
+    "webCheckoutFilesExcluded": true,
+    "requiredConfigurationFilesMatched": 10
+  },
+  "focusedFinalTests": [
+    {
+      "testFile": "src/components/__tests__/PrivacyChoices.test.tsx",
+      "tests": [
+        {
+          "name": "a failed reporting save retains a rendered retry across remount without enabling reporting or stopping ads",
+          "status": "passed"
+        },
+        {
+          "name": "a failed reporting native retains a rendered retry across remount without enabling reporting or stopping ads",
+          "status": "passed"
+        },
+        {
+          "name": "Close waits for iOS native dismissal and completes only once",
+          "status": "passed"
+        },
+        {
+          "name": "Save & continue waits for iOS native dismissal and completes only once",
+          "status": "passed"
+        },
+        {
+          "name": "unmount invalidates a late native dismissal callback",
+          "status": "passed"
+        },
+        {
+          "name": "an early Close waits for presentation then native dismissal, without a timeout",
+          "status": "passed"
+        },
+        {
+          "name": "the result waiter remains pending through delayed native dismissal and completes exactly once",
+          "status": "passed"
+        },
+        {
+          "name": "result cancellation and unmount release their waiter without a stale dismissal completing a successor",
+          "status": "passed"
+        },
+        {
+          "name": "Android Close completes after the unanimated hidden commit without waiting for an iOS-only event",
+          "status": "passed"
+        },
+        {
+          "name": "closing during a pending save cannot present a late alert or complete before dismissal",
+          "status": "passed"
+        },
+        {
+          "name": "a replacement in the same React batch waits for the old native sheet to dismiss",
+          "status": "passed"
+        },
+        {
+          "name": "an unsuccessful later reporting grant cannot reuse an earlier confirmed native stop",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "testFile": "src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+      "tests": [
+        {
+          "name": "real cold startup connects trusted country and native Apple before eligibility; only actual disclosure callback unlocks adult notice route",
+          "status": "passed"
+        },
+        {
+          "name": "analytics refusal leaves separately permitted restricted advertising functioning",
+          "status": "passed"
+        },
+        {
+          "name": "unknown country or age {\"offline\":true} cannot initialize SDKs",
+          "status": "passed"
+        },
+        {
+          "name": "unknown country or age {\"age\":{\"status\":\"declined\"}} cannot initialize SDKs",
+          "status": "passed"
+        },
+        {
+          "name": "same-country foreground reuses verified plan while background immediately stops processing and preserves withdrawal",
+          "status": "passed"
+        },
+        {
+          "name": "game entry cancels queued native privacy presentation without changing gameplay",
+          "status": "passed"
+        },
+        {
+          "name": "a refused required country-specific Apple request never falls back to a second system sheet",
+          "status": "passed"
+        },
+        {
+          "name": "a stale background age response does not consume the fresh same-country attempt",
+          "status": "passed"
+        },
+        {
+          "name": "a fresh lobby caller joining an old native sheet recovers after foreground returns before the old response",
+          "status": "passed"
+        },
+        {
+          "name": "first-play preparation requests no optional age, advertising, or reporting permission",
+          "status": "passed"
+        },
+        {
+          "name": "a genuine required Apple check remains before play without starting optional SDKs",
+          "status": "passed"
+        },
+        {
+          "name": "US adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed"
+        },
+        {
+          "name": "AU adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed"
+        },
+        {
+          "name": "MX adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed"
+        },
+        {
+          "name": "reporting refusal through Info survives relaunch while permitted Google ads initialize",
+          "status": "passed"
+        },
+        {
+          "name": "Canadian activation is purpose-specific and can allow ads with reporting refused",
+          "status": "passed"
+        },
+        {
+          "name": "post-game unknown evidence {\"offline\":true} grants nothing and shows no misleading consent request",
+          "status": "passed"
+        },
+        {
+          "name": "post-game unknown evidence {\"age\":{\"status\":\"declined\"}} grants nothing and shows no misleading consent request",
+          "status": "passed"
+        },
+        {
+          "name": "a stale post-game alert response cannot acknowledge the notice or initialize providers",
+          "status": "passed"
+        },
+        {
+          "name": "saved reporting refusal survives an unrelated failed competition save and restart",
+          "status": "passed"
+        },
+        {
+          "name": "Google presentation waits for privacy dismissal; backgrounded=false",
+          "status": "passed"
+        },
+        {
+          "name": "Google presentation waits for privacy dismissal; backgrounded=true",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "buildRequests": [
+    {
+      "id": "f0870fe0-c332-4c12-b0f8-bc8a9492a105",
+      "status": "NEW",
+      "distribution": "STORE",
+      "buildProfile": "production",
+      "appVersion": "1.0.0",
+      "appBuildVersion": "3",
+      "gitCommitHash": "20921889c3dda24d790b9f1e5ab4706c77a77c45",
+      "createdAt": "2026-09-20T05:32:22.221Z",
+      "updatedAt": "2026-09-20T05:32:22.221Z"
+    },
+    {
+      "id": "a4091cca-d32e-4856-8d32-cf3b7fccec68",
+      "status": "NEW",
+      "distribution": "INTERNAL",
+      "buildProfile": "ios-device-check",
+      "appVersion": "1.0.0",
+      "appBuildVersion": "3",
+      "gitCommitHash": "20921889c3dda24d790b9f1e5ab4706c77a77c45",
+      "createdAt": "2026-09-20T05:45:13.254Z",
+      "updatedAt": "2026-09-20T05:45:13.254Z"
+    }
+  ],
+  "physicalIpadTransition": "unverified",
+  "installedDeviceAcceptance": "unverified",
+  "genuineRevenueCatReceipt": "unverified",
+  "appStoreSubmission": "not performed",
+  "logSha256": {
+    "focused-review-before.json": "afb9a205b66e5d56958bd0cbb4c7e0e5dc7d61475e7ff1ce84edaa6fbc5811a1",
+    "focused-review-full.json": "b60550e62fa91ca06b7274cb3970fd619978335b333f2ccfd45db611ff94d04f",
+    "focused-review-typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "focused-review-lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "focused-review-package-release.log": "d41de71aab50fed2bb0d2200d9871558f84ed4add21e908b7a5e8941d87bf4e8"
+  }
+}

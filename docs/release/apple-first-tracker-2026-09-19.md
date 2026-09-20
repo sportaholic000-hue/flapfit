@@ -1,106 +1,62 @@
-# Apple-first completion tracker — September 19, 2026
+# Apple-first completion tracker
 
-## Privacy flow checkpoint — September 20, 2026
+Current checkpoint: September 20, 2026. This is the current release sheet; older counts, territory selections and build evidence remain in Git history and their dated evidence files, not current clearance.
 
-**Owner testing plan:** Use the owner's iPad for the first device pass and repairs. The brother is testing remotely on the registered iPhone from another province; send him one consolidated test pass only after the candidate is essentially complete, not intermediate or spaced-out tests. Back up completed work to GitHub and verify the remote commit. The owner states there is no music and the artwork was created from their ideas; this records that statement without inventing a licensing attestation.
+## Candidate and owner boundaries
 
-The owner authorized necessary privacy changes, with permanent controls under Info → Privacy & choices and no optional setup before the first game. That flow is now connected in source: optional Apple/advertising/reporting preparation begins only after a claimed Done / Try Again / Next Level action. A short disclosure links to the same expandable controls; separate express choices appear only when the resolved policy requires them. Required Apple checks remain independent. Camera footage and optional Record & Play files remain local and user-directed.
+- Corrected app source: `20921889c3dda24d790b9f1e5ab4706c77a77c45`, branch `wip/crash-protection-20260920`, pushed to GitHub and full remote SHA verified.
+- Production build requested: `f0870fe0-c332-4c12-b0f8-bc8a9492a105`, version **1.0.0 (3)**, STORE distribution, exact corrected SHA confirmed by EAS. Latest checked state: IN_PROGRESS. A running build is not a finished build or Apple upload. Matching registered-device/test-ad build request: `a4091cca-d32e-4856-8d32-cf3b7fccec68`, same source SHA and version 1.0.0 (3).
+- Previous finished Ad Hoc build `d19e5b3f-1c09-4e96-9d01-c1706493c5ad`, version 1.0.0 (2), source `1a276dd8f5930cd16f4447f738ee69e21701ee4e`, lacks the three focused corrections. Do not use it for final acceptance. Its iPad installation remains unconfirmed.
+- Finish independent code, build and Apple preparation before another owner testing request. Then consolidate the owner's iPad (A16), iPadOS 26.5 acceptance; send the remote brother one essentially finished iPhone 16 Pro candidate after fixes. No renewed pull-up testing.
+- Preserve onboarding/design, accepted calibration `2026-09-18.9-foot-return`, full-length video/audio sharing, free pricing and initial AU/CA/MX/US scope. Owner-completed App Store name, subtitle, description and keywords are preserved.
+- Permanent choices: Info → Privacy & choices. Optional setup follows a claimed result exit, not first gameplay. Reporting refusal leaves independently permitted Google advertising and competition enabled.
+- Ads: first session exit free, every second eligible exit, at least 90 seconds between opened ads; Done / Try Again / Next Level only. Sharing, result arrival and foreground do not trigger ads. One selected action once; no-fill continues.
+- Automatic release after approval remains saved. Final owner review precedes Submit for Review. No submission or public app release has occurred.
 
-RevenueCat reporting refusal remains independent from permitted AdMob advertising, including a local choice-write failure. Required advertising-consent withdrawal stays accessible in Info. The unchanged result scheduler preserves the first session exit being ad-free, every second eligible exit thereafter, 90 seconds between opened ads, no-fill navigation, and no ad triggered by sharing/return/foreground. Canada's invalid adjacent Apple age gates were corrected to valid 14/16/18 thresholds; unresolved younger ranges do not authorize optional processing or restrict local play.
+## Focused review disposition
 
-Verification: 54 mobile suites / 1,059 tests passed, including 219 focused privacy/monetization/share tests; TypeScript, scoped strict lint and production release configuration passed. These are source checks, not physical-device acceptance. RevenueCat's Ads dashboard showed no sandbox data on this check. A successor signed build, actual device/RevenueCat receipt, screenshots, final Apple privacy reconciliation and owner review remain outstanding. Owner-completed App Store name, subtitle, description and keywords were not edited. Historical counts below are superseded only by this source checkpoint; existing device evidence remains historical.
+1. **Reproduced and fixed:** unrelated failed save no longer removes earlier stored refusal. Exact refusal → acknowledged notice → failed competition write → restart → adult eligibility regression verifies RevenueCat is not loaded/configured and separate ads/competition remain allowed.
+2. **Reproduced and fixed:** both unconfirmed save and unconfirmed native stop keep a rendered Retry stopping reporting action through remount/retry. Actual confirmation state is shown; JavaScript denial alone does not claim native stop. Independent ads remain enabled.
+3. **Source/component race reproduced and fixed; physical verification open:** iOS continuation waits for actual native onDismiss. Tests cover Close, Save, exactly-once, background/return, cancellation, close-before-show, replacement, late completion and unmount. No blind native-dismissal timeout. The iPad sheet → required Google form → selected result action still needs physical verification.
 
+Evidence: `evidence/focused-privacy-review-2026-09-20.md` and machine-readable regression/package summary beside it.
 
-Owner goal: an evidenced Apple submission candidate within 18 hours. Owner reviews before Submit for Review.
-Source checklist: FlapFit_Apple_First_Launch_Checklist.md supplied September 19; audit baseline 453e363f0b2fcbbe0d522777f92fe2888946addd.
+## Release checklist
 
-## Owner scope change: four-country initial release
-
-The owner explicitly changed initial availability to **Canada, the United States, Australia and Mexico** on September 19 (local time). App Store Connect saved and read back **Availability (4 Countries or Regions)**, with exactly AUS, CAN, MEX and USA available on release. Automatic availability in future countries was unchecked. No submission or release occurred. This supersedes the earlier worldwide/172-territory scope recorded below. EU expansion and trader verification no longer define initial territory readiness.
-
-No country has been declared fully verified: production regional decisions, installed acceptance and final store submission items remain open. The 13+ audience, ad-supported model, RevenueCat independence, gameplay and recording are unchanged.
-
-## Current reconciled checkpoint (supersedes historical counts below)
-
-See [review reconciliation](review-reconciliation-2026-09-19.md) for source reconciliation and F1. Mobile automated evidence is **47 suites / 886 tests**, plus TypeScript and four-file strict scoped lint; see processing-readiness-2026-09-19.md for current source checks. Backend tests now total **39 passing**. Signed internal build **710512ba-6445-42d8-af23-659d862a3298**, source **0be68de0666c27f3151ae544de07b374eca54937**, version **1.0.0 (2)** finished. Its IPA was inspected directly; this is not installed-device evidence.
-
-**The owner selected worldwide availability, then excluded China mainland, Hong Kong and Iraq. Read-only Apple verification shows 172 countries or regions available and the three exclusions Not Available.** Free pricing and saved 13+ age rating/non-medical declaration were observed. EU trader identity review remains pending. No territories were changed by the agent. Only necessary regional advertising controls are authorized; the broader custom consent UI remains unapproved. Existing Google privacy access is repaired independently of ad eligibility; worldwide runtime policy/coordinator and remaining purpose-specific interface integration are unfinished. No release clearance is implied.
-
-Both devices are registered and included in the signed Ad Hoc artifact; App Store signing is preserved. Age-range entitlement is present in the binary and embedded profile. Both Apple notification URLs are saved. Apple Sandbox TEST delivery now reports SUCCESS after an existing-Supabase runtime correction (Production v3 / Sandbox v8); no extra backend or hosting was added. Real rescission/linkage and installed-flow evidence remain open.
-
-## Candidate and boundaries
-
-- Original audit-fix baseline: 5f5d69c1540e8c5b40c21b155ce9ded514884e94. The next candidate also includes the verified URI-decoder security backport. Simulator compile passed for cbd26dfd2deaf8efb1165a460582d2007f05509b. Signed distribution candidate still needs the final age/processing policy and native acceptance.
-- Bundle: com.flapfit.game; App Store ID 6813280704; SKU flapfit-ios; Expo project bbbfea4f-3047-46f6-a5ba-6286356e4718.
-- Owner-confirmed Apple title: **Flap Fit Workout Game** (no colon). Subtitle: **Home Fitness & Tracking**. Saved fields observed in App Store Connect.
-- App version 1.0.0; App Store version record 1.0. Remote build number initialized to 1, then incremented to 2 on the interactive attempt. Signed internal device artifact 710512ba completed, version 1.0.0 (2); not yet installed/accepted or App Store-distribution signed.
-- Accepted tracker 2026-09-18.9-foot-return and protected recorder/gameplay sources unchanged. No new calibration experiments.
-- No final Apple submission or public release authorized by this tracker.
-
-## Item-by-item evidence
-
-| Item | Status | Evidence / next required action |
+| Item | Status | Evidence / remaining verification |
 | --- | --- | --- |
-| A1 candidate | Verified | Full source commit, identity and clean main verified above; remote main matched. |
-| A2 actual upload contents | Verified | Actual EAS makeShallowCopy archive: 585 files, 87 assets + 97 build/source files byte-equal; nine required configuration/patch files. iOS release validator passed from extracted archive. See audit-fixes-2026-09-19.md and evidence JSON. |
-| A3 ad resources | Repaired — source, device proof pending | F1 now retains native terminal callbacks during withdrawal; see current reconciliation. Historical disposal evidence: Patched installed SDK 16.5.0 removes internal subscription and native ownership. 10/50/100 lifecycle tests return subscriptions to zero; iOS codegen passes. Physical/native acceptance remains C4. |
-| A4 permission refresh | Verified — source | Explicit Settings-return refresh, no ordinary foreground reset; automated regression tests pass. Device evidence remains C5. |
-| A5 accepted instructions | Verified | Onboarding and reviewer notes corrected; Info already describes tiptoe overhead reach, then top Step 1 and bottom Step 2. No threshold change. |
-| A6 unlock and Daily Challenge | Verified | Hydration/current unlock guard; Endless after level 5; Daily Challenge cases pass. |
-| B1 locked source checks | Verified — current automated run | 886 tests in 47 suites, TypeScript and four-file strict scoped lint passed; see processing-readiness-2026-09-19.md. Prior immutable-install/archive evidence remains historical. |
-| B2 integrity/advisories | Verified — runtime mitigation added | Known credential pattern scan and asset checks passed at prior baseline. The runtime malformed-URL DoS is now mitigated with the compatible upstream scanner backport: 35 legacy and 135 upstream cases, actual query-string integration, bounded performance reproduction, immutable install and TypeScript passed. Version-only scanners can still flag the patched 0.2.2. Other build/test advisories remain separately documented. |
-| B3 signed iOS build | Verified internal candidate; release work remains | Build 710512ba FINISHED for 0be68de, version 1.0.0 (2), latest RC/F1 included. Signed ARM64 binary and embedded profile include age-range capability and two test devices. App Store distribution candidate follows final processing policy and acceptance. |
-| B4 final native privacy/permissions | Partial artifact verification | Actual IPA: final camera/microphone text, 15 privacy manifests, no background modes, iPhone/iPad families. See evidence/ios-device-embedded-artifacts.json. Aggregated Xcode privacy report, actual data-flow reconciliation and upload validation remain. |
-| B5 installed artifact identity | Artifact verified; installation pending | Build 710512ba, 1.0.0 (2), SHA-256 0fa9fde8a47b4df076ea319fb64dadb57228c9937c66ea5ba210adbc3df6e12d. Physical installation/acceptance not yet established. |
-| C1 startup/play | Blocked — device candidate | Owner confirms iPhone + iPad available. Use equipment-free Squats/Sky, no additional pull-up experiments. |
-| C2 full video/audio recipient | Blocked — device candidate | Prior Expo Go results are not signed-build proof; verify complete received clip and duration. |
-| C3 sharing/return/cancel | Blocked — device candidate | Verify same result/clip survives cancel/return and does not trigger an ad automatically. |
-| C4 consent/result ads | Blocked — device candidate | Use test ads/registered devices; no artificial live clicks. Verify one exit action, no-fill and no late ad. |
-| C5 permissions/interruptions | Blocked — device candidate | Deny, Settings grant, return, interruptions and subsequent run. |
-| C6 online features | Blocked — acceptance evidence | Reconcile prior live deletion evidence with unchanged backend; do not delete a real player. Native terms/report/block flow still needs candidate. |
-| C7 iPhone/iPad layouts | Blocked — device candidate | Both device families remain enabled; owner has both devices. |
-| D1 served pages | Verified | Site version 27 published. Actual custom-domain privacy/terms/deletion/support/home/app-ads/config responses all HTTP 200 and authored content matches source. Cloudflare security script injection documented. Homepage/design unchanged. |
-| D2 data disclosures | In progress | Website correction covers AdMob, RevenueCat, optional competition, local video/audio, separate retention and deletion. Reconcile final artifact/provider settings. |
-| D3 consent configuration | In progress | Source UMP + no-IDFA/nonpersonalized configuration confirmed; European and US messages now published for only the two Flap Fit apps, refusal/opt-out enabled; region targeting verified. Under-age treatment and native presentation remain unverified. PG filtering does not establish age-of-consent treatment. |
-| D4 support/deletion/moderation | In progress | Owner confirms support@flapfitapp.com tested and working. Website now explains lost anonymous sessions and identifiers are not ownership proof. Read-only review confirms sole pending item is the exact documented temporary Sep 16 test, both identifiers null. Its pending status is recorded; no customer data deleted. |
-| D5 ad-provider readiness | In progress | app-ads.txt added for current publisher. RevenueCat console confirms Connected to the correct publisher. AdMob still needs store linking/approval and has an inactivity warning. Native event receipt remains unverified; provider activation/contest evidence alone does not block Apple. |
-| E1 listing/category | In progress | Name/subtitle saved. Health & Fitness, Games/Action observed. Owner finished and saved description, promotional text and keywords; populated fields and disabled Save were read back. The owner's exact wording was retained; see evidence/apple-listing-owner-save.json. Previously saved keywords, support/marketing URLs, copyright and reviewer notes observed; completed save observed with persisted form values. No removed codes or invented health claims. |
-| E2 genuine screenshots | Blocked — candidate/device | iPhone/iPad screenshot slots empty. Use real candidate captures; contest assets and app-preview video are not required gates. |
-| E3 App Privacy | In progress — URLs saved, draft prepared | Privacy Policy and Privacy Choices URLs saved in App Store Connect as https://flapfitapp.com/privacy/. Current-source category/purpose/linkage/tracking draft prepared in privacy-remaining-review-2026-09-19.md. Other Diagnostic Data resolved from authenticated API requests and documented Supabase logging: App Functionality, linked, no tracking. Questionnaire draft entry and final native SDK/privacy-report reconciliation remain pending. No questionnaire publication is claimed. |
-| E4 account/regional declarations | In progress | Developer membership active through Sep 14, 2027 and developer agreements accepted Sep 13, 2026. 13+ rating and non-medical declaration saved; worldwide selection excluding China mainland, Hong Kong and Iraq is owner-set. EU trader review pending; final export/build declarations remain. Do not invent or sign owner-only legal declarations. |
-| E5 reviewer instructions/contact | In progress | No-login selected and Squats/Sky reviewer notes entered; owner authorized using phone from Apple membership page. Private review contact visually verified and saved in Apple; no phone/address committed. |
-| E6 free/territory/release | Verified selection; privacy scope unfinished | The owner selected worldwide, then removed China mainland, Hong Kong and Iraq. Readback: 172 countries/regions available; all three exclusions Not Available; Canada/USA available on release. Free pricing was previously verified. Regional processing remains unfinished. No agent territory edit or final release. |
-| E7 processed build attachment | Blocked — build | No build attached. Upload/processing is distinct from final review submission. |
-| F1 release evidence sheet | In progress | This tracker plus audit evidence records known checks and missing proof. |
-| F2 go/no-go | Blocked | NOT APPLE SUBMISSION-READY: worldwide privacy coordinator/interface, installed acceptance/RC receipt, actual rescission/linkage, screenshots and required final store/privacy fields remain. Signed internal build and hosted Sandbox TEST are now verified. |
-| F3 Submit for Review | Blocked — owner review | Explicit owner review required; not performed. |
+| A1 candidate source/backup | Complete for corrected source | Full local and remote SHA match above; clean tree at source freeze. Documentation commits can follow without changing runtime source. |
+| A2 actual upload contents | Complete for corrected source | EAS upload-stage copy: 717 files; 229 runtime/asset/patch files and 10 configuration files byte-equal. No signing/private environment files; archive/web files excluded. Packaged production validator passed. |
+| A3 ad resources | Source verified; device open | Existing lifecycle regressions pass. No new native lifecycle changes in this focused correction. Native terminal behavior still included in consolidated C4. |
+| A4 permission refresh | Source verified; device open | Existing Settings-return and foreground regressions pass; C5 remains. |
+| A5 accepted instructions/calibration | Complete in source | Preserved accepted onboarding and tracker; no threshold or exercise redesign. |
+| A6 unlock/Daily Challenge | Complete in source | Existing hydration/unlock/Daily Challenge regressions pass. |
+| B1 final automated checks | Complete for corrected source | 55 suites / 1,074 tests passed; TypeScript, strict scoped oxlint, source and actual packaged production configuration passed. |
+| B2 scoped integrity | Complete for corrected scope | Changed-source credential scan and diff check passed. Protected assets/native/game/recorder/ad-scheduler/config comparison unchanged. Existing URI-decoder security backport retained; prior advisory analysis remains historical evidence. |
+| B3 signed corrected iOS builds | In progress | Corrected production request identified above; matching existing registered-device test-ad profile being prepared. Finished/signed status must be recorded separately. |
+| B4 native privacy/permissions | Open for corrected artifacts | Older IPA evidence does not close this item. Inspect successor entitlements, bundled manifests, permission text and Apple upload results; reconcile final SDK data paths. |
+| B5 installed artifact identity | Open | No corrected installed-device result. Expo build success is not installation success. |
+| C1 startup/play | Open; owner handoff deferred until preparation complete | Equipment-free Squats/Sky; no repeated pull-up calibration session. |
+| C2 full video/audio recipient | Open | Verify complete received signed-candidate clip with audio/duration. Prior Expo Go evidence is not sufficient. |
+| C3 sharing/return/cancel | Open | Same result/clip survives cancel/return; no automatic ad. |
+| C4 privacy/result ads | Open | Corrected iPad native dismissal → required Google form → selected result action; once only, no overlap/late ad/no-fill delay. Test-ad mode for deliberate ad checks. |
+| C5 permissions/interruptions | Open | Deny → Settings grant → return, interruption/background and subsequent run. |
+| C6 online features | Partial historical backend evidence; native open | Existing backend checks/deletion evidence retained; verify native terms/report/block/deletion without deleting real players. Actual Apple rescission/linkage receipt remains distinct from successful Sandbox TEST delivery. |
+| C7 iPhone/iPad layouts | Open | iPad owner session, then one essentially finished remote iPhone 16 Pro session. |
+| D1 served pages | Complete published/readback | Site version 28 published successfully; custom-domain privacy, terms and deletion HTTP 200. New privacy controls and ads-only RevenueCat wording read back. Full site source backed up to GitHub branch backup/flapfit-website at 43fb70fa2074e2d61fb177f59f6c2ba3645d24f6; remote SHA verified. |
+| D2 data disclosures | Draft/source aligned; final reconciliation open | Local camera/temporary video/audio only; separate AdMob/RevenueCat/competition. Reconcile successor artifact and final published labels. |
+| D3 provider consent configuration | Source/config verified; native open | Existing Google messages/UMP/no-IDFA/nonpersonalized configuration retained. Native eligibility and form transitions await C4. |
+| D4 support/deletion/moderation | Partial verified evidence | Owner previously confirmed support email works; deletion guidance and historical backend cleanup evidence retained. Do not invent ownership proof or delete a real customer. |
+| D5 genuine RevenueCat receipt | Open | Source/mock tests and Connected dashboard status are not a genuine ad-event receipt. Last checked sandbox dashboard showed no data. Separate provider store activation/contest work is not a new Apple blocker. |
+| E1 listing/category | Complete saved/readback | Owner wording preserved; Health & Fitness / Games / Action retained. |
+| E2 genuine screenshots | Open | Apple iPhone/iPad screenshot slots empty; need real completed-candidate captures. |
+| E3 App Privacy | Saved draft; not published | All 12 owner-approved categories entered and read back; no Set Up entries. Both policy/choices URLs saved. Final native/runtime reconciliation and publication remain. |
+| E4 declarations | Partial | 13+ rating and non-medical declaration saved; membership/agreements previously verified. Content Rights remains unanswered: owner's statement was no music and artwork from their ideas, not an invented third-party-rights attestation. Final build export-compliance result remains. |
+| E5 reviewer notes/contact | Complete saved/readback | No-login reviewer flow and private contact retained; notes now accurately describe result-exit setup and independent reporting refusal. No private contact committed. |
+| E6 pricing/territory/release | Complete saved selection | Free; exactly AU/CA/MX/US available at release; future-country automatic availability unchecked; automatic release after approval retained. Earlier 172-country selection is superseded. |
+| E7 Apple upload/processing/attachment | Open | Production cloud build is not Apple upload. Upload, processing and attaching the final build require separate evidence. |
+| F1 evidence sheet/backups | In progress | This current sheet replaces contradictory current/historical entries; correction source already protected on GitHub. |
+| F2 readiness | Not ready yet | Native successor build/artifact, physical acceptance, screenshots, genuine RevenueCat requirement and remaining Apple fields cannot be marked complete from source tests. |
+| F3 Submit for Review | Not performed | Owner reviews concrete completed submission before final send. |
 
-## Deferred from Apple
-
-Android store/testing work, contest media/write-up and cosmetic polish. Existing shared Android callback repair remains included. No additional feature or calibration work.
-
-## Evidence locations
-
-- Source audit evidence: docs/release/evidence/audit-fixes-2026-09-19.json.
-- Local working evidence: workspace work/audit-fixes-20260919 (Jest, codegen, archive, scan, EAS output). No private signing files in source.
-- Website source: 229fb8f5f8a00b2ce6147ccfd124f868670e3d97; existing public Site appgprj_6aa368d995348191b4206fa03f951b3a, version 27. Deployment appgdep_6aae207df8388191820ca89850fde156 succeeded. Provider URL https://flap-fit.sportaholic000.chatgpt.site; custom domain https://flapfitapp.com verified against served content.
-- Google disclosure source checked Sep 19: https://developers.google.com/admob/ios/privacy/data-disclosure
-- RevenueCat disclosure source checked Sep 19: https://www.revenuecat.com/docs/platform-resources/apple-platform-resources/apple-app-privacy
-
-Age/consent follow-up: see age-processing-policy-2026-09-19.md. Keep 13+; separate AdMob, RevenueCat and competition authorization. No blanket minor/unknown permanent ad-free policy approved. Working RevenueCat Ads in the released app remains a Shipaton acceptance requirement.
-
-## Privacy startup follow-up
-
-The production root now restores saved processing choices and queries Apple regional duties without presenting an age/consent sheet or enabling SDKs. This closes the missing startup caller only. Worldwide policy/consent integration and independent Info controls remain incomplete, so no new candidate link is being sent to the brother. The signed internal artifact predates this source change; final device acceptance must use its completed successor.
-
-## Required advertising privacy follow-up
-
-The existing Info advertising-choices entry now reads Google native requirements and opens required choices without starting an ineligible ad or RevenueCat SDK. Background/game-entry/refocus/duplicate-request guards and native dismissal ownership are covered. Reporting withdrawal now has a service action that confirms saved refusal and native stop separately, with retryable failures; no new custom controls were mounted. This closes specific source defects, not worldwide policy integration or physical-device acceptance. See privacy-rights-2026-09-19.md.
-
-## Required Apple check follow-up
-
-The lobby now invokes the required Apple age API after the root reports a positive duty, without first asking for a country or custom age. It reacts to the completed root lookup, serializes with Google/native-ad presentations, and does not treat the response as processing consent. This closes the mandatory-check startup caller; worldwide policy selection and native acceptance remain open. Correction: production rescission monitoring was already mounted through the root foreground service; actual native rescission/linkage evidence remains open. See required-apple-age-2026-09-19.md.
-
-## Processing readiness and scope follow-up
-
-The lobby now responds to effective independent processing decisions and safely resumes a newer permitted ad policy after old setup/form completion. Game-entry, withdrawal and foreground guards remain in force. No regional grants or custom UI were added. The owner-selected three territory exclusions were read back without editing Apple settings. See processing-readiness-2026-09-19.md for source evidence and correction of the earlier monitoring claim.
+Android store work, contest media, cosmetic changes and additional calibration are deferred. The original handoff was reread in full after the focused corrections; execution remains finish → verify → save/read back → backup → check off.

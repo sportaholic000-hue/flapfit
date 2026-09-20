@@ -1,3 +1,5 @@
+> Superseded device handoff: finish independent Apple/build preparation before asking the owner to test again. The old d19e5b3f build below lacks the focused privacy corrections. The corrected source is 20921889c3dda24d790b9f1e5ab4706c77a77c45; current build/status and acceptance evidence are in apple-first-tracker-2026-09-19.md. No corrected installation, iPad/iPhone acceptance or RevenueCat receipt is established yet.
+
 # Flap Fit — one device acceptance pass
 
 Current iPad candidate: [install build d19e5b3f](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/d19e5b3f-1c09-4e96-9d01-c1706493c5ad), source `1a276dd8f5930cd16f4447f738ee69e21701ee4e`, version 1.0.0 (2). Open the link in Safari on the registered iPad and choose Install. This is an Ad Hoc build; no TestFlight upload has occurred. The registered iPhone can use an Ad Hoc install link after the iPad pass and any repairs; TestFlight is optional, not required for the brother. Use the build ID/link to distinguish it from older builds with the same version number.

@@ -9,6 +9,8 @@ import zipfile
 from pathlib import Path
 
 ipa, output = map(Path, sys.argv[1:3])
+distribution = sys.argv[3] if len(sys.argv) > 3 else 'ad-hoc'
+assert distribution in ('ad-hoc', 'store')
 with zipfile.ZipFile(ipa) as archive:
     names = archive.namelist()
     info_path = next(n for n in names if re.fullmatch(r"Payload/[^/]+\.app/Info\.plist", n))
@@ -44,6 +46,8 @@ with zipfile.ZipFile(ipa) as archive:
         "bundleIdentifier": info.get("CFBundleIdentifier"),
         "version": info.get("CFBundleShortVersionString"),
         "buildNumber": info.get("CFBundleVersion"),
+        "distributionExpected": distribution,
+        "usesNonExemptEncryption": info.get("ITSAppUsesNonExemptEncryption"),
         "deviceFamilies": info.get("UIDeviceFamily"),
         "minimumOS": info.get("MinimumOSVersion"),
         "cameraDescription": info.get("NSCameraUsageDescription"),
@@ -63,6 +67,11 @@ assert result["bundleIdentifier"] == "com.flapfit.game"
 assert set(result["deviceFamilies"]) == {1, 2}
 assert result["declaredAgeRangeInSignedBinary"] is True
 assert result["declaredAgeRangeInProfile"] is True
-assert result["provisionedDeviceCount"] == 2
+assert profile.get('Entitlements', {}).get('get-task-allow', False) is False
+if distribution == 'ad-hoc':
+    assert result["provisionedDeviceCount"] == 2
+else:
+    assert 'ProvisionedDevices' not in profile
+    assert not profile.get('ProvisionsAllDevices', False)
 output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
 print(json.dumps(result, indent=2))

@@ -1,0 +1,12 @@
+{
+  "siteVersion": 28,
+  "siteSourceCommit": "43fb70fa2074e2d61fb177f59f6c2ba3645d24f6",
+  "deploymentId": "appgdep_6aaf7248a2648191b69627b20e897787",
+  "deploymentStatus": "succeeded",
+  "privacyURL": "https://flapfitapp.com/privacy/",
+  "privacyControlsReadback": true,
+  "termsHTTP": 200,
+  "deletionHTTP": 200,
+  "githubBackupBranch": "backup/flapfit-website",
+  "githubBackupRemoteShaVerified": "43fb70fa2074e2d61fb177f59f6c2ba3645d24f6"
+}
