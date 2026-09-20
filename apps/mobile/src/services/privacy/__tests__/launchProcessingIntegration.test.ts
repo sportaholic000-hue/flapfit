@@ -29,7 +29,7 @@ async function load(options: { offline?: boolean; age?: unknown; required?: bool
   const startup: typeof import('../privacyStartup') = require('../privacyStartup');
   const country: typeof import('../privacyCountry') = require('../privacyCountry');
   const stop = startup.startPrivacyStartup(); await Promise.all([startup.preparePrivacyStartup(), country.refreshPrivacyCountry()]);
-  return { access, adapter, country, requestAge, nativeAds, purchases, adLoad, rcLoad, storage, fence, memory, alert,
+  return { access, adapter, country, requestAge, nativeAds, consent: sdk.AdsConsent, purchases, adLoad, rcLoad, storage, fence, memory, alert,
     change: (value: string) => { appState.currentState = value; [...listeners].forEach((listener) => listener(value)); },
     finish: () => { stop(); if (descriptor) Object.defineProperty(globalThis, 'fetch', descriptor); } };
 }
@@ -196,5 +196,69 @@ test('a stale post-game alert response cannot acknowledge the notice or initiali
     expect(respond).toBeDefined(); current = false; respond!(); await pending;
     expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
     expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+
+test('saved reporting refusal survives an unrelated failed competition save and restart', async () => {
+  let f = await load();
+  const memory = f.memory;
+  try {
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    await notice.restoreProcessingNotice();
+    await notice.refuseProcessingPurpose('analytics');
+    await f.access.setProcessingChoice('competition', 'granted');
+    await flow.preparePostGamePrivacy(() => true, jest.fn()); await settle();
+    expect(notice.isProcessingNoticeAcknowledged()).toBe(true);
+    f.storage.setItem.mockRejectedValueOnce(new Error('unrelated competition write failed'));
+    await expect(f.access.setProcessingChoice('competition', 'granted')).rejects.toThrow('unrelated competition write failed');
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  } finally { f.finish(); }
+  f = await load({ memory });
+  try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    await flow.preparePostGamePrivacy(() => true, jest.fn()); await settle();
+    expect(f.alert).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess()).toMatchObject({
+      ads: { allowed: true }, revenueCat: { allowed: false, reason: 'refused' }, competition: { allowed: true },
+    });
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+
+test.each([false, true])('Google presentation waits for privacy dismissal; backgrounded=%s', async backgrounded => {
+  const f = await load({ country: 'CA' });
+  try {
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    let dismissed!: () => void;
+    const nativeDismissal = new Promise<void>(resolve => { dismissed = resolve; });
+    const choices = jest.fn(async () => {
+      await notice.allowProcessingPurpose('ads');
+      await notice.refuseProcessingPurpose('analytics');
+      await notice.acknowledgeProcessingNotice();
+      await nativeDismissal;
+    });
+    let active = true;
+    const preparing = flow.preparePostGamePrivacy(() => active, choices);
+    for (let i = 0; i < 8; ++i) await settle();
+    expect(choices).toHaveBeenCalledTimes(1);
+    expect(f.consent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+    if (backgrounded) { active = false; f.change('background'); }
+    dismissed(); await preparing; await settle();
+    if (backgrounded) {
+      expect(f.consent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
+      active = true; f.change('active'); await f.country.refreshPrivacyCountry();
+      await flow.preparePostGamePrivacy(() => active, choices); await settle();
+    }
+    expect(f.consent.loadAndShowConsentFormIfRequired).toHaveBeenCalledTimes(1);
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(choices).toHaveBeenCalledTimes(1);
   } finally { f.finish(); }
 });

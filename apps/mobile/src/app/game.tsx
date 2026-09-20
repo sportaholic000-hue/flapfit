@@ -35,7 +35,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import BirdAvatar from '@/components/BirdAvatar';
-import { PrivacyChoicesSheet } from '@/components/PrivacyChoices';
+import { usePrivacyChoicesSheet } from '@/components/PrivacyChoices';
 import { preparePostGamePrivacy } from '@/services/privacy/postGamePrivacy';
 import {
   prepareCompetitionRun,
@@ -290,20 +290,10 @@ function GameContent() {
     opportunity: null as ReturnType<typeof resultAdGate.createResult> | null,
     generation: 0,
     stopContinuation: null as (() => void) | null,
-    resolveChoices: null as (() => void) | null,
   }), []);
   const resultActionClaimed = useRef(false);
   const [resultActionBusy, setResultActionBusy] = useState(false);
-  const [showPrivacyChoices, setShowPrivacyChoices] = useState(false);
-  const closePrivacyChoices = () => {
-    setShowPrivacyChoices(false);
-    resultLifetime.resolveChoices?.();
-    resultLifetime.resolveChoices = null;
-  };
-  const openPrivacyChoices = () => new Promise<void>(resolve => {
-    resultLifetime.resolveChoices = resolve;
-    setShowPrivacyChoices(true);
-  });
+  const { openChoices: openPrivacyChoices, cancelChoices, privacyChoicesSheet } = usePrivacyChoicesSheet();
   const recordingIsFinalizing = recordingPhase === 'recording' || recordingPhase === 'preparing';
   useEffect(() => {
     resultActionClaimed.current = false;
@@ -311,10 +301,10 @@ function GameContent() {
     return () => {
       ++resultLifetime.generation;
       resultLifetime.stopContinuation?.(); resultLifetime.stopContinuation = null;
-      resultLifetime.resolveChoices?.(); resultLifetime.resolveChoices = null;
+      cancelChoices();
       resultLifetime.opportunity?.dispose(); resultLifetime.opportunity = null;
     };
-  }, [result, runKey, resultLifetime]);
+  }, [result, runKey, resultLifetime, cancelChoices]);
   useEffect(() => {
     if (!result || resultActionClaimed.current) return;
     resultLifetime.opportunity?.dispose();
@@ -1229,7 +1219,7 @@ function GameContent() {
 
   return (
     <View style={{ flex: 1, backgroundColor: level.sky1 }}>
-      {showPrivacyChoices ? <PrivacyChoicesSheet onClose={closePrivacyChoices} /> : null}
+      {privacyChoicesSheet}
       <StatusBar style="light" hidden={Platform.OS === 'ios'} />
       {webSource && !trackerLoadError ? (
         <WebView

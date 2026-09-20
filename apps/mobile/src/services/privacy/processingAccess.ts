@@ -79,8 +79,10 @@ function persist(changedPurpose?: Purpose): Promise<void> {
       });
       durable = { ...durable, choices };
       publish({ ...input, choices: durable.choices });
-      // Cleanup precedes later writes. An unsaved withdrawal is never reported as successful.
-      await AsyncStorage.removeItem(STORAGE_KEY).catch(() => undefined);
+      // Preserve the last successful record, especially unrelated saved refusals.
+      // Deleting it would leave the separate notice acknowledged but erase those
+      // refusals on restart. The failed operation still rejects and can be retried;
+      // no unconfirmed withdrawal is reported as durable.
       throw error;
     }
   });

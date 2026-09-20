@@ -137,5 +137,5 @@ test('unknown and refused states do not invent a grant or a universal advertisin
   expect(api.getPrivacyRights()).toEqual({
     canWithdrawReporting: false, reportingRefused: true, canStopCompetition: false, competitionStopped: false,
   });
-  expect(Object.keys(api).sort()).toEqual(['getPrivacyRights', 'stopOnlineCompetition', 'withdrawAdPerformanceReporting']);
+  expect(Object.keys(api).sort()).toEqual(['getPrivacyRights', 'getReportingWithdrawalState', 'resetReportingWithdrawalConfirmation', 'stopOnlineCompetition', 'subscribeReportingWithdrawal', 'withdrawAdPerformanceReporting']);
 });

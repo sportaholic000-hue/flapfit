@@ -12,7 +12,8 @@ export function getPrivacyRights() {
   const inputs = getProcessingInputs();
   const access = getProcessingAccess();
   return {
-    canWithdrawReporting: inputs.choices.analytics.decision === 'granted' || access.revenueCat.allowed,
+    canWithdrawReporting: inputs.choices.analytics.decision === 'granted' || access.revenueCat.allowed ||
+      (inputs.choices.analytics.decision === 'denied' && ['pending', 'save-unconfirmed', 'native-stop-unconfirmed'].includes(reportingState.status)),
     reportingRefused: inputs.choices.analytics.decision === 'denied',
     canStopCompetition: inputs.choices.competition.decision === 'granted' || access.competition.allowed,
     competitionStopped: inputs.choices.competition.decision === 'denied',
@@ -38,6 +39,26 @@ function confirmWithin<T>(operation: Promise<T>): Promise<Confirmation<T>> {
 let reportingWithdrawal: Promise<PrivacyWithdrawalResult> | null = null;
 let competitionWithdrawal: Promise<PrivacyWithdrawalResult> | null = null;
 let retryNativeStop = false;
+type ReportingWithdrawalState = Readonly<{
+  status: PrivacyWithdrawalResult['status'] | 'not-requested' | 'pending';
+  saved: boolean;
+  nativeStopped: boolean;
+}>;
+let reportingState: ReportingWithdrawalState = { status: 'not-requested', saved: false, nativeStopped: false };
+const reportingListeners = new Set<() => void>();
+export const getReportingWithdrawalState = () => reportingState;
+/** A new explicit grant cannot inherit a previous native-stop confirmation. */
+export function resetReportingWithdrawalConfirmation(): void {
+  publishReportingWithdrawal({ status: 'not-requested', saved: false, nativeStopped: false });
+}
+export function subscribeReportingWithdrawal(listener: () => void): () => void {
+  reportingListeners.add(listener);
+  return () => { reportingListeners.delete(listener); };
+}
+function publishReportingWithdrawal(next: ReportingWithdrawalState): void {
+  reportingState = next;
+  reportingListeners.forEach(listener => { try { listener(); } catch { /* Keep the withdrawal independent of its UI. */ } });
+}
 
 /** Explicit rights action only. There is intentionally no grant or disable-ads
  * operation here. Applying this refusal must not change permitted ad delivery. */
@@ -45,6 +66,7 @@ export function withdrawAdPerformanceReporting(): Promise<PrivacyWithdrawalResul
   if (reportingWithdrawal && getProcessingInputs().choices.analytics.decision === 'denied') {
     return reportingWithdrawal;
   }
+  publishReportingWithdrawal({ status: 'pending', saved: false, nativeStopped: false });
   // The central setter publishes a refusal synchronously, before awaiting storage.
   // Existing SDK subscribers therefore close their gates before any queued report.
   const saving = confirmWithin(setProcessingChoice('analytics', 'denied'));
@@ -71,7 +93,12 @@ export function withdrawAdPerformanceReporting(): Promise<PrivacyWithdrawalResul
     };
   })();
   reportingWithdrawal = operation;
-  void operation.then(() => { if (reportingWithdrawal === operation) reportingWithdrawal = null; });
+  void operation.then(result => {
+    if (reportingWithdrawal === operation) {
+      reportingWithdrawal = null;
+      publishReportingWithdrawal(result);
+    }
+  });
   return operation;
 }
 

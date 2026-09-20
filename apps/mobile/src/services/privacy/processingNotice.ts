@@ -4,7 +4,7 @@ import {
   markProcessingNoticePresented, setLaunchProcessingOptions, setProcessingChoice,
 } from './processingAccess';
 import { PROCESSING_NOTICE_VERSION, type Purpose } from './processingPolicy';
-import { withdrawAdPerformanceReporting } from './privacyRights';
+import { getReportingWithdrawalState, resetReportingWithdrawalConfirmation, withdrawAdPerformanceReporting } from './privacyRights';
 
 // Only the notice acknowledgement and specific function activations are stored.
 // No age, jurisdiction, device, ad, or workout information belongs in this record.
@@ -67,6 +67,7 @@ export function acknowledgeProcessingNotice(): Promise<void> {
  * still apply; this cannot satisfy an unresolved policy or parental authority. */
 export async function allowProcessingPurpose(purpose: 'ads' | 'analytics'): Promise<void> {
   await restoreProcessingNotice();
+  if (purpose === 'analytics') resetReportingWithdrawalConfirmation();
   await setProcessingChoice(purpose, 'granted');
   const operation = writes.catch(() => undefined).then(async () => {
     const next = { ...saved,
@@ -79,7 +80,8 @@ export async function allowProcessingPurpose(purpose: 'ads' | 'analytics'): Prom
   try { await operation; }
   catch (error) {
     // Never retain a grant whose specific activation could not be saved.
-    await setProcessingChoice(purpose, 'denied').catch(() => undefined);
+    if (purpose === 'analytics') await withdrawAdPerformanceReporting();
+    else await setProcessingChoice(purpose, 'denied').catch(() => undefined);
     throw error;
   }
 }
@@ -87,9 +89,9 @@ export async function allowProcessingPurpose(purpose: 'ads' | 'analytics'): Prom
 export async function refuseProcessingPurpose(purpose: 'ads' | 'analytics'): Promise<void> {
   if (purpose === 'analytics') {
     const result = await withdrawAdPerformanceReporting();
-    if (result.status !== 'completed') throw new Error(result.status === 'save-unconfirmed'
-      ? 'Reporting is stopped for this session, but your choice could not be saved. Please retry.'
-      : 'Reporting is blocked, but its native shutdown could not be confirmed. Please retry.');
+    if (result.status !== 'completed') throw new Error(
+      `${result.saved ? 'Choice saved.' : 'Choice save not confirmed.'} ${result.nativeStopped
+        ? 'Native reporting stopped.' : 'Native stop not confirmed.'} Use Retry stopping reporting.`);
   } else await setProcessingChoice('ads', 'denied');
 }
 
@@ -108,6 +110,15 @@ export function needsSeparatePurposeChoice(purpose: 'ads' | 'analytics'): boolea
 export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
   const input = getProcessingInputs();
   const decision = purpose === 'ads' ? getProcessingAccess().ads : getProcessingAccess().revenueCat;
+  if (purpose === 'analytics' && input.choices.analytics.decision === 'denied') {
+    const withdrawal = getReportingWithdrawalState();
+    if (withdrawal.status === 'pending') return 'Confirming your saved choice and native reporting stop';
+    if (withdrawal.status === 'completed') return 'Choice saved · native reporting stopped';
+    if (withdrawal.status === 'save-unconfirmed' || withdrawal.status === 'native-stop-unconfirmed') {
+      return `${withdrawal.saved ? 'Choice saved' : 'Choice save not confirmed'} · ${withdrawal.nativeStopped
+        ? 'native reporting stopped' : 'Native stop not confirmed'}`;
+    }
+  }
   if (input.choices[purpose].decision === 'denied') return 'Off by your choice';
   if (decision.allowed) return purpose === 'ads' ? 'Permitted · Google choices also apply' : 'On';
   if (needsSeparatePurposeChoice(purpose)) return 'Your permission is needed';

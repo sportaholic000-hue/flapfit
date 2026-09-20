@@ -205,7 +205,7 @@ test('failed grant persistence publishes no grant and rejects the operation', as
   await expect(api.setProcessingChoice('ads', 'granted')).rejects.toThrow('disk unavailable');
   expect(observed).not.toContain(true);
   expect(allOff()).toBe(true);
-  expect(storage.removeItem).toHaveBeenCalledWith(KEY);
+  expect(storage.removeItem).not.toHaveBeenCalled();
 });
 
 test('failed persistence invalidates already queued grants instead of publishing them later', async () => {

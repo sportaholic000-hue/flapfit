@@ -1,7 +1,8 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
-import { Alert, Linking, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { Alert, Linking, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RELEASE_LINKS } from '@/config/release';
+import { getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
 import { getProcessingAccess, getProcessingInputs, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import {
   acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, allowProcessingPurpose,
@@ -10,24 +11,31 @@ import {
 
 /** Shared by the permanent Info section and a required post-game choice sheet.
  * Opening/reading it does not record agreement or initialize either SDK. */
-export function PrivacyChoices({ onDone }: { onDone?: () => void }) {
+export function PrivacyChoices({ onDone, canInteract }: { onDone?: () => void; canInteract?: () => boolean }) {
   const access = useSyncExternalStore(subscribeProcessingAccess, getProcessingAccess, getProcessingAccess);
+  const withdrawal = useSyncExternalStore(subscribeReportingWithdrawal, getReportingWithdrawalState, getReportingWithdrawalState);
   const [busy, setBusy] = useState(false);
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const [, refresh] = useState(0);
   useEffect(() => { let active = true; void restoreProcessingNotice().then(() => { if (active) refresh(n => n + 1); }); return () => { active = false; }; }, []);
   const input = getProcessingInputs();
+  const current = () => mounted.current && (canInteract?.() ?? true);
   const action = async (operation: () => Promise<void>) => {
-    if (busy) return;
+    if (busy || !current()) return;
     setBusy(true);
-    try { await operation(); refresh(n => n + 1); }
-    catch (error) { Alert.alert('Privacy choice not confirmed', error instanceof Error ? error.message : 'Please try again.'); }
-    finally { setBusy(false); }
+    try { await operation(); if (mounted.current) refresh(n => n + 1); }
+    catch (error) { if (current()) Alert.alert('Privacy choice not confirmed', error instanceof Error ? error.message : 'Please try again.'); }
+    finally { if (mounted.current) setBusy(false); }
   };
   const button = (title: string, operation: () => Promise<void>) => (
     <TouchableOpacity accessibilityRole="button" disabled={busy} onPress={() => void action(operation)} style={[styles.button, busy && styles.disabled]}>
       <Text style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
   );
+  const retryReporting = input.choices.analytics.decision === 'denied' &&
+    (withdrawal.status === 'save-unconfirmed' || withdrawal.status === 'native-stop-unconfirmed');
+  const reportingPending = withdrawal.status === 'pending';
   // Keep withdrawal reachable after required advertising consent was granted.
   const advertisingChoice = input.launch?.plan?.requirements.ads === 'express-consent' || input.choices.ads.decision === 'denied';
   return <View style={styles.root}>
@@ -44,28 +52,105 @@ export function PrivacyChoices({ onDone }: { onDone?: () => void }) {
       <Text style={styles.body}>RevenueCat reporting is separate from advertising. Stopping reporting leaves separately permitted Google ads enabled.</Text>
       <Text style={styles.status}>{processingPurposeStatus('analytics')}</Text>
       <View style={styles.buttons}>
-        {needsSeparatePurposeChoice('analytics') || input.choices.analytics.decision === 'denied'
+        {!retryReporting && !reportingPending && (needsSeparatePurposeChoice('analytics') || input.choices.analytics.decision === 'denied')
           ? button('Allow reporting', () => allowProcessingPurpose('analytics')) : null}
-        {input.choices.analytics.decision !== 'denied' || access.revenueCat.allowed
-          ? button('Stop reporting', () => refuseProcessingPurpose('analytics')) : null}
+        {retryReporting || reportingPending || input.choices.analytics.decision !== 'denied' || access.revenueCat.allowed
+          ? button(retryReporting ? 'Retry stopping reporting' : 'Stop reporting', () => refuseProcessingPurpose('analytics')) : null}
       </View>
       <Text style={styles.note}>Stopping future reporting does not delete information already received by RevenueCat. Contact support for data requests.</Text>
     </View>
     <View style={styles.group}><Text style={styles.heading}>Your camera stays on your device</Text><Text style={styles.body}>Flap Fit does not receive your camera footage or audio. Record & Play makes a temporary video on your device so you can choose whether and where to share it.</Text></View>
     <TouchableOpacity accessibilityRole="link" onPress={() => void Linking.openURL(RELEASE_LINKS.privacyUrl).catch(() => Alert.alert('Unable to open privacy policy', 'Please try again when online.'))} style={styles.link}><Text style={styles.linkText}>Full privacy policy</Text></TouchableOpacity>
-    {button('Save & continue', async () => { await acknowledgeProcessingNotice(); onDone?.(); })}
+    {button('Save & continue', async () => { await acknowledgeProcessingNotice(); if (current()) onDone?.(); })}
     <Text style={styles.note}>These choices do not grant permission for online competition. You can keep playing when optional processing is unavailable.</Text>
   </View>;
 }
 
-export function PrivacyChoicesSheet({ onClose }: { onClose: () => void }) {
+export function PrivacyChoicesSheet({ onClose, closeRequested = false }: { onClose: () => void; closeRequested?: boolean }) {
   const insets = useSafeAreaInsets();
-  return <Modal animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+  const [visible, setVisible] = useState(true);
+  const lifetime = useRef({ active: true, shown: false, closing: false, completed: false });
+  useEffect(() => {
+    const current = lifetime.current;
+    current.active = true;
+    return () => { current.active = false; };
+  }, []);
+  const finishClose = useCallback(() => {
+    const current = lifetime.current;
+    if (!current.active || current.completed) return;
+    current.completed = true;
+    onClose();
+  }, [onClose]);
+  const requestClose = useCallback(() => {
+    const current = lifetime.current;
+    if (!current.active || current.closing) return;
+    current.closing = true;
+    // If a close races initial presentation, let iOS finish showing the host
+    // first so that it will issue a real dismissal completion.
+    if (current.shown || Platform.OS !== 'ios') setVisible(false);
+  }, []);
+  useEffect(() => { if (closeRequested) requestClose(); }, [closeRequested, requestClose]);
+  useEffect(() => {
+    // Android's Modal has no onDismiss event. With no exit animation it removes
+    // its native host on the visible=false commit before this effect runs.
+    if (!visible && Platform.OS !== 'ios') finishClose();
+  }, [visible, finishClose]);
+  return <Modal visible={visible} animationType={Platform.OS === 'ios' ? 'slide' : 'none'} presentationStyle="pageSheet"
+    onRequestClose={requestClose} onDismiss={finishClose} onShow={() => {
+      lifetime.current.shown = true;
+      if (lifetime.current.active && lifetime.current.closing) setVisible(false);
+    }}>
     <View style={[styles.sheet, { paddingTop: Math.max(insets.top, 16) }]}>
-      <View style={styles.header}><Text style={styles.title}>Privacy & choices</Text><TouchableOpacity accessibilityRole="button" accessibilityLabel="Close privacy choices" onPress={onClose} style={styles.close}><Text style={styles.closeText}>Close</Text></TouchableOpacity></View>
-      <ScrollView contentContainerStyle={[styles.sheetBody, { paddingBottom: insets.bottom + 24 }]}><PrivacyChoices onDone={onClose} /></ScrollView>
+      <View style={styles.header}><Text style={styles.title}>Privacy & choices</Text><TouchableOpacity accessibilityRole="button" accessibilityLabel="Close privacy choices" onPress={requestClose} style={styles.close}><Text style={styles.closeText}>Close</Text></TouchableOpacity></View>
+      <ScrollView contentContainerStyle={[styles.sheetBody, { paddingBottom: insets.bottom + 24 }]}><PrivacyChoices onDone={requestClose} canInteract={() => lifetime.current.active && !lifetime.current.closing} /></ScrollView>
     </View>
   </Modal>;
+}
+
+type SheetRequest = { id: number; completion: Promise<void>; resolve: () => void; closeRequested?: boolean };
+
+/** Cancellation releases the invalidated result waiter, while retaining the
+ * native host through dismissal. A replacement request waits behind that host. */
+export function usePrivacyChoicesSheet() {
+  const [request, setRequest] = useState<SheetRequest | null>(null);
+  const pending = useRef<SheetRequest | null>(null);
+  const displayed = useRef<SheetRequest | null>(null);
+  const nextRequestId = useRef(0);
+  const mounted = useRef(true);
+  const cancelChoices = useCallback(() => {
+    const previous = pending.current;
+    pending.current = null;
+    previous?.resolve();
+    if (mounted.current && displayed.current) setRequest({ ...displayed.current, closeRequested: true });
+  }, []);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      pending.current?.resolve(); pending.current = null;
+      displayed.current?.resolve(); displayed.current = null;
+    };
+  }, []);
+  const openChoices = useCallback((): Promise<void> => {
+    if (!mounted.current) return Promise.resolve();
+    if (pending.current) return pending.current.completion;
+    let resolve!: () => void;
+    const completion = new Promise<void>(done => { resolve = done; });
+    const next = { id: ++nextRequestId.current, completion, resolve };
+    pending.current = next;
+    if (!displayed.current) { displayed.current = next; setRequest(next); }
+    return completion;
+  }, []);
+  const dismiss = (closed: SheetRequest) => {
+    if (!mounted.current || displayed.current?.id !== closed.id) return;
+    if (pending.current?.id === closed.id) pending.current = null;
+    // Only a native dismissal can hand the presentation slot to a queued sheet.
+    displayed.current = pending.current;
+    setRequest(displayed.current);
+    closed.resolve();
+  };
+  return { openChoices, cancelChoices,
+    privacyChoicesSheet: request ? <PrivacyChoicesSheet key={request.id} closeRequested={request.closeRequested} onClose={() => dismiss(request)} /> : null };
 }
 
 const styles = StyleSheet.create({
