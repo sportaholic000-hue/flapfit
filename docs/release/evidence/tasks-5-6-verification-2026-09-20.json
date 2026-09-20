@@ -1,0 +1,208 @@
+{
+  "recordedAt": "2026-09-20T18:52:09.361962+00:00",
+  "batchStartingCommit": "19183a13161668c45c81d624146085b9210acbc0",
+  "branch": "wip/crash-protection-20260920",
+  "preservedTasks1Through4": true,
+  "scope": "Tasks 5 and 6 only. Evidence/tracker changes only; all Apple interaction read-only.",
+  "task5": {
+    "task": 5,
+    "archive": {
+      "hashReconfirmed": true,
+      "sha256": "ad7345b7ccc04325a3f1ee10b802d6eb4329c469e835903f6a397a11c3393442",
+      "version": "1.0.0",
+      "bytes": 91561294,
+      "localPath": "work/retained-FlapFit.xcarchive.zip",
+      "provenanceReusedFrom": "docs/release/evidence/regional-store-verification.json",
+      "archiveName": "FlapFit 2026-09-20 02.54.20.xcarchive",
+      "buildId": "103c8936-9447-4190-a45b-6912b1027c69",
+      "buildNumber": "4",
+      "sourceCommit": "c05f497180c89af21ddb9b9fe014e97e2a23b80a"
+    },
+    "workflowExercised": false,
+    "gap": "No currently available macOS/Xcode Organizer access. The retained archive is available, but no genuine aggregate privacy report can be generated with this Windows-only tool access.",
+    "workflowAvailableForCorrectedCandidate": "Not yet; needs the same Xcode access. Corrected candidate must receive its own report from its own archive.",
+    "newBuildStarted": false,
+    "unsupportedCommandOrManifestSummaryUsed": false,
+    "smallestRequiredAction": "Provide access to an existing Mac with compatible Xcode (build 4 used Xcode 26.6), or have its authorized operator open the retained archive in Xcode Organizer and choose Generate Privacy Report, then return the Xcode-produced PDF with archive identity and Xcode version. No new binary build or private signing key is needed.",
+    "archiveLimitation": "Build 4 predates manifest correction f168286d9058093a42da8e96f02f53a82365a7e6. Its future report proves only that archive and the reporting workflow, never the corrected source.",
+    "signingMaterialsUploaded": false,
+    "softwareInstalled": false,
+    "reportGenerated": false,
+    "authoritativeReference": "https://developer.apple.com/documentation/bundleresources/describing-data-use-in-privacy-manifests",
+    "checkedAt": "2026-09-20T18:42:48.0611809Z",
+    "laterReportEvidenceFound": false,
+    "status": "BLOCKED",
+    "currentAccess": {
+      "xcrunFound": false,
+      "configuredMacToolAccess": false,
+      "userSshConfigPresent": false,
+      "os": "Windows",
+      "xcodebuildFound": false
+    },
+    "documentedWorkflow": "Xcode Organizer > archive context menu > Generate Privacy Report > save report"
+  },
+  "task6": {
+    "status": "COMPLETE",
+    "completionMeaning": "Saved Apple state reconciled and exact remaining actions identified; does not mean app ready for submission.",
+    "appStoreConnectId": "6813280704",
+    "bundleIdentifier": "com.flapfit.game",
+    "observationDateUtc": "2026-09-20",
+    "method": "Existing signed-in App Store Connect browser; rendered accessibility state and non-secret populated/empty checks of the two reviewer input elements. Navigation and read-only disclosures only.",
+    "version": {
+      "url": "https://appstoreconnect.apple.com/apps/6813280704/distribution/ios/version/inflight",
+      "version": "1.0",
+      "state": "Prepare for Submission",
+      "saveDisabled": true,
+      "addForReviewVisible": true,
+      "selectedBuild": null,
+      "releaseChoice": "Automatically release this version"
+    },
+    "listing": {
+      "url": "https://appstoreconnect.apple.com/apps/6813280704/distribution/ios/version/inflight",
+      "locale": "English (U.S.)",
+      "promotionalTextPopulated": true,
+      "descriptionPopulated": true,
+      "keywordsPopulated": true,
+      "copyrightPopulated": true,
+      "supportUrl": "https://flapfitapp.com/support/",
+      "marketingUrl": "https://flapfitapp.com/"
+    },
+    "appInformation": {
+      "url": "https://appstoreconnect.apple.com/apps/6813280704/distribution/info",
+      "name": "Flap Fit Workout Game",
+      "subtitle": "Home Fitness & Tracking",
+      "primaryCategory": "Health & Fitness",
+      "secondaryCategory": "Games",
+      "secondarySubcategory": "Action",
+      "contentRightsReadback": "Yes, this app has the necessary rights to its third-party content.",
+      "ageRating": "13+ (172 countries or regions); pre-version-26 global 12+ with regional exceptions",
+      "nonMedicalReadback": "This app has been declared not a regulated medical device in any country or region.",
+      "changed": false
+    },
+    "reviewerInformation": {
+      "url": "https://appstoreconnect.apple.com/apps/6813280704/distribution/ios/version/inflight",
+      "notesPopulated": true,
+      "signInRequired": false,
+      "firstNamePopulated": true,
+      "lastNamePopulated": true,
+      "phonePopulated": false,
+      "emailPopulated": false,
+      "blankFieldVerification": "Both Phone number and Email resolve to native INPUT elements with a value property and empty trimmed values; not absent accessibility values on wrapper elements.",
+      "priorTrackerContactCompleteClaimSuperseded": true,
+      "privateValuesRecorded": false
+    },
+    "pricingAndAvailability": {
+      "url": "https://appstoreconnect.apple.com/apps/6813280704/distribution/pricing",
+      "availableCount": 4,
+      "availableCountriesExact": [
+        "Australia",
+        "Canada",
+        "Mexico",
+        "United States"
+      ],
+      "currentPrices": {
+        "Australia": "AUD 0.00",
+        "Canada": "CAD 0.00",
+        "Mexico": "MXN 0.00",
+        "United States": "USD 0.00"
+      },
+      "method": "Expanded 4 Available and current-price read-only table; closed price dialog with Done. No saves."
+    },
+    "privacy": {
+      "url": "https://appstoreconnect.apple.com/apps/6813280704/distribution/privacy",
+      "savedDataTypeCount": 12,
+      "savedPurposeAndLinkageReadbackMatches": "docs/release/evidence/app-privacy-draft-saved-2026-09-20.md",
+      "policyUrl": "https://flapfitapp.com/privacy/",
+      "choicesUrl": "https://flapfitapp.com/privacy/",
+      "preview": [
+        "Data Linked to You",
+        "Data Not Linked to You"
+      ],
+      "trackingSectionVisible": false,
+      "setUpEntriesVisible": false,
+      "publication": "Saved draft; publication outstanding",
+      "publicationEvidence": "Preserved saved-draft/no-Publish record plus current persisted 12-category readback with Publish available; no publication action occurred in this batch. Current page does not display a publication timestamp.",
+      "publishClicked": false
+    },
+    "screenshots": {
+      "url": "https://appstoreconnect.apple.com/apps/6813280704/distribution/ios/version/inflight",
+      "iphone65": {
+        "count": 0,
+        "maximum": 10
+      },
+      "iphone69": {
+        "count": 0,
+        "maximum": 10,
+        "readViaMediaManager": true
+      },
+      "ipad13": {
+        "count": 0,
+        "maximum": 10
+      },
+      "requirement": "A supported iPhone 6.9-inch set or fallback 6.5-inch set, and iPad 13-inch set. Optional app previews and smaller scalable slots are not new blockers.",
+      "existingCapturePlanReused": "docs/release/store-screenshot-production-plan.md",
+      "appleReference": "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/"
+    },
+    "buildsAndCompliance": {
+      "url": "https://appstoreconnect.apple.com/teams/399cf8ab-cc57-46aa-8dd0-861173e8dc7a/apps/6813280704/testflight",
+      "inventoryLabel": "No Builds",
+      "bodyReadback": "Submit a build to start testing.",
+      "processingBuildObserved": false,
+      "selectedVersionBuild": null,
+      "buildSpecificExportPromptObserved": false,
+      "genericEncryptionHelpOnly": true,
+      "interpretation": "No current build-specific Missing Compliance prompt. Actual export/compliance outcome can be checked only after a real binary is processed; the generic encryption help is not evidence that documentation is missing."
+    },
+    "reviewSubmission": {
+      "url": "https://appstoreconnect.apple.com/apps/6813280704/distribution/reviewsubmissions",
+      "readback": "Items you submit to App Review will appear here.",
+      "submittedItemsObserved": 0
+    },
+    "remainingActions": [
+      {
+        "missing": "Reviewer phone and email",
+        "location": "iOS App 1.0 > App Review Information > Contact Information > Phone number / Email",
+        "finish": "Enter the owner-confirmed reviewer contact values and save. Both current saved input values are empty; the handoff has no usable values.",
+        "dependency": "Owner-confirmed contact details, then console action"
+      },
+      {
+        "missing": "iPhone screenshots",
+        "location": "iOS App 1.0 > Previews and Screenshots > iPhone 6.5-inch Display; Media Manager > iPhone 6.9-inch Display",
+        "finish": "Upload accepted genuine final-app screenshots to a supported 6.9-inch OR 6.5-inch set. Both inspected sets are empty (0 of 10). Both sizes are not required.",
+        "dependency": "Screenshots/device evidence, then console upload"
+      },
+      {
+        "missing": "iPad screenshots",
+        "location": "iOS App 1.0 > Previews and Screenshots > iPad > 13-inch Display",
+        "finish": "Upload accepted genuine final-app iPad screenshots. The required set is empty (0 of 10).",
+        "dependency": "Screenshots/device evidence, then console upload"
+      },
+      {
+        "missing": "App Privacy publication",
+        "location": "App Privacy > Publish",
+        "finish": "Publish the saved 12-category answers when authorized after the existing final native/runtime reconciliation. The answers themselves are already saved.",
+        "dependency": "Console action; existing final privacy-evidence prerequisite remains"
+      },
+      {
+        "missing": "Final build available and selected",
+        "location": "TestFlight > Builds (No Builds); iOS App 1.0 > Build",
+        "finish": "Separately authorize the final corrected binary upload, allow Apple validation/processing, then select it for version 1.0.",
+        "dependency": "Final binary and Apple processing, then console selection"
+      },
+      {
+        "missing": "Version added and submitted for review",
+        "location": "iOS App 1.0 > Add for Review; App Review",
+        "finish": "After the required fields and final acceptance are complete, obtain the existing final-send authorization and complete review submission. The App Review page currently has no submitted items.",
+        "dependency": "Console action after prerequisites and final owner authorization"
+      }
+    ],
+    "inaccessibleRequestedFields": [],
+    "reusedEvidence": [
+      "docs/release/evidence/tasks-3-4-verification-2026-09-20.json",
+      "docs/release/evidence/app-privacy-draft-saved-2026-09-20.md"
+    ]
+  },
+  "previousCompletedSourceOrPackageChecksRerun": false,
+  "prohibitedActionsPerformed": [],
+  "applicationConfigurationOrDependencyChanges": false
+}
