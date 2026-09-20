@@ -1,0 +1,22 @@
+{
+  "recordedAt": "2026-09-20T04:00:57.3106461Z",
+  "sourceCommit": "1a276dd8f5930cd16f4447f738ee69e21701ee4e",
+  "buildId": "d19e5b3f-1c09-4e96-9d01-c1706493c5ad",
+  "buildUrl": "https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/d19e5b3f-1c09-4e96-9d01-c1706493c5ad",
+  "statusAtCreation": "NEW",
+  "distribution": "INTERNAL",
+  "profile": "ios-device-check",
+  "version": "1.0.0",
+  "buildNumber": "2",
+  "automatedChecks": {
+    "suites": 54,
+    "productionReleaseConfig": "passed",
+    "lint": "passed",
+    "typecheck": "passed",
+    "success": true,
+    "tests": 1059
+  },
+  "deviceAcceptance": "pending; owner iPad first, brother iPhone after fixes",
+  "testFlight": "not uploaded",
+  "appPrivacy": "draft declaration edits waiting for explicit owner confirmation after automatic approval review block"
+}

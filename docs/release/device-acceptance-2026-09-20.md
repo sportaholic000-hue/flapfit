@@ -1,0 +1,16 @@
+# Flap Fit — one device acceptance pass
+
+Plan: the owner tests the iPad first. Fix any failures before sending the brother the consolidated iPhone pass. Use the final install link and candidate ID supplied with this checklist; do not use an older Expo Go session. No new pull-up calibration experiments are required.
+
+Record the device model, iOS/iPadOS version, candidate ID, and the approximate time of each ad. Keep actual screenshots from the installed app for the store listing.
+
+1. Cold launch and play. Check Home, navigation, and portrait layout. Choose Squats / Sky and normal Play. Allow camera access. Complete the shown calibration and one run. Optional advertising/reporting setup should not interrupt first play; a genuinely required Apple age check may still appear. Normal Play must not request the microphone.
+2. First result exit. Tap Done or Try Again once. Complete the privacy notice/choices if shown. The first session result exit must be ad-free. Check that the chosen navigation happens once and the app stays responsive.
+3. Recording and sharing. Choose Record & Play, allow the microphone if audio is wanted, and complete a run. Open sharing, cancel, return, and reopen it. The same result and complete composed video/audio must remain available; no ad may appear just because sharing closed or the app resumed. Check a user-chosen received/saved clip for complete duration, picture, and audio.
+4. Result ad. Use a later eligible Done / Try Again / Next Level exit. In a test-ad build, verify the ad is marked as a test ad. Close it and confirm one navigation, no duplicate action, and no late ad over a new game. No ready ad must allow navigation. Ads are eligible on every second claimed exit, with at least 90 seconds since the previous ad opened. Do not click live advertising for testing.
+5. Independent reporting choice. After an initial permitted ad event, open Info → Privacy & choices → Advertising & reporting choices and stop RevenueCat reporting. Confirm the status changes and local play still works. With Google advertising still permitted, test another eligible exit after the cooldown. Cold launch again and confirm the reporting refusal remains. Server receipt and post-withdrawal checks are verified separately in RevenueCat; seeing an ad alone does not prove reporting.
+6. Finish the same session. Check Stats/progress, Daily Challenge, and the optional Compete screen; decline optional participation if no test profile is being used. Check Info links, required Google privacy access when present, and camera denial → Settings grant → return. Capture Home, exercise selection, gameplay, Stats, and Info layouts without private personal data for screenshot selection.
+
+Report pass/fail for each step, the exact step and message for any failure, and ad times. Do not repeat the whole session after a failure; first provide the observation so a targeted repair can be made. The brother receives this pass only after the iPad findings are resolved.
+
+Apple submission still requires the final store-signed artifact, accepted device results, real store screenshots, truthful privacy/rights declarations, and final owner review. Automated tests and successful cloud compilation are not device acceptance or Apple approval.
