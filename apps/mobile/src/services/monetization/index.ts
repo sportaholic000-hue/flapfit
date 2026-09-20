@@ -341,8 +341,10 @@ function preparePermittedMonetization(canPresent: () => boolean): Promise<void> 
       if (!currentAdPermission(epoch)) return;
       publishPrivacyRequirement(consent.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED);
       if (!consent.canRequestAds) { adsReady = false; return; }
+      // UMP does not forward TFUA to the ad SDK. Google maps under-consent-age
+      // treatment to CHILD; TEEN alone does not provide those protections.
       // No IDFA collection, personalized requests, health or competition attributes.
-      await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: access.ads.treatment as AgeRestrictedTreatment }));
+      await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: (access.ads.underAgeOfConsent ? 'child' : access.ads.treatment) as AgeRestrictedTreatment }));
       if (!currentAdPermission(epoch)) return;
       void initializeRevenueCat();
       await bounded(sdk.default().initialize());
@@ -405,7 +407,7 @@ async function openAdPrivacyOptions(canPresent: () => boolean): Promise<void> {
       if (!sdk) return;
       const access = getProcessingAccess();
       // Reapply the independent age/processing policy before any initialization.
-      await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: access.ads.treatment as AgeRestrictedTreatment }));
+      await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: (access.ads.underAgeOfConsent ? 'child' : access.ads.treatment) as AgeRestrictedTreatment }));
       if (!currentAdPermission(epoch)) return;
       void initializeRevenueCat();
       await bounded(sdk.default().initialize());

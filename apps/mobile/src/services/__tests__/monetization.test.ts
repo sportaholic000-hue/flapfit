@@ -253,7 +253,7 @@ test.each(['teen', 'child'])('restricted %s ads run without RevenueCat consent',
   const f = loadAdapter({ rcAllowed: false, treatment, underAgeOfConsent: true });
   await f.adapter.prepareMonetization(() => true);
   expect(f.sdk.AdsConsent.requestInfoUpdate).toHaveBeenCalledWith({ tagForUnderAgeOfConsent: true });
-  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: treatment });
+  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'child' });
   expect(f.adapter.prepareResultInterstitial()).not.toBeNull();
   expect(f.purchasesLoad).not.toHaveBeenCalled(); expect(f.nativeFence).toHaveBeenCalledWith(false);
   expect(f.nativeFence).not.toHaveBeenCalledWith(true);
@@ -587,7 +587,7 @@ test('repeated rights requests share one native form and game entry waits for it
 test('native Google choices can restore independently permitted restricted ads without RevenueCat', async () => {
   const f = loadAdapter({ rcAllowed: false, treatment: 'teen', underAgeOfConsent: true, umpBridge: true });
   await f.adapter.showAdPrivacyOptions();
-  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'teen' });
+  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'child' });
   expect(f.mobileAds.initialize).toHaveBeenCalledTimes(1);
   expect(f.adapter.prepareResultInterstitial()).not.toBeNull();
   expect(f.purchasesLoad).not.toHaveBeenCalled(); expect(f.nativeFence).not.toHaveBeenCalledWith(true);
@@ -753,7 +753,7 @@ test('a newer eligible ad policy resumes after an old info request without waiti
   expect(f.sdk.AdsConsent.requestInfoUpdate).toHaveBeenCalledTimes(2);
   expect(f.sdk.AdsConsent.requestInfoUpdate).toHaveBeenLastCalledWith({ tagForUnderAgeOfConsent: true });
   expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledTimes(1);
-  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'teen' });
+  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'child' });
   expect(f.adapter.prepareResultInterstitial()).not.toBeNull(); expect(f.purchasesLoad).not.toHaveBeenCalled();
 });
 
@@ -790,6 +790,29 @@ test('a newer independent policy waits for the Google rights form before prepari
   expect(f.sdk.AdsConsent.requestInfoUpdate).not.toHaveBeenCalled();
   resolve(f.umpInfo); await Promise.all([rights, latest]);
   expect(f.sdk.AdsConsent.requestInfoUpdate).toHaveBeenCalledTimes(1);
-  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'teen' });
+  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'child' });
   expect(f.mobileAds.initialize).toHaveBeenCalledTimes(1); expect(f.purchasesLoad).not.toHaveBeenCalled();
+});
+
+test.each(['startup', 'privacy-options'])('an eligible teen above the consent threshold retains teen ads through %s', async (entry) => {
+  const f = loadAdapter({ rcAllowed: false, treatment: 'teen', underAgeOfConsent: false, umpBridge: true });
+  if (entry === 'startup') await f.adapter.prepareMonetization(() => true);
+  else await f.adapter.showAdPrivacyOptions();
+  expect(f.mobileAds.setRequestConfiguration).toHaveBeenCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'teen' });
+  expect(f.adapter.prepareResultInterstitial()).not.toBeNull();
+  expect(f.purchasesLoad).not.toHaveBeenCalled();
+});
+
+test('a consent-threshold change replaces the ad treatment without granting analytics', async () => {
+  const f = loadAdapter({ rcAllowed: false, treatment: 'teen', underAgeOfConsent: true });
+  await f.adapter.prepareMonetization(() => true);
+  const restricted = f.adapter.prepareResultInterstitial()!; f.events.get('loaded')!();
+  expect(restricted.isReady()).toBe(true);
+  expect(f.mobileAds.setRequestConfiguration).toHaveBeenLastCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'child' });
+  f.changeAccess({ ads: { ...f.getAccess().ads, underAgeOfConsent: false } });
+  expect(restricted.isReady()).toBe(false);
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.mobileAds.setRequestConfiguration).toHaveBeenLastCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'teen' });
+  expect(f.adapter.prepareResultInterstitial()).not.toBeNull();
+  expect(f.purchasesLoad).not.toHaveBeenCalled();
 });
