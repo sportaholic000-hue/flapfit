@@ -1,5 +1,6 @@
 import { prepareAppleAgeControl, requestLaunchAppleAgeEvidence } from './appleAgeControl';
 import { getPrivacyCountrySnapshot, subscribePrivacyCountry } from './privacyCountry';
+import { restoreRegionalClarification } from './regionalClarification';
 import { getAgeVerificationRevision, getProcessingInputs, setLaunchProcessingCountry, setLaunchProcessingPlan, verifyLaunchAgeEvidence } from './processingAccess';
 import { launchAppleAgeGates, resolveVerifiedAdultLaunchPlan, refineLaunchProcessingPlan } from './launchProcessingPolicy';
 
@@ -28,7 +29,8 @@ export type LaunchProcessingPresentation = {
   canPresent: () => boolean;
   present: <T>(operation: () => Promise<T>) => Promise<T>;
 };
-export function prepareLaunchProcessing(options: LaunchProcessingPresentation): Promise<void> {
+export async function prepareLaunchProcessing(options: LaunchProcessingPresentation): Promise<void> {
+  await restoreRegionalClarification();
   if (pending) return pending;
   const input = getProcessingInputs();
   const launch = input.launch;

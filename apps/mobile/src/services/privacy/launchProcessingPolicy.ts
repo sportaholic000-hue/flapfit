@@ -18,7 +18,10 @@ export type LaunchPolicyReason = 'notice-route' | 'requested-service' | 'country
   'state-unresolved' | 'parental-authority-required' | 'quebec-activation-required' |
   'new-york-express-consent-required' | 'connecticut-ad-necessity-unresolved' |
   'connecticut-reporting-not-necessary';
+export type ConnecticutResidency = 'resident' | 'not-resident' | 'unknown';
 export type LaunchProcessingOptions = {
+  /** Explicit local clarification, not IP location or New York consent. */
+  connecticutResidency?: ConnecticutResidency;
   /** Verified authority for this processing; never download permission. */
   parentalAuthority?: Partial<Record<Purpose, boolean>>;
   /** Exact disclosed purpose activation, not Google vendor consent or a generic grant. */
@@ -220,7 +223,10 @@ function resolveWithThresholds(
   plan.requirements = { ads: 'notice-and-opt-out', analytics: 'notice-and-opt-out', competition: 'requested-service' };
   plan.reasons = { ads: 'notice-route', analytics: 'notice-route', competition: 'requested-service' };
   for (const purpose of PURPOSES) {
-    plan.parentalAuthorityRequired[purpose] = (!adult && country === 'MX') || (quebecPossible && !thresholds.fourteen);
+    // No case-by-case capacity or verified guardian service is collected here.
+    // OAIC B.61 does not let a CHILD ad tag stand in for under-15 consent.
+    plan.parentalAuthorityRequired[purpose] = (!adult && country === 'MX') ||
+      (quebecPossible && !thresholds.fourteen) || (country === 'AU' && !thresholds.fifteen);
     if (purpose === 'competition') continue;
     if (quebecPossible) {
       plan.quebecActivationRequired[purpose] = true;
@@ -228,9 +234,11 @@ function resolveWithThresholds(
       plan.reasons[purpose] = 'quebec-activation-required';
       if (!knownProvince) plan.missingFacts[purpose].push('province');
     }
-    if (!adult && country === 'US' && (!knownState || subdivision === 'CT')) {
+    const connecticutPossible = input.connecticutResidency === 'resident' || subdivision === 'CT' ||
+      (input.connecticutResidency !== 'not-resident' && !knownState);
+    if (!adult && country === 'US' && connecticutPossible) {
       if (purpose === 'analytics') {
-        block(purpose, knownState ? 'connecticut-reporting-not-necessary' : 'state-unresolved', knownState ? undefined : 'state');
+        block(purpose, knownState || input.connecticutResidency === 'resident' ? 'connecticut-reporting-not-necessary' : 'state-unresolved', knownState || input.connecticutResidency === 'resident' ? undefined : 'state');
         continue;
       }
       if (!input.connecticutContextualAdsReviewed) {

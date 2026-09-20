@@ -106,3 +106,12 @@ The row remains open until an authorized write and independent readback confirm
 dismissed and a resolution timestamp. No customer complaint or player account
 was modified, and no deletion was attempted. See moderation-live-test-2026-09-16.md
 for the exact historical test identifiers.
+
+
+### September 20 test-report closure
+
+The previously pending FFReview release test report was dismissed, not deleted.
+Exact guarded update returned one row; independent database readback confirms
+`dismissed`, resolved at `2026-09-20 07:30:54.336501+00`, both deleted account links
+null. Full identifiers and guard evidence are recorded in
+`evidence/regional-production-closure-2026-09-20.md`. Existing retention applies.

@@ -32,9 +32,11 @@ async function fixture(platform = 'ios') {
   const access: typeof import('@/services/privacy/processingAccess') = require('@/services/privacy/processingAccess');
   await access.hydrateProcessingAccess(); await access.setPrivacyRegion('us');
   access.setAppleAgeRequirement('not-required'); access.setAppleRescissionPending(false);
-  access.verifyTransientAgeEvidence({ source: 'apple', status: 'shared', lowerBound: 18, upperBound: null });
+  access.setLaunchProcessingCountry('US', true);
+  access.verifyLaunchAgeEvidence({ source: 'apple', status: 'shared', lowerBound: 18, upperBound: null }, 'US', access.getAgeVerificationRevision());
   access.setProcessingRequirements({ ads: 'express-consent', analytics: 'express-consent', competition: 'requested-service' });
   for (const purpose of ['ads', 'analytics', 'competition'] as const) await access.setProcessingChoice(purpose, 'granted');
+  access.markProcessingNoticePresented(1);
   const { PrivacyChoices, PrivacyChoicesSheet, usePrivacyChoicesSheet }: typeof import('../PrivacyChoices') = require('../PrivacyChoices');
   let tree: ReactTestRenderer;
   let controller!: ReturnType<typeof usePrivacyChoicesSheet>;
@@ -210,5 +212,55 @@ test('an unsuccessful later reporting grant cannot reuse an earlier confirmed na
   await f.press('Retry stopping reporting');
   expect(f.text()).toContain('Choice saved · native reporting stopped');
   expect(JSON.parse((await f.storage.getItem('@flapfit/processing-choices-v1'))!).choices.analytics.decision).toBe('denied');
+  await f.unmount();
+});
+
+test('Info renders only the needed teen residency clarification and preserves independent reporting refusal', async () => {
+  const f=await fixture();
+  f.access.setLaunchProcessingCountry('US',true);
+  f.access.verifyLaunchAgeEvidence({source:'apple',status:'shared',lowerBound:13,upperBound:15},'US',f.access.getAgeVerificationRevision());
+  await f.access.setProcessingChoice('analytics','denied');
+  await f.mount();
+  expect(f.text()).toContain('Do you live in Connecticut?');
+  await f.press('No');
+  expect(f.text()).toContain('Not a Connecticut resident');
+  expect(f.access.getProcessingAccess().revenueCat.allowed).toBe(false);
+  await f.press('Yes, Connecticut');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  expect(f.text()).toContain('Connecticut resident');
+  await f.unmount();
+});
+test('Info residency save failure keeps every answer reachable for retry and makes no permission claim', async () => {
+  const f=await fixture();
+  f.access.setLaunchProcessingCountry('US',true);
+  f.access.verifyLaunchAgeEvidence({source:'apple',status:'shared',lowerBound:13,upperBound:15},'US',f.access.getAgeVerificationRevision());
+  await f.mount(); f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+  await f.press('No');
+  expect(f.text()).toContain('Answer save not confirmed');
+  expect(f.button('No')).toBeDefined(); expect(f.button('Yes, Connecticut')).toBeDefined();
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.press('No');
+  expect(f.text()).toContain('Not a Connecticut resident');
+  await f.unmount();
+});
+test('adult Info has no unnecessary state question', async () => {
+  const f=await fixture(); await f.mount();
+  expect(f.text()).not.toContain('Do you live in Connecticut?'); await f.unmount();
+});
+
+
+test.each([
+  {country:'AU' as const,lowerBound:13,upperBound:14},
+  {country:'MX' as const,lowerBound:16,upperBound:17},
+  {country:'CA' as const,lowerBound:0,upperBound:13},
+])('$country restricted age shows its actual state without a misleading Allow control', async scenario => {
+  const f=await fixture();
+  f.access.setLaunchProcessingCountry(scenario.country,true);
+  f.access.verifyLaunchAgeEvidence({source:'apple',status:'shared',lowerBound:scenario.lowerBound,upperBound:scenario.upperBound},scenario.country,f.access.getAgeVerificationRevision());
+  await f.access.setProcessingChoice('analytics','denied');
+  await f.mount();
+  expect(f.button('Allow advertising')).toBeUndefined(); expect(f.button('Allow reporting')).toBeUndefined();
+  expect(f.text()).toContain(scenario.country === 'CA' ? 'age eligibility can be confirmed' : 'Flap Fit does not collect that permission');
+  expect(f.button('Save & continue')).toBeDefined();
   await f.unmount();
 });

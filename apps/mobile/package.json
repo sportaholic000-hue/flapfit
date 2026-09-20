@@ -13,7 +13,8 @@
     "release:assets": "node ./scripts/validate-store-assets.cjs",
     "verify:competition": "node ./scripts/verify-live-competition.cjs",
     "typecheck": "tsc --noEmit",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "eas-build-on-success": "node ./scripts/retain-ios-archive.cjs"
   },
   "dependencies": {
     "@expo/ngrok": "4.1.3",

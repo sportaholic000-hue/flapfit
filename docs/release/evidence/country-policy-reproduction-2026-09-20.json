@@ -1,0 +1,64 @@
+{
+  "baseline": "d2f85fd6e2fa685421d59cabf4da1df0ec742741",
+  "isolatedLogicOnly": true,
+  "australianUnder15": {
+    "before": {
+      "ads": {
+        "allowed": true,
+        "reason": "allowed"
+      },
+      "analytics": {
+        "allowed": true,
+        "reason": "allowed"
+      },
+      "competition": {
+        "allowed": true,
+        "reason": "allowed"
+      }
+    },
+    "after": {
+      "ads": {
+        "allowed": false,
+        "reason": "parent-permission-required"
+      },
+      "analytics": {
+        "allowed": false,
+        "reason": "parent-permission-required"
+      },
+      "competition": {
+        "allowed": false,
+        "reason": "parent-permission-required"
+      }
+    }
+  },
+  "usTeenMissingState": {
+    "before": {
+      "ads": {
+        "allowed": false,
+        "reason": "policy-unresolved"
+      },
+      "analytics": {
+        "allowed": false,
+        "reason": "policy-unresolved"
+      },
+      "competition": {
+        "allowed": true,
+        "reason": "allowed"
+      }
+    },
+    "afterSpecificNonResidentAnswer": {
+      "ads": {
+        "allowed": true,
+        "reason": "allowed"
+      },
+      "analytics": {
+        "allowed": true,
+        "reason": "allowed"
+      },
+      "competition": {
+        "allowed": true,
+        "reason": "allowed"
+      }
+    }
+  }
+}

@@ -112,7 +112,7 @@ test('current specific teen consent can satisfy unknown NY applicability', () =>
 });
 test('outside US does not erase known NY collection history', () => {
   const result = resolveLaunchProcessingPolicy(input({
-    country: 'AU', subdivision: null, age: teen,
+    country: 'AU', subdivision: null, age: { ...teen, lowerBound: 15 },
     newYorkApplicability: { ads: { status: 'applies', basis: 'covered-data-history' }, analytics: outside },
   }));
   expect(result.decisions.ads.allowed).toBe(false);
@@ -159,7 +159,8 @@ test('Mexico teen verified authority is independently scoped', () => {
 test.each([[13, 'child', true], [15, 'teen', false]] as const)(
   'Australian %i minimum has appropriate capacity-related ad treatment', (lowerBound, treatment, underAgeOfConsent) => {
     const result = resolveLaunchProcessingPolicy(input({ country: 'AU', subdivision: null, age: { ...teen, lowerBound } }));
-    expect(result.decisions.ads.allowed).toBe(true);
+    expect(result.decisions.ads.allowed).toBe(lowerBound >= 15);
+    if (lowerBound < 15) expect(result.decisions.ads.reason).toBe('parent-permission-required');
     expect(result.treatment).toBe(treatment);
     expect(result.underAgeOfConsent).toBe(underAgeOfConsent);
   },

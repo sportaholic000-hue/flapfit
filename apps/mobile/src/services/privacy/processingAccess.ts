@@ -1,4 +1,4 @@
-import { evaluateLaunchProcessingPlan, resolveLaunchProcessingPolicy, type LaunchProcessingPlan, type LaunchProcessingOptions } from './launchProcessingPolicy';
+import { evaluateLaunchProcessingPlan, refineLaunchProcessingPlan, resolveLaunchProcessingPolicy, type ConnecticutResidency, type LaunchProcessingPlan, type LaunchProcessingOptions } from './launchProcessingPolicy';
 import type { LaunchCountry } from './privacyCountry';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -263,7 +263,7 @@ export function setLaunchProcessingPlan(plan: LaunchProcessingPlan, expectedRevi
 export function verifyLaunchAgeEvidence(age: AgeEvidence, country: LaunchCountry, expectedRevision: number): boolean {
   if (expectedRevision !== verificationRevision || !input.launch?.current || input.launch.country !== country || input.appleAccessRestricted) return false;
   const verification = verifyTransientAge({ ...input, region: 'unknown', age, appleAgeCheckSatisfied: age.status === 'shared' && age.source === 'apple' });
-  const resolved = resolveLaunchProcessingPolicy({ country, subdivision: null, age,
+  const resolved = resolveLaunchProcessingPolicy({ ...input.launch.options, country, subdivision: null, age,
     choices: input.choices, notices: { ads: false, analytics: false, competition: false } });
   const { decisions: _decisions, ...plan } = resolved;
   publish({ ...input, verification, launch: { ...input.launch, plan, resolution: null } });
@@ -273,4 +273,23 @@ export function verifyLaunchAgeEvidence(age: AgeEvidence, country: LaunchCountry
 export function setLaunchProcessingOptions(options: LaunchProcessingOptions): void {
   if (!input.launch) return;
   publish({ ...input, launch: { ...input.launch, options: JSON.parse(JSON.stringify(options)) as LaunchProcessingOptions } });
+}
+
+/** Local residency clarification changes only the applicable regional rule.
+ * Purpose choices, notice, Apple evidence and provider consent remain independent. */
+export function applyConnecticutResidency(residency: ConnecticutResidency): boolean {
+  if (!['resident', 'not-resident', 'unknown'].includes(residency) ||
+      !input.hydrated || !input.launch?.current || input.launch.country !== 'US') return false;
+  if (input.launch.options.connecticutResidency === residency) return true;
+  const options = { ...input.launch.options, connecticutResidency: residency };
+  let plan = input.launch.plan;
+  if (plan) {
+    const { decisions: _decisions, ...refined } = refineLaunchProcessingPlan(plan, {
+      ...options, country: 'US', subdivision: null, choices: input.choices,
+      notices: { ads: false, analytics: false, competition: false },
+    });
+    plan = refined;
+  }
+  publish({ ...input, launch: { ...input.launch, options, plan, resolution: null } });
+  return true;
 }

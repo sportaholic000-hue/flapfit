@@ -67,3 +67,6 @@ README.md
 
 # EAS local signing metadata must never be committed or included in source uploads.
 **/credentials.json
+
+# Generated Xcode evidence is an EAS artifact, never a source input.
+/apps/mobile/release-evidence/

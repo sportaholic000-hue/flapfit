@@ -95,6 +95,14 @@ export async function refuseProcessingPurpose(purpose: 'ads' | 'analytics'): Pro
   } else await setProcessingChoice('ads', 'denied');
 }
 
+export function canChooseProcessingPurpose(purpose: 'ads' | 'analytics'): boolean {
+  const input = getProcessingInputs();
+  const plan = input.launch?.plan;
+  return !!input.launch?.current && !!plan && plan.ageEligibility === 'allowed' &&
+    !input.appleAccessRestricted && !plan.parentalAuthorityRequired[purpose] &&
+    plan.requirements[purpose] !== 'unresolved';
+}
+
 export function needsSeparatePurposeChoice(purpose: 'ads' | 'analytics'): boolean {
   const input = getProcessingInputs();
   const plan = input.launch?.plan;
@@ -123,6 +131,12 @@ export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
   if (decision.allowed) return purpose === 'ads' ? 'Permitted · Google choices also apply' : 'On';
   if (needsSeparatePurposeChoice(purpose)) return 'Your permission is needed';
   if (decision.reason === 'notice-needed') return 'Available after this notice';
+  if (decision.reason === 'parent-permission-required') return 'Unavailable: verified parent or guardian permission is required. Flap Fit does not collect that permission.';
+  const reason = input.launch?.resolution?.reasons[purpose];
+  if (reason === 'connecticut-reporting-not-necessary') return 'Reporting is unavailable for this age and Connecticut privacy setting';
+  if (reason === 'connecticut-ad-necessity-unresolved') return 'Advertising is unavailable for this age and regional privacy setting';
+  if (reason === 'state-unresolved') return 'Review State privacy rules in this section';
+  if (decision.reason === 'age-unresolved') return 'Unavailable until age eligibility can be confirmed';
   return 'Waiting for applicable age and privacy checks';
 }
 

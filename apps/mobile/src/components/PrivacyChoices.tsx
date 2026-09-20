@@ -2,10 +2,14 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from '
 import { Alert, Linking, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RELEASE_LINKS } from '@/config/release';
+import {
+  connecticutClarificationStatus, hasConnecticutClarificationControl,
+  restoreRegionalClarification, saveConnecticutResidency,
+} from '@/services/privacy/regionalClarification';
 import { getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
 import { getProcessingAccess, getProcessingInputs, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import {
-  acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, allowProcessingPurpose,
+  acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, allowProcessingPurpose, canChooseProcessingPurpose,
   needsSeparatePurposeChoice, processingPurposeStatus, refuseProcessingPurpose, restoreProcessingNotice,
 } from '@/services/privacy/processingNotice';
 
@@ -18,7 +22,7 @@ export function PrivacyChoices({ onDone, canInteract }: { onDone?: () => void; c
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const [, refresh] = useState(0);
-  useEffect(() => { let active = true; void restoreProcessingNotice().then(() => { if (active) refresh(n => n + 1); }); return () => { active = false; }; }, []);
+  useEffect(() => { let active = true; void Promise.all([restoreProcessingNotice(), restoreRegionalClarification()]).then(() => { if (active) refresh(n => n + 1); }); return () => { active = false; }; }, []);
   const input = getProcessingInputs();
   const current = () => mounted.current && (canInteract?.() ?? true);
   const action = async (operation: () => Promise<void>) => {
@@ -41,18 +45,29 @@ export function PrivacyChoices({ onDone, canInteract }: { onDone?: () => void; c
   return <View style={styles.root}>
     <Text style={styles.heading}>Advertising & reporting</Text>
     <Text style={styles.body}>{AD_PROCESSING_DISCLOSURE}</Text>
-    {advertisingChoice ? <View style={styles.group}>
+    {hasConnecticutClarificationControl() ? <View style={styles.group}>
+      <Text style={styles.heading}>State privacy rules</Text>
+      <Text style={styles.body}>Do you live in Connecticut?</Text>
+      <Text style={styles.note}>Your answer stays on this device to apply the appropriate privacy rules. It does not allow advertising or reporting by itself.</Text>
+      <Text style={styles.status}>{connecticutClarificationStatus()}</Text>
+      <View style={styles.buttons}>
+        {button('Yes, Connecticut', () => saveConnecticutResidency('resident'))}
+        {button('No', () => saveConnecticutResidency('not-resident'))}
+        {button('Not sure', () => saveConnecticutResidency('unknown'))}
+      </View>
+    </View> : null}
+    <View style={styles.group}>
       <Text style={styles.heading}>Google advertising</Text>
       <Text style={styles.body}>Allow the device, approximate-location, and ad-interaction functions described above for non-personalized advertising?</Text>
       <Text style={styles.status}>{processingPurposeStatus('ads')}</Text>
-      <View style={styles.buttons}>{!access.ads.allowed ? button('Allow advertising', () => allowProcessingPurpose('ads')) : null}{button(access.ads.allowed ? 'Stop advertising' : 'Not now', () => refuseProcessingPurpose('ads'))}</View>
-    </View> : null}
+      {advertisingChoice && canChooseProcessingPurpose('ads') ? <View style={styles.buttons}>{!access.ads.allowed ? button('Allow advertising', () => allowProcessingPurpose('ads')) : null}{button(access.ads.allowed ? 'Stop advertising' : 'Not now', () => refuseProcessingPurpose('ads'))}</View> : null}
+    </View>
     <View style={styles.group}>
       <Text style={styles.heading}>Ad performance reporting</Text>
       <Text style={styles.body}>RevenueCat reporting is separate from advertising. Stopping reporting leaves separately permitted Google ads enabled.</Text>
       <Text style={styles.status}>{processingPurposeStatus('analytics')}</Text>
       <View style={styles.buttons}>
-        {!retryReporting && !reportingPending && (needsSeparatePurposeChoice('analytics') || input.choices.analytics.decision === 'denied')
+        {!retryReporting && !reportingPending && canChooseProcessingPurpose('analytics') && (needsSeparatePurposeChoice('analytics') || input.choices.analytics.decision === 'denied')
           ? button('Allow reporting', () => allowProcessingPurpose('analytics')) : null}
         {retryReporting || reportingPending || input.choices.analytics.decision !== 'denied' || access.revenueCat.allowed
           ? button(retryReporting ? 'Retry stopping reporting' : 'Stop reporting', () => refuseProcessingPurpose('analytics')) : null}

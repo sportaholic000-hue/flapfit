@@ -262,3 +262,114 @@ test.each([false, true])('Google presentation waits for privacy dismissal; backg
     expect(choices).toHaveBeenCalledTimes(1);
   } finally { f.finish(); }
 });
+
+test('US teen result flow resolves residency and independent consent in one sheet before Google presentation', async () => {
+  const f=await load({age:{status:'shared',lowerBound:13,upperBound:15}});
+  try {
+    const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    const notice: typeof import('../processingNotice')=require('../processingNotice');
+    const regional: typeof import('../regionalClarification')=require('../regionalClarification');
+    const choices=jest.fn(async () => {
+      expect(regional.needsConnecticutClarification()).toBe(true);
+      await regional.saveConnecticutResidency('not-resident');
+      expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+      await notice.allowProcessingPurpose('ads'); await notice.refuseProcessingPurpose('analytics');
+      await notice.acknowledgeProcessingNotice();
+      expect(f.consent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
+    });
+    await flow.preparePostGamePrivacy(() => true,choices); await settle();
+    expect(choices).toHaveBeenCalledTimes(1); expect(f.alert).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1); expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.nativeAds.setRequestConfiguration).toHaveBeenCalledWith(expect.objectContaining({ageRestrictedTreatment:'teen'}));
+    await flow.preparePostGamePrivacy(() => true,choices);
+    expect(choices).toHaveBeenCalledTimes(1);
+  } finally {f.finish();}
+});
+test('closing the US teen clarification continues locally without recurring prompts or SDK initialization', async () => {
+  const f=await load({age:{status:'shared',lowerBound:13,upperBound:15}});
+  try {
+    const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    const choices=jest.fn().mockResolvedValue(undefined);
+    await flow.preparePostGamePrivacy(() => true,choices); await flow.preparePostGamePrivacy(() => true,choices);
+    expect(choices).toHaveBeenCalledTimes(1); expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally {f.finish();}
+});
+
+
+test.each([
+  {country:'AU',lowerBound:15,upperBound:17,gates:[13,15,18]},
+  {country:'CA',lowerBound:14,upperBound:15,gates:[14,16,18]},
+])('$country eligible teen: independent choices, withdrawal and restart use the production coordinator', async scenario => {
+  const age={status:'shared',lowerBound:scenario.lowerBound,upperBound:scenario.upperBound};
+  let f=await load({country:scenario.country,age}); const memory=f.memory;
+  try {
+    const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    const notice: typeof import('../processingNotice')=require('../processingNotice');
+    const rights: typeof import('../privacyRights')=require('../privacyRights');
+    const choices=jest.fn(async () => {
+      await notice.allowProcessingPurpose('ads'); await notice.allowProcessingPurpose('analytics');
+      await notice.acknowledgeProcessingNotice();
+    });
+    await flow.preparePostGamePrivacy(() => true,choices); await settle();
+    expect(f.requestAge).toHaveBeenCalledWith(scenario.gates);
+    expect(choices).toHaveBeenCalledTimes(1); expect(f.alert).not.toHaveBeenCalled();
+    expect(f.nativeAds.setRequestConfiguration).toHaveBeenCalledWith(expect.objectContaining({ageRestrictedTreatment:'teen'}));
+    expect(f.consent.requestInfoUpdate).toHaveBeenCalledWith(expect.objectContaining({tagForUnderAgeOfConsent:false}));
+    expect(f.purchases.configure).toHaveBeenCalledTimes(1);
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:true}});
+    const outcome=await rights.withdrawAdPerformanceReporting(); await settle();
+    expect(outcome).toMatchObject({status:'completed',saved:true,nativeStopped:true});
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false}});
+  } finally {f.finish();}
+  f=await load({country:scenario.country,age,memory});
+  try {
+    const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy'); const choices=jest.fn();
+    await flow.preparePostGamePrivacy(() => true,choices); await settle();
+    expect(choices).not.toHaveBeenCalled(); expect(f.alert).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1); expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess().revenueCat.reason).toBe('refused');
+  } finally {f.finish();}
+});
+
+test.each([
+  {country:'AU',lowerBound:13,upperBound:14,reason:'parent-permission-required'},
+  {country:'MX',lowerBound:13,upperBound:15,reason:'parent-permission-required'},
+  {country:'MX',lowerBound:16,upperBound:17,reason:'parent-permission-required'},
+  {country:'CA',lowerBound:0,upperBound:13,reason:'age-unresolved'},
+])('$country $lowerBound-$upperBound cannot turn a personal grant into verified authority', async scenario => {
+  const f=await load({country:scenario.country,age:{status:'shared',lowerBound:scenario.lowerBound,upperBound:scenario.upperBound}});
+  try {
+    const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    const notice: typeof import('../processingNotice')=require('../processingNotice'); const choices=jest.fn();
+    for(const purpose of ['ads','analytics','competition'] as const) await f.access.setProcessingChoice(purpose,'granted');
+    f.access.markProcessingNoticePresented(1);
+    await flow.preparePostGamePrivacy(() => true,choices); await settle();
+    expect(choices).not.toHaveBeenCalled(); expect(f.alert).not.toHaveBeenCalled();
+    expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(notice.canChooseProcessingPurpose('ads')).toBe(false);
+    expect(notice.canChooseProcessingPurpose('analytics')).toBe(false);
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false,reason:scenario.reason},revenueCat:{allowed:false,reason:scenario.reason},competition:{allowed:false,reason:scenario.reason}});
+  } finally {f.finish();}
+});
+
+test.each(['US','CA','AU','MX'])('%s adult reporting refusal and competition permission persist independently across restart', async country => {
+  let f=await load({country}); const memory=f.memory;
+  try {
+    const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    const notice: typeof import('../processingNotice')=require('../processingNotice');
+    await notice.refuseProcessingPurpose('analytics');
+    await f.access.setProcessingChoice('competition','granted');
+    const choices=jest.fn(async () => {await notice.allowProcessingPurpose('ads'); await notice.acknowledgeProcessingNotice();});
+    await flow.preparePostGamePrivacy(() => true,choices); await settle();
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'},competition:{allowed:true}});
+    expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally {f.finish();}
+  f=await load({country,memory});
+  try {
+    const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy'); const choices=jest.fn();
+    await flow.preparePostGamePrivacy(() => true,choices); await settle();
+    expect(choices).not.toHaveBeenCalled(); expect(f.alert).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1); expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'},competition:{allowed:true}});
+  } finally {f.finish();}
+});
