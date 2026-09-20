@@ -1,0 +1,362 @@
+{
+  "buildId": "f0870fe0-c332-4c12-b0f8-bc8a9492a105",
+  "source": "20921889c3dda24d790b9f1e5ab4706c77a77c45",
+  "logSha256": "b78fad7faf3d0673ecab2ee827fd907e412364720e5186da759d62229fa3b5ef",
+  "logBytes": 12362117,
+  "archiveSucceeded": true,
+  "errorDiagnostics": [],
+  "warningCounts": {
+    "other-retained-for-review": 200,
+    "dependency-cpp-designator-or-enum": 44,
+    "dependency-deprecation-or-language-mode": 235,
+    "dependency-empty-object": 52,
+    "dependency-module-headers": 906,
+    "dependency-nullability": 313,
+    "dependency-swift-concurrency": 187,
+    "duplicate-link-library": 1,
+    "unused-metal-toolchain-search-path": 1,
+    "hermes-static-global-or-eval-warning": 58,
+    "build-phase-output-dependencies": 2
+  },
+  "otherWarnings": [
+    {
+      "firstLine": 9208,
+      "occurrences": 2,
+      "message": "variable 'sum_left' may be uninitialized when used here [-Wconditional-uninitialized]"
+    },
+    {
+      "firstLine": 9214,
+      "occurrences": 2,
+      "message": "variable 'sum_top' may be uninitialized when used here [-Wconditional-uninitialized]"
+    },
+    {
+      "firstLine": 9571,
+      "occurrences": 1,
+      "message": "variable 'best_offset' may be uninitialized when used here [-Wconditional-uninitialized]"
+    },
+    {
+      "firstLine": 10020,
+      "occurrences": 1,
+      "message": "incompatible pointer types passing 'uint8_t[3][4096]' (aka 'unsigned char[3][4096]') to parameter of type 'uint8_t (*)[256]' (aka 'unsigned char (*)[256]') [-Wincompatible-pointer-types]"
+    },
+    {
+      "firstLine": 10027,
+      "occurrences": 1,
+      "message": "incompatible pointer types passing 'int16_t[3][74][82]' (aka 'short[3][74][82]') to parameter of type 'entry (*)[74][82]' (aka 'signed char (*)[74][82]') [-Wincompatible-pointer-types]"
+    },
+    {
+      "firstLine": 10034,
+      "occurrences": 1,
+      "message": "incompatible pointer types passing 'uint8_t[3][4096]' (aka 'unsigned char[3][4096]') to parameter of type 'const uint8_t (*)[256]' (aka 'const unsigned char (*)[256]') [-Wincompatible-pointer-types]"
+    },
+    {
+      "firstLine": 10041,
+      "occurrences": 1,
+      "message": "incompatible pointer types passing 'int16_t[3][74][82]' (aka 'short[3][74][82]') to parameter of type 'const entry (*)[74][82]' (aka 'const signed char (*)[74][82]') [-Wincompatible-pointer-types]"
+    },
+    {
+      "firstLine": 10189,
+      "occurrences": 2,
+      "message": "possible misuse of comma operator here [-Wcomma]"
+    },
+    {
+      "firstLine": 10484,
+      "occurrences": 1,
+      "message": "incompatible pointer types assigning to 'coef *' (aka 'short *') from 'uint8_t *' (aka 'unsigned char *') [-Wincompatible-pointer-types]"
+    },
+    {
+      "firstLine": 17193,
+      "occurrences": 9,
+      "message": "implicit conversion loses integer precision: 'WKDataDetectorTypes' (aka 'unsigned long') to 'RNCWebViewDataDetectorTypesMask' (aka 'unsigned int') [-Wshorten-64-to-32]"
+    },
+    {
+      "firstLine": 17220,
+      "occurrences": 2,
+      "message": "null passed to a callee that requires a non-null argument [-Wnonnull]"
+    },
+    {
+      "firstLine": 18535,
+      "occurrences": 2,
+      "message": "unused function 'IsTurboModuleManagerQueue' [-Wunused-function]"
+    },
+    {
+      "firstLine": 19302,
+      "occurrences": 1,
+      "message": "unused function 'IsJavaScriptQueue' [-Wunused-function]"
+    },
+    {
+      "firstLine": 19399,
+      "occurrences": 2,
+      "message": "value 'self' was defined but never used; consider replacing with boolean test"
+    },
+    {
+      "firstLine": 19492,
+      "occurrences": 26,
+      "message": "method possibly missing a [super updateProps:oldProps:] call [-Wobjc-missing-super-calls]"
+    },
+    {
+      "firstLine": 19496,
+      "occurrences": 25,
+      "message": "unused function 'intToRNSVGVBMOS' [-Wunused-function]"
+    },
+    {
+      "firstLine": 19597,
+      "occurrences": 5,
+      "message": "variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]"
+    },
+    {
+      "firstLine": 19670,
+      "occurrences": 1,
+      "message": "auto property synthesis will not synthesize property 'hitTestEdgeInsets'; it will be implemented by its superclass, use @dynamic to acknowledge intention [-Wobjc-property-synthesis]"
+    },
+    {
+      "firstLine": 20093,
+      "occurrences": 3,
+      "message": "'static' function 'RNSVGConvertFollyDynamicToId' declared in header file should be declared 'static inline' [-Wunneeded-internal-declaration]"
+    },
+    {
+      "firstLine": 20886,
+      "occurrences": 1,
+      "message": "auto property synthesis will not synthesize property 'stackScreen'; it will be implemented by its superclass, use @dynamic to acknowledge intention [-Wobjc-property-synthesis]"
+    },
+    {
+      "firstLine": 20903,
+      "occurrences": 1,
+      "message": "unused variable 'controller' [-Wunused-variable]"
+    },
+    {
+      "firstLine": 20906,
+      "occurrences": 1,
+      "message": "unused variable 'viewController' [-Wunused-variable]"
+    },
+    {
+      "firstLine": 20991,
+      "occurrences": 2,
+      "message": "unused variable 'key' [-Wunused-variable]"
+    },
+    {
+      "firstLine": 21347,
+      "occurrences": 1,
+      "message": "unused function 'resizeModeFromCppEquiv' [-Wunused-function]"
+    },
+    {
+      "firstLine": 21768,
+      "occurrences": 1,
+      "message": "enumeration value 'RNSTabsScreenSystemItemNone' not handled in switch [-Wswitch]"
+    },
+    {
+      "firstLine": 22813,
+      "occurrences": 6,
+      "message": "implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'int' [-Wshorten-64-to-32]"
+    },
+    {
+      "firstLine": 22964,
+      "occurrences": 3,
+      "message": "unused function 'REAIsJavaScriptQueue' [-Wunused-function]"
+    },
+    {
+      "firstLine": 22968,
+      "occurrences": 2,
+      "message": "unused function 'REAIsTurboModuleManagerQueue' [-Wunused-function]"
+    },
+    {
+      "firstLine": 23671,
+      "occurrences": 1,
+      "message": "conflicting parameter types in implementation of 'loadAd:adRequest:completionHandler:': 'void (^__strong)(__strong id<GADFullScreenPresentingAd>, NSError *__strong)' vs 'void (^__strong)(GADRewardedAd * _Nullable __strong, NSError * _Nullable __strong)' [-Wmismatched-parameter-types]"
+    },
+    {
+      "firstLine": 23686,
+      "occurrences": 1,
+      "message": "conflicting parameter types in implementation of 'loadAd:adRequest:completionHandler:': 'void (^__strong)(__strong id<GADFullScreenPresentingAd>, NSError *__strong)' vs 'void (^__strong)(GADRewardedInterstitialAd * _Nullable __strong, NSError * _Nullable __strong)' [-Wmismatched-parameter-types]"
+    },
+    {
+      "firstLine": 23703,
+      "occurrences": 9,
+      "message": "block implicitly retains 'self'; explicitly mention 'self' to indicate this is intended behavior [-Wimplicit-retain-self]"
+    },
+    {
+      "firstLine": 23749,
+      "occurrences": 2,
+      "message": "capturing 'self' strongly in this block is likely to lead to a retain cycle [-Warc-retain-cycles]"
+    },
+    {
+      "firstLine": 23815,
+      "occurrences": 1,
+      "message": "conflicting parameter types in implementation of 'loadAd:adRequest:completionHandler:': 'void (^__strong)(__strong id<GADFullScreenPresentingAd>, NSError *__strong)' vs 'void (^__strong)(GAMInterstitialAd * _Nullable __strong, NSError * _Nullable __strong)' [-Wmismatched-parameter-types]"
+    },
+    {
+      "firstLine": 23944,
+      "occurrences": 1,
+      "message": "conflicting parameter types in implementation of 'loadAd:adRequest:completionHandler:': 'void (^__strong)(__strong id<GADFullScreenPresentingAd>, NSError *__strong)' vs 'void (^__strong)(GADAppOpenAd * _Nullable __strong, NSError * _Nullable __strong)' [-Wmismatched-parameter-types]"
+    },
+    {
+      "firstLine": 24831,
+      "occurrences": 1,
+      "message": "conflicting parameter types in implementation of 'setManualImpressionsEnabled:': 'NSNumber *' vs 'BOOL *' (aka '_Bool *') [-Wmismatched-parameter-types]"
+    },
+    {
+      "firstLine": 24959,
+      "occurrences": 21,
+      "message": "unused function 'ghSpherical2tilt' [-Wunused-function]"
+    },
+    {
+      "firstLine": 24977,
+      "occurrences": 1,
+      "message": "method possibly missing a [super invalidate] call [-Wobjc-missing-super-calls]"
+    },
+    {
+      "firstLine": 25649,
+      "occurrences": 6,
+      "message": "cannot find protocol definition for 'RCTBridgeModule'"
+    },
+    {
+      "firstLine": 27677,
+      "occurrences": 5,
+      "message": "use of protocol 'Record' as a type must be written 'any Record'; this will be an error in a future Swift language mode"
+    },
+    {
+      "firstLine": 27698,
+      "occurrences": 1,
+      "message": "cast from 'any AnyDynamicType' to unrelated type 'Data.Type' always fails"
+    },
+    {
+      "firstLine": 27768,
+      "occurrences": 1,
+      "message": "weak variable 'weakAppContext' was never mutated; consider changing to 'let' constant"
+    },
+    {
+      "firstLine": 27772,
+      "occurrences": 3,
+      "message": "use '#selector' instead of explicitly constructing a 'Selector'"
+    },
+    {
+      "firstLine": 27782,
+      "occurrences": 1,
+      "message": "expression implicitly coerced from 'Any?' to 'Any'"
+    },
+    {
+      "firstLine": 28081,
+      "occurrences": 1,
+      "message": "result of call to 'withUnsafeBytes' is unused"
+    },
+    {
+      "firstLine": 28084,
+      "occurrences": 2,
+      "message": "sending 'value' risks causing data races"
+    },
+    {
+      "firstLine": 28102,
+      "occurrences": 1,
+      "message": "sending 'objectBuilder' risks causing data races"
+    },
+    {
+      "firstLine": 28249,
+      "occurrences": 1,
+      "message": "conflicting return type in implementation of 'activateAfterLongPress': 'CGFloat' (aka 'double') vs 'void' [-Wmismatched-return-types]"
+    },
+    {
+      "firstLine": 28402,
+      "occurrences": 1,
+      "message": "implicit conversion from enumeration type 'enum RNGestureHandlerDirection' to different enumeration type 'UISwipeGestureRecognizerDirection' (aka 'enum UISwipeGestureRecognizerDirection') [-Wimplicit-enum-enum-cast]"
+    },
+    {
+      "firstLine": 29254,
+      "occurrences": 2,
+      "message": "performSelector may cause a leak because its selector is unknown [-Warc-performSelector-leaks]"
+    },
+    {
+      "firstLine": 29879,
+      "occurrences": 1,
+      "message": "@protocol is using a forward protocol declaration of 'RCTBridgeModule' [-Wat-protocol]"
+    },
+    {
+      "firstLine": 32674,
+      "occurrences": 10,
+      "message": "expression implicitly coerced from 'String?' to 'Any'"
+    },
+    {
+      "firstLine": 32689,
+      "occurrences": 1,
+      "message": "expression implicitly coerced from 'NSUserActivityPersistentIdentifier?' (aka 'Optional<String>') to 'Any'"
+    },
+    {
+      "firstLine": 32719,
+      "occurrences": 2,
+      "message": "expression implicitly coerced from 'URL?' to 'Any'"
+    },
+    {
+      "firstLine": 32749,
+      "occurrences": 1,
+      "message": "expression implicitly coerced from 'Date?' to 'Any'"
+    },
+    {
+      "firstLine": 32764,
+      "occurrences": 1,
+      "message": "expression implicitly coerced from '[AnyHashable : Any]?' to 'Any'"
+    },
+    {
+      "firstLine": 32782,
+      "occurrences": 1,
+      "message": "value 'localUrl' was defined but never used; consider replacing with boolean test"
+    },
+    {
+      "firstLine": 39430,
+      "occurrences": 2,
+      "message": "expression implicitly coerced from 'Int?' to 'Any'"
+    },
+    {
+      "firstLine": 44929,
+      "occurrences": 1,
+      "message": "variable 'validTypes' was never mutated; consider changing to 'let' constant"
+    },
+    {
+      "firstLine": 45272,
+      "occurrences": 1,
+      "message": "incompatible pointer types returning 'NSURLSessionDownloadTask *' from a function with result type 'NSURLSessionUploadTask * _Nullable' [-Wincompatible-pointer-types]"
+    },
+    {
+      "firstLine": 46907,
+      "occurrences": 1,
+      "message": "incompatible pointer types passing 'NSURLSessionTask *' to parameter of type 'NSURLSessionUploadTask *' [-Wincompatible-pointer-types]"
+    },
+    {
+      "firstLine": 47930,
+      "occurrences": 3,
+      "message": "cannot find protocol definition for 'RCTHostDelegate'"
+    },
+    {
+      "firstLine": 47966,
+      "occurrences": 1,
+      "message": "value 'delegate' was defined but never used; consider replacing with boolean test"
+    },
+    {
+      "firstLine": 50437,
+      "occurrences": 1,
+      "message": "method definition for 'deviceYear' not found [-Wincomplete-implementation]"
+    },
+    {
+      "firstLine": 51191,
+      "occurrences": 1,
+      "message": "class 'EXReactNativeFactory' does not conform to protocol 'RCTHostDelegate' [-Wprotocol]"
+    },
+    {
+      "firstLine": 52268,
+      "occurrences": 1,
+      "message": "cannot find protocol definition for 'EXAppDelegateSubscriberProtocol'"
+    },
+    {
+      "firstLine": 52330,
+      "occurrences": 1,
+      "message": "unused variable 'APP_DEBUG' [-Wunused-variable]"
+    },
+    {
+      "firstLine": 57202,
+      "occurrences": 1,
+      "message": "ios_app_id key not found in react-native-google-mobile-ads key in app.json. App will crash without it. You may safely ignore this warning if you are using our Expo config plugin."
+    }
+  ],
+  "nativeAppValidationInvoked": true,
+  "customModuleWarnings": [],
+  "aggregateXcodePrivacyReportPresent": false,
+  "limits": "This is the actual archive log. It is not App Store processing, an Xcode-generated aggregated privacy report, installed behavior or provider receipt. Warnings are retained, not suppressed."
+}

@@ -75,3 +75,26 @@ scores, camera behavior, and feature state shown inside the capture must be genu
 - Verify no image includes private notifications, unrelated apps, temporary developer controls,
   Expo Go chrome, debug labels, the Form Test selector, or test-server URLs.
 - Archive the approved raw captures and final images with the tested commit hash.
+
+
+## September 20 preparation for the two registered devices
+
+The owner's iPad A16 and brother's iPhone 16 Pro are the native capture devices.
+Their raw capture sizes need not be stretched to the store canvas. Use the
+existing marketing-frame plan: place the genuine, complete native capture in a
+1320 x 2868 iPhone or 2064 x 2752 iPad canvas at its original aspect ratio, with
+plain Flap Fit background/headline space around it. Keep iPad captures in the
+iPad set and phone captures in the phone set. Do not create a fake larger-device
+UI, fabricate gameplay/metrics or claim these are 13-inch physical-device tests.
+
+This is the production route, not completed images or proof Apple accepted them.
+Apple [guideline 2.3.3](https://developer.apple.com/app-store/review/guidelines/#accurate-metadata)
+permits overlays while requiring the real app in use. The required output pixel
+dimensions still apply. Preserve raw images, exact installed build ID and visible
+content; inspect final readability, no alpha and actual upload acceptance.
+The eight-scene marketing set above is optional scope, not eight new acceptance
+tests or a requirement to unlock/fabricate all progression. One to ten genuine
+images per required set satisfy the count requirement; select representative
+real screens available during the already planned acceptance pass. Final image
+creation and upload remain after accepted-device captures; no extra device,
+simulator build, paid service or pull-up test is required by this preparation.

@@ -41,3 +41,22 @@ Fresh locked-graph registry check: 29 advisory rows and 6 deprecation rows; no c
 ## URI decoder backport completed — September 19, 2026
 
 The previously recorded runtime malformed-URL DoS is now mitigated by a narrow, verified Yarn backport of the official fixed scanner. See uri-decoder-backport-2026-09-19.md and evidence/uri-decoder-verification-2026-09-19.json. The package version stays 0.2.2 to preserve the CommonJS consumer contract; version-only registry alerts may remain. Other advisories are not claimed fixed.
+
+## September 20 signed-candidate recheck
+
+The fresh locked-graph query returned exit 1: **28 security rows (22 high, 6 moderate,
+0 critical), plus 6 deprecation rows**. These are rows, not 28 distinct packages.
+Affected package families are @xmldom/xmldom, js-yaml, postcss and uuid, with the
+same build/tooling exposure described above. No blanket update or resolution was
+introduced. The prior URI-decoder advisory is absent in this response; both the
+backport and installed decoder hashes still match the verified repair.
+
+package.json, yarn.lock, mobile/package.json and the backport are byte-equal to
+compiled source 20921889c3dda24d790b9f1e5ab4706c77a77c45. Known credential signatures
+and decoded service-role JWTs were checked in 541 tracked files, 717 actual EAS
+upload files and 164 uncompressed entries of the signed Store IPA, including
+binary bytes: no matches. This is current-tree/archive/artifact coverage, not a
+Git-history scan, exhaustive entropy scan or a claim of zero vulnerabilities.
+The prior referenced-asset, production-entry, native-patch and packaged-validator
+evidence remains applicable to the unchanged compiled source. Full current
+results: evidence/current-release-integrity-2026-09-20.json.

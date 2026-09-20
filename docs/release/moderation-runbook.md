@@ -62,3 +62,47 @@ the requester to Info > Delete online profile. Never ask users to send auth toke
 identity/workout documents. If the original anonymous session is lost, explain that ownership
 cannot currently be established from public details and escalate the request; do not improvise
 an administrative deletion. The website deletion-page draft describes this limitation explicitly.
+
+
+## Support and separate advertising-data requests
+
+Use support@flapfitapp.com for requests. First identify the requested action:
+competition profile removal, stopping future reporting/ads processing, or access
+to/deletion of provider-held records. These are different operations. Record only
+the minimum request/status information needed; avoid copying fitness records,
+recordings, credentials or public player IDs into free-text case notes.
+
+- Competition: guide the original installation to Info > Delete online profile.
+  The authenticated /me route is the ownership check. Local training progress
+  remains; retained minimized safety/legal records follow their stated retention.
+  A public support ID, player name, score or screenshot proves no ownership.
+- Lost original session: explain that public details cannot establish control of
+  the anonymous account. Escalate the rights request for a verified route; do not
+  invent an admin deletion or request passwords, JWTs or identity documents.
+- Future RevenueCat reporting: Info > Privacy & choices > Stop reporting. If the
+  app says saving or native stopping is unconfirmed, use Retry stopping reporting.
+  Do not tell the person to allow reporting first. Independently permitted ads
+  remain separate. This cannot retract information already sent.
+- Provider records: online-profile deletion does not delete Google/RevenueCat
+  records. Direct Google requests to its privacy controls and request process
+  linked from the policy. For RevenueCat, verify the actual app-scoped customer
+  identifier and permitted requester-control route before any provider deletion.
+  A competition profile ID does not identify the separate RevenueCat account.
+  Never promise provider deletion, receipt or completion without its readback.
+  If control cannot yet be verified, acknowledge/escalate and record the pending
+  action without deleting a guessed record.
+- Reply with the actions actually confirmed, any retained categories and reason,
+  and outstanding provider steps. Do not call withdrawal, transport cancellation
+  and server-record deletion interchangeable. Do not send messages automatically;
+  outbound support communication requires the owner's authorization.
+
+## September 20 temporary moderation follow-up
+
+Readback of the exact September 16 test report confirmed both test-account IDs
+remain null, status pending and resolved_at null. A guarded update targeting only
+that report and its known test context was rejected with PostgreSQL 25006
+(read-only transaction), so no row changed. The dashboard requires sign-in.
+The row remains open until an authorized write and independent readback confirm
+dismissed and a resolution timestamp. No customer complaint or player account
+was modified, and no deletion was attempted. See moderation-live-test-2026-09-16.md
+for the exact historical test identifiers.
