@@ -80,8 +80,9 @@
   "appleUpload": {
     "status": "not uploaded",
     "attempt": "EAS Submit stopped during credentials lookup before upload",
-    "reason": "No App Store Connect API upload key configured. Apple Users and Access shows Request Access; its agreement has not been accepted or submitted.",
+    "reason": "Apple API access is approved (owner acceptance confirmed by UI), Active keys (0). No upload key generated/configured. Developer-role Flap Fit EAS Upload form prepared but not submitted; EAS attempt stopped before upload.",
     "reviewSubmission": "not performed",
     "testerInvitations": "not sent"
-  }
+  },
+  "releaseAcceptance": "Not established. Regional source/configuration, aggregate privacy report, device/provider evidence and final store gates remain open in the current tracker."
 }
