@@ -18,5 +18,10 @@
   },
   "deviceAcceptance": "pending; owner iPad first, brother iPhone after fixes",
   "testFlight": "not uploaded",
-  "appPrivacy": "draft declaration edits waiting for explicit owner confirmation after automatic approval review block"
+  "appPrivacy": "draft declaration edits waiting for explicit owner confirmation after automatic approval review block",
+  "status": "FINISHED",
+  "completionEvidence": "Expo build page showed Succeeded; downloaded IPA inspected successfully",
+  "artifactInspection": "ios-artifact-2026-09-20.json",
+  "artifactSha256": "e5ff7ce1136fd754e63875cc56813972ebe7209bff58f23d0d82f5b4e9cf0101",
+  "verifiedAt": "2026-09-20T04:09:48.5684713Z"
 }

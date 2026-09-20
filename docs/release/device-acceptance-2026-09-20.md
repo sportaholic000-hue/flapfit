@@ -1,5 +1,7 @@
 # Flap Fit — one device acceptance pass
 
+Current iPad candidate: [install build d19e5b3f](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/d19e5b3f-1c09-4e96-9d01-c1706493c5ad), source `1a276dd8f5930cd16f4447f738ee69e21701ee4e`, version 1.0.0 (2). Open the link in Safari on the registered iPad and choose Install. This is an Ad Hoc build; no TestFlight upload has occurred. The iPhone TestFlight candidate will follow the iPad pass and any repairs. Use the build ID/link to distinguish it from older builds with the same version number.
+
 Plan: the owner tests the iPad first. Fix any failures before sending the brother the consolidated iPhone pass. Use the final install link and candidate ID supplied with this checklist; do not use an older Expo Go session. No new pull-up calibration experiments are required.
 
 Record the device model, iOS/iPadOS version, candidate ID, and the approximate time of each ad. Keep actual screenshots from the installed app for the store listing.
