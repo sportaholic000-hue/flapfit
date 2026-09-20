@@ -202,8 +202,14 @@ export function setAppleAccessRestricted(restricted: boolean): void {
     europeanProvider: restricted ? undefined : input.europeanProvider,
     launch: restricted && input.launch ? { ...input.launch, plan: null, resolution: null } : input.launch });
 }
-export async function setProcessingChoice(purpose: Purpose, decision: 'granted' | 'denied'): Promise<void> {
-  const generation = ++purposeRevision[purpose];
+/** Reserve the user's action before any notice/storage await. A later action
+ * invalidates it across screen unmount/remount and every subsequent write. */
+export const getProcessingChoiceRevision = (purpose: Purpose): number => purposeRevision[purpose];
+export const beginProcessingChoice = (purpose: Purpose): number => ++purposeRevision[purpose];
+export const isProcessingChoiceCurrent = (purpose: Purpose, generation: number): boolean => purposeRevision[purpose] === generation;
+export async function setProcessingChoice(purpose: Purpose, decision: 'granted' | 'denied', intent?: number): Promise<void> {
+  const generation = intent ?? beginProcessingChoice(purpose);
+  if (!isProcessingChoiceCurrent(purpose, generation)) return;
   const choice: ProcessingChoice = {
     decision, noticeVersion: PROCESSING_NOTICE_VERSION, decidedAt: new Date().toISOString(),
   };

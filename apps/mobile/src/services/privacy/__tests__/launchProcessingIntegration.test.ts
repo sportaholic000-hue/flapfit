@@ -440,3 +440,64 @@ test('visiting Compete preserves an already verified plan and independently prep
     expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:true},competition:{allowed:true}});
   }finally{f.finish();}
 });
+
+
+const orderedChoice = (decision: string) => ({ decision, noticeVersion: 1, decidedAt: null });
+const orderedMemory = () => new Map([
+  ['@flapfit/processing-choices-v1', JSON.stringify({ version: 1, region: 'unknown', choices: {
+    ads: orderedChoice('granted'), analytics: orderedChoice('unset'), competition: orderedChoice('granted'),
+  } })],
+  ['@flapfit/processing-notice-v1', JSON.stringify({ version: 1, acknowledged: true, adsActivated: true, reportingActivated: false })],
+]);
+
+test.each(['allow-only', 'stop-only', 'allow-then-stop'] as const)('audit continuation: delayed notice %s respects action order through the real Canadian coordinator and RC configuration', async (order) => {
+  const f = await load({ country: 'CA', memory: orderedMemory() });
+  let release!: (value: string | null) => void;
+  const delayed = new Promise<string | null>(resolve => { release = resolve; });
+  try {
+    await f.adapter.prepareCompetitionEligibility(() => true);
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    expect(notice.canChooseProcessingPurpose('analytics')).toBe(true);
+    expect(notice.needsSeparatePurposeChoice('analytics')).toBe(true);
+    f.storage.getItem.mockImplementation(async key => key === '@flapfit/processing-notice-v1' ? delayed : f.memory.get(key) ?? null);
+    const allowing = order !== 'stop-only' ? notice.allowProcessingPurpose('analytics') : notice.restoreProcessingNotice();
+    await settle();
+    if (order !== 'allow-only') await notice.refuseProcessingPurpose('analytics');
+    release(f.memory.get('@flapfit/processing-notice-v1')!); await allowing;
+    await f.adapter.prepareMonetization(() => true); await settle();
+    const decision = order === 'allow-only' ? 'granted' : 'denied';
+    expect(f.access.getProcessingInputs().choices.analytics.decision).toBe(decision);
+    expect(JSON.parse(f.memory.get('@flapfit/processing-choices-v1')!).choices.analytics.decision).toBe(decision);
+    expect(f.purchases.configure).toHaveBeenCalledTimes(order === 'allow-only' ? 1 : 0);
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.access.getProcessingAccess().competition.allowed).toBe(true);
+  } finally { release(null); f.finish(); }
+});
+
+test.each(['choice-write', 'notice-write'] as const)('audit continuation: newer Stop wins while older Allow waits at %s', async boundary => {
+  const f = await load({ country: 'CA', memory: orderedMemory() });
+  let release!: () => void; const wait = new Promise<void>(resolve => { release = resolve; });
+  let started!: () => void; const waiting = new Promise<void>(resolve => { started = resolve; });
+  try {
+    await f.adapter.prepareCompetitionEligibility(() => true);
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    await notice.restoreProcessingNotice();
+    let delayed = false;
+    f.storage.setItem.mockImplementation(async (key,value) => {
+      if (!delayed && key === (boundary === 'choice-write' ? '@flapfit/processing-choices-v1' : '@flapfit/processing-notice-v1')) {
+        delayed = true; started(); await wait;
+      }
+      f.memory.set(key,value);
+    });
+    const allowing = notice.allowProcessingPurpose('analytics'); await waiting;
+    const stopping = notice.refuseProcessingPurpose('analytics');
+    expect(f.access.getProcessingInputs().choices.analytics.decision).toBe('denied');
+    release(); await Promise.all([allowing,stopping]);
+    await f.adapter.prepareMonetization(() => true); await settle();
+    expect(f.access.getProcessingInputs().choices.analytics.decision).toBe('denied');
+    expect(JSON.parse(f.memory.get('@flapfit/processing-choices-v1')!).choices.analytics.decision).toBe('denied');
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.access.getProcessingAccess().competition.allowed).toBe(true);
+  } finally { release(); f.finish(); }
+});

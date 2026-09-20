@@ -11,14 +11,17 @@ let save: jest.Mock;
 let nativeLoad: jest.Mock;
 let native: { getRevenueCatWithdrawalStatus: jest.Mock; settleRevenueCatWithdrawal: jest.Mock; retryRevenueCatWithdrawal: jest.Mock };
 let setChoice: jest.Mock;
+let choiceRevision = 0;
 const tick = async () => { for (let i = 0; i < 12; ++i) await Promise.resolve(); };
 
 beforeEach(() => {
   jest.resetModules();
+  choiceRevision = 0;
   inputs = { choices: { analytics: { decision: 'granted' }, ads: { decision: 'granted' }, competition: { decision: 'granted' } } };
   access = { revenueCat: { allowed: true }, ads: { allowed: true }, competition: { allowed: true } };
   save = jest.fn().mockResolvedValue(undefined);
   setChoice = jest.fn((purpose: string, decision: string) => {
+    ++choiceRevision;
     inputs.choices[purpose] = { decision };
     if (purpose === 'analytics') access.revenueCat.allowed = false;
     if (purpose === 'competition') access.competition.allowed = false;
@@ -26,6 +29,8 @@ beforeEach(() => {
   });
   jest.doMock('../processingAccess', () => ({
     getProcessingInputs: () => inputs, getProcessingAccess: () => access,
+    getProcessingChoiceRevision: () => choiceRevision,
+    isProcessingChoiceCurrent: (_purpose: string, revision: number) => revision === choiceRevision,
     setProcessingChoice: (purpose: string, decision: string) => setChoice(purpose, decision),
   }));
   native = {
@@ -138,4 +143,16 @@ test('unknown and refused states do not invent a grant or a universal advertisin
     canWithdrawReporting: false, reportingRefused: true, canStopCompetition: false, competitionStopped: false,
   });
   expect(Object.keys(api).sort()).toEqual(['getCompetitionStopState', 'getPrivacyRights', 'getReportingWithdrawalState', 'resetReportingWithdrawalConfirmation', 'stopOnlineCompetition', 'subscribeCompetitionStop', 'subscribeReportingWithdrawal', 'withdrawAdPerformanceReporting']);
+});
+
+test('an intervening Allow intention prevents reusing an older pending Stop confirmation', async () => {
+  const stopping = deferred<{state:string;error:null}>();
+  native.settleRevenueCatWithdrawal.mockReturnValue(stopping.promise);
+  const first = api.withdrawAdPerformanceReporting();await tick();
+  // Real reservation is synchronous before notice/storage awaits.
+  ++choiceRevision;
+  const latest = api.withdrawAdPerformanceReporting();
+  expect(latest).not.toBe(first);expect(setChoice).toHaveBeenCalledTimes(2);
+  stopping.resolve({state:'stopped',error:null});
+  await expect(latest).resolves.toMatchObject({status:'completed',saved:true,nativeStopped:true});
 });

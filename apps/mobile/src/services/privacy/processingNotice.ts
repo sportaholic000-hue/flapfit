@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  getProcessingAccess, getProcessingInputs, hydrateProcessingAccess,
+  beginProcessingChoice, getProcessingAccess, getProcessingInputs, hydrateProcessingAccess, isProcessingChoiceCurrent,
   markProcessingNoticePresented, setLaunchProcessingOptions, setProcessingChoice,
 } from './processingAccess';
 import { PROCESSING_NOTICE_VERSION, type Purpose } from './processingPolicy';
@@ -67,19 +67,26 @@ export function acknowledgeProcessingNotice(): Promise<void> {
 /** Independent, clearly labeled function activation. Country/age/Apple gates
  * still apply; this cannot satisfy an unresolved policy or parental authority. */
 export async function allowProcessingPurpose(purpose: 'ads' | 'analytics'): Promise<void> {
+  const intent = beginProcessingChoice(purpose);
+  const current = () => isProcessingChoiceCurrent(purpose, intent);
   await restoreProcessingNotice();
+  if (!current()) return;
   if (purpose === 'analytics') resetReportingWithdrawalConfirmation();
-  await setProcessingChoice(purpose, 'granted');
+  await setProcessingChoice(purpose, 'granted', intent);
+  if (!current()) return;
   const operation = writes.catch(() => undefined).then(async () => {
+    if (!current()) return;
     const next = { ...saved,
       ...(purpose === 'ads' ? { adsActivated: true } : { reportingActivated: true }) };
     await AsyncStorage.setItem(KEY, JSON.stringify(next));
+    if (!current()) return;
     saved = next;
     applySavedNotice();
   });
   writes = operation;
   try { await operation; }
   catch (error) {
+    if (!current()) return; // A stale failed write cannot withdraw a newer choice.
     // Never retain a grant whose specific activation could not be saved.
     if (purpose === 'analytics') await withdrawAdPerformanceReporting();
     else await setProcessingChoice(purpose, 'denied').catch(() => undefined);

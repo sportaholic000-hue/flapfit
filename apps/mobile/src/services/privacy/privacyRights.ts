@@ -1,4 +1,4 @@
-import { getProcessingAccess, getProcessingInputs, setProcessingChoice } from './processingAccess';
+import { getProcessingAccess, getProcessingChoiceRevision, getProcessingInputs, isProcessingChoiceCurrent, setProcessingChoice } from './processingAccess';
 
 export type PrivacyWithdrawalResult = Readonly<{
   status: 'completed' | 'save-unconfirmed' | 'native-stop-unconfirmed' | 'superseded';
@@ -37,6 +37,7 @@ function confirmWithin<T>(operation: Promise<T>): Promise<Confirmation<T>> {
 }
 
 let reportingWithdrawal: Promise<PrivacyWithdrawalResult> | null = null;
+let reportingChoiceRevision = 0;
 let competitionWithdrawal: Promise<PrivacyWithdrawalResult> | null = null;
 let competitionStopState: 'not-requested' | 'pending' | PrivacyWithdrawalResult['status'] = 'not-requested';
 const competitionStopListeners = new Set<() => void>();
@@ -74,13 +75,15 @@ function publishReportingWithdrawal(next: ReportingWithdrawalState): void {
 /** Explicit rights action only. There is intentionally no grant or disable-ads
  * operation here. Applying this refusal must not change permitted ad delivery. */
 export function withdrawAdPerformanceReporting(): Promise<PrivacyWithdrawalResult> {
-  if (reportingWithdrawal && getProcessingInputs().choices.analytics.decision === 'denied') {
+  if (reportingWithdrawal && getProcessingInputs().choices.analytics.decision === 'denied' &&
+      isProcessingChoiceCurrent('analytics', reportingChoiceRevision)) {
     return reportingWithdrawal;
   }
   publishReportingWithdrawal({ status: 'pending', saved: false, nativeStopped: false });
   // The central setter publishes a refusal synchronously, before awaiting storage.
   // Existing SDK subscribers therefore close their gates before any queued report.
   const saving = confirmWithin(setProcessingChoice('analytics', 'denied'));
+  reportingChoiceRevision = getProcessingChoiceRevision('analytics');
   const stopping = confirmWithin((async () => {
     // Keep the SDK-owning service lazy, using the same Metro-compatible runtime
     // require as the monetization adapter. Reading rights never evaluates it.

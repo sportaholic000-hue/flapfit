@@ -1,0 +1,1553 @@
+{
+  "recordedAt": "2026-09-20T22:44:53.347713+00:00",
+  "baseBeforeAdditionalCorrections": "b2916d0eb218823dc8edac88ad6bf7fddf8d9429",
+  "originalAccountAuditSource": "f9ff7cfb029242652d1e231dfe35ce8e313cf48c",
+  "suppliedAuditSha256": "4d11510789edbcfbe6e129bf576dd186eadc52039c1413030a564d5bc7a40bba",
+  "sourceCoverage": "Containing commit; all required source inputs match actual package and remained unchanged throughout the final full check run.",
+  "firstFindingEvidence": "privacy-choice-read-recovery-checks-2026-09-20.json",
+  "additionalFindingsBeforeFix": {
+    "summary": {
+      "numPassedTestSuites": 0,
+      "numFailedTestSuites": 3,
+      "numPassedTests": 7,
+      "numFailedTests": 8,
+      "numPendingTests": 176,
+      "success": false
+    },
+    "filter": "audit continuation (unrelated tests deliberately skipped only in this reproduction run)",
+    "resultSha256": "323e00abd78941690284050f1791a0961c80730ce736d0dceb78675e37b154a9",
+    "logSha256": "53159a21546ce710eeef38b10603ff1912705677a940abbbe417187f130c1fdd",
+    "cases": [
+      {
+        "name": "audit continuation: delayed notice allow-only respects action order through the real Canadian coordinator and RC configuration",
+        "status": "passed",
+        "failure": null
+      },
+      {
+        "name": "audit continuation: delayed notice stop-only respects action order through the real Canadian coordinator and RC configuration",
+        "status": "passed",
+        "failure": null
+      },
+      {
+        "name": "audit continuation: delayed notice allow-then-stop respects action order through the real Canadian coordinator and RC configuration",
+        "status": "failed",
+        "failure": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"denied\"\nReceived: \"granted\""
+      },
+      {
+        "name": "audit continuation: newer Stop wins while older Allow waits at choice-write",
+        "status": "passed",
+        "failure": null
+      },
+      {
+        "name": "audit continuation: newer Stop wins while older Allow waits at notice-write",
+        "status": "passed",
+        "failure": null
+      },
+      {
+        "name": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":false,\"hasSession\":true}",
+        "status": "passed",
+        "failure": null
+      },
+      {
+        "name": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":false,\"hasSession\":false}",
+        "status": "passed",
+        "failure": null
+      },
+      {
+        "name": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":true,\"hasSession\":true}",
+        "status": "failed",
+        "failure": "Error: expect(received).rejects.toThrow()\n\nReceived promise resolved instead of rejected\nResolved to value: {}"
+      },
+      {
+        "name": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":true,\"hasSession\":false}",
+        "status": "failed",
+        "failure": "Error: expect(received).rejects.toThrow()\n\nReceived promise resolved instead of rejected\nResolved to value: {}"
+      },
+      {
+        "name": "audit continuation: a real failed delete blocks begin-run but retains support and deletion retry when Apple-required=false",
+        "status": "passed",
+        "failure": null
+      },
+      {
+        "name": "audit continuation: a real failed delete blocks begin-run but retains support and deletion retry when Apple-required=true",
+        "status": "failed",
+        "failure": "Error: expect(received).rejects.toThrow(expected)\n\nExpected substring: \"Finish deleting\"\nReceived message:   \"delete unavailable\"\n\n      576 |         access?.assert();\n      577 |         if (!response.ok) {\n    > 578 |           throw new CompetitionRequestError(\n          |                 ^\n      579 |             payload?.error || `Online request failed (${response.status}).`,\n      580 |             response.status\n      581 |           );"
+      },
+      {
+        "name": "audit continuation: deletion during pending apple-status invalidates ordinary preparation without replacement signup or game dispatch",
+        "status": "failed",
+        "failure": "Error: expect(jest.fn()).toHaveBeenCalledTimes(expected)\n\nExpected number of calls: 1\nReceived number of calls: 2"
+      },
+      {
+        "name": "audit continuation: deletion during pending session-read invalidates ordinary preparation without replacement signup or game dispatch",
+        "status": "failed",
+        "failure": "Error: expect(jest.fn()).not.toHaveBeenCalled()\n\nExpected number of calls: 0\nReceived number of calls: 1\n\n1: called with 0 arguments"
+      },
+      {
+        "name": "audit continuation: deletion during pending apple-link invalidates ordinary preparation without replacement signup or game dispatch",
+        "status": "failed",
+        "failure": "Error: expect(jest.fn()).toHaveBeenCalledTimes(expected)\n\nExpected number of calls: 1\nReceived number of calls: 2"
+      },
+      {
+        "name": "audit continuation: collapse/remount then Stop invalidates an older rendered Allow waiting for notice restoration",
+        "status": "failed",
+        "failure": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"denied\"\nReceived: \"granted\""
+      }
+    ]
+  },
+  "finalFullSuite": {
+    "summary": {
+      "numPassedTestSuites": 60,
+      "numFailedTestSuites": 0,
+      "numPassedTests": 1171,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "success": true
+    },
+    "resultSha256": "992e2f1b2c4bb74d52e4a77b85821d1dd1bc629cfbe4ddfc4740783e5722bdbe",
+    "suites": [
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "tests": 20,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/appleAgeControl.test.ts",
+        "tests": 25,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/europeanProviderProcessing.test.ts",
+        "tests": 23,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "tests": 50,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-gameplay-flow.test.js",
+        "tests": 26,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/monetization.test.ts",
+        "tests": 94,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "tests": 23,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "tests": 20,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/launch-competition.test.js",
+        "tests": 11,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "tests": 46,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/camera-preview.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/share-return.test.js",
+        "tests": 1,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/bird-stage-assets.test.ts",
+        "tests": 2,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/form-tracking.test.ts",
+        "tests": 67,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/birdWebAsset.test.ts",
+        "tests": 2,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/store-hydration.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/ad-sdk-lifecycle.test.js",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-terms-action.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "tests": 33,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-elbow-clearance.test.js",
+        "tests": 59,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-grab-entry.test.js",
+        "tests": 6,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyCountry.test.ts",
+        "tests": 40,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/regionalClarification.test.ts",
+        "tests": 13,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx",
+        "tests": 2,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-standing-reach.test.js",
+        "tests": 8,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-top-first.test.js",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/umpStoredSignals.test.ts",
+        "tests": 25,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/umpPrivacyControls.test.ts",
+        "tests": 12,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "tests": 13,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-support-reference.test.ts",
+        "tests": 52,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/umpProcessingControls.test.ts",
+        "tests": 8,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/modules/flap-fit-age-range/__tests__/bridge.test.ts",
+        "tests": 51,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyStartup.test.ts",
+        "tests": 11,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-top-reference.test.ts",
+        "tests": 20,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/recording-mp4.test.ts",
+        "tests": 8,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/videoSharing.test.ts",
+        "tests": 6,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/regionalPolicy.test.ts",
+        "tests": 103,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-top-entry.test.ts",
+        "tests": 9,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/game-modes.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/appleRescission.test.ts",
+        "tests": 36,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/settingsPermissionRecovery.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingPolicy.test.ts",
+        "tests": 46,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingPolicy.test.ts",
+        "tests": 47,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/mediapipe-recovery.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/modules/flap-fit-age-range/__tests__/app-transaction.test.ts",
+        "tests": 33,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/revenueCatTestDiagnostics.test.ts",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/game-web-navigation.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/continuous-gameplay.test.ts",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "tests": 11,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/retain-ios-archive.test.js",
+        "tests": 1,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/birdVisual.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/recording-boundaries.test.ts",
+        "tests": 2,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/level-rules.test.ts",
+        "tests": 11,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/competition-profile-reset.test.ts",
+        "tests": 1,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/resultAdGate.test.ts",
+        "tests": 8,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/evolution-core.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-monetization-config.test.js",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/stats-history.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-tracker-release.test.js",
+        "tests": 4,
+        "status": "passed"
+      }
+    ],
+    "behavioralCases": [
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "online result delivery a permanent name rejection is visible and never retried",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "online result delivery an expired run is rejected locally, not promised an overnight retry",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "online result delivery a server outage keeps the result pending and a later flush accepts it",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "online result delivery a server-expired response is visible and removed",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "online result delivery reading a support ID does not create an anonymous account",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "online result delivery a full offline queue keeps earlier results and visibly rejects the new run",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "online result delivery retrying an existing run does not evict another entry at capacity",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "online result delivery deleting the online identity clears pending results and notices",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "whole-request timeout covers a stalled session read",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "whole-request timeout covers a stalled response body",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "launch audit regressions overlapping successful submissions each report their own accepted result",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "launch audit regressions an overlapping rejection never borrows another run's successful status",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "launch audit regressions a lost deletion acknowledgement is reconciled only after Auth confirms user removal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "launch audit regressions retry completes cleanup after an ambiguous delete followed by a 401",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "launch audit regressions a 401 or expired session is not proof of deletion and does not clear pending scores",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "launch audit regressions a confirmed deletion survives local signout failure and does not resend DELETE",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "launch audit regressions a missing session after an uncertain deletion cannot create a new guest or claim success",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "bounded foreground recovery returning to the app retries pending scores once and refreshes rankings",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "bounded foreground recovery deletion verification times out without claiming success or discarding the session",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+        "name": "a submission waiting behind deletion cannot recreate a guest or repopulate the outbox",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "real cold startup connects trusted country and native Apple before eligibility; only actual disclosure callback unlocks adult notice route",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "analytics refusal leaves separately permitted restricted advertising functioning",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "unknown country or age {\"offline\":true} cannot initialize SDKs",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "unknown country or age {\"age\":{\"status\":\"declined\"}} cannot initialize SDKs",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "same-country foreground reuses verified plan while background immediately stops processing and preserves withdrawal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "game entry cancels queued native privacy presentation without changing gameplay",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "a refused required country-specific Apple request never falls back to a second system sheet",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "a stale background age response does not consume the fresh same-country attempt",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "a fresh lobby caller joining an old native sheet recovers after foreground returns before the old response",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "first-play preparation requests no optional age, advertising, or reporting permission",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "a genuine required Apple check remains before play without starting optional SDKs",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "US adult post-game acknowledgement permits ads and reporting without repeated notices",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "AU adult post-game acknowledgement permits ads and reporting without repeated notices",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "MX adult post-game acknowledgement permits ads and reporting without repeated notices",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "reporting refusal through Info survives relaunch while permitted Google ads initialize",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "Canadian activation is purpose-specific and can allow ads with reporting refused",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "post-game unknown evidence {\"offline\":true} grants nothing and shows no misleading consent request",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "post-game unknown evidence {\"age\":{\"status\":\"declined\"}} grants nothing and shows no misleading consent request",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "a stale post-game alert response cannot acknowledge the notice or initialize providers",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "saved reporting refusal survives an unrelated failed competition save and restart",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "Google presentation waits for privacy dismissal; backgrounded=false",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "Google presentation waits for privacy dismissal; backgrounded=true",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "US teen result flow resolves residency and independent consent in one sheet before Google presentation",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "closing the US teen clarification continues locally without recurring prompts or SDK initialization",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "AU eligible teen: independent choices, withdrawal and restart use the production coordinator",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "CA eligible teen: independent choices, withdrawal and restart use the production coordinator",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "AU 13-14 cannot turn a personal grant into verified authority",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "MX 13-15 cannot turn a personal grant into verified authority",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "MX 16-17 cannot turn a personal grant into verified authority",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "CA 0-13 cannot turn a personal grant into verified authority",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "US adult reporting refusal and competition permission persist independently across restart",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "CA adult reporting refusal and competition permission persist independently across restart",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "AU adult reporting refusal and competition permission persist independently across restart",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "MX adult reporting refusal and competition permission persist independently across restart",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "US Compete can establish independent eligibility before any result or ad notice",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "CA Compete can establish independent eligibility before any result or ad notice",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "AU Compete can establish independent eligibility before any result or ad notice",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "MX Compete can establish independent eligibility before any result or ad notice",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "Compete eligibility does not request Apple evidence for unset competition choice",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "Compete eligibility does not request Apple evidence for denied competition choice",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "leaving Compete for gameplay cancels a queued eligibility presentation",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "AU regional under-consent threshold reaches the actual adapter without invented guardian permission",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "MX regional under-consent threshold reaches the actual adapter without invented guardian permission",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "CA regional under-consent threshold reaches the actual adapter without invented guardian permission",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "visiting Compete preserves an already verified plan and independently prepared ads",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "audit continuation: delayed notice allow-only respects action order through the real Canadian coordinator and RC configuration",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "audit continuation: delayed notice stop-only respects action order through the real Canadian coordinator and RC configuration",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "audit continuation: delayed notice allow-then-stop respects action order through the real Canadian coordinator and RC configuration",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "audit continuation: newer Stop wins while older Allow waits at choice-write",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "name": "audit continuation: newer Stop wins while older Allow waits at notice-write",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "a failed reporting save retains a rendered retry across remount without enabling reporting or stopping ads",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "a failed reporting native retains a rendered retry across remount without enabling reporting or stopping ads",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "Close waits for iOS native dismissal and completes only once",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "Save & continue waits for iOS native dismissal and completes only once",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "unmount invalidates a late native dismissal callback",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "an early Close waits for presentation then native dismissal, without a timeout",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "the result waiter remains pending through delayed native dismissal and completes exactly once",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "result cancellation and unmount release their waiter without a stale dismissal completing a successor",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "Android Close completes after the unanimated hidden commit without waiting for an iOS-only event",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "closing during a pending save cannot present a late alert or complete before dismissal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "a replacement in the same React batch waits for the old native sheet to dismiss",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "an unsuccessful later reporting grant cannot reuse an earlier confirmed native stop",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "Info renders only the needed teen residency clarification and preserves independent reporting refusal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "Info residency save failure keeps every answer reachable for retry and makes no permission claim",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "adult Info has no unnecessary state question",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "AU restricted age shows its actual state without a misleading Allow control",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "MX restricted age shows its actual state without a misleading Allow control",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "CA restricted age shows its actual state without a misleading Allow control",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "Info stops competition independently and a failed save remains retryable after remount",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "competition withdrawal remains reachable without age eligibility or initialized providers",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "the post-result choices panel does not add an unrelated competition control",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "unreadable choices retain an actionable load retry across failure and restore refusal without stopping permitted ads",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "name": "audit continuation: collapse/remount then Stop invalidates an older rendered Allow waiting for notice restoration",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary readable refusal survives notice/adult resolution while permitted Google ads initialize",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary read-error cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary invalid-json cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary invalid-record cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary empty cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "US actual monetization configuration boundary a genuinely absent first-run record still permits the reviewed notice route",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary readable refusal survives notice/adult resolution while permitted Google ads initialize",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary read-error cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary invalid-json cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary invalid-record cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary empty cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "AU actual monetization configuration boundary a genuinely absent first-run record still permits the reviewed notice route",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary readable refusal survives notice/adult resolution while permitted Google ads initialize",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary read-error cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary invalid-json cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary invalid-record cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary empty cannot enable SDKs, overwrite unread refusal, or prevent recovery",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "MX actual monetization configuration boundary a genuinely absent first-run record still permits the reviewed notice route",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "retrying an unrelated save reads the original refusal before merging its own change",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+        "name": "a refusal made during an unreadable record stays effective when recovery restores an older grant",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "unknown eligibility blocks public reads and run creation before anonymous Auth",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "competition remains available when RevenueCat analytics is refused",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "community terms remain necessary even with independently allowed processing",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "withdrawal during session loading cannot create a guest or later send a request",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "withdrawal aborts an in-flight request and ignores its late success after regrant",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "Supabase transport is gated independently of periodic refresh",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "withdrawal preserves queued local scores and foreground retry sends nothing until reauthorized",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "revocation during score submission preserves it and suppresses foreground success",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "withdrawal does not block deletion of an existing identity or create a replacement guest",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "support ID lookup after withdrawal only uses an existing identity",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "a late Supabase Auth response body cannot complete after withdrawal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "concurrent first-use requests share one anonymous identity and its returned token",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "a failed shared signup is cleared so a later request can recover",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "an intentionally local run has a local outcome without upload activity: privacy denied",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "an intentionally local run has a local outcome without upload activity: terms missing",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "granting processing later does not retroactively publish a run that began locally",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "actual online run creation failure stays distinct from a deliberate local run",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "withdrawal during run creation settles as local even after an immediate regrant",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "withdrawal after online run creation keeps its score locally without publishing status or transport",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "the result-status callback reports a real online upload and accepted outcome",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "withdrawal while publishing yields local status rather than a failed upload message",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "a full online outbox does not turn a withdrawn run into an upload failure",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "one first-use caller timing out does not cancel another caller sharing its identity lookup",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "a timed-out identity lookup cannot poison retries or create a guest from its late result",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "the last caller timing out aborts shared Auth transport and rejects its late body",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "required Apple status is checked before any anonymous identity exists",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "required first use shares one identity and waits for verified link before all competition dispatches",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "fresh linked profile is reused without repeatedly starting link checks",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "required link revoked cannot dispatch a game request",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "required link unavailable cannot dispatch a game request",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "a status invalidated during required authentication prevents linking or dispatch",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "stale link completion cannot dispatch or bypass an independent competition refusal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "required Apple denial still permits authenticated deletion and support without status, link, or signup",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "the existing root foreground service already starts required Apple monitoring without competition participation",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "an already-required duty starts monitoring at root-service mount without an Auth session",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "required monitoring is not duplicated by synchronous restriction publication and stops when the duty clears",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":false,\"hasSession\":true}",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":false,\"hasSession\":false}",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":true,\"hasSession\":true}",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":true,\"hasSession\":false}",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "audit continuation: a real failed delete blocks begin-run but retains support and deletion retry when Apple-required=false",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "audit continuation: a real failed delete blocks begin-run but retains support and deletion retry when Apple-required=true",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "audit continuation: deletion during pending apple-status invalidates ordinary preparation without replacement signup or game dispatch",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "audit continuation: deletion during pending session-read invalidates ordinary preparation without replacement signup or game dispatch",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "audit continuation: deletion during pending apple-link invalidates ordinary preparation without replacement signup or game dispatch",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+        "name": "audit continuation: completed deletion cannot revive an older preparation after new terms are accepted",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "loading or unselected policy never starts processing even after age and region become known",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "a grant is never published before its durable write completes",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "withdrawal takes effect immediately while its persistence is pending",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "a pending grant cannot re-enable its purpose after a newer refusal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "concurrent grants remain independent and each waits for its durable operation",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "a late hydration result cannot restore a grant over a newer refusal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "a late hydration result cannot replace a newly selected region",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "a saved refusal survives relaunch and does not refuse other independently permitted purposes",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "failed grant persistence publishes no grant and rejects the operation",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "failed persistence invalidates already queued grants instead of publishing them later",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "failed reporting withdrawal stays off and preserves independently permitted ads and competition",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "a later explicit grant can recover after storage succeeds without granting other purposes",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "a failed region write cannot make that region eligible in memory",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "malformed persisted state cannot grant access: not json",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "malformed persisted state cannot grant access: {\"version\":2,\"region\":\"us\",\"choices\":{}}",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "malformed persisted state cannot grant access: {\"version\":1,\"region\":\"us\",\"choices\":{\"ads\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"}}}",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "malformed persisted state cannot grant access: {\"version\":1,\"region\":\"unrecognized\",\"choices\":{\"ads\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"},\"analytics\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"},\"competition\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"}}}",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "unreadable storage leaves purposes off and does not invent a prior choice",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "concurrent hydration uses one read and a shared completion",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "Apple evidence and access permissions are neither persisted nor sent as purpose choices",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "a newly required Apple check invalidates a previously satisfied check",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "Apple restriction takes effect immediately without rewriting the user purpose choices",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "purpose notices enable only an explicitly selected notice-and-opt-out requirement",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "a failing subscriber cannot prevent other observers seeing a withdrawal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "editing a returned input copy cannot forge a processing choice",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "Apple ranges and source are absent from runtime, saved choices and published snapshots after verification",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "a region change invalidates verification and rejects late evidence for the previous region",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "a finer jurisdiction change within the same coarse region invalidates verification",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "required Apple verification cannot be satisfied by self-declared adult evidence",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "unknown region rejects verification rather than retaining raw evidence for later",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "hydration whitelists purpose-choice fields and cannot restore an old embedded age profile",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "removing an Apple access restriction cannot revive evidence collected before restriction",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+        "name": "pending rescission suspends required processing without erasing sanitized age or changing independent refusals",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "settings retain withdrawal access while all processing is restricted and no SDK has loaded",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "reporting closes immediately, but completion waits for both persistence and native acknowledgement",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "a native pending result is not a confirmed withdrawal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "a native failed result is not a confirmed withdrawal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "a native not-requested result is not a confirmed withdrawal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "an earlier native failure is retried without re-enabling reporting",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "failed local persistence is not reported as a completed withdrawal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "a newer explicit grant supersedes the old withdrawal result",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "repeated taps share the same pending withdrawal",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "a hung native stop releases the settings action without claiming success",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "stopping competition touches only that purpose and never loads monetization",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "unknown and refused states do not invent a grant or a universal advertising switch",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+        "name": "an intervening Allow intention prevents reusing an older pending Stop confirmation",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "name": "current declarations cover the existing backend and ads-only reporting data",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "name": "rejects a missing existing OtherDataTypes collection declaration",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "name": "rejects a missing existing OtherDiagnosticData collection declaration",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "name": "rejects a missing existing CoarseLocation collection declaration",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "name": "rejects a missing existing AdvertisingData collection declaration",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "name": "rejects a missing existing ProductInteraction collection declaration",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "name": "rejects the prior four-category manifest and omitted reporting purpose",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "name": "rejects missing UserID purpose Analytics",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "name": "rejects missing OtherDataTypes purpose AppFunctionality",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "name": "rejects an incorrect authorization-record NSPrivacyCollectedDataTypeLinked declaration",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+        "name": "rejects an incorrect authorization-record NSPrivacyCollectedDataTypeTracking declaration",
+        "status": "passed"
+      }
+    ]
+  },
+  "checks": {
+    "recordedAt": "2026-09-20T22:41:01.228776+00:00",
+    "checks": {
+      "full": {
+        "exitCode": 0,
+        "logSha256": "5247bc794ee8fef886d5e89d5ae14a05009fb65b41902ce3fde6572dbb8bea0f"
+      },
+      "typecheck": {
+        "exitCode": 0,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "lint": {
+        "exitCode": 0,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "release": {
+        "exitCode": 0,
+        "logSha256": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4"
+      }
+    }
+  },
+  "reproductionCommands": {
+    "fromMobileDirectory": {
+      "fullSuite": [
+        "node",
+        "../../node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--watchman=false"
+      ],
+      "typeScript": [
+        "node",
+        "../../node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ]
+    },
+    "fromRepoRootStrictLint": [
+      "node",
+      "node_modules/oxlint/bin/oxlint",
+      "--no-ignore",
+      "--deny-warnings",
+      "apps/mobile/src",
+      "apps/mobile/scripts"
+    ],
+    "releaseValidator": "node scripts/validate-release-config.cjs (cwd apps/mobile; merge existing eas.json build.production.env and set EAS_BUILD_PLATFORM=ios, EAS_BUILD_PROFILE=production)"
+  },
+  "changedSourceSha256": {
+    "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx": "adb0fa6a41fcc8a7dbfcfb94da342b3f385b90ced3fe30478b81d8ef7d8de103",
+    "apps/mobile/src/services/__tests__/competition-processing-access.test.ts": "ef172ea97df814eeceae7a226cf41a03d0eff6472772553a4ca20eac2f7d14ae",
+    "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts": "e4a8dba496abcb08e06e64b907fae39a72f0a4d3bb4d1fc009dc33a1bc3aec3d",
+    "apps/mobile/src/services/competitionApi.ts": "e53eb63309207e6deda5035a84ecf66b98b686cd75fbd25fa5b3c0d105a01304",
+    "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts": "42ba6304e625ad0352eb626a0b1d99d160f32f2fd6166a9bc5180d8728243f5f",
+    "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts": "971bcd147c1f35753b9d3e41dc66b2918d7487bc616f0908ac5df8b6743ef750",
+    "apps/mobile/src/services/privacy/privacyRights.ts": "0f5285f6ee8add41b406a558eca67432077c604d8b3a4b5f28b00c4b75498bf1",
+    "apps/mobile/src/services/privacy/processingAccess.ts": "ae086bc34e656310b524f433d4d1a8be6bee602cb5c0b4d882d4e734dba1660e",
+    "apps/mobile/src/services/privacy/processingNotice.ts": "4e46ad08b24241d1b43c5d6ddfad5f2dc967803ff34411d3e485ec8a4772b3dd"
+  },
+  "packageEvidence": "audit-three-findings-package-2026-09-20.json",
+  "nativeProviderAndDeviceResults": false,
+  "buildHeld": true,
+  "buildOrUploadStarted": false
+}

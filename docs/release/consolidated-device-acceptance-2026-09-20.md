@@ -1,14 +1,15 @@
 # Flap Fit — consolidated device acceptance (held)
 
 **Do not start yet.** This is a prepared procedure, not a testing request or build authorization.
-The corrected privacy-read successor is recorded in `evidence/privacy-choice-read-recovery-2026-09-20.md`.
+The combined three-finding successor is recorded in `evidence/audit-three-findings-2026-09-20.md`.
+The build remains held pending the owner's next instruction; no device testing is requested.
 Finish authorized source/configuration work and inspect its matching artifact before supplying an
 installation route. Source tests, signed artifacts, installed results and provider receipt are separate.
 
 Existing registered-device/test-ad artifact **04cf2e97-63f0-43f2-af1a-0002414c9d13**, source
 **f4b191dbda7eb17bcb5811cafb8c34eb9b7c6657**, version **1.0.0 (4)**, is finished and inspected.
 It contains the corrected native declarations but lacks the later competition-entry/withdrawal
-changes in **30dffe4** and the subsequent privacy-choice read recovery. **It is not final acceptance.**
+changes in **30dffe4** and subsequent privacy-read, stale-Allow and pending-deletion corrections. **It is not final acceptance.**
 The existing Store build **103c8936**, source **c05f497**, also predates the manifest correction.
 Builds 2 and 3 and their earlier installation attempts are historical, not current candidates.
 

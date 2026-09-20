@@ -39,8 +39,10 @@ export class CompetitionAccessRequiredError extends CompetitionUnavailableError 
   }
 }
 
+let deletionPending = false;
+let deletionGeneration = 0;
 function competitionAccessAllowed() {
-  return getProcessingAccess().competition.allowed &&
+  return !deletionPending && getProcessingAccess().competition.allowed &&
     useGameStore.getState().competitionTermsVersion === COMPETITION_TERMS_VERSION;
 }
 
@@ -62,6 +64,18 @@ subscribeProcessingAccess(processingAccessChanged);
 useGameStore.subscribe((state, previous) => {
   if (state.competitionTermsVersion !== previous.competitionTermsVersion) processingAccessChanged();
 });
+
+function assertDeletionClear(generation = deletionGeneration): void {
+  if (deletionPending || generation !== deletionGeneration) throw new CompetitionUnavailableError(
+    'Finish deleting your online profile from Info before using Compete.');
+}
+async function assertNoPendingDeletion(generation = deletionGeneration): Promise<void> {
+  assertDeletionClear(generation);
+  const pending = await AsyncStorage.getItem(COMPETITION_DELETION_KEY);
+  assertDeletionClear(generation);
+  if (pending) throw new CompetitionUnavailableError(
+    'Finish deleting your online profile from Info before using Compete.');
+}
 
 function requiresAppleRescission() {
   return Platform.OS === 'ios' && getProcessingInputs().appleRequirement === 'required';
@@ -253,10 +267,12 @@ function appleProfileIsCurrent(userId: string): boolean {
   return isAppleRescissionStatusFresh() && linkedAppleProfile?.userId === userId &&
     linkedAppleProfile.revision === getAppleRescissionStatus().revision;
 }
-async function prepareRequiredAppleIdentity(): Promise<AnonymousCompetitionIdentity> {
+async function prepareRequiredAppleIdentity(deletionRevision: number): Promise<AnonymousCompetitionIdentity> {
+  assertDeletionClear(deletionRevision);
   if (requiredApplePreparation) return requiredApplePreparation;
   const operation = (async () => {
     const checked = await ensureCurrentAppleRescissionStatus();
+    assertDeletionClear(deletionRevision);
     if (checked.status !== 'no-revocation-recorded' || !isAppleRescissionStatusFresh()) throw new CompetitionAccessRequiredError();
     const identity = await withCompetitionAccess(async (access) => {
       const controller = new AbortController();
@@ -269,11 +285,13 @@ async function prepareRequiredAppleIdentity(): Promise<AnonymousCompetitionIdent
         clearTimeout(timeout); access.signal.removeEventListener('abort', abort); controller.abort();
       }
     });
+    assertDeletionClear(deletionRevision);
     if (!requiresAppleRescission() || !competitionAccessAllowed() || !isAppleRescissionStatusFresh()) throw new CompetitionAccessRequiredError();
     if (!appleProfileIsCurrent(identity.user.id)) {
       // No game operation is active during the pending link. This pause cannot
       // invalidate its own enclosing request, and rights operations never enter here.
       const linked = await linkAppleRescissionToExistingAccount(identity.session.access_token);
+      assertDeletionClear(deletionRevision);
       if (linked.status !== 'no-revocation-recorded' || !isAppleRescissionStatusFresh() ||
           !requiresAppleRescission() || !competitionAccessAllowed()) throw new CompetitionAccessRequiredError();
       linkedAppleProfile = { userId: identity.user.id, revision: linked.revision };
@@ -489,8 +507,13 @@ export async function competitionRequest<T>(
   if (useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION) {
     throw new CompetitionTermsRequiredError();
   }
+  const deletionRevision = deletionGeneration;
+  // Ordinary requests must pass this before Auth or Apple account linkage,
+  // including the required-Apple path that later supplies an existing session.
+  await assertNoPendingDeletion(deletionRevision);
   if (requiresAppleRescission()) {
-    const identity = await prepareRequiredAppleIdentity();
+    const identity = await prepareRequiredAppleIdentity(deletionRevision);
+    assertDeletionClear(deletionRevision);
     return withCompetitionAccess((access) => {
       if (!appleProfileIsCurrent(identity.user.id)) throw new CompetitionAccessRequiredError();
       return performCompetitionRequest<T>(path, { ...options, existingSession: identity.session }, access);
@@ -530,18 +553,15 @@ async function performCompetitionRequest<T>(
   try {
     return await Promise.race([
       (async () => {
+        if (requiresCurrentTerms) await assertNoPendingDeletion();
         const session =
           options.existingSession ??
           (await (async () => {
-            if (await AsyncStorage.getItem(COMPETITION_DELETION_KEY)) {
-              throw new CompetitionUnavailableError(
-                'Finish deleting your online profile from Info before using Compete.'
-              );
-            }
             access?.assert();
             const identity = await anonymousUser(() => access?.assert(), controller.signal);
             return identity.session;
           })());
+        if (requiresCurrentTerms) await assertNoPendingDeletion();
         access?.assert();
         if (controller.signal.aborted)
           throw new CompetitionRequestError('Online request timed out. It will be retried.', 408);
@@ -850,6 +870,12 @@ export async function getCompetitionSupportId(): Promise<string | null> {
 /** Reconcile a lost DELETE acknowledgement without interpreting a generic 401 as deletion. */
 export async function deleteCompetitionIdentity(): Promise<void> {
   if (!competitionIsConfigured) return;
+  const generation = ++deletionGeneration;
+  // Close ordinary access immediately, even while the outbox/storage/Auth is
+  // awaited. Explicit support and deletion use their independent rights client.
+  deletionPending = true;
+  requiredApplePreparation = null;
+  processingAccessChanged();
   return withOutboxLock(async () => {
     const supabase = getClient(true);
     const saved = await AsyncStorage.getItem(COMPETITION_DELETION_KEY);
@@ -908,5 +934,9 @@ export async function deleteCompetitionIdentity(): Promise<void> {
     linkedAppleProfile = null;
     useGameStore.getState().resetCompetitionProfile();
     await AsyncStorage.removeItem(COMPETITION_DELETION_KEY);
+    if (generation === deletionGeneration) {
+      deletionPending = false;
+      processingAccessChanged();
+    }
   });
 }

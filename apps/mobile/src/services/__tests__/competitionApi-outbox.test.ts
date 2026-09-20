@@ -1,15 +1,15 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createClient } from '@supabase/supabase-js';
-import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
-import {
-  competitionRequest,
-  consumeCompetitionSubmissionNotices,
-  deleteCompetitionIdentity,
-  flushPendingCompetitionResults,
-  getCompetitionSupportId,
-  submitCompetitionRunResult,
-  startCompetitionForegroundRetry,
-} from '../competitionApi';
+type Api = typeof import('../competitionApi');
+let AsyncStorage: typeof import('@react-native-async-storage/async-storage').default;
+let createClient: typeof import('@supabase/supabase-js').createClient;
+let COMPETITION_TERMS_VERSION: string;
+let useGameStore: typeof import('@/utils/game/store').useGameStore;
+let competitionRequest: Api['competitionRequest'];
+let consumeCompetitionSubmissionNotices: Api['consumeCompetitionSubmissionNotices'];
+let deleteCompetitionIdentity: Api['deleteCompetitionIdentity'];
+let flushPendingCompetitionResults: Api['flushPendingCompetitionResults'];
+let getCompetitionSupportId: Api['getCompetitionSupportId'];
+let submitCompetitionRunResult: Api['submitCompetitionRunResult'];
+let startCompetitionForegroundRetry: Api['startCompetitionForegroundRetry'];
 
 jest.mock('@/config/release', () => ({
   ONLINE_SERVICES: {
@@ -45,6 +45,13 @@ const reply = (status: number, payload: object = {}) =>
   ({ ok: status >= 200 && status < 300, status, json: async () => payload }) as Response;
 
 beforeEach(async () => {
+  // Deletion state is intentionally process-wide; each independent test gets a fresh service.
+  jest.resetModules();
+  const storageModule = require('@react-native-async-storage/async-storage');
+  AsyncStorage = storageModule.default ?? storageModule;
+  ({ createClient } = require('@supabase/supabase-js'));
+  ({ COMPETITION_TERMS_VERSION, useGameStore } = require('@/utils/game/store'));
+  ({ competitionRequest, consumeCompetitionSubmissionNotices, deleteCompetitionIdentity, flushPendingCompetitionResults, getCompetitionSupportId, submitCompetitionRunResult, startCompetitionForegroundRetry } = require('../competitionApi'));
   await AsyncStorage.clear();
   jest.clearAllMocks();
   useGameStore.setState({ competitionTermsVersion: COMPETITION_TERMS_VERSION });

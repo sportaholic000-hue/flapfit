@@ -1,6 +1,13 @@
 # Apple-first completion tracker
 
-## Current privacy-choice read-recovery successor
+## Current three-finding account-audit successor — BUILD HELD
+
+All three reproduced source findings are corrected in the commit containing **evidence/audit-three-findings-2026-09-20.md**: unreadable saved refusal (retained from b2916d0), stale Allow overriding newer Stop, and Apple-required competition bypassing pending deletion. The latter two had eight failing regressions plus seven passing controls before correction on b2916d0. Final actual configuration/rendered/dispatcher regressions cover refusal recovery/restart, remount and delayed writes, all Apple/session combinations, deletion during preparation, deletion retry/support, and no revival of an old request after cleanup.
+
+Final checks: **60 suites / 1171 tests**, TypeScript, strict lint and production manifest/release validators pass. Actual local EAS package: **772 files / 285 matching required inputs**; inside-package validator and exclusions pass. New source and package fingerprints are recorded beside the report. Prior authenticated RevenueCat Ads chart access and checklist/account corrections are retained. Genuine provider receipt, corrected artifact, device acceptance and Apple submission readiness remain open. **No build or upload is authorized or started.**
+
+
+## Prior privacy-choice read-recovery checkpoint
 
 The account audit's failed/invalid choices-read finding is **REPRODUCED AND FIXED** in the commit containing this section. Before correction, 14 configuration-boundary regressions failed (RC initialized after unknown saved choices; unrelated save erased refusal; retry did not reread). After correction: actual US/AU/MX notice/launch-policy/monetization tests preserve refusal, block overwrites, recover through the real notice entry, keep RC unconfigured after restart, and restore independently permitted Google ads. The existing Info panel retains a failure-only load retry. No new consent, data collection, permissions, native configuration or gameplay change.
 
@@ -53,15 +60,15 @@ Evidence: `evidence/focused-privacy-review-2026-09-20.md` and machine-readable r
 
 | Item | Status | Evidence / remaining verification |
 | --- | --- | --- |
-| A1 candidate source/backup | Read-recovery successor verified; final compiled counterpart open | Reproduced account-audit read failure corrected; specific boundary, retry and unrelated-save evidence in privacy-choice-read-recovery-2026-09-20.md. Source and evidence are backed up together. |
-| A2 actual upload contents | COMPLETE for the read-recovery successor | Actual local EAS package 769 files; 285 required inputs byte-matched; inside-package release validator passed; private/signing/web/backup/cache exclusions checked. Prior package-hash reconciliation preserved. |
+| A1 candidate source/backup | Three-finding successor verified; BUILD HELD | All three account-audit findings reproduced/fixed with exact before/after cases in audit-three-findings-2026-09-20.md. Prior completed work preserved; containing commit supplies current source for independent verification. |
+| A2 actual upload contents | COMPLETE for the three-finding successor | Actual local EAS package 772 files / 285 required inputs matching source; inside-package release validator and private/signing/web/backup/cache exclusions pass. No cloud build or upload. |
 | A3 ad resources | Source verified; device open | Existing lifecycle regressions pass. No new native lifecycle changes in this focused correction. Native terminal behavior still included in consolidated C4. |
 | A4 permission refresh | Source verified; device open | Existing Settings-return and foreground regressions pass; C5 remains. |
 | A5 accepted instructions/calibration | Complete in source | Preserved accepted onboarding and tracker; no threshold or exercise redesign. |
 | A6 unlock/Daily Challenge | Complete in source | Existing hydration/unlock/Daily Challenge regressions pass. |
-| B1 final automated checks | COMPLETE for the read-recovery source | 60 suites/1154 tests; focused 4 suites/120 cases; TypeScript, strict lint, production manifest/release checks passed. Specific failure-before/recovery-after results recorded. No native/provider acceptance inferred. |
+| B1 final automated checks | COMPLETE for the three-finding source | 60 suites/1171 tests, zero pending; TypeScript, strict lint, production manifest/release validation pass. Concrete read-recovery, stale-action, rendered-remount and pending-deletion cases recorded independently of test totals. |
 | B2 scoped integrity | Changed source and actual package verified; corrected binary open | Locked dependencies/resolutions/three patches unchanged; actual package required inputs and secret/signing-file exclusions verified. Earlier full credential-scan evidence retains its dated scope. New signed artifact remains open. |
-| B3 signed corrected iOS builds | Existing device artifact inspected; final successor artifact open | 04cf2e97 from f4b191d inspected with SHA-256 410c26d7765da88d07b903eb1257fb0e9da91b2389aa2fc7d4783231b61830c0. Includes corrected manifest but lacks review-follow-up competition wiring; not final acceptance. No new build/upload. |
+| B3 signed corrected iOS builds | Final successor artifact OPEN; BUILD HELD | Existing 04cf2e97 / f4b191d lacks later competition wiring and the three account-audit corrections. It remains inspected historical evidence, not final acceptance. No new build/upload. |
 | B4 native privacy/permissions | Existing artifact checks passed; final artifact still required; PDF DEFERRED | Actual 04cf2e97 has nine corrected app types/fourteen SDK manifests, required reasons, camera/mic descriptions, age entitlement, native fences and tracking assets. Final successor needs its own artifact checks. Organizer PDF not generated/deferred by owner. |
 | B5 installed artifact identity | Open | No corrected installed-device result. Expo build success is not installation success. |
 | C1 startup/play | Open; no testing request yet | Squats/Sky without Metro; existing onboarding, calibration/countdown, all result actions, saved progress after restart and bundled tracking. Source regressions do not close installed checks. |

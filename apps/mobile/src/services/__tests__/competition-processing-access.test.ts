@@ -608,3 +608,71 @@ test('required monitoring is not duplicated by synchronous restriction publicati
   expect(stopAppleMonitor).toHaveBeenCalledTimes(1);
   stop(); expect(stopAppleMonitor).toHaveBeenCalledTimes(1);
 });
+
+
+const deletionKey = '@flapfit/competition-deletion-v1';
+test.each([{required:false,hasSession:true},{required:false,hasSession:false},{required:true,hasSession:true},{required:true,hasSession:false}])('audit continuation: pending deletion blocks ordinary identity and dispatch %j', async ({required,hasSession}) => {
+  appleRequired=required;setAccess(true);
+  await storage.setItem(deletionKey,JSON.stringify({userId:session.user.id,confirmed:false}));
+    auth.getSession.mockResolvedValue({data:{session:hasSession?session:null},error:null});
+    auth.signInAnonymously.mockResolvedValue({data:{user:session.user,session},error:null});
+    await expect(api.competitionRequest('/leaderboard')).rejects.toThrow(/delet/i);
+    expect(auth.getSession).not.toHaveBeenCalled();expect(auth.signInAnonymously).not.toHaveBeenCalled();
+    expect(appleLink).not.toHaveBeenCalled();expect(global.fetch).not.toHaveBeenCalled();
+});
+
+test.each([false,true])('audit continuation: a real failed delete blocks begin-run but retains support and deletion retry when Apple-required=%s', async required => {
+  appleRequired=required;setAccess(true);
+  (global.fetch as jest.Mock).mockResolvedValue({ok:false,status:503,json:async()=>({error:'delete unavailable'})});
+  await expect(api.deleteCompetitionIdentity()).rejects.toMatchObject({status:503});
+  expect(await storage.getItem(deletionKey)).not.toBeNull();
+  auth.getSession.mockClear();(global.fetch as jest.Mock).mockClear();
+  await expect(api.beginCompetitionRun({kind:'leaderboard',exercise:'squats'})).rejects.toThrow('Finish deleting');
+  expect(auth.getSession).not.toHaveBeenCalled();
+  expect(auth.signInAnonymously).not.toHaveBeenCalled();expect(appleLink).not.toHaveBeenCalled();expect(global.fetch).not.toHaveBeenCalled();
+  expect(await api.getCompetitionSupportId()).toBe(session.user.id);
+  (global.fetch as jest.Mock).mockResolvedValue(response({deleted:true}));
+  await api.deleteCompetitionIdentity();
+  expect(await storage.getItem(deletionKey)).toBeNull();
+  expect(auth.signOut).toHaveBeenCalledTimes(1);expect(auth.signInAnonymously).not.toHaveBeenCalled();
+});
+
+test.each(['apple-status','session-read','apple-link'] as const)('audit continuation: deletion during pending %s invalidates ordinary preparation without replacement signup or game dispatch', async boundary => {
+  appleRequired=true;setAccess(true);
+  const started=deferred<void>();const resume=deferred<void>();
+  if(boundary==='apple-status')appleCheck.mockImplementationOnce(async()=>{started.resolve();await resume.promise;return appleStatus;});
+  if(boundary==='session-read')auth.getSession.mockImplementationOnce(async()=>{started.resolve();await resume.promise;return {data:{session:null},error:null};});
+  if(boundary==='apple-link')appleLink.mockImplementationOnce(async()=>{started.resolve();await resume.promise;return appleStatus;});
+  auth.signInAnonymously.mockResolvedValue({data:{user:session.user,session},error:null});
+  const request=api.competitionRequest('/leaderboard');const rejected=expect(request).rejects.toThrow();
+  await started.promise;
+  (global.fetch as jest.Mock).mockResolvedValue({ok:false,status:503,json:async()=>({error:'delete unavailable'})});
+  await expect(api.deleteCompetitionIdentity()).rejects.toMatchObject({status:503});
+  const before={reads:auth.getSession.mock.calls.length,links:appleLink.mock.calls.length,requests:(global.fetch as jest.Mock).mock.calls.length};
+  resume.resolve();await rejected;
+  expect(auth.getSession).toHaveBeenCalledTimes(before.reads);expect(auth.signInAnonymously).not.toHaveBeenCalled();
+  expect(appleLink).toHaveBeenCalledTimes(before.links);expect(global.fetch).toHaveBeenCalledTimes(before.requests);
+  expect(await api.getCompetitionSupportId()).toBe(session.user.id);
+});
+
+test('audit continuation: completed deletion cannot revive an older preparation after new terms are accepted', async () => {
+  appleRequired=true;setAccess(true);
+  const started=deferred<void>();const resume=deferred<void>();
+  appleCheck.mockImplementationOnce(async()=>{started.resolve();await resume.promise;return appleStatus;});
+  const stale=api.competitionRequest('/leaderboard');const rejected=expect(stale).rejects.toThrow('Finish deleting');
+  await started.promise;
+  (global.fetch as jest.Mock).mockResolvedValue(response({deleted:true}));
+  await api.deleteCompetitionIdentity();
+  expect(await storage.getItem(deletionKey)).toBeNull();
+  store.useGameStore.setState({competitionTermsVersion:store.COMPETITION_TERMS_VERSION});
+  const reads=auth.getSession.mock.calls.length;
+  resume.resolve();await rejected;
+  expect(auth.getSession).toHaveBeenCalledTimes(reads);expect(appleLink).not.toHaveBeenCalled();
+  expect(auth.signInAnonymously).not.toHaveBeenCalled();expect(global.fetch).toHaveBeenCalledTimes(1);
+  // Only a fresh explicit request after completed cleanup can create a new profile.
+  auth.getSession.mockResolvedValue({data:{session:null},error:null});
+  auth.signInAnonymously.mockResolvedValue({data:{user:session.user,session},error:null});
+  (global.fetch as jest.Mock).mockResolvedValue(response({scores:[]}));
+  await expect(api.competitionRequest('/leaderboard')).resolves.toEqual({scores:[]});
+  expect(auth.signInAnonymously).toHaveBeenCalledTimes(1);expect(appleLink).toHaveBeenCalledTimes(1);
+});

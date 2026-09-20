@@ -1,7 +1,7 @@
 # Flap Fit dual-store submission gates
 
 Current instructions reconciled September 20, 2026 against the account audit and the
-successor recorded in [privacy-choice-read-recovery](evidence/privacy-choice-read-recovery-2026-09-20.md).
+successor recorded in [three-finding account-audit correction](evidence/audit-three-findings-2026-09-20.md).
 The [Apple-first tracker](apple-first-tracker-2026-09-19.md) records detailed evidence and
 the [held acceptance procedure](consolidated-device-acceptance-2026-09-20.md) records device cases.
 This checklist does not authorize a build, upload, publication or submission.
@@ -21,6 +21,10 @@ their archived implementation is excluded from the app and EAS package.
       monetization boundary; unread records cannot reopen reporting or be overwritten by unrelated
       choices. Recovery restores saved refusals and independently permitted ads. Source results are
       recorded in the linked successor evidence; they do not prove native behavior or provider receipt.
+- [x] Per-purpose action ordering prevents an older delayed Allow from overriding newer Stop,
+      including remount and later writes. Pending deletion blocks both Apple paths before ordinary
+      Auth/link/game dispatch and invalidates in-flight preparation; support/deletion retry remain
+      available. Exact source/regression evidence is in the linked three-finding report. Build held.
 - [x] Earlier failed-write refusal preservation, save/native-stop retry controls, native-dismissal
       sequencing, independent Compete eligibility and Info competition withdrawal remain implemented.
 - [x] Camera permission plus optional microphone only for Record & Play; no ATT request or IDFA
