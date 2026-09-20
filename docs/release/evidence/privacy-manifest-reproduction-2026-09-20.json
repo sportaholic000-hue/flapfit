@@ -1,0 +1,17 @@
+{
+  "baselineBuild": "103c8936-9447-4190-a45b-6912b1027c69",
+  "baselineSource": "c05f497180c89af21ddb9b9fe014e97e2a23b80a",
+  "comparison": {
+    "before": [
+      "app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeUserID",
+      "app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeOtherDataTypes",
+      "app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeOtherDiagnosticData",
+      "app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeCoarseLocation",
+      "app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeAdvertisingData",
+      "app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeProductInteraction"
+    ],
+    "after": []
+  },
+  "runtimeOrUIChanged": false,
+  "newBuildRequired": true
+}
