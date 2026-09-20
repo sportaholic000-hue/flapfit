@@ -57,7 +57,7 @@ function validChoice(value: unknown): value is ProcessingChoice {
 function validRegion(value: unknown): value is PrivacyRegion {
   return ['us', 'ca-quebec', 'ca-other', 'other', 'unknown'].includes(value as string);
 }
-function persist(): Promise<void> {
+function persist(changedPurpose?: Purpose): Promise<void> {
   const operation = writes.catch(() => undefined).then(async () => {
     try {
       // Serialize intentions at execution time; never restore a superseded grant.
@@ -67,8 +67,17 @@ function persist(): Promise<void> {
         decision: 'denied', noticeVersion: PROCESSING_NOTICE_VERSION, decidedAt: new Date().toISOString(),
       };
       ++choicesRevision;
-      (['ads', 'analytics', 'competition'] as const).forEach((purpose) => { ++purposeRevision[purpose]; });
-      durable = { ...durable, choices: { ads: { ...denied }, analytics: { ...denied }, competition: { ...denied } } };
+      const choices = { ...input.choices };
+      (['ads', 'analytics', 'competition'] as const).forEach((purpose) => {
+        // Cancel unsaved grants, but a reporting write failure cannot revoke
+        // an independently established advertising or competition choice.
+        if (!changedPurpose || purpose === changedPurpose ||
+            durable.choices[purpose] !== input.choices[purpose]) {
+          ++purposeRevision[purpose];
+          choices[purpose] = { ...denied };
+        }
+      });
+      durable = { ...durable, choices };
       publish({ ...input, choices: durable.choices });
       // Cleanup precedes later writes. An unsaved withdrawal is never reported as successful.
       await AsyncStorage.removeItem(STORAGE_KEY).catch(() => undefined);
@@ -183,7 +192,7 @@ export async function setProcessingChoice(purpose: Purpose, decision: 'granted' 
   if (decision === 'denied') {
     publish({ ...input, choices: { ...input.choices, [purpose]: choice } });
   }
-  await persist();
+  await persist(purpose);
   if (decision === 'granted' && generation === purposeRevision[purpose]) {
     publish({ ...input, choices: { ...input.choices, [purpose]: choice } });
   }

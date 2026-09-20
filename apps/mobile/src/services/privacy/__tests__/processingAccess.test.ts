@@ -226,13 +226,15 @@ test('failed persistence invalidates already queued grants instead of publishing
   expect(saved.choices.competition.decision).toBe('denied');
 });
 
-test('failed withdrawal is surfaced and cannot leave processing enabled in the current session', async () => {
+test('failed reporting withdrawal stays off and preserves independently permitted ads and competition', async () => {
   await ready();
   await grantAll();
   storage.setItem.mockRejectedValueOnce(new Error('write failed'));
   storage.removeItem.mockRejectedValueOnce(new Error('cleanup failed'));
   await expect(api.setProcessingChoice('analytics', 'denied')).rejects.toThrow('write failed');
-  expect(allOff()).toBe(true);
+  expect(api.getProcessingAccess()).toMatchObject({
+    ads: { allowed: true }, revenueCat: { allowed: false, reason: 'refused' }, competition: { allowed: true },
+  });
 });
 
 test('a later explicit grant can recover after storage succeeds without granting other purposes', async () => {

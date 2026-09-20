@@ -1,5 +1,14 @@
 # Apple-first completion tracker — September 19, 2026
 
+## Privacy flow checkpoint — September 20, 2026
+
+The owner authorized necessary privacy changes, with permanent controls under Info → Privacy & choices and no optional setup before the first game. That flow is now connected in source: optional Apple/advertising/reporting preparation begins only after a claimed Done / Try Again / Next Level action. A short disclosure links to the same expandable controls; separate express choices appear only when the resolved policy requires them. Required Apple checks remain independent. Camera footage and optional Record & Play files remain local and user-directed.
+
+RevenueCat reporting refusal remains independent from permitted AdMob advertising, including a local choice-write failure. Required advertising-consent withdrawal stays accessible in Info. The unchanged result scheduler preserves the first session exit being ad-free, every second eligible exit thereafter, 90 seconds between opened ads, no-fill navigation, and no ad triggered by sharing/return/foreground. Canada's invalid adjacent Apple age gates were corrected to valid 14/16/18 thresholds; unresolved younger ranges do not authorize optional processing or restrict local play.
+
+Verification: 54 mobile suites / 1,059 tests passed, including 219 focused privacy/monetization/share tests; TypeScript, scoped strict lint and production release configuration passed. These are source checks, not physical-device acceptance. RevenueCat's Ads dashboard showed no sandbox data on this check. A successor signed build, actual device/RevenueCat receipt, screenshots, final Apple privacy reconciliation and owner review remain outstanding. Owner-completed App Store name, subtitle, description and keywords were not edited. Historical counts below are superseded only by this source checkpoint; existing device evidence remains historical.
+
+
 Owner goal: an evidenced Apple submission candidate within 18 hours. Owner reviews before Submit for Review.
 Source checklist: FlapFit_Apple_First_Launch_Checklist.md supplied September 19; audit baseline 453e363f0b2fcbbe0d522777f92fe2888946addd.
 

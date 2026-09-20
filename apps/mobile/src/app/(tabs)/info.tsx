@@ -36,6 +36,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BirdAvatar from '@/components/BirdAvatar';
+import { PrivacyChoices } from '@/components/PrivacyChoices';
 import { RELEASE_LINKS } from '@/config/release';
 import {
   competitionIsConfigured,
@@ -310,6 +311,7 @@ export default function InfoScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [modalPage, setModalPage] = useState<ModalPage>(null);
+  const [privacyChoicesExpanded, setPrivacyChoicesExpanded] = useState(false);
   const [onlineDeleteBusy, setOnlineDeleteBusy] = useState(false);
   const adPrivacyRequired = useSyncExternalStore(subscribeAdPrivacy, isAdPrivacyRequired, () => false);
   const [adPrivacyBusy, setAdPrivacyBusy] = useState(false);
@@ -601,9 +603,16 @@ export default function InfoScreen() {
         </Section>
 
         <Section
-          title="Privacy, safety & permissions"
+          title="Privacy & choices"
           icon={<ShieldCheck size={23} color={AMBER} />}
         >
+          <ActionRow
+            icon={<ShieldCheck size={21} color="#2563EB" />}
+            title="Advertising & reporting choices"
+            subtitle={privacyChoicesExpanded ? 'Hide your choices' : 'Manage Google advertising and RevenueCat reporting separately'}
+            onPress={() => setPrivacyChoicesExpanded(value => !value)}
+          />
+          {privacyChoicesExpanded ? <PrivacyChoices onDone={() => setPrivacyChoicesExpanded(false)} /> : null}
           <ActionRow
             icon={<ShieldCheck size={21} color="#2563EB" />}
             title="Privacy & camera data"

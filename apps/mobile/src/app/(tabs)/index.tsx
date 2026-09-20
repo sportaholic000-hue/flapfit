@@ -95,7 +95,9 @@ export default function HomeScreen() {
     let focused = true;
     const dutyResolved = !lobbyPrivacyKey.startsWith('pending:') && !lobbyPrivacyKey.startsWith('error:');
     if (hydrated && !hydrationError && hasOnboarded && dutyResolved) {
-      void prepareMonetization(() => focused);
+      // Only an actual Apple obligation may interrupt first play. Optional
+      // advertising/reporting setup belongs to a claimed post-game exit.
+      void prepareMonetization(() => focused, { requiredOnly: true });
     }
     return () => { focused = false; };
   }, [hydrated, hydrationError, hasOnboarded, lobbyPrivacyKey]));

@@ -35,6 +35,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import BirdAvatar from '@/components/BirdAvatar';
+import { PrivacyChoicesSheet } from '@/components/PrivacyChoices';
+import { preparePostGamePrivacy } from '@/services/privacy/postGamePrivacy';
 import {
   prepareCompetitionRun,
   competitionIsConfigured,
@@ -284,28 +286,62 @@ function GameContent() {
   const [recordedVideo, setRecordedVideo] = useState<RecordedVideo | null>(null);
   const [shareBusy, setShareBusy] = useState(false);
   const shareBusyRef = useRef(false);
-  const resultExitRef = useRef<ReturnType<typeof resultAdGate.createResult> | null>(null);
+  const resultLifetime = useMemo(() => ({
+    opportunity: null as ReturnType<typeof resultAdGate.createResult> | null,
+    generation: 0,
+    stopContinuation: null as (() => void) | null,
+    resolveChoices: null as (() => void) | null,
+  }), []);
   const resultActionClaimed = useRef(false);
   const [resultActionBusy, setResultActionBusy] = useState(false);
+  const [showPrivacyChoices, setShowPrivacyChoices] = useState(false);
+  const closePrivacyChoices = () => {
+    setShowPrivacyChoices(false);
+    resultLifetime.resolveChoices?.();
+    resultLifetime.resolveChoices = null;
+  };
+  const openPrivacyChoices = () => new Promise<void>(resolve => {
+    resultLifetime.resolveChoices = resolve;
+    setShowPrivacyChoices(true);
+  });
   const recordingIsFinalizing = recordingPhase === 'recording' || recordingPhase === 'preparing';
   useEffect(() => {
     resultActionClaimed.current = false;
     setResultActionBusy(false);
-    if (!result) return;
-    const opportunity = resultAdGate.createResult(
-      recordingIsFinalizing ? null : prepareResultInterstitial(),
-      adEnvironment,
+    return () => {
+      ++resultLifetime.generation;
+      resultLifetime.stopContinuation?.(); resultLifetime.stopContinuation = null;
+      resultLifetime.resolveChoices?.(); resultLifetime.resolveChoices = null;
+      resultLifetime.opportunity?.dispose(); resultLifetime.opportunity = null;
+    };
+  }, [result, runKey, resultLifetime]);
+  useEffect(() => {
+    if (!result || resultActionClaimed.current) return;
+    resultLifetime.opportunity?.dispose();
+    resultLifetime.opportunity = resultAdGate.createResult(
+      recordingIsFinalizing ? null : prepareResultInterstitial(), adEnvironment,
     );
-    resultExitRef.current = opportunity;
-    return () => { opportunity.dispose(); resultExitRef.current = null; };
-  }, [result, runKey, recordingIsFinalizing]);
+  }, [result, runKey, recordingIsFinalizing, resultLifetime]);
   const performResultAction = (action: () => void) => {
     if (!result || shareBusyRef.current || resultActionClaimed.current || !adEnvironment.isActive()) return;
     resultActionClaimed.current = true;
     setResultActionBusy(true);
-    const opportunity = resultExitRef.current;
-    if (opportunity) opportunity.exit(false, action);
-    else action();
+    const opportunity = resultLifetime.opportunity;
+    const generation = resultLifetime.generation;
+    const current = () => generation === resultLifetime.generation && !shareBusyRef.current && adEnvironment.isActive();
+    const continueExit = () => {
+      if (generation !== resultLifetime.generation) return;
+      if (!adEnvironment.isActive()) {
+        resultLifetime.stopContinuation ??= adEnvironment.onActive(continueExit);
+        return;
+      }
+      resultLifetime.stopContinuation?.(); resultLifetime.stopContinuation = null;
+      if (opportunity) opportunity.exit(false, action);
+      else action();
+    };
+    // Only a claimed result action can begin optional setup. It never waits for
+    // an ad to load or replaces the existing session/cooldown placement gate.
+    void preparePostGamePrivacy(current, openPrivacyChoices).catch(() => undefined).then(continueExit);
   };
   const [videoShareAvailability, setVideoShareAvailability] = useState({ messages: false, mail: false });
   useEffect(() => {
@@ -1193,6 +1229,7 @@ function GameContent() {
 
   return (
     <View style={{ flex: 1, backgroundColor: level.sky1 }}>
+      {showPrivacyChoices ? <PrivacyChoicesSheet onClose={closePrivacyChoices} /> : null}
       <StatusBar style="light" hidden={Platform.OS === 'ios'} />
       {webSource && !trackerLoadError ? (
         <WebView

@@ -103,6 +103,7 @@ function currentAdPermission(epoch: number) {
   return getProcessingAccess().ads.allowed && epoch === consentEpoch;
 }
 export const resultAdGate = new ResultAdGate();
+export const isMonetizationPrepared = () => adsReady;
 export const adEnvironment = {
   isActive: () => AppState.currentState === 'active',
   onActive: (callback: () => void) => {
@@ -296,7 +297,8 @@ export function getLobbyPrivacyKey(): string {
     access.revenueCat.allowed, ...(input.launch ? [input.launch.country ?? '', input.launch.current] : [])].join(':');
 }
 
-export function prepareMonetization(canPresent: () => boolean): Promise<void> {
+export function prepareMonetization(canPresent: () => boolean, options: { requiredOnly?: boolean } = {}): Promise<void> {
+  if (options.requiredOnly) return prepareExistingMonetization(canPresent, true);
   if (!getProcessingInputs().launch) return prepareExistingMonetization(canPresent);
   if (!supported || Platform.OS !== 'ios') return prepareExistingMonetization(canPresent);
   const intent = presentationIntentEpoch;
@@ -327,7 +329,7 @@ export function prepareMonetization(canPresent: () => boolean): Promise<void> {
     return launch?.current && launch.country ? preparePermittedMonetization(canPresent) : prepareExistingMonetization(canPresent);
   });
 }
-function prepareExistingMonetization(canPresent: () => boolean): Promise<void> {
+function prepareExistingMonetization(canPresent: () => boolean, requiredOnly = false): Promise<void> {
   const input = getProcessingInputs();
   if (input.appleRequirement === 'required' && !input.verification?.mandatoryCheckSatisfied) {
     if (mandatoryAppleRequest) return mandatoryAppleRequest;
@@ -350,7 +352,7 @@ function prepareExistingMonetization(canPresent: () => boolean): Promise<void> {
       // No repeated automatic sheet on each lobby return after a refusal/error.
       // A new launch or an explicit account/duty invalidation permits a new check.
       mandatoryAppleAttemptRevision = getAgeVerificationRevision();
-      if (epoch === consentEpoch && canPresent() && adEnvironment.isActive()) {
+      if (!requiredOnly && epoch === consentEpoch && canPresent() && adEnvironment.isActive()) {
         await preparePermittedMonetization(canPresent);
       }
     })().catch(() => undefined);
@@ -358,7 +360,7 @@ function prepareExistingMonetization(canPresent: () => boolean): Promise<void> {
     void operation.then(() => { if (mandatoryAppleRequest === operation) mandatoryAppleRequest = null; });
     return operation;
   }
-  return preparePermittedMonetization(canPresent);
+  return requiredOnly ? Promise.resolve() : preparePermittedMonetization(canPresent);
 }
 
 /** A new effective policy may arrive while an older setup/form is finishing.

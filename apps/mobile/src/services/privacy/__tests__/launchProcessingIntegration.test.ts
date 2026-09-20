@@ -1,13 +1,15 @@
 const settle = async () => { for (let i = 0; i < 40; i++) await Promise.resolve(); };
 const originalEnv = { ...process.env };
-async function load(options: { offline?: boolean; age?: unknown; required?: boolean } = {}) {
+async function load(options: { offline?: boolean; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string> } = {}) {
   jest.resetModules();
   process.env.EXPO_PUBLIC_ADS_MODE = 'test'; process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = 'appl_test_only';
-  const storage = { getItem: jest.fn().mockResolvedValue(null), setItem: jest.fn().mockResolvedValue(undefined), removeItem: jest.fn().mockResolvedValue(undefined) };
+  const memory = options.memory ?? new Map<string, string>();
+  const storage = { getItem: jest.fn(async (key: string) => memory.get(key) ?? null), setItem: jest.fn(async (key: string, value: string) => { memory.set(key, value); }), removeItem: jest.fn(async (key: string) => { memory.delete(key); }) };
   jest.doMock('@react-native-async-storage/async-storage', () => storage);
   const listeners = new Set<(value: string) => void>(); const fence = jest.fn().mockResolvedValue(true);
   const appState = { currentState: 'active', addEventListener: jest.fn((_event, listener) => { listeners.add(listener); return { remove: () => listeners.delete(listener) }; }) };
-  jest.doMock('react-native', () => ({ AppState: appState, Platform: { OS: 'ios', Version: '26.6' }, TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: fence } } }));
+  const alert = jest.fn((_title, _body, buttons) => buttons.find((button: { text: string }) => button.text === 'Continue')?.onPress());
+  jest.doMock('react-native', () => ({ Alert: { alert }, AppState: appState, Platform: { OS: 'ios', Version: '26.6' }, TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: fence } } }));
   jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: 'standalone', expoConfig: {} }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
   const requestAge = jest.fn().mockResolvedValue(options.age ?? { status: 'shared', lowerBound: 18, upperBound: null });
   jest.doMock('../../../../modules/flap-fit-age-range', () => ({ ...jest.requireActual('../../../../modules/flap-fit-age-range/src/gates'),
@@ -19,7 +21,7 @@ async function load(options: { offline?: boolean; age?: unknown; required?: bool
   const adLoad = jest.fn(() => sdk), rcLoad = jest.fn(() => ({ default: purchases }));
   jest.doMock('react-native-google-mobile-ads', adLoad); jest.doMock('react-native-purchases', rcLoad);
   const fetcher = jest.fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>().mockResolvedValue({ ok: true, status: 200, redirected: false,
-    url: 'https://flapfitapp.com/cdn-cgi/trace', headers: { get: (key: string) => key === 'content-type' ? 'text/plain' : null }, text: async () => 'h=flapfitapp.com\nloc=US\nip=192.0.2.9\n' } as unknown as Response);
+    url: 'https://flapfitapp.com/cdn-cgi/trace', headers: { get: (key: string) => key === 'content-type' ? 'text/plain' : null }, text: async () => 'h=flapfitapp.com\nloc=' + (options.country ?? 'US') + '\nip=192.0.2.9\n' } as unknown as Response);
   if (options.offline) fetcher.mockRejectedValue(new Error('offline'));
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'fetch'); Object.defineProperty(globalThis, 'fetch', { configurable: true, writable: true, value: fetcher });
   const access: typeof import('../processingAccess') = require('../processingAccess');
@@ -27,7 +29,7 @@ async function load(options: { offline?: boolean; age?: unknown; required?: bool
   const startup: typeof import('../privacyStartup') = require('../privacyStartup');
   const country: typeof import('../privacyCountry') = require('../privacyCountry');
   const stop = startup.startPrivacyStartup(); await Promise.all([startup.preparePrivacyStartup(), country.refreshPrivacyCountry()]);
-  return { access, adapter, country, requestAge, nativeAds, purchases, adLoad, rcLoad, storage, fence,
+  return { access, adapter, country, requestAge, nativeAds, purchases, adLoad, rcLoad, storage, fence, memory, alert,
     change: (value: string) => { appState.currentState = value; [...listeners].forEach((listener) => listener(value)); },
     finish: () => { stop(); if (descriptor) Object.defineProperty(globalThis, 'fetch', descriptor); } };
 }
@@ -103,5 +105,96 @@ test('a fresh lobby caller joining an old native sheet recovers after foreground
     const fresh = f.adapter.prepareMonetization(() => true);
     resolve({ status: 'shared', lowerBound: 18, upperBound: null }); await Promise.all([first, fresh]);
     expect(f.requestAge).toHaveBeenCalledTimes(2); expect(f.access.getProcessingInputs().verification?.mandatoryCheckSatisfied).toBe(true);
+  } finally { f.finish(); }
+});
+
+test('first-play preparation requests no optional age, advertising, or reporting permission', async () => {
+  const f = await load(); try {
+    await f.adapter.prepareMonetization(() => true, { requiredOnly: true });
+    expect(f.requestAge).not.toHaveBeenCalled();
+    expect(f.adLoad).not.toHaveBeenCalled();
+    expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.alert).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+test('a genuine required Apple check remains before play without starting optional SDKs', async () => {
+  const f = await load({ required: true }); try {
+    await f.adapter.prepareMonetization(() => true, { requiredOnly: true });
+    expect(f.requestAge).toHaveBeenCalledTimes(1);
+    expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+test.each(['US', 'AU', 'MX'])('%s adult post-game acknowledgement permits ads and reporting without repeated notices', async country => {
+  const f = await load({ country }); try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const choices = jest.fn().mockResolvedValue(undefined);
+    await flow.preparePostGamePrivacy(() => true, choices); await settle();
+    expect(f.alert).toHaveBeenCalledTimes(1); expect(choices).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1); expect(f.purchases.configure).toHaveBeenCalledTimes(1);
+    await flow.preparePostGamePrivacy(() => true, choices); await settle();
+    expect(f.alert).toHaveBeenCalledTimes(1); expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: true }, competition: { allowed: false } });
+    expect([...f.memory.values()].join('')).not.toMatch(/lowerBound|upperBound|192\.0\.2|exercise|score|country/);
+  } finally { f.finish(); }
+});
+test('reporting refusal through Info survives relaunch while permitted Google ads initialize', async () => {
+  let f = await load();
+  const memory = f.memory;
+  try {
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    await notice.restoreProcessingNotice();
+    await notice.refuseProcessingPurpose('analytics');
+    await flow.preparePostGamePrivacy(() => true, jest.fn()); await settle();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1); expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
+  } finally { f.finish(); }
+  f = await load({ memory });
+  try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    await flow.preparePostGamePrivacy(() => true, jest.fn()); await settle();
+    expect(f.alert).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1); expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: false, reason: 'refused' } });
+  } finally { f.finish(); }
+});
+test('Canadian activation is purpose-specific and can allow ads with reporting refused', async () => {
+  const f = await load({ country: 'CA' }); try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const choices = jest.fn(async () => {
+      await notice.refuseProcessingPurpose('analytics');
+      await notice.allowProcessingPurpose('ads');
+      expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+      await notice.acknowledgeProcessingNotice();
+    });
+    await flow.preparePostGamePrivacy(() => true, choices); await settle();
+    expect(f.access.getProcessingInputs().launch).toMatchObject({ country: 'CA', plan: { ageEligibility: 'allowed' } });
+    expect(choices).toHaveBeenCalledTimes(1); expect(f.alert).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1); expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: false } });
+    await flow.preparePostGamePrivacy(() => true, choices);
+    expect(choices).toHaveBeenCalledTimes(1);
+  } finally { f.finish(); }
+});
+test.each([{ offline: true }, { age: { status: 'declined' } }])('post-game unknown evidence %j grants nothing and shows no misleading consent request', async options => {
+  const f = await load(options); try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy'); const choices = jest.fn();
+    await flow.preparePostGamePrivacy(() => true, choices);
+    expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.alert).not.toHaveBeenCalled(); expect(choices).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+test('a stale post-game alert response cannot acknowledge the notice or initialize providers', async () => {
+  const f = await load(); try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    let respond: (() => void) | undefined; let current = true;
+    f.alert.mockImplementationOnce((_title, _body, buttons) => { respond = buttons.find((button: { text: string }) => button.text === 'Continue').onPress; });
+    const pending = flow.preparePostGamePrivacy(() => current, jest.fn());
+    for (let i = 0; i < 8 && !respond; ++i) await settle();
+    expect(respond).toBeDefined(); current = false; respond!(); await pending;
+    expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
+    expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
   } finally { f.finish(); }
 });

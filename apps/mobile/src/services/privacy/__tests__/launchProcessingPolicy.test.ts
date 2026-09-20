@@ -1,4 +1,5 @@
 import { PROCESSING_NOTICE_VERSION, type ProcessingChoice } from '../processingPolicy';
+import { validateAppleAgeGates } from '../../../../modules/flap-fit-age-range/src/gates';
 import {
   evaluateLaunchProcessingPlan, launchAppleAgeGates, resolveLaunchProcessingPolicy,
   resolveVerifiedAdultLaunchPlan, refineLaunchProcessingPlan,
@@ -231,10 +232,14 @@ test.each([null, 'GB', 'DE'])('outside or unresolved launch country is not clear
   expect(result.missingFacts.ads).toContain('country');
 });
 test('Apple thresholds distinguish Canadian fourteen and Australian fifteen without birthday', () => {
-  expect(launchAppleAgeGates('CA')).toEqual([13, 14, 18]);
+  expect(launchAppleAgeGates('CA')).toEqual([14, 16, 18]);
   expect(launchAppleAgeGates('AU')).toEqual([13, 15, 18]);
   expect(launchAppleAgeGates('US')).toEqual([13, 16, 18]);
   expect(launchAppleAgeGates('MX')).toEqual([13, 16, 18]);
+});
+
+test.each(['CA', 'AU', 'US', 'MX', null])('launch gates satisfy the native Apple contract: %s', country => {
+  expect(validateAppleAgeGates(launchAppleAgeGates(country))).toBe(true);
 });
 
 test('verified adult helper derives a plan without fabricating Apple evidence', () => {

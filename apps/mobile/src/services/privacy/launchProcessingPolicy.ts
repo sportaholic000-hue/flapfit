@@ -57,7 +57,9 @@ export type LaunchProcessingResolution = LaunchProcessingPlan & {
 /** No birthday; at most three Apple thresholds in any request. */
 export function launchAppleAgeGates(country: string | null): [number, number, number] {
   switch (country?.trim().toUpperCase()) {
-    case 'CA': return [13, 14, 18];
+    // Adjacent 13/14 gates are invalid in Apple's API. Below 14 remains
+    // unresolved for optional processing; this never restricts local play.
+    case 'CA': return [14, 16, 18];
     case 'AU': return [13, 15, 18];
     default: return [13, 16, 18];
   }
