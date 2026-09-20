@@ -1,6 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Image, type ImageSource } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
+import { useFocusEffect } from 'expo-router';
+import { prepareCompetitionEligibility } from '@/services/monetization';
 import {
   CheckCircle2,
   FileText,
@@ -8,11 +10,12 @@ import {
   RefreshCw,
   Trophy,
 } from 'lucide-react-native';
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import {
   Alert,
   Linking,
   Modal,
+  Platform,
   ScrollView,
   Text,
   TextInput,
@@ -140,15 +143,19 @@ function CompetitionTermsModal({
   visible,
   onAccept,
   onClose,
+  onDismiss,
 }: {
   visible: boolean;
   onAccept: () => void;
   onClose: () => void;
+  onDismiss: () => void;
 }) {
+  useEffect(() => { if (!visible && Platform.OS !== 'ios') onDismiss(); }, [visible, onDismiss]);
   return (
     <Modal
       visible={visible}
-      animationType="fade"
+      animationType={Platform.OS === 'ios' ? 'fade' : 'none'}
+      onDismiss={onDismiss}
       transparent
       statusBarTranslucent
       onRequestClose={onClose}
@@ -411,6 +418,9 @@ function LeaderboardPanel({
         </TouchableOpacity>
       </View>
 
+      {!processingAllowed ? <Text style={{ color: '#475569', fontSize: 13, marginVertical: 10 }}>
+        Online competition is unavailable until age and regional privacy checks are satisfied. Local play and saved progress remain available.
+      </Text> : null}
       {/* My rank chip */}
       {myRow && (
         <View
@@ -545,11 +555,25 @@ export default function CompeteScreen() {
   const [error, setError] = useState<string | null>(null);
   const [boardTab, setBoardTab] = useState<LeaderboardExercise>('pushups');
   const [showCompetitionTerms, setShowCompetitionTerms] = useState(false);
+  const [termsHostOpen, setTermsHostOpen] = useState(false);
+  const termsDismissed = useCallback(() => setTermsHostOpen(false), []);
 
   const hasName = competitionPlayerNameError(playerName) === null;
   const competitionChoice = getProcessingInputs().choices.competition;
   const hasAcceptedCompetitionTerms = competitionTermsVersion === COMPETITION_TERMS_VERSION
     && competitionChoice.decision === 'granted' && competitionChoice.noticeVersion === PROCESSING_NOTICE_VERSION;
+
+  useFocusEffect(useCallback(() => {
+    let focused = true;
+    // iOS must dismiss the terms host before an Apple age sheet may present.
+    // Existing accepted users also get this check without visiting a game result.
+    if (competitionIsConfigured && hydrated && hasAcceptedCompetitionTerms && !termsHostOpen) {
+      void prepareCompetitionEligibility(() => focused).catch(() => {
+        if (focused) setError('Online eligibility could not be confirmed. Local play is still available.');
+      });
+    }
+    return () => { focused = false; };
+  }, [hydrated, hasAcceptedCompetitionTerms, termsHostOpen]));
 
   // The persisted store hydrates asynchronously. Reflect the stored name once
   // it arrives exactly once. Subsequent store updates must not overwrite text
@@ -730,7 +754,7 @@ export default function CompeteScreen() {
           </Text>
           <TouchableOpacity
             accessibilityRole="button"
-            onPress={() => setShowCompetitionTerms(true)}
+            onPress={() => { setTermsHostOpen(true); setShowCompetitionTerms(true); }}
             style={{
               alignSelf: 'flex-start',
               marginTop: 10,
@@ -814,6 +838,7 @@ export default function CompeteScreen() {
       </ScrollView>
       <CompetitionTermsModal
         visible={showCompetitionTerms}
+        onDismiss={termsDismissed}
         onClose={() => setShowCompetitionTerms(false)}
         onAccept={async () => {
           if (acceptingTerms.current) return;

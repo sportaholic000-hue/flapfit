@@ -9,12 +9,15 @@ function fixture(options: { existingTerms?: boolean; allowed?: boolean } = {}) {
   const flush = jest.fn().mockResolvedValue({ submitted: 0, pending: 0, rejected: [] });
   jest.doMock('react', () => ({ ...jest.requireActual('react'),
     useEffect: (effect: () => unknown) => { effects.push(effect); },
+    useCallback: (callback: unknown) => callback,
     useRef: (current: unknown) => ({ current }),
     useState: (value: unknown) => { const setter = jest.fn(); setters.push(setter); return [value, setter]; },
     useSyncExternalStore: (_subscribe: unknown, snapshot: () => unknown) => snapshot(),
   }));
   jest.doMock('react-native', () => ({ Alert: { alert: jest.fn() }, Linking: { openURL: jest.fn() },
     Modal: 'Modal', ScrollView: 'ScrollView', Text: 'Text', TextInput: 'TextInput', TouchableOpacity: 'TouchableOpacity', View: 'View' }));
+  jest.doMock('expo-router', () => ({ useFocusEffect: (effect: () => unknown) => { effects.push(effect); } }));
+  jest.doMock('@/services/monetization', () => ({ prepareCompetitionEligibility: jest.fn().mockResolvedValue(undefined) }));
   jest.doMock('expo-image', () => ({ Image: 'Image' }));
   jest.doMock('expo-status-bar', () => ({ StatusBar: 'StatusBar' }));
   jest.doMock('lucide-react-native', () => ({ CheckCircle2: 'Check', FileText: 'File', Medal: 'Medal', RefreshCw: 'Refresh', Trophy: 'Trophy' }));

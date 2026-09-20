@@ -47,8 +47,8 @@ async function fixture(platform = 'ios') {
     await act(async () => { completion = controller.openChoices(); });
     return { completion };
   };
-  const mount = async (sheet = false, onClose = jest.fn()) => {
-    await act(async () => { tree = renderer.create(sheet ? React.createElement(PrivacyChoicesSheet, { onClose }) : React.createElement(PrivacyChoices)); });
+  const mount = async (sheet = false, onClose = jest.fn(), includeCompetition = false) => {
+    await act(async () => { tree = renderer.create(sheet ? React.createElement(PrivacyChoicesSheet, { onClose }) : React.createElement(PrivacyChoices, { includeCompetition })); });
   };
   const replaceRequest = async () => {
     let completion!: Promise<void>;
@@ -263,4 +263,34 @@ test.each([
   expect(f.text()).toContain(scenario.country === 'CA' ? 'age eligibility can be confirmed' : 'Flap Fit does not collect that permission');
   expect(f.button('Save & continue')).toBeDefined();
   await f.unmount();
+});
+
+test('Info stops competition independently and a failed save remains retryable after remount', async () => {
+  const f = await fixture(); await f.mount(false, jest.fn(), true);
+  f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+  await f.press('Stop online competition');
+  expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: true }, competition: { allowed: false } });
+  expect(f.text()).toContain('Choice save not confirmed');
+  expect(f.button('Retry stopping competition')).toBeDefined();
+  await f.unmount(); await f.mount(false, jest.fn(), true);
+  await f.press('Retry stopping competition');
+  expect(f.text()).not.toContain('Choice save not confirmed');
+  expect(f.text()).toContain('Online participation stopped');
+  expect(f.access.getProcessingInputs().choices.competition.decision).toBe('denied');
+  expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: true }, competition: { allowed: false } });
+  expect(f.native.settleRevenueCatWithdrawal).not.toHaveBeenCalled();
+  await f.unmount();
+});
+
+test('competition withdrawal remains reachable without age eligibility or initialized providers', async () => {
+  const f = await fixture(); f.access.clearAgeVerification();
+  await f.mount(false, jest.fn(), true); await f.press('Stop online competition');
+  expect(f.access.getProcessingInputs().choices.competition.decision).toBe('denied');
+  expect(f.text()).toContain('Online participation stopped');
+  await f.unmount();
+});
+
+test('the post-result choices panel does not add an unrelated competition control', async () => {
+  const f = await fixture(); await f.mount(true);
+  expect(f.button('Stop online competition')).toBeUndefined(); await f.unmount();
 });

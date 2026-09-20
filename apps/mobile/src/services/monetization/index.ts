@@ -285,8 +285,8 @@ export async function settlePrivacyBeforeGameplay(): Promise<void> {
   }
 }
 
-// Only lobby focus can start consent setup. The game-entry barrier also covers
-// a native form that has already begun loading when the user selects Play.
+// Explicit result/rights/competition callers share native presentation ownership.
+// The game-entry barrier also waits for an already-presented native form.
 /** React to effective processing changes after Apple/status/consent resolution,
  * not every raw store revision. No returned field contains an age or identifier. */
 export function getLobbyPrivacyKey(): string {
@@ -297,10 +297,11 @@ export function getLobbyPrivacyKey(): string {
     access.revenueCat.allowed, ...(input.launch ? [input.launch.country ?? '', input.launch.current] : [])].join(':');
 }
 
-export function prepareMonetization(canPresent: () => boolean, options: { requiredOnly?: boolean } = {}): Promise<void> {
+export function prepareMonetization(canPresent: () => boolean, options: { requiredOnly?: boolean; eligibilityOnly?: boolean } = {}): Promise<void> {
   if (options.requiredOnly) return prepareExistingMonetization(canPresent, true);
-  if (!getProcessingInputs().launch) return prepareExistingMonetization(canPresent);
-  if (!supported || Platform.OS !== 'ios') return prepareExistingMonetization(canPresent);
+  if (!getProcessingInputs().launch || !supported || Platform.OS !== 'ios') {
+    return options.eligibilityOnly ? Promise.resolve() : prepareExistingMonetization(canPresent);
+  }
   const intent = presentationIntentEpoch;
   const current = () => intent === presentationIntentEpoch && canPresent() && adEnvironment.isActive();
   if (!launchPreparation) {
@@ -322,12 +323,29 @@ export function prepareMonetization(canPresent: () => boolean, options: { requir
     // preserving refusal/error suppression for the unchanged request.
     const control = require('../privacy/launchProcessingControl') as typeof import('../privacy/launchProcessingControl');
     await control.prepareLaunchProcessing({ canPresent: current, present: presentPrivacy });
-    if (!current()) return;
+    if (!current() || options.eligibilityOnly) return;
     const launch = getProcessingInputs().launch;
     // A resolved-country flow owns this Apple attempt, including refusal/error.
     // Never immediately fall back to a second mandatory system request.
     return launch?.current && launch.country ? preparePermittedMonetization(canPresent) : prepareExistingMonetization(canPresent);
   });
+}
+/** Competition is an independently requested service. It can establish current
+ * eligibility without a workout, advertising notice, Google form or RC setup. */
+export async function prepareCompetitionEligibility(canPresent: () => boolean): Promise<void> {
+  const intent = presentationIntentEpoch;
+  const current = () => intent === presentationIntentEpoch && canPresent() && adEnvironment.isActive() &&
+    getProcessingInputs().choices.competition.decision === 'granted';
+  if (!current()) return;
+  const startup = require('../privacy/privacyStartup') as typeof import('../privacy/privacyStartup');
+  const country = require('../privacy/privacyCountry') as typeof import('../privacy/privacyCountry');
+  await country.refreshPrivacyCountry();
+  if (!current()) return;
+  const input = getProcessingInputs();
+  if (!input.hydrated || input.appleRequirement === 'pending' || input.appleRequirement === 'error') {
+    await startup.preparePrivacyStartup();
+  }
+  if (current()) await prepareMonetization(current, { eligibilityOnly: true });
 }
 function prepareExistingMonetization(canPresent: () => boolean, requiredOnly = false): Promise<void> {
   const input = getProcessingInputs();

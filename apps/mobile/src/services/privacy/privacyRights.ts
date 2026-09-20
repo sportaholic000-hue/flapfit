@@ -38,6 +38,17 @@ function confirmWithin<T>(operation: Promise<T>): Promise<Confirmation<T>> {
 
 let reportingWithdrawal: Promise<PrivacyWithdrawalResult> | null = null;
 let competitionWithdrawal: Promise<PrivacyWithdrawalResult> | null = null;
+let competitionStopState: 'not-requested' | 'pending' | PrivacyWithdrawalResult['status'] = 'not-requested';
+const competitionStopListeners = new Set<() => void>();
+export const getCompetitionStopState = () => competitionStopState;
+export function subscribeCompetitionStop(listener: () => void): () => void {
+  competitionStopListeners.add(listener);
+  return () => { competitionStopListeners.delete(listener); };
+}
+function publishCompetitionStop(status: typeof competitionStopState): void {
+  competitionStopState = status;
+  competitionStopListeners.forEach(listener => { try { listener(); } catch { /* A view cannot prevent withdrawal. */ } });
+}
 let retryNativeStop = false;
 type ReportingWithdrawalState = Readonly<{
   status: PrivacyWithdrawalResult['status'] | 'not-requested' | 'pending';
@@ -108,6 +119,7 @@ export function stopOnlineCompetition(): Promise<PrivacyWithdrawalResult> {
   if (competitionWithdrawal && getProcessingInputs().choices.competition.decision === 'denied') {
     return competitionWithdrawal;
   }
+  publishCompetitionStop('pending');
   const saving = confirmWithin(setProcessingChoice('competition', 'denied'));
   const operation = (async (): Promise<PrivacyWithdrawalResult> => {
     const saved = await saving;
@@ -119,6 +131,8 @@ export function stopOnlineCompetition(): Promise<PrivacyWithdrawalResult> {
     };
   })();
   competitionWithdrawal = operation;
-  void operation.then(() => { if (competitionWithdrawal === operation) competitionWithdrawal = null; });
+  void operation.then(result => {
+    if (competitionWithdrawal === operation) { competitionWithdrawal = null; publishCompetitionStop(result.status); }
+  });
   return operation;
 }

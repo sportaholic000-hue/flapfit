@@ -373,3 +373,70 @@ test.each(['US','CA','AU','MX'])('%s adult reporting refusal and competition per
     expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'},competition:{allowed:true}});
   } finally {f.finish();}
 });
+
+test.each(['US', 'CA', 'AU', 'MX'])('%s Compete can establish independent eligibility before any result or ad notice', async country => {
+  const f = await load({ country });
+  try {
+    await f.access.setProcessingChoice('competition', 'granted');
+    await f.adapter.prepareCompetitionEligibility(() => true); await settle();
+    expect(f.requestAge).toHaveBeenCalledTimes(1);
+    expect(f.access.getProcessingAccess()).toMatchObject({competition:{allowed:true},ads:{allowed:false},revenueCat:{allowed:false}});
+    expect(f.access.getProcessingInputs().presentedNoticeVersion).toBeNull();
+    expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.alert).not.toHaveBeenCalled();
+    await f.adapter.prepareCompetitionEligibility(() => true);
+    expect(f.requestAge).toHaveBeenCalledTimes(1);
+    expect(f.access.getProcessingAccess().competition.allowed).toBe(true);
+  } finally { f.finish(); }
+});
+
+test.each(['unset','denied'])('Compete eligibility does not request Apple evidence for %s competition choice', async decision => {
+  const f = await load();
+  try {
+    if (decision === 'denied') await f.access.setProcessingChoice('competition','denied');
+    await f.adapter.prepareCompetitionEligibility(() => true);
+    expect(f.requestAge).not.toHaveBeenCalled(); expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+test('leaving Compete for gameplay cancels a queued eligibility presentation', async () => {
+  const f=await load();
+  try {
+    await f.access.setProcessingChoice('competition','granted');
+    const pending=f.adapter.prepareCompetitionEligibility(() => true);
+    await f.adapter.settlePrivacyBeforeGameplay(); await pending;
+    expect(f.requestAge).not.toHaveBeenCalled(); expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally {f.finish();}
+});
+
+test.each([
+  {country:'AU',lowerBound:13,upperBound:14},
+  {country:'MX',lowerBound:13,upperBound:15},
+  {country:'CA',lowerBound:13,upperBound:13},
+])('$country regional under-consent threshold reaches the actual adapter without invented guardian permission', async scenario => {
+  const f=await load({country:scenario.country,age:{status:'shared',lowerBound:scenario.lowerBound,upperBound:scenario.upperBound}});
+  try {
+    const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    await flow.preparePostGamePrivacy(() => true,jest.fn()); await settle();
+    expect(f.access.getProcessingAccess().ads).toMatchObject({allowed:false,treatment:'child',underAgeOfConsent:true});
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.adLoad).not.toHaveBeenCalled();
+    expect(f.consent.requestInfoUpdate).not.toHaveBeenCalled();
+    expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally {f.finish();}
+});
+
+test('visiting Compete preserves an already verified plan and independently prepared ads', async () => {
+  const f=await load();
+  try {
+    const flow:typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    await flow.preparePostGamePrivacy(()=>true,jest.fn());await settle();
+    await f.access.setProcessingChoice('competition','granted');
+    const revision=f.access.getAgeVerificationRevision();
+    await f.adapter.prepareCompetitionEligibility(()=>true);await settle();
+    expect(f.access.getAgeVerificationRevision()).toBe(revision);
+    expect(f.requestAge).toHaveBeenCalledTimes(1);
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.adapter.isMonetizationPrepared()).toBe(true);
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:true},competition:{allowed:true}});
+  }finally{f.finish();}
+});

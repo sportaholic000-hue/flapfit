@@ -6,7 +6,7 @@ import {
   connecticutClarificationStatus, hasConnecticutClarificationControl,
   restoreRegionalClarification, saveConnecticutResidency,
 } from '@/services/privacy/regionalClarification';
-import { getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
+import { getCompetitionStopState, subscribeCompetitionStop, stopOnlineCompetition, getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
 import { getProcessingAccess, getProcessingInputs, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import {
   acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, allowProcessingPurpose, canChooseProcessingPurpose,
@@ -15,9 +15,10 @@ import {
 
 /** Shared by the permanent Info section and a required post-game choice sheet.
  * Opening/reading it does not record agreement or initialize either SDK. */
-export function PrivacyChoices({ onDone, canInteract }: { onDone?: () => void; canInteract?: () => boolean }) {
+export function PrivacyChoices({ onDone, canInteract, includeCompetition = false }: { onDone?: () => void; canInteract?: () => boolean; includeCompetition?: boolean }) {
   const access = useSyncExternalStore(subscribeProcessingAccess, getProcessingAccess, getProcessingAccess);
   const withdrawal = useSyncExternalStore(subscribeReportingWithdrawal, getReportingWithdrawalState, getReportingWithdrawalState);
+  const competitionStop = useSyncExternalStore(subscribeCompetitionStop, getCompetitionStopState, getCompetitionStopState);
   const [busy, setBusy] = useState(false);
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
@@ -74,6 +75,18 @@ export function PrivacyChoices({ onDone, canInteract }: { onDone?: () => void; c
       </View>
       <Text style={styles.note}>Stopping future reporting does not delete information already received by RevenueCat. Contact support for data requests.</Text>
     </View>
+    {includeCompetition ? <View style={styles.group}>
+      <Text style={styles.heading}>Online competition</Text>
+      <Text style={styles.body}>Stop online participation without deleting your profile or changing advertising and reporting choices. To participate again, review and accept the rules in Compete.</Text>
+      <Text style={styles.status}>{input.choices.competition.decision !== 'denied' ? 'Managed separately in Compete' :
+        competitionStop === 'pending' ? 'Confirming your saved choice' : competitionStop === 'save-unconfirmed' ?
+        'Choice save not confirmed · online participation stopped for this session' : 'Online participation stopped'}</Text>
+      {button(input.choices.competition.decision === 'denied' && competitionStop === 'save-unconfirmed' ? 'Retry stopping competition' : 'Stop online competition', async () => {
+        const result = await stopOnlineCompetition();
+        if (result.status !== 'completed') throw new Error('Your choice save was not confirmed. Retry stopping competition.');
+      })}
+      <Text style={styles.note}>For information already saved online, use Delete online profile or Contact us in Info.</Text>
+    </View> : null}
     <View style={styles.group}><Text style={styles.heading}>Your camera stays on your device</Text><Text style={styles.body}>Flap Fit does not receive your camera footage or audio. Record & Play makes a temporary video on your device so you can choose whether and where to share it.</Text></View>
     <TouchableOpacity accessibilityRole="link" onPress={() => void Linking.openURL(RELEASE_LINKS.privacyUrl).catch(() => Alert.alert('Unable to open privacy policy', 'Please try again when online.'))} style={styles.link}><Text style={styles.linkText}>Full privacy policy</Text></TouchableOpacity>
     {button('Save & continue', async () => { await acknowledgeProcessingNotice(); if (current()) onDone?.(); })}

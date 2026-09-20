@@ -612,7 +612,7 @@ export default function InfoScreen() {
             subtitle={privacyChoicesExpanded ? 'Hide your choices' : 'Manage Google advertising and RevenueCat reporting separately'}
             onPress={() => setPrivacyChoicesExpanded(value => !value)}
           />
-          {privacyChoicesExpanded ? <PrivacyChoices onDone={() => setPrivacyChoicesExpanded(false)} /> : null}
+          {privacyChoicesExpanded ? <PrivacyChoices includeCompetition onDone={() => setPrivacyChoicesExpanded(false)} /> : null}
           <ActionRow
             icon={<ShieldCheck size={21} color="#2563EB" />}
             title="Privacy & camera data"

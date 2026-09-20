@@ -1,0 +1,718 @@
+{
+  "recordedAt": "2026-09-20T20:23:41.693173+00:00",
+  "reviewedMain": "f39190d6ae2a84c8ba97624b5c917295f0b1ec7d",
+  "reconciledBase": "6248c71ab02101bb561e572a825ac19d11b88b57",
+  "sourceCoverage": "Corrected runtime/test input hashes and all-suite execution recorded here; the commit containing this evidence identifies the verified successor. No source changes occurred after checks.",
+  "findings": [
+    {
+      "id": 1,
+      "status": "REPRODUCED AND FIXED (remaining competition entry); post-game ad/reporting flow ALREADY FIXED",
+      "evidence": "Original main lacks the launch coordinator. Current base already connects root country/Apple evidence and claimed result exits to actual notices/choices. Current-base Compete saved its purpose choice but never called eligibility preparation; fresh users depended on a game-result visit. Now the real Compete screen starts independent eligibility only after saved terms and native dismissal, without ad notice or either SDK initialization. Rendered terms tests plus actual coordinator tests cover all four adult countries, failed save, cancellation and retained existing ad eligibility."
+    },
+    {
+      "id": 2,
+      "status": "ALREADY FIXED",
+      "evidence": "launchProcessingControl -> verifyLaunchAgeEvidence -> launchProcessingPolicy is the active four-country path. The legacy US/CA regionalPolicy is not the active launch-country resolver. Actual coordinator tests exercise US/CA/AU/MX adult permission/refusal/restart; CA14+/AU15+ teen choices and independent withdrawal; unsupported/unknown/declined and parental-authority-required paths remain restricted. No territory change or new guardian-permission collector."
+    },
+    {
+      "id": 3,
+      "status": "REPRODUCED AND FIXED (competition stop); reporting controls ALREADY FIXED",
+      "evidence": "Info already renders independent reporting controls via PrivacyChoices -> refuseProcessingPurpose -> withdrawAdPerformanceReporting, including actual save/native confirmation and rendered retry after both failures. stopOnlineCompetition had no production screen caller. Info now exposes it independently, retaining retry through remount after unconfirmed storage and never stopping permitted ads/reporting. Support/deletion remain exposed outside eligibility gating. No competition control added to the result privacy sheet."
+    },
+    {
+      "id": 4,
+      "status": "ALREADY FIXED; verification extended",
+      "evidence": "Active launch plan derives treatment/underAgeOfConsent from country-specific thresholds and central access forwards the plan, bypassing the old generic teen-only derivation. Real coordinator-to-Google tests verify TEEN and UMP false for eligible CA/AU teens and US teens. Added actual-coordinator checks verify CHILD/underAgeOfConsent true and no SDK load where CA13/AU13-14/MXminor lack verified guardian authority. Existing adapter CHILD mapping tests remain. No fictitious parental grant was added to make an eligible-child test pass; the production app does not collect that authority."
+    },
+    {
+      "id": 5,
+      "status": "ALREADY FIXED in successor source; artifact alignment remains open",
+      "evidence": "Live privacy policy read September20 describes Info > Privacy & choices, separate reporting, CT clarification and optional result-exit setup, matching current production paths. Lobby calls requiredOnly; game.tsx claims result action before preparePostGamePrivacy. Source f4b191d was already remote; completed work was pushed first at6248c71. Existing artifact04cf2e97 contains the prior corrected manifest/regional/rights implementation but not this follow-up competition wiring. It is not a final acceptance candidate."
+    }
+  ],
+  "fullSuite": {
+    "suites": 59,
+    "tests": 1133,
+    "failed": 0,
+    "pending": 0,
+    "allTrackedAndNewSuitesCovered": true,
+    "resultSha256": "83445fcf1dcf44f50759d9d43fb27c03e7d7f67a5d35513ed9229c52885db065"
+  },
+  "checks": {
+    "full": {
+      "exitCode": 0,
+      "logSha256": "7ffac4e2189b0bfec3390243e05e18244d1218373c85e77a458648236adf416d"
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "lint": {
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release": {
+      "exitCode": 0,
+      "logSha256": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4"
+    }
+  },
+  "selectedBehaviorResults": [
+    {
+      "file": "apps/mobile/src/services/__tests__/competition-terms-action.test.ts",
+      "tests": [
+        {
+          "name": "the existing affirmative action persists only competition permission before accepting terms",
+          "status": "passed"
+        },
+        {
+          "name": "failed persistence never marks terms accepted and remains retryable",
+          "status": "passed"
+        },
+        {
+          "name": "existing saved terms and screen mount never silently grant participation or retry local-only work",
+          "status": "passed"
+        },
+        {
+          "name": "a newer refusal during persistence is not overridden by the earlier acceptance continuation",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+      "tests": [
+        {
+          "name": "settings retain withdrawal access while all processing is restricted and no SDK has loaded",
+          "status": "passed"
+        },
+        {
+          "name": "reporting closes immediately, but completion waits for both persistence and native acknowledgement",
+          "status": "passed"
+        },
+        {
+          "name": "a native pending result is not a confirmed withdrawal",
+          "status": "passed"
+        },
+        {
+          "name": "a native failed result is not a confirmed withdrawal",
+          "status": "passed"
+        },
+        {
+          "name": "a native not-requested result is not a confirmed withdrawal",
+          "status": "passed"
+        },
+        {
+          "name": "an earlier native failure is retried without re-enabling reporting",
+          "status": "passed"
+        },
+        {
+          "name": "failed local persistence is not reported as a completed withdrawal",
+          "status": "passed"
+        },
+        {
+          "name": "a newer explicit grant supersedes the old withdrawal result",
+          "status": "passed"
+        },
+        {
+          "name": "repeated taps share the same pending withdrawal",
+          "status": "passed"
+        },
+        {
+          "name": "a hung native stop releases the settings action without claiming success",
+          "status": "passed"
+        },
+        {
+          "name": "stopping competition touches only that purpose and never loads monetization",
+          "status": "passed"
+        },
+        {
+          "name": "unknown and refused states do not invent a grant or a universal advertising switch",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+      "tests": [
+        {
+          "name": "real cold startup connects trusted country and native Apple before eligibility; only actual disclosure callback unlocks adult notice route",
+          "status": "passed"
+        },
+        {
+          "name": "analytics refusal leaves separately permitted restricted advertising functioning",
+          "status": "passed"
+        },
+        {
+          "name": "unknown country or age {\"offline\":true} cannot initialize SDKs",
+          "status": "passed"
+        },
+        {
+          "name": "unknown country or age {\"age\":{\"status\":\"declined\"}} cannot initialize SDKs",
+          "status": "passed"
+        },
+        {
+          "name": "same-country foreground reuses verified plan while background immediately stops processing and preserves withdrawal",
+          "status": "passed"
+        },
+        {
+          "name": "game entry cancels queued native privacy presentation without changing gameplay",
+          "status": "passed"
+        },
+        {
+          "name": "a refused required country-specific Apple request never falls back to a second system sheet",
+          "status": "passed"
+        },
+        {
+          "name": "a stale background age response does not consume the fresh same-country attempt",
+          "status": "passed"
+        },
+        {
+          "name": "a fresh lobby caller joining an old native sheet recovers after foreground returns before the old response",
+          "status": "passed"
+        },
+        {
+          "name": "first-play preparation requests no optional age, advertising, or reporting permission",
+          "status": "passed"
+        },
+        {
+          "name": "a genuine required Apple check remains before play without starting optional SDKs",
+          "status": "passed"
+        },
+        {
+          "name": "US adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed"
+        },
+        {
+          "name": "AU adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed"
+        },
+        {
+          "name": "MX adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed"
+        },
+        {
+          "name": "reporting refusal through Info survives relaunch while permitted Google ads initialize",
+          "status": "passed"
+        },
+        {
+          "name": "Canadian activation is purpose-specific and can allow ads with reporting refused",
+          "status": "passed"
+        },
+        {
+          "name": "post-game unknown evidence {\"offline\":true} grants nothing and shows no misleading consent request",
+          "status": "passed"
+        },
+        {
+          "name": "post-game unknown evidence {\"age\":{\"status\":\"declined\"}} grants nothing and shows no misleading consent request",
+          "status": "passed"
+        },
+        {
+          "name": "a stale post-game alert response cannot acknowledge the notice or initialize providers",
+          "status": "passed"
+        },
+        {
+          "name": "saved reporting refusal survives an unrelated failed competition save and restart",
+          "status": "passed"
+        },
+        {
+          "name": "Google presentation waits for privacy dismissal; backgrounded=false",
+          "status": "passed"
+        },
+        {
+          "name": "Google presentation waits for privacy dismissal; backgrounded=true",
+          "status": "passed"
+        },
+        {
+          "name": "US teen result flow resolves residency and independent consent in one sheet before Google presentation",
+          "status": "passed"
+        },
+        {
+          "name": "closing the US teen clarification continues locally without recurring prompts or SDK initialization",
+          "status": "passed"
+        },
+        {
+          "name": "AU eligible teen: independent choices, withdrawal and restart use the production coordinator",
+          "status": "passed"
+        },
+        {
+          "name": "CA eligible teen: independent choices, withdrawal and restart use the production coordinator",
+          "status": "passed"
+        },
+        {
+          "name": "AU 13-14 cannot turn a personal grant into verified authority",
+          "status": "passed"
+        },
+        {
+          "name": "MX 13-15 cannot turn a personal grant into verified authority",
+          "status": "passed"
+        },
+        {
+          "name": "MX 16-17 cannot turn a personal grant into verified authority",
+          "status": "passed"
+        },
+        {
+          "name": "CA 0-13 cannot turn a personal grant into verified authority",
+          "status": "passed"
+        },
+        {
+          "name": "US adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed"
+        },
+        {
+          "name": "CA adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed"
+        },
+        {
+          "name": "AU adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed"
+        },
+        {
+          "name": "MX adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed"
+        },
+        {
+          "name": "US Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed"
+        },
+        {
+          "name": "CA Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed"
+        },
+        {
+          "name": "AU Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed"
+        },
+        {
+          "name": "MX Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed"
+        },
+        {
+          "name": "Compete eligibility does not request Apple evidence for unset competition choice",
+          "status": "passed"
+        },
+        {
+          "name": "Compete eligibility does not request Apple evidence for denied competition choice",
+          "status": "passed"
+        },
+        {
+          "name": "leaving Compete for gameplay cancels a queued eligibility presentation",
+          "status": "passed"
+        },
+        {
+          "name": "AU regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed"
+        },
+        {
+          "name": "MX regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed"
+        },
+        {
+          "name": "CA regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed"
+        },
+        {
+          "name": "visiting Compete preserves an already verified plan and independently prepared ads",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+      "tests": [
+        {
+          "name": "a failed reporting save retains a rendered retry across remount without enabling reporting or stopping ads",
+          "status": "passed"
+        },
+        {
+          "name": "a failed reporting native retains a rendered retry across remount without enabling reporting or stopping ads",
+          "status": "passed"
+        },
+        {
+          "name": "Close waits for iOS native dismissal and completes only once",
+          "status": "passed"
+        },
+        {
+          "name": "Save & continue waits for iOS native dismissal and completes only once",
+          "status": "passed"
+        },
+        {
+          "name": "unmount invalidates a late native dismissal callback",
+          "status": "passed"
+        },
+        {
+          "name": "an early Close waits for presentation then native dismissal, without a timeout",
+          "status": "passed"
+        },
+        {
+          "name": "the result waiter remains pending through delayed native dismissal and completes exactly once",
+          "status": "passed"
+        },
+        {
+          "name": "result cancellation and unmount release their waiter without a stale dismissal completing a successor",
+          "status": "passed"
+        },
+        {
+          "name": "Android Close completes after the unanimated hidden commit without waiting for an iOS-only event",
+          "status": "passed"
+        },
+        {
+          "name": "closing during a pending save cannot present a late alert or complete before dismissal",
+          "status": "passed"
+        },
+        {
+          "name": "a replacement in the same React batch waits for the old native sheet to dismiss",
+          "status": "passed"
+        },
+        {
+          "name": "an unsuccessful later reporting grant cannot reuse an earlier confirmed native stop",
+          "status": "passed"
+        },
+        {
+          "name": "Info renders only the needed teen residency clarification and preserves independent reporting refusal",
+          "status": "passed"
+        },
+        {
+          "name": "Info residency save failure keeps every answer reachable for retry and makes no permission claim",
+          "status": "passed"
+        },
+        {
+          "name": "adult Info has no unnecessary state question",
+          "status": "passed"
+        },
+        {
+          "name": "AU restricted age shows its actual state without a misleading Allow control",
+          "status": "passed"
+        },
+        {
+          "name": "MX restricted age shows its actual state without a misleading Allow control",
+          "status": "passed"
+        },
+        {
+          "name": "CA restricted age shows its actual state without a misleading Allow control",
+          "status": "passed"
+        },
+        {
+          "name": "Info stops competition independently and a failed save remains retryable after remount",
+          "status": "passed"
+        },
+        {
+          "name": "competition withdrawal remains reachable without age eligibility or initialized providers",
+          "status": "passed"
+        },
+        {
+          "name": "the post-result choices panel does not add an unrelated competition control",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx",
+      "tests": [
+        {
+          "name": "actual Compete acceptance saves only competition and waits for native terms dismissal before eligibility",
+          "status": "passed"
+        },
+        {
+          "name": "failed Compete acceptance keeps the real modal open and does not request native eligibility",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingPolicy.test.ts",
+      "tests": [
+        {
+          "name": "US adults use notice route without an optional ads consent switch",
+          "status": "passed"
+        },
+        {
+          "name": "AU adults use notice route without an optional ads consent switch",
+          "status": "passed"
+        },
+        {
+          "name": "MX adults use notice route without an optional ads consent switch",
+          "status": "passed"
+        },
+        {
+          "name": "each notice is independently required",
+          "status": "passed"
+        },
+        {
+          "name": "Canadian non-Quebec teenager fourteen plus has independent notice route",
+          "status": "passed"
+        },
+        {
+          "name": "unknown Canadian province does not disable requested competition fourteen plus",
+          "status": "passed"
+        },
+        {
+          "name": "exact current Quebec activation can satisfy that function even without province",
+          "status": "passed"
+        },
+        {
+          "name": "generic grant is not Quebec identification/profiling activation",
+          "status": "passed"
+        },
+        {
+          "name": "Quebec analytics activation does not activate ads",
+          "status": "passed"
+        },
+        {
+          "name": "Quebec thirteen-year-old requires purpose-specific guardian authority",
+          "status": "passed"
+        },
+        {
+          "name": "NY teen requires separate express choices, not Google consent or notice",
+          "status": "passed"
+        },
+        {
+          "name": "non-NY residence alone does not exclude covered NY activity",
+          "status": "passed"
+        },
+        {
+          "name": "current specific teen consent can satisfy unknown NY applicability",
+          "status": "passed"
+        },
+        {
+          "name": "outside US does not erase known NY collection history",
+          "status": "passed"
+        },
+        {
+          "name": "incomplete wholly-outside proof does not clear teen processing",
+          "status": "passed"
+        },
+        {
+          "name": "Connecticut teen RC remains blocked even with express grant; reviewed contextual ads stay independent",
+          "status": "passed"
+        },
+        {
+          "name": "Connecticut unreviewed contextual route identifies exact necessity gap",
+          "status": "passed"
+        },
+        {
+          "name": "unknown US state cannot silently bypass Connecticut teen analytics rule",
+          "status": "passed"
+        },
+        {
+          "name": "Mexico teen verified authority is independently scoped",
+          "status": "passed"
+        },
+        {
+          "name": "Australian 13 minimum has appropriate capacity-related ad treatment",
+          "status": "passed"
+        },
+        {
+          "name": "Australian 15 minimum has appropriate capacity-related ad treatment",
+          "status": "passed"
+        },
+        {
+          "name": "unknown or invalid range is never adult permission: {\"source\":\"none\",\"status\":\"unknown\",\"lowerBound\":null,\"upperBound\":null}",
+          "status": "passed"
+        },
+        {
+          "name": "unknown or invalid range is never adult permission: {\"source\":\"apple\",\"status\":\"declined\",\"lowerBound\":18,\"upperBound\":null}",
+          "status": "passed"
+        },
+        {
+          "name": "unknown or invalid range is never adult permission: {\"source\":\"apple\",\"status\":\"shared\",\"lowerBound\":-1,\"upperBound\":20}",
+          "status": "passed"
+        },
+        {
+          "name": "unknown or invalid range is never adult permission: {\"source\":\"apple\",\"status\":\"shared\",\"lowerBound\":18,\"upperBound\":17}",
+          "status": "passed"
+        },
+        {
+          "name": "unknown or invalid range is never adult permission: {\"source\":\"apple\",\"status\":\"shared\",\"lowerBound\":12,\"upperBound\":17}",
+          "status": "passed"
+        },
+        {
+          "name": "known under-thirteen remains outside audience",
+          "status": "passed"
+        },
+        {
+          "name": "range crossing eighteen is not an adult grant",
+          "status": "passed"
+        },
+        {
+          "name": "sale/targeting opt-out permits restricted ads; full personal-data withdrawal blocks them",
+          "status": "passed"
+        },
+        {
+          "name": "analytics refusal never disables independent ads or requested competition",
+          "status": "passed"
+        },
+        {
+          "name": "denial survives notice version changes and re-evaluation never mutates the plan",
+          "status": "passed"
+        },
+        {
+          "name": "new notice invalidates express grant, not a remembered refusal",
+          "status": "passed"
+        },
+        {
+          "name": "static plan supports later QC activation without a new Apple request",
+          "status": "passed"
+        },
+        {
+          "name": "plan stores no raw range, source, country or birthday",
+          "status": "passed"
+        },
+        {
+          "name": "outside or unresolved launch country is not cleared: null",
+          "status": "passed"
+        },
+        {
+          "name": "outside or unresolved launch country is not cleared: GB",
+          "status": "passed"
+        },
+        {
+          "name": "outside or unresolved launch country is not cleared: DE",
+          "status": "passed"
+        },
+        {
+          "name": "Apple thresholds distinguish Canadian fourteen and Australian fifteen without birthday",
+          "status": "passed"
+        },
+        {
+          "name": "launch gates satisfy the native Apple contract: CA",
+          "status": "passed"
+        },
+        {
+          "name": "launch gates satisfy the native Apple contract: AU",
+          "status": "passed"
+        },
+        {
+          "name": "launch gates satisfy the native Apple contract: US",
+          "status": "passed"
+        },
+        {
+          "name": "launch gates satisfy the native Apple contract: MX",
+          "status": "passed"
+        },
+        {
+          "name": "launch gates satisfy the native Apple contract: null",
+          "status": "passed"
+        },
+        {
+          "name": "verified adult helper derives a plan without fabricating Apple evidence",
+          "status": "passed"
+        },
+        {
+          "name": "Canadian province refinement uses minimum existing rules and does not need Apple range",
+          "status": "passed"
+        },
+        {
+          "name": "thirteen-year-old ON refinement to QC cannot accidentally become fourteen plus",
+          "status": "passed"
+        },
+        {
+          "name": "US state refinement clears only state uncertainty while retaining NY consent requirement",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "changedInputs": [
+    {
+      "path": "apps/mobile/src/app/(tabs)/compete.tsx",
+      "sha256": "311d3e9e90510ba6ebb226fe482d452d5136254ca5228a733ed2958999d79079"
+    },
+    {
+      "path": "apps/mobile/src/app/(tabs)/info.tsx",
+      "sha256": "7a95a3e0d4c9b472761fb678f113ac941aa04ff58401074ef38c01c798144e51"
+    },
+    {
+      "path": "apps/mobile/src/components/PrivacyChoices.tsx",
+      "sha256": "181e0a9fbb4877e74bf9b5115b316abf036023bfd65f6ec52534eb427af588fd"
+    },
+    {
+      "path": "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx",
+      "sha256": "935b2bcfab742e4f1decd66ff257e4f0fe964ec026b9d78aa3ec77cfb7c2e56a"
+    },
+    {
+      "path": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+      "sha256": "fa3e723954dd3c4f87deec89651b072f6a91cd5b74dbad6e6cc8dbfcfe388f94"
+    },
+    {
+      "path": "apps/mobile/src/services/__tests__/competition-terms-action.test.ts",
+      "sha256": "e3046660dd6aa9a0ac87439a02862ae80953e17bf4b0ca829b430bd915a55f46"
+    },
+    {
+      "path": "apps/mobile/src/services/monetization/index.ts",
+      "sha256": "851c58eea4ab595aaab91c8305b71b227dbc856bfceba8cde51eec69d93f490b"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+      "sha256": "f31d5d792446ab012a4f6b24ba4af694a28a9793d403d8b3bba09b71060e19f1"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+      "sha256": "029575f35ed500f1347601febd732127c19fba736196142e0530b6658088583c"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/privacyRights.ts",
+      "sha256": "6e84d38deacb0f5dea32384e128cfd4a7628857d312c6037f382abaaf354ba72"
+    }
+  ],
+  "dependenciesAndNativeConfigurationUnchanged": true,
+  "firstFullRun": {
+    "suitesPassed": 57,
+    "suitesFailed": 2,
+    "testsPassed": 1128,
+    "testsFailed": 5,
+    "cause": "Existing isolated screen harness lacked newly used useCallback/focus hook mocks; exact rights-export whitelist lacked the two new read-only observers. Existing behavioral assertions retained; fixtures updated and full suite rerun.",
+    "resultSha256": "7d7bb0a2042a990b3b722c6e6effc2ec01ee64e3ab40fdc67c3313a06a34852b"
+  },
+  "livePolicy": {
+    "url": "https://flapfitapp.com/privacy/",
+    "readDate": "2026-09-20",
+    "resultExitAndInfoDisclosureMatchesCurrentSource": true,
+    "publishedContentChanged": false
+  },
+  "previousFocusedFindings": {
+    "refusalSurvivesUnrelatedSaveFailureRestart": "PASS: actual RC module load/configure absent; independently permitted ads/competition allowed",
+    "reportingWithdrawalFailureRetry": "PASS: rendered save/native failure and remount controls retain retry without regrant",
+    "nativeSheetDismissal": "PASS at source/rendered boundary; physical iOS sequence remains unverified"
+  },
+  "remaining": [
+    {
+      "item": "Final corrected signed candidate and artifact inspection",
+      "dependency": "New explicitly authorized build containing this source; no new build requested during review work."
+    },
+    {
+      "item": "One consolidated iPad acceptance, then essentially finished iPhone candidate",
+      "dependency": "Installed physical devices; full received video/audio, permissions, native forms/result exits, competition/support/deletion/layouts."
+    },
+    {
+      "item": "Genuine RevenueCat receipt and withdrawal/relaunch",
+      "dependency": "Permitted installed app events and provider receipt; no invented revenue/clicks."
+    },
+    {
+      "item": "Real Apple transaction/status/link/rescission",
+      "dependency": "Installed signed transaction and applicable Apple environment/account; prior Sandbox TEST is not this proof."
+    },
+    {
+      "item": "iPhone/iPad screenshot slots",
+      "dependency": "Genuine captures in accepted sizes, then authorized console upload."
+    },
+    {
+      "item": "Final App Privacy reconciliation/publication",
+      "dependency": "Corrected artifact/configured-flow comparison and authoritative saved/public status; publication requires authorization."
+    },
+    {
+      "item": "Store binary upload/processing/compliance/selection",
+      "dependency": "Accepted Store artifact and separate upload authorization. Existing credentials already authenticated; no repeat key setup."
+    },
+    {
+      "item": "Submit for Review",
+      "dependency": "Final record complete and owner authorization."
+    }
+  ],
+  "xcodeOrganizerPdf": "NOT GENERATED / DEFERRED by owner; actual artifact checks retained",
+  "notClaimed": [
+    "device acceptance",
+    "genuine provider receipt",
+    "Apple submission readiness",
+    "CI status as an Apple requirement"
+  ]
+}

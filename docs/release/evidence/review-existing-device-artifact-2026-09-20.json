@@ -1,0 +1,250 @@
+{
+  "checkedAt": "2026-09-20T20:13:03.220310+00:00",
+  "status": "PASS",
+  "buildId": "04cf2e97-63f0-43f2-af1a-0002414c9d13",
+  "profile": "ios-device-check",
+  "sourceCommit": "f4b191dbda7eb17bcb5811cafb8c34eb9b7c6657",
+  "verifiedApplicationBaseline": "f168286d9058093a42da8e96f02f53a82365a7e6",
+  "ipa": {
+    "filename": "FlapFit-task8-04cf2e97.ipa",
+    "bytes": 48617480,
+    "sha256": "410c26d7765da88d07b903eb1257fb0e9da91b2389aa2fc7d4783231b61830c0",
+    "bundleIdentifier": "com.flapfit.game",
+    "version": "1.0.0",
+    "buildNumber": "4",
+    "distributionExpected": "ad-hoc",
+    "usesNonExemptEncryption": false,
+    "deviceFamilies": [
+      1,
+      2
+    ],
+    "minimumOS": "16.4",
+    "cameraDescription": "Flap Fit uses the front camera to track exercise movement and control your bird. Camera images are processed live on your device. If you choose Record & Play, the app creates a temporary local recording for you to share; Flap Fit does not upload it.",
+    "microphoneDescription": "Flap Fit uses the microphone only when you choose Record & Play, so your voice and workout sounds can be included in the temporary video you control.",
+    "hasTrackingUsageDescription": false,
+    "delaysGoogleMeasurement": true,
+    "appManifestTracking": false,
+    "privacyManifestCount": 15,
+    "declaredAgeRangeInSignedBinary": true,
+    "declaredAgeRangeInProfile": true,
+    "provisionedDeviceCount": 2,
+    "profileExpires": "2027-09-19T12:27:37Z",
+    "revenueCatProcessingBridgePresent": true,
+    "deviceAcceptance": "not established by artifact inspection"
+  },
+  "retainedArchive": {
+    "buildId": "04cf2e97-63f0-43f2-af1a-0002414c9d13",
+    "sourceCommit": "f4b191dbda7eb17bcb5811cafb8c34eb9b7c6657",
+    "archiveName": "FlapFit 2026-09-20 12.29.15.xcarchive",
+    "bytes": 91561491,
+    "sha256": "7497c2772127e720f0917e506b59079f52f07889dfd21ffda924ffa7615df1cc",
+    "aggregatePrivacyReportGenerated": false
+  },
+  "archiveIpaIdentityAndJavaScriptMatch": true,
+  "archiveChecksumMatched": true,
+  "archiveAndIpaCrcPassed": true,
+  "existingTwoDeviceProfileAndCertificateMatch": true,
+  "appManifest": {
+    "matchesCorrectedSource": true,
+    "collectedDataTypeCount": 9,
+    "existingValidatorFailures": [],
+    "requiredReasons": [
+      {
+        "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+        "NSPrivacyAccessedAPITypeReasons": [
+          "CA92.1"
+        ]
+      },
+      {
+        "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
+        "NSPrivacyAccessedAPITypeReasons": [
+          "0A2A.1",
+          "3B52.1",
+          "C617.1"
+        ]
+      },
+      {
+        "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace",
+        "NSPrivacyAccessedAPITypeReasons": [
+          "E174.1",
+          "85F4.1"
+        ]
+      },
+      {
+        "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime",
+        "NSPrivacyAccessedAPITypeReasons": [
+          "35F9.1"
+        ]
+      }
+    ],
+    "sourceReasonsIncluded": true
+  },
+  "embeddedSdkManifests": {
+    "count": 14,
+    "sameReviewedSemanticsAsPriorDeviceArtifact": true,
+    "paths": [
+      "React-timing_privacy.bundle/PrivacyInfo.xcprivacy",
+      "ExpoConstants_privacy.bundle/PrivacyInfo.xcprivacy",
+      "UserMessagingPlatformResources.bundle/PrivacyInfo.xcprivacy",
+      "React-cxxreact_privacy.bundle/PrivacyInfo.xcprivacy",
+      "GoogleMobileAdsResources.bundle/PrivacyInfo.xcprivacy",
+      "RevenueCat.bundle/PrivacyInfo.xcprivacy",
+      "SDWebImage.bundle/PrivacyInfo.xcprivacy",
+      "ExpoFileSystem_privacy.bundle/PrivacyInfo.xcprivacy",
+      "PurchasesHybridCommon.bundle/PrivacyInfo.xcprivacy",
+      "Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_folly.bundle/PrivacyInfo.xcprivacy",
+      "Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_glog.bundle/PrivacyInfo.xcprivacy",
+      "Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_boost.bundle/PrivacyInfo.xcprivacy",
+      "RNCAsyncStorage_resources.bundle/PrivacyInfo.xcprivacy",
+      "React-Core_privacy.bundle/PrivacyInfo.xcprivacy"
+    ],
+    "archiveMatchesAllIpaManifests": true
+  },
+  "cameraAndMicrophoneDescriptionsMatchReviewedSourceArtifact": true,
+  "nativeBinaryMarkers": {
+    "flapFitSetProcessingAllowed": true,
+    "flapFitStoredGdprApplies": true,
+    "flapFitStoredPurpose": true,
+    "setPublisherFirstPartyIDEnabled:": true
+  },
+  "compiledJavaScriptMarkers": {
+    "@flapfit/connecticut-residency-v1": true,
+    "Retry stopping reporting": true,
+    "2026-09-18.9-foot-return": true,
+    "requestNonPersonalizedAdsOnly": true,
+    "rdp": true,
+    "trackAdLoaded": true,
+    "trackAdDisplayed": true,
+    "trackAdRevenue": true,
+    "ca-app-pub-3940256099942544/4411468910": true
+  },
+  "testAdConfiguration": {
+    "workerEnvironmentConfirmed": true,
+    "testInterstitialIdBundled": true,
+    "publisherAppIdMatchesExistingConfiguration": true,
+    "realRevenueCatIosKeyBundled": true,
+    "reportingStubIntroduced": false,
+    "sourceSelectsTestIdsUnlessModeLive": true
+  },
+  "bundledTrackingResources": {
+    "vision_bundle.mjs.mpasset": {
+      "artifactPath": "Payload/FlapFit.app/assets/assets/mediapipe/vision_bundle.mjs.mpasset",
+      "sha256": "e77f281f9619150d937023c355bae170e9120e3b9e43f1e23a2a7bee07197669",
+      "bytes": 136870
+    },
+    "vision_wasm_nosimd_internal.wasm.mpasset": {
+      "artifactPath": "Payload/FlapFit.app/assets/assets/mediapipe/vision_wasm_nosimd_internal.wasm.mpasset",
+      "sha256": "38b61feab2fd7934e05cbe9f68baa308978a5e3b7f85c1913bb8ae89b8ef8b97",
+      "bytes": 9294247
+    },
+    "vision_wasm_nosimd_internal.js.mpasset": {
+      "artifactPath": "Payload/FlapFit.app/assets/assets/mediapipe/vision_wasm_nosimd_internal.js.mpasset",
+      "sha256": "abe9b6fbeaf86fcb53a5edce3926c82ccb0619e18fed4d9d9ce561ee7f55e054",
+      "bytes": 209735
+    },
+    "vision_wasm_internal.js.mpasset": {
+      "artifactPath": "Payload/FlapFit.app/assets/assets/mediapipe/vision_wasm_internal.js.mpasset",
+      "sha256": "9440cf0cc0cea21800e31581ec32aeedcc5fbf9df4509796bbc7d3f99e52ab9c",
+      "bytes": 209826
+    },
+    "vision_wasm_internal.wasm.mpasset": {
+      "artifactPath": "Payload/FlapFit.app/assets/assets/mediapipe/vision_wasm_internal.wasm.mpasset",
+      "sha256": "f82a8e6c05e08a44cc9f9e7ec5f845935bcbb1b1500ebe8c2f4812fb4e2917dc",
+      "bytes": 9423986
+    },
+    "pose_landmarker_lite.task.mpasset": {
+      "artifactPath": "Payload/FlapFit.app/assets/assets/mediapipe/pose_landmarker_lite.task.mpasset",
+      "sha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+      "bytes": 5777746
+    }
+  },
+  "nativeBuildDiagnostics": {
+    "archiveSucceeded": true,
+    "validateInvoked": true,
+    "compilerErrors": [],
+    "warningCount": 1949,
+    "warningKinds": {
+      "pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]": 132,
+      "declaration is marked with '@deprecated' command but does not have a deprecation attribute [-Wdocumentation-deprecated-sync]": 122,
+      "pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified)": 66,
+      "block pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]": 45,
+      "method possibly missing a [super updateProps:oldProps:] call [-Wobjc-missing-super-calls]": 26,
+      "unused function 'intToRNSVGVBMOS' [-Wunused-function]": 25,
+      "block pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified)": 23,
+      "unused function 'ghSpherical2tilt' [-Wunused-function]": 21,
+      "expression implicitly coerced from 'String?' to 'Any'": 10,
+      "implicit conversion loses integer precision: 'WKDataDetectorTypes' (aka 'unsigned long') to 'RNCWebViewDataDetectorTypesMask' (aka 'unsigned int') [-Wshorten-64-to-32]": 9,
+      "block implicitly retains 'self'; explicitly mention 'self' to indicate this is intended behavior [-Wimplicit-retain-self]": 9,
+      "ISO C++ requires field designators to be specified in declaration order; field 'lockIdentifier' will be initialized after field 'title' [-Wreorder-init-list]": 8,
+      "ISO C++ requires field designators to be specified in declaration order; field 'canGoForward' will be initialized after field 'loading' [-Wreorder-init-list]": 7,
+      "implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'int' [-Wshorten-64-to-32]": 6,
+      "cannot find protocol definition for 'RCTBridgeModule'": 6,
+      "'RCTModalHostView' is deprecated: This API will be removed along with the legacy architecture.": 6,
+      "a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]": 5,
+      "'WKProcessPool' is deprecated: first deprecated in iOS 15.0 - Creating and using multiple instances of WKProcessPool no longer has any effect. [-Wdeprecated-declarations]": 5,
+      "variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]": 5,
+      "use of protocol 'Record' as a type must be written 'any Record'; this will be an error in a future Swift language mode": 5
+    },
+    "privacyRelatedWarnings": [],
+    "workerEvidence": {
+      "Xcode 26.6 (17F113)": true,
+      "EAS_BUILD_PROFILE=ios-device-check": true,
+      "EXPO_PUBLIC_ADS_MODE=test": true,
+      "RevenueCat 5.88.0 consent fence verified (10 files patched).": true,
+      "RevenueCat native fence: cold launch, active cancellation, persistent purge, stale generation rejection and fresh grant passed.": true,
+      "RevenueCat native fence: separate-process relaunch starts closed and purges retained event files.": true,
+      "UMP native nullable GDPR and independent P1/P7 checks passed without advertising initialization.": true,
+      "Retained the actual signed Xcode archive as a separate EAS artifact.": true
+    },
+    "logs": [
+      {
+        "filename": "FlapFit-task8-04cf2e97-xcode.log",
+        "sha256": "cf2723519618047bef549d1d9604fdc2a38c1048a3d1ca992d3cc002fe55d162"
+      },
+      {
+        "filename": "FlapFit-task8-04cf2e97-build-0.log",
+        "sha256": "cf2723519618047bef549d1d9604fdc2a38c1048a3d1ca992d3cc002fe55d162"
+      },
+      {
+        "filename": "FlapFit-task8-04cf2e97-build-1.log",
+        "sha256": "d045d22dc7ca10d9228c17de84d7a7a7ff77354223dc7dfd4f0820168a425fc1"
+      }
+    ],
+    "expoDoctor": {
+      "passed": 19,
+      "total": 21,
+      "failedChecks": [
+        ".expo directory reported not ignored in worker package",
+        "Seven Expo patch versions differ from Doctor recommendations"
+      ],
+      "disposition": {
+        "gitignore": "Actual source apps/mobile/.gitignore ignores .expo. The existing .easignore omits .gitignore but separately excludes **/.expo; package exclusions verified independently. This worker warning is retained, not counted as a pass.",
+        "versions": "Locked dependencies preserved; no upgrade performed. Archive/native validation succeeded with these versions. Patch recommendations remain explicit diagnostics; no observed compilation failure is hidden."
+      }
+    }
+  },
+  "configuredDataFlowReconciliation": {
+    "savedAppPrivacyCategoryCount": 12,
+    "worksheet": "docs/release/four-country-app-privacy-answers.md",
+    "appOwnedManifestNowCoversAllNineReviewedTypesAndPurposes": true,
+    "genericSdkTrackingAndPurchaseCapabilitiesNotTreatedAsRuntimeCollection": true,
+    "googleNoTrackingConfigurationArtifactEvidence": "Delayed measurement, no ATT permission, patched publisher-ID/UMP bridge, NPA/RDP bundle markers and verified unchanged source. Physical/provider behavior remains open.",
+    "revenueCatAdsOnlyEvidence": "Real SDK/key and ad-event routes retained; ten-file pinned processing patch and worker native harness passed. No genuine provider receipt claimed.",
+    "published": null,
+    "publicationStatus": "Not independently verified; no publication performed."
+  },
+  "xcodeOrganizerPdf": {
+    "status": "DEFERRED",
+    "generated": false,
+    "ownerDisposition": "Separate PDF evidence method deferred for this release. Actual artifact/required-reason/permission/data-flow/privacy reconciliation retained."
+  },
+  "notEstablished": [
+    "installed-device acceptance",
+    "genuine RevenueCat receipt",
+    "Store-distribution artifact equivalence",
+    "Apple upload validation/processing",
+    "submission readiness"
+  ],
+  "acceptanceReady": false,
+  "supersededForFinalAcceptance": "This source predates the review-driven competition eligibility/withdrawal wiring. Its inspected manifest/native inputs are evidence for this artifact only."
+}
