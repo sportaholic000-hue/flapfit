@@ -1,0 +1,2413 @@
+{
+  "checkedAt": "2026-09-20T20:55:57.646356+00:00",
+  "commit": "30dffe412a08d13a8e836d7b8abd19eac24470ef",
+  "method": "Raw git blob bytes versus retained actual EAS archive bytes and recorded SHA-256; normalization replaces CRLF with LF only, never whitespace/content.",
+  "counts": {
+    "exact": 246,
+    "lineEndingsOnly": 38,
+    "contentDifference": 0
+  },
+  "fourFiles": [
+    {
+      "path": "apps/mobile/app.config.js",
+      "classification": "lineEndingsOnly",
+      "commit": {
+        "CRLF": 0,
+        "bareLF": 28,
+        "bareCR": 0,
+        "bytes": 1096,
+        "sha256": "b13399db052a7575237f46be96ac98bf8014e737b846adeaf05f007730c280e7"
+      },
+      "retainedPackage": {
+        "CRLF": 3,
+        "bareLF": 25,
+        "bareCR": 0,
+        "bytes": 1099,
+        "sha256": "4ab8674298266e90553fb35068b47e5e4db1ed627cee17b9ffbeb7ce71c9091b"
+      },
+      "checkout": {
+        "CRLF": 3,
+        "bareLF": 25,
+        "bareCR": 0,
+        "bytes": 1099,
+        "sha256": "4ab8674298266e90553fb35068b47e5e4db1ed627cee17b9ffbeb7ce71c9091b"
+      },
+      "packageHashMatchesRecorded": true,
+      "normalizedBytesEqual": true,
+      "normalizedSha256": "b13399db052a7575237f46be96ac98bf8014e737b846adeaf05f007730c280e7"
+    },
+    {
+      "path": "apps/mobile/script/build_and_run.sh",
+      "classification": "lineEndingsOnly",
+      "commit": {
+        "CRLF": 0,
+        "bareLF": 103,
+        "bareCR": 0,
+        "bytes": 2331,
+        "sha256": "e4dda3ea4c3d13bb0dbca20ad5e38c9388f32c6b75bb2e1f95c190b8cac319a3"
+      },
+      "retainedPackage": {
+        "CRLF": 1,
+        "bareLF": 102,
+        "bareCR": 0,
+        "bytes": 2332,
+        "sha256": "5e6dfc984f63b291852f7a49d258637eb762ff53ac0f0c1da10f2ad3556fbe97"
+      },
+      "checkout": {
+        "CRLF": 1,
+        "bareLF": 102,
+        "bareCR": 0,
+        "bytes": 2332,
+        "sha256": "5e6dfc984f63b291852f7a49d258637eb762ff53ac0f0c1da10f2ad3556fbe97"
+      },
+      "packageHashMatchesRecorded": true,
+      "normalizedBytesEqual": true,
+      "normalizedSha256": "e4dda3ea4c3d13bb0dbca20ad5e38c9388f32c6b75bb2e1f95c190b8cac319a3"
+    },
+    {
+      "path": "apps/mobile/src/app/_layout.tsx",
+      "classification": "lineEndingsOnly",
+      "commit": {
+        "CRLF": 0,
+        "bareLF": 79,
+        "bareCR": 0,
+        "bytes": 2214,
+        "sha256": "7d31a64141fce4a8f0a462d4c1b639e8fff873595677337a4d6dcf6fc07898b0"
+      },
+      "retainedPackage": {
+        "CRLF": 2,
+        "bareLF": 77,
+        "bareCR": 0,
+        "bytes": 2216,
+        "sha256": "068e68210202baaa980a5c0b5993a395f6d03f8a837ed06b4b3a10a98d405838"
+      },
+      "checkout": {
+        "CRLF": 2,
+        "bareLF": 77,
+        "bareCR": 0,
+        "bytes": 2216,
+        "sha256": "068e68210202baaa980a5c0b5993a395f6d03f8a837ed06b4b3a10a98d405838"
+      },
+      "packageHashMatchesRecorded": true,
+      "normalizedBytesEqual": true,
+      "normalizedSha256": "7d31a64141fce4a8f0a462d4c1b639e8fff873595677337a4d6dcf6fc07898b0"
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/camera-preview.test.ts",
+      "classification": "lineEndingsOnly",
+      "commit": {
+        "CRLF": 0,
+        "bareLF": 72,
+        "bareCR": 0,
+        "bytes": 4581,
+        "sha256": "4489d274e51cc906d1670f5531c053bcff74e15a725fd12030041646aa67d25c"
+      },
+      "retainedPackage": {
+        "CRLF": 1,
+        "bareLF": 71,
+        "bareCR": 0,
+        "bytes": 4582,
+        "sha256": "c39094f39669199fcbf825bf6466d39d5ba78e5e9eff31b5472af6d66c593a03"
+      },
+      "checkout": {
+        "CRLF": 1,
+        "bareLF": 71,
+        "bareCR": 0,
+        "bytes": 4582,
+        "sha256": "c39094f39669199fcbf825bf6466d39d5ba78e5e9eff31b5472af6d66c593a03"
+      },
+      "packageHashMatchesRecorded": true,
+      "normalizedBytesEqual": true,
+      "normalizedSha256": "4489d274e51cc906d1670f5531c053bcff74e15a725fd12030041646aa67d25c"
+    }
+  ],
+  "allInputs": [
+    {
+      "path": ".easignore",
+      "recordedPackageSha256": "1a189d3b76990662b67ee97a5ef52a61a02110e27aa786acfbb6cff66f6d562c",
+      "commitBlobSha256": "cc5229b1f1cd3faa4b0ebd16b212ad3e7f8fdf029a78872704c26c42e0a8ec32",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "cc5229b1f1cd3faa4b0ebd16b212ad3e7f8fdf029a78872704c26c42e0a8ec32",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": ".yarn/patches/decode-uri-component-npm-0.2.2-flapfit.patch",
+      "recordedPackageSha256": "8205dd3564af0d958ccf9034df81f3d36095b91d2a88765374caae47b0a5eeb7",
+      "commitBlobSha256": "8205dd3564af0d958ccf9034df81f3d36095b91d2a88765374caae47b0a5eeb7",
+      "classification": "exact",
+      "normalizedSha256": "8205dd3564af0d958ccf9034df81f3d36095b91d2a88765374caae47b0a5eeb7",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": ".yarn/patches/expo-sms-npm-57.0.2-32281c0cc4.patch",
+      "recordedPackageSha256": "f16d26c32bb2bff3d79a01b02de0a0299c05de3b14c761c25e4925a430f02a9a",
+      "commitBlobSha256": "f16d26c32bb2bff3d79a01b02de0a0299c05de3b14c761c25e4925a430f02a9a",
+      "classification": "exact",
+      "normalizedSha256": "f16d26c32bb2bff3d79a01b02de0a0299c05de3b14c761c25e4925a430f02a9a",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": ".yarn/patches/react-native-google-mobile-ads-npm-16.5.0-flapfit.patch",
+      "recordedPackageSha256": "1e24b208c0bf2ae2c126f497cbf07f41250581c007ace2bf9a84fa1c3da01d5f",
+      "commitBlobSha256": "1e24b208c0bf2ae2c126f497cbf07f41250581c007ace2bf9a84fa1c3da01d5f",
+      "classification": "exact",
+      "normalizedSha256": "1e24b208c0bf2ae2c126f497cbf07f41250581c007ace2bf9a84fa1c3da01d5f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": ".yarnrc.yml",
+      "recordedPackageSha256": "52d8c88a00f313398c76e12fbd086245628f7a25a597e1ae4ba6dfaf477dd325",
+      "commitBlobSha256": "52d8c88a00f313398c76e12fbd086245628f7a25a597e1ae4ba6dfaf477dd325",
+      "classification": "exact",
+      "normalizedSha256": "52d8c88a00f313398c76e12fbd086245628f7a25a597e1ae4ba6dfaf477dd325",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/.eas/workflows/register-apple-test-devices.yml",
+      "recordedPackageSha256": "f4cd9cf6460d68d0f0f23b58798387c1a885c6b09d15f7852f01d8c85f255822",
+      "commitBlobSha256": "f4cd9cf6460d68d0f0f23b58798387c1a885c6b09d15f7852f01d8c85f255822",
+      "classification": "exact",
+      "normalizedSha256": "f4cd9cf6460d68d0f0f23b58798387c1a885c6b09d15f7852f01d8c85f255822",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/.easignore",
+      "recordedPackageSha256": "fd7f4d9714d15411c53043653cb36f928eb21d8e88e74eaadae508c623332127",
+      "commitBlobSha256": "fd7f4d9714d15411c53043653cb36f928eb21d8e88e74eaadae508c623332127",
+      "classification": "exact",
+      "normalizedSha256": "fd7f4d9714d15411c53043653cb36f928eb21d8e88e74eaadae508c623332127",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/.env.example",
+      "recordedPackageSha256": "fdcaf50fb0212748e6cd6309ff43f7381ac320517ecaf615af4882cf3cf331fc",
+      "commitBlobSha256": "fdcaf50fb0212748e6cd6309ff43f7381ac320517ecaf615af4882cf3cf331fc",
+      "classification": "exact",
+      "normalizedSha256": "fdcaf50fb0212748e6cd6309ff43f7381ac320517ecaf615af4882cf3cf331fc",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/app.config.js",
+      "recordedPackageSha256": "4ab8674298266e90553fb35068b47e5e4db1ed627cee17b9ffbeb7ce71c9091b",
+      "commitBlobSha256": "b13399db052a7575237f46be96ac98bf8014e737b846adeaf05f007730c280e7",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "b13399db052a7575237f46be96ac98bf8014e737b846adeaf05f007730c280e7",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/app.json",
+      "recordedPackageSha256": "edcd58ede15abe31c4a79dabb87cb56441701ba1e5ed994ace83ad4085cce637",
+      "commitBlobSha256": "7a760493ebee798253a407ce4c13aa363918d67e0268ec58935ccdd0cf68391d",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "7a760493ebee798253a407ce4c13aa363918d67e0268ec58935ccdd0cf68391d",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/adaptive-icon.png",
+      "recordedPackageSha256": "2159f38aff29b9f86af2d2c73228ce666ece196605b73b6fae464deeceabf487",
+      "commitBlobSha256": "2159f38aff29b9f86af2d2c73228ce666ece196605b73b6fae464deeceabf487",
+      "classification": "exact",
+      "normalizedSha256": "f7d7a042971a3bb0722cb62484596f33e524ffcf5c931436feda5dcb3e54b9a5",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/kiwi/stage-01.png",
+      "recordedPackageSha256": "71501ce43a574b9e55074704ce825bf85ad2c6e10d2ee3159fa7b9d1410bea00",
+      "commitBlobSha256": "71501ce43a574b9e55074704ce825bf85ad2c6e10d2ee3159fa7b9d1410bea00",
+      "classification": "exact",
+      "normalizedSha256": "7eca821dc34262042fb1e8a30b9a16464121d5b32ef703e7afaa03e2c37098d6",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/kiwi/stage-02.png",
+      "recordedPackageSha256": "34d0fdc08a9a884926b9651651df500d3c15971a92510bf1e409dacfd7f6aa4b",
+      "commitBlobSha256": "34d0fdc08a9a884926b9651651df500d3c15971a92510bf1e409dacfd7f6aa4b",
+      "classification": "exact",
+      "normalizedSha256": "7c96dd097b899454690b47b2420bb49946a3827d9467d2a5514855de446320cc",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/kiwi/stage-03.png",
+      "recordedPackageSha256": "b5f74484a3424646fcc0a7696864e2415d91a8381d6151555bff4807df0cc452",
+      "commitBlobSha256": "b5f74484a3424646fcc0a7696864e2415d91a8381d6151555bff4807df0cc452",
+      "classification": "exact",
+      "normalizedSha256": "8b6519cf337d6c081c761c38b0323b83fc7fcbc264bc3823a52af9b877ec337f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/kiwi/stage-04.png",
+      "recordedPackageSha256": "607c08bf317edad3e89b567b7d611ae072f3d7f18604baa90598afbd356d47fb",
+      "commitBlobSha256": "607c08bf317edad3e89b567b7d611ae072f3d7f18604baa90598afbd356d47fb",
+      "classification": "exact",
+      "normalizedSha256": "7898cb805a2d8bd77f30295c9fa1a3217885e48b7714767a4de5cf067f1ba490",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/kiwi/stage-05.png",
+      "recordedPackageSha256": "c3a6ddbd94a381ba0d49db68f2507f2ea686ffac4f703394b4821d438c0a8a11",
+      "commitBlobSha256": "c3a6ddbd94a381ba0d49db68f2507f2ea686ffac4f703394b4821d438c0a8a11",
+      "classification": "exact",
+      "normalizedSha256": "f2013f4c590e19489df0dabb96ad52a217d44a62ef590b85f5cfc165ab08f12c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/kiwi/stage-06.png",
+      "recordedPackageSha256": "c04fcf43b5c96cca661807c7476c190c751a16a5fa48434ae3f7e015c76f82d0",
+      "commitBlobSha256": "c04fcf43b5c96cca661807c7476c190c751a16a5fa48434ae3f7e015c76f82d0",
+      "classification": "exact",
+      "normalizedSha256": "acd0547fdfb9de4f52446a3bda68eebe2888188c3491ec10b952ec246a95b179",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/kiwi/stage-07.png",
+      "recordedPackageSha256": "63c4dc62e9359634ad2a0ad8e7dfe13c226a1e0ce94db9b0ae96cfca16f12cda",
+      "commitBlobSha256": "63c4dc62e9359634ad2a0ad8e7dfe13c226a1e0ce94db9b0ae96cfca16f12cda",
+      "classification": "exact",
+      "normalizedSha256": "8678089ab60b0ad7ad8a5af0c165bb8ec039de51d4bf2c90f2871b190e6f669c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/kiwi/stage-08.png",
+      "recordedPackageSha256": "8050359baf2f3b634ee8abc1506e2e190ebe3473ba000a4329a463ee157bb12c",
+      "commitBlobSha256": "8050359baf2f3b634ee8abc1506e2e190ebe3473ba000a4329a463ee157bb12c",
+      "classification": "exact",
+      "normalizedSha256": "4f8c17e3e553ea4a4b2df366a16858fd7de1a48af7264e315f750b271a6799ab",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/kiwi/stage-09.png",
+      "recordedPackageSha256": "abbf91207b17dec513a22550edbeedc31a9aa0b7bf03c347a3f82038aafd43c4",
+      "commitBlobSha256": "abbf91207b17dec513a22550edbeedc31a9aa0b7bf03c347a3f82038aafd43c4",
+      "classification": "exact",
+      "normalizedSha256": "198c8dedcef2144a96995a2a99ec6601234e06057a5fe36f2110f7f9a0b093a3",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/kiwi/stage-10.png",
+      "recordedPackageSha256": "7c6465350ccf7013e383e9d71b403da51dcabc607f9a936b9127fc745e1cba7e",
+      "commitBlobSha256": "7c6465350ccf7013e383e9d71b403da51dcabc607f9a936b9127fc745e1cba7e",
+      "classification": "exact",
+      "normalizedSha256": "49f4d9c489a3e1a11cd8898bcbde8f0a81954228e30f405ac8b3f2c9e3222199",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/onyx/stage-01.png",
+      "recordedPackageSha256": "3008c57b50a279b523066a9a389f8f155c1e21d006b4395001ede0c2d30579d5",
+      "commitBlobSha256": "3008c57b50a279b523066a9a389f8f155c1e21d006b4395001ede0c2d30579d5",
+      "classification": "exact",
+      "normalizedSha256": "ab418bb58b541edccd38e47dee9c6dba685148a27a3be5d030edc98848ae6790",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/onyx/stage-02.png",
+      "recordedPackageSha256": "9f7b92bce577c0a75ca0de129ad1b5fd74766d2b4486cfd008a8f3215a64f0ad",
+      "commitBlobSha256": "9f7b92bce577c0a75ca0de129ad1b5fd74766d2b4486cfd008a8f3215a64f0ad",
+      "classification": "exact",
+      "normalizedSha256": "8e149ddfe0c076065f1f77259419a5b267406df1d2642e50f3aca76ff5bc0fdd",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/onyx/stage-03.png",
+      "recordedPackageSha256": "f1a7501d2cde29c46d6acffd9d43664760a600f94b831bb0ff420f7f333a8a52",
+      "commitBlobSha256": "f1a7501d2cde29c46d6acffd9d43664760a600f94b831bb0ff420f7f333a8a52",
+      "classification": "exact",
+      "normalizedSha256": "b0743deae891bc7f3f56f8c1ee320ad6ddc133d1134475b6fae217f62df4a2a9",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/onyx/stage-04.png",
+      "recordedPackageSha256": "d303fe4d8b9d1ed80c3234f0bfb4c95ca75c94bbdf80e46f4fb2a370dbbeb9be",
+      "commitBlobSha256": "d303fe4d8b9d1ed80c3234f0bfb4c95ca75c94bbdf80e46f4fb2a370dbbeb9be",
+      "classification": "exact",
+      "normalizedSha256": "831e909fcdfa1fd66b5ad0fb5a928070755f5e5afedcf75e01f1139a655d4791",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/onyx/stage-05.png",
+      "recordedPackageSha256": "00c7f1b0186aeb619af96843e92357624c94220a8c565b1f971f8a1bb0b52473",
+      "commitBlobSha256": "00c7f1b0186aeb619af96843e92357624c94220a8c565b1f971f8a1bb0b52473",
+      "classification": "exact",
+      "normalizedSha256": "3798f33d6a75f44d8ed1a977fd884237e1c29cda0b077aee9805b074a92298a6",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/onyx/stage-06.png",
+      "recordedPackageSha256": "d332834721a9147c54b946b3c00b8c2b24e44e30bf88f3fc399c3726aaf3a7e5",
+      "commitBlobSha256": "d332834721a9147c54b946b3c00b8c2b24e44e30bf88f3fc399c3726aaf3a7e5",
+      "classification": "exact",
+      "normalizedSha256": "74d83642a9908431653060b24d100bde4467c455fe943ea53eb0c635982d1fe5",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/onyx/stage-07.png",
+      "recordedPackageSha256": "43cce2f7b40b74c0f864de6a3ec3942ee520abddad42b1d73124b74c85ff4196",
+      "commitBlobSha256": "43cce2f7b40b74c0f864de6a3ec3942ee520abddad42b1d73124b74c85ff4196",
+      "classification": "exact",
+      "normalizedSha256": "45e2baca7a497530eb9a52d26faac42166d4e2522971ebe121d0302c871f7ee5",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/onyx/stage-08.png",
+      "recordedPackageSha256": "e3f767dc1554589e12705820492656a55c8b36908a282d9b037a624785d9f04c",
+      "commitBlobSha256": "e3f767dc1554589e12705820492656a55c8b36908a282d9b037a624785d9f04c",
+      "classification": "exact",
+      "normalizedSha256": "426e9ff00c311fb51ba59190e56fd834232d222428a548d7dd3b44da850866cf",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/onyx/stage-09.png",
+      "recordedPackageSha256": "a07a44b3e81e0d5d8c02fbf7bffdc1e6c89f5905aa5c42817f5dc0e58a8d882a",
+      "commitBlobSha256": "a07a44b3e81e0d5d8c02fbf7bffdc1e6c89f5905aa5c42817f5dc0e58a8d882a",
+      "classification": "exact",
+      "normalizedSha256": "25915ccb7cad769608ee5d4bcd0f2fe063c0c5be8b02032bd8d45cdfb473ded4",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/onyx/stage-10.png",
+      "recordedPackageSha256": "392c21eaa5e10ed29addafafbe0f3631809e2477b160353e6804740acdf50aaa",
+      "commitBlobSha256": "392c21eaa5e10ed29addafafbe0f3631809e2477b160353e6804740acdf50aaa",
+      "classification": "exact",
+      "normalizedSha256": "2847b465860b476e6837a207f6812f63a913b343f6b9f7e119c6d873d35e8750",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/pearl/stage-01.png",
+      "recordedPackageSha256": "8dbd9181c36bc02f1c35dc5c04ea6f1b0324f28d3731cfe30aad0d313dd51cf4",
+      "commitBlobSha256": "8dbd9181c36bc02f1c35dc5c04ea6f1b0324f28d3731cfe30aad0d313dd51cf4",
+      "classification": "exact",
+      "normalizedSha256": "72c7f4814771bc0bfa1e800b9d93132c31d5456af8097254483af6b50a71aeb8",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/pearl/stage-02.png",
+      "recordedPackageSha256": "12ee1241793478c6c5df17ee045389c825b157815763224fbfd9a7c132550982",
+      "commitBlobSha256": "12ee1241793478c6c5df17ee045389c825b157815763224fbfd9a7c132550982",
+      "classification": "exact",
+      "normalizedSha256": "963be1fa8ceab334cc340ac8dde0ce4709cc2f73211f9da4ccc9529a681eef2f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/pearl/stage-03.png",
+      "recordedPackageSha256": "0b0d039b97db503c2f67b2c204eeeedc65d8457dc6718d38bf8f4a8a79d0bb93",
+      "commitBlobSha256": "0b0d039b97db503c2f67b2c204eeeedc65d8457dc6718d38bf8f4a8a79d0bb93",
+      "classification": "exact",
+      "normalizedSha256": "d60726f08ebc8cc2460d6eb2c9fb25723182ed1093fb2c5b23a3e9033ec47c07",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/pearl/stage-04.png",
+      "recordedPackageSha256": "f491b0be43f5b70f66c930e23e946025f1a094b67fad8401150731a421369a79",
+      "commitBlobSha256": "f491b0be43f5b70f66c930e23e946025f1a094b67fad8401150731a421369a79",
+      "classification": "exact",
+      "normalizedSha256": "8f3bde1dc648f922ff8504e31fb12d0ff82253c6d2239b81b0803949bc2e8c49",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/pearl/stage-05.png",
+      "recordedPackageSha256": "672c5571c46041806014d5a677262c9c2ea1730145099a04458b39631a90cf20",
+      "commitBlobSha256": "672c5571c46041806014d5a677262c9c2ea1730145099a04458b39631a90cf20",
+      "classification": "exact",
+      "normalizedSha256": "f13787d4c316802fc98e5c02a3712d704fe0edb66551e8bdc1aafd77f2ac9e64",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/pearl/stage-06.png",
+      "recordedPackageSha256": "fc42cac4ba341fe5128243c3abcd1c7c8da2e383bdeb5aaf30a6d08882fe5210",
+      "commitBlobSha256": "fc42cac4ba341fe5128243c3abcd1c7c8da2e383bdeb5aaf30a6d08882fe5210",
+      "classification": "exact",
+      "normalizedSha256": "242c99e81c87df5a03d61d98ef8db3772f54634e40513f60cd19796de20ea0c1",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/pearl/stage-07.png",
+      "recordedPackageSha256": "9af53dcc5b310d3162c5691f32a9c4fe0f2cf57342a7e2af5c13349cda5555f8",
+      "commitBlobSha256": "9af53dcc5b310d3162c5691f32a9c4fe0f2cf57342a7e2af5c13349cda5555f8",
+      "classification": "exact",
+      "normalizedSha256": "f843d800a82dc6e60c8b2b211f87f177601464397f9f002590e7c8d9dacb609b",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/pearl/stage-08.png",
+      "recordedPackageSha256": "6061e142c6d812e9fc57684b3c0f2154a1b61831f04bae13e51d844b22c93e5a",
+      "commitBlobSha256": "6061e142c6d812e9fc57684b3c0f2154a1b61831f04bae13e51d844b22c93e5a",
+      "classification": "exact",
+      "normalizedSha256": "72c942764696f116bab6027639746758957f5f3bfa6f8f21dae0925a0167f3e2",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/pearl/stage-09.png",
+      "recordedPackageSha256": "f4eb1eb232759f0d388b61d402f9e2d48dde3a6a17bd8db147bf182deb702293",
+      "commitBlobSha256": "f4eb1eb232759f0d388b61d402f9e2d48dde3a6a17bd8db147bf182deb702293",
+      "classification": "exact",
+      "normalizedSha256": "68059076bf4ec90dcd34bad3a9bae0d0397a6b18855221afdc906822862c250f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/pearl/stage-10.png",
+      "recordedPackageSha256": "e97661bc5121f3cc753e9be9a1f8d7df80173399fe332f8cbad5395e8bf17c93",
+      "commitBlobSha256": "e97661bc5121f3cc753e9be9a1f8d7df80173399fe332f8cbad5395e8bf17c93",
+      "classification": "exact",
+      "normalizedSha256": "a32feea4133490ee318f90d591cf24e5a2d244e22fc5b9ae835fb25037422ed0",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/ruby/stage-01.png",
+      "recordedPackageSha256": "1da20cd049d3a93312e7bbb5d60663fcb661a2678f9a573b2fb91e98c76f3681",
+      "commitBlobSha256": "1da20cd049d3a93312e7bbb5d60663fcb661a2678f9a573b2fb91e98c76f3681",
+      "classification": "exact",
+      "normalizedSha256": "74cdb0a50ae8dad8e0de59f22063299af33bd929d3af836e39d764e51f3605bb",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/ruby/stage-02.png",
+      "recordedPackageSha256": "e491aecaca684dc5b1377822bbbf8ef3ab392f06c156f2e6ee62e8c1c3247491",
+      "commitBlobSha256": "e491aecaca684dc5b1377822bbbf8ef3ab392f06c156f2e6ee62e8c1c3247491",
+      "classification": "exact",
+      "normalizedSha256": "db42df833853f6dc201bdac2e18bf31f290cf6119f53ac6a07af4dc1bd588179",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/ruby/stage-03.png",
+      "recordedPackageSha256": "ae58411df555fd2e50466f9df152148788c5909b03bf5d43daa822bccb9050f5",
+      "commitBlobSha256": "ae58411df555fd2e50466f9df152148788c5909b03bf5d43daa822bccb9050f5",
+      "classification": "exact",
+      "normalizedSha256": "24b43dac4aa2af5aa5d987be1e1c6e60e62bd7055e5baa0e70335d3065aa6168",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/ruby/stage-04.png",
+      "recordedPackageSha256": "f82c33f9e3a6cd78ae5d6c60d3d8d8a1f3d7078b54828e05bbf7fab841baf091",
+      "commitBlobSha256": "f82c33f9e3a6cd78ae5d6c60d3d8d8a1f3d7078b54828e05bbf7fab841baf091",
+      "classification": "exact",
+      "normalizedSha256": "85fe6268d8d7fa98b709643bb93eedfc2f46c0aa1bbce10a27d210a093a13edd",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/ruby/stage-05.png",
+      "recordedPackageSha256": "3bdbd070dcf85679d17b4f60184b18dea9c66ee36448821a40ab5a402d59db1e",
+      "commitBlobSha256": "3bdbd070dcf85679d17b4f60184b18dea9c66ee36448821a40ab5a402d59db1e",
+      "classification": "exact",
+      "normalizedSha256": "36d968e3ebf69685ad8976517a8eb57cfe375edae2302773f732dafa3be46282",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/ruby/stage-06.png",
+      "recordedPackageSha256": "16117273def134b4dc142128f4026b19d7f38ba180ee4f030afadcdd9b0e927a",
+      "commitBlobSha256": "16117273def134b4dc142128f4026b19d7f38ba180ee4f030afadcdd9b0e927a",
+      "classification": "exact",
+      "normalizedSha256": "1d586ab5aaa222bf9e194b13d3406b1b8439c24f93d6970dc82597847b1267c2",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/ruby/stage-07.png",
+      "recordedPackageSha256": "e86015588eed3c54da37ef85fe82f30a374e70c51dba1f51f30038a0be8702d9",
+      "commitBlobSha256": "e86015588eed3c54da37ef85fe82f30a374e70c51dba1f51f30038a0be8702d9",
+      "classification": "exact",
+      "normalizedSha256": "e849d56231649ab11458ab116bbc8206820479b89b87b3029c82848e7bdcf5fa",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/ruby/stage-08.png",
+      "recordedPackageSha256": "699c061e103036bcafb65534b88a01c549c2fb860c3f0fbcf61fd22ce7a2b02d",
+      "commitBlobSha256": "699c061e103036bcafb65534b88a01c549c2fb860c3f0fbcf61fd22ce7a2b02d",
+      "classification": "exact",
+      "normalizedSha256": "35d957e21e096c45a90a3680dd163809ab193c1c408ca274bcaf81ebda1bfec3",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/ruby/stage-09.png",
+      "recordedPackageSha256": "3e157cbf71af25f189053b47428392054bb5fbeaa89809d334f9f0c46061684a",
+      "commitBlobSha256": "3e157cbf71af25f189053b47428392054bb5fbeaa89809d334f9f0c46061684a",
+      "classification": "exact",
+      "normalizedSha256": "879bc8455b95536d61ee072daadc7862d3bd41c90c02396f1692db2c25464ec1",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/ruby/stage-10.png",
+      "recordedPackageSha256": "666c5a2a1d44de8d36479679a5c3ca13a3be224d652f946ba949dbbfc0723a77",
+      "commitBlobSha256": "666c5a2a1d44de8d36479679a5c3ca13a3be224d652f946ba949dbbfc0723a77",
+      "classification": "exact",
+      "normalizedSha256": "8a63c9ba72a6b3f7041c6ef874fe659b486c643dbddc21bb82f1b093c07cc6dc",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sky/stage-01.png",
+      "recordedPackageSha256": "00383f305275e377689320ad2f8e8df159c8d7f2ec29e9f0dca956eaf3c6506f",
+      "commitBlobSha256": "00383f305275e377689320ad2f8e8df159c8d7f2ec29e9f0dca956eaf3c6506f",
+      "classification": "exact",
+      "normalizedSha256": "2af74a18ee84b19340125bad7ccf51cb1b9c18a4a5de3f30533fff146f9e76d9",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sky/stage-02.png",
+      "recordedPackageSha256": "013a3dbc91865bd4e171d32a4aa6327ea17cd34dac4b86f98259a21192348a3b",
+      "commitBlobSha256": "013a3dbc91865bd4e171d32a4aa6327ea17cd34dac4b86f98259a21192348a3b",
+      "classification": "exact",
+      "normalizedSha256": "de25b0939e2d6a4f2cc569f2aa863cd270c3447b90a52fde343bfd4ea53e6286",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sky/stage-03.png",
+      "recordedPackageSha256": "bf3ecb4f387c2cd5a2627bbde29892b148dd28734643ecdcede597c0c2fefc20",
+      "commitBlobSha256": "bf3ecb4f387c2cd5a2627bbde29892b148dd28734643ecdcede597c0c2fefc20",
+      "classification": "exact",
+      "normalizedSha256": "c4b29a9c921f2512b76c7fbb1a094b2b1547d5ddba3408592cdc6d653d3b7110",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sky/stage-04.png",
+      "recordedPackageSha256": "d8a32945e7e66d30c5edc47d7f917f7a5faa5a98fa979645ad7f7ec3c125de70",
+      "commitBlobSha256": "d8a32945e7e66d30c5edc47d7f917f7a5faa5a98fa979645ad7f7ec3c125de70",
+      "classification": "exact",
+      "normalizedSha256": "55d94b9bb72e8dd70b72041015819dfbc8ebeccc8764abcef1031b6a937e1324",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sky/stage-05.png",
+      "recordedPackageSha256": "125bee953e6708b016c662c8c9857cd4758fc02545af82ad88ed04db7735cc48",
+      "commitBlobSha256": "125bee953e6708b016c662c8c9857cd4758fc02545af82ad88ed04db7735cc48",
+      "classification": "exact",
+      "normalizedSha256": "06ee9ba3cca497952ec062a1434b99b33a89385c01fb6b729e813661c1759449",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sky/stage-06.png",
+      "recordedPackageSha256": "2e5c362eb0e95aee6de8895b33e0a5190f7879383ae6357694f299c428400376",
+      "commitBlobSha256": "2e5c362eb0e95aee6de8895b33e0a5190f7879383ae6357694f299c428400376",
+      "classification": "exact",
+      "normalizedSha256": "e7e0d4cdf11a453ddb31d8d46488117b60b4569406072a7241f321d18bff97d9",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sky/stage-07.png",
+      "recordedPackageSha256": "cf7266cada5a776d367131919ebd5c41f2bce6e2266cb7da101748500e3adf8b",
+      "commitBlobSha256": "cf7266cada5a776d367131919ebd5c41f2bce6e2266cb7da101748500e3adf8b",
+      "classification": "exact",
+      "normalizedSha256": "d2d0724d4e3188ec2c5afa9d13206194f50103791408e5e52d8acad0ea6d820d",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sky/stage-08.png",
+      "recordedPackageSha256": "4aebf158f54361cee891f4159a239be1e30c4e805556f0c1c625284c41f73963",
+      "commitBlobSha256": "4aebf158f54361cee891f4159a239be1e30c4e805556f0c1c625284c41f73963",
+      "classification": "exact",
+      "normalizedSha256": "230494fe13bafe48219d4803accffabf2ec671b1463fb36de54e23a2db3aa938",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sky/stage-09.png",
+      "recordedPackageSha256": "4f1a3ed66fd4f66c8ff7cf5ab9d868e7fcfaf0c23c5be8f7862ec594f2167914",
+      "commitBlobSha256": "4f1a3ed66fd4f66c8ff7cf5ab9d868e7fcfaf0c23c5be8f7862ec594f2167914",
+      "classification": "exact",
+      "normalizedSha256": "620eb9c2996d8dd866613b68c1efdfcc802f52f730b967f6b749bb107f4f428c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sky/stage-10.png",
+      "recordedPackageSha256": "fa1331ab6f2f70b78d2cf6f4210412aaef8387d20851cdcfc54d1c799c7585a0",
+      "commitBlobSha256": "fa1331ab6f2f70b78d2cf6f4210412aaef8387d20851cdcfc54d1c799c7585a0",
+      "classification": "exact",
+      "normalizedSha256": "5916ac3fb8aca673f70c8ba16cfe36cba7847dd06bbf2a10dcc80bd84edb4af0",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sunny/stage-01.png",
+      "recordedPackageSha256": "54cb7c6492693c77ffb5cbd7515bc4cc704e0f37c68f436ca47a7ae2b6250e46",
+      "commitBlobSha256": "54cb7c6492693c77ffb5cbd7515bc4cc704e0f37c68f436ca47a7ae2b6250e46",
+      "classification": "exact",
+      "normalizedSha256": "a49329877562da0142aabcf373878a6c77de2b2034aa66b35d4fcd69b6a440b3",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sunny/stage-02.png",
+      "recordedPackageSha256": "55e8d783aa948dce13ec52202d8c3b2f215876438201dacf97a949fa3319fcc0",
+      "commitBlobSha256": "55e8d783aa948dce13ec52202d8c3b2f215876438201dacf97a949fa3319fcc0",
+      "classification": "exact",
+      "normalizedSha256": "a066485a9c630900a47baab8718704efee85f0fbbfb8066688c6f9227df7b0a8",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sunny/stage-03.png",
+      "recordedPackageSha256": "e2a9514c5555ef45fa5d12303713c071f4f9d8d6adf06c9d6a9bddb99a4c334c",
+      "commitBlobSha256": "e2a9514c5555ef45fa5d12303713c071f4f9d8d6adf06c9d6a9bddb99a4c334c",
+      "classification": "exact",
+      "normalizedSha256": "378e42fb557f767665067ab710d6fc1f11d66cfc00ac649067452f4c4e43e846",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sunny/stage-04.png",
+      "recordedPackageSha256": "970820f8c169e6615215f6bb29a1a6f5e6038107556bf00d256d066ba38e6738",
+      "commitBlobSha256": "970820f8c169e6615215f6bb29a1a6f5e6038107556bf00d256d066ba38e6738",
+      "classification": "exact",
+      "normalizedSha256": "690b05715b71bc216c7c4716a0fb1b5a29ce261c4d166ec8ac4ffefe6f9d1029",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sunny/stage-05.png",
+      "recordedPackageSha256": "b9aa75ac2e35965a2c0857ff351a8391045cd4afa5ac41b59018507d71ffdd05",
+      "commitBlobSha256": "b9aa75ac2e35965a2c0857ff351a8391045cd4afa5ac41b59018507d71ffdd05",
+      "classification": "exact",
+      "normalizedSha256": "27114cf96a7d9dc66219dbca6a76f81159ed85af1762198d21af549358d9fbb9",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sunny/stage-06.png",
+      "recordedPackageSha256": "7e243961f05031850f2c5aaf671409f37456b3bfd40a5bf41208399f5d1cbf54",
+      "commitBlobSha256": "7e243961f05031850f2c5aaf671409f37456b3bfd40a5bf41208399f5d1cbf54",
+      "classification": "exact",
+      "normalizedSha256": "ea8cd0b4b63518fc370bb50c27b19f71f9d49dbee51fdcc28e38f49d2a118f3f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sunny/stage-07.png",
+      "recordedPackageSha256": "126a5aa35e215d6102802d312a43e25e4b2a32da073ab0f146a5e0f5da76f358",
+      "commitBlobSha256": "126a5aa35e215d6102802d312a43e25e4b2a32da073ab0f146a5e0f5da76f358",
+      "classification": "exact",
+      "normalizedSha256": "8ecc760a0fab2a41cc159c11de2c85bae9c6d4ff9d2643ea3f63f49d51104afd",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sunny/stage-08.png",
+      "recordedPackageSha256": "31ee54cc3960f88c2df976c60a181f39f93eca8cf14e3434a807f102906945c1",
+      "commitBlobSha256": "31ee54cc3960f88c2df976c60a181f39f93eca8cf14e3434a807f102906945c1",
+      "classification": "exact",
+      "normalizedSha256": "66167aa3572ea4d25db6c532140521505b7f4861178d43883eb267bd65c8a48b",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sunny/stage-09.png",
+      "recordedPackageSha256": "72caf72d68d97b1577f489e82f1003dfc2326dc99f4c6bb7d4054477ec344eec",
+      "commitBlobSha256": "72caf72d68d97b1577f489e82f1003dfc2326dc99f4c6bb7d4054477ec344eec",
+      "classification": "exact",
+      "normalizedSha256": "72a37ea284ff110d3ed1992c4bef42248a86bd32b90f3a043280433e43e2e81f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/sunny/stage-10.png",
+      "recordedPackageSha256": "e714e1bdc82eca1809f9676b6a877db37ffae4a7f83c1d8e38874ba6b73fef9f",
+      "commitBlobSha256": "e714e1bdc82eca1809f9676b6a877db37ffae4a7f83c1d8e38874ba6b73fef9f",
+      "classification": "exact",
+      "normalizedSha256": "ca296676c0601a5daafa681ac35e514df499920e67113a5c98a4cedb89bd49a2",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/violet/stage-01.png",
+      "recordedPackageSha256": "4634b8ffbbc1c352d82905128751804cd9add421adc9d6b4c7aa336fd8000b64",
+      "commitBlobSha256": "4634b8ffbbc1c352d82905128751804cd9add421adc9d6b4c7aa336fd8000b64",
+      "classification": "exact",
+      "normalizedSha256": "7446e6943791d761a2a5977cf7af24cbb1e05ff23e63113021cfd87c2a942f82",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/violet/stage-02.png",
+      "recordedPackageSha256": "912f537acac65b29d4be42d9ff057cdcfa6607b0d5b5a36f179e30d8d7f813bc",
+      "commitBlobSha256": "912f537acac65b29d4be42d9ff057cdcfa6607b0d5b5a36f179e30d8d7f813bc",
+      "classification": "exact",
+      "normalizedSha256": "4c80af24e53a4b48311658c8aced44619ef92ae42272f27bbc966b1c502dea32",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/violet/stage-03.png",
+      "recordedPackageSha256": "4b026406db3c9e47ff7a3714298c19b88a5c1f03815c71e807fa9f041fabb15a",
+      "commitBlobSha256": "4b026406db3c9e47ff7a3714298c19b88a5c1f03815c71e807fa9f041fabb15a",
+      "classification": "exact",
+      "normalizedSha256": "8f76d4d0ebaa444ea94b994afe4bc5cb281bf6a1b1f73ec15ed967f23b87beb0",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/violet/stage-04.png",
+      "recordedPackageSha256": "ea8f525b346c1058689df38b8a0b0a9bb8e0f61dc75ebbcce1aa2c0cfd97d62f",
+      "commitBlobSha256": "ea8f525b346c1058689df38b8a0b0a9bb8e0f61dc75ebbcce1aa2c0cfd97d62f",
+      "classification": "exact",
+      "normalizedSha256": "ff5d2c9dd153e74a87559642c8d1af5a8eb65d9b3ee453064f52829a8caba67c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/violet/stage-05.png",
+      "recordedPackageSha256": "756e8a026b37dc35075634a870b90b0dd8bdd6df34d8ba10b693e8a26fe1a44c",
+      "commitBlobSha256": "756e8a026b37dc35075634a870b90b0dd8bdd6df34d8ba10b693e8a26fe1a44c",
+      "classification": "exact",
+      "normalizedSha256": "c71d394bd32578c7b913a1932d3a09a32e0236f46dc975c60fba9a2f727ecb8b",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/violet/stage-06.png",
+      "recordedPackageSha256": "43a0bd65e880cea5b3b55086aa68a0904915cfdef8083f644f1ed79b950152ae",
+      "commitBlobSha256": "43a0bd65e880cea5b3b55086aa68a0904915cfdef8083f644f1ed79b950152ae",
+      "classification": "exact",
+      "normalizedSha256": "69308acab3ba25c3fb9d74267a2469ee04068e7d40f042c12fce2e1956fc2467",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/violet/stage-07.png",
+      "recordedPackageSha256": "2cd909f496a2985181a8f7aff19e264676022ebc77c5e5e83c2ab3d2257f6838",
+      "commitBlobSha256": "2cd909f496a2985181a8f7aff19e264676022ebc77c5e5e83c2ab3d2257f6838",
+      "classification": "exact",
+      "normalizedSha256": "6399cee57cdb4066f4cfe4d786cfadc578b960a4a2d2b5491b1b590860e48284",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/violet/stage-08.png",
+      "recordedPackageSha256": "db74baa7cb022df06487693899028b562ddc070cc91d1cbff32ffef5d2de1a7d",
+      "commitBlobSha256": "db74baa7cb022df06487693899028b562ddc070cc91d1cbff32ffef5d2de1a7d",
+      "classification": "exact",
+      "normalizedSha256": "a711cef3bb33c120e23326a82ea92a6257f5434ee921eefe3c3ef4a141dc12b0",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/violet/stage-09.png",
+      "recordedPackageSha256": "5c8b04e6fddb7010a73b7036b82fd1c0a78e782cb889e71f214214fd5298837e",
+      "commitBlobSha256": "5c8b04e6fddb7010a73b7036b82fd1c0a78e782cb889e71f214214fd5298837e",
+      "classification": "exact",
+      "normalizedSha256": "6293b8f9fcd4b5e46b75d9ddde0d3b4e8ae63a7f015ea606dc47b68b71a898f2",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/evolution/violet/stage-10.png",
+      "recordedPackageSha256": "3ae23b209781f4f5307e77f768d4575fbfb732ff049a0e5218483e7a074dc159",
+      "commitBlobSha256": "3ae23b209781f4f5307e77f768d4575fbfb732ff049a0e5218483e7a074dc159",
+      "classification": "exact",
+      "normalizedSha256": "bb2ef13da23b70456f2550f9751e9c52ded20181d2807bf839827c85bbf99614",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/exercises/biceps.png",
+      "recordedPackageSha256": "f07a201ef4b67f2bf3937a698c1a8793049dea2b06ff65ea333c41704f2c79b2",
+      "commitBlobSha256": "f07a201ef4b67f2bf3937a698c1a8793049dea2b06ff65ea333c41704f2c79b2",
+      "classification": "exact",
+      "normalizedSha256": "9eb4aae5d32d30519aaec6ea6cd97711046a51e18369748c820f3181237b12ab",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/exercises/lateral-raise.png",
+      "recordedPackageSha256": "ba0d1a7b82e9af06048e0029aafef728173a8601d70038731cbfede8264c24d9",
+      "commitBlobSha256": "ba0d1a7b82e9af06048e0029aafef728173a8601d70038731cbfede8264c24d9",
+      "classification": "exact",
+      "normalizedSha256": "029d2eba58ae5353d92c0893c98f4c0c9b58d3726c7ced9a6753493c5260df08",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/exercises/pullups.png",
+      "recordedPackageSha256": "ff1ee56a74fa6c91122ff2772b32f4d27e1594cc28e184179b5adde2d943822e",
+      "commitBlobSha256": "ff1ee56a74fa6c91122ff2772b32f4d27e1594cc28e184179b5adde2d943822e",
+      "classification": "exact",
+      "normalizedSha256": "89e131ffba2033e7adfb71c24d572924bce970dd19edb205ecc890b048411ec2",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/exercises/pushups.png",
+      "recordedPackageSha256": "9fe5df5afbbfec7e30dd489911c2c8cfb8ad8af5a15fd4e4dcedf9fb70102b57",
+      "commitBlobSha256": "9fe5df5afbbfec7e30dd489911c2c8cfb8ad8af5a15fd4e4dcedf9fb70102b57",
+      "classification": "exact",
+      "normalizedSha256": "99de82587d6aaedc782e5080bccb6688c7c6854573096f72913f8070c85e16ff",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/exercises/shoulder-press.png",
+      "recordedPackageSha256": "528c9bae95b13f9f39e53ff9cabb56507cee5b20883fdff5b671007c1e5bb73d",
+      "commitBlobSha256": "528c9bae95b13f9f39e53ff9cabb56507cee5b20883fdff5b671007c1e5bb73d",
+      "classification": "exact",
+      "normalizedSha256": "c3f92fceab80d10686df269c82b2bc37f03d86ce7ff5a0989997ea94baaac11d",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/exercises/squats.png",
+      "recordedPackageSha256": "19d7ff2bbba3db132a6b25ea38a1fa78cb41853d845403f36f737a9650cf0028",
+      "commitBlobSha256": "19d7ff2bbba3db132a6b25ea38a1fa78cb41853d845403f36f737a9650cf0028",
+      "classification": "exact",
+      "normalizedSha256": "864924aad3b49144a702e93328151746df310f36b9a1c6e6ef7c05a84f4c8491",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/favicon.png",
+      "recordedPackageSha256": "fe90f66317198edafb3eea4730cc2099b2ab32a96082364a986e0b327a97df6e",
+      "commitBlobSha256": "fe90f66317198edafb3eea4730cc2099b2ab32a96082364a986e0b327a97df6e",
+      "classification": "exact",
+      "normalizedSha256": "2bdf816ed99f4a8db86615acb506bbcddb28812c9ebc405f5359592475698f78",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/flapfit-splash-logo.png",
+      "recordedPackageSha256": "b2934b4c1f4a5e1d6253636f10442109863fb6643ec4d2e3c0132f2a9b18cb48",
+      "commitBlobSha256": "b2934b4c1f4a5e1d6253636f10442109863fb6643ec4d2e3c0132f2a9b18cb48",
+      "classification": "exact",
+      "normalizedSha256": "7233e3c8a8e29fccca4f1c19c9f6b460014870c89618768cc3ec7e7360043c7c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/icon.png",
+      "recordedPackageSha256": "55ac5ee102521c5a89c9d3b58bd5980608d09d0e7c2e2d2a0dc84575122b99a4",
+      "commitBlobSha256": "55ac5ee102521c5a89c9d3b58bd5980608d09d0e7c2e2d2a0dc84575122b99a4",
+      "classification": "exact",
+      "normalizedSha256": "12d3b03e10a4fe8308f0e6a17ef7bb72b9907d963dfcf6bfc6885a7a714797a5",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/images/splash-icon.png",
+      "recordedPackageSha256": "0acbaaa0bcbad53ce68fd241fb841cd3daedb14f60558406293d12645441ef06",
+      "commitBlobSha256": "0acbaaa0bcbad53ce68fd241fb841cd3daedb14f60558406293d12645441ef06",
+      "classification": "exact",
+      "normalizedSha256": "33841e6fc6fc3272c2a0c59c4eb84c288aa69e5b13437255c4b0d096c35de91c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/mediapipe/pose_landmarker_lite.task.mpasset",
+      "recordedPackageSha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+      "commitBlobSha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+      "classification": "exact",
+      "normalizedSha256": "68df710711bd958ed0326790c538ac4915f36ebc7b7b50c9273ff1f2dde6c8bd",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/mediapipe/vision_bundle.mjs.mpasset",
+      "recordedPackageSha256": "e77f281f9619150d937023c355bae170e9120e3b9e43f1e23a2a7bee07197669",
+      "commitBlobSha256": "e77f281f9619150d937023c355bae170e9120e3b9e43f1e23a2a7bee07197669",
+      "classification": "exact",
+      "normalizedSha256": "e77f281f9619150d937023c355bae170e9120e3b9e43f1e23a2a7bee07197669",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/mediapipe/vision_wasm_internal.js.mpasset",
+      "recordedPackageSha256": "9440cf0cc0cea21800e31581ec32aeedcc5fbf9df4509796bbc7d3f99e52ab9c",
+      "commitBlobSha256": "9440cf0cc0cea21800e31581ec32aeedcc5fbf9df4509796bbc7d3f99e52ab9c",
+      "classification": "exact",
+      "normalizedSha256": "9440cf0cc0cea21800e31581ec32aeedcc5fbf9df4509796bbc7d3f99e52ab9c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/mediapipe/vision_wasm_internal.wasm.mpasset",
+      "recordedPackageSha256": "f82a8e6c05e08a44cc9f9e7ec5f845935bcbb1b1500ebe8c2f4812fb4e2917dc",
+      "commitBlobSha256": "f82a8e6c05e08a44cc9f9e7ec5f845935bcbb1b1500ebe8c2f4812fb4e2917dc",
+      "classification": "exact",
+      "normalizedSha256": "709bc084011711195e388140f9738833bb3a563befcd730a1a9619b93b21cf77",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/mediapipe/vision_wasm_nosimd_internal.js.mpasset",
+      "recordedPackageSha256": "abe9b6fbeaf86fcb53a5edce3926c82ccb0619e18fed4d9d9ce561ee7f55e054",
+      "commitBlobSha256": "abe9b6fbeaf86fcb53a5edce3926c82ccb0619e18fed4d9d9ce561ee7f55e054",
+      "classification": "exact",
+      "normalizedSha256": "abe9b6fbeaf86fcb53a5edce3926c82ccb0619e18fed4d9d9ce561ee7f55e054",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/assets/mediapipe/vision_wasm_nosimd_internal.wasm.mpasset",
+      "recordedPackageSha256": "38b61feab2fd7934e05cbe9f68baa308978a5e3b7f85c1913bb8ae89b8ef8b97",
+      "commitBlobSha256": "38b61feab2fd7934e05cbe9f68baa308978a5e3b7f85c1913bb8ae89b8ef8b97",
+      "classification": "exact",
+      "normalizedSha256": "75b198172f9d7f1b25c2f7d2468bde4c766ced96a901ff0abbf5b4dbf21cd0aa",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/babel.config.js",
+      "recordedPackageSha256": "aa5baa1726a0d5caad8574ab6589e104ebea74cda47206c04e43fde1d3b48c96",
+      "commitBlobSha256": "aa5baa1726a0d5caad8574ab6589e104ebea74cda47206c04e43fde1d3b48c96",
+      "classification": "exact",
+      "normalizedSha256": "aa5baa1726a0d5caad8574ab6589e104ebea74cda47206c04e43fde1d3b48c96",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/config/admob-skadnetwork-ids.json",
+      "recordedPackageSha256": "8939f515c5733e30516641967b56dd9ce9c674f75de4e9a698fa4553d8cb9899",
+      "commitBlobSha256": "8939f515c5733e30516641967b56dd9ce9c674f75de4e9a698fa4553d8cb9899",
+      "classification": "exact",
+      "normalizedSha256": "8939f515c5733e30516641967b56dd9ce9c674f75de4e9a698fa4553d8cb9899",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/design/evolution/EvolutionAssetProcessor.cs",
+      "recordedPackageSha256": "c9d1d265c78529c4282d0b16293e4beb30fd1cdcdb47588c0f6a11e39c287060",
+      "commitBlobSha256": "c9d1d265c78529c4282d0b16293e4beb30fd1cdcdb47588c0f6a11e39c287060",
+      "classification": "exact",
+      "normalizedSha256": "c9d1d265c78529c4282d0b16293e4beb30fd1cdcdb47588c0f6a11e39c287060",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/design/evolution/EvolutionAssetProcessor.dll",
+      "recordedPackageSha256": "a423c6f4c13fda37d8f6d0b3d11a31caff3b34ad643edbc4d3b3fb98c2ea3683",
+      "commitBlobSha256": "a423c6f4c13fda37d8f6d0b3d11a31caff3b34ad643edbc4d3b3fb98c2ea3683",
+      "classification": "exact",
+      "normalizedSha256": "a559cac4d4f9813fbbb2d0b5f60d16a4e46fc76f421ac6f5eccd6290f5d4929e",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/design/evolution/New-EvolutionContactSheet.ps1",
+      "recordedPackageSha256": "9026d7e5255adc87ae889f917713d29433dc6c7d965bc61517fcc068a5fd8912",
+      "commitBlobSha256": "9026d7e5255adc87ae889f917713d29433dc6c7d965bc61517fcc068a5fd8912",
+      "classification": "exact",
+      "normalizedSha256": "9026d7e5255adc87ae889f917713d29433dc6c7d965bc61517fcc068a5fd8912",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/design/evolution/Test-EvolutionAssets.ps1",
+      "recordedPackageSha256": "272540bac54771cd7cba521ab1462e761e0c4bab771d06829cca948f30590a77",
+      "commitBlobSha256": "272540bac54771cd7cba521ab1462e761e0c4bab771d06829cca948f30590a77",
+      "classification": "exact",
+      "normalizedSha256": "272540bac54771cd7cba521ab1462e761e0c4bab771d06829cca948f30590a77",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/design/evolution/build-evolution-assets.ps1",
+      "recordedPackageSha256": "0320ad1d99ace845808e1c19a85028f9a31eab42981826c405773bad423a2d0d",
+      "commitBlobSha256": "0320ad1d99ace845808e1c19a85028f9a31eab42981826c405773bad423a2d0d",
+      "classification": "exact",
+      "normalizedSha256": "0320ad1d99ace845808e1c19a85028f9a31eab42981826c405773bad423a2d0d",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/design/evolution/preview-sunny-stages-01-10.png",
+      "recordedPackageSha256": "b982ff44eaf0f3c04460ec566556b4258a590e034199ded9f06e36ba4f5d3b9c",
+      "commitBlobSha256": "b982ff44eaf0f3c04460ec566556b4258a590e034199ded9f06e36ba4f5d3b9c",
+      "classification": "exact",
+      "normalizedSha256": "a49a9bc46608049f84a5b75687d2033c76a2a92e7d99eb60e57fc0cfbe0083d0",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/design/evolution/source/legend-stage-10-chroma.png",
+      "recordedPackageSha256": "4ab56f615cf9b9bf3dee6938cc5cf3690b709626c49dc6dc04095ee895dd3faa",
+      "commitBlobSha256": "4ab56f615cf9b9bf3dee6938cc5cf3690b709626c49dc6dc04095ee895dd3faa",
+      "classification": "exact",
+      "normalizedSha256": "a2cc8c226f647094a505a808c5308bf77d8f6ab262b272e0792624b092459710",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/design/evolution/source/stages-01-09-sprite-chroma.png",
+      "recordedPackageSha256": "fc314a206cf92d78b6609b3e26e0cce2be217c0d747d09269b39eb7e0c5c6132",
+      "commitBlobSha256": "fc314a206cf92d78b6609b3e26e0cce2be217c0d747d09269b39eb7e0c5c6132",
+      "classification": "exact",
+      "normalizedSha256": "ff0f9dad985edae9f63ce241403beb9354bb81b8f982e76562a54a5aaf17f7c2",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/eas.json",
+      "recordedPackageSha256": "f87e4f15d5054dd321ca26bf9204f1eb73b9c8aeb8a6df592472de23f61eaf33",
+      "commitBlobSha256": "71772ba8743aab6d6349ebc4cc6e0a194f15f3ad30cb579ad16457c365fe0b07",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "71772ba8743aab6d6349ebc4cc6e0a194f15f3ad30cb579ad16457c365fe0b07",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/expo-env.d.ts",
+      "recordedPackageSha256": "6fc02634da46d3edc5a88eec9173ba6bf709726be3cba83c73ebd8e859d5c147",
+      "commitBlobSha256": "6fc02634da46d3edc5a88eec9173ba6bf709726be3cba83c73ebd8e859d5c147",
+      "classification": "exact",
+      "normalizedSha256": "6fc02634da46d3edc5a88eec9173ba6bf709726be3cba83c73ebd8e859d5c147",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/global.d.ts",
+      "recordedPackageSha256": "acdcf4b4afaf4ffa81e9ba16d2644dc7b32b954847bcbd3248a95d8f7ceafe55",
+      "commitBlobSha256": "acdcf4b4afaf4ffa81e9ba16d2644dc7b32b954847bcbd3248a95d8f7ceafe55",
+      "classification": "exact",
+      "normalizedSha256": "acdcf4b4afaf4ffa81e9ba16d2644dc7b32b954847bcbd3248a95d8f7ceafe55",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/index.tsx",
+      "recordedPackageSha256": "c7322d3a8716f4314709acaa9b0a5fdee1a87011a7b045af879c526f34529012",
+      "commitBlobSha256": "c7322d3a8716f4314709acaa9b0a5fdee1a87011a7b045af879c526f34529012",
+      "classification": "exact",
+      "normalizedSha256": "c7322d3a8716f4314709acaa9b0a5fdee1a87011a7b045af879c526f34529012",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/index.web.tsx",
+      "recordedPackageSha256": "b2e084da15050c935582a0054dc66064e0a32b5ad6e5cc04c6f62e627d3bf672",
+      "commitBlobSha256": "b2e084da15050c935582a0054dc66064e0a32b5ad6e5cc04c6f62e627d3bf672",
+      "classification": "exact",
+      "normalizedSha256": "b2e084da15050c935582a0054dc66064e0a32b5ad6e5cc04c6f62e627d3bf672",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/jest.setup.cjs",
+      "recordedPackageSha256": "ce5b518f7d41d3bf167d51f695e154c450d520b4a2b9e14dac5af2228ce587f4",
+      "commitBlobSha256": "ce5b518f7d41d3bf167d51f695e154c450d520b4a2b9e14dac5af2228ce587f4",
+      "classification": "exact",
+      "normalizedSha256": "ce5b518f7d41d3bf167d51f695e154c450d520b4a2b9e14dac5af2228ce587f4",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/metro.config.js",
+      "recordedPackageSha256": "9313b8e9f48fe1f7376927a8ca9c37e1d6ed184a2cbb49a1ca12407ea3d62116",
+      "commitBlobSha256": "9313b8e9f48fe1f7376927a8ca9c37e1d6ed184a2cbb49a1ca12407ea3d62116",
+      "classification": "exact",
+      "normalizedSha256": "9313b8e9f48fe1f7376927a8ca9c37e1d6ed184a2cbb49a1ca12407ea3d62116",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/__tests__/app-transaction.test.ts",
+      "recordedPackageSha256": "3bf18864ca93b4421b879c316b6d385e33de6c5d505b00131234b13ed7019f4e",
+      "commitBlobSha256": "3bf18864ca93b4421b879c316b6d385e33de6c5d505b00131234b13ed7019f4e",
+      "classification": "exact",
+      "normalizedSha256": "3bf18864ca93b4421b879c316b6d385e33de6c5d505b00131234b13ed7019f4e",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/__tests__/bridge.test.ts",
+      "recordedPackageSha256": "ff31ae689c306afae28d6fab4037a7e054b768abe6b21a5b0284f7493d1fc2c7",
+      "commitBlobSha256": "ff31ae689c306afae28d6fab4037a7e054b768abe6b21a5b0284f7493d1fc2c7",
+      "classification": "exact",
+      "normalizedSha256": "ff31ae689c306afae28d6fab4037a7e054b768abe6b21a5b0284f7493d1fc2c7",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/app-transaction.ts",
+      "recordedPackageSha256": "0853c7a19031d8f44911c48951caf2a54134b820fafc831b1338e504d7752128",
+      "commitBlobSha256": "0853c7a19031d8f44911c48951caf2a54134b820fafc831b1338e504d7752128",
+      "classification": "exact",
+      "normalizedSha256": "0853c7a19031d8f44911c48951caf2a54134b820fafc831b1338e504d7752128",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/app.plugin.js",
+      "recordedPackageSha256": "00e7db22d4994f3a35cfc46c1ac522288642e892a909cc8e1ce04d98ce74cf61",
+      "commitBlobSha256": "00e7db22d4994f3a35cfc46c1ac522288642e892a909cc8e1ce04d98ce74cf61",
+      "classification": "exact",
+      "normalizedSha256": "00e7db22d4994f3a35cfc46c1ac522288642e892a909cc8e1ce04d98ce74cf61",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/expo-module.config.json",
+      "recordedPackageSha256": "f171309abc175933665370250c8e5db6312c90cdf2fe4c5724bffbecffb5d40c",
+      "commitBlobSha256": "f171309abc175933665370250c8e5db6312c90cdf2fe4c5724bffbecffb5d40c",
+      "classification": "exact",
+      "normalizedSha256": "f171309abc175933665370250c8e5db6312c90cdf2fe4c5724bffbecffb5d40c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/index.ts",
+      "recordedPackageSha256": "496e5bb33b1082ab03515c3ad18ffbde14519f3054e330f5121249ee02f486f3",
+      "commitBlobSha256": "496e5bb33b1082ab03515c3ad18ffbde14519f3054e330f5121249ee02f486f3",
+      "classification": "exact",
+      "normalizedSha256": "496e5bb33b1082ab03515c3ad18ffbde14519f3054e330f5121249ee02f486f3",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRange.podspec",
+      "recordedPackageSha256": "334119e6c6596cbd26bafa6998c2e034ff251b180c4c347e364d5e330789fee6",
+      "commitBlobSha256": "334119e6c6596cbd26bafa6998c2e034ff251b180c4c347e364d5e330789fee6",
+      "classification": "exact",
+      "normalizedSha256": "334119e6c6596cbd26bafa6998c2e034ff251b180c4c347e364d5e330789fee6",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRangeModule.swift",
+      "recordedPackageSha256": "acfbaf771ecab4f11ea8232b816277fe4b410a87ebc703d7e213f05dab5a5bf4",
+      "commitBlobSha256": "acfbaf771ecab4f11ea8232b816277fe4b410a87ebc703d7e213f05dab5a5bf4",
+      "classification": "exact",
+      "normalizedSha256": "acfbaf771ecab4f11ea8232b816277fe4b410a87ebc703d7e213f05dab5a5bf4",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAppTransactionBridge.swift",
+      "recordedPackageSha256": "a5d7ea04d06cb98b2e4244b508b2fb6912fed8113ea682f359a8caed5544f779",
+      "commitBlobSha256": "a5d7ea04d06cb98b2e4244b508b2fb6912fed8113ea682f359a8caed5544f779",
+      "classification": "exact",
+      "normalizedSha256": "a5d7ea04d06cb98b2e4244b508b2fb6912fed8113ea682f359a8caed5544f779",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/src/appTransactionTypes.ts",
+      "recordedPackageSha256": "43d0edb4c27cb54df9111be60d92622498263e4ae00e92b0c46fca8c28d6f028",
+      "commitBlobSha256": "43d0edb4c27cb54df9111be60d92622498263e4ae00e92b0c46fca8c28d6f028",
+      "classification": "exact",
+      "normalizedSha256": "43d0edb4c27cb54df9111be60d92622498263e4ae00e92b0c46fca8c28d6f028",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/src/gates.ts",
+      "recordedPackageSha256": "18acd65355c060cf7f6d2fb3996d04c2395353001e65b46ce05b7f3f84a21d8b",
+      "commitBlobSha256": "18acd65355c060cf7f6d2fb3996d04c2395353001e65b46ce05b7f3f84a21d8b",
+      "classification": "exact",
+      "normalizedSha256": "18acd65355c060cf7f6d2fb3996d04c2395353001e65b46ce05b7f3f84a21d8b",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/src/normalize.ts",
+      "recordedPackageSha256": "b38c0afd755fe3466d9b56d36eaab93fd85a8f03bd1d4b90e9a7298c61ebd359",
+      "commitBlobSha256": "b38c0afd755fe3466d9b56d36eaab93fd85a8f03bd1d4b90e9a7298c61ebd359",
+      "classification": "exact",
+      "normalizedSha256": "b38c0afd755fe3466d9b56d36eaab93fd85a8f03bd1d4b90e9a7298c61ebd359",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/modules/flap-fit-age-range/src/types.ts",
+      "recordedPackageSha256": "55ef8e87dfd5bf89fdb4545e6dd50a0950bad377fa0e355c0e2e78bafd0ffd28",
+      "commitBlobSha256": "55ef8e87dfd5bf89fdb4545e6dd50a0950bad377fa0e355c0e2e78bafd0ffd28",
+      "classification": "exact",
+      "normalizedSha256": "55ef8e87dfd5bf89fdb4545e6dd50a0950bad377fa0e355c0e2e78bafd0ffd28",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/package.json",
+      "recordedPackageSha256": "090ef0bcbb0148c50f846dbcbc12d5e2cee937d73a845a292dd76c2321a2b0d7",
+      "commitBlobSha256": "45043e62d20126b9d68d395422d23b4cda88c8139b90cacd953704edb0a99e61",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "45043e62d20126b9d68d395422d23b4cda88c8139b90cacd953704edb0a99e61",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/plugins/with-share-return.cjs",
+      "recordedPackageSha256": "4802719a24253ae5d2e20a873a096bba08c6a3799d575f8001a2ded400807927",
+      "commitBlobSha256": "4802719a24253ae5d2e20a873a096bba08c6a3799d575f8001a2ded400807927",
+      "classification": "exact",
+      "normalizedSha256": "4802719a24253ae5d2e20a873a096bba08c6a3799d575f8001a2ded400807927",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/plugins/withAdMobPrivacy.cjs",
+      "recordedPackageSha256": "b786f790f603db6dbdb1a37e1bfb3fc0a95604eacbbd487f79a0c84405bd81d7",
+      "commitBlobSha256": "b786f790f603db6dbdb1a37e1bfb3fc0a95604eacbbd487f79a0c84405bd81d7",
+      "classification": "exact",
+      "normalizedSha256": "b786f790f603db6dbdb1a37e1bfb3fc0a95604eacbbd487f79a0c84405bd81d7",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/plugins/withRevenueCatProcessing.cjs",
+      "recordedPackageSha256": "63828aa2f5f881dd87795e25bdd81a9d9a3b97fafc3f804c5fa7484e31fd70fc",
+      "commitBlobSha256": "63828aa2f5f881dd87795e25bdd81a9d9a3b97fafc3f804c5fa7484e31fd70fc",
+      "classification": "exact",
+      "normalizedSha256": "63828aa2f5f881dd87795e25bdd81a9d9a3b97fafc3f804c5fa7484e31fd70fc",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/native/textinput.native.tsx",
+      "recordedPackageSha256": "f99d5a55f5ccc4d7b8017990313b0f6477c505a6e09368c2ae9b38af8a524070",
+      "commitBlobSha256": "f99d5a55f5ccc4d7b8017990313b0f6477c505a6e09368c2ae9b38af8a524070",
+      "classification": "exact",
+      "normalizedSha256": "f99d5a55f5ccc4d7b8017990313b0f6477c505a6e09368c2ae9b38af8a524070",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/web/SafeAreaView.web.tsx",
+      "recordedPackageSha256": "e663cc0aadce2d118a64c7347c1c34363b0cd58f764d26fedc7582ce38333f8f",
+      "commitBlobSha256": "e663cc0aadce2d118a64c7347c1c34363b0cd58f764d26fedc7582ce38333f8f",
+      "classification": "exact",
+      "normalizedSha256": "e663cc0aadce2d118a64c7347c1c34363b0cd58f764d26fedc7582ce38333f8f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/web/alerts.web.tsx",
+      "recordedPackageSha256": "de6b9688a99dad779d5a9fc819e99de53679f789dd604de4e544a41fbde1b884",
+      "commitBlobSha256": "de6b9688a99dad779d5a9fc819e99de53679f789dd604de4e544a41fbde1b884",
+      "classification": "exact",
+      "normalizedSha256": "de6b9688a99dad779d5a9fc819e99de53679f789dd604de4e544a41fbde1b884",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/web/camera.web.tsx",
+      "recordedPackageSha256": "29e592cc4531d3dd701af235717bc2edfddd3e2aa2c32b81cd496032a328d2cb",
+      "commitBlobSha256": "29e592cc4531d3dd701af235717bc2edfddd3e2aa2c32b81cd496032a328d2cb",
+      "classification": "exact",
+      "normalizedSha256": "29e592cc4531d3dd701af235717bc2edfddd3e2aa2c32b81cd496032a328d2cb",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/web/haptics.web.ts",
+      "recordedPackageSha256": "58f50f925abf7d70edf108bb40d436ccbe28d99691eeed0dc2b180441cd48d45",
+      "commitBlobSha256": "58f50f925abf7d70edf108bb40d436ccbe28d99691eeed0dc2b180441cd48d45",
+      "classification": "exact",
+      "normalizedSha256": "58f50f925abf7d70edf108bb40d436ccbe28d99691eeed0dc2b180441cd48d45",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/web/linking.web.ts",
+      "recordedPackageSha256": "e7414bb7377585f132a31e49a3bf66d8492eca23d27548d8f7ab87ef7f9ee279",
+      "commitBlobSha256": "e7414bb7377585f132a31e49a3bf66d8492eca23d27548d8f7ab87ef7f9ee279",
+      "classification": "exact",
+      "normalizedSha256": "e7414bb7377585f132a31e49a3bf66d8492eca23d27548d8f7ab87ef7f9ee279",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/web/refreshControl.web.tsx",
+      "recordedPackageSha256": "d338f2689e01e2950929145012d98469ca1390731f48d9f31a8beae30d336f93",
+      "commitBlobSha256": "d338f2689e01e2950929145012d98469ca1390731f48d9f31a8beae30d336f93",
+      "classification": "exact",
+      "normalizedSha256": "d338f2689e01e2950929145012d98469ca1390731f48d9f31a8beae30d336f93",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/web/safeAreaContext.web.tsx",
+      "recordedPackageSha256": "6830fc262474fee50687475d37f80f16365e1b70199118bacb4c0509228e3125",
+      "commitBlobSha256": "6830fc262474fee50687475d37f80f16365e1b70199118bacb4c0509228e3125",
+      "classification": "exact",
+      "normalizedSha256": "6830fc262474fee50687475d37f80f16365e1b70199118bacb4c0509228e3125",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/web/scrollview.web.tsx",
+      "recordedPackageSha256": "df2ae81dc289a58b8d62151907857228131afe2206b1e8c3be29fdc29ac3584d",
+      "commitBlobSha256": "df2ae81dc289a58b8d62151907857228131afe2206b1e8c3be29fdc29ac3584d",
+      "classification": "exact",
+      "normalizedSha256": "df2ae81dc289a58b8d62151907857228131afe2206b1e8c3be29fdc29ac3584d",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/web/statusBar.web.tsx",
+      "recordedPackageSha256": "a8d3efce68388ee908536a4e6379f01172a7eb2c1a84e34c99f85519247f8eaf",
+      "commitBlobSha256": "a8d3efce68388ee908536a4e6379f01172a7eb2c1a84e34c99f85519247f8eaf",
+      "classification": "exact",
+      "normalizedSha256": "a8d3efce68388ee908536a4e6379f01172a7eb2c1a84e34c99f85519247f8eaf",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/web/tabbar.web.tsx",
+      "recordedPackageSha256": "c244e4d4d57a1774750dfab84e5c39b6dc20811e30fad562cd3264190db1c00c",
+      "commitBlobSha256": "c244e4d4d57a1774750dfab84e5c39b6dc20811e30fad562cd3264190db1c00c",
+      "classification": "exact",
+      "normalizedSha256": "c244e4d4d57a1774750dfab84e5c39b6dc20811e30fad562cd3264190db1c00c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/polyfills/web/webview.web.tsx",
+      "recordedPackageSha256": "fc72c8144e036785f5d34ab96e96d24c6b476a82e07c6d57628354cebf7963d5",
+      "commitBlobSha256": "fc72c8144e036785f5d34ab96e96d24c6b476a82e07c6d57628354cebf7963d5",
+      "classification": "exact",
+      "normalizedSha256": "fc72c8144e036785f5d34ab96e96d24c6b476a82e07c6d57628354cebf7963d5",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/postcss.config.js",
+      "recordedPackageSha256": "fa650b380adfabb151a0b352f7135e107e6352345f899060f1c5c231228f94bf",
+      "commitBlobSha256": "fa650b380adfabb151a0b352f7135e107e6352345f899060f1c5c231228f94bf",
+      "classification": "exact",
+      "normalizedSha256": "fa650b380adfabb151a0b352f7135e107e6352345f899060f1c5c231228f94bf",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/script/build_and_run.sh",
+      "recordedPackageSha256": "5e6dfc984f63b291852f7a49d258637eb762ff53ac0f0c1da10f2ad3556fbe97",
+      "commitBlobSha256": "e4dda3ea4c3d13bb0dbca20ad5e38c9388f32c6b75bb2e1f95c190b8cac319a3",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "e4dda3ea4c3d13bb0dbca20ad5e38c9388f32c6b75bb2e1f95c190b8cac319a3",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/ad-sdk-lifecycle.test.js",
+      "recordedPackageSha256": "18a0db0697c3e6cdcb4926115d350799130dd2ab2f5dccd972c8a3f28ab4bfd3",
+      "commitBlobSha256": "18a0db0697c3e6cdcb4926115d350799130dd2ab2f5dccd972c8a3f28ab4bfd3",
+      "classification": "exact",
+      "normalizedSha256": "18a0db0697c3e6cdcb4926115d350799130dd2ab2f5dccd972c8a3f28ab4bfd3",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/check-release-links.cjs",
+      "recordedPackageSha256": "0e7a2b31bee75e77bfdc6aff44ba389f86fb60455bdc6ed95cd1b977fdf86384",
+      "commitBlobSha256": "0e7a2b31bee75e77bfdc6aff44ba389f86fb60455bdc6ed95cd1b977fdf86384",
+      "classification": "exact",
+      "normalizedSha256": "0e7a2b31bee75e77bfdc6aff44ba389f86fb60455bdc6ed95cd1b977fdf86384",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/eas-build-post-install.cjs",
+      "recordedPackageSha256": "8a8caf6d4f5e18a0e534045424234e068c0d523a293f0f59a020b20dad100801",
+      "commitBlobSha256": "8a8caf6d4f5e18a0e534045424234e068c0d523a293f0f59a020b20dad100801",
+      "classification": "exact",
+      "normalizedSha256": "8a8caf6d4f5e18a0e534045424234e068c0d523a293f0f59a020b20dad100801",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/launch-competition.test.js",
+      "recordedPackageSha256": "99e3f27bc6bca0dc2438390d253fa9e560251544ceecbf18b1db401dbe2b7c02",
+      "commitBlobSha256": "99e3f27bc6bca0dc2438390d253fa9e560251544ceecbf18b1db401dbe2b7c02",
+      "classification": "exact",
+      "normalizedSha256": "99e3f27bc6bca0dc2438390d253fa9e560251544ceecbf18b1db401dbe2b7c02",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/patch-admob-privacy.cjs",
+      "recordedPackageSha256": "1d7a210716e41a9577a5e39501c2c74d29760f411772c063e28dbd90701fe7e4",
+      "commitBlobSha256": "1d7a210716e41a9577a5e39501c2c74d29760f411772c063e28dbd90701fe7e4",
+      "classification": "exact",
+      "normalizedSha256": "1d7a210716e41a9577a5e39501c2c74d29760f411772c063e28dbd90701fe7e4",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/patch-revenuecat-processing.cjs",
+      "recordedPackageSha256": "de3506fa18f74ca10ca16772d38ae95e0d06c0e524c6b2fb70d7f3142efc69bc",
+      "commitBlobSha256": "de3506fa18f74ca10ca16772d38ae95e0d06c0e524c6b2fb70d7f3142efc69bc",
+      "classification": "exact",
+      "normalizedSha256": "de3506fa18f74ca10ca16772d38ae95e0d06c0e524c6b2fb70d7f3142efc69bc",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/retain-ios-archive.cjs",
+      "recordedPackageSha256": "e7c7c9d029a013f7cde3ff48e4ee59beb099ca32bf1c9427c70f14a30fcbe966",
+      "commitBlobSha256": "4505fcb66adefb3d9775126dcdba3aab18bddec5018b5c0e12d4258053806993",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "4505fcb66adefb3d9775126dcdba3aab18bddec5018b5c0e12d4258053806993",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/retain-ios-archive.test.js",
+      "recordedPackageSha256": "f003e1cf2152142855572e7dd9caf9778f18f88a8698a29fad48808063a25b71",
+      "commitBlobSha256": "178ce9ada7cb3b2724cc1d9b3d052d018575ac2cd1601820a03a5bd48fc501c3",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "178ce9ada7cb3b2724cc1d9b3d052d018575ac2cd1601820a03a5bd48fc501c3",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/share-return.test.js",
+      "recordedPackageSha256": "e605659c4128dc1f0f2b40e7ce8a4d98d9eaad6e12abbf5fa7bd7ceb20f39cf6",
+      "commitBlobSha256": "e605659c4128dc1f0f2b40e7ce8a4d98d9eaad6e12abbf5fa7bd7ceb20f39cf6",
+      "classification": "exact",
+      "normalizedSha256": "e605659c4128dc1f0f2b40e7ce8a4d98d9eaad6e12abbf5fa7bd7ceb20f39cf6",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/start-expo-go.cjs",
+      "recordedPackageSha256": "c57b23032f89c2fa82eddb3c5d3b67f90bded2868c8ba03cd6f6b367cca25c46",
+      "commitBlobSha256": "c57b23032f89c2fa82eddb3c5d3b67f90bded2868c8ba03cd6f6b367cca25c46",
+      "classification": "exact",
+      "normalizedSha256": "c57b23032f89c2fa82eddb3c5d3b67f90bded2868c8ba03cd6f6b367cca25c46",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/test-admob-privacy-native.cjs",
+      "recordedPackageSha256": "715178ad5173d55168fecfcf1798d266ca447f3b928e840d11d434e96eef6121",
+      "commitBlobSha256": "715178ad5173d55168fecfcf1798d266ca447f3b928e840d11d434e96eef6121",
+      "classification": "exact",
+      "normalizedSha256": "715178ad5173d55168fecfcf1798d266ca447f3b928e840d11d434e96eef6121",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/test-admob-privacy-patch.cjs",
+      "recordedPackageSha256": "d8a95205cdb86b6813febd3952f7ef42a6e3b196d836a58bbb545bdb7946bdb8",
+      "commitBlobSha256": "d8a95205cdb86b6813febd3952f7ef42a6e3b196d836a58bbb545bdb7946bdb8",
+      "classification": "exact",
+      "normalizedSha256": "d8a95205cdb86b6813febd3952f7ef42a6e3b196d836a58bbb545bdb7946bdb8",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/test-revenuecat-processing-native.cjs",
+      "recordedPackageSha256": "e555781e1a67b343493c77f9d62cb46db4bdd53a9fe6160bb870d293a73a7708",
+      "commitBlobSha256": "e555781e1a67b343493c77f9d62cb46db4bdd53a9fe6160bb870d293a73a7708",
+      "classification": "exact",
+      "normalizedSha256": "e555781e1a67b343493c77f9d62cb46db4bdd53a9fe6160bb870d293a73a7708",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/test-revenuecat-processing-patch.cjs",
+      "recordedPackageSha256": "7f244c2461d71827a8e6f6816a395fb43d4ea4c57bd0fb1da68f4f9b3ec683dd",
+      "commitBlobSha256": "7f244c2461d71827a8e6f6816a395fb43d4ea4c57bd0fb1da68f4f9b3ec683dd",
+      "classification": "exact",
+      "normalizedSha256": "7f244c2461d71827a8e6f6816a395fb43d4ea4c57bd0fb1da68f4f9b3ec683dd",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/validate-monetization-config.cjs",
+      "recordedPackageSha256": "5bb4757fdf2feb54ba7b35d61fe64f0fd920e12062107a38cb6056e7365ba6da",
+      "commitBlobSha256": "5bb4757fdf2feb54ba7b35d61fe64f0fd920e12062107a38cb6056e7365ba6da",
+      "classification": "exact",
+      "normalizedSha256": "5bb4757fdf2feb54ba7b35d61fe64f0fd920e12062107a38cb6056e7365ba6da",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/validate-monetization-config.test.js",
+      "recordedPackageSha256": "6ca938d339088acf1e4c0ce9c3f38d17eebb2c140b075a8bfbc324f1f719f137",
+      "commitBlobSha256": "6ca938d339088acf1e4c0ce9c3f38d17eebb2c140b075a8bfbc324f1f719f137",
+      "classification": "exact",
+      "normalizedSha256": "6ca938d339088acf1e4c0ce9c3f38d17eebb2c140b075a8bfbc324f1f719f137",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/validate-privacy-manifest.cjs",
+      "recordedPackageSha256": "fcff831e9e6d7228e53c3547923c524dbb64c3f24af791312a722bab524e3ec3",
+      "commitBlobSha256": "0976fdc2aba59579d952201c3bdb0b05a557744ee5d6c1fe01fadb1c021c9c5f",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "0976fdc2aba59579d952201c3bdb0b05a557744ee5d6c1fe01fadb1c021c9c5f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+      "recordedPackageSha256": "498897b975009a4501c5d5c49d4e70cb1fad3f399cce64c5d207062dd5bb9f47",
+      "commitBlobSha256": "a61c6ba72859c522e7f86751f1998fb7141219edf7b55d45553068808b640507",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "a61c6ba72859c522e7f86751f1998fb7141219edf7b55d45553068808b640507",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/validate-release-config.cjs",
+      "recordedPackageSha256": "44db02b12d08d914b61b7892de21fb18883b80994777fa60f403f194b7066456",
+      "commitBlobSha256": "ffb67fd77547a824d7139b0a52637c228808bd5b9f224c70530b5f1ba73a7ac2",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "ffb67fd77547a824d7139b0a52637c228808bd5b9f224c70530b5f1ba73a7ac2",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/validate-store-assets.cjs",
+      "recordedPackageSha256": "fc63b668dd22872aa18218df2d7971d147ebc29cffe2ad2eaccb519ec72ab74e",
+      "commitBlobSha256": "fc63b668dd22872aa18218df2d7971d147ebc29cffe2ad2eaccb519ec72ab74e",
+      "classification": "exact",
+      "normalizedSha256": "fc63b668dd22872aa18218df2d7971d147ebc29cffe2ad2eaccb519ec72ab74e",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/validate-tracker-release.cjs",
+      "recordedPackageSha256": "cc242c34a9a40859c036cda87fadc872c537665a2918c70ec28db4f8ae42dd5e",
+      "commitBlobSha256": "cc242c34a9a40859c036cda87fadc872c537665a2918c70ec28db4f8ae42dd5e",
+      "classification": "exact",
+      "normalizedSha256": "cc242c34a9a40859c036cda87fadc872c537665a2918c70ec28db4f8ae42dd5e",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/validate-tracker-release.test.js",
+      "recordedPackageSha256": "218caea9249b1b3d7ec95a2f5bb04b5d178fc50e69f91422e92b545642fb2a47",
+      "commitBlobSha256": "218caea9249b1b3d7ec95a2f5bb04b5d178fc50e69f91422e92b545642fb2a47",
+      "classification": "exact",
+      "normalizedSha256": "218caea9249b1b3d7ec95a2f5bb04b5d178fc50e69f91422e92b545642fb2a47",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/scripts/verify-live-competition.cjs",
+      "recordedPackageSha256": "fb91d64b9ed7ec428c033edb600eb24de3c97674252da8d0abe98687dd74c28b",
+      "commitBlobSha256": "fb91d64b9ed7ec428c033edb600eb24de3c97674252da8d0abe98687dd74c28b",
+      "classification": "exact",
+      "normalizedSha256": "fb91d64b9ed7ec428c033edb600eb24de3c97674252da8d0abe98687dd74c28b",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/app/(tabs)/_layout.tsx",
+      "recordedPackageSha256": "0c46905b259eea011b0b683cad486fdbf3f765df89424b9faeb69701d9f39e45",
+      "commitBlobSha256": "0c46905b259eea011b0b683cad486fdbf3f765df89424b9faeb69701d9f39e45",
+      "classification": "exact",
+      "normalizedSha256": "0c46905b259eea011b0b683cad486fdbf3f765df89424b9faeb69701d9f39e45",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/app/(tabs)/compete.tsx",
+      "recordedPackageSha256": "311d3e9e90510ba6ebb226fe482d452d5136254ca5228a733ed2958999d79079",
+      "commitBlobSha256": "87b0301ea3e908e143d7ab2925d7cafca0a9ac5eb511beeec66907e8a020af8a",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "87b0301ea3e908e143d7ab2925d7cafca0a9ac5eb511beeec66907e8a020af8a",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/app/(tabs)/index.tsx",
+      "recordedPackageSha256": "9a7fbd6b8d75abb07394d1901754298f77bbbffbd42e29be8d271eb6fb4769cd",
+      "commitBlobSha256": "9a7fbd6b8d75abb07394d1901754298f77bbbffbd42e29be8d271eb6fb4769cd",
+      "classification": "exact",
+      "normalizedSha256": "9a7fbd6b8d75abb07394d1901754298f77bbbffbd42e29be8d271eb6fb4769cd",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/app/(tabs)/info.tsx",
+      "recordedPackageSha256": "7a95a3e0d4c9b472761fb678f113ac941aa04ff58401074ef38c01c798144e51",
+      "commitBlobSha256": "43a2523685448821e8f034d31d5a8b06f4bc03919d81153c71ac9b461905bc74",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "43a2523685448821e8f034d31d5a8b06f4bc03919d81153c71ac9b461905bc74",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/app/(tabs)/levels.tsx",
+      "recordedPackageSha256": "02ec170d4cdcdc40d4927404a6a31379718b800d4e9afec14417eb4ed449d2c4",
+      "commitBlobSha256": "02ec170d4cdcdc40d4927404a6a31379718b800d4e9afec14417eb4ed449d2c4",
+      "classification": "exact",
+      "normalizedSha256": "02ec170d4cdcdc40d4927404a6a31379718b800d4e9afec14417eb4ed449d2c4",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/app/(tabs)/stats.tsx",
+      "recordedPackageSha256": "f35fe6e34c7cc3c64398cfafcd570f469f3f0745f9441f53d30a8781ce0a9d8a",
+      "commitBlobSha256": "f35fe6e34c7cc3c64398cfafcd570f469f3f0745f9441f53d30a8781ce0a9d8a",
+      "classification": "exact",
+      "normalizedSha256": "f35fe6e34c7cc3c64398cfafcd570f469f3f0745f9441f53d30a8781ce0a9d8a",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/app/+not-found.tsx",
+      "recordedPackageSha256": "843ea9a1f36dae95ae362a42c6a54eb15a76466284563b4bf07489cf1180d03c",
+      "commitBlobSha256": "843ea9a1f36dae95ae362a42c6a54eb15a76466284563b4bf07489cf1180d03c",
+      "classification": "exact",
+      "normalizedSha256": "843ea9a1f36dae95ae362a42c6a54eb15a76466284563b4bf07489cf1180d03c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/app/_layout.tsx",
+      "recordedPackageSha256": "068e68210202baaa980a5c0b5993a395f6d03f8a837ed06b4b3a10a98d405838",
+      "commitBlobSha256": "7d31a64141fce4a8f0a462d4c1b639e8fff873595677337a4d6dcf6fc07898b0",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "7d31a64141fce4a8f0a462d4c1b639e8fff873595677337a4d6dcf6fc07898b0",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/app/game.tsx",
+      "recordedPackageSha256": "ca06b2b6e450ee95899b4f4f794ed6f513aa5bd78e0ec383ea12171e92f558cf",
+      "commitBlobSha256": "d728dd9d56abcaf883493857ffa4298a16d0e633ba193880f1b22e712b8d463f",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "d728dd9d56abcaf883493857ffa4298a16d0e633ba193880f1b22e712b8d463f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/app/index.tsx",
+      "recordedPackageSha256": "e87a6870c99c019e1785233a8df7cf6379fefe1b3c3f2f8ecce4012323d3c31e",
+      "commitBlobSha256": "e87a6870c99c019e1785233a8df7cf6379fefe1b3c3f2f8ecce4012323d3c31e",
+      "classification": "exact",
+      "normalizedSha256": "e87a6870c99c019e1785233a8df7cf6379fefe1b3c3f2f8ecce4012323d3c31e",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/app/onboarding.tsx",
+      "recordedPackageSha256": "ad1f2c2d63909160660aa95df0b230d5e726eda6eba8a345797d9059f269cfbe",
+      "commitBlobSha256": "ad1f2c2d63909160660aa95df0b230d5e726eda6eba8a345797d9059f269cfbe",
+      "classification": "exact",
+      "normalizedSha256": "ad1f2c2d63909160660aa95df0b230d5e726eda6eba8a345797d9059f269cfbe",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/components/AppErrorBoundary.tsx",
+      "recordedPackageSha256": "6db6288c75ee591821efd94e09d3398ee1f1ebbcd5c06775277f3fd68cd8d824",
+      "commitBlobSha256": "6db6288c75ee591821efd94e09d3398ee1f1ebbcd5c06775277f3fd68cd8d824",
+      "classification": "exact",
+      "normalizedSha256": "6db6288c75ee591821efd94e09d3398ee1f1ebbcd5c06775277f3fd68cd8d824",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/components/BirdAvatar.tsx",
+      "recordedPackageSha256": "0348a1602c3de7735bf653682bd328e29ba940e13bb9de2f57244b051dd2b85d",
+      "commitBlobSha256": "0348a1602c3de7735bf653682bd328e29ba940e13bb9de2f57244b051dd2b85d",
+      "classification": "exact",
+      "normalizedSha256": "0348a1602c3de7735bf653682bd328e29ba940e13bb9de2f57244b051dd2b85d",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/components/KeyboardAvoidingAnimatedView.tsx",
+      "recordedPackageSha256": "7c6daace5373e84917473f32f1f8fd4eaff82a6f1cbab03036d384d6754a952e",
+      "commitBlobSha256": "7c6daace5373e84917473f32f1f8fd4eaff82a6f1cbab03036d384d6754a952e",
+      "classification": "exact",
+      "normalizedSha256": "7c6daace5373e84917473f32f1f8fd4eaff82a6f1cbab03036d384d6754a952e",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/components/PrivacyChoices.tsx",
+      "recordedPackageSha256": "181e0a9fbb4877e74bf9b5115b316abf036023bfd65f6ec52534eb427af588fd",
+      "commitBlobSha256": "f227de581d88c2c71bf6a1bc8033db3edbbba4f2d6471785fdfcc47085d7c7db",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "f227de581d88c2c71bf6a1bc8033db3edbbba4f2d6471785fdfcc47085d7c7db",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx",
+      "recordedPackageSha256": "935b2bcfab742e4f1decd66ff257e4f0fe964ec026b9d78aa3ec77cfb7c2e56a",
+      "commitBlobSha256": "bc4792b832011ee5828618c2d4059c2317892c5251a2076af1cf70948f88cfae",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "bc4792b832011ee5828618c2d4059c2317892c5251a2076af1cf70948f88cfae",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+      "recordedPackageSha256": "fa3e723954dd3c4f87deec89651b072f6a91cd5b74dbad6e6cc8dbfcfe388f94",
+      "commitBlobSha256": "f2220933982399a95206e4f7d2c02a5144f53e9591f6b4fc483e2d02b0df0348",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "f2220933982399a95206e4f7d2c02a5144f53e9591f6b4fc483e2d02b0df0348",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/config/release.ts",
+      "recordedPackageSha256": "87eb8dd112264b11c4128bac60ba719ae636d3cba30b1665ee9fb10e3cb9775e",
+      "commitBlobSha256": "87eb8dd112264b11c4128bac60ba719ae636d3cba30b1665ee9fb10e3cb9775e",
+      "classification": "exact",
+      "normalizedSha256": "87eb8dd112264b11c4128bac60ba719ae636d3cba30b1665ee9fb10e3cb9775e",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+      "recordedPackageSha256": "f8da4f0d3465f4b19ad5179630c1a99af6ffe909c1a282f490c2ccf28dcb21d8",
+      "commitBlobSha256": "f8da4f0d3465f4b19ad5179630c1a99af6ffe909c1a282f490c2ccf28dcb21d8",
+      "classification": "exact",
+      "normalizedSha256": "f8da4f0d3465f4b19ad5179630c1a99af6ffe909c1a282f490c2ccf28dcb21d8",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/__tests__/competition-terms-action.test.ts",
+      "recordedPackageSha256": "e3046660dd6aa9a0ac87439a02862ae80953e17bf4b0ca829b430bd915a55f46",
+      "commitBlobSha256": "e056d2a0d20319a4e79650057108a9b2dc482b45a4748647583f7a8a3d2bb204",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "e056d2a0d20319a4e79650057108a9b2dc482b45a4748647583f7a8a3d2bb204",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+      "recordedPackageSha256": "053fd1320763ca5e406bc754d02cc2631b6af87471e15c86154bf5a32209d38d",
+      "commitBlobSha256": "053fd1320763ca5e406bc754d02cc2631b6af87471e15c86154bf5a32209d38d",
+      "classification": "exact",
+      "normalizedSha256": "053fd1320763ca5e406bc754d02cc2631b6af87471e15c86154bf5a32209d38d",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/__tests__/competitionApi.test.ts",
+      "recordedPackageSha256": "daa5075637addb7376de78fdadc3cf6cedf786641e7852554a33ef0314e58755",
+      "commitBlobSha256": "daa5075637addb7376de78fdadc3cf6cedf786641e7852554a33ef0314e58755",
+      "classification": "exact",
+      "normalizedSha256": "daa5075637addb7376de78fdadc3cf6cedf786641e7852554a33ef0314e58755",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/__tests__/monetization.test.ts",
+      "recordedPackageSha256": "c9201f8e8a6ff53cad58b1235a1e43484a6cbefc94a3bcc92cf6b5309a7ab614",
+      "commitBlobSha256": "c9201f8e8a6ff53cad58b1235a1e43484a6cbefc94a3bcc92cf6b5309a7ab614",
+      "classification": "exact",
+      "normalizedSha256": "c9201f8e8a6ff53cad58b1235a1e43484a6cbefc94a3bcc92cf6b5309a7ab614",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/__tests__/resultAdGate.test.ts",
+      "recordedPackageSha256": "afdfe922a6173128edeac74142b8fbb10d353bfeaf53b947e6f93066140c159f",
+      "commitBlobSha256": "837fff2ab8b10ae9442e72993242ce3fb56b632292fcb1ee1dc29cdceae97763",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "837fff2ab8b10ae9442e72993242ce3fb56b632292fcb1ee1dc29cdceae97763",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/__tests__/revenueCatTestDiagnostics.test.ts",
+      "recordedPackageSha256": "5eda9729a9d2964f0fd1143a7a22201ead6003aee78ff0b49064ad6f692534a2",
+      "commitBlobSha256": "5eda9729a9d2964f0fd1143a7a22201ead6003aee78ff0b49064ad6f692534a2",
+      "classification": "exact",
+      "normalizedSha256": "5eda9729a9d2964f0fd1143a7a22201ead6003aee78ff0b49064ad6f692534a2",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/__tests__/settingsPermissionRecovery.test.ts",
+      "recordedPackageSha256": "ec5dbe8396f2d006cd7729ecc91e814991a69631281f0613d480b854b5455dbb",
+      "commitBlobSha256": "ec5dbe8396f2d006cd7729ecc91e814991a69631281f0613d480b854b5455dbb",
+      "classification": "exact",
+      "normalizedSha256": "ec5dbe8396f2d006cd7729ecc91e814991a69631281f0613d480b854b5455dbb",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/__tests__/videoSharing.test.ts",
+      "recordedPackageSha256": "d17d94de2fdf29b9eed4c08ae1513edec3e49e335bd65169de467f4e103e9ed3",
+      "commitBlobSha256": "d17d94de2fdf29b9eed4c08ae1513edec3e49e335bd65169de467f4e103e9ed3",
+      "classification": "exact",
+      "normalizedSha256": "d17d94de2fdf29b9eed4c08ae1513edec3e49e335bd65169de467f4e103e9ed3",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/competitionApi.ts",
+      "recordedPackageSha256": "e064cc4d25773825cfd60a6fbd0c7ed71d12b0a79189f0636998292cb89c6aa6",
+      "commitBlobSha256": "e064cc4d25773825cfd60a6fbd0c7ed71d12b0a79189f0636998292cb89c6aa6",
+      "classification": "exact",
+      "normalizedSha256": "e064cc4d25773825cfd60a6fbd0c7ed71d12b0a79189f0636998292cb89c6aa6",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/monetization/index.ts",
+      "recordedPackageSha256": "851c58eea4ab595aaab91c8305b71b227dbc856bfceba8cde51eec69d93f490b",
+      "commitBlobSha256": "12559fd0878e7016ba736cac2f148c91f33c21dfb8b17a27bd7631c5501035ef",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "12559fd0878e7016ba736cac2f148c91f33c21dfb8b17a27bd7631c5501035ef",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/monetization/resultAdGate.ts",
+      "recordedPackageSha256": "c99937e483c53125d52a197646df0348abeaa64d3e181fb563a19da0b9edadde",
+      "commitBlobSha256": "9c6010f9964d9c30bc4850bbc82aa407b559fbd638b001e26d8d52eaf29651f9",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "9c6010f9964d9c30bc4850bbc82aa407b559fbd638b001e26d8d52eaf29651f9",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/monetization/revenueCatTestDiagnostics.ts",
+      "recordedPackageSha256": "39a4659dac652fd6669febfb19427448508b47cbf7a8dd7498f35c99f902ca05",
+      "commitBlobSha256": "39a4659dac652fd6669febfb19427448508b47cbf7a8dd7498f35c99f902ca05",
+      "classification": "exact",
+      "normalizedSha256": "39a4659dac652fd6669febfb19427448508b47cbf7a8dd7498f35c99f902ca05",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/appleAgeControl.test.ts",
+      "recordedPackageSha256": "71e5527a6d8466eb83014429f502137d85bc9bf62cb0812a56630307e9b3ab86",
+      "commitBlobSha256": "71e5527a6d8466eb83014429f502137d85bc9bf62cb0812a56630307e9b3ab86",
+      "classification": "exact",
+      "normalizedSha256": "71e5527a6d8466eb83014429f502137d85bc9bf62cb0812a56630307e9b3ab86",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/appleRescission.test.ts",
+      "recordedPackageSha256": "c1b2fe0c7d379869944a04fb19a3ed59932500acac15a61ebbcd5a2588fbb1f4",
+      "commitBlobSha256": "c1b2fe0c7d379869944a04fb19a3ed59932500acac15a61ebbcd5a2588fbb1f4",
+      "classification": "exact",
+      "normalizedSha256": "c1b2fe0c7d379869944a04fb19a3ed59932500acac15a61ebbcd5a2588fbb1f4",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/europeanProviderProcessing.test.ts",
+      "recordedPackageSha256": "71033bce1f8ebda011ade27d2b4897aab24b49a39efdcaae1a5b95ceee1b148c",
+      "commitBlobSha256": "71033bce1f8ebda011ade27d2b4897aab24b49a39efdcaae1a5b95ceee1b148c",
+      "classification": "exact",
+      "normalizedSha256": "71033bce1f8ebda011ade27d2b4897aab24b49a39efdcaae1a5b95ceee1b148c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+      "recordedPackageSha256": "f31d5d792446ab012a4f6b24ba4af694a28a9793d403d8b3bba09b71060e19f1",
+      "commitBlobSha256": "be9018561e96ae7e8e2983ca5ac62c551586539d6f70c7c9c78d1673071427e8",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "be9018561e96ae7e8e2983ca5ac62c551586539d6f70c7c9c78d1673071427e8",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/launchProcessingPolicy.test.ts",
+      "recordedPackageSha256": "4ee9cdf4971217694795f75b4d3937b0cb44329219498ca8d7eba72fb679b498",
+      "commitBlobSha256": "7c94348fbff2bdd21d609a6c01b5b580f16112cb44ab9c367fd6cd648d32aa49",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "7c94348fbff2bdd21d609a6c01b5b580f16112cb44ab9c367fd6cd648d32aa49",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/privacyCountry.test.ts",
+      "recordedPackageSha256": "21b6230ec88b0bc7b8d6473f159e3d113bd24d570309a9a5544a26538032b204",
+      "commitBlobSha256": "21b6230ec88b0bc7b8d6473f159e3d113bd24d570309a9a5544a26538032b204",
+      "classification": "exact",
+      "normalizedSha256": "21b6230ec88b0bc7b8d6473f159e3d113bd24d570309a9a5544a26538032b204",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+      "recordedPackageSha256": "029575f35ed500f1347601febd732127c19fba736196142e0530b6658088583c",
+      "commitBlobSha256": "b15a713a798094a69c80d4e81990275b78a9179c34274c99a8d131e9f97c88f2",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "b15a713a798094a69c80d4e81990275b78a9179c34274c99a8d131e9f97c88f2",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/privacyStartup.test.ts",
+      "recordedPackageSha256": "ddf67ad3d5bdf196c7d95ba937c187791092a093c216425e4a78cb4624aec88d",
+      "commitBlobSha256": "ddf67ad3d5bdf196c7d95ba937c187791092a093c216425e4a78cb4624aec88d",
+      "classification": "exact",
+      "normalizedSha256": "ddf67ad3d5bdf196c7d95ba937c187791092a093c216425e4a78cb4624aec88d",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+      "recordedPackageSha256": "c2291e635ad74dfcc00ddb9c27ab6897229da941b4e7450dcf0d0216cf9494b7",
+      "commitBlobSha256": "e92e2376b8445650a2d818e65884fab81b09848d444fd2c78d2b7988fc5a3295",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "e92e2376b8445650a2d818e65884fab81b09848d444fd2c78d2b7988fc5a3295",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/processingPolicy.test.ts",
+      "recordedPackageSha256": "6cf611794a4b8e93a177bc01e6553629e11288a1c168b5f0a75dcce8f84b5306",
+      "commitBlobSha256": "6cf611794a4b8e93a177bc01e6553629e11288a1c168b5f0a75dcce8f84b5306",
+      "classification": "exact",
+      "normalizedSha256": "6cf611794a4b8e93a177bc01e6553629e11288a1c168b5f0a75dcce8f84b5306",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/regionalClarification.test.ts",
+      "recordedPackageSha256": "98242ddf7b74e5fe8d675c761f7c02951ce6c97f1b42a51d4b00ce3bb2333f14",
+      "commitBlobSha256": "d278ae10aeb9e38982061745735a05d1aef08c61c0bd406f56008f5888d55449",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "d278ae10aeb9e38982061745735a05d1aef08c61c0bd406f56008f5888d55449",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/regionalPolicy.test.ts",
+      "recordedPackageSha256": "af659b3793ecc429bb52ae449c87283ca0c2967585dd9f5b717660c653fcf699",
+      "commitBlobSha256": "e1508dbf3a655e8792d7af5a0f4c0bcb4250ff58d8b42f1265489834c492a6b0",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "e1508dbf3a655e8792d7af5a0f4c0bcb4250ff58d8b42f1265489834c492a6b0",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/umpPrivacyControls.test.ts",
+      "recordedPackageSha256": "244f6c16a1e1eaf66932545e04bfbd4b41757752c4043a52fe502ee7c53b49ea",
+      "commitBlobSha256": "244f6c16a1e1eaf66932545e04bfbd4b41757752c4043a52fe502ee7c53b49ea",
+      "classification": "exact",
+      "normalizedSha256": "244f6c16a1e1eaf66932545e04bfbd4b41757752c4043a52fe502ee7c53b49ea",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/umpProcessingControls.test.ts",
+      "recordedPackageSha256": "2d56eb5d9a5a81f78b182c8268c5a2498b8245247fc544957c8d5d180bb6039a",
+      "commitBlobSha256": "2d56eb5d9a5a81f78b182c8268c5a2498b8245247fc544957c8d5d180bb6039a",
+      "classification": "exact",
+      "normalizedSha256": "2d56eb5d9a5a81f78b182c8268c5a2498b8245247fc544957c8d5d180bb6039a",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/umpStoredSignals.test.ts",
+      "recordedPackageSha256": "f54ad5e8babdd46091b7b0d23ad492fcde54661c43336ca3c6bf594f51d8e386",
+      "commitBlobSha256": "f54ad5e8babdd46091b7b0d23ad492fcde54661c43336ca3c6bf594f51d8e386",
+      "classification": "exact",
+      "normalizedSha256": "f54ad5e8babdd46091b7b0d23ad492fcde54661c43336ca3c6bf594f51d8e386",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/appleAgeControl.ts",
+      "recordedPackageSha256": "4541a626bdd24355d0561f0f6abc92de8cd050788b24ba17b31d7ee568d214e0",
+      "commitBlobSha256": "4541a626bdd24355d0561f0f6abc92de8cd050788b24ba17b31d7ee568d214e0",
+      "classification": "exact",
+      "normalizedSha256": "4541a626bdd24355d0561f0f6abc92de8cd050788b24ba17b31d7ee568d214e0",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/appleRescission.ts",
+      "recordedPackageSha256": "c447733b5bd21cb905088af8c5bb134f607ac63f49fe8d8b581fb0c2e444b3ea",
+      "commitBlobSha256": "c447733b5bd21cb905088af8c5bb134f607ac63f49fe8d8b581fb0c2e444b3ea",
+      "classification": "exact",
+      "normalizedSha256": "c447733b5bd21cb905088af8c5bb134f607ac63f49fe8d8b581fb0c2e444b3ea",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/europeanProviderPolicy.ts",
+      "recordedPackageSha256": "686f2e6595f06fec2f65eec0839c5d4e75199f544d079f36323423d6a2b07511",
+      "commitBlobSha256": "686f2e6595f06fec2f65eec0839c5d4e75199f544d079f36323423d6a2b07511",
+      "classification": "exact",
+      "normalizedSha256": "686f2e6595f06fec2f65eec0839c5d4e75199f544d079f36323423d6a2b07511",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/europeanProviderProcessing.ts",
+      "recordedPackageSha256": "084730d0bc41158271b311a5283bd5c4730c3535631a32d497cd9000617793be",
+      "commitBlobSha256": "084730d0bc41158271b311a5283bd5c4730c3535631a32d497cd9000617793be",
+      "classification": "exact",
+      "normalizedSha256": "084730d0bc41158271b311a5283bd5c4730c3535631a32d497cd9000617793be",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/launchProcessingControl.ts",
+      "recordedPackageSha256": "b7d1641fa7e91c14186493aee1b0ceebf94d51278b41cb2dba40a90270170288",
+      "commitBlobSha256": "f59d62ef47aa3ccfe31f5a7fdbc144759b5471120676aaa177cbcb14f83c80ef",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "f59d62ef47aa3ccfe31f5a7fdbc144759b5471120676aaa177cbcb14f83c80ef",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/launchProcessingPolicy.ts",
+      "recordedPackageSha256": "4855117e52dae4895b72ba589accd71f11d807a389c0470c5be865be4ce58462",
+      "commitBlobSha256": "102ce6062a2717ee243cee3bbc576e9c9bcdd66141261c1b22dcbb4b23f77909",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "102ce6062a2717ee243cee3bbc576e9c9bcdd66141261c1b22dcbb4b23f77909",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/postGamePrivacy.ts",
+      "recordedPackageSha256": "81201201baf924b5cd7cc37d2fd8560421f3cf0ceb6ed7e0f3f5f8ec7b92071a",
+      "commitBlobSha256": "685d942095235af991062e3c625158ccdf00986dbcd99261501fb2edbbdbbed4",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "685d942095235af991062e3c625158ccdf00986dbcd99261501fb2edbbdbbed4",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/privacyCountry.ts",
+      "recordedPackageSha256": "ec5312774555ab4c5b0aacc58bf7cecfe19674da6b1e616ac29aaf0280465cad",
+      "commitBlobSha256": "ec5312774555ab4c5b0aacc58bf7cecfe19674da6b1e616ac29aaf0280465cad",
+      "classification": "exact",
+      "normalizedSha256": "ec5312774555ab4c5b0aacc58bf7cecfe19674da6b1e616ac29aaf0280465cad",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/privacyRights.ts",
+      "recordedPackageSha256": "6e84d38deacb0f5dea32384e128cfd4a7628857d312c6037f382abaaf354ba72",
+      "commitBlobSha256": "aa4973af01bb594c6d523751da76a8fd7a2161f922e0c4c2882676f73aa97621",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "aa4973af01bb594c6d523751da76a8fd7a2161f922e0c4c2882676f73aa97621",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/privacyStartup.ts",
+      "recordedPackageSha256": "509586128b86d783fc4b49f52644ace7542edaf482d5741f83eba1f7d9f3bf4a",
+      "commitBlobSha256": "509586128b86d783fc4b49f52644ace7542edaf482d5741f83eba1f7d9f3bf4a",
+      "classification": "exact",
+      "normalizedSha256": "509586128b86d783fc4b49f52644ace7542edaf482d5741f83eba1f7d9f3bf4a",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/processingAccess.ts",
+      "recordedPackageSha256": "cbe85090e4e0bc2b4f2134e884d28e17566cf416337d4d93782ee9cb680e0122",
+      "commitBlobSha256": "e8995f611c0c4831c4122e3b9e783bad7889138344e2d95ed0bda8c10debfbb0",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "e8995f611c0c4831c4122e3b9e783bad7889138344e2d95ed0bda8c10debfbb0",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/processingNotice.ts",
+      "recordedPackageSha256": "b54ec06f6fa98ecd8ff00553b771bc761aba6385c05cde90204d4caba15e8323",
+      "commitBlobSha256": "4cfa4215db449cfaeed338c09ebcb14f02be0cc8da6a6db1a6b8d9caa8f17672",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "4cfa4215db449cfaeed338c09ebcb14f02be0cc8da6a6db1a6b8d9caa8f17672",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/processingPolicy.ts",
+      "recordedPackageSha256": "552d8e622e8055c60965ddb19c1c65ec4e3b26c95260f54cd91838f4225b6173",
+      "commitBlobSha256": "552d8e622e8055c60965ddb19c1c65ec4e3b26c95260f54cd91838f4225b6173",
+      "classification": "exact",
+      "normalizedSha256": "552d8e622e8055c60965ddb19c1c65ec4e3b26c95260f54cd91838f4225b6173",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/regionalClarification.ts",
+      "recordedPackageSha256": "698ad37f5ce553ed3f771579d29177af8168353f24739c58d0682c88cad9968a",
+      "commitBlobSha256": "e01538fe32b3de9cc4649b84757522cbed9273c224489420ec42f0131d7fa06b",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "e01538fe32b3de9cc4649b84757522cbed9273c224489420ec42f0131d7fa06b",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/regionalPolicy.README.md",
+      "recordedPackageSha256": "3621f4cd5592c2d037726cb6ceeb5f75c0eec6852556a380b8fa5104d1d168e1",
+      "commitBlobSha256": "dbce3fde1f5fa9cd783bf39ed3a4df211782644caf2d39445b989ac1444cc076",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "dbce3fde1f5fa9cd783bf39ed3a4df211782644caf2d39445b989ac1444cc076",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/regionalPolicy.ts",
+      "recordedPackageSha256": "e5ab67bc59fda1e6e39ae026e14dabdfda3619f68c393f1aa51cc2ec4515a744",
+      "commitBlobSha256": "e5ab67bc59fda1e6e39ae026e14dabdfda3619f68c393f1aa51cc2ec4515a744",
+      "classification": "exact",
+      "normalizedSha256": "e5ab67bc59fda1e6e39ae026e14dabdfda3619f68c393f1aa51cc2ec4515a744",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/umpPrivacyControls.ts",
+      "recordedPackageSha256": "4d5a9b25bf2b37c6f2ede41ac43b45343960672922e150d5089dbcbf8da7802a",
+      "commitBlobSha256": "4d5a9b25bf2b37c6f2ede41ac43b45343960672922e150d5089dbcbf8da7802a",
+      "classification": "exact",
+      "normalizedSha256": "4d5a9b25bf2b37c6f2ede41ac43b45343960672922e150d5089dbcbf8da7802a",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/umpStoredSignals.ts",
+      "recordedPackageSha256": "8ea024845958071874207c20f4aefc68137ef9b3b6c034a3482f667610f175ad",
+      "commitBlobSha256": "8ea024845958071874207c20f4aefc68137ef9b3b6c034a3482f667610f175ad",
+      "classification": "exact",
+      "normalizedSha256": "8ea024845958071874207c20f4aefc68137ef9b3b6c034a3482f667610f175ad",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/settingsPermissionRecovery.ts",
+      "recordedPackageSha256": "d3b93beefe1b6bd3e192634cd0cf263d8d25bc610bf133cb6748488a816d039e",
+      "commitBlobSha256": "d3b93beefe1b6bd3e192634cd0cf263d8d25bc610bf133cb6748488a816d039e",
+      "classification": "exact",
+      "normalizedSha256": "d3b93beefe1b6bd3e192634cd0cf263d8d25bc610bf133cb6748488a816d039e",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/services/videoSharing.ts",
+      "recordedPackageSha256": "c32c0c74ec943414bdf4fbe86d9586f7056e02bd18ff637f3043ed6abf36c176",
+      "commitBlobSha256": "c32c0c74ec943414bdf4fbe86d9586f7056e02bd18ff637f3043ed6abf36c176",
+      "classification": "exact",
+      "normalizedSha256": "c32c0c74ec943414bdf4fbe86d9586f7056e02bd18ff637f3043ed6abf36c176",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/bird-stage-assets.test.ts",
+      "recordedPackageSha256": "2ea4dc8e44c36f77472af882699156e4e31e97ac52ffb3d36dffc5417df6f6d8",
+      "commitBlobSha256": "2ea4dc8e44c36f77472af882699156e4e31e97ac52ffb3d36dffc5417df6f6d8",
+      "classification": "exact",
+      "normalizedSha256": "2ea4dc8e44c36f77472af882699156e4e31e97ac52ffb3d36dffc5417df6f6d8",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/camera-preview.test.ts",
+      "recordedPackageSha256": "c39094f39669199fcbf825bf6466d39d5ba78e5e9eff31b5472af6d66c593a03",
+      "commitBlobSha256": "4489d274e51cc906d1670f5531c053bcff74e15a725fd12030041646aa67d25c",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "4489d274e51cc906d1670f5531c053bcff74e15a725fd12030041646aa67d25c",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/competition-profile-reset.test.ts",
+      "recordedPackageSha256": "dd3db45ac48d07948d90e6e775243c69f33bab330437429ef94ed9c935b958ba",
+      "commitBlobSha256": "dd3db45ac48d07948d90e6e775243c69f33bab330437429ef94ed9c935b958ba",
+      "classification": "exact",
+      "normalizedSha256": "dd3db45ac48d07948d90e6e775243c69f33bab330437429ef94ed9c935b958ba",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/continuous-gameplay.test.ts",
+      "recordedPackageSha256": "07f755f1947a3f965e2346c28fc45de9728811fd705e3e6cc130e94fb1c64063",
+      "commitBlobSha256": "07f755f1947a3f965e2346c28fc45de9728811fd705e3e6cc130e94fb1c64063",
+      "classification": "exact",
+      "normalizedSha256": "07f755f1947a3f965e2346c28fc45de9728811fd705e3e6cc130e94fb1c64063",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/evolution-core.test.ts",
+      "recordedPackageSha256": "be990a38183a1207930f3b1ab722aa365827161a935b0d5ff990879b26e2f468",
+      "commitBlobSha256": "be990a38183a1207930f3b1ab722aa365827161a935b0d5ff990879b26e2f468",
+      "classification": "exact",
+      "normalizedSha256": "be990a38183a1207930f3b1ab722aa365827161a935b0d5ff990879b26e2f468",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/fixtures/chromium-audio-duration-defect.mp4",
+      "recordedPackageSha256": "a98d0c841644fb2c15d34b247e78892cf6f20cfecb21935d59ba67fac5a05b7b",
+      "commitBlobSha256": "a98d0c841644fb2c15d34b247e78892cf6f20cfecb21935d59ba67fac5a05b7b",
+      "classification": "exact",
+      "normalizedSha256": "94dab2907c17517af561d7fb00ca9255fd01ce20b25e90c9ca3e7541ec78d82a",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/fixtures/chromium-duration-defect.mp4",
+      "recordedPackageSha256": "6b50078c031234fd45fadfbc6c815e3ae1d7d13055bb6afbce5ef1f74023dc16",
+      "commitBlobSha256": "6b50078c031234fd45fadfbc6c815e3ae1d7d13055bb6afbce5ef1f74023dc16",
+      "classification": "exact",
+      "normalizedSha256": "1db3bbde712471ff9c73535b31bc31cf07e1139cf03d7e94694b190f1754c3c6",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/form-tracking.test.ts",
+      "recordedPackageSha256": "38906991cb3611ddb4ba7a37a8b9015dcea52ffa0429d047627535d05929d0e6",
+      "commitBlobSha256": "38906991cb3611ddb4ba7a37a8b9015dcea52ffa0429d047627535d05929d0e6",
+      "classification": "exact",
+      "normalizedSha256": "38906991cb3611ddb4ba7a37a8b9015dcea52ffa0429d047627535d05929d0e6",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/game-modes.test.ts",
+      "recordedPackageSha256": "255706c52a212e92dc96d4bf2de65388017185f9f564e032a017f8bbdc52b507",
+      "commitBlobSha256": "255706c52a212e92dc96d4bf2de65388017185f9f564e032a017f8bbdc52b507",
+      "classification": "exact",
+      "normalizedSha256": "255706c52a212e92dc96d4bf2de65388017185f9f564e032a017f8bbdc52b507",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/level-rules.test.ts",
+      "recordedPackageSha256": "baaab1fb2f8836217f1311ef17dc52e809c2e841b3de33dbb93f503f993dd970",
+      "commitBlobSha256": "01dd7de5b9bd58fe22d383c306932f050a70f77e26ded15c6c2b23f3f7d8a0f5",
+      "classification": "lineEndingsOnly",
+      "normalizedSha256": "01dd7de5b9bd58fe22d383c306932f050a70f77e26ded15c6c2b23f3f7d8a0f5",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/mediapipe-recovery.test.ts",
+      "recordedPackageSha256": "421b843d39e4f4a3bf941e9c07a3a1727bf8fc70352c941dc25d9c0c8a0a1cbe",
+      "commitBlobSha256": "421b843d39e4f4a3bf941e9c07a3a1727bf8fc70352c941dc25d9c0c8a0a1cbe",
+      "classification": "exact",
+      "normalizedSha256": "421b843d39e4f4a3bf941e9c07a3a1727bf8fc70352c941dc25d9c0c8a0a1cbe",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/pullup-elbow-clearance.test.js",
+      "recordedPackageSha256": "96375f352a0918b471b1b8739ef90cc39a0a6af80def5a38d03f75535bd54636",
+      "commitBlobSha256": "96375f352a0918b471b1b8739ef90cc39a0a6af80def5a38d03f75535bd54636",
+      "classification": "exact",
+      "normalizedSha256": "96375f352a0918b471b1b8739ef90cc39a0a6af80def5a38d03f75535bd54636",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/pullup-gameplay-flow.test.js",
+      "recordedPackageSha256": "53c52abcf2b5d8c51784789d15de33a4d0db890352a2c056f020f9fd6e83d3a5",
+      "commitBlobSha256": "53c52abcf2b5d8c51784789d15de33a4d0db890352a2c056f020f9fd6e83d3a5",
+      "classification": "exact",
+      "normalizedSha256": "53c52abcf2b5d8c51784789d15de33a4d0db890352a2c056f020f9fd6e83d3a5",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/pullup-grab-entry.test.js",
+      "recordedPackageSha256": "772956a1bdb12cd56817898337e9681fcc5a4e4cbf9edd0c370f2d2e86b6b1b8",
+      "commitBlobSha256": "772956a1bdb12cd56817898337e9681fcc5a4e4cbf9edd0c370f2d2e86b6b1b8",
+      "classification": "exact",
+      "normalizedSha256": "772956a1bdb12cd56817898337e9681fcc5a4e4cbf9edd0c370f2d2e86b6b1b8",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/pullup-standing-reach.test.js",
+      "recordedPackageSha256": "303ac9ba0278250c42dc87d73e5f03854b5d214b5bb3cc7ea45dab9ecb4cc71f",
+      "commitBlobSha256": "303ac9ba0278250c42dc87d73e5f03854b5d214b5bb3cc7ea45dab9ecb4cc71f",
+      "classification": "exact",
+      "normalizedSha256": "303ac9ba0278250c42dc87d73e5f03854b5d214b5bb3cc7ea45dab9ecb4cc71f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/pullup-support-reference.test.ts",
+      "recordedPackageSha256": "6309ac95220411110750a94e3f43952c7f1eb56fd3e696117081318c331c85d1",
+      "commitBlobSha256": "6309ac95220411110750a94e3f43952c7f1eb56fd3e696117081318c331c85d1",
+      "classification": "exact",
+      "normalizedSha256": "6309ac95220411110750a94e3f43952c7f1eb56fd3e696117081318c331c85d1",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/pullup-top-entry.test.ts",
+      "recordedPackageSha256": "9a1837268b2ed615a0e72c577f714eb74915535f78298bb5bb5d3f0cb69cb5d5",
+      "commitBlobSha256": "9a1837268b2ed615a0e72c577f714eb74915535f78298bb5bb5d3f0cb69cb5d5",
+      "classification": "exact",
+      "normalizedSha256": "9a1837268b2ed615a0e72c577f714eb74915535f78298bb5bb5d3f0cb69cb5d5",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/pullup-top-first.test.js",
+      "recordedPackageSha256": "18aaecc89c6547bbc0f1a6acdbf8a537c442b7d4c87c54719c674845aee3928f",
+      "commitBlobSha256": "18aaecc89c6547bbc0f1a6acdbf8a537c442b7d4c87c54719c674845aee3928f",
+      "classification": "exact",
+      "normalizedSha256": "18aaecc89c6547bbc0f1a6acdbf8a537c442b7d4c87c54719c674845aee3928f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/pullup-top-reference.test.ts",
+      "recordedPackageSha256": "f4ee76b8097015934e1942a9043065d090639620f0c41357a2007fec7eb8ddb9",
+      "commitBlobSha256": "f4ee76b8097015934e1942a9043065d090639620f0c41357a2007fec7eb8ddb9",
+      "classification": "exact",
+      "normalizedSha256": "f4ee76b8097015934e1942a9043065d090639620f0c41357a2007fec7eb8ddb9",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/recording-boundaries.test.ts",
+      "recordedPackageSha256": "e6c816d630d6d4e72c8bc1b208449921ffa46c4ab1e8d6591f19164abe40c174",
+      "commitBlobSha256": "e6c816d630d6d4e72c8bc1b208449921ffa46c4ab1e8d6591f19164abe40c174",
+      "classification": "exact",
+      "normalizedSha256": "e6c816d630d6d4e72c8bc1b208449921ffa46c4ab1e8d6591f19164abe40c174",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/recording-mp4.test.ts",
+      "recordedPackageSha256": "d66de32f3b9c35ef3c014d7b676aecff666bc7f6925264eccc41411512a4ccf0",
+      "commitBlobSha256": "d66de32f3b9c35ef3c014d7b676aecff666bc7f6925264eccc41411512a4ccf0",
+      "classification": "exact",
+      "normalizedSha256": "d66de32f3b9c35ef3c014d7b676aecff666bc7f6925264eccc41411512a4ccf0",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/stats-history.test.ts",
+      "recordedPackageSha256": "343dc5495b6943349d1297056621a73f6e7215352e8747b403d0e39b0ca46d23",
+      "commitBlobSha256": "343dc5495b6943349d1297056621a73f6e7215352e8747b403d0e39b0ca46d23",
+      "classification": "exact",
+      "normalizedSha256": "343dc5495b6943349d1297056621a73f6e7215352e8747b403d0e39b0ca46d23",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/__tests__/store-hydration.test.ts",
+      "recordedPackageSha256": "4be4fe6304fe99c573df47e1c129bec37b75f1004d6ad0b392e918050b64c0bc",
+      "commitBlobSha256": "4be4fe6304fe99c573df47e1c129bec37b75f1004d6ad0b392e918050b64c0bc",
+      "classification": "exact",
+      "normalizedSha256": "4be4fe6304fe99c573df47e1c129bec37b75f1004d6ad0b392e918050b64c0bc",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/achievements.ts",
+      "recordedPackageSha256": "8a6c015405771fd02e96a2d1a6d3a23ac315f863c43a5c8166413eec22b00fe6",
+      "commitBlobSha256": "8a6c015405771fd02e96a2d1a6d3a23ac315f863c43a5c8166413eec22b00fe6",
+      "classification": "exact",
+      "normalizedSha256": "8a6c015405771fd02e96a2d1a6d3a23ac315f863c43a5c8166413eec22b00fe6",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/birdStageArt.ts",
+      "recordedPackageSha256": "b625c99c39a51422385002b2c1a5cd060f4033cd3f95bdc38c670780c7d90bce",
+      "commitBlobSha256": "b625c99c39a51422385002b2c1a5cd060f4033cd3f95bdc38c670780c7d90bce",
+      "classification": "exact",
+      "normalizedSha256": "b625c99c39a51422385002b2c1a5cd060f4033cd3f95bdc38c670780c7d90bce",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/birdVisual.test.ts",
+      "recordedPackageSha256": "c0497f511159fe58fddc9fabc822ed10f55f1a3e22106bc04a6698e502435fd1",
+      "commitBlobSha256": "c0497f511159fe58fddc9fabc822ed10f55f1a3e22106bc04a6698e502435fd1",
+      "classification": "exact",
+      "normalizedSha256": "c0497f511159fe58fddc9fabc822ed10f55f1a3e22106bc04a6698e502435fd1",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/birdVisual.ts",
+      "recordedPackageSha256": "042443e77555bc3b11aa941fc0d7ba979cf49eab178a898ad5d753fdb2bfc8fd",
+      "commitBlobSha256": "042443e77555bc3b11aa941fc0d7ba979cf49eab178a898ad5d753fdb2bfc8fd",
+      "classification": "exact",
+      "normalizedSha256": "042443e77555bc3b11aa941fc0d7ba979cf49eab178a898ad5d753fdb2bfc8fd",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/birdWebAsset.test.ts",
+      "recordedPackageSha256": "7c2378d4be19f51657a248c66fe17913c5b3718572f7799bc0dae8ad3e196104",
+      "commitBlobSha256": "7c2378d4be19f51657a248c66fe17913c5b3718572f7799bc0dae8ad3e196104",
+      "classification": "exact",
+      "normalizedSha256": "7c2378d4be19f51657a248c66fe17913c5b3718572f7799bc0dae8ad3e196104",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/birdWebAsset.ts",
+      "recordedPackageSha256": "25a5db0714ec90d4e9347fdc6134da2986ffe7c2eac5d65d83614e1261cb5b85",
+      "commitBlobSha256": "25a5db0714ec90d4e9347fdc6134da2986ffe7c2eac5d65d83614e1261cb5b85",
+      "classification": "exact",
+      "normalizedSha256": "25a5db0714ec90d4e9347fdc6134da2986ffe7c2eac5d65d83614e1261cb5b85",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/birds.ts",
+      "recordedPackageSha256": "da24960398adb94844d1d7505ffe562541108041d993505dc7a9ccb721ee3e1a",
+      "commitBlobSha256": "da24960398adb94844d1d7505ffe562541108041d993505dc7a9ccb721ee3e1a",
+      "classification": "exact",
+      "normalizedSha256": "da24960398adb94844d1d7505ffe562541108041d993505dc7a9ccb721ee3e1a",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/exerciseImages.ts",
+      "recordedPackageSha256": "0c970371500a7dea2c874ff250bede996732a0ee5aba7792a795bde5c5f158ce",
+      "commitBlobSha256": "0c970371500a7dea2c874ff250bede996732a0ee5aba7792a795bde5c5f158ce",
+      "classification": "exact",
+      "normalizedSha256": "0c970371500a7dea2c874ff250bede996732a0ee5aba7792a795bde5c5f158ce",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/game-web-navigation.test.ts",
+      "recordedPackageSha256": "31c8e6079f180e8863f82ba39630c43820dd8e1ba2932067f37ccd049d28baa5",
+      "commitBlobSha256": "31c8e6079f180e8863f82ba39630c43820dd8e1ba2932067f37ccd049d28baa5",
+      "classification": "exact",
+      "normalizedSha256": "31c8e6079f180e8863f82ba39630c43820dd8e1ba2932067f37ccd049d28baa5",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/game-web-navigation.ts",
+      "recordedPackageSha256": "34b58181a1539fd28c391529f30efc6820b7556c465913baca5b0c58ddfcdbd2",
+      "commitBlobSha256": "34b58181a1539fd28c391529f30efc6820b7556c465913baca5b0c58ddfcdbd2",
+      "classification": "exact",
+      "normalizedSha256": "34b58181a1539fd28c391529f30efc6820b7556c465913baca5b0c58ddfcdbd2",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/gameHtml.ts",
+      "recordedPackageSha256": "1b5b84108766e65cdb5baae527fe4c0b6cb3331b5d5a3271c70cfcc995273373",
+      "commitBlobSha256": "1b5b84108766e65cdb5baae527fe4c0b6cb3331b5d5a3271c70cfcc995273373",
+      "classification": "exact",
+      "normalizedSha256": "1b5b84108766e65cdb5baae527fe4c0b6cb3331b5d5a3271c70cfcc995273373",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/gameModes.ts",
+      "recordedPackageSha256": "58747d768b12b8f3f6a720c33a5b7426afc86f6d7ed50ad002cb04e9402126f5",
+      "commitBlobSha256": "58747d768b12b8f3f6a720c33a5b7426afc86f6d7ed50ad002cb04e9402126f5",
+      "classification": "exact",
+      "normalizedSha256": "58747d768b12b8f3f6a720c33a5b7426afc86f6d7ed50ad002cb04e9402126f5",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/html/scriptCore.ts",
+      "recordedPackageSha256": "ba12862d9192d97ae6f374de0c6c7f16705d976eb45518e03c50cfd9ee585e24",
+      "commitBlobSha256": "ba12862d9192d97ae6f374de0c6c7f16705d976eb45518e03c50cfd9ee585e24",
+      "classification": "exact",
+      "normalizedSha256": "ba12862d9192d97ae6f374de0c6c7f16705d976eb45518e03c50cfd9ee585e24",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/html/scriptFormTracking.ts",
+      "recordedPackageSha256": "d0dabe46f881fae43aff784a5f0c4543c9a0c0236cad954546ca51d4811821bf",
+      "commitBlobSha256": "d0dabe46f881fae43aff784a5f0c4543c9a0c0236cad954546ca51d4811821bf",
+      "classification": "exact",
+      "normalizedSha256": "d0dabe46f881fae43aff784a5f0c4543c9a0c0236cad954546ca51d4811821bf",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/html/scriptGame.ts",
+      "recordedPackageSha256": "55055246457ab00d2ca76296c9c63655af80e694068cf142ba00bc088dc23d37",
+      "commitBlobSha256": "55055246457ab00d2ca76296c9c63655af80e694068cf142ba00bc088dc23d37",
+      "classification": "exact",
+      "normalizedSha256": "55055246457ab00d2ca76296c9c63655af80e694068cf142ba00bc088dc23d37",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/html/scriptPullupSupport.ts",
+      "recordedPackageSha256": "dc3cd6397ab3f4f69601142505d14286a49f2b4fdd2d021ce812136131b19baf",
+      "commitBlobSha256": "dc3cd6397ab3f4f69601142505d14286a49f2b4fdd2d021ce812136131b19baf",
+      "classification": "exact",
+      "normalizedSha256": "dc3cd6397ab3f4f69601142505d14286a49f2b4fdd2d021ce812136131b19baf",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/html/scriptRecordingMp4.ts",
+      "recordedPackageSha256": "e4d5ab846558d9d6655892aa3ce58c4db0f867ae53e796ff1998adc1db8e2030",
+      "commitBlobSha256": "e4d5ab846558d9d6655892aa3ce58c4db0f867ae53e796ff1998adc1db8e2030",
+      "classification": "exact",
+      "normalizedSha256": "e4d5ab846558d9d6655892aa3ce58c4db0f867ae53e796ff1998adc1db8e2030",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/levels.ts",
+      "recordedPackageSha256": "693492f1cfa0622a866ef9bfe0366da3a77997315d2e5aec67b836e8c9d5aa63",
+      "commitBlobSha256": "693492f1cfa0622a866ef9bfe0366da3a77997315d2e5aec67b836e8c9d5aa63",
+      "classification": "exact",
+      "normalizedSha256": "693492f1cfa0622a866ef9bfe0366da3a77997315d2e5aec67b836e8c9d5aa63",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/mediapipeAssets.ts",
+      "recordedPackageSha256": "4e04d92254d63147163b0b5f7ba55cee613892c96890e086912043bb51162802",
+      "commitBlobSha256": "4e04d92254d63147163b0b5f7ba55cee613892c96890e086912043bb51162802",
+      "classification": "exact",
+      "normalizedSha256": "4e04d92254d63147163b0b5f7ba55cee613892c96890e086912043bb51162802",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/store.ts",
+      "recordedPackageSha256": "de5d443cdc0db89c8578211b3bcaebc0b3c4078f5fd73b006087c9ed1c85edb1",
+      "commitBlobSha256": "de5d443cdc0db89c8578211b3bcaebc0b3c4078f5fd73b006087c9ed1c85edb1",
+      "classification": "exact",
+      "normalizedSha256": "de5d443cdc0db89c8578211b3bcaebc0b3c4078f5fd73b006087c9ed1c85edb1",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/src/utils/game/testUtils/pullupGameplayHarness.js",
+      "recordedPackageSha256": "bb2a0b0ad92ec7632d2401d12a54d5ab2f3230922e0c356e912b8c823d33ca96",
+      "commitBlobSha256": "bb2a0b0ad92ec7632d2401d12a54d5ab2f3230922e0c356e912b8c823d33ca96",
+      "classification": "exact",
+      "normalizedSha256": "bb2a0b0ad92ec7632d2401d12a54d5ab2f3230922e0c356e912b8c823d33ca96",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/tailwind.config.js",
+      "recordedPackageSha256": "4bcdf129cccd951f82990323f7f09ec4a6f686263f811383a57d09d2fe51dab4",
+      "commitBlobSha256": "4bcdf129cccd951f82990323f7f09ec4a6f686263f811383a57d09d2fe51dab4",
+      "classification": "exact",
+      "normalizedSha256": "4bcdf129cccd951f82990323f7f09ec4a6f686263f811383a57d09d2fe51dab4",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "apps/mobile/tsconfig.json",
+      "recordedPackageSha256": "97f08eea973ea254e6486833d987b8b52ff0456b95135601238d9b8b5f32a7a5",
+      "commitBlobSha256": "97f08eea973ea254e6486833d987b8b52ff0456b95135601238d9b8b5f32a7a5",
+      "classification": "exact",
+      "normalizedSha256": "97f08eea973ea254e6486833d987b8b52ff0456b95135601238d9b8b5f32a7a5",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "package.json",
+      "recordedPackageSha256": "c4505fdef2a34c3ee80fad3200c01af2b508f19a7ced7310cb01b37a2044287f",
+      "commitBlobSha256": "c4505fdef2a34c3ee80fad3200c01af2b508f19a7ced7310cb01b37a2044287f",
+      "classification": "exact",
+      "normalizedSha256": "c4505fdef2a34c3ee80fad3200c01af2b508f19a7ced7310cb01b37a2044287f",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "supabase/config.toml",
+      "recordedPackageSha256": "1125aa53b8ed574608c52059ecbbfb9adfb991ed30f54416044ebb09406e976a",
+      "commitBlobSha256": "1125aa53b8ed574608c52059ecbbfb9adfb991ed30f54416044ebb09406e976a",
+      "classification": "exact",
+      "normalizedSha256": "1125aa53b8ed574608c52059ecbbfb9adfb991ed30f54416044ebb09406e976a",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "supabase/functions/flapfit-game/index.ts",
+      "recordedPackageSha256": "56d962031e1f371a520e5dc4036e4018544840684517d990773bd2987ebf2043",
+      "commitBlobSha256": "56d962031e1f371a520e5dc4036e4018544840684517d990773bd2987ebf2043",
+      "classification": "exact",
+      "normalizedSha256": "56d962031e1f371a520e5dc4036e4018544840684517d990773bd2987ebf2043",
+      "currentCheckoutMatchesPackage": true
+    },
+    {
+      "path": "yarn.lock",
+      "recordedPackageSha256": "70625858620f62b3811cf462ed0a605b25ce28c08cac0a030bfed450fb26ac6b",
+      "commitBlobSha256": "70625858620f62b3811cf462ed0a605b25ce28c08cac0a030bfed450fb26ac6b",
+      "classification": "exact",
+      "normalizedSha256": "70625858620f62b3811cf462ed0a605b25ce28c08cac0a030bfed450fb26ac6b",
+      "currentCheckoutMatchesPackage": true
+    }
+  ],
+  "sourceChanged": false,
+  "testsRerunRequired": false,
+  "existingVerificationCoverage": "Existing full source/package checks retained if every difference is line endings only.",
+  "subsequentFormattingCorrection": {
+    "paths": [
+      "apps/mobile/app.config.js",
+      "apps/mobile/script/build_and_run.sh",
+      "apps/mobile/src/app/_layout.tsx",
+      "apps/mobile/src/utils/game/__tests__/camera-preview.test.ts"
+    ],
+    "newPolicy": ".gitattributes: text eol=lf for these four paths only",
+    "applicationContentChanged": false,
+    "originalRetainedPackagePreserved": true,
+    "freshPackageEvidence": "package-source-normalized-package-2026-09-20.json"
+  }
+}

@@ -1,5 +1,12 @@
 # Apple-first completion tracker
 
+## Current package and authenticated provider reconciliation
+
+Source 30dffe412a08d13a8e836d7b8abd19eac24470ef: all 284 recorded inputs reconciled, 246 raw Git matches and 38 CRLF/LF-only differences; zero content differences. Four mixed-ending files were normalized to their existing Git bytes and pinned to LF. Fresh local EAS archive inspection and the validator inside it passed. Existing 59-suite/1133-test, TypeScript and strict-lint coverage remains applicable; no application-logic change or build.
+
+The current authenticated audit is recorded in **evidence/package-provider-audit-2026-09-20.md**. Apple saved listing, declarations, four-country free pricing/release choice and twelve-category privacy answers remain verified; completed reviewer-contact and upload-authentication evidence is preserved. Both screenshot sets are empty and TestFlight has No Builds. Privacy publication is not independently established by the Publish button. RevenueCat is connected to the matching AdMob account but sandbox/production dashboards contain no receipt evidence. AdMob has the correct iOS interstitial and published consent messages; no policy violations or disapproved apps, but store linkage/readiness approval and the five-month inactivity warning remain open. These exact facts supersede contradictory older checkpoint summaries below without reopening resolved source findings. Final artifact/device/provider/Apple evidence remains distinct. Xcode Organizer PDF stays not generated/deferred. No build, upload, console setting change, privacy publication or submission occurred.
+
+
 ## Current supplied-review reconciliation
 
 The supplied review has been reconciled against the current successor. See evidence/review-successor-resolution-2026-09-20.md for each finding, scoped competition corrections, full source/package results and exact remaining artifact/device/provider/Apple actions. Earlier checkpoints below retain their dated source scope; they are not current submission clearance. No new build or Apple upload was launched during this correction.

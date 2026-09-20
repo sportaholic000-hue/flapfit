@@ -1,2 +1,8 @@
 # Preserve retired feature snapshots byte-for-byte for their SHA-256 manifest.
 archive/friend-challenges/** -text
+
+# Keep reconciled upload inputs identical across Windows and Unix checkouts.
+apps/mobile/app.config.js text eol=lf
+apps/mobile/script/build_and_run.sh text eol=lf
+apps/mobile/src/app/_layout.tsx text eol=lf
+apps/mobile/src/utils/game/__tests__/camera-preview.test.ts text eol=lf
