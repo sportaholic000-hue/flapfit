@@ -1,0 +1,84 @@
+{
+  "recordedAt": "2026-09-20T18:13:56.243021+00:00",
+  "startingCommit": "1ecab513c20a604511579e0df2465d2656616627",
+  "preservedSourceVerificationBatch": "1ecab513c20a604511579e0df2465d2656616627",
+  "task3": {
+    "bundleIdentifier": "com.flapfit.game",
+    "selectedAnswer": "Yes, it contains, shows, or accesses third-party content, and I have the necessary rights",
+    "supportingSources": [
+      "https://developers.google.com/admob/terms",
+      "https://www.gstatic.com/adsense/tc/2022-v1/google_usa/en.html"
+    ],
+    "reloadPersistenceVerified": true,
+    "initiallyUnanswered": true,
+    "priorApprovalReview": "Initial save rejected because third-party ad authorization was not yet established. Owner subsequently confirmed the authorized AdMob account; supported save then succeeded.",
+    "url": "https://appstoreconnect.apple.com/apps/6813280704/distribution/info",
+    "status": "COMPLETE",
+    "task": 3,
+    "appName": "Flap Fit Workout Game",
+    "savedReadbackAfterReload": "Yes, this app has the necessary rights to its third-party content.",
+    "savedIndicatorObserved": true,
+    "verifiedAt": "2026-09-20T18:11:42.6244828Z",
+    "exactQuestion": "Does your app contain, show, or access third-party content?",
+    "scope": "Content Rights only. No listing, rating, country, price, release setting or App Privacy changes.",
+    "appStoreConnectId": "6813280704",
+    "ownerFacts": [
+      "No music; artwork created completely from scratch for Flap Fit. This was not expanded into a third-party artwork licence.",
+      "Owner explicitly confirmed: Yes, it is my authorized AdMob account."
+    ]
+  },
+  "task4": {
+    "status": "BLOCKED",
+    "priorCredentialInventory": {
+      "checkedAt": "2026-09-20T17:55:35.043Z",
+      "appStoreConnectId": "6813280704",
+      "bundleIdentifier": "com.flapfit.game",
+      "localSubmission": {
+        "apiKeyPathConfigured": false,
+        "keyIdConfigured": false,
+        "issuerConfigured": false,
+        "apiKeyFileExists": false
+      },
+      "localCredentialSections": [
+        "ios"
+      ],
+      "localIosCredentialSections": [
+        "provisioningProfilePath",
+        "distributionCertificate"
+      ],
+      "credentialEnvironmentPresence": {
+        "EXPO_ASC_API_KEY_PATH": false,
+        "EXPO_ASC_API_KEY_ID": false,
+        "EXPO_ASC_KEY_ID": false,
+        "EXPO_ASC_API_KEY_ISSUER_ID": false,
+        "EXPO_ASC_ISSUER_ID": false,
+        "EXPO_APPLE_APP_SPECIFIC_PASSWORD": false
+      },
+      "expo": {
+        "projectId": "bbbfea4f-3047-46f6-a5ba-6286356e4718",
+        "matchingCredentialRecords": 1,
+        "configuredSubmissionKeys": [],
+        "accountApiKeyCount": 0,
+        "accountApiKeyMetadata": []
+      }
+    },
+    "approvedAction": "Generate Flap Fit EAS Upload with Developer access; download once; securely configure in existing Expo/EAS submission workflow for app 6813280704. Owner approved key creation and secure setup.",
+    "createdAppleKey": {
+      "name": "Flap Fit EAS Upload",
+      "keyId": "284JCB3MXC",
+      "role": "Developer",
+      "appleUiActiveCount": 1
+    },
+    "authentication": {
+      "status": "BLOCKED",
+      "blockedAt": "Secure download handoff",
+      "reason": "Apple key was created with action-time owner approval. The Download action was invoked and Apple removed the one-time download control. No private-key file was available in the checked Downloads/local download locations. Browser security policy prohibited inspecting the browser downloads page. Owner was asked to save AuthKey_284JCB3MXC.p8 to Downloads or report that no download appears. No substitute key was created or revoked.",
+      "configuredInEas": false,
+      "appleApiAuthenticationProved": false,
+      "binaryUploaded": false
+    }
+  },
+  "changedApplicationOrSubmissionConfiguration": false,
+  "priorChecksRerun": false,
+  "prohibitedActionsPerformed": []
+}
