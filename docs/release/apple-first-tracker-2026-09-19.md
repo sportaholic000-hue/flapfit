@@ -2,6 +2,8 @@
 
 ## Privacy flow checkpoint — September 20, 2026
 
+**Owner testing plan:** Use the owner's iPad for the first device pass and repairs. The brother is testing remotely on the registered iPhone from another province; send him one consolidated test pass only after the candidate is essentially complete, not intermediate or spaced-out tests. Back up completed work to GitHub and verify the remote commit. The owner states there is no music and the artwork was created from their ideas; this records that statement without inventing a licensing attestation.
+
 The owner authorized necessary privacy changes, with permanent controls under Info → Privacy & choices and no optional setup before the first game. That flow is now connected in source: optional Apple/advertising/reporting preparation begins only after a claimed Done / Try Again / Next Level action. A short disclosure links to the same expandable controls; separate express choices appear only when the resolved policy requires them. Required Apple checks remain independent. Camera footage and optional Record & Play files remain local and user-directed.
 
 RevenueCat reporting refusal remains independent from permitted AdMob advertising, including a local choice-write failure. Required advertising-consent withdrawal stays accessible in Info. The unchanged result scheduler preserves the first session exit being ad-free, every second eligible exit thereafter, 90 seconds between opened ads, no-fill navigation, and no ad triggered by sharing/return/foreground. Canada's invalid adjacent Apple age gates were corrected to valid 14/16/18 thresholds; unresolved younger ranges do not authorize optional processing or restrict local play.
