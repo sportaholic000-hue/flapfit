@@ -1,0 +1,50 @@
+{
+  "recordedAt": "2026-09-20T19:52:51.070411+00:00",
+  "applicationSource": "f4b191dbda7eb17bcb5811cafb8c34eb9b7c6657",
+  "verifiedApplicationBaseline": "f168286d9058093a42da8e96f02f53a82365a7e6",
+  "sourceAlreadyPushedVerified": true,
+  "reviewedOlderMain": "f39190d6ae2a84c8ba97624b5c917295f0b1ec7d",
+  "reviewerContacts": {
+    "status": "COMPLETE",
+    "verifiedAt": "2026-09-20T19:31:11.440681+00:00",
+    "appStoreConnectId": "6813280704",
+    "version": "1.0",
+    "url": "https://appstoreconnect.apple.com/apps/6813280704/distribution/ios/version/inflight",
+    "phoneSource": "Existing signed-in Apple Developer membership phone",
+    "emailSource": "Existing saved app-review support address; matches the approved application support configuration",
+    "correctPhonePresentAfterReload": true,
+    "correctEmailPresentAfterReload": true,
+    "savePerformed": true,
+    "freshReloadsVerified": 2,
+    "saveDisabledAfterReload": true,
+    "actualInputVerification": "Visual reading of the rendered input fields after reload. Phone matches membership; email matches the existing approved support mailbox. No values/screenshots copied to Git.",
+    "priorTask6FindingCorrection": "The prior empty-field assertion was incorrect. Accessibility and the read-only DOM adapter omit current values for these two inputs. Both rendered fields were populated after reload. Empty DOM/AX output must not be used to classify these fields as unfinished.",
+    "automationLimitation": "Text input enumeration and clipboard readback returned empty strings despite visible populated inputs; visual readback is the confirmation evidence.",
+    "otherTextInputsUnchanged": true,
+    "nameAndReviewerNotesPreserved": true,
+    "signInRequiredStillFalse": true,
+    "releaseChoicePreserved": true,
+    "otherAppleFieldsChanged": false,
+    "privateContactValuesInEvidence": false,
+    "ownerRepeatedInformation": false
+  },
+  "xcodeOrganizerPdf": {
+    "status": "DEFERRED",
+    "generated": false,
+    "ownerDisposition": "Not required for this release. No owner Mac/operator request. Actual artifact manifest, required-reason, permission, configured-data-flow and App Privacy reconciliation checks remain required."
+  },
+  "registeredDeviceBuild": {
+    "id": "04cf2e97-63f0-43f2-af1a-0002414c9d13",
+    "sourceCommit": "f4b191dbda7eb17bcb5811cafb8c34eb9b7c6657",
+    "profile": "ios-device-check",
+    "version": "1.0.0",
+    "buildNumber": "4",
+    "status": "FINISHED reported by EAS cancellation response after owner stop",
+    "artifactInspected": false,
+    "acceptanceReady": false,
+    "buildsRequested": 1,
+    "newBuildAuthorizedByThisRecord": false
+  },
+  "privacyPublicationCorrection": "Twelve-category answers saved; publication is not independently established by the current UI. A visible Publish button alone is insufficient. Prior unpublished-draft history is preserved, but current publication needs authoritative verification.",
+  "reviewDisposition": "The newly supplied review findings remain pending a finding-by-finding current-source reconciliation. No fixed claim is based only on the branch difference."
+}
