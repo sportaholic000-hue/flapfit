@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { validateMonetizationConfig } = require('./validate-monetization-config.cjs');
 const { validateTrackerReleaseConfig } = require('./validate-tracker-release.cjs');
+const { validateCollectedDataDeclarations } = require('./validate-privacy-manifest.cjs');
 
 const appRoot = path.resolve(__dirname, '..');
 const repoRoot = path.resolve(appRoot, '..', '..');
@@ -176,27 +177,7 @@ for (const [apiType, reasons] of requiredPrivacyApiReasons) {
   }
 }
 
-const requiredCollectedDataTypes = new Set([
-  'NSPrivacyCollectedDataTypeUserID',
-  'NSPrivacyCollectedDataTypeGameplayContent',
-  'NSPrivacyCollectedDataTypeFitness',
-  'NSPrivacyCollectedDataTypeOtherUserContent',
-]);
-for (const dataType of requiredCollectedDataTypes) {
-  const entry = privacyManifest?.NSPrivacyCollectedDataTypes?.find(
-    (candidate) => candidate.NSPrivacyCollectedDataType === dataType
-  );
-  if (
-    !entry ||
-    entry.NSPrivacyCollectedDataTypeLinked !== true ||
-    entry.NSPrivacyCollectedDataTypeTracking !== false ||
-    !entry.NSPrivacyCollectedDataTypePurposes?.includes(
-      'NSPrivacyCollectedDataTypePurposeAppFunctionality'
-    )
-  ) {
-    failures.push(`app.json: iOS privacy manifest is incomplete for ${dataType}`);
-  }
-}
+failures.push(...validateCollectedDataDeclarations(privacyManifest));
 
 const buildPropertiesPlugin = appJson.plugins?.find(
   (plugin) => Array.isArray(plugin) && plugin[0] === 'expo-build-properties'
