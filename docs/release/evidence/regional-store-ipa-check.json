@@ -1,0 +1,25 @@
+{
+  "sha256": "ff972e71d5cd69538410e43bb11b2dea22cefc6526109ea393bd0b3a1d40c4e4",
+  "bundleIdentifier": "com.flapfit.game",
+  "version": "1.0.0",
+  "buildNumber": "4",
+  "distributionExpected": "store",
+  "usesNonExemptEncryption": false,
+  "deviceFamilies": [
+    1,
+    2
+  ],
+  "minimumOS": "16.4",
+  "cameraDescription": "Flap Fit uses the front camera to track exercise movement and control your bird. Camera images are processed live on your device. If you choose Record & Play, the app creates a temporary local recording for you to share; Flap Fit does not upload it.",
+  "microphoneDescription": "Flap Fit uses the microphone only when you choose Record & Play, so your voice and workout sounds can be included in the temporary video you control.",
+  "hasTrackingUsageDescription": false,
+  "delaysGoogleMeasurement": true,
+  "appManifestTracking": false,
+  "privacyManifestCount": 15,
+  "declaredAgeRangeInSignedBinary": true,
+  "declaredAgeRangeInProfile": true,
+  "provisionedDeviceCount": 0,
+  "profileExpires": "2027-09-19T12:27:37Z",
+  "revenueCatProcessingBridgePresent": true,
+  "deviceAcceptance": "not established by artifact inspection"
+}

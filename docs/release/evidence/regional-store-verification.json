@@ -1,0 +1,42 @@
+{
+  "buildId": "103c8936-9447-4190-a45b-6912b1027c69",
+  "compiledSource": "c05f497180c89af21ddb9b9fe014e97e2a23b80a",
+  "version": "1.0.0",
+  "buildNumber": "4",
+  "ipaSha256": "ff972e71d5cd69538410e43bb11b2dea22cefc6526109ea393bd0b3a1d40c4e4",
+  "retainedArchive": {
+    "buildId": "103c8936-9447-4190-a45b-6912b1027c69",
+    "sourceCommit": "c05f497180c89af21ddb9b9fe014e97e2a23b80a",
+    "archiveName": "FlapFit 2026-09-20 02.54.20.xcarchive",
+    "bytes": 91561294,
+    "sha256": "ad7345b7ccc04325a3f1ee10b802d6eb4329c469e835903f6a397a11c3393442",
+    "aggregatePrivacyReportGenerated": false
+  },
+  "workerArchiveChecksumMatched": true,
+  "archiveIdentityMatchesIPA": true,
+  "archiveJavaScriptMatchesIPA": true,
+  "retainedArchiveCRCVerified": true,
+  "embeddedRegionalAndProtectedMarkers": {
+    "@flapfit/connecticut-residency-v1": true,
+    "Retry stopping reporting": true,
+    "2026-09-18.9-foot-return": true
+  },
+  "privacyManifestCount": 15,
+  "archiveManifestCountMatched": 15,
+  "manifestSemanticsUnchangedFromInspectedBuild3": true,
+  "bundledTrackingResourcePaths": [
+    "Payload/FlapFit.app/assets/assets/mediapipe/vision_wasm_nosimd_internal.wasm.mpasset",
+    "Payload/FlapFit.app/assets/assets/mediapipe/vision_wasm_nosimd_internal.js.mpasset",
+    "Payload/FlapFit.app/assets/assets/mediapipe/vision_wasm_internal.js.mpasset",
+    "Payload/FlapFit.app/assets/assets/mediapipe/vision_wasm_internal.wasm.mpasset",
+    "Payload/FlapFit.app/assets/assets/mediapipe/pose_landmarker_lite.task.mpasset"
+  ],
+  "credentialScan": {
+    "scope": "Known credential signatures and decoded service-role JWTs in every uncompressed file of this signed IPA; not history, exhaustive entropy analysis or runtime proof.",
+    "fileCount": 164,
+    "findings": []
+  },
+  "actualXcodeAggregatePrivacyReport": "not generated; retained archive is input only",
+  "installedDeviceResult": "not verified",
+  "genuineRevenueCatReceipt": "not verified"
+}

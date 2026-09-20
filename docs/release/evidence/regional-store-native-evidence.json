@@ -1,0 +1,30 @@
+{
+  "buildId": "103c8936-9447-4190-a45b-6912b1027c69",
+  "compiledSource": "c05f497180c89af21ddb9b9fe014e97e2a23b80a",
+  "archiveSucceeded": true,
+  "nativeValidateInvoked": true,
+  "compilerErrorDiagnostics": [],
+  "workerEvidence": {
+    "Xcode 26.6 (17F113)": true,
+    "EAS_BUILD_PROFILE=production": true,
+    "EXPO_PUBLIC_ADS_MODE=live": true,
+    "RevenueCat 5.88.0 consent fence verified (10 files patched).": true,
+    "RevenueCat native fence: cold launch, active cancellation, persistent purge, stale generation rejection and fresh grant passed.": true,
+    "RevenueCat native fence: separate-process relaunch starts closed and purges retained event files.": true,
+    "Flap Fit release configuration is complete.": true,
+    "Retained the actual signed Xcode archive as a separate EAS artifact.": true
+  },
+  "logs": [
+    {
+      "name": "FlapFit-103c8936-xcode-decoded.log",
+      "bytes": 12376281,
+      "sha256": "9d8777ff8e5bd678c07d2fe6d0fe6741b89729bc55c72a25d673c468360e169c"
+    },
+    {
+      "name": "FlapFit-103c8936-build-1-decoded.log",
+      "bytes": 535046,
+      "sha256": "2bc7aa884aa79a5d5ed1af01fc4f7c3ab5919b2be80bccea74c349048f3c5b6c"
+    }
+  ],
+  "boundary": "Build-worker harness and native archive proof only; no installed device, provider receipt or genuine Xcode aggregate privacy report claimed."
+}
