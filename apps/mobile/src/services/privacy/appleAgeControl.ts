@@ -5,10 +5,11 @@ import {
 } from '../../../modules/flap-fit-age-range';
 import {
   getProcessingAccess, getProcessingInputs, getAgeVerificationRevision, hydrateProcessingAccess,
-  clearAgeVerification, verifyTransientAgeEvidence, verifyMandatoryAppleAgeEvidence, setAppleAgeRequirement,
+  clearAgeVerification, verifyTransientAgeEvidence, verifyMandatoryAppleAgeEvidence, verifyEuropeanAppleAgeEvidence, setAppleAgeRequirement,
 } from './processingAccess';
 import { AgeEvidence, AppleRequirement, ProcessingAccess } from './processingPolicy';
 import { resolveRegionalPolicy, RegionalPolicyInputs, RegionalPolicyResolution } from './regionalPolicy';
+import { getPrivacyCountrySnapshot, type LaunchCountry } from './privacyCountry';
 
 export type AppleAgeVerificationContext = Omit<RegionalPolicyInputs, 'age'>;
 export type AppleAgeVerificationResult = {
@@ -67,16 +68,39 @@ export function requestAppleAgeEvidence(
   context?: AppleAgeVerificationContext,
   ageGates?: readonly number[],
 ): Promise<AppleAgeVerificationResult> {
+  return requestAgeEvidence(context, ageGates, false);
+}
+/** Only called after fresh native UMP established European treatment applicability. */
+export function requestEuropeanAppleAgeEvidence(): Promise<AppleAgeVerificationResult> {
+  return requestAgeEvidence(undefined, [14, 16, 18], true);
+}
+/** Country is a fresh network applicability fact, never province/residence or consent.
+ * The synchronous consumer retains only a minimal policy plan, not the raw range. */
+export function requestLaunchAppleAgeEvidence(
+  country: LaunchCountry, gates: readonly number[], consume: (age: AgeEvidence, revision: number) => boolean,
+): Promise<AppleAgeVerificationResult> {
+  const observed = getPrivacyCountrySnapshot();
+  if (observed.status !== 'resolved' || observed.country !== country) {
+    return Promise.resolve({ status: 'unavailable', access: getProcessingAccess(), regional: null });
+  }
+  return requestAgeEvidence(undefined, gates, false, {
+    country, current: () => getPrivacyCountrySnapshot() === observed, consume,
+  });
+}
+function requestAgeEvidence(
+  context: AppleAgeVerificationContext | undefined, ageGates: readonly number[] | undefined, europeanProvider: boolean,
+  launch?: { country: LaunchCountry; current: () => boolean; consume: (age: AgeEvidence, revision: number) => boolean },
+): Promise<AppleAgeVerificationResult> {
   if (ageGates !== undefined && !validateAppleAgeGates(ageGates)) {
     clearAgeVerification();
     return Promise.resolve({ status: 'unavailable', access: getProcessingAccess(), regional: null });
   }
   const gates = [...(ageGates ?? DEFAULT_APPLE_AGE_GATES)];
-  const gatesKey = (context ? 'regional:' : 'mandatory:') + gates.join(',');
+  const gatesKey = (launch ? 'launch-' + launch.country + ':' : europeanProvider ? 'european-provider:' : context ? 'regional:' : 'mandatory:') + gates.join(',');
   if (request) {
     // The mandatory-only coordinator can join a more specific native request.
     // It must not invalidate a legitimate regional check already in flight.
-    if (!context || gatesKey === requestGatesKey) return request;
+    if ((!context && !europeanProvider && !launch) || gatesKey === requestGatesKey) return request;
     // Do not reuse a response requested for different distinctions or present two sheets.
     clearAgeVerification();
     return Promise.resolve({ status: 'unavailable', access: getProcessingAccess(), regional: null });
@@ -84,7 +108,7 @@ export function requestAppleAgeEvidence(
   const coarse = context ? resolveRegionalPolicy({
     ...context, age: { source: 'none', status: 'unknown', lowerBound: null, upperBound: null },
   }).region : null;
-  if (context ? coarse === 'unknown' || coarse !== getProcessingInputs().region :
+  if (launch ? !launch.current() : europeanProvider ? !getProcessingInputs().europeanProvider : context ? coarse === 'unknown' || coarse !== getProcessingInputs().region :
     getProcessingInputs().appleRequirement !== 'required') {
     clearAgeVerification();
     return Promise.resolve({ status: 'unavailable', access: getProcessingAccess(), regional: null });
@@ -105,7 +129,7 @@ export function requestAppleAgeEvidence(
     try {
       response = ageGates === undefined
         ? await requestAppleAgeRange() : await requestAppleAgeRange(gates);
-      if (token !== generation || verificationToken !== getAgeVerificationRevision()) {
+      if (token !== generation || verificationToken !== getAgeVerificationRevision() || (launch && !launch.current())) {
         return { status: 'stale', access: getProcessingAccess(), regional: null };
       }
       age = {
@@ -114,8 +138,12 @@ export function requestAppleAgeEvidence(
         lowerBound: response.status === 'shared' ? response.lowerBound : null,
         upperBound: response.status === 'shared' ? response.upperBound : null,
       };
+      if (launch) {
+        const accepted = launch.consume(age, verificationToken);
+        return { status: accepted ? 'processed' : 'stale', access: getProcessingAccess(), regional: null };
+      }
       if (!policy) {
-        const accepted = verifyMandatoryAppleAgeEvidence(age, verificationToken);
+        const accepted = europeanProvider ? verifyEuropeanAppleAgeEvidence(age, verificationToken) : verifyMandatoryAppleAgeEvidence(age, verificationToken);
         return { status: accepted ? 'processed' : 'stale', access: getProcessingAccess(), regional: null };
       }
       const regional = resolveRegionalPolicy({ ...policy, age });
@@ -131,7 +159,7 @@ export function requestAppleAgeEvidence(
         regional: accepted ? regional : null,
       };
     } catch {
-      const stale = token !== generation || verificationToken !== getAgeVerificationRevision();
+      const stale = token !== generation || verificationToken !== getAgeVerificationRevision() || !!(launch && !launch.current());
       if (!stale) clearAgeVerification();
       return { status: stale ? 'stale' : 'unavailable', access: getProcessingAccess(), regional: null };
     } finally {

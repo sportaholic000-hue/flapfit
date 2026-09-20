@@ -12,6 +12,8 @@ let setRequirement: jest.Mock;
 let lifecycle: Set<(state: string) => void>;
 let appState: { currentState: string; addEventListener: jest.Mock };
 let remove: jest.Mock;
+let countryStart: jest.Mock;
+let countryStop: jest.Mock;
 const settle = async () => { for (let i = 0; i < 8; ++i) await Promise.resolve(); };
 function changeState(state: string) {
   appState.currentState = state;
@@ -23,6 +25,7 @@ beforeEach(() => {
   requirement = 'pending';
   lifecycle = new Set();
   remove = jest.fn();
+  countryStop = jest.fn(); countryStart = jest.fn(() => countryStop);
   control = jest.fn(async () => { requirement = 'not-required'; return requirement; });
   setRequirement = jest.fn((next: string) => { requirement = next; });
   appState = {
@@ -33,6 +36,8 @@ beforeEach(() => {
     }),
   };
   jest.doMock('react-native', () => ({ AppState: appState }));
+  jest.doMock('../launchProcessingControl', () => ({ startLaunchProcessing: () => () => undefined }));
+  jest.doMock('../privacyCountry', () => ({ startPrivacyCountry: () => countryStart() }));
   jest.doMock('../appleAgeControl', () => ({ prepareAppleAgeControl: () => control() }));
   jest.doMock('../processingAccess', () => ({
     getProcessingInputs: () => ({ appleRequirement: requirement }),
@@ -150,4 +155,32 @@ test('real startup restores a saved refusal without asking for an age range or e
     ads: { allowed: false }, revenueCat: { allowed: false }, competition: { allowed: false },
   });
   stop();
+});
+
+test('root startup owns exactly one country listener until the final consumer stops', () => {
+  const first = api.startPrivacyStartup(), second = api.startPrivacyStartup();
+  expect(countryStart).toHaveBeenCalledTimes(1); first(); first(); expect(countryStop).not.toHaveBeenCalled();
+  second(); expect(countryStop).toHaveBeenCalledTimes(1);
+});
+test('real mounted startup resolves country without Home, SDK initialization, region question or age prompt', async () => {
+  jest.resetModules(); jest.dontMock('../privacyCountry');
+  jest.doMock('react-native', () => ({ AppState: appState, Platform: { OS: 'ios', Version: '26.6' } }));
+  jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: 'standalone' }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
+  const request = jest.fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>().mockResolvedValue({
+    ok: true, status: 200, redirected: false, url: 'https://flapfitapp.com/cdn-cgi/trace',
+    headers: { get: (key: string) => key === 'content-type' ? 'text/plain' : null },
+    text: async () => 'h=flapfitapp.com\nloc=CA\nip=192.0.2.9\ncolo=IAD\n',
+  } as unknown as Response);
+  const original = Object.getOwnPropertyDescriptor(globalThis, 'fetch');
+  Object.defineProperty(globalThis, 'fetch', { configurable: true, writable: true, value: request });
+  api = require('../privacyStartup');
+  const country = require('../privacyCountry') as typeof import('../privacyCountry');
+  const stop = api.startPrivacyStartup();
+  try {
+    await expect(country.refreshPrivacyCountry()).resolves.toEqual({ status: 'resolved', country: 'CA', source: 'cloudflare-trace' });
+    expect(request).toHaveBeenCalledTimes(1); expect(control).toHaveBeenCalledTimes(1);
+    expect(country.getPrivacyCountrySnapshot()).not.toHaveProperty('ip');
+    expect(lifecycle.size).toBe(2);
+  } finally { stop(); if (original) Object.defineProperty(globalThis, 'fetch', original); }
+  expect(lifecycle.size).toBe(0); expect(country.getPrivacyCountrySnapshot().status).toBe('unknown');
 });

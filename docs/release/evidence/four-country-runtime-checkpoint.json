@@ -1,0 +1,51 @@
+{
+  "recordedAt": "2026-09-20T01:06:35.240Z",
+  "status": "implementation-checkpoint-not-submission-ready",
+  "storeTerritories": [
+    "CA",
+    "US",
+    "AU",
+    "MX"
+  ],
+  "automaticCountry": {
+    "endpoint": "https://flapfitapp.com/cdn-cgi/trace",
+    "retains": [
+      "country",
+      "source",
+      "status"
+    ],
+    "noProvinceClaim": true,
+    "noNewBackend": true
+  },
+  "interface": {
+    "newOnboardingParagraphAdded": false,
+    "customLocationQuestionsAdded": false,
+    "universalAdsSwitchAdded": false,
+    "existingCompetitionAgreementWired": true,
+    "independentReportingWithdrawalInterfaceApproved": false,
+    "realNoticePresentationHookBound": false
+  },
+  "verified": {
+    "fullMobileSuites": 54,
+    "fullMobileTests": 1039,
+    "fullSuiteExitCode": 0,
+    "fullSuiteNote": "The final age-request retry corrections require their separately recorded focused regression run.",
+    "typecheck": "passed before final retry corrections",
+    "admobAndUmpPinnedPatchChecks": "passed",
+    "competitionAcceptanceAndAccessTests": 40
+  },
+  "remaining": [
+    "Bind an appropriate real disclosure/choice route without the rejected new onboarding paragraph or location questionnaire.",
+    "Complete applicable regional purpose controls; missing facts do not become adult permission.",
+    "Expose approved independent withdrawal controls before permitting reporting.",
+    "Compile the latest native source and run installed iPhone/iPad acceptance, including genuine RevenueCat receipt.",
+    "Complete and verify Apple privacy questionnaire, genuine screenshots and final review metadata before owner-approved submission."
+  ],
+  "applePrivacyDraft": {
+    "dataTypesSaved": 12,
+    "published": false,
+    "fitnessLinkageCorrectionSaveBlockedByAutomaticApprovalReview": true
+  },
+  "sourceChangesToAcceptedCalibrationGameplayRecordingSharing": false,
+  "appleSubmitted": false
+}

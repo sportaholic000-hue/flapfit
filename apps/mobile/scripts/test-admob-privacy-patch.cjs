@@ -20,8 +20,9 @@ assert.ok(initialize.indexOf('setPublisherFirstPartyIDEnabled:NO') < initialize.
 assert.equal(result.split('setPublisherFirstPartyIDEnabled:NO').length - 1, 2);
 console.log('AdMob privacy patch passed: locked source, apply, idempotence, drift/tamper rejection, native opt-out before initialization and request configuration.');
 
-const { transformConsent, consentReader, consentTransforms, consentExpected, consentPatched } = require('./patch-admob-privacy.cjs');
+const { transformConsent, consentReader, consentTransforms, consentExpected, consentPatched, legacyConsentPatched, legacyConsentTransforms } = require('./patch-admob-privacy.cjs');
 let consentSource=fs.readFileSync(path.join(path.dirname(packageFile),'ios/RNGoogleMobileAds/RNGoogleMobileAdsConsentModule.mm'),'utf8');
+if(consentSource.includes("PRESENCE_AWARE_V1")) for(const [before,after] of [...legacyConsentTransforms].reverse()) consentSource=consentSource.replace(after,before);
 for(const [before,after] of [...consentTransforms].reverse()) consentSource=consentSource.replace(after,before);
 assert.equal(hash(consentSource),consentExpected);
 const consentResult=transformConsent(consentSource);
@@ -29,10 +30,18 @@ assert.equal(hash(consentResult),consentPatched);
 assert.equal(transformConsent(consentResult),consentResult);
 assert.throws(()=>transformConsent(consentSource+'// drift'),/source drift/);
 assert.throws(()=>transformConsent(consentResult+'// tamper'),/Modified/);
-assert.ok(consentResult.includes('@"flapFitPrivacySignalsVersion" : @1'));
+assert.ok(consentResult.includes('@"flapFitPrivacySignalsVersion" : @2'));
 assert.ok(consentResult.includes('@"flapFitGdprApplies" : [self flapFitStoredGdprApplies]'));
 assert.ok(consentReader.includes('objectForKey:@"IABTCF_gdprApplies"'));
 assert.ok(!consentReader.includes('boolForKey:'));
 assert.ok(!consentReader.includes('GADMobileAds'));
 assert.ok(!consentResult.includes('boolForKey:@"IABTCF_gdprApplies"'));
 console.log('UMP presence patch passed: pinned source, apply, idempotence, drift/tamper rejection, null-aware retrieval and native version signal.');
+
+let legacy=consentSource; for(const [a,b] of legacyConsentTransforms) legacy=legacy.replace(a,b);
+assert.equal(hash(legacy),legacyConsentPatched);
+assert.equal(transformConsent(legacy),consentResult);
+assert.throws(()=>transformConsent(legacy+'// tampered'),/Modified legacy/);
+assert.ok(consentResult.includes('IABTCF_PublisherConsent" index:6'));
+assert.ok(!consentResult.includes('IABTCF_PublisherConsents'));
+assert.ok(consentResult.includes('flapFitPurposeOneConsent'));

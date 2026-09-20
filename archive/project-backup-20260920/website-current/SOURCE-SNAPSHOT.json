@@ -1,0 +1,227 @@
+{
+  "sourceRoot": "C:/Users/money/Documents/Codex/2026-09-16/g/work/flapfit-site-apple",
+  "sourceCommit": "229fb8f5f8a00b2ce6147ccfd124f868670e3d97",
+  "currentPublishedSource": true,
+  "files": [
+    {
+      "source": ".gitignore",
+      "snapshot": "archive/project-backup-20260920/website-current/.gitignore",
+      "sha256": "0835641cb74583773104145085ade80ecf310369d516807f1394679ced9b9184"
+    },
+    {
+      "source": ".openai/hosting.json",
+      "snapshot": "archive/project-backup-20260920/website-current/.openai/hosting.json",
+      "sha256": "14a3285c296dc6dbd624d6b0209dd077e231a5de4647ec728951a37f18af2032"
+    },
+    {
+      "source": "LAUNCH.md",
+      "snapshot": "archive/project-backup-20260920/website-current/LAUNCH.md",
+      "sha256": "9621970b09b8b06981f2f0b71fff1adee939f69f78cde551bd9acb8cb8f4016c"
+    },
+    {
+      "source": "dist/404.html",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/404.html",
+      "sha256": "dc2a68f1b38ef9bc6a41788b25be66edf7cd1f4b18b6fa9af4d94bf5f8bb378d"
+    },
+    {
+      "source": "dist/_headers",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/_headers",
+      "sha256": "eee969fb41110ab902c59af3c6f359069a3694dddc551fbace57d3e28939be61"
+    },
+    {
+      "source": "dist/app-ads.txt",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/app-ads.txt",
+      "sha256": "f8beaab9ecc7df66310dd7f6a1477a0c8f86d9173726ec791a7d93653505c913"
+    },
+    {
+      "source": "dist/assets/biceps.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/biceps.png",
+      "sha256": "f07a201ef4b67f2bf3937a698c1a8793049dea2b06ff65ea333c41704f2c79b2"
+    },
+    {
+      "source": "dist/assets/flapfit-splash-logo.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/flapfit-splash-logo.png",
+      "sha256": "b2934b4c1f4a5e1d6253636f10442109863fb6643ec4d2e3c0132f2a9b18cb48"
+    },
+    {
+      "source": "dist/assets/lateral-raise.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/lateral-raise.png",
+      "sha256": "ba0d1a7b82e9af06048e0029aafef728173a8601d70038731cbfede8264c24d9"
+    },
+    {
+      "source": "dist/assets/pullups.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/pullups.png",
+      "sha256": "ff1ee56a74fa6c91122ff2772b32f4d27e1594cc28e184179b5adde2d943822e"
+    },
+    {
+      "source": "dist/assets/pushups.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/pushups.png",
+      "sha256": "9fe5df5afbbfec7e30dd489911c2c8cfb8ad8af5a15fd4e4dcedf9fb70102b57"
+    },
+    {
+      "source": "dist/assets/shoulder-press.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/shoulder-press.png",
+      "sha256": "528c9bae95b13f9f39e53ff9cabb56507cee5b20883fdff5b671007c1e5bb73d"
+    },
+    {
+      "source": "dist/assets/squats.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/squats.png",
+      "sha256": "19d7ff2bbba3db132a6b25ea38a1fa78cb41853d845403f36f737a9650cf0028"
+    },
+    {
+      "source": "dist/assets/sunny-1.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-1.png",
+      "sha256": "54cb7c6492693c77ffb5cbd7515bc4cc704e0f37c68f436ca47a7ae2b6250e46"
+    },
+    {
+      "source": "dist/assets/sunny-1.svg",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-1.svg",
+      "sha256": "478583db673100baa8941136212a017f3f92349166e49c4aa5f251a4ac7d0524"
+    },
+    {
+      "source": "dist/assets/sunny-10.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-10.png",
+      "sha256": "e714e1bdc82eca1809f9676b6a877db37ffae4a7f83c1d8e38874ba6b73fef9f"
+    },
+    {
+      "source": "dist/assets/sunny-10.svg",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-10.svg",
+      "sha256": "f41865264c413fbd6586db63fd04a3b850f7f0e294e034137c5398b0352de5ba"
+    },
+    {
+      "source": "dist/assets/sunny-2.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-2.png",
+      "sha256": "55e8d783aa948dce13ec52202d8c3b2f215876438201dacf97a949fa3319fcc0"
+    },
+    {
+      "source": "dist/assets/sunny-2.svg",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-2.svg",
+      "sha256": "84c06113158c01f9e4fa67d7955ca8b2de1f0b8ec53e4fc82f88ddf977e06907"
+    },
+    {
+      "source": "dist/assets/sunny-3.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-3.png",
+      "sha256": "e2a9514c5555ef45fa5d12303713c071f4f9d8d6adf06c9d6a9bddb99a4c334c"
+    },
+    {
+      "source": "dist/assets/sunny-3.svg",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-3.svg",
+      "sha256": "a334a8ebb11e585eb74e2e73daa3cede518564d3c5bd13c22b073f0b5579245a"
+    },
+    {
+      "source": "dist/assets/sunny-4.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-4.png",
+      "sha256": "970820f8c169e6615215f6bb29a1a6f5e6038107556bf00d256d066ba38e6738"
+    },
+    {
+      "source": "dist/assets/sunny-4.svg",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-4.svg",
+      "sha256": "31f7c2648a07f33b6185f8b9f6e742a7294cbec7a27b3fe86760898c31fbe2fc"
+    },
+    {
+      "source": "dist/assets/sunny-5.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-5.png",
+      "sha256": "b9aa75ac2e35965a2c0857ff351a8391045cd4afa5ac41b59018507d71ffdd05"
+    },
+    {
+      "source": "dist/assets/sunny-5.svg",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-5.svg",
+      "sha256": "9980a8cfe1666f0390bea587790f9144d94a71b153bc54737524aa35c3212557"
+    },
+    {
+      "source": "dist/assets/sunny-6.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-6.png",
+      "sha256": "7e243961f05031850f2c5aaf671409f37456b3bfd40a5bf41208399f5d1cbf54"
+    },
+    {
+      "source": "dist/assets/sunny-6.svg",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-6.svg",
+      "sha256": "ed846b04c6455393f806f2483386fa797ec96a57d0ea046adb002e24311052b5"
+    },
+    {
+      "source": "dist/assets/sunny-7.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-7.png",
+      "sha256": "126a5aa35e215d6102802d312a43e25e4b2a32da073ab0f146a5e0f5da76f358"
+    },
+    {
+      "source": "dist/assets/sunny-7.svg",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-7.svg",
+      "sha256": "560c9d89a739c9af66288adbd1fcb3f5d4e4d07dc52bf494f6a327147b705a17"
+    },
+    {
+      "source": "dist/assets/sunny-8.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-8.png",
+      "sha256": "31ee54cc3960f88c2df976c60a181f39f93eca8cf14e3434a807f102906945c1"
+    },
+    {
+      "source": "dist/assets/sunny-8.svg",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-8.svg",
+      "sha256": "3e469226c2b7de60c8490dd5158408ef3a95665d59b67c025d87d779efaec04b"
+    },
+    {
+      "source": "dist/assets/sunny-9.png",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-9.png",
+      "sha256": "72caf72d68d97b1577f489e82f1003dfc2326dc99f4c6bb7d4054477ec344eec"
+    },
+    {
+      "source": "dist/assets/sunny-9.svg",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-9.svg",
+      "sha256": "249ecb625975318517344e4246761e8ec8367d07ba169f79071dc1b5783c5680"
+    },
+    {
+      "source": "dist/assets/sunny-flying.svg",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/assets/sunny-flying.svg",
+      "sha256": "ea549c532a45887a2580b6daf5defafc35c17e0f47048ad604070d009cbb0efa"
+    },
+    {
+      "source": "dist/delete-account/index.html",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/delete-account/index.html",
+      "sha256": "50337cb0f73c21f1fbf8c4c75494d5795a63845eb62aff1c2815501ca508df48"
+    },
+    {
+      "source": "dist/index.html",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/index.html",
+      "sha256": "b4a93fdb805b10e726a9400e75685946a16070df69d0c0d3212edfebb1382353"
+    },
+    {
+      "source": "dist/privacy/index.html",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/privacy/index.html",
+      "sha256": "f575dc812e69726fe3ba59c971e144d928ab7367051a860dbf803d8ab0c82025"
+    },
+    {
+      "source": "dist/robots.txt",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/robots.txt",
+      "sha256": "9133ceedd6bece0761cc791489df7a3fdbfaaa32d6316d98b92e6f8ff76e397a"
+    },
+    {
+      "source": "dist/site-config.js",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/site-config.js",
+      "sha256": "73ded23b841cb6fe0ba6660e55e4376b9001b6b003f00cd3c6b54ed9050adb46"
+    },
+    {
+      "source": "dist/site.js",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/site.js",
+      "sha256": "c5cde53d8864a8a61c955f6f15026c5a08d85172fab14418bae3da8662730383"
+    },
+    {
+      "source": "dist/styles.css",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/styles.css",
+      "sha256": "ae37b379995bc69cf0246be9d813f2caced4b665f7f20238f83947579ed77be9"
+    },
+    {
+      "source": "dist/support/index.html",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/support/index.html",
+      "sha256": "408f3a7f46f98349fd5444025ec0df4872a4f4fe9a6e2f80d24e7b0619a6042c"
+    },
+    {
+      "source": "dist/terms/index.html",
+      "snapshot": "archive/project-backup-20260920/website-current/dist/terms/index.html",
+      "sha256": "bd2472860eefed07dbef21b9b18032039451331884a3bfc759d23e2538bf66c5"
+    },
+    {
+      "source": "scripts/validate-site.cjs",
+      "snapshot": "archive/project-backup-20260920/website-current/scripts/validate-site.cjs",
+      "sha256": "0d7fd03083f6357f014b066287b10df0d50ae54a59136bb6da481e5e8bd304b9"
+    }
+  ]
+}

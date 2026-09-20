@@ -5,6 +5,7 @@ import type { AdRevenueData, PurchasesAdTracker } from 'react-native-purchases';
 import { ResultAdGate, type InterstitialCallbacks, type ReadyInterstitial } from './resultAdGate';
 import { getAgeVerificationRevision, getProcessingAccess, getProcessingInputs, subscribeProcessingAccess } from '../privacy/processingAccess';
 import { getUmpPrivacyControls } from '../privacy/umpPrivacyControls';
+import { createRevenueCatTestDiagnostics, type RevenueCatTestDiagnosticKind } from './revenueCatTestDiagnostics';
 
 type AdsSdk = typeof import('react-native-google-mobile-ads');
 type PurchasesSdk = typeof import('react-native-purchases');
@@ -27,6 +28,8 @@ let privacyOptionsEpoch: number | null = null;
 let init: Promise<void> | null = null;
 let initEpoch: number | null = null;
 let consentEpoch = 0;
+let presentationIntentEpoch = 0;
+let launchPreparation: Promise<void> | null = null;
 let privacyPresentation: Promise<unknown> | null = null;
 let privacyPresentationEpoch: number | null = null;
 let impressionSequence = 0;
@@ -34,6 +37,14 @@ let mandatoryAppleRequest: Promise<void> | null = null;
 let mandatoryAppleAttemptRevision: number | null = null;
 let processingAccess = getProcessingAccess();
 let revenueCatEpoch = 0;
+let revenueCatDiagnosticIdentity: string | null = null;
+const revenueCatTestDiagnostics = createRevenueCatTestDiagnostics(() => ({
+  adsMode: mode,
+  revenueCatPermitted: getProcessingAccess().revenueCat.allowed,
+  generation: revenueCatEpoch,
+  appVersion: Constants.expoConfig?.version,
+  buildNumber: Constants.platform?.ios?.buildNumber ?? Constants.expoConfig?.ios?.buildNumber,
+}));
 let revenueCatConfigured = false;
 let revenueCatInit: Promise<void> | null = null;
 export type RevenueCatWithdrawalStatus = Readonly<{
@@ -69,6 +80,7 @@ subscribeProcessingAccess(() => {
   const sameAnalytics = next.revenueCat.allowed === processingAccess.revenueCat.allowed;
   processingAccess = next;
   if (!sameAdTreatment) {
+    if (!next.ads.allowed) ++presentationIntentEpoch;
     ++consentEpoch;
     adsReady = false;
     disposeResultAds();
@@ -76,6 +88,7 @@ subscribeProcessingAccess(() => {
   if (!sameAnalytics) {
     ++revenueCatEpoch;
     tracker = null;
+    revenueCatDiagnosticIdentity = null;
     if (!next.revenueCat.allowed) {
       // Native transport cancellation and persistent-event purge are required;
       // clearing the JavaScript tracker alone cannot stop an initialized SDK.
@@ -177,6 +190,22 @@ export function retryRevenueCatWithdrawal(): Promise<RevenueCatWithdrawalStatus>
   return getProcessingAccess().revenueCat.allowed ? Promise.resolve(withdrawalStatus) : requestRevenueCatWithdrawal();
 }
 
+function prepareRevenueCatTestIdentity(sdk: PurchasesSdk, epoch: number): void {
+  // This cached SDK identity read is optional local test instrumentation. It
+  // never delays SDK readiness or permits processing on a missing decision.
+  if (mode !== 'test' || epoch !== revenueCatEpoch || !getProcessingAccess().revenueCat.allowed) return;
+  const current = tracker;
+  const recordConfigured = (appUserID?: string) => {
+    if (tracker !== current || epoch !== revenueCatEpoch || !getProcessingAccess().revenueCat.allowed) return;
+    revenueCatDiagnosticIdentity = appUserID ?? null;
+    revenueCatTestDiagnostics.record({ kind: 'configured', generation: epoch, appUserID });
+  };
+  try {
+    if (typeof sdk.default.getAppUserID !== 'function') { recordConfigured(); return; }
+    void sdk.default.getAppUserID().then(recordConfigured, () => recordConfigured()).catch(() => undefined);
+  } catch { recordConfigured(); }
+}
+
 function initializeRevenueCat(): Promise<void> {
   if (!supported || !revenueCatKey || tracker || !getProcessingAccess().revenueCat.allowed) return Promise.resolve();
   if (revenueCatInit) return revenueCatInit;
@@ -215,6 +244,7 @@ function initializeRevenueCat(): Promise<void> {
         revenueCatConfigured = true;
       }
       tracker = sdk.default.adTracker;
+      prepareRevenueCatTestIdentity(sdk, epoch);
     } catch {
       await requestRevenueCatWithdrawal();
     } finally {
@@ -244,6 +274,7 @@ function presentPrivacy<T>(operation: () => Promise<T>): Promise<T> {
 }
 
 export async function settlePrivacyBeforeGameplay(): Promise<void> {
+  ++presentationIntentEpoch;
   ++consentEpoch; // A pending info request may finish, but must never start a new form.
   disposeResultAds();
   await settleResultPresentations();
@@ -262,10 +293,41 @@ export function getLobbyPrivacyKey(): string {
   const access = getProcessingAccess();
   return [input.appleRequirement, Boolean(input.verification?.mandatoryCheckSatisfied),
     access.ads.allowed, access.ads.treatment, access.ads.underAgeOfConsent,
-    access.revenueCat.allowed].join(':');
+    access.revenueCat.allowed, ...(input.launch ? [input.launch.country ?? '', input.launch.current] : [])].join(':');
 }
 
 export function prepareMonetization(canPresent: () => boolean): Promise<void> {
+  if (!getProcessingInputs().launch) return prepareExistingMonetization(canPresent);
+  if (!supported || Platform.OS !== 'ios') return prepareExistingMonetization(canPresent);
+  const intent = presentationIntentEpoch;
+  const current = () => intent === presentationIntentEpoch && canPresent() && adEnvironment.isActive();
+  if (!launchPreparation) {
+    const operation = Promise.resolve().then(async () => {
+      await settleResultPresentations();
+      if (privacyOptionsRequest) { try { await privacyOptionsRequest; } catch { /* Recheck ownership below. */ } }
+      if (init) { try { await init; } catch { /* A failed SDK startup grants nothing. */ } }
+      if (privacyPresentation) { try { await privacyPresentation; } catch { /* Recheck ownership below. */ } }
+      if (!current()) return;
+      const control = require('../privacy/launchProcessingControl') as typeof import('../privacy/launchProcessingControl');
+      await control.prepareLaunchProcessing({ canPresent: current, present: presentPrivacy });
+    });
+    launchPreparation = operation.finally(() => { launchPreparation = null; });
+  }
+  return launchPreparation.then(async () => {
+    if (!current()) return;
+    // A newly focused caller may have joined an older native request that became
+    // stale while backgrounded. The deduped controller retries only a fresh key,
+    // preserving refusal/error suppression for the unchanged request.
+    const control = require('../privacy/launchProcessingControl') as typeof import('../privacy/launchProcessingControl');
+    await control.prepareLaunchProcessing({ canPresent: current, present: presentPrivacy });
+    if (!current()) return;
+    const launch = getProcessingInputs().launch;
+    // A resolved-country flow owns this Apple attempt, including refusal/error.
+    // Never immediately fall back to a second mandatory system request.
+    return launch?.current && launch.country ? preparePermittedMonetization(canPresent) : prepareExistingMonetization(canPresent);
+  });
+}
+function prepareExistingMonetization(canPresent: () => boolean): Promise<void> {
   const input = getProcessingInputs();
   if (input.appleRequirement === 'required' && !input.verification?.mandatoryCheckSatisfied) {
     if (mandatoryAppleRequest) return mandatoryAppleRequest;
@@ -372,6 +434,7 @@ export function showAdPrivacyOptions(canPresent: () => boolean = () => true): Pr
 }
 
 async function openAdPrivacyOptions(canPresent: () => boolean): Promise<void> {
+  ++presentationIntentEpoch;
   if (!adEnvironment.isActive() || !canPresent()) return;
   if (privacyPresentation) { await privacyPresentation; return; }
   adsReady = false;
@@ -427,7 +490,7 @@ export function toRevenueData(base: Omit<AdRevenueData, 'revenueMicros' | 'curre
   return { ...base, revenueMicros: Math.round(paid.value * 1_000_000), currency: paid.currency, precision };
 }
 
-function track(send: (value: PurchasesAdTracker) => Promise<void>) {
+function track(kind: RevenueCatTestDiagnosticKind, impressionId: string, send: (value: PurchasesAdTracker) => Promise<void>) {
   const current = tracker;
   const epoch = revenueCatEpoch;
   const access = getProcessingAccess();
@@ -437,7 +500,9 @@ function track(send: (value: PurchasesAdTracker) => Promise<void>) {
   void Promise.resolve().then(() => {
     const latest = getProcessingAccess();
     if (tracker !== current || !latest.revenueCat.allowed || revenueCatEpoch !== epoch) return;
-    return send(current);
+    const sent = send(current);
+    revenueCatTestDiagnostics.record({ kind, generation: epoch, appUserID: revenueCatDiagnosticIdentity, impressionId });
+    return sent;
   }).catch(() => undefined);
 }
 
@@ -492,26 +557,26 @@ export function prepareResultInterstitial(): ReadyInterstitial | null {
     ad.addAdEventListener(sdk.AdEventType.LOADED, () => {
       if (invalidated || released || shown) return;
       loaded = true;
-      track((value) => value.trackAdLoaded(base));
+      track('ad_loaded', impressionId, (value) => value.trackAdLoaded(base));
     });
     ad.addAdEventListener(sdk.AdEventType.OPENED, () => {
       if (released || !shown || opened) return;
       opened = true;
-      if (!invalidated) track((value) => value.trackAdDisplayed(base));
+      if (!invalidated) track('ad_displayed', impressionId, (value) => value.trackAdDisplayed(base));
       // Lifecycle accounting must survive withdrawal; this sends no analytics.
       callbacks?.opened();
     });
     ad.addAdEventListener(sdk.AdEventType.CLICKED, () => {
-      if (!invalidated && !released) track((value) => value.trackAdOpened(base));
+      if (!invalidated && !released) track('ad_clicked', impressionId, (value) => value.trackAdOpened(base));
     });
     ad.addAdEventListener(sdk.AdEventType.PAID, (payload) => {
       if (invalidated || released) return;
       const revenue = toRevenueData(base, payload as unknown as PaidEvent);
-      if (revenue) track((value) => value.trackAdRevenue(revenue));
+      if (revenue) track('ad_revenue', impressionId, (value) => value.trackAdRevenue(revenue));
     });
     ad.addAdEventListener(sdk.AdEventType.ERROR, () => {
       if (released) return;
-      if (!shown && !invalidated) track((value) => value.trackAdFailedToLoad({ mediatorName: base.mediatorName, adFormat: base.adFormat, placement: base.placement, adUnitId }));
+      if (!shown && !invalidated) track('ad_failed_to_load', impressionId, (value) => value.trackAdFailedToLoad({ mediatorName: base.mediatorName, adFormat: base.adFormat, placement: base.placement, adUnitId }));
       // On this one-shot request, an error after show is the native full-screen
       // presentation failure callback. Disposal never synthesizes this event.
       finish('failed');

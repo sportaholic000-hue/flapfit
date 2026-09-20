@@ -8,7 +8,7 @@ import {
   RefreshCw,
   Trophy,
 } from 'lucide-react-native';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import {
   Alert,
   Linking,
@@ -22,6 +22,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import KeyboardAvoidingAnimatedView from '@/components/KeyboardAvoidingAnimatedView';
 import { RELEASE_LINKS } from '@/config/release';
+import { getProcessingAccess, getProcessingInputs, setProcessingChoice, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
+import { PROCESSING_NOTICE_VERSION } from '@/services/privacy/processingPolicy';
 import {
   competitionIsConfigured,
   competitionPlayerNameError,
@@ -293,9 +295,11 @@ function CompetitionTermsModal({
 function LeaderboardPanel({
   exercise,
   termsAccepted,
+  processingAllowed,
 }: {
   exercise: LeaderboardExercise;
   termsAccepted: boolean;
+  processingAllowed: boolean;
 }) {
   const queryClient = useQueryClient();
   const tab = BOARD_TABS.find((t) => t.key === exercise)!;
@@ -308,13 +312,13 @@ function LeaderboardPanel({
       );
       return d.scores ?? [];
     },
-    enabled: competitionIsConfigured && termsAccepted,
+    enabled: competitionIsConfigured && termsAccepted && processingAllowed,
     staleTime: 30000,
   });
 
   const [refreshing, setRefreshing] = useState(false);
   const refresh = async () => {
-    if (refreshing) return;
+    if (refreshing || !processingAllowed) return;
     setRefreshing(true);
     try {
       const flushed = await flushPendingCompetitionResults();
@@ -532,6 +536,8 @@ export default function CompeteScreen() {
   const competitionTermsVersion = useGameStore((s) => s.competitionTermsVersion);
   const acceptCompetitionTerms = useGameStore((s) => s.acceptCompetitionTerms);
   const hydrated = useGameStore((s) => s.hydrated);
+  const processingAccess = useSyncExternalStore(subscribeProcessingAccess, getProcessingAccess, getProcessingAccess);
+  const acceptingTerms = useRef(false);
 
   const [nameDraft, setNameDraft] = useState(playerName);
   const hasLoadedNameDraft = useRef(false);
@@ -541,7 +547,9 @@ export default function CompeteScreen() {
   const [showCompetitionTerms, setShowCompetitionTerms] = useState(false);
 
   const hasName = competitionPlayerNameError(playerName) === null;
-  const hasAcceptedCompetitionTerms = competitionTermsVersion === COMPETITION_TERMS_VERSION;
+  const competitionChoice = getProcessingInputs().choices.competition;
+  const hasAcceptedCompetitionTerms = competitionTermsVersion === COMPETITION_TERMS_VERSION
+    && competitionChoice.decision === 'granted' && competitionChoice.noticeVersion === PROCESSING_NOTICE_VERSION;
 
   // The persisted store hydrates asynchronously. Reflect the stored name once
   // it arrives exactly once. Subsequent store updates must not overwrite text
@@ -554,7 +562,7 @@ export default function CompeteScreen() {
   }, [hydrated, playerName]);
 
   useEffect(() => {
-    if (!competitionIsConfigured || !hasAcceptedCompetitionTerms) return;
+    if (!competitionIsConfigured || !hasAcceptedCompetitionTerms || !processingAccess.competition.allowed) return;
     void consumeCompetitionSubmissionNotices().then((notices) => {
       const first = notices[0];
       if (first) {
@@ -572,7 +580,7 @@ export default function CompeteScreen() {
         }
       })
       .catch((flushError) => console.warn('Competition results remain queued', flushError));
-  }, [hasAcceptedCompetitionTerms, queryClient]);
+  }, [hasAcceptedCompetitionTerms, processingAccess.competition.allowed, queryClient]);
 
   const saveName = () => {
     if (!hydrated) return;
@@ -799,7 +807,7 @@ export default function CompeteScreen() {
             ))}
           </View>
 
-          <LeaderboardPanel exercise={boardTab} termsAccepted={hasAcceptedCompetitionTerms} />
+          <LeaderboardPanel exercise={boardTab} termsAccepted={hasAcceptedCompetitionTerms} processingAllowed={processingAccess.competition.allowed} />
         </View>
 
         {error && <Text style={{ color: '#DC2626', marginTop: 12, fontSize: 13 }}>{error}</Text>}
@@ -807,10 +815,21 @@ export default function CompeteScreen() {
       <CompetitionTermsModal
         visible={showCompetitionTerms}
         onClose={() => setShowCompetitionTerms(false)}
-        onAccept={() => {
-          acceptCompetitionTerms();
-          setShowCompetitionTerms(false);
-          setError(null);
+        onAccept={async () => {
+          if (acceptingTerms.current) return;
+          acceptingTerms.current = true;
+          try {
+            // This existing affirmative disclosure covers competition only.
+            // The central policy still enforces age/region/Apple restrictions.
+            await setProcessingChoice('competition', 'granted');
+            const choice = getProcessingInputs().choices.competition;
+            if (choice.decision !== 'granted' || choice.noticeVersion !== PROCESSING_NOTICE_VERSION) return;
+            acceptCompetitionTerms();
+            setShowCompetitionTerms(false);
+            setError(null);
+          } catch {
+            setError('Could not save competition acceptance. Please try again.');
+          } finally { acceptingTerms.current = false; }
         }}
       />
     </KeyboardAvoidingAnimatedView>

@@ -25,10 +25,25 @@ function transform(source) {
   return source;
 }
 const consentExpected = "2520e8eb0b3025778673869cff83eda3c337ea61df9c0dde4e4ac411772dd34d";
-const consentPatched = "21e7000b3875001556c0290a0b081a7fba7411be16bf796c777d360c398e8297";
-const consentMarker = "// FLAP_FIT_UMP_PRESENCE_AWARE_V1";
-const consentReader = "// FLAP_FIT_UMP_PRESENCE_AWARE_V1\n- (id)flapFitStoredGdprApplies {\n  id value = [[NSUserDefaults standardUserDefaults] objectForKey:@\"IABTCF_gdprApplies\"];\n  if (![value isKindOfClass:[NSNumber class]]) return [NSNull null];\n  if ([value isEqual:@0]) return @NO;\n  if ([value isEqual:@1]) return @YES;\n  return [NSNull null];\n}\n";
+const consentPatched = "cae39b04cb2c6b1ee701cde879d68e76c4e78d45167000056a6efe13cd9fcd86";
+const consentMarker = "// FLAP_FIT_UMP_PRESENCE_AWARE_V2";
+const consentReader = "// FLAP_FIT_UMP_PRESENCE_AWARE_V2\n- (id)flapFitStoredGdprApplies {\n  id value = [[NSUserDefaults standardUserDefaults] objectForKey:@\"IABTCF_gdprApplies\"];\n  if (![value isKindOfClass:[NSNumber class]]) return [NSNull null];\n  if ([value isEqual:@0]) return @NO;\n  if ([value isEqual:@1]) return @YES;\n  return [NSNull null];\n}\n\n- (id)flapFitStoredPurpose:(NSString *)key index:(NSUInteger)index {\n  id value = [[NSUserDefaults standardUserDefaults] objectForKey:key];\n  if (![value isKindOfClass:[NSString class]] || [value length] <= index) return [NSNull null];\n  NSCharacterSet *invalid = [[NSCharacterSet characterSetWithCharactersInString:@\"01\"] invertedSet];\n  if ([value rangeOfCharacterFromSet:invalid].location != NSNotFound) return [NSNull null];\n  return @([value characterAtIndex:index] == '1');\n}\n";
 const consentTransforms = [
+  [
+    "RCT_EXPORT_MODULE();",
+    "RCT_EXPORT_MODULE();\n\n// FLAP_FIT_UMP_PRESENCE_AWARE_V2\n- (id)flapFitStoredGdprApplies {\n  id value = [[NSUserDefaults standardUserDefaults] objectForKey:@\"IABTCF_gdprApplies\"];\n  if (![value isKindOfClass:[NSNumber class]]) return [NSNull null];\n  if ([value isEqual:@0]) return @NO;\n  if ([value isEqual:@1]) return @YES;\n  return [NSNull null];\n}\n\n- (id)flapFitStoredPurpose:(NSString *)key index:(NSUInteger)index {\n  id value = [[NSUserDefaults standardUserDefaults] objectForKey:key];\n  if (![value isKindOfClass:[NSString class]] || [value length] <= index) return [NSNull null];\n  NSCharacterSet *invalid = [[NSCharacterSet characterSetWithCharactersInString:@\"01\"] invertedSet];\n  if ([value rangeOfCharacterFromSet:invalid].location != NSNotFound) return [NSNull null];\n  return @([value characterAtIndex:index] == '1');\n}\n"
+  ],
+  [
+    "  return @{\n    @\"status\" :",
+    "  return @{\n    @\"flapFitPrivacySignalsVersion\" : @2,\n    @\"flapFitGdprApplies\" : [self flapFitStoredGdprApplies],\n    @\"flapFitPurposeOneConsent\" : [self flapFitStoredPurpose:@\"IABTCF_PurposeConsents\" index:0],\n    @\"flapFitPublisherPurposeOneConsent\" : [self flapFitStoredPurpose:@\"IABTCF_PublisherConsent\" index:0],\n    @\"flapFitPublisherPurposeSevenConsent\" : [self flapFitStoredPurpose:@\"IABTCF_PublisherConsent\" index:6],\n    @\"status\" :"
+  ],
+  [
+    "    BOOL gdprApplies = [[NSUserDefaults standardUserDefaults] boolForKey:@\"IABTCF_gdprApplies\"];\n    resolve(@(gdprApplies));",
+    "    resolve([self flapFitStoredGdprApplies]);"
+  ]
+];
+const legacyConsentPatched = "21e7000b3875001556c0290a0b081a7fba7411be16bf796c777d360c398e8297";
+const legacyConsentTransforms = [
   [
     "RCT_EXPORT_MODULE();",
     "RCT_EXPORT_MODULE();\n\n// FLAP_FIT_UMP_PRESENCE_AWARE_V1\n- (id)flapFitStoredGdprApplies {\n  id value = [[NSUserDefaults standardUserDefaults] objectForKey:@\"IABTCF_gdprApplies\"];\n  if (![value isKindOfClass:[NSNumber class]]) return [NSNull null];\n  if ([value isEqual:@0]) return @NO;\n  if ([value isEqual:@1]) return @YES;\n  return [NSNull null];\n}\n"
@@ -43,6 +58,10 @@ const consentTransforms = [
   ]
 ];
 function transformConsent(source) {
+  if (source.includes("// FLAP_FIT_UMP_PRESENCE_AWARE_V1")) {
+    if (hash(source) !== legacyConsentPatched) throw Error("Modified legacy Flap Fit UMP presence bridge");
+    for (const [before, after] of [...legacyConsentTransforms].reverse()) source = source.replace(after, before);
+  }
   if(source.includes(consentMarker)) {
     if(hash(source)!==consentPatched) throw Error('Modified Flap Fit UMP presence bridge');
     return source;
@@ -69,7 +88,7 @@ function patchAdMobPrivacy(projectRoot) {
   if (consentSource !== consentResult) fs.writeFileSync(consentFile, consentResult);
   return file;
 }
-module.exports = { patchAdMobPrivacy, transform, marker, insertion, anchors, expected, patched, transformConsent, consentReader, consentTransforms, consentExpected, consentPatched };
+module.exports = { patchAdMobPrivacy, transform, marker, insertion, anchors, expected, patched, transformConsent, consentReader, consentTransforms, consentExpected, consentPatched, legacyConsentPatched, legacyConsentTransforms };
 if (require.main === module) {
   patchAdMobPrivacy(process.argv[2]);
   console.log('AdMob 16.5.0 native publisher first-party ID disabling verified.');

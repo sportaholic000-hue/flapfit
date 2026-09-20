@@ -1,10 +1,14 @@
 import { AppState } from 'react-native';
 import { prepareAppleAgeControl } from './appleAgeControl';
+import { startPrivacyCountry } from './privacyCountry';
+import { startLaunchProcessing } from './launchProcessingControl';
 import { getProcessingInputs, setAppleAgeRequirement } from './processingAccess';
 import type { AppleRequirement } from './processingPolicy';
 
 let consumers = 0;
 let removeLifecycleListener: (() => void) | null = null;
+let stopPrivacyCountry: (() => void) | null = null;
+let stopLaunchProcessing: (() => void) | null = null;
 let preparation: Promise<AppleRequirement> | null = null;
 
 /** Restore purpose choices and query Apple's regional obligations. This does not
@@ -26,6 +30,8 @@ export function preparePrivacyStartup(): Promise<AppleRequirement> {
 export function startPrivacyStartup(): () => void {
   ++consumers;
   if (consumers === 1) {
+    stopLaunchProcessing = startLaunchProcessing();
+    stopPrivacyCountry = startPrivacyCountry();
     let previousState = AppState.currentState;
     const subscription = AppState.addEventListener('change', (state) => {
       const enteredForeground = state === 'active' && previousState !== 'active';
@@ -47,6 +53,9 @@ export function startPrivacyStartup(): () => void {
     if (--consumers === 0) {
       removeLifecycleListener?.();
       removeLifecycleListener = null;
+      stopPrivacyCountry?.();
+      stopPrivacyCountry = null;
+      stopLaunchProcessing?.(); stopLaunchProcessing = null;
     }
   };
 }

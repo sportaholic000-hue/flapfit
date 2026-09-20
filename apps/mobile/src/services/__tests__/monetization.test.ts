@@ -1,7 +1,7 @@
 const originalEnv = { ...process.env };
-function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: boolean; adsAllowed?: boolean; rcAllowed?: boolean; treatment?: string; underAgeOfConsent?: boolean; nativeFence?: boolean; umpBridge?: boolean; appleRequired?: boolean } = {}) {
+function loadAdapter(options: { adsMode?: string; rcIdMethod?: boolean; platform?: string; expoGo?: boolean; rcFails?: boolean; adsAllowed?: boolean; rcAllowed?: boolean; treatment?: string; underAgeOfConsent?: boolean; nativeFence?: boolean; umpBridge?: boolean; appleRequired?: boolean } = {}) {
   jest.resetModules();
-  process.env.EXPO_PUBLIC_ADS_MODE = 'test';
+  process.env.EXPO_PUBLIC_ADS_MODE = options.adsMode ?? 'test';
   process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = 'appl_unit_test_only';
   let access = { ads: { allowed: options.adsAllowed ?? true, treatment: options.treatment ?? 'unspecified', underAgeOfConsent: options.underAgeOfConsent ?? false }, revenueCat: { allowed: options.rcAllowed ?? true }, competition: { allowed: true }, revision: 1 };
   const accessListeners = new Set<() => void>();
@@ -27,7 +27,8 @@ function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: b
     AdEventType: { LOADED: 'loaded', OPENED: 'opened', CLICKED: 'clicked', PAID: 'paid', ERROR: 'error', CLOSED: 'closed' },
     InterstitialAd: { createForAdRequest: jest.fn(() => nativeAd) },
   };
-  const purchases = { configure: jest.fn(() => { if (options.rcFails) throw new Error('RevenueCat unavailable'); }), adTracker: tracker };
+  const cachedIdentity = jest.fn().mockResolvedValue('$RCAnonymousID:0123456789abcdef0123456789abcdef');
+  const purchases = { ...(options.rcIdMethod === false ? {} : { getAppUserID: cachedIdentity }), configure: jest.fn(() => { if (options.rcFails) throw new Error('RevenueCat unavailable'); }), adTracker: tracker };
   const stateListeners = new Set<(state: string) => void>();
   const state = { currentState: 'active', addEventListener: jest.fn((_event: string, listener: (state: string) => void) => {
     stateListeners.add(listener);
@@ -36,7 +37,7 @@ function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: b
   const changeState = (next: string) => { state.currentState = next; [...stateListeners].forEach((listener) => listener(next)); };
   const nativeLoad = jest.fn(() => sdk);
   const purchasesLoad = jest.fn(() => ({ default: purchases }));
-  jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: options.expoGo ? 'storeClient' : 'standalone' }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
+  jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: options.expoGo ? 'storeClient' : 'standalone', platform: { ios: { buildNumber: '13' } }, expoConfig: { version: '1.0.0', ios: { buildNumber: '1' } } }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
   const nativeModules: { RNPurchases?: { flapFitSetProcessingAllowed?: typeof nativeFence } } = options.nativeFence === false ? {} : { RNPurchases: { flapFitSetProcessingAllowed: nativeFence } };
   const umpInfo = { canRequestAds: true, privacyOptionsRequirementStatus: 'REQUIRED' };
   const ump = { getConsentInfo: jest.fn().mockResolvedValue(umpInfo), showPrivacyOptionsForm: jest.fn().mockResolvedValue(umpInfo) };
@@ -45,10 +46,15 @@ function loadAdapter(options: { platform?: string; expoGo?: boolean; rcFails?: b
   jest.doMock('react-native-google-mobile-ads', () => nativeLoad());
   jest.doMock('react-native-purchases', () => purchasesLoad());
   const adapter = require('../monetization') as typeof import('../monetization');
-  return { adapter, sdk, purchases, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativeModules, changeState, ump, umpInfo, ageRequest, privacyInput, invalidateAge };
+  return { adapter, sdk, purchases, cachedIdentity, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativeModules, changeState, ump, umpInfo, ageRequest, privacyInput, invalidateAge };
 }
 
-afterEach(() => { process.env = { ...originalEnv }; jest.useRealTimers(); });
+let diagnosticConsole: jest.SpyInstance;
+beforeEach(() => { diagnosticConsole = jest.spyOn(console, 'info').mockImplementation(() => undefined); });
+afterEach(() => { process.env = { ...originalEnv }; jest.useRealTimers(); diagnosticConsole.mockRestore(); });
+function diagnosticRecords() {
+  return diagnosticConsole.mock.calls.map(([line]) => JSON.parse(line as string) as Record<string, unknown>);
+}
 
 test.each([{ expoGo: true }, { platform: 'web' }])('does not evaluate either native SDK in unsupported runtime %j', async (options) => {
   const f = loadAdapter(options);
@@ -815,4 +821,74 @@ test('a consent-threshold change replaces the ad treatment without granting anal
   expect(f.mobileAds.setRequestConfiguration).toHaveBeenLastCalledWith({ maxAdContentRating: 'PG', ageRestrictedTreatment: 'teen' });
   expect(f.adapter.prepareResultInterstitial()).not.toBeNull();
   expect(f.purchasesLoad).not.toHaveBeenCalled();
+});
+
+
+test('test diagnostics follow genuine dispatched callbacks with redacted identity and shared impression correlation', async () => {
+  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
+  expect(f.cachedIdentity).toHaveBeenCalledTimes(1);
+  const ad = f.adapter.prepareResultInterstitial()!;
+  f.events.get('loaded')!(); await Promise.resolve();
+  await ad.show({ opened: jest.fn(), closed: jest.fn(), failed: jest.fn() });
+  f.events.get('opened')!();
+  f.events.get('paid')!({ value: 0.00123, currency: 'USD', precision: 3 });
+  await Promise.resolve();
+  const records = diagnosticRecords();
+  expect(records.map((record) => record.kind)).toEqual(['configured', 'ad_loaded', 'ad_displayed', 'ad_revenue']);
+  const impressionId = f.tracker.trackAdLoaded.mock.calls[0][0].impressionId;
+  for (const record of records) {
+    expect(record).toMatchObject({ scope: 'flapfit.rc.test.local', receipt: 'unverified', rcIdSuffix: '456789abcdef', buildNumber: '13' });
+    if (record.kind !== 'configured') expect(record.impressionId).toBe(impressionId);
+    expect(record).not.toHaveProperty('revenueMicros');
+  }
+  expect(JSON.stringify(records)).not.toContain('$RCAnonymousID:');
+  f.events.get('closed')!();
+});
+
+test.each([{ adsMode: 'live' }, { rcAllowed: false }])('diagnostics neither read identity nor log without permitted test mode %j', async (options) => {
+  const f = loadAdapter(options); await f.adapter.prepareMonetization(() => true);
+  expect(f.cachedIdentity).not.toHaveBeenCalled(); expect(diagnosticConsole).not.toHaveBeenCalled();
+});
+
+test.each(['reject', 'throw', 'missing', 'pending'])('optional identity lookup %s cannot disable reporting or eligible ads', async (failure) => {
+  const f = loadAdapter({ rcIdMethod: failure !== 'missing' });
+  if (failure === 'reject') f.cachedIdentity.mockRejectedValue(new Error('local lookup failed'));
+  if (failure === 'throw') f.cachedIdentity.mockImplementation(() => { throw new Error('local lookup failed'); });
+  if (failure === 'pending') f.cachedIdentity.mockReturnValue(new Promise(() => undefined));
+  await f.adapter.prepareMonetization(() => true);
+  const ad = f.adapter.prepareResultInterstitial()!; expect(ad).not.toBeNull();
+  f.events.get('loaded')!(); await Promise.resolve();
+  expect(ad.isReady()).toBe(true); expect(f.tracker.trackAdLoaded).toHaveBeenCalledTimes(1);
+  expect(f.adapter.getRevenueCatWithdrawalStatus().state).toBe('not-requested');
+  expect(diagnosticRecords().filter((record) => record.kind === 'ad_loaded')).toHaveLength(1);
+});
+
+test('withdrawal rejects queued diagnostic dispatch and a stale identity result after regrant', async () => {
+  const f = loadAdapter(); let resolveIdentity!: (value: string) => void;
+  f.cachedIdentity.mockReturnValueOnce(new Promise((resolve) => { resolveIdentity = resolve; }));
+  await f.adapter.prepareMonetization(() => true);
+  const ad = f.adapter.prepareResultInterstitial()!; f.events.get('loaded')!();
+  f.changeAccess({ revenueCat: { allowed: false } }); await f.adapter.settleRevenueCatWithdrawal();
+  expect(ad.isReady()).toBe(true); expect(diagnosticConsole).not.toHaveBeenCalled();
+  f.cachedIdentity.mockResolvedValue('$RCAnonymousID:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+  f.changeAccess({ revenueCat: { allowed: true } });
+  for (let i = 0; i < 12; ++i) await Promise.resolve();
+  resolveIdentity('$RCAnonymousID:0123456789abcdef0123456789abcdef');
+  for (let i = 0; i < 6; ++i) await Promise.resolve();
+  expect(diagnosticRecords()).toEqual([expect.objectContaining({ kind: 'configured', rcIdSuffix: 'aaaaaaaaaaaa' })]);
+  f.events.get('paid')!({ value: 0.001, currency: 'USD', precision: 3 }); await Promise.resolve();
+  expect(diagnosticRecords()[1]).toMatchObject({ kind: 'ad_revenue', rcIdSuffix: 'aaaaaaaaaaaa' });
+});
+
+test('Android launch context preserves the existing independently permitted SDK route without requesting Apple', async () => {
+  const f = loadAdapter({ platform: 'android', rcAllowed: false });
+  Object.assign(f.privacyInput, { launch: { country: 'US', current: true } });
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.mobileAds.initialize).toHaveBeenCalledTimes(1); expect(f.ageRequest).not.toHaveBeenCalled();
+});
+test('Android launch context does not turn unknown processing into permission', async () => {
+  const f = loadAdapter({ platform: 'android', adsAllowed: false, rcAllowed: false });
+  Object.assign(f.privacyInput, { launch: { country: null, current: false } });
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.nativeLoad).not.toHaveBeenCalled(); expect(f.purchasesLoad).not.toHaveBeenCalled(); expect(f.ageRequest).not.toHaveBeenCalled();
 });

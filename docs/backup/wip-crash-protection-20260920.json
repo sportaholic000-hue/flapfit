@@ -1,0 +1,38 @@
+{
+  "purpose": "Crash-protection WIP checkpoint; unfinished and not release-ready",
+  "createdAt": "2026-09-20T01:59:45.181Z",
+  "branch": "wip/crash-protection-20260920",
+  "previousHead": "f39190d6ae2a84c8ba97624b5c917295f0b1ec7d",
+  "testsRunForBackup": false,
+  "codeRefactored": false,
+  "externalSnapshots": [
+    "website-current",
+    "website-older-checkout"
+  ],
+  "excluded": {
+    "privateFiles": [
+      "apps/mobile/.env.local",
+      "apps/web/.env",
+      "apps/mobile/credentials.json"
+    ],
+    "generatedAndDependencyPaths": [
+      ".yarn/install-state.gz",
+      ".dependency-backups/**",
+      "node_modules/**",
+      "node_modules.reparse-backup-20260910/**",
+      "apps/web/node_modules/**",
+      "apps/mobile/.expo/**",
+      "apps/mobile/.metro-virtual/**",
+      "apps/mobile/caches/** (two helper source files are copied under archive/project-backup-20260920/local-dev-helpers/)",
+      "apps/mobile/dist/**",
+      "publisher/.yarn/install-state.gz",
+      "supabase/.temp/**"
+    ],
+    "outsideRepository": "Private Apple signing downloads and workspace build/tool caches remain local. Existing application source, backend, patches, models and assets are in this Git tree; both separate website checkouts are included as source snapshots.",
+    "ignoredFilesIncluded": [
+      ".asset-backups/**",
+      "apps/mobile/.codex/environments/environment.toml",
+      "apps/mobile/expo-env.d.ts"
+    ]
+  }
+}

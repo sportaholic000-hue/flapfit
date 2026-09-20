@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="sunny-1-body" x1="0" y1="0" x2="0.82" y2="1">
+      <stop offset="0" stop-color="#ffd66b"/>
+      <stop offset="0.5" stop-color="#FFC93C"/>
+      <stop offset="1" stop-color="#d2a93d"/>
+    </linearGradient>
+    <linearGradient id="sunny-1-wing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffae40"/>
+      <stop offset="1" stop-color="#FF9F1C"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(128 128) scale(0.64) translate(-128 -128)" stroke-linejoin="round">
+    <ellipse cx="132" cy="226" rx="44" ry="8" fill="#1c2743" opacity="0.1"/>
+    <g id="sunny-1-legs" fill="#FF6B35" stroke="#1c2743" stroke-width="5.2">
+          <path d="M116 173 C112 199 109 210 108 220 C102 222 96 226 91 231 C100 230 108 230 114 232 C117 224 121 215 125 182 Z"/>
+          <path d="M151 176 C153 200 157 211 160 220 C155 223 151 228 148 233 C157 230 165 230 173 231 C170 221 166 212 163 184 Z"/>
+        </g>
+    <path id="sunny-1-rear-wing" d="M113 112 C91 83 57 71 34 78
+      C25 80 23 88 29 95
+      C35 104 47 112 61 117
+      C45 113 31 115 24 122
+      C21 127 23 134 31 136
+      C47 141 65 140 83 136
+      C70 144 62 152 65 158
+      C69 164 82 158 96 150
+      C108 143 119 139 130 137 Z"
+      fill="url(#sunny-1-wing)" stroke="#1c2743" stroke-width="5.2"/>
+    <path d="M39 98 C59 105 80 117 103 132
+      M35 123 C58 124 79 128 100 136"
+      fill="none" stroke="#a06d2c" stroke-width="3" stroke-linecap="round" opacity="0.62"/>
+    <path id="sunny-1-body" d="M119 93
+      C139 75 171 78 188 101
+      C200 119 202 153 173 151
+      C174 184 158 190 137 196
+      C111 194 88 187 80 164
+      C72 141 79 116 96 102 C102 97 110 94 119 93 Z"
+      fill="url(#sunny-1-body)" stroke="#1c2743" stroke-width="5.2"/>
+    <ellipse cx="137" cy="162" rx="32" ry="31" fill="#FFE8A3" opacity="0.82"/>
+    <circle cx="105" cy="111" r="9" fill="#ffd66b" stroke="#1c2743" stroke-width="4.2"/>
+    
+    <path id="sunny-1-front-wing" d="M154 119
+      C160 101 170 91 184 92
+      C198 92 208 102 208 115
+      C207 124 199 130 190 127
+      C196 116 194 108 187 106
+      C179 104 175 112 179 120
+      C185 130 184 141 176 150
+      C166 160 153 160 145 151
+      C151 142 154 131 154 119 Z"
+      fill="url(#sunny-1-wing)" stroke="#1c2743" stroke-width="5.2"/>
+    <ellipse cx="190" cy="108" rx="10" ry="9"
+      fill="#ffae40" stroke="#1c2743" stroke-width="4" transform="rotate(-12 190 108)"/>
+    <path d="M171 121 C178 116 184 116 190 121 M157 145 C164 140 171 139 177 142"
+      fill="none" stroke="#99692e" stroke-width="3.2" stroke-linecap="round" opacity="0.3"/>
+    
+    <ellipse cx="166" cy="82" rx="35" ry="31" fill="url(#sunny-1-body)" stroke="#1c2743" stroke-width="5.2"/>
+    <path d="M143 60 C138 48 143 38 153 45 C157 33 168 31 171 45 C179 36 190 40 187 54"
+      fill="#FFC93C" stroke="#1c2743" stroke-width="5.2" stroke-linecap="round"/>
+    <ellipse cx="179" cy="78" rx="12" ry="13" fill="#FFFFFF" stroke="#1c2743" stroke-width="3.8"/>
+    <circle cx="183" cy="80" r="5.2" fill="#1F2937"/>
+    <circle cx="185" cy="77" r="1.7" fill="#FFFFFF"/>
+    
+    <path d="M196 82 L239 92 L198 105 C202 97 202 89 196 82 Z" fill="#FF6B35" stroke="#1c2743" stroke-width="5.2"/>
+    <path d="M203 94 L226 94" fill="none" stroke="#994c3b" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M174 96 C181 102 191 101 196 95" fill="none" stroke="#1c2743" stroke-width="3.2" stroke-linecap="round"/>
+    
+  </g>
+</svg>

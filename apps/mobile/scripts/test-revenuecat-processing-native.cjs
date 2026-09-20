@@ -15,7 +15,12 @@ const harness = `
 import Foundation
 
 enum DirectoryHelper {
-  static let defaultPersistenceBaseUrl: URL? = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  static let defaultPersistenceBaseUrl: URL? = {
+    if let directory = ProcessInfo.processInfo.environment["FLAP_FIT_FENCE_TEST_DIRECTORY"] {
+      return URL(fileURLWithPath: directory, isDirectory: true)
+    }
+    return FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+  }()
 }
 ${gate}
 
@@ -45,10 +50,40 @@ func fileIsEmpty(_ url: URL) -> Bool { (try? Data(contentsOf: url))?.isEmpty == 
     let base = DirectoryHelper.defaultPersistenceBaseUrl!.appendingPathComponent("revenuecat")
     try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
     let file = base.appendingPathComponent("ad_event_store")
+    let featureFile = base.appendingPathComponent("paywall_event_store")
+    if CommandLine.arguments.contains("--seed-relaunch") {
+      precondition(!FFRevenueCatProcessingGate.accepts(FFRevenueCatProcessingGate.currentGeneration))
+      precondition(FFRevenueCatProcessingGate.setProcessingAllowed(true))
+      let generation = FFRevenueCatProcessingGate.currentGeneration
+      for eventFile in [file, featureFile] {
+        try FFRevenueCatProcessingGate.withEventWrite(url: eventFile, generation: generation) {
+          try Data("previous-process queued test data".utf8).write(to: eventFile)
+        }
+      }
+      print("Previous process wrote local test files; no network events were sent.")
+      return
+    }
+    if CommandLine.arguments.contains("--verify-relaunch") {
+      precondition(!fileIsEmpty(file) && !fileIsEmpty(featureFile), "seed process must persist files")
+      precondition(!FFRevenueCatProcessingGate.accepts(FFRevenueCatProcessingGate.currentGeneration), "new process starts closed even after previous process granted")
+      for eventFile in [file, featureFile] {
+        do {
+          try FFRevenueCatProcessingGate.withEventWrite(url: eventFile, generation: FFRevenueCatProcessingGate.currentGeneration) {
+            try Data("must not append".utf8).write(to: eventFile)
+          }
+          preconditionFailure("relaunch must reject writes before a new permitted decision")
+        } catch { /* expected cancellation */ }
+      }
+      precondition(FFRevenueCatProcessingGate.setProcessingAllowed(false))
+      precondition(fileIsEmpty(file) && fileIsEmpty(featureFile), "withdrawn relaunch purges previous-process event files")
+      print("RevenueCat native fence: separate-process relaunch starts closed and purges retained event files.")
+      return
+    }
     try Data("cached event".utf8).write(to: file)
+    try Data("cached feature event".utf8).write(to: featureFile)
     precondition(!FFRevenueCatProcessingGate.accepts(FFRevenueCatProcessingGate.currentGeneration), "cold launch must be denied")
     precondition(FFRevenueCatProcessingGate.setProcessingAllowed(false))
-    precondition(fileIsEmpty(file), "cold launch purges cached events")
+    precondition(fileIsEmpty(file) && fileIsEmpty(featureFile), "cold launch purges both event stores")
 
     let config = URLSessionConfiguration.ephemeral
     config.protocolClasses = [SinkProtocol.self]
@@ -67,7 +102,15 @@ func fileIsEmpty(_ url: URL) -> Bool { (try? Data(contentsOf: url))?.isEmpty == 
     precondition(SinkProtocol.counters.didStart.wait(timeout: .now() + 5) == .success)
     precondition(FFRevenueCatProcessingGate.setProcessingAllowed(false))
     precondition(completed.wait(timeout: .now() + 5) == .success, "withdrawal cancels in-flight transport")
-    precondition(fileIsEmpty(file), "withdrawal purges stored analytics")
+    precondition(fileIsEmpty(file) && fileIsEmpty(featureFile), "withdrawal purges stored analytics")
+    // Purge failure must be an explicit failure and must not reopen processing.
+    let obstructed = base.appendingPathComponent("ad_event_store")
+    try FileManager.default.removeItem(at: obstructed)
+    try FileManager.default.createDirectory(at: obstructed, withIntermediateDirectories: false)
+    precondition(!FFRevenueCatProcessingGate.setProcessingAllowed(true), "failed purge cannot acknowledge a grant")
+    precondition(!FFRevenueCatProcessingGate.accepts(FFRevenueCatProcessingGate.currentGeneration))
+    try FileManager.default.removeItem(at: obstructed)
+    try Data().write(to: obstructed)
 
     precondition(FFRevenueCatProcessingGate.setProcessingAllowed(true))
     let stale = session.dataTask(with: URL(string: "https://consent-test.invalid/stale")!) { _, _, _ in completed.signal() }
@@ -99,6 +142,17 @@ if (sdk.status !== 0 || !sdk.stdout.trim()) throw Error('macOS SDK unavailable f
 const target = (process.arch === 'arm64' ? 'arm64' : 'x86_64') + '-apple-macos13.0';
 for (const [command, args] of [['xcrun', ['--sdk', 'macosx', 'swiftc', '-sdk', sdk.stdout.trim(), '-target', target, '-parse-as-library', source, '-o', executable]], [executable, []]]) {
   const result = spawnSync(command, args, { stdio: 'inherit', timeout: 120000 });
+  if (result.error) throw result.error;
+  if (result.status !== 0) process.exit(result.status || 1);
+}
+// Two invocations of the compiled native gate share only the temporary directory.
+// This proves that a prior process's grant never survives a genuine process restart.
+const relaunchDirectory = path.join(folder, 'relaunch-persistence');
+for (const mode of ['--seed-relaunch', '--verify-relaunch']) {
+  const result = spawnSync(executable, [mode], {
+    stdio: 'inherit', timeout: 30000,
+    env: { ...process.env, FLAP_FIT_FENCE_TEST_DIRECTORY: relaunchDirectory },
+  });
   if (result.error) throw result.error;
   if (result.status !== 0) process.exit(result.status || 1);
 }

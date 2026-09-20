@@ -1,6 +1,8 @@
+import { evaluateLaunchProcessingPlan, resolveLaunchProcessingPolicy, type LaunchProcessingPlan, type LaunchProcessingOptions } from './launchProcessingPolicy';
+import type { LaunchCountry } from './privacyCountry';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  AgeEvidence, AppleRequirement, evaluateVerifiedProcessing, initialProcessingRuntimeInputs, verifyTransientAge,
+  AgeEvidence, AppleRequirement, EuropeanProviderDecisions, evaluateVerifiedProcessing, initialProcessingRuntimeInputs, verifyTransientAge,
   PROCESSING_NOTICE_VERSION, ProcessingChoice, ProcessingRuntimeInputs, PrivacyRegion, Purpose, PurposeRequirement,
 } from './processingPolicy';
 
@@ -21,6 +23,8 @@ export function getProcessingInputs(): ProcessingRuntimeInputs {
   return {
     ...input, verification: input.verification ? { ...input.verification } : null,
     requirements: { ...input.requirements },
+    ...(input.launch ? { launch: JSON.parse(JSON.stringify(input.launch)) as ProcessingRuntimeInputs['launch'] } : {}),
+    ...(input.europeanProvider ? { europeanProvider: { ads: { ...input.europeanProvider.ads }, analytics: { ...input.europeanProvider.analytics }, competition: { ...input.europeanProvider.competition } } } : {}),
     choices: {
       ads: { ...input.choices.ads }, analytics: { ...input.choices.analytics },
       competition: { ...input.choices.competition },
@@ -32,6 +36,11 @@ export function subscribeProcessingAccess(listener: () => void): () => void {
   return () => { listeners.delete(listener); };
 }
 function publish(next: ProcessingRuntimeInputs): void {
+  if (next.launch?.plan) {
+    const noticed = next.presentedNoticeVersion === PROCESSING_NOTICE_VERSION;
+    const competitionNoticed = next.choices.competition.decision === 'granted' && next.choices.competition.noticeVersion === PROCESSING_NOTICE_VERSION;
+    next = { ...next, launch: { ...next.launch, resolution: evaluateLaunchProcessingPlan(next.launch.plan, { ads: noticed, analytics: noticed, competition: competitionNoticed }, next.choices, next.launch.options) } };
+  }
   input = next;
   snapshot = evaluateVerifiedProcessing(next, ++revision);
   listeners.forEach((listener) => {
@@ -108,7 +117,7 @@ export async function setPrivacyRegion(region: PrivacyRegion): Promise<void> {
   const generation = ++regionRevision;
   ++verificationRevision;
   durable = { ...durable, region };
-  publish({ ...input, region: 'unknown', verification: null, appleRequirement: 'pending',
+  publish({ ...input, region: 'unknown', verification: null, europeanProvider: undefined, launch: undefined, appleRequirement: 'pending',
     requirements: { ads: 'unresolved', analytics: 'unresolved', competition: 'unresolved' },
     presentedNoticeVersion: null });
   await persist();
@@ -118,11 +127,11 @@ export async function setPrivacyRegion(region: PrivacyRegion): Promise<void> {
 export const getAgeVerificationRevision = () => verificationRevision;
 export function clearAgeVerification(): void {
   ++verificationRevision;
-  publish({ ...input, verification: null });
+  publish({ ...input, verification: null, launch: input.launch ? { ...input.launch, plan: null, resolution: null } : undefined });
 }
 export function setAppleAgeRequirement(requirement: AppleRequirement): void {
   ++verificationRevision;
-  publish({ ...input, appleRequirement: requirement, verification: null });
+  publish({ ...input, appleRequirement: requirement, verification: null, europeanProvider: undefined, launch: input.launch ? { ...input.launch, plan: null, resolution: null } : undefined });
 }
 /** Consume evidence synchronously. Never keep, return, persist, or publish its raw range/source.
  * The caller must discard its response after this returns. Region must be established first.
@@ -160,7 +169,9 @@ export function setAppleRescissionPending(pending: boolean): void {
 export function setAppleAccessRestricted(restricted: boolean): void {
   if (restricted) ++verificationRevision;
   publish({ ...input, appleAccessRestricted: restricted,
-    verification: restricted ? null : input.verification });
+    verification: restricted ? null : input.verification,
+    europeanProvider: restricted ? undefined : input.europeanProvider,
+    launch: restricted && input.launch ? { ...input.launch, plan: null, resolution: null } : input.launch });
 }
 export async function setProcessingChoice(purpose: Purpose, decision: 'granted' | 'denied'): Promise<void> {
   ++choicesRevision;
@@ -185,4 +196,70 @@ export function setProcessingRequirements(requirements: Record<Purpose, PurposeR
 }
 export function markProcessingNoticePresented(version: number): void {
   publish({ ...input, presentedNoticeVersion: version });
+}
+
+const unresolvedProvider = (): EuropeanProviderDecisions => ({
+  ads: { allowed: false, reason: 'policy-unresolved' },
+  analytics: { allowed: false, reason: 'policy-unresolved' },
+  competition: { allowed: false, reason: 'policy-unresolved' },
+});
+/** A successful fresh UMP update can establish this treatment regime, never a country.
+ * This is runtime-only and creates no processing grant or persistent age profile. */
+export function beginEuropeanProviderProcessing(): number | null {
+  if (!input.hydrated || input.appleAccessRestricted || input.appleRequirement === 'pending' || input.appleRequirement === 'error') return null;
+  publish({ ...input, europeanProvider: unresolvedProvider() });
+  return verificationRevision;
+}
+export function verifyEuropeanAppleAgeEvidence(age: AgeEvidence, expectedRevision: number): boolean {
+  if (expectedRevision !== verificationRevision || !input.europeanProvider || input.appleAccessRestricted) return false;
+  const verification = verifyTransientAge({ ...input, region: 'unknown', age, appleAgeCheckSatisfied: age.status === 'shared' });
+  publish({ ...input, verification });
+  return expectedRevision === verificationRevision;
+}
+/** Refusals remain in independent durable choices and always override these signals. */
+export function setEuropeanProviderDecisions(decisions: EuropeanProviderDecisions, expectedRevision: number): boolean {
+  if (expectedRevision !== verificationRevision || !input.europeanProvider || input.appleAccessRestricted) return false;
+  publish({ ...input, europeanProvider: { ads: { ...decisions.ads }, analytics: { ...decisions.analytics }, competition: { ...decisions.competition } } });
+  return expectedRevision === verificationRevision;
+}
+/** Close affected gates synchronously before reading replacement provider choices. */
+export function invalidateEuropeanProviderDecisions(preserveCompetition = false): void {
+  if (!input.europeanProvider) return;
+  const next = unresolvedProvider();
+  if (preserveCompetition) next.competition = { ...input.europeanProvider.competition };
+  publish({ ...input, europeanProvider: next });
+}
+
+/** Country freshness is independent of age verification: a same-country foreground
+ * refresh closes processing temporarily without erasing its already verified plan. */
+export function setLaunchProcessingCountry(country: LaunchCountry | null, current: boolean): boolean {
+  const previous = input.launch;
+  const changed = country !== null && previous?.country != null && previous.country !== country;
+  if (changed) ++verificationRevision;
+  const nextCountry = country ?? previous?.country ?? null;
+  if (previous && previous.country === nextCountry && previous.current === current && !changed) return false;
+  publish({ ...input, europeanProvider: undefined, verification: changed ? null : input.verification,
+    launch: { country: nextCountry, current, plan: changed ? null : previous?.plan ?? null,
+      resolution: changed ? null : previous?.resolution ?? null, options: changed ? {} : previous?.options ?? {} } });
+  return changed;
+}
+export function setLaunchProcessingPlan(plan: LaunchProcessingPlan, expectedRevision: number): boolean {
+  if (expectedRevision !== verificationRevision || !input.launch?.current || !input.verification?.mandatoryCheckSatisfied) return false;
+  publish({ ...input, launch: { ...input.launch, plan: JSON.parse(JSON.stringify(plan)) as LaunchProcessingPlan, resolution: null } });
+  return expectedRevision === verificationRevision;
+}
+/** Only the serialized native Apple consumer supplies this transient evidence. */
+export function verifyLaunchAgeEvidence(age: AgeEvidence, country: LaunchCountry, expectedRevision: number): boolean {
+  if (expectedRevision !== verificationRevision || !input.launch?.current || input.launch.country !== country || input.appleAccessRestricted) return false;
+  const verification = verifyTransientAge({ ...input, region: 'unknown', age, appleAgeCheckSatisfied: age.status === 'shared' && age.source === 'apple' });
+  const resolved = resolveLaunchProcessingPolicy({ country, subdivision: null, age,
+    choices: input.choices, notices: { ads: false, analytics: false, competition: false } });
+  const { decisions: _decisions, ...plan } = resolved;
+  publish({ ...input, verification, launch: { ...input.launch, plan, resolution: null } });
+  return expectedRevision === verificationRevision;
+}
+/** Separate verified purpose controls; no change is inferred from UMP or download permission. */
+export function setLaunchProcessingOptions(options: LaunchProcessingOptions): void {
+  if (!input.launch) return;
+  publish({ ...input, launch: { ...input.launch, options: JSON.parse(JSON.stringify(options)) as LaunchProcessingOptions } });
 }

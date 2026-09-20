@@ -3,6 +3,12 @@
 Owner goal: an evidenced Apple submission candidate within 18 hours. Owner reviews before Submit for Review.
 Source checklist: FlapFit_Apple_First_Launch_Checklist.md supplied September 19; audit baseline 453e363f0b2fcbbe0d522777f92fe2888946addd.
 
+## Owner scope change: four-country initial release
+
+The owner explicitly changed initial availability to **Canada, the United States, Australia and Mexico** on September 19 (local time). App Store Connect saved and read back **Availability (4 Countries or Regions)**, with exactly AUS, CAN, MEX and USA available on release. Automatic availability in future countries was unchecked. No submission or release occurred. This supersedes the earlier worldwide/172-territory scope recorded below. EU expansion and trader verification no longer define initial territory readiness.
+
+No country has been declared fully verified: production regional decisions, installed acceptance and final store submission items remain open. The 13+ audience, ad-supported model, RevenueCat independence, gameplay and recording are unchanged.
+
 ## Current reconciled checkpoint (supersedes historical counts below)
 
 See [review reconciliation](review-reconciliation-2026-09-19.md) for source reconciliation and F1. Mobile automated evidence is **47 suites / 886 tests**, plus TypeScript and four-file strict scoped lint; see processing-readiness-2026-09-19.md for current source checks. Backend tests now total **39 passing**. Signed internal build **710512ba-6445-42d8-af23-659d862a3298**, source **0be68de0666c27f3151ae544de07b374eca54937**, version **1.0.0 (2)** finished. Its IPA was inspected directly; this is not installed-device evidence.

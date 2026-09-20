@@ -1,3 +1,5 @@
+import type { LaunchProcessingPlan, LaunchProcessingOptions, LaunchProcessingResolution } from './launchProcessingPolicy';
+import type { LaunchCountry } from './privacyCountry';
 /** Independent purpose decisions. Apple age evidence is never processing consent. */
 export const PROCESSING_NOTICE_VERSION = 1;
 export type PrivacyRegion = 'us' | 'ca-quebec' | 'ca-other' | 'other' | 'unknown';
@@ -42,8 +44,12 @@ export type AgeVerification = {
   treatment: 'child' | 'teen' | 'unspecified';
   underAgeOfConsent: boolean;
 };
+/** Provider applicability is not a country, residence, or reusable consent grant. */
+export type EuropeanProviderDecisions = Record<Purpose, ProcessingDecision>;
 export type ProcessingRuntimeInputs = Omit<ProcessingInputs, 'age' | 'appleAgeCheckSatisfied'> & {
   verification: AgeVerification | null;
+  europeanProvider?: EuropeanProviderDecisions;
+  launch?: { country: LaunchCountry | null; current: boolean; plan: LaunchProcessingPlan | null; resolution: LaunchProcessingResolution | null; options: LaunchProcessingOptions };
 };
 export type ProcessingAccess = {
   ads: ProcessingDecision & {
@@ -134,6 +140,17 @@ function runtimeEligibility(input: ProcessingRuntimeInputs): ProcessingReason {
   if (input.appleRequirement === 'pending' || input.appleRequirement === 'error') return 'apple-check-pending';
   if (input.appleRequirement === 'required' && !input.verification?.mandatoryCheckSatisfied) return 'apple-check-required';
   if (input.appleRequirement === 'required' && input.appleRescissionPending) return 'apple-access-check-pending';
+  if (input.launch) {
+    if (!input.launch.current || !input.launch.country) return 'region-unconfirmed';
+    if (!input.verification?.mandatoryCheckSatisfied) return 'age-unresolved';
+    return input.launch.plan?.ageEligibility ?? 'age-unresolved';
+  }
+  if (input.europeanProvider) {
+    // The current automatic provider branch is established only for an Apple-verified adult.
+    // A self-reported adult or missing range cannot enter it; minors remain unresolved.
+    if (!input.verification?.mandatoryCheckSatisfied || input.verification.treatment !== 'unspecified') return 'age-unresolved';
+    return 'allowed';
+  }
   if (input.region === 'unknown') return 'region-unconfirmed';
   if (input.region === 'other') return 'region-not-cleared';
   return input.verification?.eligibility ?? 'age-unresolved';
@@ -141,14 +158,24 @@ function runtimeEligibility(input: ProcessingRuntimeInputs): ProcessingReason {
 /** Runtime decisions use verification outcomes only; raw Apple evidence is already discarded. */
 export function evaluateVerifiedProcessing(input: ProcessingRuntimeInputs, revision = 0): ProcessingAccess {
   const common = runtimeEligibility(input);
+  const purpose = (key: Purpose): ProcessingDecision => {
+    if (input.launch) {
+      if (common !== 'allowed') return { allowed: false, reason: common };
+      return input.launch.resolution?.decisions[key] ?? { allowed: false, reason: 'policy-unresolved' };
+    }
+    if (!input.europeanProvider) return decide(input, key, common);
+    if (common !== 'allowed') return { allowed: false, reason: common };
+    if (input.choices[key].decision === 'denied') return { allowed: false, reason: 'refused' };
+    return { ...input.europeanProvider[key] };
+  };
   return {
     ads: {
-      ...decide(input, 'ads', common),
-      treatment: input.verification?.treatment ?? 'child',
-      underAgeOfConsent: input.verification?.underAgeOfConsent ?? true,
+      ...purpose('ads'),
+      treatment: input.launch?.plan?.adTreatment ?? input.verification?.treatment ?? 'child',
+      underAgeOfConsent: input.launch?.plan?.underAgeOfConsent ?? input.verification?.underAgeOfConsent ?? true,
     },
-    revenueCat: decide(input, 'analytics', common),
-    competition: decide(input, 'competition', common),
+    revenueCat: purpose('analytics'),
+    competition: purpose('competition'),
     revision,
   };
 }

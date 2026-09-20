@@ -1,0 +1,25 @@
+{
+  "observedOn": "2026-09-19 America/Halifax",
+  "appId": "6813280704",
+  "ownerAuthorized": true,
+  "countriesAvailableOnRelease": [
+    "AUS",
+    "CAN",
+    "MEX",
+    "USA"
+  ],
+  "count": 4,
+  "automaticallyIncludeFutureCountries": false,
+  "source": "App Store Connect saved availability page readback",
+  "appSubmitted": false,
+  "countryComplianceVerified": false,
+  "countrySignalProbe": {
+    "url": "https://flapfitapp.com/cdn-cgi/trace",
+    "status": 200,
+    "country": "CA",
+    "clientSuppliedCountryHeaderIgnored": true,
+    "subdivisionAvailable": false,
+    "noNewBackendOrAccount": true,
+    "appIntegrationVerified": false
+  }
+}
