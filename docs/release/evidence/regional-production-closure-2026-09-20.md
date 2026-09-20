@@ -107,3 +107,27 @@ Actual macOS hook execution/archive retrieval and Xcode Organizer's generated
 privacy report remain artifact-dependent. A local manifest summary is not an
 Xcode report. [EAS hook/artifact order](https://docs.expo.dev/build-reference/ios-builds/)
 places extra-artifact upload after the success hook.
+
+## Final independent verification and backup
+
+Implementation 0cea7e3f3ba4f43081573c25301e8a3c5cc0b3d5 was committed, pushed and
+matched against the full remote WIP SHA. Full 57 suites/1,106 tests passed;
+the two final nonbehavioral edits received an affected 2-suite/14-test pass.
+TypeScript, strict lint after its test-cleanup correction, source validation,
+actual packaged validation and targeted integrity comparison passed. The EAS
+copy contains 733 files, 233 byte-matched runtime/asset/patch files and ten
+matched configurations. No private signing/environment files are included.
+
+The earlier first-use competition identity and misleading local-upload findings
+are already fixed. Their production service tests verify one shared token,
+retryable signup, withdrawal invalidation and intentional-local outcomes; all
+passed in this successor. This adds evidence, not a repeat implementation.
+
+Website version 29 published successfully. All six public routes returned 200;
+content matched committed source after only newline and observed Cloudflare
+edge-script normalization. Full website GitHub backup SHA:
+85e252b57ae6e02c6300860f98794f3ba1e269d6.
+
+Existing build-3 artifacts contain the original three focused corrections, not
+this regional successor. No installed result, real provider receipt, unseen
+review coverage, Xcode aggregate report or Apple submission is inferred here.

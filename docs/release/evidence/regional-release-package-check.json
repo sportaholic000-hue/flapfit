@@ -1,0 +1,9 @@
+{
+  "stage": "EAS build:inspect archive",
+  "fileCount": 733,
+  "byteMatchedRuntimeAssetPatchFiles": 233,
+  "secretFileCount": 0,
+  "retiredArchiveFilesExcluded": true,
+  "webCheckoutFilesExcluded": true,
+  "requiredConfigurationFilesMatched": 10
+}

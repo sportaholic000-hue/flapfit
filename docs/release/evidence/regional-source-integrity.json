@@ -1,0 +1,25 @@
+{
+  "sourceCommit": "0cea7e3f3ba4f43081573c25301e8a3c5cc0b3d5",
+  "credentialScan": {
+    "scope": "Known credential signatures and decoded service-role JWTs in current tracked source and actual EAS upload. No history/entropy claim; values omitted.",
+    "counts": {
+      "tracked-current-tree": 551,
+      "actual-eas-upload": 733
+    },
+    "findings": []
+  },
+  "lockedGraphAndPatchesUnchangedSince": "d2f85fd6e2fa685421d59cabf4da1df0ec742741",
+  "unchangedInputs": {
+    "package.json": true,
+    "yarn.lock": true,
+    ".yarnrc.yml": true,
+    ".yarn/patches/decode-uri-component-npm-0.2.2-flapfit.patch": true,
+    ".yarn/patches/expo-sms-npm-57.0.2-32281c0cc4.patch": true,
+    ".yarn/patches/react-native-google-mobile-ads-npm-16.5.0-flapfit.patch": true,
+    "mobile.dependencies": true,
+    "mobile.devDependencies": true,
+    "mobile.resolutions": true
+  },
+  "priorAdvisoryEvidence": "current-release-integrity-2026-09-20.json",
+  "compiledSuccessorInspected": false
+}

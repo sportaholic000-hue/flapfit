@@ -1,0 +1,68 @@
+{
+  "websiteCommit": "85e252b57ae6e02c6300860f98794f3ba1e269d6",
+  "version": 29,
+  "deployment": "appgdep_6aaf97a5ca68819188d6a21883024f7d",
+  "comparison": "All content after LF/CRLF normalization and excluding only the observed Cloudflare edge challenge script; not raw-byte equivalence.",
+  "results": [
+    {
+      "route": "/",
+      "status": 200,
+      "url": "https://flapfitapp.com/",
+      "bytes": 20659,
+      "sha256": "028781701eb2d722ca1f058db7825376a7c660a564a86c40cb122fbf928ce3e8",
+      "rawByteMatch": false,
+      "cloudflareEdgeScriptsExcluded": 1,
+      "matchesPublishedSource": true
+    },
+    {
+      "route": "/privacy/",
+      "status": 200,
+      "url": "https://flapfitapp.com/privacy/",
+      "bytes": 14557,
+      "sha256": "5c0232ffc34215aee75379c357596fcd58ba98a815496e6a44c7cda94cc4cf4a",
+      "rawByteMatch": false,
+      "cloudflareEdgeScriptsExcluded": 1,
+      "matchesPublishedSource": true
+    },
+    {
+      "route": "/terms/",
+      "status": 200,
+      "url": "https://flapfitapp.com/terms/",
+      "bytes": 7978,
+      "sha256": "402ccb6364b8a989f49b77e5c076df7bf39f09087725f3ac1ac14a58cbc975b0",
+      "rawByteMatch": false,
+      "cloudflareEdgeScriptsExcluded": 1,
+      "matchesPublishedSource": true
+    },
+    {
+      "route": "/delete-account/",
+      "status": 200,
+      "url": "https://flapfitapp.com/delete-account/",
+      "bytes": 6557,
+      "sha256": "fd99b3c613cc54907bff96b791ff43e0a2ea51e1abbcd2d99a7e3ab76bf4407c",
+      "rawByteMatch": false,
+      "cloudflareEdgeScriptsExcluded": 1,
+      "matchesPublishedSource": true
+    },
+    {
+      "route": "/support/",
+      "status": 200,
+      "url": "https://flapfitapp.com/support/",
+      "bytes": 5358,
+      "sha256": "4550264fd7a37ee5c883ab05f985b852ea195597ef992c170c63682b8f0d11c5",
+      "rawByteMatch": false,
+      "cloudflareEdgeScriptsExcluded": 1,
+      "matchesPublishedSource": true
+    },
+    {
+      "route": "/app-ads.txt",
+      "status": 200,
+      "url": "https://flapfitapp.com/app-ads.txt",
+      "bytes": 60,
+      "sha256": "1fd972c60481791a9bb218508e6a2cb489ac49cbc0a92a4131978e0e7e43a489",
+      "rawByteMatch": false,
+      "cloudflareEdgeScriptsExcluded": 0,
+      "matchesPublishedSource": true
+    }
+  ]
+}
