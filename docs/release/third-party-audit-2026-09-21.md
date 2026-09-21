@@ -7,6 +7,7 @@ Status: source corrections and automated checks complete; independent audit must
 - Keep the existing 13+ audience: known under-13 users remain blocked. Required Apple age/access controls remain separate.
 - No Quebec, Connecticut, New York, Australian or Mexican regional gameplay bans. No one-game quota or gameplay gate tied to the advertising notice or optional regional answers.
 - Both New York answers persist locally. Foreground/restart does not re-ask; Info provides manual Update. Previously unsaved legacy No answers cannot be recovered. Saved No is not a live travel/location check.
+- Owner reaffirmed the approved release decision: disable advertising for Australia ages 13–14 and Mexico ages 13–17 while keeping local gameplay available. These advertising exclusions are accepted release scope, not unfinished monetization work or a reason to delay the source audit.
 - Advertising is the business model. Eligible advertising remains enabled by default subject to the disclosed processing requirements. Reporting refusal does not disable separately permitted Google ads. A user's advertising-data withdrawal stops future ad requests and is not a paid remove-ads product.
 - Camera is required for every game; recording and microphone permission are optional. Do not add payments, subscriptions, mandatory online competition, or new regional gameplay restrictions.
 - Build and upload are expressly held for independent inspection. Do not treat passing source tests or this document as authorization to build or submit.
@@ -33,16 +34,16 @@ The baseline for this task is `bb12be76639c4cfeb1a130767555979fd697f244` on `wip
 | Under 18 with established NY protection/history | Available | Off, including after leaving NY |
 | US, 13–17, CT No and NY No | Available | Eligible |
 | Australia, 15+ | Available | Eligible |
-| Australia, 13–14 | Available | Off under existing parental-authority handling |
+| Australia, 13–14 | Available | Off — owner-approved release decision |
 | Mexico, 18+ | Available | Eligible |
-| Mexico, 13–17 | Available | Off under existing parental-authority handling |
+| Mexico, 13–17 | Available | Off — owner-approved release decision |
 | Known under 13 | Blocked by the retained minimum-age rule | Off |
 | Missing optional answers, notice or country lookup | Available unless separately age/Apple-restricted | Affected providers paused |
 | Required Apple check incomplete or app-access consent revoked | Next game blocked by the separate access gate | Off |
 
 Eligible does not guarantee an impression. The first result exit is free; ads are attempted every second eligible Done/Retry/Next exit with at least 90 seconds between opened ads. No-fill continues the selected action. A saved NY-protection history can override a teenage eligible row. Ads and RevenueCat have separate choices. Compete has separate eligibility and is not included in this local-gameplay table.
 
-**Explicit monetization limitation:** AU ages 13–14 and MX ages 13–17 remain excluded from advertising in addition to QC and CT/NY minors. The current code requires a parental-authority/capacity route that is not implemented. This work does not establish that all advertising to those users is unlawful, and those cutoffs must not be described as blanket Apple requirements. Do not silently activate SDK processing or invent a guardian-consent checkbox to remove this limitation. A supported lawful processing route must be reviewed if wider monetization is desired.
+**Approved advertising exclusions:** The owner reaffirmed on September 21, 2026 that Australia ages 13–14 and Mexico ages 13–17 should receive no advertising, in addition to the listed Quebec and CT/NY minor exclusions. The implemented advertising and ad-event reporting gates already enforce this decision, while local gameplay remains available for ages 13+. These AU/MX exclusions are resolved release decisions, not outstanding requirements to enable ads or add guardian consent. The existing implementation uses its parental-authority gates to enforce them; this does not establish a blanket legal or Apple prohibition on advertising to these audiences. No runtime change is required for this clarification. The independent audit and no-build hold remain in effect.
 
 ## Automated verification
 
@@ -66,7 +67,7 @@ Eligible does not guarantee an impression. The first result exit is free; ads ar
 
 1. Review the full source diff, particularly privacy restoration, failed writes, stale asynchronous actions, no pre-consent ad initialization, cached-ad invalidation, game-entry checks, and native-dismissal sequencing.
 2. Audit the existing patched Google/RevenueCat native paths and twelve-category privacy disclosures against the later exact compiled artifact. NPA/RDP and absence of ATT alone do not prove absence of cross-company tracking.
-3. Validate the once-only NY declaration's limits and the AU/MX minor advertising route against actual data flows. Local answers do not establish location continuously or settle every applicable legal question.
+3. Validate the once-only NY declaration's limits and confirm that the approved AU/MX advertising exclusions prevent ad-provider processing while preserving local gameplay. Enabling advertising for these AU/MX ages or adding a guardian-consent route is outside the approved release scope. Local answers do not establish location continuously or settle every applicable legal question.
 4. After separate build approval, test camera denial/recovery, normal Play vs Record & Play, optional microphone, sharing return, real ad close/info/report controls, withdrawal/background/relaunch, competition deletion/report/block, applicable Apple authorization, and network/IPv6 failure. No device result is claimed here.
 5. Correlate genuine permitted installed-app ad events with RevenueCat receipt. AdMob payment/serving and RevenueCat receipt are distinct. The app must continue when either provider fails or has no fill.
 6. Link the public App Store listing in AdMob when available; complete its readiness/seller-file requirements and legitimate inactivity follow-through. Google approval timing is separate from Apple review and cannot be guaranteed for the same afternoon.
