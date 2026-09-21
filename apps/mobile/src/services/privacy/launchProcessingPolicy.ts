@@ -12,7 +12,7 @@ export const LAUNCH_PROCESSING_ROUTES = {
   competition: { requestedServiceOnly: true },
 } as const;
 export type LaunchMissingFact = 'country' | 'age' | 'province' | 'state' |
-  'parental-authority' | 'new-york-applicability' | 'contextual-ad-necessity';
+  'parental-authority' | 'new-york-covered-user' | 'new-york-applicability' | 'contextual-ad-necessity';
 export type LaunchPolicyReason = 'notice-route' | 'requested-service' | 'country-unresolved' |
   'outside-launch-scope' | 'age-unresolved' | 'outside-audience' | 'province-unresolved' |
   'state-unresolved' | 'parental-authority-required' | 'quebec-activation-required' |
@@ -139,8 +139,9 @@ export function evaluateLaunchProcessingPlan(
       decisions[purpose] = { allowed: false, reason: 'notice-changed' };
     } else {
       decisions[purpose] = { allowed: true, reason: 'allowed' };
-      // These facts are alternatives to the verified specific activation/consent.
-      missingFacts[purpose] = missingFacts[purpose].filter(fact => fact !== 'province' && fact !== 'new-york-applicability');
+      // A choice does not establish NY covered-user status or territorial scope.
+      // Keep those missing facts visible for the pre-build policy decision.
+      missingFacts[purpose] = missingFacts[purpose].filter(fact => fact !== 'province');
     }
   }
   return { ...plan, reasons, missingFacts, decisions };
@@ -259,8 +260,10 @@ function resolveWithThresholds(
         continue;
       }
     }
-    // Residence/current country does not exclude covered NY activity or retained data.
-    // Exact NY-compliant purpose consent may satisfy uncertain applicability.
+    // NY 899-ee requires a covered user; 899-ll separately limits territorial scope.
+    // Missing wholly-outside evidence proves neither coverage nor a worldwide duty.
+    // Keep the existing conservative fallback pending that pre-build decision; this
+    // is not an Apple requirement and does not label every teen a covered NY user.
     const newYorkConfirmed = (country === 'US' && subdivision === 'NY') ||
       input.newYorkApplicability?.[purpose]?.status === 'applies';
     if (!adult && (newYorkConfirmed || !outsideNewYork(input.newYorkApplicability?.[purpose]))) {
@@ -270,7 +273,7 @@ function resolveWithThresholds(
       // that is not evidence that this user lives in New York.
       plan.reasons[purpose] = newYorkConfirmed
         ? 'new-york-express-consent-required' : 'new-york-applicability-unresolved';
-      if (!newYorkConfirmed) plan.missingFacts[purpose].push('new-york-applicability');
+      if (!newYorkConfirmed) plan.missingFacts[purpose].push('new-york-covered-user', 'new-york-applicability');
     }
   }
   return finish();

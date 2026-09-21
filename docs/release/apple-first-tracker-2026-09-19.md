@@ -1,5 +1,25 @@
 # Apple-first completion tracker
 
+## September 21 source recovery — regional monetization NOT complete
+
+The advertising-withdrawal controls, truthful save/retry state, orphan-recording cleanup,
+and Yes/No-only regional answers are verified in **evidence/source-recovery-2026-09-21.md**
+and its adjacent checks/package records. Current results: **62 suites / 1305 tests**,
+TypeScript, strict lint and release/privacy validators pass. Actual local EAS package:
+**785 files / 289 required inputs**, all byte-matched; inside-package validator and exclusions pass.
+
+These results do not meet the latest no-discretionary-ad-free requirement. Unanswered
+region, required refusal and unavailable age evidence still leave affected ads paused;
+the worldwide NY teen fallback is not resolved. An age/region-wide availability decision
+is pending, separately from consent. No new restriction, paywall, limited-ad mode, native
+build, upload or Apple submission is claimed. Complete source fixes are backed up for review,
+not offered as an acceptance candidate. The owner must test before submission.
+
+This section supersedes older readiness wording only for the identified source corrections.
+Prior account work and unrelated local evidence are preserved. Source tests, package,
+future signed artifact, installed-device outcomes and genuine provider receipt remain separate.
+
+
 ## Regional behavior and competition Stop successor — BUILD HELD
 
 Preserves the Canada Quebec / established non-Quebec / unresolved distinction from 14863f8 and adds direct ad-request/presentation plus fresh rendered-control proof: non-Quebec Canadian adults receive restricted result-exit ads without a discretionary advertising-off switch, while reporting refusal stays independent. Quebec remains available with required choices; no province-only exclusion is claimed. Unknown US state is not Connecticut. Unproved New York processing scope is now explicitly distinct from confirmed NY activity; the teen consent fallback remains because the territorial/data-history exemption is not established. **That narrowing remains open, not a device-test task.**

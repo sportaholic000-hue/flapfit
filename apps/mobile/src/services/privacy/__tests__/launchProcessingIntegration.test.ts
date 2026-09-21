@@ -1,6 +1,6 @@
 const settle = async () => { for (let i = 0; i < 40; i++) await Promise.resolve(); };
 const originalEnv = { ...process.env };
-async function load(options: { offline?: boolean; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string>; quebecResidency?: 'resident' | 'not-resident' } = {}) {
+async function load(options: { offline?: boolean; unsupported?: boolean; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string>; quebecResidency?: 'resident' | 'not-resident' } = {}) {
   jest.resetModules();
   process.env.EXPO_PUBLIC_ADS_MODE = 'test'; process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = 'appl_test_only';
   const memory = options.memory ?? new Map<string, string>();
@@ -10,11 +10,11 @@ async function load(options: { offline?: boolean; age?: unknown; required?: bool
   const listeners = new Set<(value: string) => void>(); const fence = jest.fn().mockResolvedValue(true);
   const appState = { currentState: 'active', addEventListener: jest.fn((_event, listener) => { listeners.add(listener); return { remove: () => listeners.delete(listener) }; }) };
   const alert = jest.fn((_title, _body, buttons) => buttons.find((button: { text: string }) => button.text === 'Continue')?.onPress());
-  jest.doMock('react-native', () => ({ Alert: { alert }, AppState: appState, Platform: { OS: 'ios', Version: '26.6' }, TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: fence } } }));
+  jest.doMock('react-native', () => ({ Alert: { alert }, AppState: appState, Platform: { OS: 'ios', Version: options.unsupported ? '16.4' : '26.6' }, TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: fence } } }));
   jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: 'standalone', expoConfig: {} }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
   const requestAge = jest.fn().mockResolvedValue(options.age ?? { status: 'shared', lowerBound: 18, upperBound: null });
   jest.doMock('../../../../modules/flap-fit-age-range', () => ({ ...jest.requireActual('../../../../modules/flap-fit-age-range/src/gates'),
-    getAppleAgeRequirements: jest.fn().mockResolvedValue({ status: 'available', ageRangeSupported: true, eligibility: options.required ?? false,
+    getAppleAgeRequirements: jest.fn().mockResolvedValue({ status: options.unsupported ? 'unsupported' : 'available', ageRangeSupported: !options.unsupported, eligibility: options.required ?? false,
       regulatoryFeaturesSupported: true, regulatoryFeatures: [], compiledCapabilities: { ageRange: true, regionalEligibility: true, regulatoryFeatures: true, confirmedAssurance: true } }), requestAppleAgeRange: requestAge }));
   const nativeAds = { setRequestConfiguration: jest.fn().mockResolvedValue(undefined), initialize: jest.fn().mockResolvedValue(undefined) };
   const events = new Map<string, (value?: unknown) => void>();
@@ -292,13 +292,13 @@ test('US teen result flow resolves residency and independent consent in one shee
     expect(choices).toHaveBeenCalledTimes(1);
   } finally {f.finish();}
 });
-test('closing the US teen clarification continues locally without recurring prompts or SDK initialization', async () => {
+test('closing the US teen clarification does not complete the unanswered question or initialize SDKs', async () => {
   const f=await load({age:{status:'shared',lowerBound:13,upperBound:15}});
   try {
     const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
     const choices=jest.fn().mockResolvedValue(undefined);
     await flow.preparePostGamePrivacy(() => true,choices); await flow.preparePostGamePrivacy(() => true,choices);
-    expect(choices).toHaveBeenCalledTimes(1); expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(choices).toHaveBeenCalledTimes(2); expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
   } finally {f.finish();}
 });
 
@@ -540,13 +540,13 @@ test('regional correction: real Canadian result path chooses outside Quebec and 
     expect(f.purchases.configure).not.toHaveBeenCalled();
   } finally {f.finish();}
 });
-test('regional correction: closing unanswered Canada clarification records unknown, never an ad refusal or Quebec activation', async () => {
+test('regional correction: closing unanswered Canada clarification records nothing and never marks the question complete', async () => {
   const f=await load({country:'CA'});
   try {
     const flow:typeof import('../postGamePrivacy')=require('../postGamePrivacy');const choices=jest.fn().mockResolvedValue(undefined);
     await flow.preparePostGamePrivacy(()=>true,choices);await flow.preparePostGamePrivacy(()=>true,choices);
-    expect(choices).toHaveBeenCalledTimes(1);
-    expect(f.access.getProcessingInputs().launch?.options.quebecResidency).toBe('unknown');
+    expect(choices).toHaveBeenCalledTimes(2);
+    expect(f.access.getProcessingInputs().launch?.options.quebecResidency).toBeUndefined();
     expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
     expect(f.access.getProcessingInputs().launch?.plan?.quebecActivationRequired.ads).toBe(false);
     expect(f.nativeAds.initialize).not.toHaveBeenCalled();expect(f.purchases.configure).not.toHaveBeenCalled();
@@ -646,4 +646,107 @@ test.each([false,true])('competition Stop/accept/Stop survives restart and block
     await expect(network.api.competitionRequest('/leaderboard')).rejects.toBeInstanceOf(network.api.CompetitionAccessRequiredError);
     expect(network.createClient).not.toHaveBeenCalled();expect(global.fetch).not.toHaveBeenCalled();
   } finally {f.finish();}
+});
+
+
+test.each([false,true])('existing Quebec consent withdrawal survives lost eligibility, recovery and restart; failed first save=%s',async failSave=>{
+  let f=await load({country:'CA',quebecResidency:'resident'});
+  const memory=f.memory;
+  try {
+    let notice:typeof import('../processingNotice')=require('../processingNotice');
+    await f.adapter.prepareCompetitionEligibility(()=>true);
+    await notice.allowProcessingPurpose('ads');await notice.acknowledgeProcessingNotice();
+    await f.access.setProcessingChoice('competition','granted');
+    await notice.refuseProcessingPurpose('analytics');
+    await f.adapter.prepareMonetization(()=>true);await settle();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    const ad=f.adapter.prepareResultInterstitial();expect(ad).not.toBeNull();
+    f.events.get('loaded')!();expect(ad!.isReady()).toBe(true);
+    f.access.setLaunchProcessingCountry(null,false);
+    expect(notice.canChooseProcessingPurpose('ads')).toBe(false);
+    expect(f.nativeAd.destroy).toHaveBeenCalled();
+    if(failSave)f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+    const stopping=notice.refuseProcessingPurpose('ads');
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+    if(failSave){
+      await expect(stopping).rejects.toThrow('save not confirmed');
+      expect(JSON.parse(memory.get('@flapfit/processing-choices-v1')!).choices.ads.decision).toBe('granted');
+      expect(notice.processingPurposeStatus('ads')).toContain('save not confirmed');
+      await notice.refuseProcessingPurpose('ads');
+    }else await stopping;
+    expect(f.adapter.prepareResultInterstitial()).toBeNull();
+    expect(f.nativeAd.show).not.toHaveBeenCalled();
+    f.access.setLaunchProcessingCountry('CA',true);
+    f.access.verifyLaunchAgeEvidence({source:'apple',status:'shared',lowerBound:18,upperBound:null},'CA',f.access.getAgeVerificationRevision());
+    await f.adapter.prepareMonetization(()=>true);await settle();
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false,reason:'refused'},revenueCat:{allowed:false},competition:{allowed:true}});
+    expect(f.interstitial.createForAdRequest).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(memory.get('@flapfit/processing-choices-v1')!).choices).toMatchObject({ads:{decision:'denied'},analytics:{decision:'denied'},competition:{decision:'granted'}});
+  }finally{f.finish();}
+  f=await load({country:'CA',memory});
+  try{
+    await f.adapter.prepareMonetization(()=>true);await settle();
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false,reason:'refused'},competition:{allowed:true}});
+    expect(f.adLoad).not.toHaveBeenCalled();expect(f.purchases.configure).not.toHaveBeenCalled();
+  }finally{f.finish();}
+});
+
+test('supported older iOS never fakes age or starts provider SDKs; it reports the actual compatibility limit',async()=>{
+  const f=await load({unsupported:true});
+  try{
+    const notice:typeof import('../processingNotice')=require('../processingNotice');
+    f.access.markProcessingNoticePresented(1);
+    await f.access.setProcessingChoice('competition','granted');
+    await f.adapter.prepareMonetization(()=>true);await f.adapter.prepareCompetitionEligibility(()=>true);
+    expect(f.access.getProcessingInputs().appleRequirement).toBe('unsupported');
+    expect(f.requestAge).not.toHaveBeenCalled();
+    expect(f.adLoad).not.toHaveBeenCalled();expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false},revenueCat:{allowed:false},competition:{allowed:false}});
+    expect(notice.processingPurposeStatus('ads')).toContain('This system cannot provide the age check');
+  }finally{f.finish();}
+});
+
+test('advertising withdrawal changes only its purpose and an unrelated failed save cannot erase the saved refusal',async()=>{
+  let f=await load({country:'CA',quebecResidency:'resident'});const memory=f.memory;
+  try{
+    const notice:typeof import('../processingNotice')=require('../processingNotice');
+    await f.adapter.prepareCompetitionEligibility(()=>true);
+    await notice.allowProcessingPurpose('ads');await notice.allowProcessingPurpose('analytics');
+    await f.access.setProcessingChoice('competition','granted');await notice.acknowledgeProcessingNotice();
+    await f.adapter.prepareMonetization(()=>true);await settle();
+    expect(f.purchases.configure).toHaveBeenCalledTimes(1);expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    await notice.refuseProcessingPurpose('ads');
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false},revenueCat:{allowed:true},competition:{allowed:true}});
+    f.storage.setItem.mockRejectedValueOnce(new Error('unrelated write failed'));
+    await expect(f.access.setProcessingChoice('competition','denied')).rejects.toThrow();
+    expect(JSON.parse(memory.get('@flapfit/processing-choices-v1')!).choices.ads.decision).toBe('denied');
+  }finally{f.finish();}
+  f=await load({country:'CA',memory});
+  try{
+    await f.adapter.prepareMonetization(()=>true);await settle();
+    expect(f.access.getProcessingAccess().ads.reason).toBe('refused');
+    expect(f.adLoad).not.toHaveBeenCalled();
+  }finally{f.finish();}
+});
+
+test.each(['CA','US'] as const)('regional binary answers: dismissing %s clarification writes no regional fact, consent or refusal and remains unanswered after restart',async country=>{
+  const age={status:'shared',lowerBound:country==='CA'?18:14,upperBound:country==='CA'?null:17};
+  let f=await load({country,age});const memory=f.memory;
+  try{
+    const flow:typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    await flow.preparePostGamePrivacy(()=>true,jest.fn().mockResolvedValue(undefined));
+    expect(f.storage.setItem).not.toHaveBeenCalled();
+    expect(f.access.getProcessingInputs().choices).toMatchObject({ads:{decision:'unset'},analytics:{decision:'unset'},competition:{decision:'unset'}});
+    expect(f.access.getProcessingInputs().launch?.options[country==='CA'?'quebecResidency':'connecticutResidency']).toBeUndefined();
+    expect(f.adLoad).not.toHaveBeenCalled();expect(f.rcLoad).not.toHaveBeenCalled();
+  }finally{f.finish();}
+  f=await load({country,age,memory});
+  try{
+    const flow:typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    const choices=jest.fn().mockResolvedValue(undefined);
+    await flow.preparePostGamePrivacy(()=>true,choices);
+    expect(choices).toHaveBeenCalledTimes(1);
+    expect(f.storage.setItem).not.toHaveBeenCalled();
+    expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
+  }finally{f.finish();}
 });

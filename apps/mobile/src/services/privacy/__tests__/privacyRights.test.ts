@@ -25,6 +25,7 @@ beforeEach(() => {
     inputs.choices[purpose] = { decision };
     if (purpose === 'analytics') access.revenueCat.allowed = false;
     if (purpose === 'competition') access.competition.allowed = false;
+    if (purpose === 'ads') access.ads.allowed = false;
     return save();
   });
   jest.doMock('../processingAccess', () => ({
@@ -142,7 +143,7 @@ test('unknown and refused states do not invent a grant or a universal advertisin
   expect(api.getPrivacyRights()).toEqual({
     canWithdrawReporting: false, reportingRefused: true, canStopCompetition: false, competitionStopped: false,
   });
-  expect(Object.keys(api).sort()).toEqual(['getCompetitionStopState', 'getPrivacyRights', 'getReportingWithdrawalState', 'resetReportingWithdrawalConfirmation', 'stopOnlineCompetition', 'subscribeCompetitionStop', 'subscribeReportingWithdrawal', 'withdrawAdPerformanceReporting']);
+  expect(Object.keys(api).sort()).toEqual(['getAdvertisingWithdrawalState', 'getCompetitionStopState', 'getPrivacyRights', 'getReportingWithdrawalState', 'resetAdvertisingWithdrawalConfirmation', 'resetReportingWithdrawalConfirmation', 'stopOnlineCompetition', 'subscribeAdvertisingWithdrawal', 'subscribeCompetitionStop', 'subscribeReportingWithdrawal', 'withdrawAdPerformanceReporting', 'withdrawAdvertisingConsent']);
 });
 
 test('an intervening Allow intention prevents reusing an older pending Stop confirmation', async () => {
@@ -188,4 +189,30 @@ test('competition save failure remains retryable without changing ads or reporti
   await expect(api.stopOnlineCompetition()).resolves.toMatchObject({status:'save-unconfirmed',saved:false});
   await expect(api.stopOnlineCompetition()).resolves.toMatchObject({status:'completed',saved:true});
   expect(access.ads.allowed).toBe(true);expect(access.revenueCat.allowed).toBe(true);
+});
+
+test('advertising save timeout stays unconfirmed and retryable without changing competition or reporting',async()=>{
+  jest.useFakeTimers();const saving=deferred<void>();save.mockReturnValueOnce(saving.promise);
+  const first=api.withdrawAdvertisingConsent();
+  expect(access.ads.allowed).toBe(false);
+  expect(api.getAdvertisingWithdrawalState().status).toBe('pending');
+  expect(api.withdrawAdvertisingConsent()).toBe(first);
+  await jest.advanceTimersByTimeAsync(10_000);
+  await expect(first).resolves.toEqual({status:'save-unconfirmed',saved:false});
+  expect(api.getAdvertisingWithdrawalState().status).toBe('save-unconfirmed');
+  saving.resolve();await tick();
+  // A late write cannot silently change the reported unconfirmed state.
+  expect(api.getAdvertisingWithdrawalState().status).toBe('save-unconfirmed');
+  await expect(api.withdrawAdvertisingConsent()).resolves.toEqual({status:'completed',saved:true});
+  expect(access.competition.allowed).toBe(true);expect(access.revenueCat.allowed).toBe(true);
+  expect(nativeLoad).not.toHaveBeenCalled();expect(jest.getTimerCount()).toBe(0);
+});
+test('advertising Stop does not reuse an older pending Stop after an intervening Allow intent',async()=>{
+  const saving=deferred<void>();save.mockReturnValue(saving.promise);
+  const first=api.withdrawAdvertisingConsent();++choiceRevision;
+  const latest=api.withdrawAdvertisingConsent();expect(latest).not.toBe(first);
+  saving.resolve();
+  await expect(first).resolves.toMatchObject({status:'superseded'});
+  await expect(latest).resolves.toMatchObject({status:'completed',saved:true});
+  expect(api.getAdvertisingWithdrawalState().status).toBe('completed');
 });

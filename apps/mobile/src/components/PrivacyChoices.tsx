@@ -7,7 +7,7 @@ import {
   restoreRegionalClarification, saveConnecticutResidency,
   hasQuebecClarificationControl, quebecClarificationStatus, saveQuebecResidency,
 } from '@/services/privacy/regionalClarification';
-import { getCompetitionStopState, subscribeCompetitionStop, stopOnlineCompetition, getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
+import { getAdvertisingWithdrawalState, subscribeAdvertisingWithdrawal, getCompetitionStopState, subscribeCompetitionStop, stopOnlineCompetition, getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
 import { getProcessingAccess, getProcessingInputs, hasProcessingChoicesReadError, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import {
   acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, allowProcessingPurpose, canChooseProcessingPurpose,
@@ -18,6 +18,7 @@ import {
  * Opening/reading it does not record agreement or initialize either SDK. */
 export function PrivacyChoices({ onDone, canInteract, includeCompetition = false }: { onDone?: () => void; canInteract?: () => boolean; includeCompetition?: boolean }) {
   const access = useSyncExternalStore(subscribeProcessingAccess, getProcessingAccess, getProcessingAccess);
+  const advertisingWithdrawal = useSyncExternalStore(subscribeAdvertisingWithdrawal, getAdvertisingWithdrawalState, getAdvertisingWithdrawalState);
   const withdrawal = useSyncExternalStore(subscribeReportingWithdrawal, getReportingWithdrawalState, getReportingWithdrawalState);
   const competitionStop = useSyncExternalStore(subscribeCompetitionStop, getCompetitionStopState, getCompetitionStopState);
   const [busy, setBusy] = useState(false);
@@ -42,6 +43,11 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const retryReporting = input.choices.analytics.decision === 'denied' &&
     (withdrawal.status === 'save-unconfirmed' || withdrawal.status === 'native-stop-unconfirmed');
   const reportingPending = withdrawal.status === 'pending';
+  const retryAdvertising = input.choices.ads.decision === 'denied' && advertisingWithdrawal.status === 'save-unconfirmed';
+  const advertisingPending = input.choices.ads.decision === 'denied' && advertisingWithdrawal.status === 'pending';
+  // Every production ads grant comes from an explicit purpose choice. A fresh
+  // notice-only adult has unset, so this does not add a discretionary remove-ads switch.
+  const existingAdConsent = input.choices.ads.decision === 'granted';
   // Keep withdrawal reachable after required advertising consent was granted.
   const advertisingChoice = input.launch?.plan?.requirements.ads === 'express-consent' || input.choices.ads.decision === 'denied';
   const expressAds = input.launch?.plan?.separateExpressChoiceRequired.ads === true;
@@ -62,9 +68,8 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       <Text style={styles.note}>Your answer stays on this device. It selects the applicable privacy rules and does not change your advertising or reporting choices.</Text>
       <Text style={styles.status}>{quebecClarificationStatus()}</Text>
       <View style={styles.buttons}>
-        {button('Yes, Quebec', () => saveQuebecResidency('resident'))}
-        {button('No, another province or territory', () => saveQuebecResidency('not-resident'))}
-        {button('Not sure', () => saveQuebecResidency('unknown'))}
+        {button('Yes', () => saveQuebecResidency('resident'))}
+        {button('No', () => saveQuebecResidency('not-resident'))}
       </View>
     </View> : null}
     {hasConnecticutClarificationControl() ? <View style={styles.group}>
@@ -73,9 +78,8 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       <Text style={styles.note}>Your answer stays on this device to apply the appropriate privacy rules. It does not allow advertising or reporting by itself.</Text>
       <Text style={styles.status}>{connecticutClarificationStatus()}</Text>
       <View style={styles.buttons}>
-        {button('Yes, Connecticut', () => saveConnecticutResidency('resident'))}
+        {button('Yes', () => saveConnecticutResidency('resident'))}
         {button('No', () => saveConnecticutResidency('not-resident'))}
-        {button('Not sure', () => saveConnecticutResidency('unknown'))}
       </View>
     </View> : null}
     <View style={styles.group}>
@@ -83,9 +87,13 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       <Text style={styles.body}>{advertisingChoice ? 'Allow the device, approximate-location, and ad-interaction functions described above for non-personalized advertising?' : 'Non-personalized ads help keep Flap Fit free. The applicable privacy rules and your Google choices determine when ads can run.'}</Text>
       <Text style={styles.status}>{processingPurposeStatus('ads')}</Text>
       {expressAds ? <Text style={styles.note}>This use of your personal data is not strictly necessary to play. You can decline and keep playing, or stop it here later.</Text> : null}
-      {advertisingChoice && canChooseProcessingPurpose('ads') ? <View style={styles.buttons}>
-        {button(access.ads.allowed ? 'Stop advertising' : 'Not now', () => refuseProcessingPurpose('ads'), expressAds)}
-        {!access.ads.allowed ? button('Allow advertising', () => allowProcessingPurpose('ads')) : null}
+      {existingAdConsent || retryAdvertising || advertisingPending || (advertisingChoice && canChooseProcessingPurpose('ads')) ? <View style={styles.buttons}>
+        {existingAdConsent || retryAdvertising || advertisingPending
+          ? button(retryAdvertising ? 'Retry stopping advertising' : 'Stop advertising', () => refuseProcessingPurpose('ads'), expressAds)
+          : input.choices.ads.decision !== 'denied' && advertisingChoice && canChooseProcessingPurpose('ads')
+            ? button('Not now', () => refuseProcessingPurpose('ads'), expressAds) : null}
+        {!retryAdvertising && !advertisingPending && !access.ads.allowed && advertisingChoice && canChooseProcessingPurpose('ads')
+          ? button('Allow advertising', () => allowProcessingPurpose('ads')) : null}
       </View> : null}
     </View>
     <View style={styles.group}>

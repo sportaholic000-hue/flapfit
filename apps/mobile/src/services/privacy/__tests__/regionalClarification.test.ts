@@ -28,10 +28,11 @@ test('US teen clarification resolves only Connecticut uncertainty, never NY purp
 });
 test.each(['resident','unknown'] as const)('%s cannot override Connecticut necessity with express grants', async answer => {
   const f=await fixture();
-  await f.regional.saveConnecticutResidency(answer);
+  if(answer==='resident')await f.regional.saveConnecticutResidency(answer);
+  else f.access.applyConnecticutResidency('unknown'); // Internal unresolved evidence, never a user answer.
   for (const purpose of ['ads','analytics','competition'] as const) await f.access.setProcessingChoice(purpose,'granted');
   expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false},revenueCat:{allowed:false},competition:{allowed:true}});
-  expect(f.regional.needsConnecticutClarification()).toBe(false);
+  expect(f.regional.needsConnecticutClarification()).toBe(answer==='unknown');
 });
 test.each(['CA','AU','MX'] as const)('%s does not receive an unnecessary Connecticut question or accept that answer', async country => {
   const f=await fixture(new Map(),country);
@@ -176,4 +177,23 @@ test('regional correction: delayed province save cannot apply to another country
   const old=f.regional.saveQuebecResidency('not-resident'); await settle();
   f.access.setLaunchProcessingCountry('US',true); finish(); await old;
   expect(f.access.getProcessingInputs().launch).toMatchObject({country:'US',plan:null,options:{}});
+});
+
+test.each(['CA','US'] as const)('regional binary answers: legacy unknown for %s stays unanswered through restart, without changing refusals',async country=>{
+  const key=country==='CA'?'@flapfit/quebec-residency-v1':'@flapfit/connecticut-residency-v1';
+  const memory=new Map([[key,JSON.stringify({version:1,answer:'unknown'})]]);
+  let f=await fixture(memory,country,country==='CA');
+  await f.access.setProcessingChoice('analytics','denied');
+  f=await fixture(memory,country,country==='CA');
+  expect(country==='CA'?f.regional.needsQuebecClarification():f.regional.needsConnecticutClarification()).toBe(true);
+  expect(country==='CA'?f.regional.quebecClarificationStatus():f.regional.connecticutClarificationStatus()).toBe('Not answered');
+  expect(f.access.getProcessingInputs().launch?.options[country==='CA'?'quebecResidency':'connecticutResidency']).toBeUndefined();
+  expect(f.access.getProcessingInputs().choices).toMatchObject({ads:{decision:'unset'},analytics:{decision:'denied'},competition:{decision:'unset'}});
+  expect(f.storage.setItem).not.toHaveBeenCalled();
+});
+test.each(['CA','US'] as const)('regional binary answers: %s service rejects unknown rather than persisting it as an answer',async country=>{
+  const f=await fixture(new Map(),country,country==='CA');
+  const saving=country==='CA'?f.regional.saveQuebecResidency:f.regional.saveConnecticutResidency;
+  await expect(saving('unknown' as never)).rejects.toThrow('Yes or No');
+  expect(f.storage.setItem).not.toHaveBeenCalled();
 });

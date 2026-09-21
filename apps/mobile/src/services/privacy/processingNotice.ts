@@ -1,10 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ageProcessingAvailability } from './processingAvailability';
 import {
   beginProcessingChoice, getProcessingAccess, getProcessingInputs, hydrateProcessingAccess, isProcessingChoiceCurrent,
   markProcessingNoticePresented, setLaunchProcessingOptions, setProcessingChoice,
 } from './processingAccess';
 import { PROCESSING_NOTICE_VERSION, type Purpose } from './processingPolicy';
-import { getReportingWithdrawalState, resetReportingWithdrawalConfirmation, withdrawAdPerformanceReporting } from './privacyRights';
+import { getAdvertisingWithdrawalState, resetAdvertisingWithdrawalConfirmation, withdrawAdvertisingConsent, getReportingWithdrawalState, resetReportingWithdrawalConfirmation, withdrawAdPerformanceReporting } from './privacyRights';
 
 // Only the notice acknowledgement and specific function activations are stored.
 // No age, jurisdiction, device, ad, or workout information belongs in this record.
@@ -72,6 +73,7 @@ export async function allowProcessingPurpose(purpose: 'ads' | 'analytics'): Prom
   await restoreProcessingNotice();
   if (!current()) return;
   if (purpose === 'analytics') resetReportingWithdrawalConfirmation();
+  else resetAdvertisingWithdrawalConfirmation();
   await setProcessingChoice(purpose, 'granted', intent);
   if (!current()) return;
   const operation = writes.catch(() => undefined).then(async () => {
@@ -100,7 +102,10 @@ export async function refuseProcessingPurpose(purpose: 'ads' | 'analytics'): Pro
     if (result.status !== 'completed') throw new Error(
       `${result.saved ? 'Choice saved.' : 'Choice save not confirmed.'} ${result.nativeStopped
         ? 'Native reporting stopped.' : 'Native stop not confirmed.'} Use Retry stopping reporting.`);
-  } else await setProcessingChoice('ads', 'denied');
+  } else {
+    const result = await withdrawAdvertisingConsent();
+    if (result.status !== 'completed') throw new Error('Advertising refusal save not confirmed. New ad requests are blocked for this session. Use Retry stopping advertising.');
+  }
 }
 
 export function canChooseProcessingPurpose(purpose: 'ads' | 'analytics'): boolean {
@@ -126,6 +131,12 @@ export function needsSeparatePurposeChoice(purpose: 'ads' | 'analytics'): boolea
 export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
   const input = getProcessingInputs();
   const decision = purpose === 'ads' ? getProcessingAccess().ads : getProcessingAccess().revenueCat;
+  if (purpose === 'ads' && input.choices.ads.decision === 'denied') {
+    const withdrawal = getAdvertisingWithdrawalState();
+    if (withdrawal.status === 'pending') return 'Confirming advertising refusal save · new ad requests blocked';
+    if (withdrawal.status === 'save-unconfirmed') return 'Advertising refusal save not confirmed · new ad requests blocked for this session';
+    if (withdrawal.status === 'completed') return 'Advertising refusal saved · new ad requests blocked';
+  }
   if (purpose === 'analytics' && input.choices.analytics.decision === 'denied') {
     const withdrawal = getReportingWithdrawalState();
     if (withdrawal.status === 'pending') return 'Confirming your saved choice and native reporting stop';
@@ -138,6 +149,8 @@ export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
   if (!input.hydrated) return 'Saved privacy choices are unavailable · retry loading';
   if (input.choices[purpose].decision === 'denied') return 'Off by your choice';
   if (decision.allowed) return purpose === 'ads' ? 'Permitted · Google choices also apply' : 'On';
+  const ageAvailability = ageProcessingAvailability();
+  if (ageAvailability) return ageAvailability;
   if (needsSeparatePurposeChoice(purpose)) return 'Your permission is needed';
   if (decision.reason === 'notice-needed') return 'Available after this notice';
   if (decision.reason === 'parent-permission-required') return 'Unavailable: verified parent or guardian permission is required. Flap Fit does not collect that permission.';

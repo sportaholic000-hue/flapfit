@@ -335,3 +335,14 @@ test.each(['CA','US','AU'])('%s teen missing processing scope is expressly unres
   expect(result.missingFacts.ads).toContain('new-york-applicability');
   expect(result.requirements.ads).toBe('express-consent');
 });
+
+test.each(['CA','AU','MX','US'])('%s teen consent does not manufacture a NY covered-user or territorial determination',country=>{
+  const result=resolveLaunchProcessingPolicy(input({
+    country,subdivision:country==='CA'?'CA-ON':null,age:{...teen,lowerBound:16},newYorkApplicability:undefined,
+    connecticutResidency:'not-resident',choices:{ads:grant(),analytics:grant(),competition:grant()},
+  }));
+  expect(result.decisions.ads.allowed).toBe(country !== 'MX');
+  if (country === 'MX') expect(result.decisions.ads.reason).toBe('parent-permission-required');
+  expect(result.missingFacts.ads).toEqual(expect.arrayContaining(['new-york-covered-user','new-york-applicability']));
+  expect(result.missingFacts.analytics).toEqual(expect.arrayContaining(['new-york-covered-user','new-york-applicability']));
+});

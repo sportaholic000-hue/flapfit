@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
-import { File, Paths, type FileHandle } from 'expo-file-system';
+import type { File, FileHandle } from 'expo-file-system';
+import { createGameplayRecordingFile, discardGameplayRecordingFile } from '@/services/recordingCache';
 import * as Haptics from 'expo-haptics';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { getVideoShareAvailability, shareGameplayVideo, type VideoShareDestination } from '@/services/videoSharing';
@@ -381,13 +382,7 @@ function GameContent() {
 
       const file = recordingFileRef.current;
       recordingFileRef.current = null;
-      if (file?.exists) {
-        try {
-          file.delete();
-        } catch (error) {
-          console.warn('Failed to remove temporary gameplay video', error);
-        }
-      }
+      discardGameplayRecordingFile(file);
 
       if (resetUi) {
         setRecordedVideo(null);
@@ -713,13 +708,7 @@ function GameContent() {
           : normalizedExtension === 'mov'
             ? 'video/quicktime'
             : 'video/webm');
-      const safeSessionId =
-        sessionId.replace(/[^a-z0-9_-]/gi, '').slice(0, 24) || `run-${Date.now()}`;
-      const randomSuffix = Math.random().toString(36).slice(2, 9);
-      const file = new File(
-        Paths.cache,
-        `flap-fit-${Date.now()}-${safeSessionId}-${randomSuffix}.${normalizedExtension}`
-      );
+      const file = createGameplayRecordingFile(sessionId, normalizedExtension);
 
       try {
         recordingFileRef.current = file;

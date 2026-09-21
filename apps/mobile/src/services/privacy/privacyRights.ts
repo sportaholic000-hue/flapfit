@@ -145,3 +145,49 @@ export function stopOnlineCompetition(): Promise<PrivacyWithdrawalResult> {
   });
   return operation;
 }
+
+type AdvertisingWithdrawalState = Readonly<{
+  status: 'not-requested' | 'pending' | 'completed' | 'save-unconfirmed' | 'superseded';
+  saved: boolean;
+}>;
+let advertisingState: AdvertisingWithdrawalState = { status: 'not-requested', saved: false };
+let advertisingWithdrawal: Promise<AdvertisingWithdrawalState> | null = null;
+let advertisingChoiceRevision = 0;
+const advertisingListeners = new Set<() => void>();
+export const getAdvertisingWithdrawalState = () => advertisingState;
+export function subscribeAdvertisingWithdrawal(listener: () => void): () => void {
+  advertisingListeners.add(listener);
+  return () => { advertisingListeners.delete(listener); };
+}
+function publishAdvertisingWithdrawal(state: AdvertisingWithdrawalState): void {
+  advertisingState = state;
+  advertisingListeners.forEach(listener => { try { listener(); } catch { /* Rights do not depend on the view. */ } });
+}
+export function resetAdvertisingWithdrawalConfirmation(): void {
+  publishAdvertisingWithdrawal({ status: 'not-requested', saved: false });
+}
+/** Revoke an existing/required purpose choice even when new consent is ineligible.
+ * The central refusal synchronously closes new ad work and invalidates preloads.
+ * This is not a claim that Google provides a global native SDK shutdown API. */
+export function withdrawAdvertisingConsent(): Promise<AdvertisingWithdrawalState> {
+  if (advertisingWithdrawal && getProcessingInputs().choices.ads.decision === 'denied' &&
+      isProcessingChoiceCurrent('ads', advertisingChoiceRevision)) return advertisingWithdrawal;
+  publishAdvertisingWithdrawal({ status: 'pending', saved: false });
+  const saving = confirmWithin(setProcessingChoice('ads', 'denied'));
+  const intent = advertisingChoiceRevision = getProcessingChoiceRevision('ads');
+  const operation = (async (): Promise<AdvertisingWithdrawalState> => {
+    const saved = await saving;
+    const current = getProcessingInputs().choices.ads.decision === 'denied' &&
+      (!saved.confirmed || isProcessingChoiceCurrent('ads', intent));
+    return { status: !current ? 'superseded' : saved.confirmed ? 'completed' : 'save-unconfirmed',
+      saved: saved.confirmed };
+  })();
+  advertisingWithdrawal = operation;
+  void operation.then(result => {
+    if (advertisingWithdrawal === operation) {
+      advertisingWithdrawal = null;
+      publishAdvertisingWithdrawal(result);
+    }
+  });
+  return operation;
+}

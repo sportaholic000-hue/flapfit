@@ -1,0 +1,831 @@
+{
+  "verifiedAt": "2026-09-21T07:16:39.105399+00:00",
+  "baseCommit": "52f4e70c1a6edd89f65b10b0a999176dfd3ee597",
+  "scope": "Source correction verification only. Regional monetization decision remains open; NOT build or submission readiness.",
+  "checks": {
+    "recordedAt": "2026-09-21T07:13:00.865434+00:00",
+    "checks": {
+      "full": {
+        "exitCode": 0,
+        "logSha256": "76e680d78bef9ce273b7b3f89afa63777e691d8d5cd173252b856faf88cf4f9f"
+      },
+      "typecheck": {
+        "exitCode": 0,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "lint": {
+        "exitCode": 0,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "release": {
+        "exitCode": 0,
+        "logSha256": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4"
+      }
+    }
+  },
+  "fullSuite": {
+    "numPassedTestSuites": 62,
+    "numFailedTestSuites": 0,
+    "numPassedTests": 1305,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "focusedSuite": {
+    "numPassedTestSuites": 3,
+    "numFailedTestSuites": 0,
+    "numPassedTests": 122,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "changedFiles": [
+    {
+      "path": "apps/mobile/src/app/(tabs)/compete.tsx",
+      "workingSha256": "bcad2d5621a26256f34a3c5746d0248e7a79385af12c19da1a6f4aada193a9cb",
+      "lfSha256": "bcad2d5621a26256f34a3c5746d0248e7a79385af12c19da1a6f4aada193a9cb"
+    },
+    {
+      "path": "apps/mobile/src/app/(tabs)/info.tsx",
+      "workingSha256": "068e8569b69263182ada423cde4ae406739fd7e55522fff0c581f47080fceb78",
+      "lfSha256": "068e8569b69263182ada423cde4ae406739fd7e55522fff0c581f47080fceb78"
+    },
+    {
+      "path": "apps/mobile/src/app/_layout.tsx",
+      "workingSha256": "332b8413b80eaea0ba9c0f40d9780bae9608129c4ab7ce8621833ee0d0ec2633",
+      "lfSha256": "332b8413b80eaea0ba9c0f40d9780bae9608129c4ab7ce8621833ee0d0ec2633"
+    },
+    {
+      "path": "apps/mobile/src/app/game.tsx",
+      "workingSha256": "0466be1bc6fb8268f4029cc6e48880161a8b38ee2849f7386d1747053046e4ad",
+      "lfSha256": "0466be1bc6fb8268f4029cc6e48880161a8b38ee2849f7386d1747053046e4ad"
+    },
+    {
+      "path": "apps/mobile/src/components/PrivacyChoices.tsx",
+      "workingSha256": "1108cd52029563328454b4f157ec5e844dee14dd77323560762d96ae8a7d4b26",
+      "lfSha256": "1108cd52029563328454b4f157ec5e844dee14dd77323560762d96ae8a7d4b26"
+    },
+    {
+      "path": "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx",
+      "workingSha256": "9402edd1ca7823bd7d554e655b2be93819aa57834fead1165aa5fbd0f8e03d74",
+      "lfSha256": "9402edd1ca7823bd7d554e655b2be93819aa57834fead1165aa5fbd0f8e03d74"
+    },
+    {
+      "path": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+      "workingSha256": "5436a9c1ae6cb1968ae40f8822ca0c5e8e6fb4cf0254f67c278cb8252ccbcf61",
+      "lfSha256": "5436a9c1ae6cb1968ae40f8822ca0c5e8e6fb4cf0254f67c278cb8252ccbcf61"
+    },
+    {
+      "path": "apps/mobile/src/components/__tests__/RecordingCleanupRoot.test.tsx",
+      "workingSha256": "9e594a977eb3e2ca84fb368eea7d9f9c4761a3bde4db9ca10d0dede133db1b0e",
+      "lfSha256": "9e594a977eb3e2ca84fb368eea7d9f9c4761a3bde4db9ca10d0dede133db1b0e"
+    },
+    {
+      "path": "apps/mobile/src/services/__tests__/recordingCache.test.ts",
+      "workingSha256": "9ae28391e7b47ea21643264ed1a70950f491ec53514a7c6ce96fa43b1e477387",
+      "lfSha256": "9ae28391e7b47ea21643264ed1a70950f491ec53514a7c6ce96fa43b1e477387"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+      "workingSha256": "c0323ce4ef3bec83b26eed29d7b34fe2eabef155bb095030ce6d25fc07f725b2",
+      "lfSha256": "c0323ce4ef3bec83b26eed29d7b34fe2eabef155bb095030ce6d25fc07f725b2"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/launchProcessingPolicy.test.ts",
+      "workingSha256": "6ba3a4f90eccebe6b6b822ea0add8d70ce7294f857093c77e64f4f53c400cd16",
+      "lfSha256": "6ba3a4f90eccebe6b6b822ea0add8d70ce7294f857093c77e64f4f53c400cd16"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+      "workingSha256": "7f3dada08dba4ff16825c90df6ec5a59d0c984503297cb86da0be7b507a0b2d6",
+      "lfSha256": "7f3dada08dba4ff16825c90df6ec5a59d0c984503297cb86da0be7b507a0b2d6"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/regionalClarification.test.ts",
+      "workingSha256": "15aed51d233d20b60ad68a1a8e439c4c8d581576b7b751a4f37ed318d7f9ac30",
+      "lfSha256": "15aed51d233d20b60ad68a1a8e439c4c8d581576b7b751a4f37ed318d7f9ac30"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/launchProcessingControl.ts",
+      "workingSha256": "65332e81a2457f5d0937ce7684f4e772d36f4865e514e97a37d8b3c0f3d22985",
+      "lfSha256": "65332e81a2457f5d0937ce7684f4e772d36f4865e514e97a37d8b3c0f3d22985"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/launchProcessingPolicy.ts",
+      "workingSha256": "de3dd9adf0cf3c8a86586ec53894a7b8dce8fe0157850d5570eebac86b9d4ce5",
+      "lfSha256": "de3dd9adf0cf3c8a86586ec53894a7b8dce8fe0157850d5570eebac86b9d4ce5"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/postGamePrivacy.ts",
+      "workingSha256": "745a9ed3d9fa8e36c47a0b70eb42289ae22055ac5d9bccec61c70ba4b6a46509",
+      "lfSha256": "745a9ed3d9fa8e36c47a0b70eb42289ae22055ac5d9bccec61c70ba4b6a46509"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/privacyRights.ts",
+      "workingSha256": "8afc3706c0e2ffa684aa1907b44307a53a598a570bee4d0583131275148f0d3d",
+      "lfSha256": "8afc3706c0e2ffa684aa1907b44307a53a598a570bee4d0583131275148f0d3d"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/processingAvailability.ts",
+      "workingSha256": "d11b571f3435f7761ad5f3cb59485b9262751a3f72e7c7842b0132c6800c9758",
+      "lfSha256": "d11b571f3435f7761ad5f3cb59485b9262751a3f72e7c7842b0132c6800c9758"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/processingNotice.ts",
+      "workingSha256": "f9c0ea86ebba98f9f814de7aa2015824f290dbec676f84ce58f5838b2bd7d175",
+      "lfSha256": "f9c0ea86ebba98f9f814de7aa2015824f290dbec676f84ce58f5838b2bd7d175"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/regionalClarification.ts",
+      "workingSha256": "ff21156a611c78c32d3e74df609fafb286dcd21509ee9833f64c7fdaec03a414",
+      "lfSha256": "ff21156a611c78c32d3e74df609fafb286dcd21509ee9833f64c7fdaec03a414"
+    },
+    {
+      "path": "apps/mobile/src/services/recordingCache.ts",
+      "workingSha256": "2258586bff318fdaec92796af09602f304d20c03b75ace33b1c8c870d2565c74",
+      "lfSha256": "2258586bff318fdaec92796af09602f304d20c03b75ace33b1c8c870d2565c74"
+    },
+    {
+      "path": "docs/legal/privacy-policy-draft.md",
+      "workingSha256": "ee19ad11ce5bbb19dfd76e953cfce02686e421231d845dbedf5b2180c2dc6945",
+      "lfSha256": "ee19ad11ce5bbb19dfd76e953cfce02686e421231d845dbedf5b2180c2dc6945"
+    }
+  ],
+  "protectedBaselinePaths": [
+    "apps/mobile/app.config.js",
+    "apps/mobile/app.json",
+    "apps/mobile/assets/images/adaptive-icon.png",
+    "apps/mobile/assets/images/evolution/kiwi/stage-01.png",
+    "apps/mobile/assets/images/evolution/kiwi/stage-02.png",
+    "apps/mobile/assets/images/evolution/kiwi/stage-03.png",
+    "apps/mobile/assets/images/evolution/kiwi/stage-04.png",
+    "apps/mobile/assets/images/evolution/kiwi/stage-05.png",
+    "apps/mobile/assets/images/evolution/kiwi/stage-06.png",
+    "apps/mobile/assets/images/evolution/kiwi/stage-07.png",
+    "apps/mobile/assets/images/evolution/kiwi/stage-08.png",
+    "apps/mobile/assets/images/evolution/kiwi/stage-09.png",
+    "apps/mobile/assets/images/evolution/kiwi/stage-10.png",
+    "apps/mobile/assets/images/evolution/onyx/stage-01.png",
+    "apps/mobile/assets/images/evolution/onyx/stage-02.png",
+    "apps/mobile/assets/images/evolution/onyx/stage-03.png",
+    "apps/mobile/assets/images/evolution/onyx/stage-04.png",
+    "apps/mobile/assets/images/evolution/onyx/stage-05.png",
+    "apps/mobile/assets/images/evolution/onyx/stage-06.png",
+    "apps/mobile/assets/images/evolution/onyx/stage-07.png",
+    "apps/mobile/assets/images/evolution/onyx/stage-08.png",
+    "apps/mobile/assets/images/evolution/onyx/stage-09.png",
+    "apps/mobile/assets/images/evolution/onyx/stage-10.png",
+    "apps/mobile/assets/images/evolution/pearl/stage-01.png",
+    "apps/mobile/assets/images/evolution/pearl/stage-02.png",
+    "apps/mobile/assets/images/evolution/pearl/stage-03.png",
+    "apps/mobile/assets/images/evolution/pearl/stage-04.png",
+    "apps/mobile/assets/images/evolution/pearl/stage-05.png",
+    "apps/mobile/assets/images/evolution/pearl/stage-06.png",
+    "apps/mobile/assets/images/evolution/pearl/stage-07.png",
+    "apps/mobile/assets/images/evolution/pearl/stage-08.png",
+    "apps/mobile/assets/images/evolution/pearl/stage-09.png",
+    "apps/mobile/assets/images/evolution/pearl/stage-10.png",
+    "apps/mobile/assets/images/evolution/ruby/stage-01.png",
+    "apps/mobile/assets/images/evolution/ruby/stage-02.png",
+    "apps/mobile/assets/images/evolution/ruby/stage-03.png",
+    "apps/mobile/assets/images/evolution/ruby/stage-04.png",
+    "apps/mobile/assets/images/evolution/ruby/stage-05.png",
+    "apps/mobile/assets/images/evolution/ruby/stage-06.png",
+    "apps/mobile/assets/images/evolution/ruby/stage-07.png",
+    "apps/mobile/assets/images/evolution/ruby/stage-08.png",
+    "apps/mobile/assets/images/evolution/ruby/stage-09.png",
+    "apps/mobile/assets/images/evolution/ruby/stage-10.png",
+    "apps/mobile/assets/images/evolution/sky/stage-01.png",
+    "apps/mobile/assets/images/evolution/sky/stage-02.png",
+    "apps/mobile/assets/images/evolution/sky/stage-03.png",
+    "apps/mobile/assets/images/evolution/sky/stage-04.png",
+    "apps/mobile/assets/images/evolution/sky/stage-05.png",
+    "apps/mobile/assets/images/evolution/sky/stage-06.png",
+    "apps/mobile/assets/images/evolution/sky/stage-07.png",
+    "apps/mobile/assets/images/evolution/sky/stage-08.png",
+    "apps/mobile/assets/images/evolution/sky/stage-09.png",
+    "apps/mobile/assets/images/evolution/sky/stage-10.png",
+    "apps/mobile/assets/images/evolution/sunny/stage-01.png",
+    "apps/mobile/assets/images/evolution/sunny/stage-02.png",
+    "apps/mobile/assets/images/evolution/sunny/stage-03.png",
+    "apps/mobile/assets/images/evolution/sunny/stage-04.png",
+    "apps/mobile/assets/images/evolution/sunny/stage-05.png",
+    "apps/mobile/assets/images/evolution/sunny/stage-06.png",
+    "apps/mobile/assets/images/evolution/sunny/stage-07.png",
+    "apps/mobile/assets/images/evolution/sunny/stage-08.png",
+    "apps/mobile/assets/images/evolution/sunny/stage-09.png",
+    "apps/mobile/assets/images/evolution/sunny/stage-10.png",
+    "apps/mobile/assets/images/evolution/violet/stage-01.png",
+    "apps/mobile/assets/images/evolution/violet/stage-02.png",
+    "apps/mobile/assets/images/evolution/violet/stage-03.png",
+    "apps/mobile/assets/images/evolution/violet/stage-04.png",
+    "apps/mobile/assets/images/evolution/violet/stage-05.png",
+    "apps/mobile/assets/images/evolution/violet/stage-06.png",
+    "apps/mobile/assets/images/evolution/violet/stage-07.png",
+    "apps/mobile/assets/images/evolution/violet/stage-08.png",
+    "apps/mobile/assets/images/evolution/violet/stage-09.png",
+    "apps/mobile/assets/images/evolution/violet/stage-10.png",
+    "apps/mobile/assets/images/exercises/biceps.png",
+    "apps/mobile/assets/images/exercises/lateral-raise.png",
+    "apps/mobile/assets/images/exercises/pullups.png",
+    "apps/mobile/assets/images/exercises/pushups.png",
+    "apps/mobile/assets/images/exercises/shoulder-press.png",
+    "apps/mobile/assets/images/exercises/squats.png",
+    "apps/mobile/assets/images/favicon.png",
+    "apps/mobile/assets/images/flapfit-splash-logo.png",
+    "apps/mobile/assets/images/icon.png",
+    "apps/mobile/assets/images/splash-icon.png",
+    "apps/mobile/assets/mediapipe/pose_landmarker_lite.task.mpasset",
+    "apps/mobile/assets/mediapipe/vision_bundle.mjs.mpasset",
+    "apps/mobile/assets/mediapipe/vision_wasm_internal.js.mpasset",
+    "apps/mobile/assets/mediapipe/vision_wasm_internal.wasm.mpasset",
+    "apps/mobile/assets/mediapipe/vision_wasm_nosimd_internal.js.mpasset",
+    "apps/mobile/assets/mediapipe/vision_wasm_nosimd_internal.wasm.mpasset",
+    "apps/mobile/eas.json",
+    "apps/mobile/modules/flap-fit-age-range/README.md",
+    "apps/mobile/modules/flap-fit-age-range/__tests__/app-transaction.test.ts",
+    "apps/mobile/modules/flap-fit-age-range/__tests__/bridge.test.ts",
+    "apps/mobile/modules/flap-fit-age-range/app-transaction.ts",
+    "apps/mobile/modules/flap-fit-age-range/app.plugin.js",
+    "apps/mobile/modules/flap-fit-age-range/expo-module.config.json",
+    "apps/mobile/modules/flap-fit-age-range/index.ts",
+    "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRange.podspec",
+    "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRangeModule.swift",
+    "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAppTransactionBridge.swift",
+    "apps/mobile/modules/flap-fit-age-range/src/appTransactionTypes.ts",
+    "apps/mobile/modules/flap-fit-age-range/src/gates.ts",
+    "apps/mobile/modules/flap-fit-age-range/src/normalize.ts",
+    "apps/mobile/modules/flap-fit-age-range/src/types.ts",
+    "apps/mobile/package.json",
+    "apps/mobile/plugins/with-share-return.cjs",
+    "apps/mobile/plugins/withAdMobPrivacy.cjs",
+    "apps/mobile/plugins/withRevenueCatProcessing.cjs",
+    "apps/mobile/scripts/ad-sdk-lifecycle.test.js",
+    "apps/mobile/scripts/check-release-links.cjs",
+    "apps/mobile/scripts/eas-build-post-install.cjs",
+    "apps/mobile/scripts/launch-competition.test.js",
+    "apps/mobile/scripts/patch-admob-privacy.cjs",
+    "apps/mobile/scripts/patch-revenuecat-processing.cjs",
+    "apps/mobile/scripts/retain-ios-archive.cjs",
+    "apps/mobile/scripts/retain-ios-archive.test.js",
+    "apps/mobile/scripts/share-return.test.js",
+    "apps/mobile/scripts/start-expo-go.cjs",
+    "apps/mobile/scripts/test-admob-privacy-native.cjs",
+    "apps/mobile/scripts/test-admob-privacy-patch.cjs",
+    "apps/mobile/scripts/test-revenuecat-processing-native.cjs",
+    "apps/mobile/scripts/test-revenuecat-processing-patch.cjs",
+    "apps/mobile/scripts/validate-monetization-config.cjs",
+    "apps/mobile/scripts/validate-monetization-config.test.js",
+    "apps/mobile/scripts/validate-privacy-manifest.cjs",
+    "apps/mobile/scripts/validate-privacy-manifest.test.js",
+    "apps/mobile/scripts/validate-release-config.cjs",
+    "apps/mobile/scripts/validate-store-assets.cjs",
+    "apps/mobile/scripts/validate-tracker-release.cjs",
+    "apps/mobile/scripts/validate-tracker-release.test.js",
+    "apps/mobile/scripts/verify-live-competition.cjs",
+    "apps/mobile/src/services/competitionApi.ts",
+    "apps/mobile/src/services/monetization/index.ts",
+    "apps/mobile/src/services/monetization/resultAdGate.ts",
+    "apps/mobile/src/services/monetization/revenueCatTestDiagnostics.ts",
+    "apps/mobile/src/services/privacy/processingAccess.ts",
+    "package.json",
+    "yarn.lock"
+  ],
+  "namedRegressions": [
+    {
+      "test": "a failed reporting save retains a rendered retry across remount without enabling reporting or stopping ads",
+      "status": "passed"
+    },
+    {
+      "test": "a failed reporting native retains a rendered retry across remount without enabling reporting or stopping ads",
+      "status": "passed"
+    },
+    {
+      "test": "result cancellation and unmount release their waiter without a stale dismissal completing a successor",
+      "status": "passed"
+    },
+    {
+      "test": "Info residency save failure keeps every answer reachable for retry and makes no permission claim",
+      "status": "passed"
+    },
+    {
+      "test": "Info stops competition independently and a failed save remains retryable after remount",
+      "status": "passed"
+    },
+    {
+      "test": "competition withdrawal remains reachable without age eligibility or initialized providers",
+      "status": "passed"
+    },
+    {
+      "test": "the post-result choices panel does not add an unrelated competition control",
+      "status": "passed"
+    },
+    {
+      "test": "unreadable choices retain an actionable load retry across failure and restore refusal without stopping permitted ads",
+      "status": "passed"
+    },
+    {
+      "test": "regional correction: rendered failed province save has an actionable retry",
+      "status": "passed"
+    },
+    {
+      "test": "fresh non-Quebec adult has no discretionary advertising off or allow control",
+      "status": "passed"
+    },
+    {
+      "test": "failed advertising withdrawal retains honest retry after region loss and panel remount",
+      "status": "passed"
+    },
+    {
+      "test": "regional binary answers: Quebec=true renders only clear Yes/No and no Not sure",
+      "status": "passed"
+    },
+    {
+      "test": "regional binary answers: Quebec=false renders only clear Yes/No and no Not sure",
+      "status": "passed"
+    },
+    {
+      "test": "online result delivery an expired run is rejected locally, not promised an overnight retry",
+      "status": "passed"
+    },
+    {
+      "test": "online result delivery retrying an existing run does not evict another entry at capacity",
+      "status": "passed"
+    },
+    {
+      "test": "launch audit regressions retry completes cleanup after an ambiguous delete followed by a 401",
+      "status": "passed"
+    },
+    {
+      "test": "same-country foreground reuses verified plan while background immediately stops processing and preserves withdrawal",
+      "status": "passed"
+    },
+    {
+      "test": "a stale background age response does not consume the fresh same-country attempt",
+      "status": "passed"
+    },
+    {
+      "test": "a stale post-game alert response cannot acknowledge the notice or initialize providers",
+      "status": "passed"
+    },
+    {
+      "test": "saved reporting refusal survives an unrelated failed competition save and restart",
+      "status": "passed"
+    },
+    {
+      "test": "AU eligible teen: independent choices, withdrawal and restart use the production coordinator",
+      "status": "passed"
+    },
+    {
+      "test": "CA eligible teen: independent choices, withdrawal and restart use the production coordinator",
+      "status": "passed"
+    },
+    {
+      "test": "non-Quebec adult with no ad grant receives a restricted result-exit ad while reporting stays refused",
+      "status": "passed"
+    },
+    {
+      "test": "competition Stop/accept/Stop survives restart and blocks actual Auth/request boundary; Apple required=false",
+      "status": "passed"
+    },
+    {
+      "test": "competition Stop/accept/Stop survives restart and blocks actual Auth/request boundary; Apple required=true",
+      "status": "passed"
+    },
+    {
+      "test": "existing Quebec consent withdrawal survives lost eligibility, recovery and restart; failed first save=false",
+      "status": "passed"
+    },
+    {
+      "test": "existing Quebec consent withdrawal survives lost eligibility, recovery and restart; failed first save=true",
+      "status": "passed"
+    },
+    {
+      "test": "advertising withdrawal changes only its purpose and an unrelated failed save cannot erase the saved refusal",
+      "status": "passed"
+    },
+    {
+      "test": "regional binary answers: dismissing CA clarification writes no regional fact, consent or refusal and remains unanswered after restart",
+      "status": "passed"
+    },
+    {
+      "test": "regional binary answers: dismissing US clarification writes no regional fact, consent or refusal and remains unanswered after restart",
+      "status": "passed"
+    },
+    {
+      "test": "a stale native discovery response cannot apply after jurisdiction changes",
+      "status": "passed"
+    },
+    {
+      "test": "declined Apple information clears previous eligibility even if native payload contains stale bounds",
+      "status": "passed"
+    },
+    {
+      "test": "a late mandatory Apple rejection after account invalidation is stale, not a completed new attempt",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal during session loading cannot create a guest or later send a request",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal aborts an in-flight request and ignores its late success after regrant",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal preserves queued local scores and foreground retry sends nothing until reauthorized",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal does not block deletion of an existing identity or create a replacement guest",
+      "status": "passed"
+    },
+    {
+      "test": "support ID lookup after withdrawal only uses an existing identity",
+      "status": "passed"
+    },
+    {
+      "test": "a late Supabase Auth response body cannot complete after withdrawal",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal during run creation settles as local even after an immediate regrant",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal after online run creation keeps its score locally without publishing status or transport",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal while publishing yields local status rather than a failed upload message",
+      "status": "passed"
+    },
+    {
+      "test": "stale link completion cannot dispatch or bypass an independent competition refusal",
+      "status": "passed"
+    },
+    {
+      "test": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":false,\"hasSession\":true}",
+      "status": "passed"
+    },
+    {
+      "test": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":false,\"hasSession\":false}",
+      "status": "passed"
+    },
+    {
+      "test": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":true,\"hasSession\":true}",
+      "status": "passed"
+    },
+    {
+      "test": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":true,\"hasSession\":false}",
+      "status": "passed"
+    },
+    {
+      "test": "audit continuation: a real failed delete blocks begin-run but retains support and deletion retry when Apple-required=false",
+      "status": "passed"
+    },
+    {
+      "test": "audit continuation: a real failed delete blocks begin-run but retains support and deletion retry when Apple-required=true",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal followed by a later grant does not replay old queued events",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal waits for native close before completing an active result exit once",
+      "status": "passed"
+    },
+    {
+      "test": "native withdrawal reject remains observable after RevenueCat starts",
+      "status": "passed"
+    },
+    {
+      "test": "native withdrawal missing remains observable after RevenueCat starts",
+      "status": "passed"
+    },
+    {
+      "test": "native withdrawal false remains observable after RevenueCat starts",
+      "status": "passed"
+    },
+    {
+      "test": "a failed native withdrawal can be retried without enabling reporting or disabling ads",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal during a configured SDK re-grant requires a native stop acknowledgement",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal during pending ios presentation retains terminal ownership",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal during pending android presentation retains terminal ownership",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal while displayed/pending releases only after native close and foreground",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal while displayed/pending releases only after native error and foreground",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal while displayed/pending releases only after native reject and foreground",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal before show destroys the preload and continues without native presentation",
+      "status": "passed"
+    },
+    {
+      "test": "a stale read cannot erase the privacy result from a newer form",
+      "status": "passed"
+    },
+    {
+      "test": "unavailable Google rights UNKNOWN surface a retryable failure",
+      "status": "passed"
+    },
+    {
+      "test": "unavailable Google rights error surface a retryable failure",
+      "status": "passed"
+    },
+    {
+      "test": "the lobby key ignores unrelated competition revisions but reacts to each effective SDK decision",
+      "status": "passed"
+    },
+    {
+      "test": "unchanged failed setup does not become an automatic retry loop for concurrent callers",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal rejects queued diagnostic dispatch and a stale identity result after regrant",
+      "status": "passed"
+    },
+    {
+      "test": "retrying an unrelated save reads the original refusal before merging its own change",
+      "status": "passed"
+    },
+    {
+      "test": "full extension across all exercises still rejects an unrelated joint angle in the middle of a movement",
+      "status": "passed"
+    },
+    {
+      "test": "failed permissive save grants nothing and offers an honest retry",
+      "status": "passed"
+    },
+    {
+      "test": "an unrelated regional write failure does not erase the saved reporting refusal",
+      "status": "passed"
+    },
+    {
+      "test": "a stale save cannot apply a US permission to changed country or new age evidence",
+      "status": "passed"
+    },
+    {
+      "test": "regional correction: failed provincial save remains retryable without erasing a saved reporting refusal",
+      "status": "passed"
+    },
+    {
+      "test": "regional correction: unreadable province remains unknown; retry restores independent ads and refuses reporting",
+      "status": "passed"
+    },
+    {
+      "test": "regional correction: stale outside-Quebec save cannot override a newer Quebec answer",
+      "status": "passed"
+    },
+    {
+      "test": "regional binary answers: legacy unknown for CA stays unanswered through restart, without changing refusals",
+      "status": "passed"
+    },
+    {
+      "test": "regional binary answers: legacy unknown for US stays unanswered through restart, without changing refusals",
+      "status": "passed"
+    },
+    {
+      "test": "regional binary answers: CA service rejects unknown rather than persisting it as an answer",
+      "status": "passed"
+    },
+    {
+      "test": "regional binary answers: US service rejects unknown rather than persisting it as an answer",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal takes effect immediately while its persistence is pending",
+      "status": "passed"
+    },
+    {
+      "test": "failed reporting withdrawal stays off and preserves independently permitted ads and competition",
+      "status": "passed"
+    },
+    {
+      "test": "a failing subscriber cannot prevent other observers seeing a withdrawal",
+      "status": "passed"
+    },
+    {
+      "test": "deduplicates overlapping calls and does not loop-retry failures during a foreground session",
+      "status": "passed"
+    },
+    {
+      "test": "invalidation rejects stale lifecycle work even when old fetch resolves after a new country",
+      "status": "passed"
+    },
+    {
+      "test": "body timeout and stale body read cannot republish a late result",
+      "status": "passed"
+    },
+    {
+      "test": "settings retain withdrawal access while all processing is restricted and no SDK has loaded",
+      "status": "passed"
+    },
+    {
+      "test": "a native pending result is not a confirmed withdrawal",
+      "status": "passed"
+    },
+    {
+      "test": "a native failed result is not a confirmed withdrawal",
+      "status": "passed"
+    },
+    {
+      "test": "a native not-requested result is not a confirmed withdrawal",
+      "status": "passed"
+    },
+    {
+      "test": "failed local persistence is not reported as a completed withdrawal",
+      "status": "passed"
+    },
+    {
+      "test": "a newer explicit grant supersedes the old withdrawal result",
+      "status": "passed"
+    },
+    {
+      "test": "repeated taps share the same pending withdrawal",
+      "status": "passed"
+    },
+    {
+      "test": "competition Stop reserves a new refusal after an intervening pending acceptance",
+      "status": "passed"
+    },
+    {
+      "test": "repeated competition Stop without a newer intent shares its pending save",
+      "status": "passed"
+    },
+    {
+      "test": "an older successful competition Stop cannot confirm a newer pending acceptance",
+      "status": "passed"
+    },
+    {
+      "test": "competition save failure remains retryable without changing ads or reporting",
+      "status": "passed"
+    },
+    {
+      "test": "advertising save timeout stays unconfirmed and retryable without changing competition or reporting",
+      "status": "passed"
+    },
+    {
+      "test": "explicit pull-up floor reference does not accumulate contact by validating a stale pose repeatedly",
+      "status": "passed"
+    },
+    {
+      "test": "explicit pull-up floor reference discards stale pending contact across a camera gap",
+      "status": "passed"
+    },
+    {
+      "test": "failed persistence never marks terms accepted and remains retryable",
+      "status": "passed"
+    },
+    {
+      "test": "existing saved terms and screen mount never silently grant participation or retry local-only work",
+      "status": "passed"
+    },
+    {
+      "test": "next actual root mount removes an interrupted-session recording but preserves unrelated cache files",
+      "status": "passed"
+    },
+    {
+      "test": "process loss releases in-memory ownership so the next startup removes a completed but unshared orphan",
+      "status": "passed"
+    },
+    {
+      "test": "failed normal discard releases ownership for a subsequent cleanup retry without truncating another active video",
+      "status": "passed"
+    },
+    {
+      "test": "unmounted startup does not retry on later lifecycle events",
+      "status": "passed"
+    },
+    {
+      "test": "preparing again restores an evicted file instead of returning stale cached paths",
+      "status": "passed"
+    },
+    {
+      "test": "persistent storage failures reach the caller after a bounded retry",
+      "status": "passed"
+    },
+    {
+      "test": "stale adult bounds with unknown status never grant an adult route",
+      "status": "passed"
+    },
+    {
+      "test": "stale adult bounds with declined status never grant an adult route",
+      "status": "passed"
+    },
+    {
+      "test": "stale adult bounds with unsupported status never grant an adult route",
+      "status": "passed"
+    },
+    {
+      "test": "stale adult bounds with unavailable status never grant an adult route",
+      "status": "passed"
+    },
+    {
+      "test": "stale adult bounds with error status never grant an adult route",
+      "status": "passed"
+    },
+    {
+      "test": "full ad personal-data withdrawal cannot be bypassed by NPA/RDP",
+      "status": "passed"
+    },
+    {
+      "test": "restricted demand does not bypass Quebec function activation or full advertising withdrawal",
+      "status": "passed"
+    },
+    {
+      "test": "sale/targeting opt-out permits restricted ads; full personal-data withdrawal blocks them",
+      "status": "passed"
+    },
+    {
+      "test": "known New York activity cannot be contradicted by a stale wholly-outside exemption",
+      "status": "passed"
+    },
+    {
+      "test": "Apple inclusive age bounds unknown age is never interpreted as adult even if stale adult bounds remain",
+      "status": "passed"
+    },
+    {
+      "test": "Apple inclusive age bounds declined age is never interpreted as adult even if stale adult bounds remain",
+      "status": "passed"
+    },
+    {
+      "test": "Apple inclusive age bounds unsupported age is never interpreted as adult even if stale adult bounds remain",
+      "status": "passed"
+    },
+    {
+      "test": "Apple inclusive age bounds unavailable age is never interpreted as adult even if stale adult bounds remain",
+      "status": "passed"
+    },
+    {
+      "test": "Apple inclusive age bounds error age is never interpreted as adult even if stale adult bounds remain",
+      "status": "passed"
+    },
+    {
+      "test": "a failed permission refresh can retry on the next return",
+      "status": "passed"
+    },
+    {
+      "test": "an observed revocation cannot be cleared by a later no-record, retry, link, or invalidation",
+      "status": "passed"
+    },
+    {
+      "test": "an endpoint error never triggers a cross-environment retry",
+      "status": "passed"
+    },
+    {
+      "test": "deliberate result action ads no ready ad or show failure continues without a retry ad",
+      "status": "passed"
+    },
+    {
+      "test": "unverified never exposes a stale signed value",
+      "status": "passed"
+    },
+    {
+      "test": "unsupported never exposes a stale signed value",
+      "status": "passed"
+    },
+    {
+      "test": "unavailable never exposes a stale signed value",
+      "status": "passed"
+    },
+    {
+      "test": "error never exposes a stale signed value",
+      "status": "passed"
+    },
+    {
+      "test": "withdrawal and regrant cannot revive stale callbacks",
+      "status": "passed"
+    },
+    {
+      "test": "stops at 100 local records without queues or retry timers",
+      "status": "passed"
+    }
+  ],
+  "fullResultSha256": "e2fcfd47571b42636da0d5d42672c8e8c0fdefa837f14e5054cf79e03dffaa4f",
+  "focusedResultSha256": "0ed7183efd0c73c1ea03efea321c0779c3bedd0a043ed9289c400797b1eb9624",
+  "beforeCorrectionEvidence": {
+    "path": "local retained submission-source-before-focused.json",
+    "sha256": "f462034620ed52034fc69e07639f08d15cacec1ec7902645c82ad12a5c89d234",
+    "failed": 5
+  }
+}

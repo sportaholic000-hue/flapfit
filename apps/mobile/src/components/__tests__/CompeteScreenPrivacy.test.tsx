@@ -31,7 +31,7 @@ async function fixture() {
   await act(async()=>{tree=renderer.create(React.createElement(Screen));});
   const modal=()=>tree.root.findByType('Modal' as never);
   const press=async(text:string)=>{const button=tree.root.findAllByType('TouchableOpacity' as never).find(node=>node.findAllByType('Text' as never).some(t=>t.children.join('')===text));expect(button).toBeDefined();await act(async()=>{button!.props.onPress();});};
-  return {access,state,storage,memory,prepare,modal,press,act,unmount:async()=>{await act(async()=>tree.unmount());}};
+  return {access,state,storage,memory,prepare,modal,press,act,text:()=>tree.root.findAllByType('Text' as never).map(n=>n.children.join('')).join('\n'),unmount:async()=>{await act(async()=>tree.unmount());}};
 }
 test('actual Compete acceptance saves only competition and waits for native terms dismissal before eligibility',async()=>{
   const f=await fixture();
@@ -83,4 +83,12 @@ test('a newer Stop defeats actual I Agree while an older Stop save is pending, i
   const restarted:typeof import('@/services/privacy/processingAccess')=require('@/services/privacy/processingAccess');
   await restarted.hydrateProcessingAccess();
   expect(restarted.getProcessingInputs().choices.competition.decision).toBe('denied');
+});
+
+test('Compete renders the older-system limitation, not an endlessly pending privacy check',async()=>{
+  const f=await fixture();
+  await f.act(async()=>{f.access.setAppleAgeRequirement('unsupported');});
+  expect(f.text()).toContain('This system cannot provide the age check');
+  expect(f.text()).toContain('Local play, recordings and saved progress remain available.');
+  await f.unmount();
 });

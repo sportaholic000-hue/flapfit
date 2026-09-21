@@ -1,6 +1,7 @@
 'use client';
 
 import { startCompetitionForegroundRetry } from '@/services/competitionApi';
+import { startRecordingCacheCleanup } from '@/services/recordingCache';
 import { startPrivacyStartup } from '@/services/privacy/privacyStartup';
 import { AppErrorBoundary } from '@/components/AppErrorBoundary';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -28,6 +29,7 @@ const queryClient = new QueryClient({
 
 export default function RootLayout() {
   const [showAppSplash, setShowAppSplash] = useState(true);
+  useEffect(() => startRecordingCacheCleanup(), []);
   useEffect(() => startPrivacyStartup(), []);
   useEffect(() => startCompetitionForegroundRetry(() => {
     void queryClient.invalidateQueries({ queryKey: ['leaderboard'] });

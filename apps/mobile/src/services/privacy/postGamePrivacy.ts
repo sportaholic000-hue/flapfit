@@ -1,10 +1,9 @@
 import { Alert } from 'react-native';
-import { needsConnecticutClarification, saveConnecticutResidency, needsQuebecClarification, saveQuebecResidency } from './regionalClarification';
+import { needsConnecticutClarification, needsQuebecClarification } from './regionalClarification';
 import { isMonetizationPrepared, prepareMonetization } from '../monetization';
 import {
   acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, canPresentProcessingNotice,
   isProcessingNoticeAcknowledged, needsSeparatePurposeChoice, restoreProcessingNotice,
-  refuseProcessingPurpose,
 } from './processingNotice';
 
 /** Called only for a claimed Done/Retry/Next action after a completed game.
@@ -27,14 +26,9 @@ export async function preparePostGamePrivacy(
   if (!isProcessingNoticeAcknowledged() || requiredChoices) {
     if (requiredChoices) {
       await openChoices();
-      // Closing an explicit-permission request grants nothing and must not
-      // repeatedly reopen the same request on subsequent result exits.
-      if (canPresent()) {
-        if (needsQuebecClarification()) await saveQuebecResidency('unknown').catch(() => undefined);
-        if (needsConnecticutClarification()) await saveConnecticutResidency('unknown').catch(() => undefined);
-        if (needsSeparatePurposeChoice('analytics')) await refuseProcessingPurpose('analytics');
-        if (needsSeparatePurposeChoice('ads')) await refuseProcessingPurpose('ads');
-      }
+      // Dismissal is neither a regional answer nor a purpose choice. Explicit
+      // Yes/No, Allow and Stop actions alone persist their respective decisions.
+      // An unanswered clarification remains pending, including after restart.
     } else {
       const action = await new Promise<'continue' | 'choices' | 'cancel'>(resolve => {
         Alert.alert('Ads keep Flap Fit free', AD_PROCESSING_DISCLOSURE +

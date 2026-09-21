@@ -35,7 +35,8 @@ export async function prepareLaunchProcessing(options: LaunchProcessingPresentat
   const input = getProcessingInputs();
   const launch = input.launch;
   if (!launch?.current || !launch.country || !input.hydrated || input.appleAccessRestricted ||
-    input.appleRequirement === 'pending' || input.appleRequirement === 'error' || !options.canPresent()) return Promise.resolve();
+    input.appleRequirement === 'pending' || input.appleRequirement === 'error' ||
+    input.appleRequirement === 'unsupported' || !options.canPresent()) return Promise.resolve();
   if (launch.plan && input.verification?.mandatoryCheckSatisfied) return Promise.resolve();
   if (input.verification?.mandatoryCheckSatisfied && input.verification.treatment === 'unspecified') {
     const resolved = resolveVerifiedAdultLaunchPlan({ ...launch.options, country: launch.country, subdivision: null,

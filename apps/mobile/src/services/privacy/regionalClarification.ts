@@ -2,17 +2,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   applyConnecticutResidency, applyQuebecResidency, getAgeVerificationRevision, getProcessingInputs, hydrateProcessingAccess,
 } from './processingAccess';
-import type { ConnecticutResidency, QuebecResidency } from './launchProcessingPolicy';
+type RegionalAnswer = 'resident' | 'not-resident';
 
 const KEY = '@flapfit/connecticut-residency-v1';
-let answer: ConnecticutResidency | null = null;
+let answer: RegionalAnswer | null = null;
 let hydration: Promise<void> | null = null;
 let writes: Promise<void> = Promise.resolve();
 let revision = 0;
 let changing = false;
 let saveUnconfirmed = false;
-const valid = (value: unknown): value is ConnecticutResidency =>
-  value === 'resident' || value === 'not-resident' || value === 'unknown';
+const validAnswer = (value: unknown): value is RegionalAnswer =>
+  value === 'resident' || value === 'not-resident';
+// Read old unknown records without interpreting them as an answer or rewriting choices.
+const validStored = (value: unknown) => validAnswer(value) || value === 'unknown';
 
 /** Stores only the user's minimal residency answer. No age bounds, precise
  * location, device identity or purpose permission is stored or transmitted. */
@@ -23,7 +25,7 @@ async function restoreConnecticutClarification(): Promise<void> {
     try {
       const raw = await AsyncStorage.getItem(KEY);
       const value = raw ? JSON.parse(raw) : null;
-      if (before === revision && value?.version === 1 && valid(value.answer)) answer = value.answer;
+      if (before === revision && value?.version === 1 && validStored(value.answer)) answer = validAnswer(value.answer) ? value.answer : null;
     } catch { /* Unreadable evidence cannot clear a regional restriction. */ }
   })();
   await hydration;
@@ -38,7 +40,7 @@ export function hasConnecticutClarificationControl(): boolean {
 }
 export function needsConnecticutClarification(): boolean {
   const input = getProcessingInputs();
-  return hasConnecticutClarificationControl() && input.launch?.options.connecticutResidency === undefined &&
+  return hasConnecticutClarificationControl() && (changing || saveUnconfirmed || !validAnswer(input.launch?.options.connecticutResidency)) &&
     (input.choices.ads.decision !== 'denied' || input.choices.analytics.decision !== 'denied');
 }
 export function connecticutClarificationStatus(): string {
@@ -46,11 +48,12 @@ export function connecticutClarificationStatus(): string {
   if (changing) return 'Saving your answer';
   const value = getProcessingInputs().launch?.options.connecticutResidency;
   return value === 'resident' ? 'Connecticut resident' : value === 'not-resident' ? 'Not a Connecticut resident' :
-    value === 'unknown' ? 'Not sure · regional restrictions remain' : 'Not answered';
+    'Not answered';
 }
 
-export async function saveConnecticutResidency(value: ConnecticutResidency): Promise<void> {
-  if (!valid(value) || !hasConnecticutClarificationControl()) throw new Error('Privacy eligibility changed. Reopen Info to review your choices.');
+export async function saveConnecticutResidency(value: RegionalAnswer): Promise<void> {
+  if (!validAnswer(value)) throw new Error('Choose Yes or No for the regional question.');
+  if (!hasConnecticutClarificationControl()) throw new Error('Privacy eligibility changed. Reopen Info to review your choices.');
   const token = ++revision;
   const ageRevision = getAgeVerificationRevision();
   changing = true;
@@ -73,7 +76,7 @@ export async function saveConnecticutResidency(value: ConnecticutResidency): Pro
 }
 
 const QUEBEC_KEY = '@flapfit/quebec-residency-v1';
-let quebecAnswer: QuebecResidency | null = null;
+let quebecAnswer: RegionalAnswer | null = null;
 let quebecHydration: Promise<void> | null = null;
 let quebecReadConfirmed = false;
 let quebecReadFailed = false;
@@ -90,8 +93,8 @@ async function restoreQuebecClarification(): Promise<void> {
       try {
         const raw = await AsyncStorage.getItem(QUEBEC_KEY);
         const value = raw === null ? null : JSON.parse(raw);
-        if (raw !== null && (value?.version !== 1 || !valid(value.answer))) throw new Error('Invalid regional answer');
-        if (before === quebecRevision) quebecAnswer = value?.answer ?? null;
+        if (raw !== null && (value?.version !== 1 || !validStored(value.answer))) throw new Error('Invalid regional answer');
+        if (before === quebecRevision) quebecAnswer = validAnswer(value?.answer) ? value.answer : null;
         quebecReadConfirmed = true;
         quebecReadFailed = false;
       } catch { quebecReadFailed = true; }
@@ -110,7 +113,7 @@ export function hasQuebecClarificationControl(): boolean {
 }
 export function needsQuebecClarification(): boolean {
   const input = getProcessingInputs();
-  return hasQuebecClarificationControl() && input.launch?.options.quebecResidency === undefined &&
+  return hasQuebecClarificationControl() && (quebecChanging || quebecSaveUnconfirmed || !validAnswer(input.launch?.options.quebecResidency)) &&
     (input.choices.ads.decision !== 'denied' || input.choices.analytics.decision !== 'denied');
 }
 export function quebecClarificationStatus(): string {
@@ -119,10 +122,11 @@ export function quebecClarificationStatus(): string {
   if (quebecReadFailed) return 'Saved answer unavailable · choose your answer again';
   const value = getProcessingInputs().launch?.options.quebecResidency;
   return value === 'resident' ? 'Quebec resident' : value === 'not-resident' ? 'Canadian resident outside Quebec' :
-    value === 'unknown' ? 'Province not confirmed · choose an answer to apply regional rules' : 'Not answered';
+    'Not answered';
 }
-export async function saveQuebecResidency(value: QuebecResidency): Promise<void> {
-  if (!valid(value) || !hasQuebecClarificationControl()) throw new Error('Privacy eligibility changed. Reopen Info to review your choices.');
+export async function saveQuebecResidency(value: RegionalAnswer): Promise<void> {
+  if (!validAnswer(value)) throw new Error('Choose Yes or No for the regional question.');
+  if (!hasQuebecClarificationControl()) throw new Error('Privacy eligibility changed. Reopen Info to review your choices.');
   const token = ++quebecRevision;
   const ageRevision = getAgeVerificationRevision();
   quebecChanging = true;

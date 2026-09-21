@@ -25,6 +25,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import KeyboardAvoidingAnimatedView from '@/components/KeyboardAvoidingAnimatedView';
 import { RELEASE_LINKS } from '@/config/release';
+import { ageProcessingAvailability } from '@/services/privacy/processingAvailability';
 import { getProcessingAccess, getProcessingInputs, setProcessingChoice, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import { PROCESSING_NOTICE_VERSION } from '@/services/privacy/processingPolicy';
 import {
@@ -381,6 +382,9 @@ function LeaderboardPanel({
           No anonymous online account or competition request starts until you accept the current
           Terms of Use and community rules above.
         </Text>
+        {ageProcessingAvailability() ? <Text style={{ color: '#475569', fontSize: 13, marginTop: 10 }}>
+          {ageProcessingAvailability()}
+        </Text> : null}
       </View>
     );
   }
@@ -419,7 +423,7 @@ function LeaderboardPanel({
       </View>
 
       {!processingAllowed ? <Text style={{ color: '#475569', fontSize: 13, marginVertical: 10 }}>
-        Online competition is unavailable until age and regional privacy checks are satisfied. Local play and saved progress remain available.
+        {ageProcessingAvailability() ?? 'Online competition is unavailable until age and regional privacy checks are satisfied. Local play and saved progress remain available.'}
       </Text> : null}
       {/* My rank chip */}
       {myRow && (

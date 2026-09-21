@@ -179,8 +179,10 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
                 include your camera feed, bird, pipes, score, and microphone audio if you grant
                 microphone permission. The file is kept only in the app's temporary cache so you can
                 choose where to share it. Flap Fit does not upload the recording. The temporary file
-                is removed when you leave the result screen or start another run. A service you
-                choose in the share sheet receives the video under that service's privacy terms.
+                is scheduled for removal when you leave the result screen or start another run.
+                If a crash interrupts cleanup, Flap Fit retries on the next app launch or return.
+                Active recordings remain available while you share them. A service you choose in
+                the share sheet receives the video under that service's privacy terms.
               </Text>
               <Text style={styles.modalHeading}>Tracking technology</Text>
               <Text style={styles.modalText}>

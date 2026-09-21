@@ -25,8 +25,11 @@ If you select Record & Play, Flap Fit can request microphone permission and crea
 the camera view, game graphics, your voice, and workout sounds. The video remains in temporary app
 storage only so you can use your device's share sheet. Flap Fit does not upload or receive the video.
 A destination you choose in the share sheet processes the video under its own privacy terms. The
-temporary file is removed when you leave the result screen or begin another run, subject to normal
-operating-system cache behavior.
+temporary file is scheduled for deletion when you leave the result screen or begin another run.
+If the app crashes or a deletion fails, the file can remain locally until cleanup succeeds on a
+later app launch, foreground return, or recording attempt. Cleanup leaves the current recording
+available while you use the share screen; it does not delete copies held by destinations you chose.
+The operating system may also clear cached files.
 
 ## Optional online competition
 
