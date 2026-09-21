@@ -1,0 +1,87 @@
+{
+  "checkedAt": "2026-09-21T07:42:00.706583+00:00",
+  "websiteCommit": "2b432af2d1789c004c0346a6692404141eae0cdd",
+  "version": 30,
+  "deployment": "appgdep_6ab0dc6fbd6481919b200023bde288e5",
+  "comparison": "Every byte after LF/CRLF normalization and excluding only the recognized Cloudflare edge script; not raw-byte equivalence.",
+  "results": [
+    {
+      "route": "/",
+      "status": 200,
+      "url": "https://flapfitapp.com/",
+      "bytes": 20659,
+      "sha256": "ee1f1ab14ab38e8326b98bcd48d126ea90cb41b060093120071de09e91dd48a2",
+      "sourceSha256": "b4a93fdb805b10e726a9400e75685946a16070df69d0c0d3212edfebb1382353",
+      "rawByteMatch": false,
+      "cloudflareEdgeScriptsExcluded": 1,
+      "matchesPublishedSource": true,
+      "httpDate": "Mon, 21 Sep 2026 07:42:00 GMT",
+      "cacheStatus": "HIT"
+    },
+    {
+      "route": "/privacy/",
+      "status": 200,
+      "url": "https://flapfitapp.com/privacy/",
+      "bytes": 14965,
+      "sha256": "d2587c9ada9a562198f05c27d017c4d78206aa6137b321210b0c87c9a7f25ceb",
+      "sourceSha256": "1ed42a4a122b4357b826a08c3b46e30a817392bde0613b28525e69743fed04cb",
+      "rawByteMatch": false,
+      "cloudflareEdgeScriptsExcluded": 1,
+      "matchesPublishedSource": true,
+      "httpDate": "Mon, 21 Sep 2026 07:42:00 GMT",
+      "cacheStatus": "MISS"
+    },
+    {
+      "route": "/terms/",
+      "status": 200,
+      "url": "https://flapfitapp.com/terms/",
+      "bytes": 7977,
+      "sha256": "503d6688cf3818410a31198aab658573d2ed43b97605b60c491c67ee33339b5a",
+      "sourceSha256": "bd2472860eefed07dbef21b9b18032039451331884a3bfc759d23e2538bf66c5",
+      "rawByteMatch": false,
+      "cloudflareEdgeScriptsExcluded": 1,
+      "matchesPublishedSource": true,
+      "httpDate": "Mon, 21 Sep 2026 07:42:00 GMT",
+      "cacheStatus": "HIT"
+    },
+    {
+      "route": "/delete-account/",
+      "status": 200,
+      "url": "https://flapfitapp.com/delete-account/",
+      "bytes": 6556,
+      "sha256": "8087a63bf29c9a071cf627b1a6d277c9571d683ed8016e098e180336367b01f1",
+      "sourceSha256": "50337cb0f73c21f1fbf8c4c75494d5795a63845eb62aff1c2815501ca508df48",
+      "rawByteMatch": false,
+      "cloudflareEdgeScriptsExcluded": 1,
+      "matchesPublishedSource": true,
+      "httpDate": "Mon, 21 Sep 2026 07:42:01 GMT",
+      "cacheStatus": "MISS"
+    },
+    {
+      "route": "/support/",
+      "status": 200,
+      "url": "https://flapfitapp.com/support/",
+      "bytes": 5357,
+      "sha256": "ee368b6e56dec6545f06ac910295294ffb96507856fadabaa8ab6fe04c76fa18",
+      "sourceSha256": "408f3a7f46f98349fd5444025ec0df4872a4f4fe9a6e2f80d24e7b0619a6042c",
+      "rawByteMatch": false,
+      "cloudflareEdgeScriptsExcluded": 1,
+      "matchesPublishedSource": true,
+      "httpDate": "Mon, 21 Sep 2026 07:42:01 GMT",
+      "cacheStatus": "MISS"
+    },
+    {
+      "route": "/app-ads.txt",
+      "status": 200,
+      "url": "https://flapfitapp.com/app-ads.txt",
+      "bytes": 59,
+      "sha256": "f8beaab9ecc7df66310dd7f6a1477a0c8f86d9173726ec791a7d93653505c913",
+      "sourceSha256": "f8beaab9ecc7df66310dd7f6a1477a0c8f86d9173726ec791a7d93653505c913",
+      "rawByteMatch": true,
+      "cloudflareEdgeScriptsExcluded": 0,
+      "matchesPublishedSource": true,
+      "httpDate": "Mon, 21 Sep 2026 07:42:01 GMT",
+      "cacheStatus": "HIT"
+    }
+  ]
+}

@@ -8,7 +8,7 @@ and its adjacent checks/package records. Current results: **62 suites / 1305 tes
 TypeScript, strict lint and release/privacy validators pass. Actual local EAS package:
 **785 files / 289 required inputs**, all byte-matched; inside-package validator and exclusions pass.
 
-Website follow-through: policy version 30 is published with accurate cleanup retry and Yes/No wording; exact source/archive/deployment evidence is in **evidence/policy-copy-publication-2026-09-21.json**. This changes no application eligibility or Apple field.
+Website follow-through: policy version 30 is published with accurate cleanup retry and Yes/No wording; exact source/archive/deployment evidence is in **evidence/policy-copy-publication-2026-09-21.json**. This changes no application eligibility or Apple field. Fresh direct HTTP readback also passed for all six public routes against version-30 source; **evidence/policy-copy-live-readback-2026-09-21.json** records the exact comparisons.
 
 These results do not meet the latest no-discretionary-ad-free requirement. Unanswered
 region, required refusal and unavailable age evidence still leave affected ads paused;

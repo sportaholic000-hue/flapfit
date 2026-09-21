@@ -25,5 +25,10 @@
     "app availability or advertising eligibility",
     "Apple fields, App Privacy, uploads and submission"
   ],
-  "limitation": "This publication describes current source; it does not resolve the remaining advertising availability decision or establish device acceptance."
+  "limitation": "This publication describes current source; it does not resolve the remaining advertising availability decision or establish device acceptance.",
+  "publicHttpReadback": {
+    "checkedAt": "2026-09-21T07:42:00.706583+00:00",
+    "evidence": "policy-copy-live-readback-2026-09-21.json",
+    "result": "Six public routes returned HTTP 200 and matched the committed version-30 source after line-ending and recognized Cloudflare edge-script normalization. app-ads.txt matched raw bytes."
+  }
 }
