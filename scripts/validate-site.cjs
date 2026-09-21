@@ -75,10 +75,15 @@ const privacy = read('dist/privacy/index.html');
 for (const phrase of ['bundled with the app', 'Supabase', 'Delete online profile', 'aged 13 and older', 'Google AdMob', 'RevenueCat', 'not proof of ownership', 'Ad privacy settings']) {
   check(privacy.includes(phrase), `privacy policy is missing: ${phrase}`);
 }
-for (const phrase of ['Quebec is not supported', 'first-game-started flag', 'New York No lasts only', 'one initial game', 'refusals remain respected']) {
-  check(privacy.includes(phrase), `availability disclosure is missing: ${phrase}`);
+for (const phrase of ['Regional advertising restrictions do not exclude you from gameplay', 'Both New York answers are saved', 'Camera access is required for all Flap Fit gameplay', 'refusals remain respected']) {
+  check(privacy.includes(phrase), `privacy disclosure is missing: ${phrase}`);
+}
+for (const stale of ['Quebec is not supported', 'New York No lasts only', 'permits one initial game', 'before another game', 'You may decline camera permission,']) {
+  check(!privacy.includes(stale), 'outdated privacy restriction remains: ' + stale);
 }
 const terms = read('dist/terms/index.html');
+check(terms.includes('Camera access is required for all gameplay'), 'terms must explain camera requirement');
+check(!terms.includes('Quebec is not supported'), 'terms must not exclude Quebec gameplay');
 for (const phrase of ['at least 13', 'report', 'block', 'Record &amp; Play']) {
   check(terms.includes(phrase), `terms are missing: ${phrase}`);
 }
