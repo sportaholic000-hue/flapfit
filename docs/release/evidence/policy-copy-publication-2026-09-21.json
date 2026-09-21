@@ -1,0 +1,29 @@
+{
+  "siteProject": "appgprj_6aa368d995348191b4206fa03f951b3a",
+  "siteSource": "2b432af2d1789c004c0346a6692404141eae0cdd",
+  "previousSiteSource": "85e252b57ae6e02c6300860f98794f3ba1e269d6",
+  "sourceRemoteVerified": true,
+  "version": 30,
+  "versionId": "appgprj_6aa368d995348191b4206fa03f951b3a~appgver_2f333032bd388191bddc9ea30ffaa8c3",
+  "deploymentId": "appgdep_6ab0dc6fbd6481919b200023bde288e5",
+  "deploymentStatus": "succeeded",
+  "deployedAt": "2026-09-21T07:27:49.089997+00:00",
+  "deploymentUrl": "https://flap-fit.sportaholic000.chatgpt.site",
+  "customDomain": "https://flapfitapp.com",
+  "privacyHtmlSha256": "1ed42a4a122b4357b826a08c3b46e30a817392bde0613b28525e69743fed04cb",
+  "localArchiveSha256": "12bcf3656477a01c03b09c7bcde166471c8b18285dc6c0fadfba0ab25c148395",
+  "sitesStoredContentHash": "sha256:0093d916b8aa7c4ad5f22b851b2d052c4fc9fb0177a037584543ef71bb849ab3",
+  "validation": "Existing 5-route site validator passed; exact static inputs and packaged privacy bytes matched; native Sites response confirms published version/source.",
+  "packaging": "The Bash wrapper failed on Windows before packaging. The same installed prepare-site-build.cjs staged and validated static output; Python tarfile packaged it and checked entries/bytes. No software installed.",
+  "changes": [
+    "Temporary recordings may remain after a crash/deletion failure until a cleanup retry succeeds; active sharing preserved.",
+    "Local Quebec/Connecticut questions are Yes/No; dismissal is no answer, consent or refusal."
+  ],
+  "notChanged": [
+    "hosting service and audience",
+    "price or paywall",
+    "app availability or advertising eligibility",
+    "Apple fields, App Privacy, uploads and submission"
+  ],
+  "limitation": "This publication describes current source; it does not resolve the remaining advertising availability decision or establish device acceptance."
+}

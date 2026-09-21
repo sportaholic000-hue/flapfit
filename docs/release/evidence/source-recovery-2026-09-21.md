@@ -1,5 +1,7 @@
 # Source corrections verified; regional monetization remains unresolved
 
+Subsequent website-only follow-through: policy version 30 is published and the two outdated copy points below are corrected. See `policy-copy-publication-2026-09-21.json`. Application source and the regional monetization blocker remain unchanged.
+
 Base: `52f4e70c1a6edd89f65b10b0a999176dfd3ee597`. Branch: `wip/crash-protection-20260920`. The commit containing this record identifies the successor. This record does **not** clear a build, device acceptance, genuine RevenueCat receipt, or submission.
 
 The latest objective is free access funded by ads without an optional ad-free tier. The current behavior does **not yet meet that objective**. Saving these completed fixes must not be interpreted as accepting the remaining paused-ad paths.
