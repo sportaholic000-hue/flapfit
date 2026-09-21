@@ -89,6 +89,8 @@ test('Compete renders the older-system limitation, not an endlessly pending priv
   const f=await fixture();
   await f.act(async()=>{f.access.setAppleAgeRequirement('unsupported');});
   expect(f.text()).toContain('This system cannot provide the age check');
-  expect(f.text()).toContain('Local play, recordings and saved progress remain available.');
+  expect(f.text()).toContain('Choose your age range in Info > Privacy & choices before another game.');
+  expect(f.text()).toContain('Saved progress is unchanged.');
+  expect(f.text()).not.toContain('Local play, recordings and saved progress remain available.');
   await f.unmount();
 });

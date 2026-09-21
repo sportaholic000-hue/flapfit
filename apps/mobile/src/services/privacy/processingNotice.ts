@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ageProcessingAvailability } from './processingAvailability';
+import { releaseEligibilityMessage, resolveReleaseEligibility } from './releaseEligibility';
 import {
-  beginProcessingChoice, getProcessingAccess, getProcessingInputs, hydrateProcessingAccess, isProcessingChoiceCurrent,
-  markProcessingNoticePresented, setLaunchProcessingOptions, setProcessingChoice,
+  beginProcessingChoice, getProcessingAccess, getProcessingInputs, hydrateProcessingAccess, isProcessingChoiceCurrent, isCurrentProcessingSaveFailure,
+  markProcessingNoticePresented, notifyProcessingChoiceIntent, setLaunchProcessingOptions, setProcessingChoice,
 } from './processingAccess';
 import { PROCESSING_NOTICE_VERSION, type Purpose } from './processingPolicy';
 import { getAdvertisingWithdrawalState, resetAdvertisingWithdrawalConfirmation, withdrawAdvertisingConsent, getReportingWithdrawalState, resetReportingWithdrawalConfirmation, withdrawAdPerformanceReporting } from './privacyRights';
@@ -14,6 +15,11 @@ type Notice = { version: number; acknowledged: boolean; adsActivated: boolean; r
 let saved: Notice = { version: PROCESSING_NOTICE_VERSION, acknowledged: false, adsActivated: false, reportingActivated: false };
 let hydration: Promise<void> | null = null;
 let writes: Promise<void> = Promise.resolve();
+const pendingAllows: Partial<Record<'ads' | 'analytics', number>> = {};
+export function isProcessingAllowPending(purpose: 'ads' | 'analytics'): boolean {
+  const intent = pendingAllows[purpose];
+  return intent !== undefined && isProcessingChoiceCurrent(purpose, intent);
+}
 
 export const AD_PROCESSING_DISCLOSURE = 'Google AdMob uses app and device information, IP address and approximate location, diagnostics, and ad interactions to deliver non-personalized ads. RevenueCat measures ad loads, views, clicks, and revenue using a separate random app ID and app/device information. Neither receives your camera footage, recordings, exercises, scores, or training history.';
 
@@ -69,30 +75,42 @@ export function acknowledgeProcessingNotice(): Promise<void> {
  * still apply; this cannot satisfy an unresolved policy or parental authority. */
 export async function allowProcessingPurpose(purpose: 'ads' | 'analytics'): Promise<void> {
   const intent = beginProcessingChoice(purpose);
-  const current = () => isProcessingChoiceCurrent(purpose, intent);
-  await restoreProcessingNotice();
-  if (!current()) return;
-  if (purpose === 'analytics') resetReportingWithdrawalConfirmation();
-  else resetAdvertisingWithdrawalConfirmation();
-  await setProcessingChoice(purpose, 'granted', intent);
-  if (!current()) return;
-  const operation = writes.catch(() => undefined).then(async () => {
+  pendingAllows[purpose] = intent;
+  notifyProcessingChoiceIntent();
+  try {
+    const current = () => isProcessingChoiceCurrent(purpose, intent);
+    await restoreProcessingNotice();
     if (!current()) return;
-    const next = { ...saved,
-      ...(purpose === 'ads' ? { adsActivated: true } : { reportingActivated: true }) };
-    await AsyncStorage.setItem(KEY, JSON.stringify(next));
-    if (!current()) return;
-    saved = next;
-    applySavedNotice();
-  });
-  writes = operation;
-  try { await operation; }
-  catch (error) {
-    if (!current()) return; // A stale failed write cannot withdraw a newer choice.
-    // Never retain a grant whose specific activation could not be saved.
-    if (purpose === 'analytics') await withdrawAdPerformanceReporting();
-    else await setProcessingChoice(purpose, 'denied').catch(() => undefined);
-    throw error;
+    if (purpose === 'analytics') resetReportingWithdrawalConfirmation();
+    else resetAdvertisingWithdrawalConfirmation();
+    // Complete the supplementary notice write first. Publishing a purpose grant
+    // before this write finishes can start a notice-based provider while the UI
+    // still reports Allow pending. A prior refusal remains the durable choice
+    // until the last required write succeeds.
+    const operation = writes.catch(() => undefined).then(async () => {
+      if (!current()) return;
+      const next = { ...saved,
+        ...(purpose === 'ads' ? { adsActivated: true } : { reportingActivated: true }) };
+      await AsyncStorage.setItem(KEY, JSON.stringify(next));
+      if (current()) saved = next;
+    });
+    writes = operation;
+    try {
+      await operation;
+      if (!current()) return;
+      await setProcessingChoice(purpose, 'granted', intent);
+      if (current()) applySavedNotice();
+    } catch (error) {
+      if (!current() && !isCurrentProcessingSaveFailure(error, purpose)) return; // Never withdraw a newer user action.
+      if (purpose === 'analytics') await withdrawAdPerformanceReporting();
+      else await setProcessingChoice(purpose, 'denied').catch(() => undefined);
+      throw error;
+    }
+  } finally {
+    if (pendingAllows[purpose] === intent) {
+      delete pendingAllows[purpose];
+      notifyProcessingChoiceIntent();
+    }
   }
 }
 
@@ -112,6 +130,7 @@ export function canChooseProcessingPurpose(purpose: 'ads' | 'analytics'): boolea
   const input = getProcessingInputs();
   const plan = input.launch?.plan;
   return input.hydrated && !!input.launch?.current && !!plan && plan.ageEligibility === 'allowed' &&
+    resolveReleaseEligibility(input).status === 'available' &&
     !input.appleAccessRestricted && !plan.parentalAuthorityRequired[purpose] &&
     plan.requirements[purpose] !== 'unresolved';
 }
@@ -119,6 +138,7 @@ export function canChooseProcessingPurpose(purpose: 'ads' | 'analytics'): boolea
 export function needsSeparatePurposeChoice(purpose: 'ads' | 'analytics'): boolean {
   const input = getProcessingInputs();
   const plan = input.launch?.plan;
+  if (resolveReleaseEligibility(input).status !== 'available') return false;
   if (!plan || plan.ageEligibility !== 'allowed' || plan.parentalAuthorityRequired[purpose] ||
       plan.requirements[purpose] === 'unresolved' || input.choices[purpose].decision === 'denied') return false;
   if (plan.requirements[purpose] !== 'express-consent') return false;
@@ -131,6 +151,7 @@ export function needsSeparatePurposeChoice(purpose: 'ads' | 'analytics'): boolea
 export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
   const input = getProcessingInputs();
   const decision = purpose === 'ads' ? getProcessingAccess().ads : getProcessingAccess().revenueCat;
+  if (isProcessingAllowPending(purpose)) return 'Allow request pending · you can stop it before confirmation';
   if (purpose === 'ads' && input.choices.ads.decision === 'denied') {
     const withdrawal = getAdvertisingWithdrawalState();
     if (withdrawal.status === 'pending') return 'Confirming advertising refusal save · new ad requests blocked';
@@ -148,9 +169,11 @@ export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
   }
   if (!input.hydrated) return 'Saved privacy choices are unavailable · retry loading';
   if (input.choices[purpose].decision === 'denied') return 'Off by your choice';
-  if (decision.allowed) return purpose === 'ads' ? 'Permitted · Google choices also apply' : 'On';
   const ageAvailability = ageProcessingAvailability();
   if (ageAvailability) return ageAvailability;
+  const availability = resolveReleaseEligibility(input);
+  if (input.launch && availability.status !== 'available') return releaseEligibilityMessage(availability);
+  if (decision.allowed) return purpose === 'ads' ? 'Permitted · Google choices also apply' : 'On';
   if (needsSeparatePurposeChoice(purpose)) return 'Your permission is needed';
   if (decision.reason === 'notice-needed') return 'Available after this notice';
   if (decision.reason === 'parent-permission-required') return 'Unavailable: verified parent or guardian permission is required. Flap Fit does not collect that permission.';

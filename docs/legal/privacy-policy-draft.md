@@ -1,7 +1,8 @@
 # Flap Fit Privacy Policy
 
-Status: monetized release draft updated September 17, 2026. Not yet published to the website.
-Verify the final native build, consent messages, and provider retention settings before publication.
+Status: historical working draft; do not publish this document over the current website.
+The source-backed release policy is preserved in archive/project-backup-20260921/website-release-eligibility/dist/privacy/index.html.
+See docs/release/evidence/release-eligibility-2026-09-21.md for current availability, disclosure and publication evidence. Final native-artifact reconciliation remains required.
 
 Effective date: set to the actual publication date
 

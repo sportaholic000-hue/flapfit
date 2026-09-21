@@ -1,3 +1,5 @@
+> Current source reconciliation (September 21): release eligibility and its limitations are in evidence/release-eligibility-2026-09-21.md. The new first-run marker, local regional/protection-history answers and older-system self-declared age band stay on-device; no new provider payload/permission or collected category was added. Existing twelve saved categories remain the reviewed union of configured practices. Final compiled-artifact reconciliation and authorized publication are still required. Website version 32 is saved, not live.
+
 # Flap Fit App Privacy answers — four-country Apple release
 
 Current implementation worksheet, September 19–20, 2026. Scope: Canada, United States, Australia and Mexico; the parent task verified those four saved Apple territories. This supersedes the older stock-RevenueCat purchase/IDFV assumptions in `apple-app-privacy.md` and `privacy-remaining-review-2026-09-19.md`. It does not claim the final native candidate has been installed or that this questionnaire is already published.

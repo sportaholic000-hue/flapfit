@@ -99,15 +99,17 @@ test('NY teen requires separate express choices, not Google consent or notice', 
 });
 test('non-NY residence alone does not exclude covered NY activity', () => {
   const result = resolveLaunchProcessingPolicy(input({ subdivision: 'CA', age: teen, newYorkApplicability: undefined }));
-  expect(result.requirements.ads).toBe('express-consent');
+  expect(result.requirements.ads).toBe('unresolved');
+  expect(result.missingFacts.ads).toContain('new-york-location');
   expect(result.decisions.ads.allowed).toBe(false);
 });
-test('current specific teen consent can satisfy unknown NY applicability', () => {
+test('a teen consent cannot answer an unresolved NY location question', () => {
   const result = resolveLaunchProcessingPolicy(input({
     subdivision: 'CA', age: teen, newYorkApplicability: undefined,
     choices: { ads: grant(), analytics: deny(), competition: grant() },
   }));
-  expect(result.decisions.ads.allowed).toBe(true);
+  expect(result.decisions.ads.allowed).toBe(false);
+  expect(result.missingFacts.ads).toContain('new-york-location');
   expect(result.decisions.analytics.reason).toBe('refused');
 });
 test('outside US does not erase known NY collection history', () => {
@@ -207,7 +209,7 @@ test('denial survives notice version changes and re-evaluation never mutates the
 });
 test('new notice invalidates express grant, not a remembered refusal', () => {
   const result = resolveLaunchProcessingPolicy(input({
-    age: teen, newYorkApplicability: undefined,
+    age: teen, newYorkApplicability: undefined, newYorkProtectedHistory: true,
     choices: { ads: { ...grant(), noticeVersion: 0 }, analytics: { ...deny(), noticeVersion: 0 }, competition: unset() },
   }));
   expect(result.decisions.ads.reason).toBe('notice-changed');
@@ -232,8 +234,8 @@ test.each([null, 'GB', 'DE'])('outside or unresolved launch country is not clear
   expect(Object.values(result.decisions).every(decision => !decision.allowed)).toBe(true);
   expect(result.missingFacts.ads).toContain('country');
 });
-test('Apple thresholds distinguish Canadian fourteen and Australian fifteen without birthday', () => {
-  expect(launchAppleAgeGates('CA')).toEqual([14, 16, 18]);
+test('Apple thresholds preserve supported Canadian thirteen and Australian fifteen without birthday', () => {
+  expect(launchAppleAgeGates('CA')).toEqual([13, 16, 18]);
   expect(launchAppleAgeGates('AU')).toEqual([13, 15, 18]);
   expect(launchAppleAgeGates('US')).toEqual([13, 16, 18]);
   expect(launchAppleAgeGates('MX')).toEqual([13, 16, 18]);
@@ -267,13 +269,14 @@ test('thirteen-year-old ON refinement to QC cannot accidentally become fourteen 
   });
   expect(result.decisions.ads.reason).toBe('parent-permission-required');
 });
-test('US state refinement clears only state uncertainty while retaining NY consent requirement', () => {
+test('US residence refinement does not answer current NY location', () => {
   const original = input({ subdivision: null, age: teen, newYorkApplicability: undefined });
   const plan = resolveLaunchProcessingPolicy(original);
   const { age: _age, ...withoutAge } = original;
   const result = refineLaunchProcessingPlan(plan, { ...withoutAge, subdivision: 'CA' });
-  expect(result.requirements.analytics).toBe('express-consent');
-  expect(result.decisions.analytics.reason).toBe('permission-needed');
+  expect(result.requirements.analytics).toBe('unresolved');
+  expect(result.decisions.analytics.reason).toBe('policy-unresolved');
+  expect(result.missingFacts.analytics).toContain('new-york-location');
 });
 
 // Regional correction: unknown geography must never be a confirmed jurisdiction.
@@ -328,12 +331,13 @@ test('known New York activity cannot be contradicted by a stale wholly-outside e
   expect(result.decisions.ads.allowed).toBe(false);
 });
 
-test.each(['CA','US','AU'])('%s teen missing processing scope is expressly unresolved, never identified as New York',country=>{
+test.each(['CA','US','AU'])('%s teen missing territorial assessment does not manufacture worldwide NY coverage',country=>{
   const result=resolveLaunchProcessingPolicy(input({country,subdivision:country==='US'?'CA':null,
     quebecResidency:'not-resident',age:{...teen,lowerBound:15},newYorkApplicability:undefined}));
-  expect(result.reasons.ads).toBe('new-york-applicability-unresolved');
-  expect(result.missingFacts.ads).toContain('new-york-applicability');
-  expect(result.requirements.ads).toBe('express-consent');
+  expect(result.reasons.ads).toBe(country === 'US' ? 'new-york-location-unresolved' : 'notice-route');
+  expect(result.missingFacts.ads).toEqual(country === 'US' ? ['new-york-location'] : []);
+  expect(result.requirements.ads).toBe(country === 'US' ? 'unresolved' : 'notice-and-opt-out');
+  expect(result.separateExpressChoiceRequired.ads).toBe(false);
 });
 
 test.each(['CA','AU','MX','US'])('%s teen consent does not manufacture a NY covered-user or territorial determination',country=>{
@@ -341,8 +345,9 @@ test.each(['CA','AU','MX','US'])('%s teen consent does not manufacture a NY cove
     country,subdivision:country==='CA'?'CA-ON':null,age:{...teen,lowerBound:16},newYorkApplicability:undefined,
     connecticutResidency:'not-resident',choices:{ads:grant(),analytics:grant(),competition:grant()},
   }));
-  expect(result.decisions.ads.allowed).toBe(country !== 'MX');
+  expect(result.decisions.ads.allowed).toBe(country !== 'MX' && country !== 'US');
   if (country === 'MX') expect(result.decisions.ads.reason).toBe('parent-permission-required');
-  expect(result.missingFacts.ads).toEqual(expect.arrayContaining(['new-york-covered-user','new-york-applicability']));
-  expect(result.missingFacts.analytics).toEqual(expect.arrayContaining(['new-york-covered-user','new-york-applicability']));
+  expect(result.missingFacts.ads).toEqual(country === 'US' ? ['new-york-location'] : country === 'MX' ? ['parental-authority'] : []);
+  expect(result.missingFacts.analytics).toEqual(result.missingFacts.ads);
+  expect(result.separateExpressChoiceRequired).toEqual({ads:false,analytics:false});
 });

@@ -1,16 +1,10 @@
 # Flap Fit dual-store submission gates
 
-## Current regional monetization hold
+## Current source successor — build held
 
-Canada's Quebec / established non-Quebec / unresolved distinction and the competition
-Stop race successor are verified in
-[evidence/regional-stop-correction-2026-09-20.md](evidence/regional-stop-correction-2026-09-20.md).
-Non-Quebec adult ad request/presentation and absence of a discretionary ads-off control
-are source-tested. Quebec is not excluded. New York territorial/data-history proof for
-narrowing the existing teen consent fallback remains unestablished; uncertainty is now
-labelled separately from confirmed applicability. This is not a device-test task.
-No build, upload or release is authorized by these source/package results.
+See [release eligibility evidence](evidence/release-eligibility-2026-09-21.md) for the current country/age/region behavior, exact dismissal/restart rules, all retained findings and 67-suite/1,383-test verification. Actual local EAS package: 805 files / 300 required inputs, packaged validator and exclusions passed. Quebec is excluded by explicit in-app answer, not a store province filter. NY worldwide fallback is removed without inventing a wholly-outside provider assessment; known minor context/history remains protected. Existing refusals remain independent and honored. No build/upload/submission is authorized by these results.
 
+**Non-device actions still blocked:** website version 32 is saved but deployment authorization was rejected automatically; live version 31 remains. The narrow Apple review-note replacement is prepared for an authorized console edit. These are not described as device tests. Older dated source records below are historical where superseded here.
 
 Current instructions reconciled September 20, 2026 against the account audit and the
 successor recorded in [three-finding account-audit correction](evidence/audit-three-findings-2026-09-20.md).
@@ -54,10 +48,9 @@ their archived implementation is excluded from the app and EAS package.
 - [x] Dedicated Supabase project, anonymous-auth competition, Terms enforcement, RLS/restricted
       direct access, validation, run/outbox protections, moderation, deletion and retention have
       retained source/backend evidence. Native rights and genuine Apple delivery remain separate.
-- [x] Public website version 29 and GitHub backup are verified. Home, Privacy, Terms, Support,
-      deletion and publisher-specific app-ads.txt have September 20 HTTP-200/content-match evidence.
-      Current privacy text identifies Google/RevenueCat, data/purposes, rights, retention and transfers;
-      the older “no advertising SDK” copy and September 16 seller-file 404 are superseded.
+- [x] Existing website/provider/support and seller-file setup is retained with its dated readback evidence.
+- [ ] Publish saved version 32 after authorization, then verify current privacy/terms readback;
+      version 31 is still live and does not describe the new release eligibility. No new hosting service.
 - [x] Support receive/reply and independent deletion/moderation operations are retained in tracker D4.
       This does not mark installed-app rights access complete.
 
@@ -102,7 +95,7 @@ reopen completed setup. No change to hosting or plan is authorized by this check
 - [ ] Accepted Store-distribution artifact, authorized Apple upload, actual processing/validation,
       any real export-compliance prompt, and selected version build. TestFlight currently has no
       builds. TestFlight is optional for registered Ad Hoc acceptance; it is not a required extra
-      tester session or authorization to upload. Existing reviewer notes and Content Rights are done.
+      tester session or authorization to upload. Contacts and Content Rights are done; the prepared narrow eligibility-note correction must be saved/read back before review.
 - [ ] Final owner review and authorized Add for Review / Submit for Review. Confirm any actual
       account/compliance prompt then; do not manufacture new unfinished fields from generic guidance.
 

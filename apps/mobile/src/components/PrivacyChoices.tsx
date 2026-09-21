@@ -10,9 +10,11 @@ import {
 import { getAdvertisingWithdrawalState, subscribeAdvertisingWithdrawal, getCompetitionStopState, subscribeCompetitionStop, stopOnlineCompetition, getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
 import { getProcessingAccess, getProcessingInputs, hasProcessingChoicesReadError, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import { hasLocalAgeControl, hasLocalAgeReadError, localAgeAnswerStatus, localAgeOptions, restoreLocalAgeAnswer, saveLocalAgeAnswer } from '@/services/privacy/localAgeAnswer';
+import { hasNewYorkClarificationControl, hasNewYorkReadError, newYorkClarificationStatus, restoreNewYorkClarification, saveNewYorkPresence } from '@/services/privacy/newYorkClarification';
+import { releaseEligibilityMessage, resolveReleaseEligibility } from '@/services/privacy/releaseEligibility';
 import {
   acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, allowProcessingPurpose, canChooseProcessingPurpose,
-  needsSeparatePurposeChoice, processingPurposeStatus, refuseProcessingPurpose, restoreProcessingNotice,
+  isProcessingAllowPending, needsSeparatePurposeChoice, processingPurposeStatus, refuseProcessingPurpose, restoreProcessingNotice,
 } from '@/services/privacy/processingNotice';
 
 /** Shared by the permanent Info section and a required post-game choice sheet.
@@ -26,8 +28,9 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const [, refresh] = useState(0);
-  useEffect(() => { let active = true; void Promise.all([restoreProcessingNotice(), restoreRegionalClarification(), restoreLocalAgeAnswer()]).then(() => { if (active) refresh(n => n + 1); }); return () => { active = false; }; }, []);
+  useEffect(() => { let active = true; void Promise.all([restoreProcessingNotice(), restoreRegionalClarification(), restoreLocalAgeAnswer(), restoreNewYorkClarification()]).then(() => { if (active) refresh(n => n + 1); }); return () => { active = false; }; }, []);
   const input = getProcessingInputs();
+  const releaseAvailability = resolveReleaseEligibility(input);
   const current = () => mounted.current && (canInteract?.() ?? true);
   const action = async (operation: () => Promise<void>) => {
     if (busy || !current()) return;
@@ -44,20 +47,29 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const retryReporting = input.choices.analytics.decision === 'denied' &&
     (withdrawal.status === 'save-unconfirmed' || withdrawal.status === 'native-stop-unconfirmed');
   const reportingPending = withdrawal.status === 'pending';
+  const reportingAllowPending = isProcessingAllowPending('analytics');
   const retryAdvertising = input.choices.ads.decision === 'denied' && advertisingWithdrawal.status === 'save-unconfirmed';
   const advertisingPending = input.choices.ads.decision === 'denied' && advertisingWithdrawal.status === 'pending';
+  const advertisingAllowPending = isProcessingAllowPending('ads');
   // Every production ads grant comes from an explicit purpose choice. A fresh
   // notice-only adult has unset, so this does not add a discretionary remove-ads switch.
   const existingAdConsent = input.choices.ads.decision === 'granted';
   // Keep withdrawal reachable after required advertising consent was granted.
-  const advertisingChoice = input.launch?.plan?.requirements.ads === 'express-consent' || input.choices.ads.decision === 'denied';
-  const expressAds = input.launch?.plan?.separateExpressChoiceRequired.ads === true;
-  const expressReporting = input.launch?.plan?.separateExpressChoiceRequired.analytics === true;
+  const advertisingChoice = releaseAvailability.status === 'available' &&
+    (input.launch?.plan?.requirements.ads === 'express-consent' || input.choices.ads.decision === 'denied');
+  const expressAds = releaseAvailability.status === 'available' && input.launch?.plan?.separateExpressChoiceRequired.ads === true;
+  const expressReporting = releaseAvailability.status === 'available' && input.launch?.plan?.separateExpressChoiceRequired.analytics === true;
   return <View style={styles.root}>
     <Text style={styles.heading}>Advertising & reporting</Text>
     <Text style={styles.body}>{AD_PROCESSING_DISCLOSURE}</Text>
+    {input.launch ? <Text style={styles.status}>{releaseEligibilityMessage(resolveReleaseEligibility(input))}</Text> : null}
+    {Platform.OS === 'ios' && resolveReleaseEligibility(input).status === 'unanswered'
+      ? button('Retry availability check', async () => {
+        const retry = require('@/services/privacy/retryGameEligibility') as typeof import('@/services/privacy/retryGameEligibility');
+        await retry.retryGameEligibility(current);
+      }) : null}
     {hasProcessingChoicesReadError() ? <View style={styles.group}>
-      <Text style={styles.status}>Saved privacy choices could not be read. Optional processing is paused. You can keep playing.</Text>
+      <Text style={styles.status}>Saved privacy choices could not be read. Optional processing is paused. Retry loading before another game.</Text>
       {button('Retry loading privacy choices', async () => {
         await restoreProcessingNotice();
         if (!getProcessingInputs().hydrated) throw new Error('Saved privacy choices are still unavailable. Please retry.');
@@ -77,7 +89,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
     {hasQuebecClarificationControl() ? <View style={styles.group}>
       <Text style={styles.heading}>Province privacy rules</Text>
       <Text style={styles.body}>Do you live in Quebec?</Text>
-      <Text style={styles.note}>Your answer stays on this device. It selects the applicable privacy rules and does not change your advertising or reporting choices.</Text>
+      <Text style={styles.note}>Quebec is not supported for this release. Your answer stays on this device and does not change your advertising or reporting choices.</Text>
       <Text style={styles.status}>{quebecClarificationStatus()}</Text>
       <View style={styles.buttons}>
         {button('Yes', () => saveQuebecResidency('resident'))}
@@ -87,24 +99,38 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
     {hasConnecticutClarificationControl() ? <View style={styles.group}>
       <Text style={styles.heading}>State privacy rules</Text>
       <Text style={styles.body}>Do you live in Connecticut?</Text>
-      <Text style={styles.note}>Your answer stays on this device to apply the appropriate privacy rules. It does not allow advertising or reporting by itself.</Text>
+      <Text style={styles.note}>Connecticut residents under 18 are not supported for this release. Your answer stays on this device; it is not advertising or reporting consent.</Text>
       <Text style={styles.status}>{connecticutClarificationStatus()}</Text>
       <View style={styles.buttons}>
         {button('Yes', () => saveConnecticutResidency('resident'))}
         {button('No', () => saveConnecticutResidency('not-resident'))}
       </View>
     </View> : null}
+    {hasNewYorkReadError() && input.launch?.plan && input.launch.plan.treatment !== 'unspecified' ? <View style={styles.group}>
+      <Text style={styles.status}>Saved regional status could not be confirmed.</Text>
+      {button('Retry loading regional status', restoreNewYorkClarification)}
+    </View> : null}
+    {hasNewYorkClarificationControl() ? <View style={styles.group}>
+      <Text style={styles.heading}>New York availability</Text>
+      <Text style={styles.body}>Are you in New York right now?</Text>
+      <Text style={styles.note}>If you answer Yes, this release stays unavailable on this device while you are under 18, even after you leave New York. No applies until the next availability check. This answer does not give permission for ads or reporting.</Text>
+      <Text style={styles.status}>{newYorkClarificationStatus()}</Text>
+      <View style={styles.buttons}>
+        {button('Yes', () => saveNewYorkPresence('present'))}
+        {button('No', () => saveNewYorkPresence('not-present'))}
+      </View>
+    </View> : null}
     <View style={styles.group}>
       <Text style={styles.heading}>Google advertising</Text>
       <Text style={styles.body}>{advertisingChoice ? 'Allow the device, approximate-location, and ad-interaction functions described above for non-personalized advertising?' : 'Non-personalized ads help keep Flap Fit free. The applicable privacy rules and your Google choices determine when ads can run.'}</Text>
       <Text style={styles.status}>{processingPurposeStatus('ads')}</Text>
-      {expressAds ? <Text style={styles.note}>This use of your personal data is not strictly necessary to play. You can decline and keep playing, or stop it here later.</Text> : null}
-      {existingAdConsent || retryAdvertising || advertisingPending || (advertisingChoice && canChooseProcessingPurpose('ads')) ? <View style={styles.buttons}>
-        {existingAdConsent || retryAdvertising || advertisingPending
+      {expressAds ? <Text style={styles.note}>Existing consent can still be withdrawn here. Release availability is determined separately by age and region, never by this choice.</Text> : null}
+      {existingAdConsent || advertisingAllowPending || retryAdvertising || advertisingPending || (advertisingChoice && canChooseProcessingPurpose('ads')) ? <View style={styles.buttons}>
+        {existingAdConsent || advertisingAllowPending || retryAdvertising || advertisingPending
           ? button(retryAdvertising ? 'Retry stopping advertising' : 'Stop advertising', () => refuseProcessingPurpose('ads'), expressAds)
           : input.choices.ads.decision !== 'denied' && advertisingChoice && canChooseProcessingPurpose('ads')
             ? button('Not now', () => refuseProcessingPurpose('ads'), expressAds) : null}
-        {!retryAdvertising && !advertisingPending && !access.ads.allowed && advertisingChoice && canChooseProcessingPurpose('ads')
+        {!retryAdvertising && !advertisingPending && !advertisingAllowPending && !access.ads.allowed && advertisingChoice && canChooseProcessingPurpose('ads')
           ? button('Allow advertising', () => allowProcessingPurpose('ads')) : null}
       </View> : null}
     </View>
@@ -114,9 +140,9 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       <Text style={styles.status}>{processingPurposeStatus('analytics')}</Text>
       {expressReporting ? <Text style={styles.note}>This use of your personal data is not strictly necessary to play. You can decline and keep playing, or stop it here later.</Text> : null}
       <View style={styles.buttons}>
-        {retryReporting || reportingPending || input.choices.analytics.decision !== 'denied' || access.revenueCat.allowed
+        {retryReporting || reportingPending || reportingAllowPending || input.choices.analytics.decision !== 'denied' || access.revenueCat.allowed
           ? button(retryReporting ? 'Retry stopping reporting' : 'Stop reporting', () => refuseProcessingPurpose('analytics'), expressReporting) : null}
-        {!retryReporting && !reportingPending && canChooseProcessingPurpose('analytics') && (needsSeparatePurposeChoice('analytics') || input.choices.analytics.decision === 'denied')
+        {!retryReporting && !reportingPending && !reportingAllowPending && canChooseProcessingPurpose('analytics') && (needsSeparatePurposeChoice('analytics') || input.choices.analytics.decision === 'denied')
           ? button('Allow reporting', () => allowProcessingPurpose('analytics')) : null}
       </View>
       <Text style={styles.note}>Stopping future reporting does not delete information already received by RevenueCat. Contact support for data requests.</Text>
@@ -136,7 +162,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
     <View style={styles.group}><Text style={styles.heading}>Your camera stays on your device</Text><Text style={styles.body}>Flap Fit does not receive your camera footage or audio. Record & Play makes a temporary video on your device so you can choose whether and where to share it.</Text></View>
     <TouchableOpacity accessibilityRole="link" onPress={() => void Linking.openURL(RELEASE_LINKS.privacyUrl).catch(() => Alert.alert('Unable to open privacy policy', 'Please try again when online.'))} style={styles.link}><Text style={styles.linkText}>Full privacy policy</Text></TouchableOpacity>
     {button('Save & continue', async () => { await acknowledgeProcessingNotice(); if (current()) onDone?.(); })}
-    <Text style={styles.note}>These choices do not grant permission for online competition. You can keep playing when optional processing is unavailable.</Text>
+    <Text style={styles.note}>These choices do not grant permission for online competition. Reporting and competition refusals do not change your game eligibility. Closing leaves unanswered eligibility questions unanswered.</Text>
   </View>;
 }
 

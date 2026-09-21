@@ -1,5 +1,6 @@
 import type { LaunchProcessingPlan, LaunchProcessingOptions, LaunchProcessingResolution } from './launchProcessingPolicy';
 import type { LaunchCountry } from './privacyCountry';
+import { resolveReleaseEligibility } from './releaseEligibility';
 /** Independent purpose decisions. Apple age evidence is never processing consent. */
 export const PROCESSING_NOTICE_VERSION = 1;
 export type PrivacyRegion = 'us' | 'ca-quebec' | 'ca-other' | 'other' | 'unknown';
@@ -35,7 +36,7 @@ export type ProcessingReason =
   | 'allowed' | 'loading' | 'region-unconfirmed' | 'region-not-cleared'
   | 'apple-check-pending' | 'apple-check-required' | 'apple-access-restricted' | 'apple-access-check-pending'
   | 'age-unresolved' | 'outside-audience' | 'parent-permission-required'
-  | 'age-14-unresolved' | 'policy-unresolved' | 'notice-needed' | 'permission-needed' | 'refused' | 'notice-changed';
+  | 'age-14-unresolved' | 'policy-unresolved' | 'release-unavailable' | 'notice-needed' | 'permission-needed' | 'refused' | 'notice-changed';
 export type ProcessingDecision = { allowed: boolean; reason: ProcessingReason };
 /** Minimum ephemeral verification outcome, not an Apple age profile. Never persisted. */
 export type AgeVerification = {
@@ -167,7 +168,10 @@ export function evaluateVerifiedProcessing(input: ProcessingRuntimeInputs, revis
   const purpose = (key: Purpose): ProcessingDecision => {
     if (input.launch) {
       if (common !== 'allowed') return { allowed: false, reason: common };
-      return input.launch.resolution?.decisions[key] ?? { allowed: false, reason: 'policy-unresolved' };
+      if (input.choices[key].decision === 'denied') return { allowed: false, reason: 'refused' };
+      const decision = input.launch.resolution?.decisions[key] ?? { allowed: false, reason: 'policy-unresolved' as const };
+      if (key !== 'competition' && decision.allowed && resolveReleaseEligibility(input).status !== 'available') return { allowed: false, reason: 'release-unavailable' };
+      return decision;
     }
     if (!input.europeanProvider) return decide(input, key, common);
     if (common !== 'allowed') return { allowed: false, reason: common };

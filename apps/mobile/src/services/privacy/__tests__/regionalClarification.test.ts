@@ -19,9 +19,12 @@ test('US teen clarification resolves only Connecticut uncertainty, never NY purp
   expect(f.regional.needsConnecticutClarification()).toBe(true);
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
   await f.regional.saveConnecticutResidency('not-resident');
-  expect(f.access.getProcessingInputs().launch?.plan?.separateExpressChoiceRequired).toEqual({ads:true,analytics:true});
-  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false,reason:'permission-needed'},revenueCat:{allowed:false,reason:'permission-needed'}});
-  await f.access.setProcessingChoice('ads','granted');
+  expect(f.access.getProcessingInputs().launch?.plan?.separateExpressChoiceRequired).toEqual({ads:false,analytics:false});
+  expect(f.access.getProcessingInputs().launch?.plan?.missingFacts.ads).toContain('new-york-location');
+  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false,reason:'policy-unresolved'},revenueCat:{allowed:false,reason:'policy-unresolved'}});
+  const ny: typeof import('../newYorkClarification') = require('../newYorkClarification');
+  await ny.restoreNewYorkClarification(); await ny.saveNewYorkPresence('not-present');
+  expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
   await f.access.setProcessingChoice('analytics','denied');
   await f.access.setProcessingChoice('competition','granted');
   expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'},competition:{allowed:true}});
@@ -52,11 +55,13 @@ test('failed permissive save grants nothing and offers an honest retry', async (
   expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false},revenueCat:{allowed:false}});
   expect(f.regional.connecticutClarificationStatus()).toContain('not confirmed');
   await f.regional.saveConnecticutResidency('not-resident');
+  f.access.applyNewYorkContext({newYorkPresence:'not-present'});
   expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:true}});
 });
 test('a failed restrictive answer stays restricted when other preparation rereads saved evidence', async () => {
   const f=await fixture();
   await f.regional.saveConnecticutResidency('not-resident');
+  f.access.applyNewYorkContext({newYorkPresence:'not-present'});
   await f.access.setProcessingChoice('ads','granted');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
   f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
@@ -70,11 +75,13 @@ test('a failed restrictive answer stays restricted when other preparation reread
 test('restart restores the residency fact but preserves reporting refusal independently', async () => {
   let f=await fixture();
   await f.regional.saveConnecticutResidency('not-resident');
+  f.access.applyNewYorkContext({newYorkPresence:'not-present'});
   await f.access.setProcessingChoice('ads','granted');
   await f.access.setProcessingChoice('analytics','denied');
   const memory=f.memory;
   expect(memory.get('@flapfit/connecticut-residency-v1')).toBe('{"version":1,"answer":"not-resident"}');
   f=await fixture(memory);
+  f.access.applyNewYorkContext({newYorkPresence:'not-present'});
   expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'}});
   expect(f.regional.needsConnecticutClarification()).toBe(false);
   expect([...memory.values()].join('')).not.toMatch(/lowerBound|upperBound|birthday|latitude|longitude/);
@@ -82,11 +89,13 @@ test('restart restores the residency fact but preserves reporting refusal indepe
 test('an unrelated regional write failure does not erase the saved reporting refusal', async () => {
   let f=await fixture();
   await f.regional.saveConnecticutResidency('not-resident');
+  f.access.applyNewYorkContext({newYorkPresence:'not-present'});
   await f.access.setProcessingChoice('ads','granted');
   await f.access.setProcessingChoice('analytics','denied');
   f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
   await expect(f.regional.saveConnecticutResidency('not-resident')).rejects.toThrow();
   f=await fixture(f.memory);
+  f.access.applyNewYorkContext({newYorkPresence:'not-present'});
   expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'}});
 });
 test('a stale save cannot apply a US permission to changed country or new age evidence', async () => {
@@ -98,10 +107,10 @@ test('a stale save cannot apply a US permission to changed country or new age ev
   expect(f.access.getProcessingInputs().launch).toMatchObject({country:'CA',plan:null,options:{}});
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
 });
-test('declining both purposes suppresses an unnecessary result clarification', async () => {
+test('independent refusals do not erase the regional availability question', async () => {
   const f=await fixture();
   await f.access.setProcessingChoice('ads','denied'); await f.access.setProcessingChoice('analytics','denied');
-  expect(f.regional.needsConnecticutClarification()).toBe(false);
+  expect(f.regional.needsConnecticutClarification()).toBe(true);
   expect(f.regional.hasConnecticutClarificationControl()).toBe(true);
 });
 

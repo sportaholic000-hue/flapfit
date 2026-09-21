@@ -41,6 +41,92 @@ async function load(options: { offline?: boolean; unsupported?: boolean; age?: u
     finish: () => { stop(); if (descriptor) Object.defineProperty(globalThis, 'fetch', descriptor); } };
 }
 afterEach(() => { process.env = { ...originalEnv }; });
+
+test('excluded Quebec with legacy grants never initializes providers, and withdrawal survives lost eligibility and restart', async () => {
+  const memory = orderedMemory();
+  let f = await load({ country: 'CA', quebecResidency: 'resident', memory });
+  try {
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const choices = jest.fn();
+    await flow.preparePostGamePrivacy(() => true, choices); await settle();
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.alert).not.toHaveBeenCalled(); expect(choices).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess().ads.reason).toBe('release-unavailable');
+    f.access.setLaunchProcessingCountry('CA', false);
+    await notice.refuseProcessingPurpose('ads');
+    expect(JSON.parse(memory.get('@flapfit/processing-choices-v1')!).choices.ads.decision).toBe('denied');
+  } finally { f.finish(); }
+  f = await load({ country: 'CA', memory });
+  try {
+    await f.adapter.prepareMonetization(() => true); await settle();
+    expect(f.access.getProcessingAccess().ads.reason).toBe('refused');
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.purchases.configure).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+test.each(['CT', 'NY'] as const)('excluded %s minor cannot initialize native ad or reporting SDKs through the result coordinator', async region => {
+  const f = await load({ age: { status: 'shared', lowerBound: 13, upperBound: 17 } });
+  try {
+    const regional: typeof import('../regionalClarification') = require('../regionalClarification');
+    const ny: typeof import('../newYorkClarification') = require('../newYorkClarification');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    await flow.preparePostGamePrivacy(() => true, async () => {
+      await regional.saveConnecticutResidency(region === 'CT' ? 'resident' : 'not-resident');
+      if (region === 'NY') await ny.saveNewYorkPresence('present');
+      await notice.acknowledgeProcessingNotice();
+    }); await settle();
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+    expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
+    expect(f.access.getProcessingInputs().choices.analytics.decision).toBe('unset');
+  } finally { f.finish(); }
+});
+
+test('a newly established New York context disposes a ready teen ad and stops reporting before any result ad can show', async () => {
+  const f = await load({ age: { status: 'shared', lowerBound: 13, upperBound: 17 } });
+  try {
+    const regional: typeof import('../regionalClarification') = require('../regionalClarification');
+    const ny: typeof import('../newYorkClarification') = require('../newYorkClarification');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    await f.adapter.prepareMonetization(() => true, { eligibilityOnly: true });
+    await regional.saveConnecticutResidency('not-resident'); await ny.saveNewYorkPresence('not-present');
+    await notice.acknowledgeProcessingNotice(); await f.adapter.prepareMonetization(() => true); await settle();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1); expect(f.purchases.configure).toHaveBeenCalledTimes(1);
+    const ad = f.adapter.prepareResultInterstitial(); expect(ad).not.toBeNull();
+    f.events.get('loaded')!(); expect(ad!.isReady()).toBe(true);
+    await ny.saveNewYorkPresence('present'); await settle();
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: false }, revenueCat: { allowed: false } });
+    expect(f.nativeAd.destroy).toHaveBeenCalled(); expect(f.nativeAd.show).not.toHaveBeenCalled();
+    expect(ad!.isReady()).toBe(false);
+    expect(f.fence).toHaveBeenLastCalledWith(false);
+    const gate: typeof import('../gameEntry') = require('../gameEntry');
+    expect(await gate.authorizeGameEntry(true)).toEqual({ status: 'unavailable', reason: 'new-york-minor' });
+  } finally { f.finish(); }
+});
+
+test.each(['@flapfit/processing-notice-v1', '@flapfit/processing-choices-v1'])('failed reporting Allow at %s preserves the previous refusal through actual configuration and restart', async failedKey => {
+  const memory = orderedMemory(); let f = await load({ country: 'CA', quebecResidency: 'not-resident', memory });
+  try {
+    await f.adapter.prepareCompetitionEligibility(() => true);
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    await notice.restoreProcessingNotice();
+    let fail = true;
+    f.storage.setItem.mockImplementation(async (key, value) => { if (key === failedKey && fail) { fail = false; throw new Error('write failed'); } memory.set(key, value); });
+    await expect(notice.allowProcessingPurpose('analytics')).rejects.toThrow('write failed');
+    await f.adapter.prepareMonetization(() => true); await settle();
+    expect(f.purchases.configure).not.toHaveBeenCalled(); expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(memory.get('@flapfit/processing-choices-v1')!).choices.analytics.decision).toBe('denied');
+  } finally { f.finish(); }
+  f = await load({ country: 'CA', memory });
+  try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    await flow.preparePostGamePrivacy(() => true, jest.fn()); await settle();
+    expect(f.purchases.configure).not.toHaveBeenCalled(); expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.access.getProcessingAccess().revenueCat.reason).toBe('refused');
+  } finally { f.finish(); }
+});
 test('real cold startup connects trusted country and native Apple before eligibility; only actual disclosure callback unlocks adult notice route', async () => {
   const f = await load(); try {
     await f.adapter.prepareMonetization(() => true); expect(f.requestAge).toHaveBeenCalledWith([13, 16, 18]);
@@ -165,13 +251,13 @@ test('reporting refusal through Info survives relaunch while permitted Google ad
     expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: false, reason: 'refused' } });
   } finally { f.finish(); }
 });
-test('Canadian activation is purpose-specific and can allow ads with reporting refused', async () => {
-  const f = await load({ country: 'CA', quebecResidency: 'resident' }); try {
+test('Canadian regional clarification permits independent ads with reporting refused', async () => {
+  const f = await load({ country: 'CA' }); try {
     const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
     const notice: typeof import('../processingNotice') = require('../processingNotice');
     const choices = jest.fn(async () => {
       await notice.refuseProcessingPurpose('analytics');
-      await notice.allowProcessingPurpose('ads');
+      await (require('../regionalClarification') as typeof import('../regionalClarification')).saveQuebecResidency('not-resident');
       expect(f.nativeAds.initialize).not.toHaveBeenCalled();
       await notice.acknowledgeProcessingNotice();
     });
@@ -238,14 +324,14 @@ test('saved reporting refusal survives an unrelated failed competition save and 
 
 
 test.each([false, true])('Google presentation waits for privacy dismissal; backgrounded=%s', async backgrounded => {
-  const f = await load({ country: 'CA', quebecResidency: 'resident' });
+  const f = await load({ country: 'CA' });
   try {
     const notice: typeof import('../processingNotice') = require('../processingNotice');
     const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
     let dismissed!: () => void;
     const nativeDismissal = new Promise<void>(resolve => { dismissed = resolve; });
     const choices = jest.fn(async () => {
-      await notice.allowProcessingPurpose('ads');
+      await (require('../regionalClarification') as typeof import('../regionalClarification')).saveQuebecResidency('not-resident');
       await notice.refuseProcessingPurpose('analytics');
       await notice.acknowledgeProcessingNotice();
       await nativeDismissal;
@@ -270,7 +356,7 @@ test.each([false, true])('Google presentation waits for privacy dismissal; backg
   } finally { f.finish(); }
 });
 
-test('US teen result flow resolves residency and independent consent in one sheet before Google presentation', async () => {
+test('US teen result flow resolves residency and current location separately from consent in one sheet before Google presentation', async () => {
   const f=await load({age:{status:'shared',lowerBound:13,upperBound:15}});
   try {
     const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
@@ -280,7 +366,9 @@ test('US teen result flow resolves residency and independent consent in one shee
       expect(regional.needsConnecticutClarification()).toBe(true);
       await regional.saveConnecticutResidency('not-resident');
       expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
-      await notice.allowProcessingPurpose('ads'); await notice.refuseProcessingPurpose('analytics');
+      await (require('../newYorkClarification') as typeof import('../newYorkClarification')).saveNewYorkPresence('not-present');
+      expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
+      await notice.refuseProcessingPurpose('analytics');
       await notice.acknowledgeProcessingNotice();
       expect(f.consent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
     });
@@ -305,10 +393,10 @@ test('closing the US teen clarification does not complete the unanswered questio
 
 test.each([
   {country:'AU',lowerBound:15,upperBound:17,gates:[13,15,18]},
-  {country:'CA',lowerBound:14,upperBound:15,gates:[14,16,18]},
+  {country:'CA',lowerBound:13,upperBound:15,gates:[13,16,18]},
 ])('$country eligible teen: independent choices, withdrawal and restart use the production coordinator', async scenario => {
   const age={status:'shared',lowerBound:scenario.lowerBound,upperBound:scenario.upperBound};
-  let f=await load({country:scenario.country,age,quebecResidency:scenario.country==='CA'?'resident':undefined}); const memory=f.memory;
+  let f=await load({country:scenario.country,age,quebecResidency:scenario.country==='CA'?'not-resident':undefined}); const memory=f.memory;
   try {
     const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
     const notice: typeof import('../processingNotice')=require('../processingNotice');
@@ -319,7 +407,8 @@ test.each([
     });
     await flow.preparePostGamePrivacy(() => true,choices); await settle();
     expect(f.requestAge).toHaveBeenCalledWith(scenario.gates);
-    expect(choices).toHaveBeenCalledTimes(1); expect(f.alert).not.toHaveBeenCalled();
+    expect(choices).not.toHaveBeenCalled(); expect(f.alert).toHaveBeenCalledTimes(1);
+    expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
     expect(f.nativeAds.setRequestConfiguration).toHaveBeenCalledWith(expect.objectContaining({ageRestrictedTreatment:'teen'}));
     expect(f.consent.requestInfoUpdate).toHaveBeenCalledWith(expect.objectContaining({tagForUnderAgeOfConsent:false}));
     expect(f.purchases.configure).toHaveBeenCalledTimes(1);
@@ -360,7 +449,7 @@ test.each([
 });
 
 test.each(['US','CA','AU','MX'])('%s adult reporting refusal and competition permission persist independently across restart', async country => {
-  let f=await load({country,quebecResidency:country==='CA'?'resident':undefined}); const memory=f.memory;
+  let f=await load({country,quebecResidency:country==='CA'?'not-resident':undefined}); const memory=f.memory;
   try {
     const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
     const notice: typeof import('../processingNotice')=require('../processingNotice');
@@ -452,20 +541,21 @@ test('visiting Compete preserves an already verified plan and independently prep
 const orderedChoice = (decision: string) => ({ decision, noticeVersion: 1, decidedAt: null });
 const orderedMemory = () => new Map([
   ['@flapfit/processing-choices-v1', JSON.stringify({ version: 1, region: 'unknown', choices: {
-    ads: orderedChoice('granted'), analytics: orderedChoice('unset'), competition: orderedChoice('granted'),
+    ads: orderedChoice('granted'), analytics: orderedChoice('denied'), competition: orderedChoice('granted'),
   } })],
   ['@flapfit/processing-notice-v1', JSON.stringify({ version: 1, acknowledged: true, adsActivated: true, reportingActivated: false })],
 ]);
 
 test.each(['allow-only', 'stop-only', 'allow-then-stop'] as const)('audit continuation: delayed notice %s respects action order through the real Canadian coordinator and RC configuration', async (order) => {
-  const f = await load({ country: 'CA', memory: orderedMemory(), quebecResidency: 'resident' });
+  const f = await load({ country: 'CA', memory: orderedMemory(), quebecResidency: 'not-resident' });
   let release!: (value: string | null) => void;
   const delayed = new Promise<string | null>(resolve => { release = resolve; });
   try {
     await f.adapter.prepareCompetitionEligibility(() => true);
     const notice: typeof import('../processingNotice') = require('../processingNotice');
     expect(notice.canChooseProcessingPurpose('analytics')).toBe(true);
-    expect(notice.needsSeparatePurposeChoice('analytics')).toBe(true);
+    expect(notice.needsSeparatePurposeChoice('analytics')).toBe(false);
+    expect(f.access.getProcessingInputs().choices.analytics.decision).toBe('denied');
     f.storage.getItem.mockImplementation(async key => key === '@flapfit/processing-notice-v1' ? delayed : f.memory.get(key) ?? null);
     const allowing = order !== 'stop-only' ? notice.allowProcessingPurpose('analytics') : notice.restoreProcessingNotice();
     await settle();
@@ -482,7 +572,7 @@ test.each(['allow-only', 'stop-only', 'allow-then-stop'] as const)('audit contin
 });
 
 test.each(['choice-write', 'notice-write'] as const)('audit continuation: newer Stop wins while older Allow waits at %s', async boundary => {
-  const f = await load({ country: 'CA', memory: orderedMemory(), quebecResidency: 'resident' });
+  const f = await load({ country: 'CA', memory: orderedMemory(), quebecResidency: 'not-resident' });
   let release!: () => void; const wait = new Promise<void>(resolve => { release = resolve; });
   let started!: () => void; const waiting = new Promise<void>(resolve => { started = resolve; });
   try {
@@ -649,8 +739,8 @@ test.each([false,true])('competition Stop/accept/Stop survives restart and block
 });
 
 
-test.each([false,true])('existing Quebec consent withdrawal survives lost eligibility, recovery and restart; failed first save=%s',async failSave=>{
-  let f=await load({country:'CA',quebecResidency:'resident'});
+test.each([false,true])('existing Canadian consent withdrawal survives lost eligibility, recovery and restart; failed first save=%s',async failSave=>{
+  let f=await load({country:'CA',quebecResidency:'not-resident'});
   const memory=f.memory;
   try {
     let notice:typeof import('../processingNotice')=require('../processingNotice');
@@ -775,7 +865,7 @@ test.each([{country:'US',answer:'under-13'},{country:'AU',answer:'13-14'},{count
 });
 
 test('advertising withdrawal changes only its purpose and an unrelated failed save cannot erase the saved refusal',async()=>{
-  let f=await load({country:'CA',quebecResidency:'resident'});const memory=f.memory;
+  let f=await load({country:'CA',quebecResidency:'not-resident'});const memory=f.memory;
   try{
     const notice:typeof import('../processingNotice')=require('../processingNotice');
     await f.adapter.prepareCompetitionEligibility(()=>true);

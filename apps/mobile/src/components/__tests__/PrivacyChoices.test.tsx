@@ -3,7 +3,7 @@ import type { ReactTestRenderer } from 'react-test-renderer';
 // First module load on the Windows release host can exceed Jest's default 5s.
 jest.setTimeout(20_000);
 
-async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetReporting = false, canadianRegion: 'resident' | 'unknown' = 'resident', freshChoices = false, lowerBound = 18) {
+async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetReporting = false, canadianRegion: 'resident' | 'not-resident' | 'unknown' = 'resident', freshChoices = false, lowerBound = 18) {
   jest.resetModules();
   const React: typeof import('react') = require('react');
   const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
@@ -44,9 +44,9 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
   access.setAppleAgeRequirement('not-required'); access.setAppleRescissionPending(false);
   const country = canadianUnsetReporting ? 'CA' : 'US';
   access.setLaunchProcessingCountry(country, true);
-  if (canadianUnsetReporting && canadianRegion === 'resident') {
-    memory.set('@flapfit/quebec-residency-v1',JSON.stringify({version:1,answer:'resident'}));
-    access.applyQuebecResidency('resident');
+  if (canadianUnsetReporting && canadianRegion !== 'unknown') {
+    memory.set('@flapfit/quebec-residency-v1',JSON.stringify({version:1,answer:canadianRegion}));
+    access.applyQuebecResidency(canadianRegion);
   }
   access.verifyLaunchAgeEvidence({ source: 'apple', status: 'shared', lowerBound, upperBound: lowerBound < 18 ? 17 : null }, country, access.getAgeVerificationRevision());
   access.setProcessingRequirements({ ads: 'express-consent', analytics: 'express-consent', competition: 'requested-service' });
@@ -317,7 +317,7 @@ test.each([
   await f.access.setProcessingChoice('analytics','denied');
   await f.mount();
   expect(f.button('Allow advertising')).toBeUndefined(); expect(f.button('Allow reporting')).toBeUndefined();
-  expect(f.text()).toContain(scenario.country === 'CA' ? 'age eligibility can be confirmed' : 'Flap Fit does not collect that permission');
+  expect(f.text()).toContain(scenario.country === 'CA' ? 'Confirm your age range before another game' : 'not available for this age group');
   expect(f.button('Save & continue')).toBeDefined();
   await f.unmount();
 });
@@ -372,10 +372,11 @@ test('unreadable choices retain an actionable load retry across failure and rest
 
 
 test('audit continuation: collapse/remount then Stop invalidates an older rendered Allow waiting for notice restoration', async () => {
-  const f = await fixture('ios',false,true);
+  const f = await fixture('ios',false,true,'not-resident');
+  await f.access.setProcessingChoice('analytics','denied');
   let release!: (value:string|null)=>void;const delayed=new Promise<string|null>(resolve=>{release=resolve;});
   f.storage.getItem.mockImplementation(async key=>key==='@flapfit/processing-notice-v1'?delayed:f.memory.get(key)??null);
-  await f.mount();expect(f.button('Allow reporting')).toBeDefined();expect(f.button('Stop reporting')).toBeDefined();
+  await f.mount();expect(f.button('Allow reporting')).toBeDefined();
   await f.press('Allow reporting');await f.unmount();await f.mount();
   await f.press('Stop reporting');
   expect(f.text()).toContain('Choice saved · native reporting stopped');
@@ -402,7 +403,8 @@ test('regional correction: rendered Canadian region controls remove unneeded ad 
   expect(f.button('Stop advertising')).toBeUndefined();
   expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'}});
   await f.press('Yes');
-  expect(f.button('Allow advertising')).toBeDefined();
+  expect(f.text()).toContain('not available in Quebec');
+  expect(f.button('Allow advertising')).toBeUndefined();
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
   await f.unmount();
 });
@@ -435,24 +437,22 @@ test('fresh non-Quebec adult has no discretionary advertising off or allow contr
   await f.unmount();
 });
 
-test('teen fallback consent explains optional data use and makes refusal the first prominent choice',async()=>{
+test('non-Quebec Canadian teen does not inherit a worldwide NY consent or discretionary ads-off control',async()=>{
   const f=await fixture('ios',false,true,'unknown',true,14);await f.mount();
   await f.press('No');
-  expect(f.access.getProcessingInputs().launch?.resolution?.reasons.ads).toBe('new-york-applicability-unresolved');
-  expect(f.text()).toContain('not strictly necessary to play');
-  const buttons=f.buttons();
-  expect(buttons.indexOf(f.button('Not now')!)).toBeLessThan(buttons.indexOf(f.button('Allow advertising')!));
-  expect(f.button('Not now')!.props.style).toEqual(expect.arrayContaining([expect.objectContaining({borderWidth:2})]));
-  expect(buttons.indexOf(f.button('Stop reporting')!)).toBeLessThan(buttons.indexOf(f.button('Allow reporting')!));
-  await f.press('Not now');await f.press('Stop reporting');
-  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false},revenueCat:{allowed:false}});
+  expect(f.access.getProcessingInputs().launch?.resolution?.reasons.ads).toBe('notice-route');
+  expect(f.button('Not now')).toBeUndefined();expect(f.button('Allow advertising')).toBeUndefined();
+  expect(f.button('Stop advertising')).toBeUndefined();
+  await f.press('Stop reporting');await f.press('Save & continue');
+  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false}});
   await f.unmount();
 });
 
 test.each(['country','age','apple'] as const)('existing Quebec ad consent remains withdrawable with %s eligibility unavailable',async unavailable=>{
   const f=await fixture('ios',false,true);await f.mount();
-  await f.press('Allow advertising');await f.press('Save & continue');
-  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  expect(f.access.getProcessingInputs().choices.ads.decision).toBe('granted');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  expect(f.text()).toContain('not available in Quebec');
   await f.act(async()=>{
     if(unavailable==='country')f.access.setLaunchProcessingCountry(null,false);
     if(unavailable==='age')f.access.clearAgeVerification();
@@ -470,7 +470,8 @@ test.each(['country','age','apple'] as const)('existing Quebec ad consent remain
 
 test('failed advertising withdrawal retains honest retry after region loss and panel remount',async()=>{
   const f=await fixture('ios',false,true);await f.mount();
-  await f.press('Allow advertising');await f.press('Save & continue');
+  expect(f.access.getProcessingInputs().choices.ads.decision).toBe('granted');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
   f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
   await f.press('Stop advertising');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
@@ -491,7 +492,8 @@ test.each(['unsupported','unknown'] as const)('Info renders accurate %s age avai
   f.access.clearAgeVerification();f.access.setAppleAgeRequirement(state==='unsupported'?'unsupported':'not-required');
   await f.mount();
   expect(f.text()).toContain(state==='unsupported'?'This system cannot provide the age check':'Age eligibility has not been confirmed');
-  expect(f.text()).toContain('Local play, recordings and saved progress remain available.');
+  expect(f.text()).toContain('before another game');
+  expect(f.text()).toContain('Saved progress is unchanged.');
   expect(f.button('Stop advertising')).toBeUndefined();expect(f.button('Allow advertising')).toBeUndefined();
   await f.unmount();
 });

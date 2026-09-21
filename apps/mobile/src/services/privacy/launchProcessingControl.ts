@@ -2,6 +2,7 @@ import { prepareAppleAgeControl, requestLaunchAppleAgeEvidence } from './appleAg
 import { getPrivacyCountrySnapshot, subscribePrivacyCountry } from './privacyCountry';
 import { restoreRegionalClarification } from './regionalClarification';
 import { restoreLocalAgeAnswer } from './localAgeAnswer';
+import { restoreNewYorkClarification } from './newYorkClarification';
 import { getAgeVerificationRevision, getProcessingInputs, setLaunchProcessingCountry, setLaunchProcessingPlan, verifyLaunchAgeEvidence } from './processingAccess';
 import { launchAppleAgeGates, resolveVerifiedAdultLaunchPlan, refineLaunchProcessingPlan } from './launchProcessingPolicy';
 
@@ -10,6 +11,8 @@ let removeCountryListener: (() => void) | null = null;
 let pending: Promise<void> | null = null;
 let attemptedKey: string | null = null;
 export function getLaunchProcessingStatus() { return getProcessingInputs().launch ?? null; }
+/** Only an explicit user retry may repeat an optional Apple response. */
+export function retryLaunchAgeCheck(): void { attemptedKey = null; }
 /** Root-owned subscription blocks stale country processing immediately. It never
  * displays UI, invents a province/residence, marks a notice, or changes user choices. */
 export function startLaunchProcessing(): () => void {
@@ -32,6 +35,7 @@ export type LaunchProcessingPresentation = {
 };
 export async function prepareLaunchProcessing(options: LaunchProcessingPresentation): Promise<void> {
   await restoreRegionalClarification();
+  await restoreNewYorkClarification();
   await restoreLocalAgeAnswer();
   if (pending) return pending;
   const input = getProcessingInputs();

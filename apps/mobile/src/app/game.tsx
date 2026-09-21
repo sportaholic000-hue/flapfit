@@ -36,6 +36,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import BirdAvatar from '@/components/BirdAvatar';
+import { GameEligibilityGate } from '@/components/GameEligibilityGate';
 import { usePrivacyChoicesSheet } from '@/components/PrivacyChoices';
 import { preparePostGamePrivacy } from '@/services/privacy/postGamePrivacy';
 import {
@@ -185,7 +186,9 @@ export default function GameScreen() {
     return () => { mounted = false; };
   }, [supportedMode]);
   if (hydrated && !supportedMode) return <Redirect href="/(tabs)" />;
-  if (supportedMode && privacySettled) return <GameContent />;
+  if (supportedMode && privacySettled) return <GameEligibilityGate key={`${mode}:${levelId}`} hasExistingPlay={() => useGameStore.getState().sessions.length > 0 || useGameStore.getState().totalTutSeconds > 0}>
+    {(newRun, prepareEntry) => <GameContent onNewRun={newRun} prepareEntry={prepareEntry} />}
+  </GameEligibilityGate>;
   return (
     <View style={{ flex: 1, backgroundColor: '#0F172A', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
       <ActivityIndicator color="#FFFFFF" size="large" />
@@ -199,7 +202,7 @@ export default function GameScreen() {
   );
 }
 
-function GameContent() {
+function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepareEntry: () => Promise<void> }) {
   const insets = useSafeAreaInsets();
   const { height: viewportHeight } = useWindowDimensions();
   const router = useRouter();
@@ -562,6 +565,21 @@ function GameContent() {
     if (!html || (!USE_REMOTE_TRACKER && !trackerAssets)) return null;
     return { html, baseUrl: GAME_WEB_BASE_URL };
   }, [html, trackerAssets]);
+  const entryReadyRef = useRef(false);
+  const [entryReady, setEntryReady] = useState(false);
+  const [entryError, setEntryError] = useState<string | null>(null);
+  const [entryAttempt, setEntryAttempt] = useState(0);
+  useEffect(() => {
+    if (entryReadyRef.current || !webSource || trackerLoadError || !permission?.granted ||
+      (recordRun && !recordWithoutAudio && !microphonePermission?.granted)) return;
+    let active = true;
+    void prepareEntry().then(() => {
+      if (active) { entryReadyRef.current = true; setEntryReady(true); }
+    }).catch(() => {
+      if (active) setEntryError('Your first-game status could not be saved. Retry before starting.');
+    });
+    return () => { active = false; };
+  }, [webSource, trackerLoadError, permission?.granted, recordRun, recordWithoutAudio, microphonePermission?.granted, prepareEntry, entryAttempt]);
 
   useEffect(() => {
     trackerTransferTokenRef.current += 1;
@@ -1019,6 +1037,7 @@ function GameContent() {
     setEvolvedTo(null);
     setShowEvolutionCeremony(false);
     setRunKey((k) => k + 1);
+    onNewRun();
   };
 
   const goToNextLevel = () => {
@@ -1046,6 +1065,7 @@ function GameContent() {
     setEvolvedTo(null);
     setShowEvolutionCeremony(false);
     setRunKey((k) => k + 1);
+    onNewRun();
     router.replace({
       pathname: '/game',
       params: {
@@ -1210,7 +1230,7 @@ function GameContent() {
     <View style={{ flex: 1, backgroundColor: level.sky1 }}>
       {privacyChoicesSheet}
       <StatusBar style="light" hidden={Platform.OS === 'ios'} />
-      {webSource && !trackerLoadError ? (
+      {webSource && !trackerLoadError && entryReady ? (
         <WebView
           ref={webViewRef}
           key={runKey}
@@ -1243,11 +1263,11 @@ function GameContent() {
             backgroundColor: level.sky1,
           }}
         >
-          {birdImageErrorKey === birdImageRequestKey || trackerLoadError ? null : (
+          {birdImageErrorKey === birdImageRequestKey || trackerLoadError || entryError ? null : (
             <ActivityIndicator color="#FFFFFF" size="large" />
           )}
           <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '800' }}>
-            {birdImageErrorKey === birdImageRequestKey
+            {entryError ? entryError : birdImageErrorKey === birdImageRequestKey
               ? 'Your bird did not load.'
               : trackerLoadError
                 ? 'The on-device camera tracker did not load.'
@@ -1255,9 +1275,10 @@ function GameContent() {
                   ? 'Starting your game…'
                   : 'Preparing on-device tracking…'}
           </Text>
-          {birdImageErrorKey === birdImageRequestKey || trackerLoadError ? (
+          {birdImageErrorKey === birdImageRequestKey || trackerLoadError || entryError ? (
             <TouchableOpacity
               onPress={() => {
+                if (entryError) { setEntryError(null); setEntryAttempt(value => value + 1); return; }
                 if (birdImageErrorKey === birdImageRequestKey) {
                   setRunKey((key) => key + 1);
                 }

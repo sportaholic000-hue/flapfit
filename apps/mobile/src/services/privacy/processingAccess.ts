@@ -59,6 +59,16 @@ function validChoice(value: unknown): value is ProcessingChoice {
 function validRegion(value: unknown): value is PrivacyRegion {
   return ['us', 'ca-quebec', 'ca-other', 'other', 'unknown'].includes(value as string);
 }
+class ProcessingSaveFailure extends Error {
+  constructor(error: unknown, readonly cancelled: Partial<Record<Purpose, number>>) {
+    super(error instanceof Error ? error.message : 'Privacy choice save failed');
+  }
+}
+/** A storage failure cancels its unsaved grants. Distinguish that cancellation
+ * from a newer user action before completing the corresponding native stop. */
+export function isCurrentProcessingSaveFailure(error: unknown, purpose: Purpose): boolean {
+  return error instanceof ProcessingSaveFailure && error.cancelled[purpose] === purposeRevision[purpose];
+}
 function persist(changedPurpose?: Purpose): Promise<void> {
   const operation = writes.catch(() => undefined).then(async () => {
     try {
@@ -69,12 +79,13 @@ function persist(changedPurpose?: Purpose): Promise<void> {
         decision: 'denied', noticeVersion: PROCESSING_NOTICE_VERSION, decidedAt: new Date().toISOString(),
       };
       const choices = { ...input.choices };
+      const cancelled: Partial<Record<Purpose, number>> = {};
       (['ads', 'analytics', 'competition'] as const).forEach((purpose) => {
         // Cancel unsaved grants, but a reporting write failure cannot revoke
         // an independently established advertising or competition choice.
         if (!changedPurpose || purpose === changedPurpose ||
             durable.choices[purpose] !== input.choices[purpose]) {
-          ++purposeRevision[purpose];
+          cancelled[purpose] = ++purposeRevision[purpose];
           choices[purpose] = { ...denied };
         }
       });
@@ -84,7 +95,7 @@ function persist(changedPurpose?: Purpose): Promise<void> {
       // Deleting it would leave the separate notice acknowledged but erase those
       // refusals on restart. The failed operation still rejects and can be retried;
       // no unconfirmed withdrawal is reported as durable.
-      throw error;
+      throw new ProcessingSaveFailure(error, cancelled);
     }
   });
   writes = operation;
@@ -207,6 +218,8 @@ export function setAppleAccessRestricted(restricted: boolean): void {
 export const getProcessingChoiceRevision = (purpose: Purpose): number => purposeRevision[purpose];
 export const beginProcessingChoice = (purpose: Purpose): number => ++purposeRevision[purpose];
 export const isProcessingChoiceCurrent = (purpose: Purpose, generation: number): boolean => purposeRevision[purpose] === generation;
+/** Refresh truthful pending-action controls without changing any permission. */
+export function notifyProcessingChoiceIntent(): void { publish({ ...input }); }
 export async function setProcessingChoice(purpose: Purpose, decision: 'granted' | 'denied', intent?: number): Promise<void> {
   const generation = intent ?? beginProcessingChoice(purpose);
   if (!isProcessingChoiceCurrent(purpose, generation)) return;
@@ -278,7 +291,13 @@ export function setLaunchProcessingCountry(country: LaunchCountry | null, curren
   if (previous && previous.country === nextCountry && previous.current === current && !changed) return false;
   publish({ ...input, europeanProvider: undefined, verification: changed ? null : input.verification,
     launch: { country: nextCountry, current, plan: changed ? null : previous?.plan ?? null,
-      resolution: changed ? null : previous?.resolution ?? null, options: changed ? {} : previous?.options ?? {} } });
+      resolution: changed ? null : previous?.resolution ?? null, options: changed ? {
+        ...(previous?.options.newYorkProtectedHistory || previous?.plan?.newYorkKnownContext ? { newYorkProtectedHistory: true } : {}),
+        ...(previous?.options.newYorkHistoryReadConfirmed !== undefined ? { newYorkHistoryReadConfirmed: previous.options.newYorkHistoryReadConfirmed } : {}),
+      } : previous?.options ?? {} } });
+  if (!current && input.launch?.options.newYorkPresence === 'not-present') {
+    applyNewYorkContext({ newYorkPresence: 'unknown' });
+  }
   return changed;
 }
 export function setLaunchProcessingPlan(plan: LaunchProcessingPlan, expectedRevision: number): boolean {
@@ -318,6 +337,25 @@ export function verifyLocalLaunchAgeEvidence(age: AgeEvidence, country: LaunchCo
 export function setLaunchProcessingOptions(options: LaunchProcessingOptions): void {
   if (!input.launch) return;
   publish({ ...input, launch: { ...input.launch, options: JSON.parse(JSON.stringify(options)) as LaunchProcessingOptions } });
+}
+
+/** Country/presence evidence never changes a purpose choice. A known protected
+ * history cannot be cleared by a later No answer or a country refresh. */
+export function applyNewYorkContext(context: Pick<LaunchProcessingOptions,
+  'newYorkPresence' | 'newYorkProtectedHistory' | 'newYorkHistoryReadConfirmed'>): void {
+  if (!input.launch) return;
+  const options = { ...input.launch.options, ...context };
+  if (input.launch.options.newYorkProtectedHistory) options.newYorkProtectedHistory = true;
+  if (JSON.stringify(options) === JSON.stringify(input.launch.options)) return;
+  let plan = input.launch.plan;
+  if (plan) {
+    const { decisions: _decisions, ...refined } = refineLaunchProcessingPlan(plan, {
+      ...options, country: input.launch.country, subdivision: null, choices: input.choices,
+      notices: { ads: false, analytics: false, competition: false },
+    });
+    plan = refined;
+  }
+  publish({ ...input, launch: { ...input.launch, options, plan, resolution: null } });
 }
 
 /** Local residency clarification changes only the applicable regional rule.

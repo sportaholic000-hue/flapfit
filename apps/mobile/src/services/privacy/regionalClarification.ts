@@ -41,7 +41,7 @@ export function hasConnecticutClarificationControl(): boolean {
 export function needsConnecticutClarification(): boolean {
   const input = getProcessingInputs();
   return hasConnecticutClarificationControl() && (changing || saveUnconfirmed || !validAnswer(input.launch?.options.connecticutResidency)) &&
-    (input.choices.ads.decision !== 'denied' || input.choices.analytics.decision !== 'denied');
+    !input.launch?.options.newYorkProtectedHistory && !input.launch?.plan?.newYorkKnownContext;
 }
 export function connecticutClarificationStatus(): string {
   if (saveUnconfirmed) return 'Answer save not confirmed · choose your answer again to retry';
@@ -114,7 +114,8 @@ export function hasQuebecClarificationControl(): boolean {
 export function needsQuebecClarification(): boolean {
   const input = getProcessingInputs();
   return hasQuebecClarificationControl() && (quebecChanging || quebecSaveUnconfirmed || !validAnswer(input.launch?.options.quebecResidency)) &&
-    (input.choices.ads.decision !== 'denied' || input.choices.analytics.decision !== 'denied');
+    !(input.launch?.plan?.treatment !== 'unspecified' &&
+      (input.launch?.options.newYorkProtectedHistory || input.launch?.plan?.newYorkKnownContext));
 }
 export function quebecClarificationStatus(): string {
   if (quebecSaveUnconfirmed) return 'Answer save not confirmed · choose your answer again to retry';

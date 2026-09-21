@@ -12,12 +12,12 @@ export const LAUNCH_PROCESSING_ROUTES = {
   competition: { requestedServiceOnly: true },
 } as const;
 export type LaunchMissingFact = 'country' | 'age' | 'province' | 'state' |
-  'parental-authority' | 'new-york-covered-user' | 'new-york-applicability' | 'contextual-ad-necessity';
+  'parental-authority' | 'new-york-covered-user' | 'new-york-applicability' | 'new-york-location' | 'contextual-ad-necessity';
 export type LaunchPolicyReason = 'notice-route' | 'requested-service' | 'country-unresolved' |
   'outside-launch-scope' | 'age-unresolved' | 'outside-audience' | 'province-unresolved' |
   'state-unresolved' | 'parental-authority-required' | 'quebec-activation-required' |
   'new-york-express-consent-required' | 'new-york-applicability-unresolved' | 'connecticut-ad-necessity-unresolved' |
-  'connecticut-reporting-not-necessary';
+  'connecticut-reporting-not-necessary' | 'new-york-location-unresolved';
 export type ConnecticutResidency = 'resident' | 'not-resident' | 'unknown';
 export type QuebecResidency = 'resident' | 'not-resident' | 'unknown';
 export type LaunchProcessingOptions = {
@@ -25,6 +25,11 @@ export type LaunchProcessingOptions = {
   quebecResidency?: QuebecResidency;
   /** Explicit local clarification, not IP location or New York consent. */
   connecticutResidency?: ConnecticutResidency;
+  /** Current-session location answer, never inferred from residence or storefront. */
+  newYorkPresence?: 'present' | 'not-present' | 'unknown';
+  /** Known prior covered-user context is retained across country changes. */
+  newYorkProtectedHistory?: boolean;
+  newYorkHistoryReadConfirmed?: boolean;
   /** Verified authority for this processing; never download permission. */
   parentalAuthority?: Partial<Record<Purpose, boolean>>;
   /** Exact disclosed purpose activation, not Google vendor consent or a generic grant. */
@@ -44,6 +49,8 @@ export type LaunchProcessingInput = LaunchProcessingOptions & {
 /** Derived rules only. May be retained in RAM; never contains raw Apple bounds/source. */
 type LaunchAgeThresholds = { thirteen: boolean; fourteen: boolean; fifteen: boolean; eighteen: boolean };
 export type LaunchProcessingPlan = {
+  /** Minimal positive context retained through later refinements; never an exemption. */
+  newYorkKnownContext?: boolean;
   /** Latent CA-specific authority rule for a later confirmed Quebec refinement. */
   quebecMinorAuthorityRequired: boolean;
   requirements: Record<Purpose, PurposeRequirement>;
@@ -63,9 +70,9 @@ export type LaunchProcessingResolution = LaunchProcessingPlan & {
 /** No birthday; at most three Apple thresholds in any request. */
 export function launchAppleAgeGates(country: string | null): [number, number, number] {
   switch (country?.trim().toUpperCase()) {
-    // Adjacent 13/14 gates are invalid in Apple's API. Below 14 remains
-    // unresolved for optional processing; this never restricts local play.
-    case 'CA': return [14, 16, 18];
+    // Quebec is outside this release's availability. The supported Canadian
+    // audience starts at 13; do not lose thirteen-year-olds to a 14 boundary.
+    case 'CA': return [13, 16, 18];
     case 'AU': return [13, 15, 18];
     default: return [13, 16, 18];
   }
@@ -177,7 +184,7 @@ export function refineLaunchProcessingPlan(
 ): LaunchProcessingResolution {
   const adult = plan.ageEligibility === 'allowed' && plan.treatment === 'unspecified';
   const country = input.country?.trim().toUpperCase();
-  return resolveWithThresholds(input, plan.ageEligibility, {
+  return resolveWithThresholds({ ...input, newYorkProtectedHistory: input.newYorkProtectedHistory || plan.newYorkKnownContext }, plan.ageEligibility, {
     thirteen: plan.ageEligibility === 'allowed',
     fourteen: adult || (country === 'CA' && !plan.quebecMinorAuthorityRequired),
     fifteen: adult || (country === 'AU' && !plan.underAgeOfConsent),
@@ -216,6 +223,9 @@ function resolveWithThresholds(
   }
   const adult = thresholds.eighteen;
   const subdivision = input.subdivision?.trim().toUpperCase().replace(new RegExp('^' + country + '-'), '') ?? '';
+  plan.newYorkKnownContext = input.newYorkProtectedHistory === true || (!adult && (
+    (country === 'US' && (subdivision === 'NY' || input.newYorkPresence === 'present')) ||
+    input.newYorkApplicability?.ads?.status === 'applies' || input.newYorkApplicability?.analytics?.status === 'applies'));
   const knownProvince = country === 'CA' && PROVINCES.has(subdivision);
   const knownState = country === 'US' && STATES.has(subdivision);
   const quebecConfirmed = country === 'CA' && (subdivision === 'QC' || input.quebecResidency === 'resident');
@@ -239,6 +249,10 @@ function resolveWithThresholds(
       continue;
     }
     if (purpose === 'competition') continue;
+    if (!adult && input.newYorkHistoryReadConfirmed === false) {
+      block(purpose, 'new-york-applicability-unresolved', 'new-york-covered-user');
+      continue;
+    }
     if (quebecConfirmed) {
       plan.quebecActivationRequired[purpose] = true;
       plan.requirements[purpose] = 'express-consent';
@@ -260,20 +274,22 @@ function resolveWithThresholds(
         continue;
       }
     }
-    // NY 899-ee requires a covered user; 899-ll separately limits territorial scope.
-    // Missing wholly-outside evidence proves neither coverage nor a worldwide duty.
-    // Keep the existing conservative fallback pending that pre-build decision; this
-    // is not an Apple requirement and does not label every teen a covered NY user.
-    const newYorkConfirmed = (country === 'US' && subdivision === 'NY') ||
+    // Coverage (899-ee) and the territorial exception (899-ll) are distinct.
+    // No NY history is cleared by a current country or residence answer. Equally,
+    // absence of a wholly-outside assessment does not establish worldwide coverage.
+    const newYorkConfirmed = input.newYorkProtectedHistory === true ||
+      (country === 'US' && (subdivision === 'NY' || input.newYorkPresence === 'present')) ||
       input.newYorkApplicability?.[purpose]?.status === 'applies';
-    if (!adult && (newYorkConfirmed || !outsideNewYork(input.newYorkApplicability?.[purpose]))) {
+    const newYorkLocationUnknown = country === 'US' && input.newYorkPresence !== 'not-present' &&
+      !outsideNewYork(input.newYorkApplicability?.[purpose]);
+    if (!adult && !newYorkConfirmed && newYorkLocationUnknown) {
+      block(purpose, 'new-york-location-unresolved', 'new-york-location');
+      continue;
+    }
+    if (!adult && newYorkConfirmed) {
       plan.requirements[purpose] = 'express-consent';
       plan.separateExpressChoiceRequired[purpose] = true;
-      // Consent is the fallback when the whole processing exemption is unproved;
-      // that is not evidence that this user lives in New York.
-      plan.reasons[purpose] = newYorkConfirmed
-        ? 'new-york-express-consent-required' : 'new-york-applicability-unresolved';
-      if (!newYorkConfirmed) plan.missingFacts[purpose].push('new-york-covered-user', 'new-york-applicability');
+      plan.reasons[purpose] = 'new-york-express-consent-required';
     }
   }
   return finish();

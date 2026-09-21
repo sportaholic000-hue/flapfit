@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "18957f759a7133c8cc21f936d592cf1d704e592b",
+  "version": 32,
+  "versionId": "appgprj_6aa368d995348191b4206fa03f951b3a~appgver_f3e9049c52088191a4211d624b014535",
+  "projectId": "appgprj_6aa368d995348191b4206fa03f951b3a",
+  "archive": {
+    "archive_format": "tar",
+    "sediment_file_id": "file_00000000083881f69d51f51d270b28fa",
+    "content_hash": "sha256:80db2d596e8836c9c41c6e7ec74a706085d64daf99372c392849119d17aa12eb",
+    "size_bytes": 9758720,
+    "file_count": 41
+  },
+  "status": "SAVED_NOT_DEPLOYED",
+  "publicationBlocked": "Automatic approval review rejected deployment because the earlier user instruction prohibited deployment; owner authorization requested.",
+  "liveVersion": 31,
+  "liveSourceCommit": "6b23ee3883ceda26d01f8d41839e8fe567227f0c"
+}

@@ -1,7 +1,7 @@
 # Flap Fit — consolidated device acceptance (held)
 
 **Do not start yet.** This is a prepared procedure, not a testing request or build authorization.
-The combined three-finding successor is recorded in `evidence/audit-three-findings-2026-09-20.md`.
+The current eligibility successor and retained three-finding fixes are recorded in `evidence/release-eligibility-2026-09-21.md`.
 The build remains held pending the owner's next instruction; no device testing is requested.
 Finish authorized source/configuration work and inspect its matching artifact before supplying an
 installation route. Source tests, signed artifacts, installed results and provider receipt are separate.
@@ -60,7 +60,7 @@ fill the device's disk, or add developer controls to the release.
 | No optional pregame interruption | First ordinary Squats/Sky run; record any system sheet and its actual requirement. Optional Info/result choices must not become new onboarding. |
 | Native handoff | At the applicable result exit, exercise the existing sheet's Close and Save paths, then background/return while a sheet is visible. Record the chosen action and visible presentations. If Google requires no form for this device, record that fact; do not claim the Google-form transition was physically exercised. |
 | Ad timing and empty readiness | Record eligible exit counts and times of actual ad openings across the session. Confirm first exit free, every-second eligibility and 90-second spacing. If no ad is ready, the action must continue immediately and no later ad may cover gameplay. Do not force live ad clicks. |
-| Offline continuation | Temporarily disconnect network for a local run/result exit, then restore it. This proves that local continuation survives unavailable networking; it does not reproduce a specific Google no-fill/failure callback. A provider failure not actually observed stays untested physically, with source/native evidence separate. |
+| Offline and unanswered eligibility | During an admitted run, disconnect/return and finish without losing the recording. Before a new run, unavailable country/age/region evidence must show truthful recovery, not repeat ad-free admission. Close/Back/restart leaves an unanswered question unanswered. Restore connectivity and answer only the actual applicable question in Info, then retry. This is distinct from a no-fill callback: unavailable ads must not block an otherwise eligible continuation. |
 | Reporting receipt and withdrawal | Record a fresh installed RC ID when genuinely created and its permitted event/impression ID, placement and UTC times from available SDK/provider evidence. Match that exact event in the existing RC account. Stop reporting in Info, then background and cold-launch while independently permitted Google ads remain. If the provider view exposes insufficient evidence, keep receipt open; do not use customer-info GET or a connection badge as a substitute. |
 | Failure-specific Retry controls | The two rendered failure/retry regressions already passed. No storage/native failure is manufactured on the owner's device. Any physical failure observed must retain Retry; absent one, these failure cases retain their source-test evidence and are not called physical passes. |
 | Withdrawal while native ad is open | There is no pretend in-ad Info control. Only a genuine applicable external authorization change could exercise this physically. If unavailable, retain the source and worker native cancellation evidence and explicitly leave the physical scenario unexercised. |
