@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "f168286d9058093a42da8e96f02f53a82365a7e6",
+  "stage": "Actual EAS build:inspect archive; no cloud upload",
+  "fileCount": 746,
+  "byteMatchedRuntimeAssetPatchFiles": 235,
+  "requiredConfigurationFilesMatched": 10,
+  "secretFileCount": 0,
+  "retiredArchiveFilesExcluded": true,
+  "webCheckoutFilesExcluded": true,
+  "newManifestValidatorAndRegressionIncluded": true,
+  "productionValidatorExit": 0,
+  "productionValidatorLogSha256": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4",
+  "compiledArtifactVerified": false
+}

@@ -70,3 +70,9 @@ README.md
 
 # Generated Xcode evidence is an EAS artifact, never a source input.
 /apps/mobile/release-evidence/
+
+# Generated exports and nested install state are never source inputs.
+/apps/mobile/dist
+/apps/mobile/web-build
+/apps/mobile/.metro-virtual
+**/.yarn/install-state.gz

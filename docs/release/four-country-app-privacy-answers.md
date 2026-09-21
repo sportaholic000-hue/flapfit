@@ -55,3 +55,8 @@ Build-4 native artifact checks are complete as recorded below; installed checks 
 ## Build-4 artifact reconciliation
 
 Store 103c8936, source c05f497, was inspected on September 20. All 15 manifest semantics match the previously reviewed artifact, including the stock RevenueCat Purchase History capability declaration. The worker verifies the ten-file native ads-only/consent fence, and its isolated lifecycle harness passes. Actual production profile, delayed Google measurement, no ATT usage description, permissions and entitlement are confirmed in the signed app. These close native-artifact observations only; they do not prove real provider traffic, native physical behavior, generate an Xcode aggregate report, or publish the Apple questionnaire. The existing twelve-category draft remains saved but unpublished.
+
+
+## Native declaration correction checkpoint
+
+The twelve-category saved draft is unchanged. Source f168286d supplements the app-owned native manifest for existing authorization records, backend diagnostics, country lookup and permitted ads-only reporting. No camera/video/audio upload or new runtime collection was added. Build 4 lacks this correction; prior manifest equality did not prove completeness. See evidence/privacy-manifest-reconciliation-2026-09-20.md. Final native/report reconciliation and publication remain open.

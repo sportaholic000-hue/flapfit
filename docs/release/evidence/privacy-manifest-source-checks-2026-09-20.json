@@ -1,0 +1,2093 @@
+{
+  "sourceCommit": "f168286d9058093a42da8e96f02f53a82365a7e6",
+  "remoteShaVerified": true,
+  "scope": "App-owned native declarations and release validation only; no runtime/UI changes.",
+  "sourceChecks": {
+    "release": {
+      "exitCode": 0,
+      "evidence": "Completed process exit observed in task; an empty log is valid for successful quiet checks.",
+      "logSha256": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4"
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "evidence": "Completed process exit observed in task; an empty log is valid for successful quiet checks.",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "lint": {
+      "exitCode": 0,
+      "evidence": "Completed process exit observed in task; an empty log is valid for successful quiet checks.",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "focusedJest": {
+    "success": true,
+    "suites": 1,
+    "tests": 11,
+    "namedAssertions": [
+      {
+        "name": "current declarations cover the existing backend and ads-only reporting data",
+        "status": "passed"
+      },
+      {
+        "name": "rejects a missing existing OtherDataTypes collection declaration",
+        "status": "passed"
+      },
+      {
+        "name": "rejects a missing existing OtherDiagnosticData collection declaration",
+        "status": "passed"
+      },
+      {
+        "name": "rejects a missing existing CoarseLocation collection declaration",
+        "status": "passed"
+      },
+      {
+        "name": "rejects a missing existing AdvertisingData collection declaration",
+        "status": "passed"
+      },
+      {
+        "name": "rejects a missing existing ProductInteraction collection declaration",
+        "status": "passed"
+      },
+      {
+        "name": "rejects the prior four-category manifest and omitted reporting purpose",
+        "status": "passed"
+      },
+      {
+        "name": "rejects missing UserID purpose Analytics",
+        "status": "passed"
+      },
+      {
+        "name": "rejects missing OtherDataTypes purpose AppFunctionality",
+        "status": "passed"
+      },
+      {
+        "name": "rejects an incorrect authorization-record NSPrivacyCollectedDataTypeLinked declaration",
+        "status": "passed"
+      },
+      {
+        "name": "rejects an incorrect authorization-record NSPrivacyCollectedDataTypeTracking declaration",
+        "status": "passed"
+      }
+    ]
+  },
+  "fullSuccessorRegression": {
+    "passed": true,
+    "disposition": "All 58 suites / 1117 tests passed in the completed direct run.",
+    "counts": {
+      "success": true,
+      "numPassedTestSuites": 58,
+      "numFailedTestSuites": 0,
+      "numPassedTests": 1117,
+      "numFailedTests": 0
+    }
+  },
+  "completedInitialFullRun": {
+    "success": false,
+    "numPassedTestSuites": 57,
+    "numFailedTestSuites": 1,
+    "numPassedTests": 1116,
+    "numFailedTests": 1
+  },
+  "timeoutFollowup": {
+    "initialFailure": "First rendered save-withdrawal retry case exceeded its 20000ms test timeout; recorded duration 29508ms. No behavior assertion failure was reported.",
+    "isolatedSameCase": {
+      "name": "a failed reporting save retains a rendered retry across remount without enabling reporting or stopping ads",
+      "status": "passed",
+      "durationMs": 2700
+    },
+    "assertionsChanged": false,
+    "testTimeoutChanged": false,
+    "timeoutMs": 20000,
+    "cause": "Timing was transient on this host; the exact blocked setup step was not instrumented, so no definitive cause is claimed."
+  },
+  "integrity": {
+    "sourceCommit": "f168286d9058093a42da8e96f02f53a82365a7e6",
+    "credentialScan": {
+      "scope": "Known credential signatures and decoded service-role JWTs in current tracked source and actual EAS upload. No history/entropy claim; values omitted.",
+      "counts": {
+        "tracked-current-tree": 564,
+        "actual-eas-upload": 746
+      },
+      "findings": []
+    },
+    "lockedGraphAndPatchesUnchangedSince": "d2f85fd6e2fa685421d59cabf4da1df0ec742741",
+    "unchangedInputs": {
+      "package.json": true,
+      "yarn.lock": true,
+      ".yarnrc.yml": true,
+      ".yarn/patches/decode-uri-component-npm-0.2.2-flapfit.patch": true,
+      ".yarn/patches/expo-sms-npm-57.0.2-32281c0cc4.patch": true,
+      ".yarn/patches/react-native-google-mobile-ads-npm-16.5.0-flapfit.patch": true,
+      "mobile.dependencies": true,
+      "mobile.devDependencies": true,
+      "mobile.resolutions": true
+    },
+    "priorAdvisoryEvidence": "current-release-integrity-2026-09-20.json",
+    "compiledSuccessorInspected": false
+  },
+  "package": {
+    "sourceCommit": "f168286d9058093a42da8e96f02f53a82365a7e6",
+    "stage": "Actual EAS build:inspect archive; no cloud upload",
+    "fileCount": 746,
+    "byteMatchedRuntimeAssetPatchFiles": 235,
+    "requiredConfigurationFilesMatched": 10,
+    "secretFileCount": 0,
+    "retiredArchiveFilesExcluded": true,
+    "webCheckoutFilesExcluded": true,
+    "newManifestValidatorAndRegressionIncluded": true,
+    "productionValidatorExit": 0,
+    "productionValidatorLogSha256": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4",
+    "compiledArtifactVerified": false
+  },
+  "compiledSuccessorVerified": false,
+  "physicalDeviceVerified": false,
+  "genuineRevenueCatReceiptVerified": false,
+  "behaviorRegressionEvidence": [
+    {
+      "suite": "monetization.test.ts",
+      "name": "does not evaluate either native SDK in unsupported runtime {\"expoGo\":true}",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "does not evaluate either native SDK in unsupported runtime {\"platform\":\"web\"}",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "leaving the lobby during the consent request cannot present a form",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a consent service failure disables ads without blocking independently permitted RevenueCat",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "RevenueCat failure does not disable the separately functioning ad SDK",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "reports one ad identity with SDK-correct micros and no gameplay attributes",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "rejects invalid paid events rather than reporting misleading revenue",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "changing privacy choices invalidates an already loaded ad",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "late startup initialization cannot undo newer denied privacy choices",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "entering a game cancels a slow info request without waiting for the network",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "game entry waits for an already loading native form (failure=false)",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "game entry waits for an already loading native form (failure=true)",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a new consent check cannot reuse old ad permission when gameplay wins the race",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "privacy options cannot launch a second native form over one already loading",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "granting privacy choices later applies the PG cap before the first SDK initialization",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "discarding an unused result destroys its native request exactly once",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "load startup exceptions still dispose the created SDK instance",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "consent invalidation destroys unfinished ads and ignores their late revenue/load events",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a forwarded Android presentation failure completes the selected result action once",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "unresolved processing never loads either SDK",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "restricted teen ads run without RevenueCat consent",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "restricted child ads run without RevenueCat consent",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "processing permission alone cannot override UMP denial",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a build missing the native RevenueCat stop fence still serves eligible ads",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "analytics refusal preserves loaded ads and drops queued and subsequent reporting",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "ad-specific changes invalidate preloads and late native initialization",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "analytics refusal during native grant never configures RevenueCat",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "analytics can be granted later while an existing eligible ad remains ready",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "withdrawal followed by a later grant does not replay old queued events",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "withdrawal waits for native close before completing an active result exit once",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "native withdrawal reject remains observable after RevenueCat starts",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "native withdrawal missing remains observable after RevenueCat starts",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "native withdrawal false remains observable after RevenueCat starts",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "missing native bridge is safe to acknowledge when RevenueCat never started",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a failed native withdrawal can be retried without enabling reporting or disabling ads",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "withdrawal during a configured SDK re-grant requires a native stop acknowledgement",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "an uncertain native re-grant is closed again before reporting can resume",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a restored RevenueCat grant initializes independently when ads are denied before module load",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "withdrawal during pending ios presentation retains terminal ownership",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "withdrawal during pending android presentation retains terminal ownership",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "withdrawal while displayed/pending releases only after native close and foreground",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "withdrawal while displayed/pending releases only after native error and foreground",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "withdrawal while displayed/pending releases only after native reject and foreground",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "withdrawal before show destroys the preload and continues without native presentation",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "unmount retains the native closed barrier but never replays the old result action",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "unmount retains the native error barrier but never replays the old result action",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "unmount retains the native reject barrier but never replays the old result action",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "privacy form cannot cover an unsettled native result ad",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a cold restricted session recovers the required Google entry without starting either SDK",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "required-entry recovery keeps known requirements on unknown/error, and clears an explicit not-required result",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a stale read cannot erase the privacy result from a newer form",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a late native rights query cannot open a form after game",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a late native rights query cannot open a form after background",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a late native rights query cannot open a form after blur",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "repeated rights requests share one native form and game entry waits for its completion",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "native Google choices can restore independently permitted restricted ads without RevenueCat",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "native Google refusal does not erase independent RevenueCat permission or initialize ads",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "unavailable Google rights UNKNOWN surface a retryable failure",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "unavailable Google rights error surface a retryable failure",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "lobby re-entry cannot start a second native form while privacy options are presented",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "lobby re-entry during an unresolved rights query cannot bypass its later refusal",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "positive Apple duty invokes the system check with no location question or invented processing grant",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "Apple duty pending never automatically presents the age sheet",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "Apple duty error never automatically presents the age sheet",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "Apple duty not-required never automatically presents the age sheet",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "Apple duty unsupported never automatically presents the age sheet",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "an already satisfied Apple check is reused and no repeated system sheet is requested",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "Apple refusal is not automatically re-requested on ordinary lobby return",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "game entry waits for an Apple system sheet already dispatched, without allowing ads",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "leaving the lobby before native dispatch cannot show an Apple sheet over the next screen",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "an invalidated Apple response cannot consume the fresh account check attempt",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "the lobby key changes when required Apple information is satisfied, without exposing any range",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "required Apple sheet waits for an already pending Google rights lookup and form",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "lobby readiness changes when permitted ads become available while analytics remains refused",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "the lobby key ignores unrelated competition revisions but reacts to each effective SDK decision",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a newer eligible ad policy resumes after an old info request without waiting for another lobby visit",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a queued policy refresh cannot resume after game",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a queued policy refresh cannot resume after blur",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a queued policy refresh cannot resume after background",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "unchanged failed setup does not become an automatic retry loop for concurrent callers",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a newer independent policy waits for the Google rights form before preparing eligible ads",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "an eligible teen above the consent threshold retains teen ads through startup",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "an eligible teen above the consent threshold retains teen ads through privacy-options",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "a consent-threshold change replaces the ad treatment without granting analytics",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "test diagnostics follow genuine dispatched callbacks with redacted identity and shared impression correlation",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "diagnostics neither read identity nor log without permitted test mode {\"adsMode\":\"live\"}",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "diagnostics neither read identity nor log without permitted test mode {\"rcAllowed\":false}",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "optional identity lookup reject cannot disable reporting or eligible ads",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "optional identity lookup throw cannot disable reporting or eligible ads",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "optional identity lookup missing cannot disable reporting or eligible ads",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "optional identity lookup pending cannot disable reporting or eligible ads",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "withdrawal rejects queued diagnostic dispatch and a stale identity result after regrant",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "Android launch context preserves the existing independently permitted SDK route without requesting Apple",
+      "status": "passed"
+    },
+    {
+      "suite": "monetization.test.ts",
+      "name": "Android launch context does not turn unknown processing into permission",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "unknown eligibility blocks public reads and run creation before anonymous Auth",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "competition remains available when RevenueCat analytics is refused",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "community terms remain necessary even with independently allowed processing",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "withdrawal during session loading cannot create a guest or later send a request",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "withdrawal aborts an in-flight request and ignores its late success after regrant",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "Supabase transport is gated independently of periodic refresh",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "withdrawal preserves queued local scores and foreground retry sends nothing until reauthorized",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "revocation during score submission preserves it and suppresses foreground success",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "withdrawal does not block deletion of an existing identity or create a replacement guest",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "support ID lookup after withdrawal only uses an existing identity",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "a late Supabase Auth response body cannot complete after withdrawal",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "concurrent first-use requests share one anonymous identity and its returned token",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "a failed shared signup is cleared so a later request can recover",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "an intentionally local run has a local outcome without upload activity: privacy denied",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "an intentionally local run has a local outcome without upload activity: terms missing",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "granting processing later does not retroactively publish a run that began locally",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "actual online run creation failure stays distinct from a deliberate local run",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "withdrawal during run creation settles as local even after an immediate regrant",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "withdrawal after online run creation keeps its score locally without publishing status or transport",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "the result-status callback reports a real online upload and accepted outcome",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "withdrawal while publishing yields local status rather than a failed upload message",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "a full online outbox does not turn a withdrawn run into an upload failure",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "one first-use caller timing out does not cancel another caller sharing its identity lookup",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "a timed-out identity lookup cannot poison retries or create a guest from its late result",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "the last caller timing out aborts shared Auth transport and rejects its late body",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "required Apple status is checked before any anonymous identity exists",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "required first use shares one identity and waits for verified link before all competition dispatches",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "fresh linked profile is reused without repeatedly starting link checks",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "required link revoked cannot dispatch a game request",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "required link unavailable cannot dispatch a game request",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "a status invalidated during required authentication prevents linking or dispatch",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "stale link completion cannot dispatch or bypass an independent competition refusal",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "required Apple denial still permits authenticated deletion and support without status, link, or signup",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "the existing root foreground service already starts required Apple monitoring without competition participation",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "an already-required duty starts monitoring at root-service mount without an Auth session",
+      "status": "passed"
+    },
+    {
+      "suite": "competition-processing-access.test.ts",
+      "name": "required monitoring is not duplicated by synchronous restriction publication and stops when the duty clears",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "real cold startup connects trusted country and native Apple before eligibility; only actual disclosure callback unlocks adult notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "analytics refusal leaves separately permitted restricted advertising functioning",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "unknown country or age {\"offline\":true} cannot initialize SDKs",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "unknown country or age {\"age\":{\"status\":\"declined\"}} cannot initialize SDKs",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "same-country foreground reuses verified plan while background immediately stops processing and preserves withdrawal",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "game entry cancels queued native privacy presentation without changing gameplay",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "a refused required country-specific Apple request never falls back to a second system sheet",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "a stale background age response does not consume the fresh same-country attempt",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "a fresh lobby caller joining an old native sheet recovers after foreground returns before the old response",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "first-play preparation requests no optional age, advertising, or reporting permission",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "a genuine required Apple check remains before play without starting optional SDKs",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "US adult post-game acknowledgement permits ads and reporting without repeated notices",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "AU adult post-game acknowledgement permits ads and reporting without repeated notices",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "MX adult post-game acknowledgement permits ads and reporting without repeated notices",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "reporting refusal through Info survives relaunch while permitted Google ads initialize",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "Canadian activation is purpose-specific and can allow ads with reporting refused",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "post-game unknown evidence {\"offline\":true} grants nothing and shows no misleading consent request",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "post-game unknown evidence {\"age\":{\"status\":\"declined\"}} grants nothing and shows no misleading consent request",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "a stale post-game alert response cannot acknowledge the notice or initialize providers",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "saved reporting refusal survives an unrelated failed competition save and restart",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "Google presentation waits for privacy dismissal; backgrounded=false",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "Google presentation waits for privacy dismissal; backgrounded=true",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "US teen result flow resolves residency and independent consent in one sheet before Google presentation",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "closing the US teen clarification continues locally without recurring prompts or SDK initialization",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "AU eligible teen: independent choices, withdrawal and restart use the production coordinator",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "CA eligible teen: independent choices, withdrawal and restart use the production coordinator",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "AU 13-14 cannot turn a personal grant into verified authority",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "MX 13-15 cannot turn a personal grant into verified authority",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "MX 16-17 cannot turn a personal grant into verified authority",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "CA 0-13 cannot turn a personal grant into verified authority",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "US adult reporting refusal and competition permission persist independently across restart",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "CA adult reporting refusal and competition permission persist independently across restart",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "AU adult reporting refusal and competition permission persist independently across restart",
+      "status": "passed"
+    },
+    {
+      "suite": "launchProcessingIntegration.test.ts",
+      "name": "MX adult reporting refusal and competition permission persist independently across restart",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "a failed reporting save retains a rendered retry across remount without enabling reporting or stopping ads",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "a failed reporting native retains a rendered retry across remount without enabling reporting or stopping ads",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "Close waits for iOS native dismissal and completes only once",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "Save & continue waits for iOS native dismissal and completes only once",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "unmount invalidates a late native dismissal callback",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "an early Close waits for presentation then native dismissal, without a timeout",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "the result waiter remains pending through delayed native dismissal and completes exactly once",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "result cancellation and unmount release their waiter without a stale dismissal completing a successor",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "Android Close completes after the unanimated hidden commit without waiting for an iOS-only event",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "closing during a pending save cannot present a late alert or complete before dismissal",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "a replacement in the same React batch waits for the old native sheet to dismiss",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "an unsuccessful later reporting grant cannot reuse an earlier confirmed native stop",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "Info renders only the needed teen residency clarification and preserves independent reporting refusal",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "Info residency save failure keeps every answer reachable for retry and makes no permission claim",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "adult Info has no unnecessary state question",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "AU restricted age shows its actual state without a misleading Allow control",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "MX restricted age shows its actual state without a misleading Allow control",
+      "status": "passed"
+    },
+    {
+      "suite": "PrivacyChoices.test.tsx",
+      "name": "CA restricted age shows its actual state without a misleading Allow control",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "loading or unselected policy never starts processing even after age and region become known",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "a grant is never published before its durable write completes",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "withdrawal takes effect immediately while its persistence is pending",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "a pending grant cannot re-enable its purpose after a newer refusal",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "concurrent grants remain independent and each waits for its durable operation",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "a late hydration result cannot restore a grant over a newer refusal",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "a late hydration result cannot replace a newly selected region",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "a saved refusal survives relaunch and does not refuse other independently permitted purposes",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "failed grant persistence publishes no grant and rejects the operation",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "failed persistence invalidates already queued grants instead of publishing them later",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "failed reporting withdrawal stays off and preserves independently permitted ads and competition",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "a later explicit grant can recover after storage succeeds without granting other purposes",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "a failed region write cannot make that region eligible in memory",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "malformed persisted state cannot grant access: not json",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "malformed persisted state cannot grant access: {\"version\":2,\"region\":\"us\",\"choices\":{}}",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "malformed persisted state cannot grant access: {\"version\":1,\"region\":\"us\",\"choices\":{\"ads\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"}}}",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "malformed persisted state cannot grant access: {\"version\":1,\"region\":\"unrecognized\",\"choices\":{\"ads\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"},\"analytics\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"},\"competition\":{\"decision\":\"granted\",\"noticeVersion\":1,\"decidedAt\":\"2026-09-20T10:00:00.000Z\"}}}",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "unreadable storage leaves purposes off and does not invent a prior choice",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "concurrent hydration uses one read and a shared completion",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "Apple evidence and access permissions are neither persisted nor sent as purpose choices",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "a newly required Apple check invalidates a previously satisfied check",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "Apple restriction takes effect immediately without rewriting the user purpose choices",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "purpose notices enable only an explicitly selected notice-and-opt-out requirement",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "a failing subscriber cannot prevent other observers seeing a withdrawal",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "editing a returned input copy cannot forge a processing choice",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "Apple ranges and source are absent from runtime, saved choices and published snapshots after verification",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "a region change invalidates verification and rejects late evidence for the previous region",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "a finer jurisdiction change within the same coarse region invalidates verification",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "required Apple verification cannot be satisfied by self-declared adult evidence",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "unknown region rejects verification rather than retaining raw evidence for later",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "hydration whitelists purpose-choice fields and cannot restore an old embedded age profile",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "removing an Apple access restriction cannot revive evidence collected before restriction",
+      "status": "passed"
+    },
+    {
+      "suite": "processingAccess.test.ts",
+      "name": "pending rescission suspends required processing without erasing sanitized age or changing independent refusals",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "US teen clarification resolves only Connecticut uncertainty, never NY purpose consent",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "resident cannot override Connecticut necessity with express grants",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "unknown cannot override Connecticut necessity with express grants",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "CA does not receive an unnecessary Connecticut question or accept that answer",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "AU does not receive an unnecessary Connecticut question or accept that answer",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "MX does not receive an unnecessary Connecticut question or accept that answer",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "adults do not receive the teen clarification",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "failed permissive save grants nothing and offers an honest retry",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "a failed restrictive answer stays restricted when other preparation rereads saved evidence",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "restart restores the residency fact but preserves reporting refusal independently",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "an unrelated regional write failure does not erase the saved reporting refusal",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "a stale save cannot apply a US permission to changed country or new age evidence",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalClarification.test.ts",
+      "name": "declining both purposes suppresses an unnecessary result clarification",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "verified US adult route needs notice, not a state question or universal opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Canadian adult ON uses assessed notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Canadian adult BC uses assessed notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Canadian adult AB uses assessed notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Canadian adult NS uses assessed notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Canadian adult CA-ON uses assessed notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Canadian adult CA-NON-QC uses assessed notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unknown country null never defaults to US adult",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unknown country  never defaults to US adult",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unknown country unknown never defaults to US adult",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unreviewed country GB stays outside release policy",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unreviewed country FR stays outside release policy",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unreviewed country AU stays outside release policy",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Canada needs Quebec status, not an unconfirmed null",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Canada needs Quebec status, not an unconfirmed XX",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Canada needs Quebec status, not an unconfirmed US-NY",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Canada needs Quebec status, not an unconfirmed non-quebec",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Canada needs Quebec status, not an unconfirmed other",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "stale adult bounds with unknown status never grant an adult route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "stale adult bounds with declined status never grant an adult route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "stale adult bounds with unsupported status never grant an adult route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "stale adult bounds with unavailable status never grant an adult route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "stale adult bounds with error status never grant an adult route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "malformed interval null..null stays unresolved",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "malformed interval 18..17 stays unresolved",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "malformed interval -1..12 stays unresolved",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "malformed interval 13.5..17 stays unresolved",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "malformed interval 13..NaN stays unresolved",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "under13 is outside audience; a lower-open interval through13 is unresolved",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Quebec inclusive age13 requires parental permission, not teen self-consent",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Quebec 13..14 needs only age14 refinement",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Quebec 13..15 needs only age14 refinement",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Quebec 13..null needs only age14 refinement",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Quebec 14..14 has no universal adult/teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Quebec 14..17 has no universal adult/teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Quebec 18..null has no universal adult/teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Quebec function uncertainty affects its purpose only",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Quebec function activation is separate for ads and analytics",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "Quebec function activation cannot override an unassessed data flow",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "US nonadult-proven interval 13..15 needs state for differing teen rules",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "US nonadult-proven interval 16..17 needs state for differing teen rules",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "US nonadult-proven interval 13..null needs state for differing teen rules",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "US nonadult-proven interval 17..18 needs state for differing teen rules",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "a fictional US state never becomes an ordinary teen route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "NY teen needs separate consent for ads and RevenueCat",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "NY adult does not inherit the teen consent requirements",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "CT teen disclosure and generic consent do not clear necessity",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "CT verified necessary contextual ads can run independently of optional RC reporting",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "CT reporting needs its own explicit strict internal necessity assessment",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "CT adult does not require the minor-only necessity flags",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "verified contextual, non-sale, purpose-limited teen route in CO avoids blanket teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "verified contextual, non-sale, purpose-limited teen route in MT avoids blanket teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "verified contextual, non-sale, purpose-limited teen route in MD avoids blanket teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "verified contextual, non-sale, purpose-limited teen route in OR avoids blanket teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "verified contextual, non-sale, purpose-limited teen route in DE avoids blanket teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "verified contextual, non-sale, purpose-limited teen route in NJ avoids blanket teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "verified contextual, non-sale, purpose-limited teen route in CA avoids blanket teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "verified contextual, non-sale, purpose-limited teen route in TX avoids blanket teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "verified contextual, non-sale, purpose-limited teen route in DC avoids blanket teen opt-in",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unverified ads providerOnly cannot be fixed by selecting adult or notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unverified ads disclosed cannot be fixed by selecting adult or notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unverified ads nonSensitive cannot be fixed by selecting adult or notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unverified ads purposeLimited cannot be fixed by selecting adult or notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unverified ads nonPersonalized cannot be fixed by selecting adult or notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "unverified ads restrictedDataProcessing cannot be fixed by selecting adult or notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "reports every missing data-flow assessment rather than hiding later blockers",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "sale/share/targeting opt-out preserves the verified NPA/RDP ad route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "full ad personal-data withdrawal cannot be bypassed by NPA/RDP",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "analytics refusal leaves verified contextual ads available",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "resolver does not bypass central Apple check or notice version",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "resolution contains no raw Apple evidence and does not mutate input",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "assessed restricted demand permits the applicable US/null/18 notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "assessed restricted demand permits the applicable US/TX/13 notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "assessed restricted demand permits the applicable CA/CA-NON-QC/14 notice route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand still requires its thirdPartyRecipientsDisclosed assessment",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand still requires its bidRequestDataMinimized assessment",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand still requires its creativeProcessingRestricted assessment",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand still requires its noSaleSharingOrCrossContext assessment",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand still requires its contractualPurposeAndRetentionLimits assessment",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand does not replace the shared disclosed check",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand does not replace the shared nonSensitive check",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand does not replace the shared purposeLimited check",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand does not replace the shared nonPersonalized check",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand does not replace the shared restrictedDataProcessing check",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "verified Google-only demand is an alternative ads route, not proof that all recipients are processors",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand does not turn NY minor consent into a notice-only route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand leaves CT necessity independent of disclosure and consent",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted demand does not bypass Quebec function activation or full advertising withdrawal",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "sale/share/targeting opt-out keeps only an independently verified restricted-demand route",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "restricted-demand advertising remains independent of RevenueCat refusal and processor assessment",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "residence US/TX alone cannot decide NY scope for teenage processing",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "residence US/NY alone cannot decide NY scope for teenage processing",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "residence CA/ON alone cannot decide NY scope for teenage processing",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "NY in-state-activity evidence requires teen consent regardless of non-NY residence",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "NY covered-data-history evidence requires teen consent regardless of non-NY residence",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "NY residence does not override verified wholly-outside processing",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "wholly-outside scope requires verified collectedOutsideNewYork",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "wholly-outside scope requires verified noUseInNewYork",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "wholly-outside scope requires verified noNewYorkCollectedDataUsed",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "NY applicability remains independent for ads and analytics",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "NY consent never replaces CT necessity",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "NY applicability never skips Quebec function assessment",
+      "status": "passed"
+    },
+    {
+      "suite": "regionalPolicy.test.ts",
+      "name": "adult processing does not need a minor-only NY scope assessment",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "initial state selects no product policy and allows no processing",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds null through 12 does not become an adult or eligible teen",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds 0 through 12 does not become an adult or eligible teen",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds 12 through 12 does not become an adult or eligible teen",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds null through 13 does not become an adult or eligible teen",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds null through null does not become an adult or eligible teen",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds 12 through 17 does not become an adult or eligible teen",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds 17 through 16 does not become an adult or eligible teen",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds -1 through 12 does not become an adult or eligible teen",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds 13.5 through 17 does not become an adult or eligible teen",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds 13 through NaN does not become an adult or eligible teen",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds eligible range 13 through 13 always receives teen treatment",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds eligible range 13 through 15 always receives teen treatment",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds eligible range 16 through 17 always receives teen treatment",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds eligible range 13 through null always receives teen treatment",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds only an established lower bound of 18 permits adult treatment",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds Quebec range 13 through 13 respects the age-14 boundary",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds Quebec range 13 through 14 respects the age-14 boundary",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds Quebec range 13 through 15 respects the age-14 boundary",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds Quebec range 14 through 14 respects the age-14 boundary",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds Quebec range 14 through 17 respects the age-14 boundary",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds unknown age is never interpreted as adult even if stale adult bounds remain",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds declined age is never interpreted as adult even if stale adult bounds remain",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds unsupported age is never interpreted as adult even if stale adult bounds remain",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds unavailable age is never interpreted as adult even if stale adult bounds remain",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple inclusive age bounds error age is never interpreted as adult even if stale adult bounds remain",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "an Apple check that is pending blocks self-declared eligibility",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "an Apple check that is error blocks self-declared eligibility",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "a self-declared range cannot replace a required Apple result",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "Apple access permission is distinct from purpose authorization",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "region unknown cannot silently borrow a cleared region policy",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "region other cannot silently borrow a cleared region policy",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "refusing ads does not refuse the other purposes",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "refusing analytics does not refuse the other purposes",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "refusing competition does not refuse the other purposes",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "an unresolved analytics policy does not disable independently cleared ads or competition",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "notice-and-opt-out requires its current notice and honors refusal",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "a requested service does not initialize before the user requests it",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "old affirmative permission does not silently authorize a revised notice",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "automatic repeat-request calendar guard no automatic repeat at 2026-09-21T00:00:00.000Z after a 2026 refusal",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "automatic repeat-request calendar guard no automatic repeat at 2027-01-01T00:00:00.000Z after a 2026 refusal",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "automatic repeat-request calendar guard no automatic repeat at 2027-12-31T23:59:59.999Z after a 2026 refusal",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "automatic repeat-request calendar guard allows a new automatic request only after the following calendar year has ended",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "automatic repeat-request calendar guard missing or invalid refusal time cannot shorten the waiting period",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "automatic repeat-request calendar guard does not repeat grants and can initially ask when no decision exists",
+      "status": "passed"
+    },
+    {
+      "suite": "processingPolicy.test.ts",
+      "name": "required Apple rescission check is an independent gate even after valid age and purpose choices",
+      "status": "passed"
+    },
+    {
+      "suite": "resultAdGate.test.ts",
+      "name": "deliberate result action ads never shows on result creation, and the first completed exit is free",
+      "status": "passed"
+    },
+    {
+      "suite": "resultAdGate.test.ts",
+      "name": "deliberate result action ads sharing or a backgrounded app cannot consume an exit or show an ad",
+      "status": "passed"
+    },
+    {
+      "suite": "resultAdGate.test.ts",
+      "name": "deliberate result action ads second exit waits for close and executes the selected action once",
+      "status": "passed"
+    },
+    {
+      "suite": "resultAdGate.test.ts",
+      "name": "deliberate result action ads enforces both the two-exit and ninety-second cap",
+      "status": "passed"
+    },
+    {
+      "suite": "resultAdGate.test.ts",
+      "name": "deliberate result action ads no ready ad or show failure continues without a retry ad",
+      "status": "passed"
+    },
+    {
+      "suite": "resultAdGate.test.ts",
+      "name": "deliberate result action ads a delayed native presentation cannot appear over a new game after a JS timeout",
+      "status": "passed"
+    },
+    {
+      "suite": "resultAdGate.test.ts",
+      "name": "deliberate result action ads close while outside the app waits for foreground without showing another ad",
+      "status": "passed"
+    },
+    {
+      "suite": "resultAdGate.test.ts",
+      "name": "deliberate result action ads unmount cancels pending navigation and ignores late load/show/close callbacks",
+      "status": "passed"
+    }
+  ],
+  "unsuccessfulAttempts": [
+    {
+      "exitCode": "timeout",
+      "log": "manifest-successor-tests-retry.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "priorAttempt": "Interrupted after over 30 minutes without results; not a passing run."
+    },
+    {
+      "exitCode": "timeout",
+      "allTrackedSuitesIncluded": 58,
+      "roots": [
+        "modules",
+        "scripts",
+        "src"
+      ],
+      "preset": "existing jest-expo; unchanged",
+      "cacheDirectory": "workspace work/jest-cache",
+      "priorAttempts": "Two full runs produced no results; preserved as interrupted/timeout, not passed.",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

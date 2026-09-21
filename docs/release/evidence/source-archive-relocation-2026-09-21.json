@@ -1,0 +1,134 @@
+[
+  {
+    "source": "C:\\Users\\money\\Projects\\flapfit\\site",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\01-site-7a808d8",
+    "head": "7a808d87a7e1a5c5749564456accbebf984e9114",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-10\\flap-fit-website",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\02-flap-fit-website-548f050",
+    "head": "548f050fabc56529b56e6a464fc7053a42621af8",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-13\\flapfit-apk-build\\work\\source",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\03-source-f289471",
+    "head": "f2894715ee84cf1154d3370af95dbeda3afbce15",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-16\\g\\work\\audit-fixes-20260919\\eas-archive",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\04-eas-archive-453e363",
+    "head": "453e363f0b2fcbbe0d522777f92fe2888946addd",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-16\\g\\work\\audit-fixes-20260919\\eas-archive-2",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\05-eas-archive-2-453e363",
+    "head": "453e363f0b2fcbbe0d522777f92fe2888946addd",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-16\\g\\work\\audit-fixes-20260919\\eas-archive-3",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\06-eas-archive-3-453e363",
+    "head": "453e363f0b2fcbbe0d522777f92fe2888946addd",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-16\\g\\work\\audit-fixes-20260919\\eas-archive-4",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\07-eas-archive-4-82e8087",
+    "head": "82e8087b44c28b830e2df1414e7bd58b1b00b14c",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\audit-three-successor-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\08-audit-three-successor-upload-b2916d0",
+    "head": "b2916d0eb218823dc8edac88ad6bf7fddf8d9429",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\focused-review-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\09-focused-review-upload-7842fd6",
+    "head": "7842fd6c8714e4080e34430e0dd30d944f988b59",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\focused-review-upload-final",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\10-focused-review-upload-final-2092188",
+    "head": "20921889c3dda24d790b9f1e5ab4706c77a77c45",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\hydration-successor-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\11-hydration-successor-upload-f9ff7cf",
+    "head": "f9ff7cfb029242652d1e231dfe35ce8e313cf48c",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\local-age-fallback-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\12-local-age-fallback-upload-ffdd792",
+    "head": "ffdd7923a78fb70b1ecfa185c8f5417244b7430a",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\manifest-release-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\13-manifest-release-upload-f168286",
+    "head": "f168286d9058093a42da8e96f02f53a82365a7e6",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\reconciled-inputs-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\14-reconciled-inputs-upload-30dffe4",
+    "head": "30dffe412a08d13a8e836d7b8abd19eac24470ef",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\region-correction-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\15-region-correction-upload-269b6b3",
+    "head": "269b6b320b533a4f070c4ff1156b2f5271a6c07b",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\region-stop-final-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\16-region-stop-final-upload-14863f8",
+    "head": "14863f823384774e8dea693716bbcb32ffb046af",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\region-stop-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\17-region-stop-upload-14863f8",
+    "head": "14863f823384774e8dea693716bbcb32ffb046af",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\regional-release-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\18-regional-release-upload-d2f85fd",
+    "head": "d2f85fd6e2fa685421d59cabf4da1df0ec742741",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\release-eligibility-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\19-release-eligibility-upload-73be387",
+    "head": "73be3871c51a1e980759f32e541f94ee6750e47e",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\review-successor-final-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\20-review-successor-final-upload-6248c71",
+    "head": "6248c71ab02101bb561e572a825ac19d11b88b57",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\review-successor-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\21-review-successor-upload-6248c71",
+    "head": "6248c71ab02101bb561e572a825ac19d11b88b57",
+    "verified": true
+  },
+  {
+    "source": "C:\\Users\\money\\Documents\\Codex\\2026-09-19\\hop\\work\\submission-source-upload",
+    "destination": "C:\\Users\\money\\Documents\\Codex\\FlapFit-archive\\2026-09-21\\22-submission-source-upload-52f4e70",
+    "head": "52f4e70c1a6edd89f65b10b0a999176dfd3ee597",
+    "verified": true
+  }
+]

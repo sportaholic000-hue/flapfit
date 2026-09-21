@@ -1,5 +1,7 @@
 # Flap Fit source audit handoff — September 21, 2026
 
+Current checkout and branch: see [source organization](source-organization-2026-09-21.md). The app is consolidated on `main`; older WIP references below describe the original change baseline. Website version 36 is the later website-only audience-list removal; version 35 evidence remains historical.
+
 Status: source corrections and automated checks complete; independent audit must precede any new app build. No mobile build, binary upload, TestFlight upload, App Store submission, or production-account mutation was performed in this correction. The public website privacy update was published separately.
 
 ## Review scope and owner boundaries

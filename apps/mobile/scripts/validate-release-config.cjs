@@ -204,6 +204,16 @@ if (!/^0\.86\./.test(String(mobilePackage.dependencies?.['react-native'] ?? ''))
   failures.push('package.json: React Native 0.86 must remain aligned with Expo SDK 57');
 }
 
+if (easJson.cli?.requireCommit !== true) {
+  failures.push('eas.json: cli.requireCommit must be true so builds use committed source');
+}
+
+for (const exclusion of ['/apps/mobile/dist', '/apps/mobile/web-build', '/apps/mobile/.metro-virtual', '**/.yarn/install-state.gz']) {
+  if (!easIgnore.split(/\r?\n/).includes(exclusion)) {
+    failures.push(`.easignore: missing generated-source exclusion ${exclusion}`);
+  }
+}
+
 const productionBuild = easJson.build?.production;
 if (!productionBuild) {
   failures.push('eas.json: missing production build profile');

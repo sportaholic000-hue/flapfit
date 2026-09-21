@@ -1,0 +1,41 @@
+{
+  "recordedAt": "2026-09-21T21:25:19.244Z",
+  "baselineAppCommit": "1233dfdd45f980d9ac43f9f183d7ca2f1fb2d01e",
+  "easCli": "24.7.0",
+  "validatorCases": [
+    {
+      "name": "valid",
+      "passed": true,
+      "exitCode": 0
+    },
+    {
+      "name": "uncommitted-source-allowed",
+      "passed": true,
+      "exitCode": 1
+    },
+    {
+      "name": "missing exclusion /apps/mobile/dist",
+      "passed": true,
+      "exitCode": 1
+    },
+    {
+      "name": "missing exclusion /apps/mobile/web-build",
+      "passed": true,
+      "exitCode": 1
+    },
+    {
+      "name": "missing exclusion /apps/mobile/.metro-virtual",
+      "passed": true,
+      "exitCode": 1
+    },
+    {
+      "name": "missing exclusion **/.yarn/install-state.gz",
+      "passed": true,
+      "exitCode": 1
+    }
+  ],
+  "oldGeneratedFilesExcluded": 333,
+  "dirtySourceBlockedByActualEasClient": true,
+  "runtimeAndDependencyInputsUnchanged": true,
+  "archiveRelocationsVerified": 22
+}

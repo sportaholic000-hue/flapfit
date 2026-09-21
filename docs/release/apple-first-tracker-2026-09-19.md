@@ -2,7 +2,7 @@
 
 ## Current audit gate — September 21
 
-The owner requires an independent inspection before any final app build. Source fixes, full checks and the website update are recorded in [the audit handoff](third-party-audit-2026-09-21.md). **67 suites / 1,400 tests**, TypeScript, strict lint and release validation pass. The unapproved general ads-off controls are removed; regression tests cover eligible adults across all four launch countries. Website version 35 is published with the corresponding wording corrected. No mobile build, Apple upload, metadata edit or submission occurred. Wait for the owner’s explicit build instruction after the audit. This supersedes earlier build-preparation wording below.
+The owner requires an independent inspection before any final app build. Source fixes, full checks and the website update are recorded in [the audit handoff](third-party-audit-2026-09-21.md). **67 suites / 1,400 tests**, TypeScript, strict lint and release validation pass. The unapproved general ads-off controls are removed; regression tests cover eligible adults across all four launch countries. Website version 36 is published; the public regional audience list was removed in the website-only successor. See [the current source record](source-organization-2026-09-21.md) for the authoritative branch, archived copies and build-input cleanup. No mobile build, Apple upload, metadata edit or submission occurred. Wait for the owner’s explicit build instruction after the audit. This supersedes earlier build-preparation wording below.
 
 
 ## September 21 owner correction — regional advertising only
@@ -86,9 +86,13 @@ Current checkpoint: September 20, 2026. This is the current release sheet; older
 
 Tasks 1 and 2 are COMPLETE for application source f168286d9058093a42da8e96f02f53a82365a7e6. The full 58-suite / 1,117-test exact-source run, fresh TypeScript/strict lint/source validators and actual EAS package verification passed. All 283 required inputs match; the packaged validator passed. Evidence: evidence/privacy-manifest-batch-completion-2026-09-20.md. This source/package checkpoint supersedes earlier manifest-completeness wording only; it does not clear a build, device test or submission. Build 4 lacks this correction. No other checklist task is advanced.
 
+## Native declaration correction checkpoint
+
+**Source/package checks passed; compiled, Apple-platform and owner dependencies remain. No acceptance request.** Source correction f168286d9058093a42da8e96f02f53a82365a7e6 is pushed with full remote SHA verified. Actual build-4 app manifest reproduction exposed six declaration/purpose coverage gaps. Nine app-owned declarations now cover existing practices already in the twelve-category App Privacy draft. Eleven focused regressions, production validation, TypeScript and strict lint pass. All 58 suites / 1117 tests passed in the completed direct run. Actual EAS package verified: 746 files; 235 runtime/asset/patch files and ten configurations byte-matched; packaged production validator passed; private-file exclusions checked. Build 4 is superseded for final acceptance. This checkpoint supersedes earlier completeness wording below. Detailed evidence: evidence/privacy-manifest-reconciliation-2026-09-20.md.
+
 ## Candidate and owner boundaries
 
-- Latest corrected app source: `0cea7e3f3ba4f43081573c25301e8a3c5cc0b3d5`, branch `wip/crash-protection-20260920`, pushed to GitHub and full remote SHA verified.
+- Regional implementation predecessor: `0cea7e3f3ba4f43081573c25301e8a3c5cc0b3d5`, branch `wip/crash-protection-20260920`, pushed to GitHub and full remote SHA verified.
 - Previous builds **FINISHED**, version **1.0.0 (3)**, source `20921889c3dda24d790b9f1e5ab4706c77a77c45` (three focused fixes present; latest regional corrections absent; not final acceptance candidates): STORE `f0870fe0-c332-4c12-b0f8-bc8a9492a105` and INTERNAL/test-ad `a4091cca-d32e-4856-8d32-cf3b7fccec68`. Both signed artifacts inspected. Historical upload stop: credentials were missing then. Task4 later completed secure setup/read-only authentication; no binary upload occurred.
 - Previous finished Ad Hoc build `d19e5b3f-1c09-4e96-9d01-c1706493c5ad`, version 1.0.0 (2), source `1a276dd8f5930cd16f4447f738ee69e21701ee4e`, lacks the three focused corrections. Do not use it for final acceptance. Its iPad installation remains unconfirmed.
 - Finish independent code, build and Apple preparation before another owner testing request. Then consolidate the owner's iPad (A16), iPadOS 26.5 acceptance; send the remote brother one essentially finished iPhone 16 Pro candidate after fixes. No renewed pull-up testing.
@@ -97,7 +101,7 @@ Tasks 1 and 2 are COMPLETE for application source f168286d9058093a42da8e96f02f53
 - Ads: first session exit free, every second eligible exit, at least 90 seconds between opened ads; Done / Try Again / Next Level only. Sharing, result arrival and foreground do not trigger ads. One selected action once; no-fill continues.
 - Automatic release after approval remains saved. Final owner review precedes Submit for Review. No submission or public app release has occurred.
 
-## Corrected Store artifact checkpoint
+## Regional Store artifact checkpoint (superseded for final acceptance)
 
 Store build **1.0.0 (4)**, **103c8936-9447-4190-a45b-6912b1027c69**, is finished and artifact-inspected from **c05f497180c89af21ddb9b9fe014e97e2a23b80a**. It includes the regional successor. Native/archive evidence and remaining gates: `evidence/regional-store-artifact-2026-09-20.md`. That earlier registered-device attempt was blocked. Later authorized device build04cf2e97 completed and has now been inspected; it lacks the latest competition wiring. No final-source build or Apple upload is claimed.
 
