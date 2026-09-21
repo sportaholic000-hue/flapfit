@@ -1,0 +1,88 @@
+{
+  "reviewedAt": "2026-09-21",
+  "mode": "Read-only authenticated Supabase metadata; no customer rows or production test traffic",
+  "advisors": [
+    {
+      "name": "rls_enabled_no_policy",
+      "title": "RLS Enabled No Policy",
+      "level": "INFO"
+    },
+    {
+      "name": "auth_allow_anonymous_sign_ins",
+      "title": "Anonymous Access Policies",
+      "level": "WARN"
+    },
+    {
+      "name": "auth_allow_anonymous_sign_ins",
+      "title": "Anonymous Access Policies",
+      "level": "WARN"
+    },
+    {
+      "name": "auth_leaked_password_protection",
+      "title": "Leaked Password Protection Disabled",
+      "level": "WARN"
+    }
+  ],
+  "functions": [
+    {
+      "slug": "flapfit-game",
+      "status": "ACTIVE",
+      "version": 8,
+      "verify_jwt": true
+    },
+    {
+      "slug": "flapfit-apple-consent",
+      "status": "ACTIVE",
+      "version": 3,
+      "verify_jwt": false
+    },
+    {
+      "slug": "flapfit-apple-consent-sandbox",
+      "status": "ACTIVE",
+      "version": 8,
+      "verify_jwt": false
+    }
+  ],
+  "migrations": [
+    {
+      "version": "20260914163417",
+      "name": "flapfit_competition"
+    },
+    {
+      "version": "20260914163501",
+      "name": "flapfit_retention"
+    },
+    {
+      "version": "20260914163939",
+      "name": "flapfit_advisor_hardening"
+    },
+    {
+      "version": "20260915063843",
+      "name": "verified_game_runs"
+    },
+    {
+      "version": "20260915064343",
+      "name": "fix_challenge_run_lookup"
+    },
+    {
+      "version": "20260915065406",
+      "name": "index_game_run_challenges"
+    },
+    {
+      "version": "20260916062308",
+      "name": "enforce_run_timing"
+    },
+    {
+      "version": "20260917072148",
+      "name": "bind_challenges_to_exercise"
+    },
+    {
+      "version": "20260919202827",
+      "name": "apple_consent_rescission"
+    },
+    {
+      "version": "20260919202842",
+      "name": "apple_consent_vault"
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "functions": [
+    {
+      "proname": "apple_consent_user_is_revoked",
+      "arguments": "p_user_id uuid, p_environment text",
+      "definition": "CREATE OR REPLACE FUNCTION public.apple_consent_user_is_revoked(p_user_id uuid, p_environment text)\n RETURNS boolean\n LANGUAGE sql\n STABLE\n SET search_path TO ''\nAS $function$\n  select exists(select 1 from flapfit_private.apple_consent_identities i\n    join flapfit_private.apple_consent_revocations r using (transaction_hash)\n    where i.user_id = p_user_id and r.environment = p_environment);\n$function$\n"
+    },
+    {
+      "proname": "begin_game_run",
+      "arguments": "p_user_id uuid, p_kind text, p_exercise text, p_challenge_code text, p_rules_version text",
+      "definition": "CREATE OR REPLACE FUNCTION public.begin_game_run(p_user_id uuid, p_kind text, p_exercise text, p_challenge_code text, p_rules_version text)\n RETURNS TABLE(run_id uuid, expires_at timestamp with time zone)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare\n  recent_count integer;\n  daily_count integer;\n  selected_challenge_id uuid;\n  created_run_id uuid;\n  created_expires_at timestamptz;\nbegin\n  perform pg_advisory_xact_lock(hashtextextended(p_user_id::text, 641923));\n\n  if p_kind not in ('leaderboard', 'challenge') then\n    raise exception 'Game run type is invalid.';\n  end if;\n  if p_exercise not in ('pushups', 'squats', 'pullups', 'biceps', 'lateralraise', 'shoulderpress') then\n    raise exception 'Exercise is invalid.';\n  end if;\n  if p_kind = 'leaderboard' and p_exercise not in ('pushups', 'squats', 'pullups') then\n    raise exception 'Exercise is invalid for the leaderboard.';\n  end if;\n  if nullif(trim(p_rules_version), '') is null then\n    raise exception 'Rules version is invalid.';\n  end if;\n\n  select count(*) into recent_count\n  from public.game_runs\n  where user_id = p_user_id\n    and started_at >= now() - interval '10 minutes';\n  if recent_count >= 30 then\n    raise exception 'Game run limit reached.';\n  end if;\n\n  select count(*) into daily_count\n  from public.game_runs\n  where user_id = p_user_id\n    and started_at >= now() - interval '24 hours';\n  if daily_count >= 500 then\n    raise exception 'Daily game run limit reached.';\n  end if;\n\n  if p_kind = 'challenge' then\n    select c.id into selected_challenge_id\n    from public.challenges c\n    where c.code = p_challenge_code\n      and c.expires_at > now();\n    if selected_challenge_id is null then\n      raise exception 'Challenge not found.';\n    end if;\n  elsif p_challenge_code is not null then\n    raise exception 'Challenge does not match this run.';\n  end if;\n\n  insert into public.game_runs (\n    user_id,\n    run_kind,\n    exercise,\n    challenge_id,\n    rules_version\n  ) values (\n    p_user_id,\n    p_kind,\n    p_exercise,\n    selected_challenge_id,\n    p_rules_version\n  )\n  returning id, game_runs.expires_at into created_run_id, created_expires_at;\n\n  return query select created_run_id, created_expires_at;\nend;\n$function$\n"
+    },
+    {
+      "proname": "cleanup_flapfit_retention",
+      "arguments": "",
+      "definition": "CREATE OR REPLACE FUNCTION public.cleanup_flapfit_retention()\n RETURNS void\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nbegin\n  delete from public.game_runs\n  where expires_at < pg_catalog.now() - interval '7 days';\n\n  delete from public.challenges\n  where expires_at < pg_catalog.now();\n\n  delete from public.content_reports\n  where status in ('reviewed', 'actioned', 'dismissed')\n    and resolved_at < pg_catalog.now() - interval '180 days';\nend;\n$function$\n"
+    },
+    {
+      "proname": "finalize_game_run",
+      "arguments": "p_run_id uuid, p_user_id uuid, p_player_name text, p_score integer, p_duration_ms integer, p_terms_version text, p_rules_version text",
+      "definition": "CREATE OR REPLACE FUNCTION public.finalize_game_run(p_run_id uuid, p_user_id uuid, p_player_name text, p_score integer, p_duration_ms integer, p_terms_version text, p_rules_version text)\n RETURNS TABLE(improved boolean, result_kind text, exercise_name text, challenge_code text)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare\n  selected_run public.game_runs%rowtype;\n  selected_challenge public.challenges%rowtype;\n  wall_elapsed_ms bigint;\n  was_improved boolean := false;\n  returned_code text := null;\nbegin\n  select gr.* into selected_run\n  from public.game_runs gr\n  where gr.id = p_run_id\n    and gr.user_id = p_user_id\n  for update;\n\n  if not found then\n    raise exception 'Game run not found.';\n  end if;\n  if selected_run.rules_version <> p_rules_version then\n    raise exception 'Game run rules version does not match.';\n  end if;\n\n  if selected_run.finalized_at is not null then\n    if selected_run.final_score = p_score and selected_run.duration_ms = p_duration_ms then\n      if selected_run.challenge_id is not null then\n        select code into returned_code from public.challenges where id = selected_run.challenge_id;\n      end if;\n      return query select false, selected_run.run_kind, selected_run.exercise, returned_code;\n      return;\n    end if;\n    raise exception 'Game run was already finalized.';\n  end if;\n\n  if selected_run.expires_at <= now() then\n    raise exception 'Game run expired.';\n  end if;\n  if p_score < 0 or p_score > 100000 then\n    raise exception 'Game score is implausible.';\n  end if;\n  if p_duration_ms < 0 or p_duration_ms > 21600000 then\n    raise exception 'Game duration is invalid.';\n  end if;\n\n  wall_elapsed_ms := floor(extract(epoch from (now() - selected_run.started_at)) * 1000);\n  if p_duration_ms > wall_elapsed_ms + 30000 then\n    raise exception 'Game duration does not match the server run.';\n  end if;\n  if p_score > floor(p_duration_ms / 250.0) + 5 then\n    raise exception 'Game score is implausible for its duration.';\n  end if;\n\n  if selected_run.run_kind = 'challenge' then\n    select c.* into selected_challenge\n    from public.challenges c\n    where c.id = selected_run.challenge_id\n      and c.expires_at > now();\n    if not found then\n      raise exception 'Challenge expired.';\n    end if;\n    if p_score > 60 then\n      raise exception 'Challenge score is implausible.';\n    end if;\n    returned_code := selected_challenge.code;\n  end if;\n\n  insert into public.profiles (\n    user_id,\n    player_name,\n    terms_version,\n    terms_accepted_at,\n    updated_at\n  ) values (\n    p_user_id,\n    p_player_name,\n    p_terms_version,\n    now(),\n    now()\n  )\n  on conflict (user_id) do update\n    set player_name = excluded.player_name,\n        terms_version = excluded.terms_version,\n        terms_accepted_at = excluded.terms_accepted_at,\n        updated_at = excluded.updated_at;\n\n  if selected_run.run_kind = 'leaderboard' then\n    insert into public.leaderboard_scores (user_id, exercise, score)\n    values (p_user_id, selected_run.exercise, p_score)\n    on conflict (user_id, exercise) do update\n      set score = excluded.score,\n          updated_at = now()\n      where excluded.score > public.leaderboard_scores.score\n    returning true into was_improved;\n  else\n    insert into public.challenge_attempts (challenge_id, user_id, score)\n    values (selected_run.challenge_id, p_user_id, p_score)\n    on conflict (challenge_id, user_id) do update\n      set score = excluded.score,\n          updated_at = now()\n      where excluded.score > public.challenge_attempts.score\n    returning true into was_improved;\n  end if;\n\n  update public.game_runs\n  set finalized_at = now(),\n      final_score = p_score,\n      duration_ms = p_duration_ms\n  where id = selected_run.id;\n\n  return query select coalesce(was_improved, false), selected_run.run_kind,\n    selected_run.exercise, returned_code;\nend;\n$function$\n"
+    }
+  ],
+  "foreign_keys": [
+    {
+      "conname": "challenge_attempts_challenge_id_fkey",
+      "nspname": "public",
+      "relname": "challenge_attempts",
+      "definition": "FOREIGN KEY (challenge_id) REFERENCES challenges(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "challenge_attempts_user_id_fkey",
+      "nspname": "public",
+      "relname": "challenge_attempts",
+      "definition": "FOREIGN KEY (user_id) REFERENCES profiles(user_id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "profiles_user_id_fkey",
+      "nspname": "public",
+      "relname": "profiles",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "leaderboard_scores_user_id_fkey",
+      "nspname": "public",
+      "relname": "leaderboard_scores",
+      "definition": "FOREIGN KEY (user_id) REFERENCES profiles(user_id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "challenges_creator_id_fkey",
+      "nspname": "public",
+      "relname": "challenges",
+      "definition": "FOREIGN KEY (creator_id) REFERENCES profiles(user_id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "player_blocks_blocker_id_fkey",
+      "nspname": "public",
+      "relname": "player_blocks",
+      "definition": "FOREIGN KEY (blocker_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "player_blocks_blocked_id_fkey",
+      "nspname": "public",
+      "relname": "player_blocks",
+      "definition": "FOREIGN KEY (blocked_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "content_reports_reporter_id_fkey",
+      "nspname": "public",
+      "relname": "content_reports",
+      "definition": "FOREIGN KEY (reporter_id) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "conname": "content_reports_reported_user_id_fkey",
+      "nspname": "public",
+      "relname": "content_reports",
+      "definition": "FOREIGN KEY (reported_user_id) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "conname": "game_runs_user_id_fkey",
+      "nspname": "public",
+      "relname": "game_runs",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "game_runs_challenge_id_fkey",
+      "nspname": "public",
+      "relname": "game_runs",
+      "definition": "FOREIGN KEY (challenge_id) REFERENCES challenges(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "apple_consent_identities_user_id_fkey",
+      "nspname": "flapfit_private",
+      "relname": "apple_consent_identities",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    }
+  ],
+  "private_schema": [
+    {
+      "nspname": "flapfit_private",
+      "anon_usage": false,
+      "authenticated_usage": false
+    }
+  ],
+  "private_tables": [
+    {
+      "relname": "apple_consent_revocations",
+      "anon_access": false,
+      "relrowsecurity": true,
+      "authenticated_access": false
+    },
+    {
+      "relname": "apple_consent_notifications",
+      "anon_access": false,
+      "relrowsecurity": true,
+      "authenticated_access": false
+    },
+    {
+      "relname": "apple_consent_identities",
+      "anon_access": false,
+      "relrowsecurity": true,
+      "authenticated_access": false
+    }
+  ],
+  "recent_retention_runs": [
+    {
+      "status": "succeeded",
+      "jobname": "flapfit-retention-cleanup",
+      "end_time": "2026-09-21T03:17:00.329466+00:00",
+      "start_time": "2026-09-21T03:17:00.217189+00:00"
+    },
+    {
+      "status": "succeeded",
+      "jobname": "flapfit-retention-cleanup",
+      "end_time": "2026-09-20T03:17:00.298299+00:00",
+      "start_time": "2026-09-20T03:17:00.202609+00:00"
+    },
+    {
+      "status": "succeeded",
+      "jobname": "flapfit-retention-cleanup",
+      "end_time": "2026-09-19T03:17:00.181306+00:00",
+      "start_time": "2026-09-19T03:17:00.169157+00:00"
+    }
+  ]
+}

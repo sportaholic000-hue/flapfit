@@ -1,0 +1,147 @@
+{
+  "date": "2026-09-21",
+  "sourceCommit": "2f9b8a33404c9ed2eb809d03e41cbff8055e6a01",
+  "note": "Command logs are saved with .txt suffix; empty successful TypeScript/lint output is intentional. source-checks.json is the earlier 645-file snapshot; verification-summary.json records the final 647-file and 460-package-file scan. Evidence index hashes use UTF-8 text with LF line endings; normalize CRLF after Windows checkout before comparison. Source-package manifest hashes describe the actual EAS copy bytes separately.",
+  "files": [
+    {
+      "file": "startup-before.txt",
+      "bytes": 3728,
+      "sha256": "15dfa204d0f5a1b0c6d2564e63249482e821d8d08533176ea642957bf73f1fe0"
+    },
+    {
+      "file": "body-before.txt",
+      "bytes": 2770,
+      "sha256": "860fd28eafe2c81593d722a79960b3fa934caa40696bf5c3210c22f74a07c579"
+    },
+    {
+      "file": "save-race-before.txt",
+      "bytes": 1044,
+      "sha256": "34086b547eaae4894fce4b92a7020c4ee1f6fce9bcbf46c841dbf9190272c0e8"
+    },
+    {
+      "file": "jest-final.txt",
+      "bytes": 4393,
+      "sha256": "35cd25c70075f56aa31de8db2f414d543f7e7f112c83cabb7caea8926dba74ca"
+    },
+    {
+      "file": "jest-final-results.json",
+      "bytes": 519703,
+      "sha256": "f6e1740d4173b6023b9f08798fdb2bdcd1f997438ba851292f9419592d9fbad5"
+    },
+    {
+      "file": "typecheck-final.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "lint-final.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "backend-tests.txt",
+      "bytes": 5256,
+      "sha256": "b7e84baece8ec5f981fe8806b5b6b5420f8cdffd3907fdc7cc469eac8d7bda40"
+    },
+    {
+      "file": "competition-db-tests.txt",
+      "bytes": 486,
+      "sha256": "e384cc04957cfdf088600691d0c4bcbff12bbdfa3f490fc2d0a125d47d23b794"
+    },
+    {
+      "file": "server-final.txt",
+      "bytes": 159,
+      "sha256": "d4e2baee6e4b4e3b0d6f5115372aec3aceaa661ac497714251b9093ea9885790"
+    },
+    {
+      "file": "deno-check-network.txt",
+      "bytes": 3742,
+      "sha256": "7b456952da8c7ec04fe39b44d1a98d90345669677004e3b82628f9d9c2d502b2"
+    },
+    {
+      "file": "deno-check-final.txt",
+      "bytes": 167,
+      "sha256": "b1c563f8c89680d28acebbdfde0b0b38af61ea34970714e2101859d29ced01b9"
+    },
+    {
+      "file": "deno-audit.lock",
+      "bytes": 14466,
+      "sha256": "e1144cb0147e201d40d02bf3327ccc2794666360d5159998445ae894ef9ab761"
+    },
+    {
+      "file": "backend-type-repair.json",
+      "bytes": 198,
+      "sha256": "0930a19c44e2228cdc512daa8099f99a5645801b8099f850faae2aced8984659"
+    },
+    {
+      "file": "source-checks.json",
+      "bytes": 17108,
+      "sha256": "4cec9032e62ca7d5cfc61c58c2ac1173e0a593626c7fae501bec33f6c2213aec"
+    },
+    {
+      "file": "production-config.txt",
+      "bytes": 44,
+      "sha256": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4"
+    },
+    {
+      "file": "store-assets.txt",
+      "bytes": 1158,
+      "sha256": "78c540fbd7573748d63121cc5c89e09a415bc2a61a4c95dbbfe6f857ff68fdfd"
+    },
+    {
+      "file": "admob-patch.txt",
+      "bytes": 285,
+      "sha256": "3c04a7d47e4f7156d5700f2437d6d267b1400e0d5743f96925e179717b653b2d"
+    },
+    {
+      "file": "revenuecat-patch.txt",
+      "bytes": 420,
+      "sha256": "0dacb145d7bb04a2bf9dbc999fc1432ca0ed550256e1f69a8254b708842f4196"
+    },
+    {
+      "file": "public-links.txt",
+      "bytes": 77,
+      "sha256": "23d826458b08dd5842e013b8a6466c1118afa3f75e63f09ca24a3f81498c2f1b"
+    },
+    {
+      "file": "dependency-audit.jsonl",
+      "bytes": 11760,
+      "sha256": "143f3923d9c7daac27198516c407670edcc290b4cb73bc35e8d3909be26c32e4"
+    },
+    {
+      "file": "uri-decoder-verification.json",
+      "bytes": 721,
+      "sha256": "f2bd2cd8edcafe6c1917727b07e111927196ab57404428ce3e4ec518022f8f6c"
+    },
+    {
+      "file": "live-database.json",
+      "bytes": 11870,
+      "sha256": "d93c226c81770d31119cc833f01d859c29446e995a7c8f904cf9f87e8434f8fb"
+    },
+    {
+      "file": "live-metadata.json",
+      "bytes": 1936,
+      "sha256": "752fe227fdb2b868549f0fdafd944f670f16126d800ac42f6f2d269df7dfc52d"
+    },
+    {
+      "file": "live-access-metadata.json",
+      "bytes": 7644,
+      "sha256": "47c894b7feadc857e7835d6b9d368b13bd12c8242a1742679f473ec72eee857a"
+    },
+    {
+      "file": "verification-summary.json",
+      "bytes": 2611,
+      "sha256": "55a77df362f56c865fa03beda168446008ad035e72c604d7b462e27cf2a2fbc8"
+    },
+    {
+      "file": "source-package-manifest.json",
+      "bytes": 114827,
+      "sha256": "bf1e066a4d18a78eed3cf1bc36710eea28f5d323b971e13ebccb2ba32165dcb8"
+    },
+    {
+      "file": "authorized-scope.txt",
+      "bytes": 5022,
+      "sha256": "bd4bfa0e7ff60044f10a9b4810acea5bb42d4db8507eb026833b8732fb37457a"
+    }
+  ]
+}

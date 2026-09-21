@@ -1,0 +1,24 @@
+FAIL src/services/privacy/__tests__/localAgeAnswer.test.ts (9.934 s)
+  ● a failed correction cannot erase the saved under-13 answer discovered by an overlapping game-entry read
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      152 |   await flush(); finishRead(JSON.stringify({ version: 1, answer: 'under-13' }));
+      153 |   await reading; await failedSave;
+    > 154 |   expect(await f.local.hasSavedUnder13Answer()).toBe(true);
+          |                                                 ^
+      155 |   expect(JSON.parse(f.memory.get(KEY)!).answer).toBe('under-13');
+      156 | });
+      157 |
+
+      at Object.toBe (src/services/privacy/__tests__/localAgeAnswer.test.ts:154:49)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 18 skipped, 19 total
+Snapshots:   0 total
+Time:        11.267 s

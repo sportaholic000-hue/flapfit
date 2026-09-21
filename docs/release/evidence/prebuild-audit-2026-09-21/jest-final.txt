@@ -1,0 +1,76 @@
+PASS src/services/privacy/__tests__/localAgeAnswer.test.ts (13.652 s)
+(node:267352) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS src/services/__tests__/competitionApi-outbox.test.ts (28.511 s)
+PASS src/services/privacy/__tests__/startupGameEntry.test.tsx (30.278 s)
+PASS src/services/privacy/__tests__/launchProcessingIntegration.test.ts (15.658 s)
+PASS src/services/__tests__/monetization.test.ts
+PASS scripts/share-return.test.js
+PASS src/services/privacy/__tests__/europeanProviderProcessing.test.ts (8.71 s)
+PASS src/components/__tests__/PrivacyChoices.test.tsx (10.443 s)
+PASS src/services/__tests__/competition-processing-access.test.ts (8.483 s)
+PASS src/services/privacy/__tests__/regionalClarification.test.ts
+PASS src/components/__tests__/CompeteScreenPrivacy.test.tsx
+PASS src/services/privacy/__tests__/appleAgeControl.test.ts (9.381 s)
+PASS src/services/privacy/__tests__/processingHydrationIntegration.test.ts
+PASS src/utils/game/__tests__/pullup-gameplay-flow.test.js (5.655 s)
+PASS scripts/launch-competition.test.js (5.297 s)
+PASS src/services/privacy/__tests__/processingAccess.test.ts
+PASS src/services/privacy/__tests__/privacyCountry.test.ts
+PASS src/utils/game/__tests__/form-tracking.test.ts
+PASS src/components/__tests__/GameEligibilityGate.test.tsx
+PASS src/services/privacy/__tests__/gameEntry.test.ts
+PASS src/utils/game/__tests__/pullup-elbow-clearance.test.js
+PASS src/services/__tests__/competitionApi.test.ts
+PASS src/utils/game/birdWebAsset.test.ts
+PASS scripts/ad-sdk-lifecycle.test.js
+PASS src/utils/game/__tests__/bird-stage-assets.test.ts
+PASS src/services/privacy/__tests__/newYorkClarification.test.ts
+PASS src/services/privacy/__tests__/privacyRights.test.ts
+PASS src/utils/game/__tests__/pullup-grab-entry.test.js
+PASS src/services/privacy/__tests__/umpStoredSignals.test.ts
+PASS src/services/__tests__/recordingCache.test.ts
+PASS src/utils/game/__tests__/pullup-support-reference.test.ts
+PASS src/utils/game/__tests__/pullup-standing-reach.test.js
+PASS src/components/__tests__/RecordingCleanupRoot.test.tsx
+PASS src/utils/game/__tests__/game-modes.test.ts
+PASS src/services/privacy/__tests__/launchProcessingPolicy.test.ts
+PASS src/services/privacy/__tests__/umpPrivacyControls.test.ts
+PASS src/services/__tests__/resultAdGate.test.ts
+PASS src/services/privacy/__tests__/privacyStartup.test.ts
+PASS src/services/privacy/__tests__/umpProcessingControls.test.ts
+PASS modules/flap-fit-age-range/__tests__/bridge.test.ts
+PASS src/services/__tests__/competition-terms-action.test.ts
+PASS scripts/validate-monetization-config.test.js
+PASS src/utils/game/__tests__/pullup-top-first.test.js
+PASS src/utils/game/__tests__/recording-mp4.test.ts
+PASS scripts/retain-ios-archive.test.js
+PASS src/services/privacy/__tests__/regionalPolicy.test.ts
+PASS src/services/__tests__/revenueCatTestDiagnostics.test.ts
+PASS src/services/privacy/__tests__/appleRescission.test.ts
+PASS src/utils/game/__tests__/pullup-top-entry.test.ts
+PASS scripts/validate-privacy-manifest.test.js
+PASS src/services/__tests__/videoSharing.test.ts
+PASS scripts/validate-tracker-release.test.js
+PASS src/utils/game/game-web-navigation.test.ts
+PASS src/utils/game/__tests__/competition-profile-reset.test.ts
+PASS src/services/privacy/__tests__/processingPolicy.test.ts
+PASS src/utils/game/__tests__/continuous-gameplay.test.ts
+PASS src/utils/game/__tests__/level-rules.test.ts
+PASS src/utils/game/__tests__/recording-boundaries.test.ts
+PASS src/utils/game/__tests__/mediapipe-recovery.test.ts
+PASS src/services/privacy/__tests__/releaseEligibility.test.ts
+PASS src/utils/game/__tests__/pullup-top-reference.test.ts
+PASS src/services/__tests__/settingsPermissionRecovery.test.ts
+PASS src/utils/game/__tests__/stats-history.test.ts
+PASS src/utils/game/__tests__/store-hydration.test.ts
+PASS src/utils/game/__tests__/evolution-core.test.ts
+PASS modules/flap-fit-age-range/__tests__/app-transaction.test.ts
+PASS src/utils/game/birdVisual.test.ts
+PASS src/utils/game/__tests__/camera-preview.test.ts
+
+Test Suites: 68 passed, 68 total
+Tests:       1429 passed, 1429 total
+Snapshots:   0 total
+Time:        245.386 s, estimated 291 s
+Test results written to: ..\..\..\..\..\Documents\Codex\2026-09-21\can-you-ch\work\prebuild-audit\jest-final-results.json

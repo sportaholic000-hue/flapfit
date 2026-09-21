@@ -1,0 +1,62 @@
+FAIL scripts/launch-competition.test.js (14.043 s)
+  ● streamed body stops at the byte limit without buffering the remainder
+
+    expect(jest.fn()).toHaveBeenCalledTimes(expected)
+
+    Expected number of calls: 1
+    Received number of calls: 0
+
+      143 |     method: 'POST', headers: { Authorization: 'Bearer fixture', 'X-FlapFit-Terms-Version': '2026-09-14' }, body: stream, duplex: 'half',
+      144 |   }));
+    > 145 |   expect(response.status).toBe(413); expect(cancel).toHaveBeenCalledTimes(1); expect(reads).toBe(2);
+          |                                                     ^
+      146 |   expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
+      147 | });
+      148 |
+
+      at Object.toHaveBeenCalledTimes (scripts/launch-competition.test.js:145:53)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● body limit counts UTF-8 bytes, not JavaScript characters
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 413
+    Received: 201
+
+      150 |   const { handler, admin } = bodyLimitFixture();
+      151 |   const response = await handler(request('/runs', { kind: 'leaderboard', exercise: 'pushups', unused: 'é'.repeat(2050) }));
+    > 152 |   expect(response.status).toBe(413); expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
+          |                           ^
+      153 | });
+      154 |
+      155 | test('declared oversize body is rejected without reading it', async () => {
+
+      at Object.toBe (scripts/launch-competition.test.js:152:27)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● declared oversize body is rejected without reading it
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 413
+    Received: 400
+
+      160 |     body: new ReadableStream({ pull }, { highWaterMark: 0 }), duplex: 'half',
+      161 |   }));
+    > 162 |   expect(response.status).toBe(413); expect(pull).not.toHaveBeenCalled();
+          |                           ^
+      163 | });
+      164 |
+      165 | test('run ownership comes from the verified session, never a body user identifier', async () => {
+
+      at Object.toBe (scripts/launch-competition.test.js:162:27)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       3 failed, 18 passed, 21 total
+Snapshots:   0 total
+Time:        16.209 s

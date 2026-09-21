@@ -1,0 +1,74 @@
+FAIL src/services/privacy/__tests__/startupGameEntry.test.tsx (28.041 s)
+  ● saved under-13 is restored before Home Play reaches camera setup (offline=false)
+
+    expect(jest.fn()).not.toHaveBeenCalled()
+
+    Expected number of calls: 0
+    Received number of calls: 3
+
+    1: called with 0 arguments
+    2: called with 0 arguments
+    3: called with 0 arguments
+
+      101 | test.each([false, true])('saved under-13 is restored before Home Play reaches camera setup (offline=%s)', async offline => {
+      102 |   const f = await mountApp(JSON.stringify({ version: 1, answer: 'under-13' }), { offline });
+    > 103 |   try { await f.play(); expect(f.camera).not.toHaveBeenCalled(); expect(JSON.stringify(f.tree.toJSON())).toContain('13');
+          |                                              ^
+      104 |     expect(f.storage.getItem).toHaveBeenCalledWith('@flapfit/local-age-answer-v1'); expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+      105 |   } finally { await f.finish(); }
+      106 | });
+
+      at toHaveBeenCalled (src/services/privacy/__tests__/startupGameEntry.test.tsx:103:46)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● saved under-13 is restored before Home Play reaches camera setup (offline=true)
+
+    expect(jest.fn()).not.toHaveBeenCalled()
+
+    Expected number of calls: 0
+    Received number of calls: 3
+
+    1: called with 0 arguments
+    2: called with 0 arguments
+    3: called with 0 arguments
+
+      101 | test.each([false, true])('saved under-13 is restored before Home Play reaches camera setup (offline=%s)', async offline => {
+      102 |   const f = await mountApp(JSON.stringify({ version: 1, answer: 'under-13' }), { offline });
+    > 103 |   try { await f.play(); expect(f.camera).not.toHaveBeenCalled(); expect(JSON.stringify(f.tree.toJSON())).toContain('13');
+          |                                              ^
+      104 |     expect(f.storage.getItem).toHaveBeenCalledWith('@flapfit/local-age-answer-v1'); expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+      105 |   } finally { await f.finish(); }
+      106 | });
+
+      at toHaveBeenCalled (src/services/privacy/__tests__/startupGameEntry.test.tsx:103:46)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● a delayed saved-age read finishes before the camera/game child can mount
+
+    expect(jest.fn()).not.toHaveBeenCalled()
+
+    Expected number of calls: 0
+    Received number of calls: 3
+
+    1: called with 0 arguments
+    2: called with 0 arguments
+    3: called with 0 arguments
+
+      108 | test('a delayed saved-age read finishes before the camera/game child can mount', async () => {
+      109 |   const f = await mountApp(JSON.stringify({ version: 1, answer: 'under-13' }), { delayed: true });
+    > 110 |   try { await f.play(); expect(f.camera).not.toHaveBeenCalled(); await f.release(); expect(f.camera).not.toHaveBeenCalled(); }
+          |                                              ^
+      111 |   finally { await f.finish(); }
+      112 | });
+      113 |
+
+      at Object.toHaveBeenCalled (src/services/privacy/__tests__/startupGameEntry.test.tsx:110:46)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       3 failed, 5 passed, 8 total
+Snapshots:   0 total
+Time:        29.137 s

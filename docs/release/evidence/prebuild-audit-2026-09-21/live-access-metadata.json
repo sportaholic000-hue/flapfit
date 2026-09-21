@@ -1,0 +1,301 @@
+{
+  "tables": [
+    {
+      "rls": true,
+      "table": "challenges",
+      "schema": "public",
+      "anon_write": false,
+      "anon_select": false,
+      "authenticated_write": false,
+      "authenticated_select": false
+    },
+    {
+      "rls": true,
+      "table": "profiles",
+      "schema": "public",
+      "anon_write": false,
+      "anon_select": false,
+      "authenticated_write": false,
+      "authenticated_select": false
+    },
+    {
+      "rls": true,
+      "table": "leaderboard_scores",
+      "schema": "public",
+      "anon_write": false,
+      "anon_select": false,
+      "authenticated_write": false,
+      "authenticated_select": false
+    },
+    {
+      "rls": true,
+      "table": "challenge_attempts",
+      "schema": "public",
+      "anon_write": false,
+      "anon_select": false,
+      "authenticated_write": false,
+      "authenticated_select": false
+    },
+    {
+      "rls": true,
+      "table": "player_blocks",
+      "schema": "public",
+      "anon_write": false,
+      "anon_select": false,
+      "authenticated_write": false,
+      "authenticated_select": false
+    },
+    {
+      "rls": true,
+      "table": "content_reports",
+      "schema": "public",
+      "anon_write": false,
+      "anon_select": false,
+      "authenticated_write": false,
+      "authenticated_select": false
+    },
+    {
+      "rls": true,
+      "table": "game_runs",
+      "schema": "public",
+      "anon_write": false,
+      "anon_select": false,
+      "authenticated_write": false,
+      "authenticated_select": false
+    },
+    {
+      "rls": true,
+      "table": "apple_consent_revocations",
+      "schema": "flapfit_private",
+      "anon_write": false,
+      "anon_select": false,
+      "authenticated_write": false,
+      "authenticated_select": false
+    },
+    {
+      "rls": true,
+      "table": "apple_consent_notifications",
+      "schema": "flapfit_private",
+      "anon_write": false,
+      "anon_select": false,
+      "authenticated_write": false,
+      "authenticated_select": false
+    },
+    {
+      "rls": true,
+      "table": "apple_consent_identities",
+      "schema": "flapfit_private",
+      "anon_write": false,
+      "anon_select": false,
+      "authenticated_write": false,
+      "authenticated_select": false
+    }
+  ],
+  "public_functions": [
+    {
+      "config": [
+        "search_path=\"\""
+      ],
+      "function": "set_content_report_resolved_at",
+      "anon_execute": false,
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=\"\""
+      ],
+      "function": "cleanup_flapfit_retention",
+      "anon_execute": false,
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=public"
+      ],
+      "function": "upsert_leaderboard_score",
+      "anon_execute": false,
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=public"
+      ],
+      "function": "upsert_challenge_attempt",
+      "anon_execute": false,
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "function": "begin_game_run",
+      "anon_execute": false,
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "function": "finalize_game_run",
+      "anon_execute": false,
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "function": "create_challenge_limited",
+      "anon_execute": false,
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=\"\""
+      ],
+      "function": "flapfit_enforce_run_timing",
+      "anon_execute": false,
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=\"\""
+      ],
+      "function": "flapfit_minimum_run_duration_ms",
+      "anon_execute": false,
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=\"\""
+      ],
+      "function": "record_apple_consent_revocation",
+      "anon_execute": false,
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=\"\""
+      ],
+      "function": "apple_consent_is_revoked",
+      "anon_execute": false,
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=\"\""
+      ],
+      "function": "link_apple_consent_identity",
+      "anon_execute": false,
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=\"\""
+      ],
+      "function": "apple_consent_user_is_revoked",
+      "anon_execute": false,
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "function": "create_challenge_limited",
+      "anon_execute": false,
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "function": "flapfit_enforce_challenge_exercise",
+      "anon_execute": false,
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "config": [
+        "search_path=\"\""
+      ],
+      "function": "get_apple_consent_hmac_key",
+      "anon_execute": false,
+      "security_definer": false,
+      "authenticated_execute": false
+    }
+  ],
+  "default_privileges": [
+    {
+      "acl": "{postgres=arwdDxtm/postgres,anon=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+      "owner": "postgres",
+      "schema": "public",
+      "object_type": "r"
+    },
+    {
+      "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "schema": "public",
+      "object_type": "f"
+    },
+    {
+      "acl": "{postgres=rwU/postgres,anon=rwU/postgres,authenticated=rwU/postgres,service_role=rwU/postgres}",
+      "owner": "postgres",
+      "schema": "public",
+      "object_type": "S"
+    },
+    {
+      "acl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}",
+      "owner": "supabase_admin",
+      "schema": "public",
+      "object_type": "S"
+    },
+    {
+      "acl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}",
+      "owner": "supabase_admin",
+      "schema": "public",
+      "object_type": "r"
+    },
+    {
+      "acl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}",
+      "owner": "supabase_admin",
+      "schema": "public",
+      "object_type": "f"
+    }
+  ],
+  "schema_permissions": [
+    {
+      "schema": "public",
+      "anon_usage": true,
+      "anon_create": false,
+      "authenticated_usage": true,
+      "authenticated_create": false
+    },
+    {
+      "schema": "cron",
+      "anon_usage": false,
+      "anon_create": false,
+      "authenticated_usage": false,
+      "authenticated_create": false
+    },
+    {
+      "schema": "flapfit_private",
+      "anon_usage": false,
+      "anon_create": false,
+      "authenticated_usage": false,
+      "authenticated_create": false
+    }
+  ]
+}

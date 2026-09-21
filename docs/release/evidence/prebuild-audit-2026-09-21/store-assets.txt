@@ -1,0 +1,26 @@
+Flap Fit store assets are incomplete:
+
+- app-store/iphone-6.9/01-home.png: missing
+- app-store/iphone-6.9/02-exercises.png: missing
+- app-store/iphone-6.9/03-sky-gameplay.png: missing
+- app-store/iphone-6.9/04-live-camera.png: missing
+- app-store/iphone-6.9/05-evolution.png: missing
+- app-store/iphone-6.9/06-stats.png: missing
+- app-store/iphone-6.9/07-compete.png: missing
+- app-store/iphone-6.9/08-record-share.png: missing
+- app-store/ipad-13/01-home.png: missing
+- app-store/ipad-13/02-exercises.png: missing
+- app-store/ipad-13/03-sky-gameplay.png: missing
+- app-store/ipad-13/04-live-camera.png: missing
+- app-store/ipad-13/05-evolution.png: missing
+- app-store/ipad-13/06-stats.png: missing
+- app-store/ipad-13/07-compete.png: missing
+- app-store/ipad-13/08-record-share.png: missing
+- google-play/phone/01-home.png: missing
+- google-play/phone/02-exercises.png: missing
+- google-play/phone/03-sky-gameplay.png: missing
+- google-play/phone/04-live-camera.png: missing
+- google-play/phone/05-evolution.png: missing
+- google-play/phone/06-stats.png: missing
+- google-play/phone/07-compete.png: missing
+- google-play/phone/08-record-share.png: missing

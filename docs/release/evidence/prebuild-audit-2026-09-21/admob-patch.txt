@@ -1,0 +1,2 @@
+AdMob privacy patch passed: locked source, apply, idempotence, drift/tamper rejection, native opt-out before initialization and request configuration.
+UMP presence patch passed: pinned source, apply, idempotence, drift/tamper rejection, null-aware retrieval and native version signal.

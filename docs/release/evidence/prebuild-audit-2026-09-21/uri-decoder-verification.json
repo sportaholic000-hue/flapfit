@@ -1,0 +1,23 @@
+{
+  "target": "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\decode-uri-component\\index.js",
+  "legacyCases": 35,
+  "upstreamCases": 135,
+  "upstreamCalls": 165,
+  "queryStringChecks": 2,
+  "performance": {
+    "before": {
+      "timedOut": true,
+      "timeoutMs": 3000,
+      "repetitions": 2000
+    },
+    "after": {
+      "elapsedMs": 294.65689999999995,
+      "bytes": 600000,
+      "unchanged": true
+    }
+  },
+  "at": "2026-09-21T23:00:24.894Z",
+  "patchFile": ".yarn/patches/decode-uri-component-npm-0.2.2-flapfit.patch",
+  "patchSha256": "8205dd3564af0d958ccf9034df81f3d36095b91d2a88765374caae47b0a5eeb7",
+  "installedSha256": "d5408329ab34ad8f3534002a2fd95fc566504a18d46e62c84bb52b473fb1e960"
+}

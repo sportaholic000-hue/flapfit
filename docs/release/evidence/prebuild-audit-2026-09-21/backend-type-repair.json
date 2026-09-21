@@ -1,0 +1,5 @@
+{
+  "errorsBefore": 7,
+  "scope": "Explicit result types match the reviewed SQL return shapes; relationship fallback retains its object/array compatibility.",
+  "emittedJavaScriptUnchanged": true
+}

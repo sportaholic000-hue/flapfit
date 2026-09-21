@@ -1,0 +1,71 @@
+{
+  "checkedAt": "2026-09-21T23:16:27.097Z",
+  "baseline": "368f829e671a39aed32cd3bfb5debbf82e3ba916",
+  "sourceCommit": "2f9b8a33404c9ed2eb809d03e41cbff8055e6a01",
+  "branch": "main",
+  "clean": true,
+  "commits": [
+    "2f9b8a33404c9ed2eb809d03e41cbff8055e6a01 Correct competition query result types for backend checks",
+    "ba598fd7ac7654b803edc92877eb49d786eb2798 Restore saved minimum-age checks and bound competition request bodies"
+  ],
+  "changedFiles": [
+    "apps/mobile/scripts/launch-competition.test.js",
+    "apps/mobile/src/services/privacy/__tests__/gameEntry.test.ts",
+    "apps/mobile/src/services/privacy/__tests__/localAgeAnswer.test.ts",
+    "apps/mobile/src/services/privacy/__tests__/startupGameEntry.test.tsx",
+    "apps/mobile/src/services/privacy/gameEntry.ts",
+    "apps/mobile/src/services/privacy/localAgeAnswer.ts",
+    "supabase/functions/flapfit-game/index.ts",
+    "supabase/tests/apple-consent/competition-database.test.mjs",
+    "supabase/tests/apple-consent/package.json"
+  ],
+  "mobileTests": {
+    "suites": 68,
+    "passed": 1429,
+    "failed": 0,
+    "success": true
+  },
+  "backendNodeTests": {
+    "apple": 39,
+    "competitionSql": 3,
+    "failed": 0
+  },
+  "backendHandlerAfterTypeFix": {
+    "passed": 21,
+    "failed": 0,
+    "includedInMobileTotal": true
+  },
+  "typeScriptExit": 0,
+  "strictLintExit": 0,
+  "denoCheckExit": 0,
+  "secretSignatureScan": {
+    "trackedFiles": 647,
+    "packagedFiles": 460,
+    "findings": [],
+    "scope": "Current tracked files and actual EAS source copy; known signatures only; no history or exhaustive entropy scan"
+  },
+  "sourcePackage": {
+    "time": "2026-09-21T23:08:35.530Z",
+    "sourceCommit": "2f9b8a33404c9ed2eb809d03e41cbff8055e6a01",
+    "branch": "main",
+    "easCli": "24.7.0",
+    "verification": "Actual EAS GitClient.makeShallowCopyAsync with requireCommit=true; no compilation, cloud upload or build request",
+    "cleanSourceAccepted": true,
+    "committedContentsUnmodified": true,
+    "onlyIgnoredTrackedFilesRemoved": true,
+    "excludedGeneratedFilesAbsent": true,
+    "packagedProductionValidatorExit": 0,
+    "sourceFileCount": 460,
+    "sourceFileBytes": 55953778
+  },
+  "preserved": "Only nine listed files changed. Camera/game UI, calibration/exercise/scoring/recording, regional/provider policy and controls, manifests/configuration, dependency locks and native patches were not changed.",
+  "website": {
+    "commit": "560bfae47fa6b526ca0d5eb33aa9a5acda692a0f",
+    "clean": true,
+    "changed": false
+  },
+  "productionWrites": false,
+  "mobileBuild": false,
+  "upload": false,
+  "push": false
+}

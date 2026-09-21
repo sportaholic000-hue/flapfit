@@ -1,0 +1,3 @@
+RevenueCat 5.88.0 consent fence verified (10 files patched).
+RevenueCat 5.88.0 consent fence verified (0 files patched).
+RC patch checks passed: no Local Podspecs directory, exact resolved versions, missing/mismatched versions rejected, ten pinned patches; ad-only endpoint routing, no IDFV/purchase/config startup, genuine ad delivery preserved, idempotence, tamper rejection, Podfile migration and safe JSON argument.

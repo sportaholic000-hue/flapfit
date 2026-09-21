@@ -1,0 +1,62 @@
+(node:266224) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/money/Projects/flapfit/anything/supabase/functions/flapfit-apple-consent/core.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\money\Projects\flapfit\anything\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ outer and nested signatures verified, denial persisted before acknowledgement (350.3269ms)
+✔ rejects forged verifyNotification without recording or leaking details (6.4925ms)
+✔ rejects forged verifyAppTransaction without recording or leaking details (12.8066ms)
+✔ database failure returns retryable 503 and never ACKs (5.4186ms)
+✔ rejects nested scope mismatch {"bundleId":"com.other.app"} (28.6937ms)
+✔ rejects nested scope mismatch {"appAppleId":1} (2.1086ms)
+✔ rejects nested scope mismatch {} (2.2776ms)
+✔ rejects nested scope mismatch {"receiptType":"Sandbox"} (9.7623ms)
+✔ rejects nested scope mismatch {"receiptType":"Xcode"} (2.1339ms)
+✔ rejects nested scope mismatch {"appTransactionId":""} (2.202ms)
+✔ rejects outer scope mismatch {"bundleId":"com.other.app"} (6.5878ms)
+✔ rejects outer scope mismatch {"appAppleId":1} (2.185ms)
+✔ rejects outer scope mismatch {} (1.5634ms)
+✔ rejects outer scope mismatch {"environment":"Sandbox"} (1.6051ms)
+✔ rejects outer scope mismatch {} (1.6536ms)
+✔ status needs no auth or competition identity and never returns permission or IDs (3.0829ms)
+✔ replayed valid download or new live auth cannot clear existing denial (21.7487ms)
+✔ link rejects missing, expired or deleted-user auth before inspecting signed data (3.6643ms)
+✔ signature-valid old notifications still revoke; future/malformed dates do not (8.3354ms)
+✔ unknown routes and unsupported bodies cannot invoke verification (14.0707ms)
+✔ unrelated authenticated Apple notification never grants or clears consent (1.9268ms)
+✔ competition blocks are scoped; account deletion and safety/support remain reachable (4.866ms)
+(node:264296) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/money/Projects/flapfit/anything/supabase/functions/flapfit-apple-consent/apple-roots.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\money\Projects\flapfit\anything\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:264296) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:264296) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+✔ newer runtimes retain native certificate and key APIs (14.8976ms)
+✔ compatibility preserves public roots, native metadata and immutable DER copies (1475.1062ms)
+✔ tampered certificate signatures and unrelated issuer keys reject (1057.5282ms)
+✔ AIA endpoints match native parsing without dropping the OCSP responder (9.442ms)
+✔ Deno curve aliases normalize only when the actual JWK curve agrees (17.1442ms)
+✔ actual Apple verifier retains chain, validity and required-OID rejection (3465.6104ms)
+✔ hosted Supabase compatibility-version string enables the same adapter (973.4771ms)
+✔ SQL: record UUID idempotently, reject mismatched replay, preserve original denial (16523.3075ms)
+✔ SQL: failed denial write rolls back notification UUID, permitting safe retry (8354.6091ms)
+✔ SQL: link before/after revocation sees denial; deletion removes only identity mapping (7210.0317ms)
+✔ SQL: anonymous/authenticated cannot read mappings or invoke service RPCs; service cannot clear denial (6460.5568ms)
+✔ Vault migration creates once, retains existing key, and service RPC exposes only fixed secret (16738.3024ms)
+✔ Vault RPC rejects anonymous/authenticated, user subjects, missing and malformed keys (10030.2015ms)
+✔ Production and Sandbox entrypoints are fixed, and launch game never follows a shared env flag (631.5615ms)
+(node:265096) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/money/Projects/flapfit/anything/supabase/functions/flapfit-apple-consent/apple-roots.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\money\Projects\flapfit\anything\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:265096) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+✔ real pinned Apple verifier rejects unsigned/forged outer and nested JWS (18.0852ms)
+✔ pinned public trust anchors are Apple self-signed certificate authorities (144.1864ms)
+✔ deployed adapter pins verifier and forbids Xcode/local signature-bypass environments (72.2406ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 57121.8431

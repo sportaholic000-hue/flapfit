@@ -1,0 +1,6 @@
+PASS scripts/launch-competition.test.js (10.296 s)
+
+Test Suites: 1 passed, 1 total
+Tests:       21 passed, 21 total
+Snapshots:   0 total
+Time:        12.385 s

@@ -1,0 +1,66 @@
+Download https://jsr.io/@supabase/functions-js/meta.json
+Download https://jsr.io/@supabase/functions-js/2.116.0_meta.json
+Download https://jsr.io/@supabase/functions-js/2.116.0/src/edge-runtime.d.ts
+Download https://registry.npmjs.org/openai
+Download https://registry.npmjs.org/abort-controller
+Download https://registry.npmjs.org/agentkeepalive
+Download https://registry.npmjs.org/form-data-encoder
+Download https://registry.npmjs.org/formdata-node
+Download https://registry.npmjs.org/ws
+Download https://registry.npmjs.org/zod
+Download https://registry.npmjs.org/event-target-shim
+Download https://registry.npmjs.org/humanize-ms
+Download https://registry.npmjs.org/node-domexception
+Download https://registry.npmjs.org/web-streams-polyfill
+Download https://registry.npmjs.org/openai/-/openai-4.104.0.tgz
+Download https://registry.npmjs.org/@types/node/-/node-18.19.130.tgz
+Download https://registry.npmjs.org/abort-controller/-/abort-controller-3.0.0.tgz
+Download https://registry.npmjs.org/agentkeepalive/-/agentkeepalive-4.6.0.tgz
+Download https://registry.npmjs.org/formdata-node/-/formdata-node-4.4.1.tgz
+Download https://registry.npmjs.org/form-data-encoder/-/form-data-encoder-1.7.2.tgz
+Download https://registry.npmjs.org/undici-types/-/undici-types-5.26.5.tgz
+Download https://registry.npmjs.org/event-target-shim/-/event-target-shim-5.0.1.tgz
+Download https://registry.npmjs.org/humanize-ms/-/humanize-ms-1.2.1.tgz
+Download https://registry.npmjs.org/node-domexception/-/node-domexception-1.0.0.tgz
+Download https://registry.npmjs.org/web-streams-polyfill/-/web-streams-polyfill-4.0.0-beta.3.tgz
+Check supabase/functions/flapfit-game/index.ts
+Check supabase/functions/flapfit-apple-consent/index.ts
+Check supabase/functions/flapfit-apple-consent-sandbox/index.ts
+TS2339 [ERROR]: Property 'player_name' does not exist on type 'never'.
+            : row.profiles?.player_name,
+                            ~~~~~~~~~~~
+    at file:///C:/Users/money/Projects/flapfit/anything/supabase/functions/flapfit-game/index.ts:231:29
+
+TS18046 [ERROR]: 'runResult.data' is of type 'unknown'.
+      return json({ run_id: runResult.data.run_id, expires_at: runResult.data.expires_at }, 201);
+                            ~~~~~~~~~~~~~~
+    at file:///C:/Users/money/Projects/flapfit/anything/supabase/functions/flapfit-game/index.ts:256:29
+
+TS18046 [ERROR]: 'runResult.data' is of type 'unknown'.
+      return json({ run_id: runResult.data.run_id, expires_at: runResult.data.expires_at }, 201);
+                                                               ~~~~~~~~~~~~~~
+    at file:///C:/Users/money/Projects/flapfit/anything/supabase/functions/flapfit-game/index.ts:256:64
+
+TS18046 [ERROR]: 'finalizeResult.data' is of type 'unknown'.
+        improved: finalizeResult.data.improved,
+                  ~~~~~~~~~~~~~~~~~~~
+    at file:///C:/Users/money/Projects/flapfit/anything/supabase/functions/flapfit-game/index.ts:281:19
+
+TS18046 [ERROR]: 'finalizeResult.data' is of type 'unknown'.
+        kind: finalizeResult.data.result_kind,
+              ~~~~~~~~~~~~~~~~~~~
+    at file:///C:/Users/money/Projects/flapfit/anything/supabase/functions/flapfit-game/index.ts:282:15
+
+TS18046 [ERROR]: 'finalizeResult.data' is of type 'unknown'.
+        exercise: finalizeResult.data.exercise_name,
+                  ~~~~~~~~~~~~~~~~~~~
+    at file:///C:/Users/money/Projects/flapfit/anything/supabase/functions/flapfit-game/index.ts:283:19
+
+TS18046 [ERROR]: 'finalizeResult.data' is of type 'unknown'.
+        challenge_code: finalizeResult.data.challenge_code,
+                        ~~~~~~~~~~~~~~~~~~~
+    at file:///C:/Users/money/Projects/flapfit/anything/supabase/functions/flapfit-game/index.ts:284:25
+
+Found 7 errors.
+
+error: Type checking failed.

@@ -1,0 +1,2776 @@
+{
+  "time": "2026-09-21T23:08:35.530Z",
+  "sourceCommit": "2f9b8a33404c9ed2eb809d03e41cbff8055e6a01",
+  "branch": "main",
+  "easCli": "24.7.0",
+  "verification": "Actual EAS GitClient.makeShallowCopyAsync with requireCommit=true; no compilation, cloud upload or build request",
+  "cleanSourceAccepted": true,
+  "committedContentsUnmodified": true,
+  "onlyIgnoredTrackedFilesRemoved": true,
+  "excludedGeneratedFilesAbsent": true,
+  "packagedProductionValidatorExit": 0,
+  "sourceFileCount": 460,
+  "sourceFileBytes": 55953778,
+  "files": [
+    {
+      "file": ".easignore",
+      "gitBlob": "f2083344a67f5841f50ef4dc4e2c6ae2a2941290",
+      "bytes": 1590,
+      "sha256": "b6208387a9e0f994a14300dd6791ad46bef8fc98db7b84e078961b713a516831"
+    },
+    {
+      "file": ".gitattributes",
+      "gitBlob": "b01990190401a20f79e62f8406249c1278480c52",
+      "bytes": 402,
+      "sha256": "2374936c15528fed26dcd34bb4f50ed52bf0c96d015b37e4443e2aa4a8acfa6f"
+    },
+    {
+      "file": ".yarn/patches/decode-uri-component-npm-0.2.2-flapfit.patch",
+      "gitBlob": "76e07cc138decf21c618c3375534dde6c90983db",
+      "bytes": 7152,
+      "sha256": "f738b8eee6c1b3d73604180bbda449366524279979717772f7494a3853a8287f"
+    },
+    {
+      "file": ".yarn/patches/expo-sms-npm-57.0.2-32281c0cc4.patch",
+      "gitBlob": "0d25f555ffbcc5c7d113cf973b8c74ae4295566e",
+      "bytes": 1391,
+      "sha256": "993b0dad7dda276a72428204ac2a554c6d4658513aef239087f52635c953706d"
+    },
+    {
+      "file": ".yarn/patches/react-native-google-mobile-ads-npm-16.5.0-flapfit.patch",
+      "gitBlob": "5df86eb653cd0df0edfca40ac69a892f35c850bd",
+      "bytes": 12779,
+      "sha256": "0c4a7ccb0b1a81dfc1fa8a43a9531105e23f2e76e927dd556cc7b51cc76ec9a7"
+    },
+    {
+      "file": ".yarnrc.yml",
+      "gitBlob": "55123bc29a9935385b7ae04610acb52a1c647413",
+      "bytes": 555,
+      "sha256": "bf0767a93c65650f3013e9c38d5483851bb1555094294ae58f923edfff7cf83d"
+    },
+    {
+      "file": "apps/mobile/.eas/workflows/register-apple-test-devices.yml",
+      "gitBlob": "b9a913ba1e77c2a328a5b3f6ac1f33987f8cf7fa",
+      "bytes": 361,
+      "sha256": "84987ac6f47f7bae890c5b93c74d480c36e2026558dbb5e07ec1279019c51db9"
+    },
+    {
+      "file": "apps/mobile/.easignore",
+      "gitBlob": "d523b73afa885b77cf622f697f30494d205ec5ae",
+      "bytes": 138,
+      "sha256": "694b26752fca9d670a76376c0b65502381440c4fa10c8cabbe1da249dff34544"
+    },
+    {
+      "file": "apps/mobile/.env.example",
+      "gitBlob": "4d0e2ecbbf3f29834e0749a1705ca96c0681e41f",
+      "bytes": 1415,
+      "sha256": "c0097e56b393e08575379790c7d6e54fcb014e82684539c2f39f314f39a6ad5c"
+    },
+    {
+      "file": "apps/mobile/app.config.js",
+      "gitBlob": "97176cb5d08b4cff71b307e36a4aed876605b672",
+      "bytes": 1096,
+      "sha256": "b13399db052a7575237f46be96ac98bf8014e737b846adeaf05f007730c280e7"
+    },
+    {
+      "file": "apps/mobile/app.json",
+      "gitBlob": "f82943d3dc42927b1e9d4f746dd33300ab3efcc5",
+      "bytes": 7287,
+      "sha256": "edcd58ede15abe31c4a79dabb87cb56441701ba1e5ed994ace83ad4085cce637"
+    },
+    {
+      "file": "apps/mobile/assets/images/adaptive-icon.png",
+      "gitBlob": "6b5c45c164a65afcbcc4b3dfc31d183515fc4d68",
+      "bytes": 505614,
+      "sha256": "2159f38aff29b9f86af2d2c73228ce666ece196605b73b6fae464deeceabf487"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/kiwi/stage-01.png",
+      "gitBlob": "05aec855663da432b33aec7e8c94c33967b9da87",
+      "bytes": 113298,
+      "sha256": "71501ce43a574b9e55074704ce825bf85ad2c6e10d2ee3159fa7b9d1410bea00"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/kiwi/stage-02.png",
+      "gitBlob": "335306704b9745d6c2579be40ce7de1a53a85745",
+      "bytes": 140092,
+      "sha256": "34d0fdc08a9a884926b9651651df500d3c15971a92510bf1e409dacfd7f6aa4b"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/kiwi/stage-03.png",
+      "gitBlob": "9423a31f4913143651811b7c2276f86eac117b51",
+      "bytes": 152876,
+      "sha256": "b5f74484a3424646fcc0a7696864e2415d91a8381d6151555bff4807df0cc452"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/kiwi/stage-04.png",
+      "gitBlob": "81ea8967c936d8805bd89e3c351045b16f6bd718",
+      "bytes": 164537,
+      "sha256": "607c08bf317edad3e89b567b7d611ae072f3d7f18604baa90598afbd356d47fb"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/kiwi/stage-05.png",
+      "gitBlob": "1645daa407e23c5300c6da784df0201f1df51a9e",
+      "bytes": 175652,
+      "sha256": "c3a6ddbd94a381ba0d49db68f2507f2ea686ffac4f703394b4821d438c0a8a11"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/kiwi/stage-06.png",
+      "gitBlob": "b2db1f0f435869557714940e4cf6dc5dc8c42a8d",
+      "bytes": 187033,
+      "sha256": "c04fcf43b5c96cca661807c7476c190c751a16a5fa48434ae3f7e015c76f82d0"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/kiwi/stage-07.png",
+      "gitBlob": "558bf2f0d5a762aab23d74c083ba045c744f2702",
+      "bytes": 205114,
+      "sha256": "63c4dc62e9359634ad2a0ad8e7dfe13c226a1e0ce94db9b0ae96cfca16f12cda"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/kiwi/stage-08.png",
+      "gitBlob": "88ca37bb9e3ec308d198db56f6d1888141d55239",
+      "bytes": 207975,
+      "sha256": "8050359baf2f3b634ee8abc1506e2e190ebe3473ba000a4329a463ee157bb12c"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/kiwi/stage-09.png",
+      "gitBlob": "adfd946321aa608e4cfef581cbb03ff9aef80b9c",
+      "bytes": 224308,
+      "sha256": "abbf91207b17dec513a22550edbeedc31a9aa0b7bf03c347a3f82038aafd43c4"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/kiwi/stage-10.png",
+      "gitBlob": "2e931ff5f29476c7cacb63baf9d5a4f971f5f2dc",
+      "bytes": 263248,
+      "sha256": "7c6465350ccf7013e383e9d71b403da51dcabc607f9a936b9127fc745e1cba7e"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/onyx/stage-01.png",
+      "gitBlob": "4984649cd05225b679af99689e4debc92570bf66",
+      "bytes": 89339,
+      "sha256": "3008c57b50a279b523066a9a389f8f155c1e21d006b4395001ede0c2d30579d5"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/onyx/stage-02.png",
+      "gitBlob": "b3a1f5a6c11f9858eb9df4a1639d42ce698a5d44",
+      "bytes": 107989,
+      "sha256": "9f7b92bce577c0a75ca0de129ad1b5fd74766d2b4486cfd008a8f3215a64f0ad"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/onyx/stage-03.png",
+      "gitBlob": "4b23c2379296ad792f37967fe75279b105cae837",
+      "bytes": 117850,
+      "sha256": "f1a7501d2cde29c46d6acffd9d43664760a600f94b831bb0ff420f7f333a8a52"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/onyx/stage-04.png",
+      "gitBlob": "ae928486e6acc24c5d8c3d800fa8353951fa6a95",
+      "bytes": 127529,
+      "sha256": "d303fe4d8b9d1ed80c3234f0bfb4c95ca75c94bbdf80e46f4fb2a370dbbeb9be"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/onyx/stage-05.png",
+      "gitBlob": "4a61081fbbd63494357281b540934646f87b6131",
+      "bytes": 135633,
+      "sha256": "00c7f1b0186aeb619af96843e92357624c94220a8c565b1f971f8a1bb0b52473"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/onyx/stage-06.png",
+      "gitBlob": "07d32530fe17a0e030c9636c0e449d524ee2e5e4",
+      "bytes": 144910,
+      "sha256": "d332834721a9147c54b946b3c00b8c2b24e44e30bf88f3fc399c3726aaf3a7e5"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/onyx/stage-07.png",
+      "gitBlob": "6b02a6148bea9880d2b5a23773f6c118f84464c2",
+      "bytes": 158548,
+      "sha256": "43cce2f7b40b74c0f864de6a3ec3942ee520abddad42b1d73124b74c85ff4196"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/onyx/stage-08.png",
+      "gitBlob": "d264d2e648932ff716931530b332e385f815b900",
+      "bytes": 159906,
+      "sha256": "e3f767dc1554589e12705820492656a55c8b36908a282d9b037a624785d9f04c"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/onyx/stage-09.png",
+      "gitBlob": "331c328e05035d09641d592cbc3799fffdf47fb5",
+      "bytes": 172975,
+      "sha256": "a07a44b3e81e0d5d8c02fbf7bffdc1e6c89f5905aa5c42817f5dc0e58a8d882a"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/onyx/stage-10.png",
+      "gitBlob": "e44a235687b710361fd60f3b9a13c2ad511cf6af",
+      "bytes": 208762,
+      "sha256": "392c21eaa5e10ed29addafafbe0f3631809e2477b160353e6804740acdf50aaa"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/pearl/stage-01.png",
+      "gitBlob": "908f0924b49bddadafaf2d7c505e4312f7e64045",
+      "bytes": 92678,
+      "sha256": "8dbd9181c36bc02f1c35dc5c04ea6f1b0324f28d3731cfe30aad0d313dd51cf4"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/pearl/stage-02.png",
+      "gitBlob": "00017ddb837920eb05d9a2a73eb3fc769faa9af6",
+      "bytes": 112794,
+      "sha256": "12ee1241793478c6c5df17ee045389c825b157815763224fbfd9a7c132550982"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/pearl/stage-03.png",
+      "gitBlob": "408da4b6fc11930412284bbd107eca3fc4fda45a",
+      "bytes": 123242,
+      "sha256": "0b0d039b97db503c2f67b2c204eeeedc65d8457dc6718d38bf8f4a8a79d0bb93"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/pearl/stage-04.png",
+      "gitBlob": "e2a39267805eeaa3f8db35317f1ba3929b58b8f9",
+      "bytes": 133570,
+      "sha256": "f491b0be43f5b70f66c930e23e946025f1a094b67fad8401150731a421369a79"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/pearl/stage-05.png",
+      "gitBlob": "6be34f1cd5e52e7c16e6025922fe01e157062248",
+      "bytes": 141855,
+      "sha256": "672c5571c46041806014d5a677262c9c2ea1730145099a04458b39631a90cf20"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/pearl/stage-06.png",
+      "gitBlob": "88c5adbc492ddbef6db1f2f394468cf904dfabec",
+      "bytes": 151647,
+      "sha256": "fc42cac4ba341fe5128243c3abcd1c7c8da2e383bdeb5aaf30a6d08882fe5210"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/pearl/stage-07.png",
+      "gitBlob": "2b9309df4f4ad04456f4c80bcb2e00e59eb41e0f",
+      "bytes": 165888,
+      "sha256": "9af53dcc5b310d3162c5691f32a9c4fe0f2cf57342a7e2af5c13349cda5555f8"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/pearl/stage-08.png",
+      "gitBlob": "b6845bcf7301e01c80cbf74dc0c2291eb1e17f84",
+      "bytes": 167571,
+      "sha256": "6061e142c6d812e9fc57684b3c0f2154a1b61831f04bae13e51d844b22c93e5a"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/pearl/stage-09.png",
+      "gitBlob": "252c605710e8c5caa28c8bdb9684c42170eec9fe",
+      "bytes": 180492,
+      "sha256": "f4eb1eb232759f0d388b61d402f9e2d48dde3a6a17bd8db147bf182deb702293"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/pearl/stage-10.png",
+      "gitBlob": "6dd02bea5cb12b0323affcfe8bfa3de4941b12b8",
+      "bytes": 216050,
+      "sha256": "e97661bc5121f3cc753e9be9a1f8d7df80173399fe332f8cbad5395e8bf17c93"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/ruby/stage-01.png",
+      "gitBlob": "23616c735d2eeaee9b9c15108e933f945f749fef",
+      "bytes": 114292,
+      "sha256": "1da20cd049d3a93312e7bbb5d60663fcb661a2678f9a573b2fb91e98c76f3681"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/ruby/stage-02.png",
+      "gitBlob": "af1c65975dfedd673618d2e22d7e62104003f2ea",
+      "bytes": 141680,
+      "sha256": "e491aecaca684dc5b1377822bbbf8ef3ab392f06c156f2e6ee62e8c1c3247491"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/ruby/stage-03.png",
+      "gitBlob": "c519af0c4ca920e238c400794025e01b6c2affb5",
+      "bytes": 154136,
+      "sha256": "ae58411df555fd2e50466f9df152148788c5909b03bf5d43daa822bccb9050f5"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/ruby/stage-04.png",
+      "gitBlob": "8165a0897bb633fe1b41b90209bec8dd2d96f19a",
+      "bytes": 165886,
+      "sha256": "f82c33f9e3a6cd78ae5d6c60d3d8d8a1f3d7078b54828e05bbf7fab841baf091"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/ruby/stage-05.png",
+      "gitBlob": "6a7aa75589cac73759516ca68f634fff74f137d2",
+      "bytes": 176486,
+      "sha256": "3bdbd070dcf85679d17b4f60184b18dea9c66ee36448821a40ab5a402d59db1e"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/ruby/stage-06.png",
+      "gitBlob": "e34fd4e0c4fa51ff23d4e88e37222c1d0726b2a2",
+      "bytes": 188365,
+      "sha256": "16117273def134b4dc142128f4026b19d7f38ba180ee4f030afadcdd9b0e927a"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/ruby/stage-07.png",
+      "gitBlob": "e4a3c3cd8591c01dcfcb61460aa970fbbd4dee5e",
+      "bytes": 206699,
+      "sha256": "e86015588eed3c54da37ef85fe82f30a374e70c51dba1f51f30038a0be8702d9"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/ruby/stage-08.png",
+      "gitBlob": "fb0fa517d95fb9cbd45e5415551bbdb7da46dca0",
+      "bytes": 209450,
+      "sha256": "699c061e103036bcafb65534b88a01c549c2fb860c3f0fbcf61fd22ce7a2b02d"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/ruby/stage-09.png",
+      "gitBlob": "23f48689014755f0640f216e18fe750cac1bf658",
+      "bytes": 226153,
+      "sha256": "3e157cbf71af25f189053b47428392054bb5fbeaa89809d334f9f0c46061684a"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/ruby/stage-10.png",
+      "gitBlob": "3095c1183e5f75069a9e87e40360359dbab731c9",
+      "bytes": 263630,
+      "sha256": "666c5a2a1d44de8d36479679a5c3ca13a3be224d652f946ba949dbbfc0723a77"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sky/stage-01.png",
+      "gitBlob": "51c8a2732464e9630782f4acb0f8fe0173165659",
+      "bytes": 115787,
+      "sha256": "00383f305275e377689320ad2f8e8df159c8d7f2ec29e9f0dca956eaf3c6506f"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sky/stage-02.png",
+      "gitBlob": "cc679ee1e0bab86bdabc25b5d3137d52e6ca1478",
+      "bytes": 143527,
+      "sha256": "013a3dbc91865bd4e171d32a4aa6327ea17cd34dac4b86f98259a21192348a3b"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sky/stage-03.png",
+      "gitBlob": "070610e9472b1b739610f1b44a136832e72c1611",
+      "bytes": 155995,
+      "sha256": "bf3ecb4f387c2cd5a2627bbde29892b148dd28734643ecdcede597c0c2fefc20"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sky/stage-04.png",
+      "gitBlob": "96619455a95815a062b0a65108d62aa64465be81",
+      "bytes": 168272,
+      "sha256": "d8a32945e7e66d30c5edc47d7f917f7a5faa5a98fa979645ad7f7ec3c125de70"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sky/stage-05.png",
+      "gitBlob": "2a0857d5c0589bc23c6942c17187d1e3d07d2b88",
+      "bytes": 179215,
+      "sha256": "125bee953e6708b016c662c8c9857cd4758fc02545af82ad88ed04db7735cc48"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sky/stage-06.png",
+      "gitBlob": "3ad69fc810e6c074cfb12665eece7803995620d6",
+      "bytes": 190776,
+      "sha256": "2e5c362eb0e95aee6de8895b33e0a5190f7879383ae6357694f299c428400376"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sky/stage-07.png",
+      "gitBlob": "4ec60bcdf675d8438da89c2c83ad44480a49d340",
+      "bytes": 210176,
+      "sha256": "cf7266cada5a776d367131919ebd5c41f2bce6e2266cb7da101748500e3adf8b"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sky/stage-08.png",
+      "gitBlob": "60fe9058816bff2ba4157638dc87c3b99c00fa25",
+      "bytes": 212712,
+      "sha256": "4aebf158f54361cee891f4159a239be1e30c4e805556f0c1c625284c41f73963"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sky/stage-09.png",
+      "gitBlob": "7ca0970f4836801c4536255ae3f03f1d52dc60c0",
+      "bytes": 229220,
+      "sha256": "4f1a3ed66fd4f66c8ff7cf5ab9d868e7fcfaf0c23c5be8f7862ec594f2167914"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sky/stage-10.png",
+      "gitBlob": "0a06508b76128f3a15ba1967f82b156e40c79f39",
+      "bytes": 268091,
+      "sha256": "fa1331ab6f2f70b78d2cf6f4210412aaef8387d20851cdcfc54d1c799c7585a0"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sunny/stage-01.png",
+      "gitBlob": "5160dd9bd124e1d238dcac465133eacc0028e512",
+      "bytes": 138617,
+      "sha256": "54cb7c6492693c77ffb5cbd7515bc4cc704e0f37c68f436ca47a7ae2b6250e46"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sunny/stage-02.png",
+      "gitBlob": "96be39b720a81beed02ca281f42b9a5d936db18b",
+      "bytes": 174539,
+      "sha256": "55e8d783aa948dce13ec52202d8c3b2f215876438201dacf97a949fa3319fcc0"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sunny/stage-03.png",
+      "gitBlob": "5c35d09be1776fbaa65fe0d7ef00372e7a998e54",
+      "bytes": 188596,
+      "sha256": "e2a9514c5555ef45fa5d12303713c071f4f9d8d6adf06c9d6a9bddb99a4c334c"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sunny/stage-04.png",
+      "gitBlob": "0c917dbe2d2e3b5a07c923dfd033eb853ee3bcbf",
+      "bytes": 204189,
+      "sha256": "970820f8c169e6615215f6bb29a1a6f5e6038107556bf00d256d066ba38e6738"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sunny/stage-05.png",
+      "gitBlob": "3218e8b06eda27e177a7bcd4ed90376693eff811",
+      "bytes": 217812,
+      "sha256": "b9aa75ac2e35965a2c0857ff351a8391045cd4afa5ac41b59018507d71ffdd05"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sunny/stage-06.png",
+      "gitBlob": "01807cf2c890194e74f15dcddd4aa7cf64fb8440",
+      "bytes": 232297,
+      "sha256": "7e243961f05031850f2c5aaf671409f37456b3bfd40a5bf41208399f5d1cbf54"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sunny/stage-07.png",
+      "gitBlob": "4541b762f15ecadf9cd09301f9105b4f8b04172d",
+      "bytes": 257173,
+      "sha256": "126a5aa35e215d6102802d312a43e25e4b2a32da073ab0f146a5e0f5da76f358"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sunny/stage-08.png",
+      "gitBlob": "8fdc7825b9bd41bd5616a1aa2e15b474ea1015fd",
+      "bytes": 260363,
+      "sha256": "31ee54cc3960f88c2df976c60a181f39f93eca8cf14e3434a807f102906945c1"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sunny/stage-09.png",
+      "gitBlob": "3b7303d53ee01be8413f473a9a3b6bd01777954b",
+      "bytes": 280989,
+      "sha256": "72caf72d68d97b1577f489e82f1003dfc2326dc99f4c6bb7d4054477ec344eec"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/sunny/stage-10.png",
+      "gitBlob": "65bcbcec8932af789c22b7d102fc12673fb84efc",
+      "bytes": 317392,
+      "sha256": "e714e1bdc82eca1809f9676b6a877db37ffae4a7f83c1d8e38874ba6b73fef9f"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/violet/stage-01.png",
+      "gitBlob": "f59b5a55a86d521df8c9eb4412f3b41998a90d20",
+      "bytes": 113167,
+      "sha256": "4634b8ffbbc1c352d82905128751804cd9add421adc9d6b4c7aa336fd8000b64"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/violet/stage-02.png",
+      "gitBlob": "f35c1175ba2f151fde6ec4323da9af3db040c079",
+      "bytes": 140533,
+      "sha256": "912f537acac65b29d4be42d9ff057cdcfa6607b0d5b5a36f179e30d8d7f813bc"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/violet/stage-03.png",
+      "gitBlob": "983b3122c3800c4cf928ccba448d5269644602d6",
+      "bytes": 152896,
+      "sha256": "4b026406db3c9e47ff7a3714298c19b88a5c1f03815c71e807fa9f041fabb15a"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/violet/stage-04.png",
+      "gitBlob": "276ba04e985a4d1bc6cf65371b5d80b50ca4c34f",
+      "bytes": 164250,
+      "sha256": "ea8f525b346c1058689df38b8a0b0a9bb8e0f61dc75ebbcce1aa2c0cfd97d62f"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/violet/stage-05.png",
+      "gitBlob": "dde86dd8ba82a67df399494281300f761a062a87",
+      "bytes": 175314,
+      "sha256": "756e8a026b37dc35075634a870b90b0dd8bdd6df34d8ba10b693e8a26fe1a44c"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/violet/stage-06.png",
+      "gitBlob": "6caaa2d30d1b29bb4dd5c3a32bfc8c211f257e43",
+      "bytes": 186719,
+      "sha256": "43a0bd65e880cea5b3b55086aa68a0904915cfdef8083f644f1ed79b950152ae"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/violet/stage-07.png",
+      "gitBlob": "9bb269797ea22f20d647f8f88c16771ec0db7a13",
+      "bytes": 204840,
+      "sha256": "2cd909f496a2985181a8f7aff19e264676022ebc77c5e5e83c2ab3d2257f6838"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/violet/stage-08.png",
+      "gitBlob": "e4763286b83a4fb18093234ca7d45ea36eb300af",
+      "bytes": 207525,
+      "sha256": "db74baa7cb022df06487693899028b562ddc070cc91d1cbff32ffef5d2de1a7d"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/violet/stage-09.png",
+      "gitBlob": "65818ab1c1b163900d98c315545ebccc605a3aa1",
+      "bytes": 224664,
+      "sha256": "5c8b04e6fddb7010a73b7036b82fd1c0a78e782cb889e71f214214fd5298837e"
+    },
+    {
+      "file": "apps/mobile/assets/images/evolution/violet/stage-10.png",
+      "gitBlob": "756c37922c8cf3ac47e5b4d9583fe904c4557013",
+      "bytes": 261245,
+      "sha256": "3ae23b209781f4f5307e77f768d4575fbfb732ff049a0e5218483e7a074dc159"
+    },
+    {
+      "file": "apps/mobile/assets/images/exercises/biceps.png",
+      "gitBlob": "2384c2dd4c02117704df504389c319e9b2f40426",
+      "bytes": 1286147,
+      "sha256": "f07a201ef4b67f2bf3937a698c1a8793049dea2b06ff65ea333c41704f2c79b2"
+    },
+    {
+      "file": "apps/mobile/assets/images/exercises/lateral-raise.png",
+      "gitBlob": "4e8017b70a32328d1b64bfac7309264379d91e6c",
+      "bytes": 861930,
+      "sha256": "ba0d1a7b82e9af06048e0029aafef728173a8601d70038731cbfede8264c24d9"
+    },
+    {
+      "file": "apps/mobile/assets/images/exercises/pullups.png",
+      "gitBlob": "2b0e2d365fa4565639f34d11bdb3c36cca31b5b5",
+      "bytes": 940893,
+      "sha256": "ff1ee56a74fa6c91122ff2772b32f4d27e1594cc28e184179b5adde2d943822e"
+    },
+    {
+      "file": "apps/mobile/assets/images/exercises/pushups.png",
+      "gitBlob": "bb9e88562d1b29a99e80093aac6219306e403dde",
+      "bytes": 1015113,
+      "sha256": "9fe5df5afbbfec7e30dd489911c2c8cfb8ad8af5a15fd4e4dcedf9fb70102b57"
+    },
+    {
+      "file": "apps/mobile/assets/images/exercises/shoulder-press.png",
+      "gitBlob": "1975f937a697ef70d7a3669eaaff385735bbc429",
+      "bytes": 1319722,
+      "sha256": "528c9bae95b13f9f39e53ff9cabb56507cee5b20883fdff5b671007c1e5bb73d"
+    },
+    {
+      "file": "apps/mobile/assets/images/exercises/squats.png",
+      "gitBlob": "24feecab07a560ff5ed306ce253d3df67234e8e4",
+      "bytes": 1077325,
+      "sha256": "19d7ff2bbba3db132a6b25ea38a1fa78cb41853d845403f36f737a9650cf0028"
+    },
+    {
+      "file": "apps/mobile/assets/images/favicon.png",
+      "gitBlob": "eec8fb10930614552502d0c9cf37037d812d344b",
+      "bytes": 19610,
+      "sha256": "fe90f66317198edafb3eea4730cc2099b2ab32a96082364a986e0b327a97df6e"
+    },
+    {
+      "file": "apps/mobile/assets/images/flapfit-splash-logo.png",
+      "gitBlob": "6bb65a4918a8921fbbd75218b6b9fc47e4f15788",
+      "bytes": 803274,
+      "sha256": "b2934b4c1f4a5e1d6253636f10442109863fb6643ec4d2e3c0132f2a9b18cb48"
+    },
+    {
+      "file": "apps/mobile/assets/images/icon.png",
+      "gitBlob": "8a5acc0d9b73ea4695846138d6fb2216555a2b6e",
+      "bytes": 745313,
+      "sha256": "55ac5ee102521c5a89c9d3b58bd5980608d09d0e7c2e2d2a0dc84575122b99a4"
+    },
+    {
+      "file": "apps/mobile/assets/images/splash-icon.png",
+      "gitBlob": "37e13231fc90630c256d4dba0ff0bc42b18ec10b",
+      "bytes": 784609,
+      "sha256": "0acbaaa0bcbad53ce68fd241fb841cd3daedb14f60558406293d12645441ef06"
+    },
+    {
+      "file": "apps/mobile/assets/mediapipe/pose_landmarker_lite.task.mpasset",
+      "gitBlob": "09576a930167d58ba3cd759a1521a1f7b159b0f2",
+      "bytes": 5777746,
+      "sha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a"
+    },
+    {
+      "file": "apps/mobile/assets/mediapipe/vision_bundle.mjs.mpasset",
+      "gitBlob": "c367f270812135e746e910aebf94e14d6b392f6b",
+      "bytes": 136872,
+      "sha256": "8ba4234736bd935a0154dd41bf8c772b4d95efdebd7ff5d7e3792de4088b6e8f"
+    },
+    {
+      "file": "apps/mobile/assets/mediapipe/vision_wasm_internal.js.mpasset",
+      "gitBlob": "15ccc9124484032a0156a93dad6300e11383b305",
+      "bytes": 209846,
+      "sha256": "80b646a9dadaa0e9fbab489b8a45eaf4d453580aaba321fda6912a7e533e0f4f"
+    },
+    {
+      "file": "apps/mobile/assets/mediapipe/vision_wasm_internal.wasm.mpasset",
+      "gitBlob": "639e1896a631dcd49b39f9c76c908a99285e1bcf",
+      "bytes": 9423986,
+      "sha256": "f82a8e6c05e08a44cc9f9e7ec5f845935bcbb1b1500ebe8c2f4812fb4e2917dc"
+    },
+    {
+      "file": "apps/mobile/assets/mediapipe/vision_wasm_nosimd_internal.js.mpasset",
+      "gitBlob": "d35ef64207f9c109d9cab4b9d1953d2ad6521a84",
+      "bytes": 209755,
+      "sha256": "f92e83e09ad73288849ae60c2332c2c5449fff7fd97a83a2a7dded34ab64af0a"
+    },
+    {
+      "file": "apps/mobile/assets/mediapipe/vision_wasm_nosimd_internal.wasm.mpasset",
+      "gitBlob": "a6dd15a0976a36094f5299965ccc9f31003dcd05",
+      "bytes": 9294247,
+      "sha256": "38b61feab2fd7934e05cbe9f68baa308978a5e3b7f85c1913bb8ae89b8ef8b97"
+    },
+    {
+      "file": "apps/mobile/babel.config.js",
+      "gitBlob": "04bc056d631ab8d401252140a555e6f5252e7a06",
+      "bytes": 150,
+      "sha256": "976ffa262152b21a0b25fea86fb86be7aac297823732d779514d47179212c244"
+    },
+    {
+      "file": "apps/mobile/config/admob-skadnetwork-ids.json",
+      "gitBlob": "6aa4e24b3b1389de142d8095c2899dcb0918aa41",
+      "bytes": 1455,
+      "sha256": "f26645d0653555e480f874ae6d5cc978c4022f4c36019689b612f94a78daf732"
+    },
+    {
+      "file": "apps/mobile/design/evolution/EvolutionAssetProcessor.cs",
+      "gitBlob": "20d58d657d04e3e0bd0c33be7dd6b0d23df53857",
+      "bytes": 19878,
+      "sha256": "292bff074b4f411d5f0627903bcb018d3a96774876bf357609d644cba20b21c0"
+    },
+    {
+      "file": "apps/mobile/design/evolution/EvolutionAssetProcessor.dll",
+      "gitBlob": "607ee408668a6436519561db21fd8bac56c4edbc",
+      "bytes": 11776,
+      "sha256": "a423c6f4c13fda37d8f6d0b3d11a31caff3b34ad643edbc4d3b3fb98c2ea3683"
+    },
+    {
+      "file": "apps/mobile/design/evolution/New-EvolutionContactSheet.ps1",
+      "gitBlob": "dffe82ce1f44cd71dd4b01976d07a740aa40267b",
+      "bytes": 1834,
+      "sha256": "3a432bee5a4cbcdbabad27bc37879888de49c8a3cd23d9c099b0d2f0e145c18a"
+    },
+    {
+      "file": "apps/mobile/design/evolution/Test-EvolutionAssets.ps1",
+      "gitBlob": "0896bbd05d0696afa2b745e4d85eefc577b17718",
+      "bytes": 2848,
+      "sha256": "500b6d5b34f938c6fefdf66a132678da663a3656189ce225e1571c732f13f097"
+    },
+    {
+      "file": "apps/mobile/design/evolution/build-evolution-assets.ps1",
+      "gitBlob": "821dde6f26cb715fcb0ff611dd6905b045ba3a6f",
+      "bytes": 4389,
+      "sha256": "9955a4179a0220c93d1f8e897b02291927861c503a92ef1fd8338350da45b04c"
+    },
+    {
+      "file": "apps/mobile/design/evolution/preview-sunny-stages-01-10.png",
+      "gitBlob": "e4f77e7cbdcc1967452e5cee55571922e7cb242c",
+      "bytes": 588510,
+      "sha256": "b982ff44eaf0f3c04460ec566556b4258a590e034199ded9f06e36ba4f5d3b9c"
+    },
+    {
+      "file": "apps/mobile/design/evolution/source/legend-stage-10-chroma.png",
+      "gitBlob": "f4c722cfad96612d9835c7343d5833b32e953371",
+      "bytes": 1615056,
+      "sha256": "4ab56f615cf9b9bf3dee6938cc5cf3690b709626c49dc6dc04095ee895dd3faa"
+    },
+    {
+      "file": "apps/mobile/design/evolution/source/stages-01-09-sprite-chroma.png",
+      "gitBlob": "54a74c050605866bfc92c97f03eef11918526af1",
+      "bytes": 1845527,
+      "sha256": "fc314a206cf92d78b6609b3e26e0cce2be217c0d747d09269b39eb7e0c5c6132"
+    },
+    {
+      "file": "apps/mobile/eas.json",
+      "gitBlob": "cfe168371de3713c22384dcc89bf1c19f2ddaced",
+      "bytes": 5208,
+      "sha256": "3bbc73bb8580807ce13fc7d7eb7748efb56767d53713c14514fd445c739282b2"
+    },
+    {
+      "file": "apps/mobile/expo-env.d.ts",
+      "gitBlob": "5411fdde4fe48cdef838788e277202ea12f1f5fc",
+      "bytes": 112,
+      "sha256": "a0d5fafb395326359e89a30a415020ec694bdc96f3fa81e87e6957dadd553965"
+    },
+    {
+      "file": "apps/mobile/global.d.ts",
+      "gitBlob": "9cde68294ce6f8a5ee3d37d0beb4ab2c70cbf180",
+      "bytes": 1094,
+      "sha256": "af65b0b63308890ed4aa6e2a4c548e4f3268cbccca703df25851c5bb0751ca2d"
+    },
+    {
+      "file": "apps/mobile/index.tsx",
+      "gitBlob": "8d1f5d2a6817940b18990ca0b45f654395d62ef6",
+      "bytes": 193,
+      "sha256": "8cd32cd75f4f832c1e5bc041df8e24d936cb44f63bfb33135941ac134aa93087"
+    },
+    {
+      "file": "apps/mobile/index.web.tsx",
+      "gitBlob": "b1a3d47897568eed650a13f6f8c26b3b6485d91f",
+      "bytes": 226,
+      "sha256": "026cf046096d8843ef6fd242252bed36cabd01f4a643bef0cf0f8f64f55d4a1d"
+    },
+    {
+      "file": "apps/mobile/jest.setup.cjs",
+      "gitBlob": "4714e464b7513e15172e6bd796e015f7cf46bc7b",
+      "bytes": 146,
+      "sha256": "31905550da37efe7ca32dc63c5ab622a8198c035f3803db6867c6b071aa559e0"
+    },
+    {
+      "file": "apps/mobile/metro.config.js",
+      "gitBlob": "f58c32f67bdb9d93b4b7e315f5db41857befd97e",
+      "bytes": 3730,
+      "sha256": "6ed03fe5d0f4dd42edcf6bede1e6f3ff118304b816c1a3283ccf2dfafc7d6827"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/__tests__/app-transaction.test.ts",
+      "gitBlob": "0406ff60323bb5589a65772d34d84a2c8e3a6e91",
+      "bytes": 6125,
+      "sha256": "7037ebf242ab084b40ad35b7fabe9b2331739a350540c06c8be87404d7f59a86"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/__tests__/bridge.test.ts",
+      "gitBlob": "0ae510cd8f94ed468b9bd93077fbcf7031e30158",
+      "bytes": 9436,
+      "sha256": "dc1f46c001ff0ad7c221ef6779bfcda454807ffa05280de36d9aa05fc5ea9aeb"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/app-transaction.ts",
+      "gitBlob": "bce773280cb1a1de7d82c556e72ed91c199ed928",
+      "bytes": 2340,
+      "sha256": "d7ef4e000c1976f50f6544ad7a3b864df265e57cecc0bbea6b674c5a7bf21e80"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/app.plugin.js",
+      "gitBlob": "a6f73224135203339b61df2a078adc4bac6aa161",
+      "bytes": 515,
+      "sha256": "8525b160ffdd70e5dae6782f1d4e6d12b29c8fee4355d76171b7690a43ba89f9"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/expo-module.config.json",
+      "gitBlob": "46fd5b890d55862c9d0480250963eac80ab7fd8b",
+      "bytes": 118,
+      "sha256": "8da5149889468c64e36b5d47969bfdc593b8cf36c5f5f4c0a6582b21c7b6356c"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/index.ts",
+      "gitBlob": "166411d59737b743888cb0d066c38db65d521fa3",
+      "bytes": 2408,
+      "sha256": "4c83e6f4caa9c16b98748bcbaa7f98cdb43af469887c518c0d548c2aa4336cb1"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRange.podspec",
+      "gitBlob": "9f1590b912b8c5f992abfcae68d17de88c4e4efe",
+      "bytes": 1294,
+      "sha256": "2808a625cb51c891eeb6f439a47fc20976deb080d82e9247807fd6db416aa675"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRangeModule.swift",
+      "gitBlob": "7c5a3bad0d2cd5ae4c6bbac9e5db93efdca69006",
+      "bytes": 8176,
+      "sha256": "ed9ff4aa9046cf959bdd1d2ed3b5d0daafaec385250b86b38112ffcb82341794"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAppTransactionBridge.swift",
+      "gitBlob": "a3d22116030d85a874d83634133793ccd3ce920a",
+      "bytes": 1918,
+      "sha256": "cfe98841846a24898ead78c500f59b9b041b806a17751b47e8a33f600433579d"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/src/appTransactionTypes.ts",
+      "gitBlob": "3e80a2670ba377c2ff918a8f4ee80d8b36819d01",
+      "bytes": 528,
+      "sha256": "ded0a21b146fade4d7653dff4c1d3d075f3f34d537fcb5dab1f42ed38f9be1c1"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/src/gates.ts",
+      "gitBlob": "5587008b1d92cc4e9734592e739020c7b90c081a",
+      "bytes": 659,
+      "sha256": "4d3cd35d16fa839c38fb311868705996ef2ee9ec0e446a976ad30d480f89c94c"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/src/normalize.ts",
+      "gitBlob": "c1e008fb04a6321e46c34c3cc0af403f4195c3fb",
+      "bytes": 4755,
+      "sha256": "da97045a988bd1959aea74a1b7991c0770c6d6da6489c77321bd84096615bfee"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/src/types.ts",
+      "gitBlob": "a56b8269f6e6499ffa8fadb678a3b8e698fac4ab",
+      "bytes": 1519,
+      "sha256": "43f23354868181ce6e4d25c8019fbea725a0c779a1110e461f06d954b6388eb9"
+    },
+    {
+      "file": "apps/mobile/package.json",
+      "gitBlob": "5a980cdf5ffd3b00a0c4602dbf2c266e580aac7a",
+      "bytes": 2966,
+      "sha256": "090ef0bcbb0148c50f846dbcbc12d5e2cee937d73a845a292dd76c2321a2b0d7"
+    },
+    {
+      "file": "apps/mobile/plugins/with-share-return.cjs",
+      "gitBlob": "1fb0b8a166b9d00f6b3e5d3d6c2fc43635a58e61",
+      "bytes": 710,
+      "sha256": "e21a7b142532e06d1162dec700286744cdc4f361d120ef6a24714d7e5794de8e"
+    },
+    {
+      "file": "apps/mobile/plugins/withAdMobPrivacy.cjs",
+      "gitBlob": "2809a4f53b32df06b67d0b13c464128097905d57",
+      "bytes": 570,
+      "sha256": "971dd8428a0b2d775351a4aab37eee5d8603e30a5f2d65ada278202f94ddd837"
+    },
+    {
+      "file": "apps/mobile/plugins/withRevenueCatProcessing.cjs",
+      "gitBlob": "5c24a757944883b51ff878366cf8c3f789251847",
+      "bytes": 2492,
+      "sha256": "7b288b6f002de7554cddcb9818f2815551ba0f9af1c11ad7779e9ab8fd3ca470"
+    },
+    {
+      "file": "apps/mobile/polyfills/native/textinput.native.tsx",
+      "gitBlob": "e8b84d7c2571ef36c493dd569554c7a590fe0095",
+      "bytes": 1292,
+      "sha256": "9fabb4c957551d8449a9be515ee893179f4dae20d285a52b7d5b280246e68be5"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/SafeAreaView.web.tsx",
+      "gitBlob": "df469d100965809ef714eda20c1b2eaa477662db",
+      "bytes": 1572,
+      "sha256": "9ae5fbdfe5f1734b71137275fd92167faf156a1fa4c4e277ad2a6a5cb81e7b9d"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/alerts.web.tsx",
+      "gitBlob": "35b31d48d6dd75d7bfd57db08ed20f2621885d71",
+      "bytes": 15531,
+      "sha256": "ae45628aba28e832fb0a139db0bc8ed1b06c1ff436ba05c704cd47816f96f8e7"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/camera.web.tsx",
+      "gitBlob": "e2f4a7e6ad4a83e7182700340b6e8833311fe153",
+      "bytes": 6074,
+      "sha256": "284af88f123824693723b62555c3d85294d00a2716451328586918675ea0bb4b"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/haptics.web.ts",
+      "gitBlob": "261a21fae4f59ee47eaa299307695de266de4297",
+      "bytes": 1533,
+      "sha256": "7f91c7a132dd3d0a59046dfcc0b483b7405bc18f4d952d80081db7d806a9c316"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/linking.web.ts",
+      "gitBlob": "7393eeb70e92a62280f9d3d7ccab178ca3df9f64",
+      "bytes": 1556,
+      "sha256": "b5f712d5f3d5c8dbe1b1113348119a5cc7d1f728b440307f14cd9650cd2b67b8"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/refreshControl.web.tsx",
+      "gitBlob": "fb8462df792ed6242f53f164f76cc062f3ea004d",
+      "bytes": 102,
+      "sha256": "28b724966c855143cf1b0dc24ed51a48cb8cbc277f6e6ee238d431e3f503edbf"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/safeAreaContext.web.tsx",
+      "gitBlob": "e8b90f59a6a6a768fa22075336952227111f3713",
+      "bytes": 674,
+      "sha256": "63ac4ceb6f1c21364c64eb8ff7a189705527cf2024c133ac177fa3ea6dceff13"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/scrollview.web.tsx",
+      "gitBlob": "bd80dc9d3f6f986b673c4c43bbb12353b8f43cd8",
+      "bytes": 550,
+      "sha256": "9020cd82b8eef34c1fd03982935134387b2a4549690f27a1884daf9804f8056f"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/statusBar.web.tsx",
+      "gitBlob": "f242d14e8d6b161d9a06297e08fcbcbfacef7bc1",
+      "bytes": 374,
+      "sha256": "0c038c3d2e6b5e3cc1286732e9f242693499aa9ce4bccc28cfb29a49095f094e"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/tabbar.web.tsx",
+      "gitBlob": "edf4371161f85e56f7d308c7abc1a300a631c32b",
+      "bytes": 798,
+      "sha256": "17ad826e94d9d3efe33d1c0396e5a555b8a2158de7c7d0020cd93ea17f75851a"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/webview.web.tsx",
+      "gitBlob": "86a7f9ef6a11c25b227922ba89ea090d1314417a",
+      "bytes": 3039,
+      "sha256": "261fa3958732770b5000ae5e38cc26fcffb74250186ff699ce2300ecc2bc1aea"
+    },
+    {
+      "file": "apps/mobile/postcss.config.js",
+      "gitBlob": "12a703d900da8159c30e75acbd2c4d87ae177f62",
+      "bytes": 89,
+      "sha256": "b78f5d0a0a449ecf58b6b6252e26cd2216c7aa41235e2d6d01a26b9a065cd439"
+    },
+    {
+      "file": "apps/mobile/script/build_and_run.sh",
+      "gitBlob": "9f3379957c7ef5083e61652549281f6e2a25f0ef",
+      "bytes": 2331,
+      "sha256": "e4dda3ea4c3d13bb0dbca20ad5e38c9388f32c6b75bb2e1f95c190b8cac319a3"
+    },
+    {
+      "file": "apps/mobile/scripts/ad-sdk-lifecycle.test.js",
+      "gitBlob": "8d9c9e091e3b672c3826543b00b71072f577b5f2",
+      "bytes": 4216,
+      "sha256": "5d6ecb7ffe5a2284b84029e21753f3d204501f04502ae0968d19a2700fd64e52"
+    },
+    {
+      "file": "apps/mobile/scripts/check-release-links.cjs",
+      "gitBlob": "ffdcef0f8e5a0ba560966c2d543219803a930085",
+      "bytes": 1764,
+      "sha256": "eb806f7ebd824a1227779f1ee788f8128516ed66c72326c63c1232719bea1684"
+    },
+    {
+      "file": "apps/mobile/scripts/eas-build-post-install.cjs",
+      "gitBlob": "5e84be4fde97647db9b1ba0ee79fdcd43e50892f",
+      "bytes": 461,
+      "sha256": "75c861c440eaeaac17c66a4b726ec747d36feee66a5509ae5399c0154f5e904c"
+    },
+    {
+      "file": "apps/mobile/scripts/launch-competition.test.js",
+      "gitBlob": "b7cd1abb29052bbb18b777fc0c17d6601fff190f",
+      "bytes": 9897,
+      "sha256": "a8d99566e1d2f5b4ff2e125cebce61a76390ccd8bf69eff5b2dbce1bc6edfbe2"
+    },
+    {
+      "file": "apps/mobile/scripts/patch-admob-privacy.cjs",
+      "gitBlob": "6ab3c4377c29b7889312ba8ee93fa6a988684056",
+      "bytes": 7543,
+      "sha256": "50008a06b51dfeb4af5072f8890295eec441abba9c9fd985e3f6387c9b4aba96"
+    },
+    {
+      "file": "apps/mobile/scripts/patch-revenuecat-processing.cjs",
+      "gitBlob": "80f8c602f432392cdfa06228659217bbaab837fe",
+      "bytes": 20443,
+      "sha256": "3c0fae9341591a5da56ea32fb871c914063eb09216c0a35b1c8b55da10399529"
+    },
+    {
+      "file": "apps/mobile/scripts/retain-ios-archive.cjs",
+      "gitBlob": "8c50f5dcf3493e439495ad095f2a56754a9495be",
+      "bytes": 2739,
+      "sha256": "e7c7c9d029a013f7cde3ff48e4ee59beb099ca32bf1c9427c70f14a30fcbe966"
+    },
+    {
+      "file": "apps/mobile/scripts/retain-ios-archive.test.js",
+      "gitBlob": "75ac86b1c5d17a91cf09a8ad1741b2149bbd3ac8",
+      "bytes": 1156,
+      "sha256": "f003e1cf2152142855572e7dd9caf9778f18f88a8698a29fad48808063a25b71"
+    },
+    {
+      "file": "apps/mobile/scripts/share-return.test.js",
+      "gitBlob": "f4557bd6b709121a48b865c910b49d73e100a447",
+      "bytes": 1537,
+      "sha256": "354986dbf85813151f7eba2ec792b49bd525519713ff25d29da27df8ab305d08"
+    },
+    {
+      "file": "apps/mobile/scripts/start-expo-go.cjs",
+      "gitBlob": "9769a34a8a7b25ac48c52288911cc3b90f9ba6c2",
+      "bytes": 838,
+      "sha256": "fe57b8c345c34e508cba5a364b4e0bf0c7175317e817d95bcf03ee2292648ba5"
+    },
+    {
+      "file": "apps/mobile/scripts/test-admob-privacy-native.cjs",
+      "gitBlob": "38c6ab0147983c407716570ce4889623b4cd1c88",
+      "bytes": 4465,
+      "sha256": "22286a6b444eeb0086a4c02e972b013945e00186c87449c01911ae05d62c4e73"
+    },
+    {
+      "file": "apps/mobile/scripts/test-admob-privacy-patch.cjs",
+      "gitBlob": "2e0efdabbfb4b1d04457a4db6f0c6f6a37413417",
+      "bytes": 3625,
+      "sha256": "ab12958e1be996719d0f71af97659d58ecfd44266f10f668aaf45b696467637e"
+    },
+    {
+      "file": "apps/mobile/scripts/test-revenuecat-processing-native.cjs",
+      "gitBlob": "9d7778c94ff1f01c672727becf7f3dfcefa3f1da",
+      "bytes": 9560,
+      "sha256": "495da37656da6d5e8bd57265e9ea14d2d2cd4bdc2a85121e2d2da3a50963c244"
+    },
+    {
+      "file": "apps/mobile/scripts/test-revenuecat-processing-patch.cjs",
+      "gitBlob": "b9eca036f824f72af8034a321213c527b794a248",
+      "bytes": 6178,
+      "sha256": "132d5f04f5ef7dc4bc3c9daac3d7e1faa9543e563032a8e8859559673e803887"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-monetization-config.cjs",
+      "gitBlob": "252e40a34f9d734112157b1f93f4584b5c049459",
+      "bytes": 5401,
+      "sha256": "d0864878f8f21b248309be0213bde48626e7eab2ad806d4b7abe0f3c1c5af494"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-monetization-config.test.js",
+      "gitBlob": "f28072b9f6f5baaf3ae1f868707c07a90e63cbd6",
+      "bytes": 6386,
+      "sha256": "74bd01ea3d59f7ade336515935f26a05690f920315563f2d6757af75f3eb6868"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-privacy-manifest.cjs",
+      "gitBlob": "bd251b076cc57b0d9c1f3b52c2f0259ae3f43cdb",
+      "bytes": 1569,
+      "sha256": "fcff831e9e6d7228e53c3547923c524dbb64c3f24af791312a722bab524e3ec3"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+      "gitBlob": "bb376782b29bfe322aa784b16389d5237601840c",
+      "bytes": 2710,
+      "sha256": "498897b975009a4501c5d5c49d4e70cb1fad3f399cce64c5d207062dd5bb9f47"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-release-config.cjs",
+      "gitBlob": "cbdce8aefe0d530f8937c0784c948dc6fea88871",
+      "bytes": 13639,
+      "sha256": "1b0c8bdc68a05511e3be86e79d2d8ac18322913c31a83bfe65bd897fe3ce2e90"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-store-assets.cjs",
+      "gitBlob": "98ebfee6b08f884e09af64f30b1ac20a3a59189c",
+      "bytes": 5876,
+      "sha256": "384a373802bb87580733361332c50ea980b8ecdd07d8b43f9fc9462601465e2d"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-tracker-release.cjs",
+      "gitBlob": "802d2537a29bc09c665d5ab516a493254dc4945e",
+      "bytes": 1023,
+      "sha256": "2d340d88c380f7268194dadb123ab98a99a808a9fbc564186a00c62b7b0dff22"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-tracker-release.test.js",
+      "gitBlob": "8292073bead36964765706d60ca2010de0301601",
+      "bytes": 1876,
+      "sha256": "02248aa48cf37e8632a08ba639661f2831ab4e5ceb448c76c89f0f781326854a"
+    },
+    {
+      "file": "apps/mobile/scripts/verify-live-competition.cjs",
+      "gitBlob": "e267f80d632dac607e554cd66ae39193f01496fe",
+      "bytes": 4517,
+      "sha256": "23ae1d54ebb82de40e521bb767ddf1eb12576d8e2bc528b3f4eb7460f4dc0dc8"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/_layout.tsx",
+      "gitBlob": "47a159a0acca3bdbc1d6a2c3800dc12112aecf57",
+      "bytes": 2200,
+      "sha256": "b9eba6528acb68305c3231aac59fb647ddfe69c92a8b6a8443f90cdafc32d459"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/compete.tsx",
+      "gitBlob": "735048bd7d50ae362b0f50b1894a1fcdc7caca6c",
+      "bytes": 33307,
+      "sha256": "56f6b1f3befba90a074e52c154c2a80d3aa7a871e1d30abfc9198b14214196eb"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/index.tsx",
+      "gitBlob": "12a5eeb67706f2ae41921e7b2b6c7c53e49f6070",
+      "bytes": 28720,
+      "sha256": "562ef8baa7b5988a8102e02d8052f7907b874fcd236a9f0a23a249327cbee90f"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/info.tsx",
+      "gitBlob": "9eb8d0c0950b306f29525a0deefa712b504d278b",
+      "bytes": 37941,
+      "sha256": "d4d3e9b4ec9c6409fcf95ac0da9f6f565fccfaeb60f40fa00c69263d0a2fd6fd"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/levels.tsx",
+      "gitBlob": "7820df4f69ea78d2eb05bfa1161729fdd9843192",
+      "bytes": 14251,
+      "sha256": "c01de2ced4a862ae2a084cc5c4e85b909f169652354edf81338ed6c1db2622ec"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/stats.tsx",
+      "gitBlob": "ea07cb26e144a5aadb5e446ad788cdb70fb4a75a",
+      "bytes": 26914,
+      "sha256": "bba0c9358fbbc5d583c429b5623874b41b698daf6af0a98e0af8b7773d68a29b"
+    },
+    {
+      "file": "apps/mobile/src/app/+not-found.tsx",
+      "gitBlob": "65f84fed2087f59e9393f769d96fe558c1ba6b8c",
+      "bytes": 1827,
+      "sha256": "acb42879a19f881781c74a7d12e8577629bc20649501e0358f1f85253ec315c5"
+    },
+    {
+      "file": "apps/mobile/src/app/_layout.tsx",
+      "gitBlob": "5538081c8c50d130dc06ffa33c7dc81cdf660a2f",
+      "bytes": 2339,
+      "sha256": "332b8413b80eaea0ba9c0f40d9780bae9608129c4ab7ce8621833ee0d0ec2633"
+    },
+    {
+      "file": "apps/mobile/src/app/game.tsx",
+      "gitBlob": "67c29c778613de8322e7b8c2d6aad94ecfa83f1e",
+      "bytes": 71627,
+      "sha256": "6dbc5df7d2c9bdca45aaf95e32b2289c532c16d102e6f2adc66c356539b99c71"
+    },
+    {
+      "file": "apps/mobile/src/app/index.tsx",
+      "gitBlob": "5b59d4ac8aa08e4d0d06cabd22c4e832c82371cc",
+      "bytes": 131,
+      "sha256": "ed0fafaac8a51c6c5fd90c091294690e49d19a55ea230510d39a0a1647b917eb"
+    },
+    {
+      "file": "apps/mobile/src/app/onboarding.tsx",
+      "gitBlob": "325cafb0de3380f395a82fb74b5f641daacbf124",
+      "bytes": 18217,
+      "sha256": "21590b23ea3c158f91063ed0715f4b4bee6927c26f8c0dc50d42724fcc8c13fc"
+    },
+    {
+      "file": "apps/mobile/src/components/AppErrorBoundary.tsx",
+      "gitBlob": "1df1bad20f844034da86c080c29947f7850cea0b",
+      "bytes": 1914,
+      "sha256": "cbdd0413e036e320f5780c99bd38b2b224851967e8c784bbbcb94b4bcfa8785b"
+    },
+    {
+      "file": "apps/mobile/src/components/BirdAvatar.tsx",
+      "gitBlob": "b0af98baeb52920ed0ae3851caca2f5b81c3ae71",
+      "bytes": 940,
+      "sha256": "f56798242aeedbcc9219c4e52567bd4bcb118c85cca871a4105c00b932449c3a"
+    },
+    {
+      "file": "apps/mobile/src/components/GameEligibilityGate.tsx",
+      "gitBlob": "8456c2d3be5deefb3312fb771ab09b422f81c5cc",
+      "bytes": 5011,
+      "sha256": "e5a1396d153e59ccb264c345099c027746b653af4c44279b667e6c53c9ceb5ae"
+    },
+    {
+      "file": "apps/mobile/src/components/KeyboardAvoidingAnimatedView.tsx",
+      "gitBlob": "ce0f0f50c904cbbc9802d9f31e58f13f9de91947",
+      "bytes": 4563,
+      "sha256": "28b0482412a3a2e0a049363640f8cf0a996de1653c9ea80ccc38f10d9afa5b94"
+    },
+    {
+      "file": "apps/mobile/src/components/PrivacyChoices.tsx",
+      "gitBlob": "ee2181b178e8641bd6f5e584906fbc9f2b28fea4",
+      "bytes": 20374,
+      "sha256": "7054d5b5a969c61f3f99061d4cfb063d6db35b8a22d4a65fad1e4c59f25cadb8"
+    },
+    {
+      "file": "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx",
+      "gitBlob": "fb2153b34f31701e62b74477a0b732474d5de198",
+      "bytes": 7374,
+      "sha256": "5e19446dfffedb0a1c2576c36b442c11395314ba09c65abbbb0a2addbdedee78"
+    },
+    {
+      "file": "apps/mobile/src/components/__tests__/GameEligibilityGate.test.tsx",
+      "gitBlob": "f8407ccc084518826bb720a3f16659e5c18401f8",
+      "bytes": 7672,
+      "sha256": "7f5f239ec5665c51635b5b030d9bd285ec722f870f6cef64668511195dac63a7"
+    },
+    {
+      "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+      "gitBlob": "b4e10eac1dd9e64f9518fe4c5abd800597eee6c5",
+      "bytes": 33209,
+      "sha256": "93b75f589d3b2adcae6eb67beebcd37fc795dd30ebcb1457e681250d13b9249b"
+    },
+    {
+      "file": "apps/mobile/src/components/__tests__/RecordingCleanupRoot.test.tsx",
+      "gitBlob": "926f941937dc593fbf7cec721bde7bfd209c3fd2",
+      "bytes": 2230,
+      "sha256": "1776fdaa142d0f414524fa14ca9d05e982c401246919ff0e327a922aff523568"
+    },
+    {
+      "file": "apps/mobile/src/config/release.ts",
+      "gitBlob": "1337d1b3c4950de3c33033b3ea7c1cb6d59c6813",
+      "bytes": 742,
+      "sha256": "17b178e9ea53e6042df7aa6d9186485404cae12b8d85d486b329aa464330ca5d"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+      "gitBlob": "2ee406cc87ac03ef6d3e93262e95aaa556bb3408",
+      "bytes": 37030,
+      "sha256": "125391dea69734084b831d490ab7008fd6721d5cefde7500d5974b97fb5a823f"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/competition-terms-action.test.ts",
+      "gitBlob": "9a87f6c6284bbab31560735bee83a513d8578b8c",
+      "bytes": 6151,
+      "sha256": "e3046660dd6aa9a0ac87439a02862ae80953e17bf4b0ca829b430bd915a55f46"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+      "gitBlob": "1e2774068b194d527f505f4dedcec7f293c13ace",
+      "bytes": 16647,
+      "sha256": "025e57bd602398731b580a1c8d1fef3b7c8de8aa1e9ec5bf130fcdfee352c0a6"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/competitionApi.test.ts",
+      "gitBlob": "e6a7001f6529d5cb4778a6e7758c356c841e4745",
+      "bytes": 790,
+      "sha256": "874bb093282cdc8ce99671943c6bf7078475663dff11218b2909a6614efed61a"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/monetization.test.ts",
+      "gitBlob": "afd08a3d70fddef6a0e17c3ef57ae671391cdbd1",
+      "bytes": 57305,
+      "sha256": "335de0f29a68e814765e40d3a3da8f9a5b4464f1fb7b864f800f4533e2aa75d4"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/recordingCache.test.ts",
+      "gitBlob": "cb3a9ca399daed807b9a83e2ab35c5ff42d9153a",
+      "bytes": 3905,
+      "sha256": "3c61d2f53ef53c9d7620510311c8f39198ba40f1ad627ea4d4b99bbb2a042861"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/resultAdGate.test.ts",
+      "gitBlob": "9503de82f7b31a7ce71246024ec6c1d04f0e13ab",
+      "bytes": 5774,
+      "sha256": "afdfe922a6173128edeac74142b8fbb10d353bfeaf53b947e6f93066140c159f"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/revenueCatTestDiagnostics.test.ts",
+      "gitBlob": "1fd92b7ca47700652114639d7a871dd5bb8b2a4b",
+      "bytes": 3942,
+      "sha256": "b8387ff02e7df041d2262a26cbd55da5bf80153183191bd148adf5867a216cb8"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/settingsPermissionRecovery.test.ts",
+      "gitBlob": "a129bdae6cb1bf5c6e90381e95a4518146de3253",
+      "bytes": 1696,
+      "sha256": "a5f7f285d8a93617130f12197712aeb04500e01406d14e46153778ce2af9f142"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/videoSharing.test.ts",
+      "gitBlob": "cf704bb115476263cc9a0b3d4991fee600287eac",
+      "bytes": 4115,
+      "sha256": "a35c13b3e7fe8447ef1316a0acd60b2aef171ee561b6e85f4336b57dd16700a4"
+    },
+    {
+      "file": "apps/mobile/src/services/competitionApi.ts",
+      "gitBlob": "5afb786ba0e7f54d3e6f0818a41b78954fa4cf65",
+      "bytes": 38145,
+      "sha256": "9ad98b79f0d75ea4805235dd3f9343fb7bd12823b2e623f642e753fe720b9a65"
+    },
+    {
+      "file": "apps/mobile/src/services/monetization/index.ts",
+      "gitBlob": "f0188f30cf3964b7e5c547ac08a95d5f05b36c6d",
+      "bytes": 33200,
+      "sha256": "851c58eea4ab595aaab91c8305b71b227dbc856bfceba8cde51eec69d93f490b"
+    },
+    {
+      "file": "apps/mobile/src/services/monetization/resultAdGate.ts",
+      "gitBlob": "316f6526d295cc724457112a05cea80c99946423",
+      "bytes": 2695,
+      "sha256": "c99937e483c53125d52a197646df0348abeaa64d3e181fb563a19da0b9edadde"
+    },
+    {
+      "file": "apps/mobile/src/services/monetization/revenueCatTestDiagnostics.ts",
+      "gitBlob": "5767c7008ae9182be047adcb4743f25ffa102b17",
+      "bytes": 2867,
+      "sha256": "921bb05d7b88dc826972102513864494ed6f7d7c688a82f61bd636980dfae9e8"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/appleAgeControl.test.ts",
+      "gitBlob": "1888eddab161e3592524440d4d90baee55a87148",
+      "bytes": 16532,
+      "sha256": "ef06c5bedd3cc776cba392062c719ba096fdc2751bf09bfb469cce3968f4a8b2"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/appleRescission.test.ts",
+      "gitBlob": "62e649090e32ba6e40c464220b37e392dde7139c",
+      "bytes": 14146,
+      "sha256": "846b736cb5786289135a0b693dc2543292151050a07f1d216239ac6ae9b8fdd0"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/europeanProviderProcessing.test.ts",
+      "gitBlob": "137f1a91e922d1705bcdd19dbf400a482613686c",
+      "bytes": 12198,
+      "sha256": "8c12e4b1f2d5aa3e206988417db0206bae67bde06ba6447142e56d4b22cff8a5"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/gameEntry.test.ts",
+      "gitBlob": "2164458bc37a66cfd9c52370bb0e98166245e1f1",
+      "bytes": 5063,
+      "sha256": "7353424f541d7b3c8c2e116a50f0208df75a479572040ece3b986c13ae1eb27b"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+      "gitBlob": "056cb61bf8362181024c8ba26cb1d16d049e0ada",
+      "bytes": 64516,
+      "sha256": "f27fd8742dfe1bc38f70b9ddb4f837fbfc9cd9d8e7f66154db9cf82089dc85c0"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingPolicy.test.ts",
+      "gitBlob": "ea0c04a018cf8e3039ef1a7eccdc553b7b5fd444",
+      "bytes": 22030,
+      "sha256": "b13ba66c33f743feafc06a941e40836d2bc911f75a9652dfc94c7592477484f0"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/localAgeAnswer.test.ts",
+      "gitBlob": "19060b21df8e9a39b617e77a317a8865ba587ca4",
+      "bytes": 9490,
+      "sha256": "4ef2401380d07b0fe0e158e48b33cbdf0af39e9f52ec80cd80f507ad6ac1df68"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/newYorkClarification.test.ts",
+      "gitBlob": "ca0eb018137323c1d091be4af87283983abe8b28",
+      "bytes": 8021,
+      "sha256": "e219fb39c2574f8da0928332c14b1983cae28b68dfef1adf1941efd97da1b21f"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/privacyCountry.test.ts",
+      "gitBlob": "c95db53276684f2f9fb8cb446feba84fec3d31b8",
+      "bytes": 8907,
+      "sha256": "2f4388aa3683fcab8370459da2db370659a4054d4c9ba7a378588b7bae4065d1"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+      "gitBlob": "e08aba19ba99ea0f5dd033e13c6e6ae9ea71d733",
+      "bytes": 12131,
+      "sha256": "c2bd9239e6a7df4a68b1ae952af566a58942f620563a21109fda70546d77985a"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/privacyStartup.test.ts",
+      "gitBlob": "67216870648889b9d87cfa960811e26f4e4cdf38",
+      "bytes": 8997,
+      "sha256": "92c5a10e65508bdb70f77a1f8f5d256bbccd068e66fe61d0d61ce3aa4314f043"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+      "gitBlob": "72ab0ea86d687d55b4c4897b836994b6dd044860",
+      "bytes": 21015,
+      "sha256": "68abbc77247bcfc2d915b61a3ab1c21a6c93bd6b5ee66c74c05ba46def4ea86b"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+      "gitBlob": "a20e0d0ec67f0f270c09f00c860b876b1319257e",
+      "bytes": 8918,
+      "sha256": "b8275a7c09115bf931884c6f1ce82f87a62cb6e9a7ab9d7975787850145ac154"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/processingPolicy.test.ts",
+      "gitBlob": "a6f2a0cbb4e35731696616a0072030524b0b0872",
+      "bytes": 10209,
+      "sha256": "961738f2e513459822fdac3f9b8736939ea3904cf572491ca22b9f08579dc2c1"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/regionalClarification.test.ts",
+      "gitBlob": "f7587e32d65b617d9eb3b0b4a91c49bd4ecde5a6",
+      "bytes": 14929,
+      "sha256": "729ef0615dae6c197621da484565d0f8a34c8575659bedb062c1bd8cd1eefb05"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/regionalPolicy.test.ts",
+      "gitBlob": "3953136d75b1307746004c5c8f22995530e63671",
+      "bytes": 24317,
+      "sha256": "af659b3793ecc429bb52ae449c87283ca0c2967585dd9f5b717660c653fcf699"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/releaseEligibility.test.ts",
+      "gitBlob": "debbee43cac64900f060e21ffb37891b7aa2cf1e",
+      "bytes": 4087,
+      "sha256": "2f049c02277ca6e098e52feaff71efc08564ecf249b8220a860677bfdd17da65"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/startupGameEntry.test.tsx",
+      "gitBlob": "04fd1f6a43c7cdd6291b3fba4475a93e6069f1ed",
+      "bytes": 11321,
+      "sha256": "4042e7e2c066ee097ccc5f9060bb48dd42488330ac31372bc4ae01b31a96aa3e"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/umpPrivacyControls.test.ts",
+      "gitBlob": "2bb3c01d1f0bd454be3b832404917a027c8c08cd",
+      "bytes": 3017,
+      "sha256": "967cdedee3ab17cc8b23e1c9978db17449a8c8b62625974b0e47aeb03cdb0ce3"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/umpProcessingControls.test.ts",
+      "gitBlob": "ad1a695a7019ec15dc81597d44d38005bb7ecdad",
+      "bytes": 3535,
+      "sha256": "e601e8992c0d2d6217e3cf966a5c18c8cc844166b834ce401e8d3626ee331a0d"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/umpStoredSignals.test.ts",
+      "gitBlob": "ca5fa57b5f08c4a5f5b00b2e2c88c994cc961267",
+      "bytes": 4250,
+      "sha256": "84f77b5c185342ddd643b7d0eaaa6115f9b15e7fa62ae08bbd046a0a1691273b"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/appleAgeControl.ts",
+      "gitBlob": "0fe4012729ecd0cb1a4ad96966f868e5f3a55501",
+      "bytes": 9790,
+      "sha256": "0cfc79a2b4bb1d376e4ccc410ef91a2dfc8c1925313fb6a86dd0519c2c69ab37"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/appleRescission.ts",
+      "gitBlob": "aacbac98b50774dc7839e5c2d42d342ae6f12e01",
+      "bytes": 8925,
+      "sha256": "917ee4db72496e2b7cb725422728c0fd3a7a5ca0ecef4678e83625d8f31615c8"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/europeanProviderPolicy.ts",
+      "gitBlob": "e148d7a8c066c848f25f83c9ac87a3b4436a9d67",
+      "bytes": 1051,
+      "sha256": "c370696957991a15eb092a6983c7d673a2b5ca254c95a9d7ff183e9ba71c7e89"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/europeanProviderProcessing.ts",
+      "gitBlob": "f532a41a3b86b68bbe9f5adcd081c844004cd355",
+      "bytes": 8077,
+      "sha256": "64013cbb2ac8a3202b21fa3b7974e495265d3eae69105159086d59ebba776d78"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/gameEntry.ts",
+      "gitBlob": "5990c7efe989425901aa6f473b2f904091fa490b",
+      "bytes": 1340,
+      "sha256": "ac36bbeb3dc9940106d6c8b31aec533167eba463bccca84e89cb35bcbc650c1f"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/launchProcessingControl.ts",
+      "gitBlob": "a7307b4ef9bac56641789f4a876ed7694aefeaef",
+      "bytes": 4944,
+      "sha256": "52ea2fd2073ae819b8636f0afa6405e9b7eacf6645c34061b67ca39625f33903"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/launchProcessingPolicy.ts",
+      "gitBlob": "a44e400dfa267d238975f9a01960b545b88e1309",
+      "bytes": 17410,
+      "sha256": "5f67a0c749e360e25c6b8ca6df184ebe0a900441b7de1dd74392f146f0747d24"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/localAgeAnswer.ts",
+      "gitBlob": "3586db33c5b93304ae64776b79337704ea4b9b42",
+      "bytes": 6051,
+      "sha256": "6097d0a8e7c25f5a54a0d05d658485888f364ed76db1655752f81b742c86db23"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/newYorkClarification.ts",
+      "gitBlob": "5d75bdcea9ccfc7886a46d19a748eea76a88a7a1",
+      "bytes": 5163,
+      "sha256": "eca77b4f4cf0a92b8368ddcb1b490f5e3083af775e4d68fb7aae9a7e4fef4fc6"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/postGamePrivacy.ts",
+      "gitBlob": "b7d8cfc59484b681b549d3d4ce52c45296ba1f56",
+      "bytes": 3491,
+      "sha256": "86487ec4fd5a54d1009ca6d5737eb88e056a97f029a2480b4e5f92dedb7c3670"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/privacyCountry.ts",
+      "gitBlob": "951be2801c539c000ad2ac77d06b002a8dedf001",
+      "bytes": 9392,
+      "sha256": "7cb07e792fb84c60271397b7395b3ae2b04e971d9032ee3eca1edecc15bd6c0a"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/privacyRights.ts",
+      "gitBlob": "2571608188251309485d54c06ef2fd4b0f9f2714",
+      "bytes": 10002,
+      "sha256": "4a1adbf961c2e2eaf27661db387f1e42d3a0944324fc5a72985c41523ac59389"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/privacyStartup.ts",
+      "gitBlob": "3f0e47b183648031476ff44fa6215b8b2ac44f24",
+      "bytes": 2706,
+      "sha256": "1da42bd75b68eb862cdb2ea48d1007d30444483b7ce6e758193a79651ead0657"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/processingAccess.ts",
+      "gitBlob": "9af56c505945eab6afcbae6f818663073374614e",
+      "bytes": 23536,
+      "sha256": "d30b4bbe0b79faade982f60a06982c47db9a6efc6bafb1f8b81aeebe3ae83a22"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/processingAvailability.ts",
+      "gitBlob": "382ac2f8a5a54937fd70ade0d2db633a4d9007f6",
+      "bytes": 1142,
+      "sha256": "512db9d0b86b61221e5ecc563b7fe820f9be26fe3841224d962c3f2c4a35ba24"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/processingNotice.ts",
+      "gitBlob": "18e295ad143af4fec862f0b12a48dc35d42b73b6",
+      "bytes": 11824,
+      "sha256": "9f4102421cd3ccd9c571e01b65ca860539e575b748394cbc5d1ace142fb489db"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/processingPolicy.ts",
+      "gitBlob": "35a85a2e55188c1405ae8600e866bce08e126454",
+      "bytes": 11531,
+      "sha256": "5b41e8b174d8c7fcb86e5599bca6c891f3eeb6927c58b5cb71ac00c553929bd1"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/regionalAdvertising.ts",
+      "gitBlob": "30f2d648a0a4ccfe21cb37fe8d1106f18ce53539",
+      "bytes": 994,
+      "sha256": "f1bf40b22bd510a866b93b01b7da985f4e7e4c6df5886c40ae4d6543166ef108"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/regionalClarification.ts",
+      "gitBlob": "c0809a281bb6314514659a996d1c00e051222fd5",
+      "bytes": 8124,
+      "sha256": "a649bc0c1fb767a7c4276e783c30e2cee6562674ab612c989c3dd94141935e66"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/regionalPolicy.README.md",
+      "gitBlob": "fefed026a1964d65b8adaba5a2bc20d3ae937e22",
+      "bytes": 12663,
+      "sha256": "0a67270114960a645599e5b1ac4250c2b843ce44ddd57d45faee9b77ab00c486"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/regionalPolicy.ts",
+      "gitBlob": "cf7cfac6a6a27a3803b4dbdcd3cbce4ad72f0f9f",
+      "bytes": 15893,
+      "sha256": "e8d4b1266fed9223a7d97382ad9d8e9ae17e2c34aa01e83ed75e39d73d3d2bce"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/releaseEligibility.ts",
+      "gitBlob": "6204bac58034a1ba2b332ca304446dde3c88e5dc",
+      "bytes": 1555,
+      "sha256": "e824f0105415cd39e080b9afebf6561a75f364327de9e0e36da5c96457659a51"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/retryGameEligibility.ts",
+      "gitBlob": "31f2837ba33d143a76632298e910cac476da7e29",
+      "bytes": 1042,
+      "sha256": "9562773fb9468d77a351c751a6fa337e12963d0fd13b543f2ebd81d5a0f2166a"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/umpPrivacyControls.ts",
+      "gitBlob": "6eddc817804de9d98f4bb3195ae3d98767cda975",
+      "bytes": 3542,
+      "sha256": "94bdfc1a05bfd3acabc03f67ca1ab93326037513f756cae2e191380dace66390"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/umpStoredSignals.ts",
+      "gitBlob": "1952597f9c255fba50a81a412317c6dec94d784c",
+      "bytes": 3093,
+      "sha256": "548835ebc6c2153360cde383cc6b616434443a8e7e4f083c2fed8615aaffb3d3"
+    },
+    {
+      "file": "apps/mobile/src/services/recordingCache.ts",
+      "gitBlob": "80a719d56c3ff4fda8ca03c143396fe12e6c43a2",
+      "bytes": 1957,
+      "sha256": "eff58e21bef97230205728caaead730f2e6a97aedd4495c1e1e0115f9ae63761"
+    },
+    {
+      "file": "apps/mobile/src/services/settingsPermissionRecovery.ts",
+      "gitBlob": "25e4f1f202d1d7c33f278bd326cc5787ef8ef852",
+      "bytes": 759,
+      "sha256": "87d8e2fd48cd9859f42a9b6d6f99af68f5e98e75349658f52255760a0b0ba18e"
+    },
+    {
+      "file": "apps/mobile/src/services/videoSharing.ts",
+      "gitBlob": "36ba8b6ed7ab18b316957d93590a1a34c8201116",
+      "bytes": 2777,
+      "sha256": "652cc1ebd9da3f3bbdc162ee2e674037a0748e482df8cc4b170e97e346d7003c"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/bird-stage-assets.test.ts",
+      "gitBlob": "de394bfc837ff31389d82b68e9da653925067c0b",
+      "bytes": 654,
+      "sha256": "69d533e4788e507e3bfd7b6436b97be9da85a3db16e683ca5a16a2912efafd89"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/camera-preview.test.ts",
+      "gitBlob": "2c8cf3a2e3fd0f2663d36d3694687b3d4eb59cec",
+      "bytes": 4581,
+      "sha256": "4489d274e51cc906d1670f5531c053bcff74e15a725fd12030041646aa67d25c"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/competition-profile-reset.test.ts",
+      "gitBlob": "e2b62d6e85456a27242b059bb6f400a07d9d5162",
+      "bytes": 746,
+      "sha256": "d296a9b67adb5fb11b3e19ffef5c041560cc78e007008fa49a7ad264c8fdaf8a"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/continuous-gameplay.test.ts",
+      "gitBlob": "e7d4bc58689bd522b28083529d4052bce1ee3d90",
+      "bytes": 7341,
+      "sha256": "417425915026cbde8d190c66f1e28f4a98fdaf1ea31d72cc22dd7dff62d0e21f"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/evolution-core.test.ts",
+      "gitBlob": "2650f191a3f1fea2312332a5ff1dd2fe8ee610a6",
+      "bytes": 2932,
+      "sha256": "803e43dff692a8fd377aeae17661a98f8f5cb8ade8ff13c24e3f0ea298c1379a"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/fixtures/chromium-audio-duration-defect.mp4",
+      "gitBlob": "cfffd68935ebf9ff58b08d13ad5adf8ff6a86fd6",
+      "bytes": 513364,
+      "sha256": "a98d0c841644fb2c15d34b247e78892cf6f20cfecb21935d59ba67fac5a05b7b"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/fixtures/chromium-duration-defect.mp4",
+      "gitBlob": "52b8c778057634f6851d44432d606b5ce036e665",
+      "bytes": 216080,
+      "sha256": "6b50078c031234fd45fadfbc6c815e3ae1d7d13055bb6afbce5ef1f74023dc16"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/form-tracking.test.ts",
+      "gitBlob": "421c7b3a10d38c05e2bddfd6513739119a0a913e",
+      "bytes": 58228,
+      "sha256": "89c5d883fa7e0fd35fde61bc6b6361711b248896125354e7ed238429972cca25"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/game-modes.test.ts",
+      "gitBlob": "fa9367d6f716b2412d681de991f69387a3465b36",
+      "bytes": 2103,
+      "sha256": "ee01daeb7eeb500125d698f5b229179dc0c42d6e4d78eb088bc1c31ffac896e8"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/level-rules.test.ts",
+      "gitBlob": "a2dd9064813dfb4064e43cf8133dd741e96cbc0d",
+      "bytes": 7193,
+      "sha256": "baaab1fb2f8836217f1311ef17dc52e809c2e841b3de33dbb93f503f993dd970"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/mediapipe-recovery.test.ts",
+      "gitBlob": "b3a5fa7b46e19a7e78840dbf92e7ca411169246d",
+      "bytes": 4158,
+      "sha256": "25008b5abe64d76355d6bce15d28ac5370d400989a8cf1b38b3c6804a1b04bb8"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-elbow-clearance.test.js",
+      "gitBlob": "ad4a0d7f9f6ef8efab2f8272fd20646ca87da300",
+      "bytes": 21534,
+      "sha256": "18c213fb2892d156d90476830fef4ff5d4ba063d39e67fb4effb0dc4b1e6447a"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-gameplay-flow.test.js",
+      "gitBlob": "b11d2a1c9738241110bf69d980a3339ad231d598",
+      "bytes": 15428,
+      "sha256": "d67cd72c22d3b614edd7ef500711edab6db2d750c29e16e9a942f819b1a3277a"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-grab-entry.test.js",
+      "gitBlob": "653d2aecb437ef2bea3e5ec8b0192167c45eb576",
+      "bytes": 2400,
+      "sha256": "18eb81da7e3c7f465b70a64139ec26c28a91c20dbb559d5a62fc5331e4b88b6d"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-standing-reach.test.js",
+      "gitBlob": "1ca2e0a22ab4f3f9d8c4799cd3cd94f0e8806e4f",
+      "bytes": 3078,
+      "sha256": "adac9b109cc86c4ff15e4a812c0960dbf1be5b3cef389973ba7bff3909881bae"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-support-reference.test.ts",
+      "gitBlob": "e88a4d496136e94c7890b088c4f5e6b3e42c2081",
+      "bytes": 23586,
+      "sha256": "f66864d4c14d8d2fd3b5c66d1d141b57066c15c5f4109eea93cbf91bc44a4953"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-top-entry.test.ts",
+      "gitBlob": "e639395b01ab6390c2fa0e1eb87f1a1fe3d94b3d",
+      "bytes": 6094,
+      "sha256": "ec4fe476c995be33ad7016a94e1f06f896860d37e0e5db63d2a2167ef6a235d8"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-top-first.test.js",
+      "gitBlob": "b02ceba0c18f5cb4f615428dd50cb32132a6fa35",
+      "bytes": 1837,
+      "sha256": "435122d5ba553e2a2c9c8f768472b4b8b1b62e43f3f5101a8dc3ffdf0b54c21a"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-top-reference.test.ts",
+      "gitBlob": "39174a75e7c3bc81ccf4511939bf1ddd88d8e5a8",
+      "bytes": 12948,
+      "sha256": "986397cf93ca0c575faae3060f3cd1c5802e4a680f6dccc0ea93ca0d1aaee11e"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/recording-boundaries.test.ts",
+      "gitBlob": "36042ad07ed4537a5ebbbccc099dfd4f37e19f50",
+      "bytes": 4313,
+      "sha256": "5c7fcc81c25069a7f50270ed470402a0bcf3e2d2fb061891cefd275495aafda8"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/recording-mp4.test.ts",
+      "gitBlob": "2c93a4e048ce00db135d0ec2c32d499c422528fd",
+      "bytes": 9708,
+      "sha256": "f2904ba003a8e4b202cdceb2e8acf96844a23ab2592125353b7028f6e5752f0e"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/stats-history.test.ts",
+      "gitBlob": "c056ae873414e079506ce40320e9b9254f03e1ed",
+      "bytes": 1681,
+      "sha256": "531e8b695743ab6bd32d3a0bce1ad26b2f86f0fe4b854de331bc437d32139135"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/store-hydration.test.ts",
+      "gitBlob": "7f5fe9647e44da64a2a7dad6ded320bdc2f182b3",
+      "bytes": 4258,
+      "sha256": "516d08a826d12d5f3e8a0b5da44da31f1d7fbc4cbf1dfa7bc1d5367fe852f9bf"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/achievements.ts",
+      "gitBlob": "c5a7222ec1752efce0f7fbab28f6952fc709eddc",
+      "bytes": 7515,
+      "sha256": "cdcfc65ac0c383b29f4d44fc64ac7457658370ecaf2993165e068e2da9f6029d"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birdStageArt.ts",
+      "gitBlob": "425379407e23a9470fd035cc8e5634f24ed2dd8d",
+      "bytes": 5933,
+      "sha256": "c09abb73c6cb690c1206931dc1dd6ee14dfcdcc1280183d964bce632ecacbb92"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birdVisual.test.ts",
+      "gitBlob": "c118d878c8713dfaa54845874a39145ce9606205",
+      "bytes": 2647,
+      "sha256": "51cc4c2f31f1afdc8923ef244c0387d12ce8f4f12f085a79ffec7be76bb581c2"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birdVisual.ts",
+      "gitBlob": "827916fcb236f2ec1c1c979c8c77a5ab64499a42",
+      "bytes": 13141,
+      "sha256": "153e890351503fc91a9e1c900fdcd91cad30d53799c5b887fdf5812bd7b04827"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birdWebAsset.test.ts",
+      "gitBlob": "4c4d01787022cb3135e6bce2c3be9e256c2af983",
+      "bytes": 819,
+      "sha256": "772ab7c6c8d022fcdb2bd6bccffce0443305cf3f2946336fc4afcb17ee1e4bd4"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birdWebAsset.ts",
+      "gitBlob": "e67e633174342fdce20994c740301a3ae5c57ab7",
+      "bytes": 1664,
+      "sha256": "27e6c06427525783d041817792461c21ae6bf6016283d7f397a23b860e00d934"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birds.ts",
+      "gitBlob": "3262dc58cd1242b45f2d34a3745faf3a38991c47",
+      "bytes": 1404,
+      "sha256": "d8283d6b504bccd918ae5afc6a8f9299b8b839c4b867962ce239a6fa2605c1ef"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/exerciseImages.ts",
+      "gitBlob": "f4e58f92681d480e54225865496d893fdb3f91e4",
+      "bytes": 746,
+      "sha256": "e9fc9048125d604428d5b4322eddde6e0e54294b21fa2c90a582a10de875cbfa"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/game-web-navigation.test.ts",
+      "gitBlob": "9eda2f359521f736db0d6b87485b78c925de11eb",
+      "bytes": 1164,
+      "sha256": "c56d19132afa70113d8bd6c6b169e8c92e48cae29a86a989623432ed84d37733"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/game-web-navigation.ts",
+      "gitBlob": "11ef82490cbdd41b8d9631af04a14c5a6bb81531",
+      "bytes": 645,
+      "sha256": "0174740331282d17172584bd8222460f4884c2ba1add0012cf4d916dcc995048"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/gameHtml.ts",
+      "gitBlob": "edc5cf73fab3c51c6a8efd380bba27ff32b70f3c",
+      "bytes": 3409,
+      "sha256": "cbb327fcceb2eaec0ee69b49e1b052bb16c63d1986f22129742d08da15dd9f15"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/gameModes.ts",
+      "gitBlob": "92c7e83d1a54625c42d6f8aaf4a379fe8023e074",
+      "bytes": 882,
+      "sha256": "d54f3bc874977c259b68db972fd6db0b04a57fe701cceb6be8553f9ee59f8178"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptCore.ts",
+      "gitBlob": "f0a1e0c644e195845a1dc52707d2490f76dadc85",
+      "bytes": 18299,
+      "sha256": "370e5d5f660e37363bae54b13891086ba0255b5954662c7061b63fca03356148"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptFormTracking.ts",
+      "gitBlob": "cd25b3c11ff0b74f9fee3d7c578caf8713a64576",
+      "bytes": 41183,
+      "sha256": "5a8ee11792eb88ed8daa479c3cc38aafdfa7ba9698ae4a91c9126d5064db5734"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptGame.ts",
+      "gitBlob": "fa83a23d9af215433ed706b7b133263d6afa5895",
+      "bytes": 34729,
+      "sha256": "1bb823293aca22ceb64a6c2c3ee34a9e98a7a6b1f57db15d5dc95389c36cffd1"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptPullupSupport.ts",
+      "gitBlob": "b54baea889277a6f92d7e6eeed0c3284ba737af6",
+      "bytes": 32387,
+      "sha256": "98219ab80a4a2db9f043b02d66856c2200ae230734c83f86a744b0dad7a9f3f3"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptRecordingMp4.ts",
+      "gitBlob": "a5db5b08c0eb5da7ec490896337eadc5e3d1131c",
+      "bytes": 10454,
+      "sha256": "6ec581eedac163ff75201a58d8d06840d8f71a2bfd3b84af75cb6d93b1b07840"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/levels.ts",
+      "gitBlob": "997fd2987e34dfe2c17e949c7d368521274f0630",
+      "bytes": 5111,
+      "sha256": "875729c0e37d02a9030f6a9ef88c56cd591dd139697b63f3d593292fac651508"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/mediapipeAssets.ts",
+      "gitBlob": "4dadbebbdf7a9edf1958edde49caf207272fced1",
+      "bytes": 5497,
+      "sha256": "2dce4a2378a7eef7423fa6e629517c175ab0f344333de46eab25ad7c6bede352"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/store.ts",
+      "gitBlob": "1bda79d22b03850bfc3585370d24be6f89948b0f",
+      "bytes": 15325,
+      "sha256": "8669a5d501567dfb2db77c14b2cd44dfccac1618c318215566f3126e348638f0"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/testUtils/pullupGameplayHarness.js",
+      "gitBlob": "7b9aea30c75dd7c25a9cc730a9fefcd64e73c3f3",
+      "bytes": 6338,
+      "sha256": "e329ae710b271d11ca8fab52b2677dff704a4d9320bae1965f908fd7b7a41f21"
+    },
+    {
+      "file": "apps/mobile/tailwind.config.js",
+      "gitBlob": "868d19b3e899cf9621ab4842ae95ada801c8f84d",
+      "bytes": 189,
+      "sha256": "3182516cb6d4b482e482ea4872f3303a51fbbcd2c11971f668a562b468b51b3d"
+    },
+    {
+      "file": "apps/mobile/tsconfig.json",
+      "gitBlob": "9cc8c3c13310794a8992d52a3d17edb5b6301334",
+      "bytes": 267,
+      "sha256": "b5dfb70d7f9a489013fb1890c3c11f5d105257d18c607205ece77c4cb7d73d32"
+    },
+    {
+      "file": "docs/backup/WIP-CHECKPOINT-20260920.md",
+      "gitBlob": "c9d659fbdb8c7c59ed1edf6605acdf50d68f4a44",
+      "bytes": 899,
+      "sha256": "21903faa7060997c6e64af01c5e949ea0920fe10adb49c90c73c20b9e54f60cb"
+    },
+    {
+      "file": "docs/backup/wip-crash-protection-20260920.json",
+      "gitBlob": "a57f6d8e3c675e8a0ea32c877488660494ec578f",
+      "bytes": 1475,
+      "sha256": "74cb59620404042510582f1258c0a5533c5763463ecceef64f5aa268675cbf4e"
+    },
+    {
+      "file": "docs/legal/account-deletion-page-draft.md",
+      "gitBlob": "7a674160361c78749c399a4ab474733547e67e05",
+      "bytes": 3204,
+      "sha256": "9c71c0b1f806a4ff4c0ca4f70c64af90c636b4a902d4f5c89e6e77b03204df1d"
+    },
+    {
+      "file": "docs/legal/privacy-policy-draft.md",
+      "gitBlob": "38b34ac69d687d6f329aa3b8dba77eb7d79b2d22",
+      "bytes": 10028,
+      "sha256": "483104946c5e64da5e82be559ef9e052a1d2c273ed6681e92193538a2acb740f"
+    },
+    {
+      "file": "docs/legal/terms-of-use-draft.md",
+      "gitBlob": "867059b6194b10c7bdbcb796dad29df3ed6b413d",
+      "bytes": 5312,
+      "sha256": "0f81f1526bbeb87e4707933932ab93538f2494ce762b91015e5a8e81c19058b7"
+    },
+    {
+      "file": "docs/release/age-processing-policy-2026-09-19.md",
+      "gitBlob": "46cad67d2855561f5ef100952aba8206d31683c1",
+      "bytes": 15844,
+      "sha256": "48d439408e314c1d373d9126b855a3cb119a10272d71035a8d2dd838992a6d01"
+    },
+    {
+      "file": "docs/release/apple-age-rating.md",
+      "gitBlob": "b0188185c325b0f54fbc964a163d3193f6877b7d",
+      "bytes": 4727,
+      "sha256": "94782dfda6d0ac65a7ba3f53a882b2472f87987e7b5baba1f65e0841c9793c07"
+    },
+    {
+      "file": "docs/release/apple-app-privacy.md",
+      "gitBlob": "78b228ba3f9fc97db4a6e3661801bf808e47efd9",
+      "bytes": 8451,
+      "sha256": "6bc1edf0685234a5e182dade181f65c24d75e4cbe8ca0436e2d2f0e844766d44"
+    },
+    {
+      "file": "docs/release/apple-consent-receiver-2026-09-19.md",
+      "gitBlob": "878de3387daec27083b652dd8e0830089ffd19be",
+      "bytes": 10954,
+      "sha256": "08dae8af4cfcf5e0745d78d32c5eae2db5735bd04da0b665e1f8802dfc8b6de1"
+    },
+    {
+      "file": "docs/release/apple-first-tracker-2026-09-19.md",
+      "gitBlob": "79bae794c230107b13e7cc60958adcd1f97f12a5",
+      "bytes": 33411,
+      "sha256": "94dda8037e34dcefafcb5fae85b933ed0a0f2c083290283e7a111d7912e67d34"
+    },
+    {
+      "file": "docs/release/apple-test-device-enrollment-2026-09-19.md",
+      "gitBlob": "83513d01af3508642567961b334e69ae341b055f",
+      "bytes": 2072,
+      "sha256": "334d4376bda6054a530c2f55ebc28b81ead1e31b4a84d586c8a9ce764de8c6dc"
+    },
+    {
+      "file": "docs/release/audit-fixes-2026-09-19.md",
+      "gitBlob": "71503472cd8eda6b35cbcd66e248bf11e1432e7b",
+      "bytes": 6088,
+      "sha256": "ba8e683d3cd7a173b46ce6f376b31cbc48749f6e6f1987ce73c97e199fdb07a8"
+    },
+    {
+      "file": "docs/release/audit-handoff-2026-09-18.md",
+      "gitBlob": "b10ac55dee26bf9f1a47d7ff70ab7ece626130a5",
+      "bytes": 4947,
+      "sha256": "5fb129697af515a31ecb49a8bbd5deb0ba67e55731381420ca5b621088879e0b"
+    },
+    {
+      "file": "docs/release/audit-reconciliation-2026-09-15.md",
+      "gitBlob": "7fa0223e76ef9009e0a5c85d5ad58c2c345b433d",
+      "bytes": 10008,
+      "sha256": "2cb4090264e96951a9d29a8ac462704c2e4e0f87320196baca9f93a5850fee21"
+    },
+    {
+      "file": "docs/release/consolidated-device-acceptance-2026-09-20.md",
+      "gitBlob": "1fe4bc9387e771e1ad98ec5ff7fc5f2fb2196781",
+      "bytes": 11919,
+      "sha256": "6424feaa67e85590506d574c34550d7031e4ee7d96385a5f035d1de30ced50ef"
+    },
+    {
+      "file": "docs/release/dependency-audit.md",
+      "gitBlob": "1b2cf9cf1fb41d67aab0bb9258b0d6988f6938ed",
+      "bytes": 7015,
+      "sha256": "d487a8b3a0d66f723b78b30430a7076bc0f24417d002dea472f89259fab34f27"
+    },
+    {
+      "file": "docs/release/device-acceptance-2026-09-20.md",
+      "gitBlob": "6b7332368757d4a6f7bdd990b3c5c8cfee12b353",
+      "bytes": 6733,
+      "sha256": "79eca1296f80170f5a43aa9e83c15555e5c4aa958fed3e7c460b924b20e31f02"
+    },
+    {
+      "file": "docs/release/eas-project-evidence.md",
+      "gitBlob": "551c0d44bbecbba5ea369a8211ca34c72130a6cf",
+      "bytes": 7739,
+      "sha256": "a26cfd682a5fcbd8d12c7393c69ef04c267f347d1b833fd3358046e9f1b87a47"
+    },
+    {
+      "file": "docs/release/evidence/ad-control-correction-checks-2026-09-21.json",
+      "gitBlob": "0ecaebd968143d4abfec3c3a36260563354e79d1",
+      "bytes": 5265,
+      "sha256": "7a8e751909b2947141963e2228e05af3a3f9a2daebde849268ac3c9b77959b00"
+    },
+    {
+      "file": "docs/release/evidence/app-privacy-draft-saved-2026-09-20.md",
+      "gitBlob": "f4261f0ac063232476fe141d3da0bf9d8c284468",
+      "bytes": 2267,
+      "sha256": "c34ec9ebbeabcece2e0f339abd73c4bd8b18d0211111cf7d91753a33ca434a0e"
+    },
+    {
+      "file": "docs/release/evidence/apple-compat-deployment.json",
+      "gitBlob": "327122dc02ac98c9ab827aa1d27c37f25eba16f5",
+      "bytes": 713,
+      "sha256": "8535b4393d36911ea6981cdc406132a9caefd647398539271def37fb18720984"
+    },
+    {
+      "file": "docs/release/evidence/apple-compat-hosted-proof.json",
+      "gitBlob": "f46464db979a7d2fc6a6ca91cbe4b86eace438bb",
+      "bytes": 418,
+      "sha256": "0fc7452500519540d776c6d78d23dc5be2d23753e665d0044072a0dd3b7a3b3c"
+    },
+    {
+      "file": "docs/release/evidence/apple-console-2026-09-19.json",
+      "gitBlob": "3d9ac95848532fd02f750831cbf46bc85c20aea0",
+      "bytes": 2187,
+      "sha256": "e98bf17698cd2fd2bc44ba285ad0133e72874023bd7c47af5ee4cd6a1e19d484"
+    },
+    {
+      "file": "docs/release/evidence/apple-listing-owner-save.json",
+      "gitBlob": "b7062c9a60e4b3b85fcba89d3fa72e284728fa68",
+      "bytes": 689,
+      "sha256": "af1c185b80d93cae2a9861c6c2e1c0196732582eb81eca71656ec5211a64ebcd"
+    },
+    {
+      "file": "docs/release/evidence/apple-public-pages-2026-09-19.json",
+      "gitBlob": "bb31ed1310c9f6c09187d0557c5238196fa77be3",
+      "bytes": 2793,
+      "sha256": "3407a56db585ea154c65f178ee84d2405b1f59d7e515bb47b1c7b3f7e091d81b"
+    },
+    {
+      "file": "docs/release/evidence/apple-review-note-ready-2026-09-21.json",
+      "gitBlob": "ac1819b87b4a9b1eac202203c33b1549366dfa08",
+      "bytes": 3064,
+      "sha256": "0a20a951ad42f4b81f0f57884cc9ada3bf69bacbd7f62dfdd3249383944ca54a"
+    },
+    {
+      "file": "docs/release/evidence/audit-fixes-2026-09-19.json",
+      "gitBlob": "1a39d23078e0914402466049813938e4175dea45",
+      "bytes": 2306,
+      "sha256": "a596285c8b353897de0291440e670adb8e9e653013030ba4c95be1938faea5c1"
+    },
+    {
+      "file": "docs/release/evidence/audit-three-findings-2026-09-20.md",
+      "gitBlob": "ba98e1d5963bd0ee5f62f6476fb4d42f9a931a15",
+      "bytes": 8796,
+      "sha256": "a643ae62e164171fac4dd2813002eab88fd75a7e42c18a5106b47f35f4197d47"
+    },
+    {
+      "file": "docs/release/evidence/audit-three-findings-checks-2026-09-20.json",
+      "gitBlob": "10e483dc6b6fe767319e81c906b7a93681ec5339",
+      "bytes": 71484,
+      "sha256": "21d1ade4b83bfcb853e1fb5402ece4eb1c75d04c97d6746a675bc32782dbf4d7"
+    },
+    {
+      "file": "docs/release/evidence/audit-three-findings-package-2026-09-20.json",
+      "gitBlob": "de87b63dab782a3cd1177f675ea21bfa91c88f0d",
+      "bytes": 49076,
+      "sha256": "3f1173b09f705febd944497096116f03ae26111b57673f8819c55a917b6f734d"
+    },
+    {
+      "file": "docs/release/evidence/completed-work-before-review-2026-09-20.json",
+      "gitBlob": "144cddf2001a8ba0d5b42710655ff0ebb40ce37a",
+      "bytes": 3172,
+      "sha256": "88fb7f0a986b38afd24b3a17d9e4350f57d58ce5af77cb35878461992abaa694"
+    },
+    {
+      "file": "docs/release/evidence/completed-work-before-review-2026-09-20.md",
+      "gitBlob": "59023d1703bf38d957a34d625267c0bfcc1b75cb",
+      "bytes": 2220,
+      "sha256": "2b4bf28cd66a01b20e946e0f4c15fdc86c4601bf71ec795da9d088867ff492a5"
+    },
+    {
+      "file": "docs/release/evidence/corrected-ios-builds-2026-09-20.json",
+      "gitBlob": "fbf479c05cb1beab5b6994f72bff0769ac181e13",
+      "bytes": 4471,
+      "sha256": "93381dce938deb6df7968c305f6bf50da4f4af7e55990dbc3a94bdd3b1bfed07"
+    },
+    {
+      "file": "docs/release/evidence/corrected-ios-privacy-manifests-2026-09-20.json",
+      "gitBlob": "b9ca11710f12fcb6e01799d975527b992648e960",
+      "bytes": 14229,
+      "sha256": "31f776450c427210b105c3e1f8776f873825051d8ab9e7b6bfce39b955e90c71"
+    },
+    {
+      "file": "docs/release/evidence/country-policy-reproduction-2026-09-20.json",
+      "gitBlob": "7fa5ee6e71a7dd8dca01428407cd7b171aa9c025",
+      "bytes": 1386,
+      "sha256": "182af8adf8eb1cb2e177b87876f473168acf3a5f9f889550b1d7770abde40d07"
+    },
+    {
+      "file": "docs/release/evidence/current-release-integrity-2026-09-20.json",
+      "gitBlob": "89cdc439a54b0369042d84b6cc5176a52c7b125d",
+      "bytes": 16299,
+      "sha256": "e09ced08354813203f28e35016204f0e4b961b4d6354f1e812e0025425945f9a"
+    },
+    {
+      "file": "docs/release/evidence/current-tree-secret-scan-2026-09-19.json",
+      "gitBlob": "f28fa592631c1dad6e99735e1bf6dd61956e436c",
+      "bytes": 296,
+      "sha256": "3e0b8d2892a1d983336c93a5900aa311d44a07587b0e910f20a42e228cede3ac"
+    },
+    {
+      "file": "docs/release/evidence/dependency-audit-2026-09-19.json",
+      "gitBlob": "d705848527af0eea1527fc216a2bca071b3d17ba",
+      "bytes": 792,
+      "sha256": "f65dd726ff9f07ded246be157da6512d4383efc52c5e85b718ce2231f20c4b62"
+    },
+    {
+      "file": "docs/release/evidence/device-build-2026-09-20.json",
+      "gitBlob": "a6e2bd0b9153a1d3f2d4f99a5a02fa6787b1b4cd",
+      "bytes": 1255,
+      "sha256": "dafd9787fe28937de86797379ae1cac51f18e962082c550578791d9d69d065f6"
+    },
+    {
+      "file": "docs/release/evidence/eas-archive-4-2026-09-19.json",
+      "gitBlob": "6412ac8ebdfc09beda811ef02a722ddb31af6118",
+      "bytes": 490,
+      "sha256": "f6a36596deb7d18599a6b6a3a6ea66c36c9ad02142220ee89e0385a2427bb604"
+    },
+    {
+      "file": "docs/release/evidence/external-apple-readiness-review-2026-09-20.md",
+      "gitBlob": "f5553a1e58fdd17511514897cb34a22b75574012",
+      "bytes": 16914,
+      "sha256": "cb3cb6892ca6eac5c0c67e3b72dc09f1cdc8f5b68869bd2cc6c0099fb01445cb"
+    },
+    {
+      "file": "docs/release/evidence/focused-privacy-review-2026-09-20.json",
+      "gitBlob": "e512010e7c75c9c696e60c3dace25e0c44163cb5",
+      "bytes": 8720,
+      "sha256": "6e71952ff86863b10fc501605690494deab776ddc7136dc460d200eb68eabdb6"
+    },
+    {
+      "file": "docs/release/evidence/focused-privacy-review-2026-09-20.md",
+      "gitBlob": "2d7238e927039dd98d38fe8de95106a61738c0d7",
+      "bytes": 4561,
+      "sha256": "3c3b0ef292f0474ed0164cf9747197f649b4c465d0e5f25bfe9657936d5c4944"
+    },
+    {
+      "file": "docs/release/evidence/four-country-launch-scope.json",
+      "gitBlob": "81e85665468291a1627af5113292c36c2058a0f8",
+      "bytes": 676,
+      "sha256": "4a7ed3c2fb789578d491462905e95a55e8310781f866536f72c7920bb6c65433"
+    },
+    {
+      "file": "docs/release/evidence/four-country-runtime-checkpoint.json",
+      "gitBlob": "ae3f17abcd5ce8e3b20c9df47a4a5f34abc0208f",
+      "bytes": 1957,
+      "sha256": "cc51ab47a3c504e8a93e835e105f914c6fe8f80ec1ca98d4029df2a2e5466be8"
+    },
+    {
+      "file": "docs/release/evidence/inspect_ios_artifact.py",
+      "gitBlob": "e4cd0e9dc93f91388eb9f9a393c68b045ae046a3",
+      "bytes": 4250,
+      "sha256": "4fbdcca74c48416d518a8160a0d142631bd6ce637a9ddf3f542da3ac691da623"
+    },
+    {
+      "file": "docs/release/evidence/ios-artifact-2026-09-20.json",
+      "gitBlob": "d09ee2e46f8717c9529c59c17a1acfde0e8ec5c7",
+      "bytes": 1111,
+      "sha256": "857286db994d6245b4a73a992ca810d18a9cf3c1c1d1fd95e7072e7a0ce1007c"
+    },
+    {
+      "file": "docs/release/evidence/ios-compile-2026-09-19.json",
+      "gitBlob": "2b3a330f9919918f2a7134bd3b09ab99e108c60c",
+      "bytes": 947,
+      "sha256": "038e2d71adf4e605ba2977d12bdd01f9d1298bb466c04dee53d39f0e95871041"
+    },
+    {
+      "file": "docs/release/evidence/ios-device-embedded-artifacts.json",
+      "gitBlob": "cc768606f515106875301d4a92194ebb4dc43bdb",
+      "bytes": 16222,
+      "sha256": "0ebdd8fef85cf91caff148540dbc9bd717dbf7c60af83e39d9c9e6fd11a091c6"
+    },
+    {
+      "file": "docs/release/evidence/local-age-fallback-2026-09-21.md",
+      "gitBlob": "43020242574cf5470f2f253c983c0606b960962a",
+      "bytes": 6041,
+      "sha256": "f090020c1a6cead3fa23e1c191d024f145e3625e3c16e77e315b13addfd2e31e"
+    },
+    {
+      "file": "docs/release/evidence/local-age-fallback-checks-2026-09-21.json",
+      "gitBlob": "c9707834279abcc527d35fcf68a8a282a4889502",
+      "bytes": 41026,
+      "sha256": "4e3b0e6ac1dd6a5f44de77db2743e6ec54178ffd3a3a799172b0385a5866dfdd"
+    },
+    {
+      "file": "docs/release/evidence/local-age-fallback-package-2026-09-21.json",
+      "gitBlob": "48ca94e5687078905d9ca02ec2e0db16b95050b0",
+      "bytes": 51197,
+      "sha256": "748dd16d2cb8e1dc79d67eb64bebe38f613be5ebde9480f67cedfcfb05ce54e4"
+    },
+    {
+      "file": "docs/release/evidence/local-age-fallback-website-2026-09-21.json",
+      "gitBlob": "587789e7479ea3a3e0aaf8f34c736a9b9c14c48e",
+      "bytes": 2800,
+      "sha256": "d3ae5130837c308b7250ca88527eb4e846cf5ec1e4cdfb701fe0681a0065bc98"
+    },
+    {
+      "file": "docs/release/evidence/package-provider-audit-2026-09-20.md",
+      "gitBlob": "b68d0edc4baef59809e3884b09e9f9c38cc7920a",
+      "bytes": 12109,
+      "sha256": "8b41cbb21aebaa2d9fcbc9a5adc68819e04073a4317d0714eb7ada560f3dcda3"
+    },
+    {
+      "file": "docs/release/evidence/package-source-hash-reconciliation-2026-09-20.json",
+      "gitBlob": "88d2884769465c8dd3e3167ae80cd54e677fd4ca",
+      "bytes": 134004,
+      "sha256": "e4e079c9160c3b411e65bdc5614936eab7a7c1becad90f3801b8bf5a83fee359"
+    },
+    {
+      "file": "docs/release/evidence/package-source-normalized-package-2026-09-20.json",
+      "gitBlob": "0895b7095eb9233a857977805b60b7982f7487aa",
+      "bytes": 49181,
+      "sha256": "cb99dd2889d0f266f245695535f9b0d3cce7c76b218f1f132732dbf6214608cb"
+    },
+    {
+      "file": "docs/release/evidence/policy-copy-live-readback-2026-09-21.json",
+      "gitBlob": "1dd78a35711cb02c29c0c85daa03642212b05078",
+      "bytes": 3396,
+      "sha256": "7ec1a1f2834ea38a6471c818a1cbf6802ca661720cf534ed823391e06c101a9f"
+    },
+    {
+      "file": "docs/release/evidence/policy-copy-publication-2026-09-21.json",
+      "gitBlob": "72f8737b08a22aab1901e26fbd859506b378ee13",
+      "bytes": 2259,
+      "sha256": "fa158c209651a23042858ab25b8b08903f19a6c3a300208dc79a871a6538b108"
+    },
+    {
+      "file": "docs/release/evidence/privacy-choice-read-recovery-2026-09-20.md",
+      "gitBlob": "360f8ff54958fbd7016ef9a3f271fae924d1d922",
+      "bytes": 9179,
+      "sha256": "f964b832f645f746c4b58df56a4845030609a4128b67be94a167bcde81bfb39f"
+    },
+    {
+      "file": "docs/release/evidence/privacy-choice-read-recovery-checks-2026-09-20.json",
+      "gitBlob": "0f6f6e0b9b2d45dca8413e8cc9dc8bdfd41d4f43",
+      "bytes": 44513,
+      "sha256": "447c46432f6ce4d35d44fb4700426585ce3520a032602c9617302b6bba69ca98"
+    },
+    {
+      "file": "docs/release/evidence/privacy-choice-read-recovery-package-2026-09-20.json",
+      "gitBlob": "1f2760ccf0ee6c0117d72849e3d57e38bbf7771a",
+      "bytes": 49076,
+      "sha256": "f5571e27c9a15821981e5313fb31a1d1f011985fefaa6b74d040201963b502f7"
+    },
+    {
+      "file": "docs/release/evidence/privacy-direct-readback-2026-09-20.json",
+      "gitBlob": "0d9f0e91611b879401bee8461c515a4db21b7ce8",
+      "bytes": 148,
+      "sha256": "9d868c8e3dcbf9afc4ae91d14d47f078c3adfcab03d565cd4b0e12adc83cc937"
+    },
+    {
+      "file": "docs/release/evidence/privacy-manifest-batch-completion-2026-09-20.md",
+      "gitBlob": "46643c373b174777e36f10f574f190d505d7ccd3",
+      "bytes": 3765,
+      "sha256": "865238e4342e369c3640b17704b7d83b6097f485871f7799e179b40b5f1748c4"
+    },
+    {
+      "file": "docs/release/evidence/privacy-manifest-batch-verification-2026-09-20.json",
+      "gitBlob": "1dc95fa9496efeaadf3ce837146226dcea2c6fbb",
+      "bytes": 57720,
+      "sha256": "033c32a840c25fa6eb313a955c5152f715c61ae92054cb4e42e57d42741c4d10"
+    },
+    {
+      "file": "docs/release/evidence/privacy-manifest-integrity-2026-09-20.json",
+      "gitBlob": "9b7672df6ab8bd04acd8404dc0982eedc343d9e0",
+      "bytes": 1007,
+      "sha256": "c05c847b22c854f6b5837d1c7e5143403795d1604eed815f0d3263bd39d39210"
+    },
+    {
+      "file": "docs/release/evidence/privacy-manifest-package-check-2026-09-20.json",
+      "gitBlob": "d33a5c67180d33d0f1feeecea8ce94eeb2d3a3f4",
+      "bytes": 573,
+      "sha256": "44763749fe45107e3aa645ccaea75d3feb31a270f504b6520d008cd2f1e88049"
+    },
+    {
+      "file": "docs/release/evidence/privacy-manifest-reconciliation-2026-09-20.md",
+      "gitBlob": "5bfdd0fb21f2c4041b454ac03ae5365c39d9b783",
+      "bytes": 5354,
+      "sha256": "4e2b5ad162100409c49e0a6f7c8f395037f1c5c928a79f43a7f766d83d49a91e"
+    },
+    {
+      "file": "docs/release/evidence/privacy-manifest-reproduction-2026-09-20.json",
+      "gitBlob": "70a90baabbff8926f9a927cad947c441679d4a2a",
+      "bytes": 859,
+      "sha256": "b69eaf7db3318cc60ab0f24d180e21ff38e984c633c9c7ee5e691ad9928e16ac"
+    },
+    {
+      "file": "docs/release/evidence/privacy-manifest-source-checks-2026-09-20.json",
+      "gitBlob": "a1bbba383b47a6a9864bdace8bafed7bb91127b1",
+      "bytes": 76372,
+      "sha256": "a23050c2c6140d37a96bff000ab6472f256fcb565a93adb7783932bd7f8ba932"
+    },
+    {
+      "file": "docs/release/evidence/privacy-rights.json",
+      "gitBlob": "0e5e831683449cbcae3ee6a19fe834843373a6c8",
+      "bytes": 6959,
+      "sha256": "b5714f418e776bc175fdf42785313ad6f31170f7fcc3306c8f6b6e108f076c5e"
+    },
+    {
+      "file": "docs/release/evidence/privacy-startup.json",
+      "gitBlob": "4a795516d23032a0e36e468eb892c0d8fe443f97",
+      "bytes": 1533,
+      "sha256": "69ff60c4f2b222dabc1e470707767fcfdf48a72169eefab77108ec2fdf964586"
+    },
+    {
+      "file": "docs/release/evidence/processing-readiness.json",
+      "gitBlob": "2a0d561876ab13f862ac0a718db1cfd907fcf4f5",
+      "bytes": 6870,
+      "sha256": "4068c029ab07025a7cf4fdf9134f6c0555f85f5cc5f4253807d6cddcb7144e9d"
+    },
+    {
+      "file": "docs/release/evidence/production-notification-follow-through-2026-09-20.md",
+      "gitBlob": "548aecdd846fcd4caaa8afebc2e6691b8bba0694",
+      "bytes": 1378,
+      "sha256": "d78983199e5269585fa2d222d7303ec71777721bbe1275c01e017240cfed42e3"
+    },
+    {
+      "file": "docs/release/evidence/provider-and-archive-reconciliation-2026-09-20.md",
+      "gitBlob": "ce21becf47ff0a22eb29d16e8c43d341f34effbf",
+      "bytes": 5627,
+      "sha256": "1239a5deecb4e14740d7de4d48fd7525b252a140e60e670a68cae3866d565c45"
+    },
+    {
+      "file": "docs/release/evidence/regional-advertising-correction-2026-09-21.md",
+      "gitBlob": "56d244463b07a038467acb5984cc6d3e62e47951",
+      "bytes": 3704,
+      "sha256": "9917c332aab73569469253b92c4055937241b72f88e1b20c099737a6a425a553"
+    },
+    {
+      "file": "docs/release/evidence/regional-assumption-checks-2026-09-20.json",
+      "gitBlob": "b6f9d46a578583dbd5c93c77c4ab18b0b45ac281",
+      "bytes": 20871,
+      "sha256": "9922f487f100380d86665aa86a0183a31ea94ce15b94fb682ae6fcc4c40a15fb"
+    },
+    {
+      "file": "docs/release/evidence/regional-assumption-correction-2026-09-20.md",
+      "gitBlob": "f6b14c7f0bea67263c928417accd98725d38c097",
+      "bytes": 7263,
+      "sha256": "d9722ae4ecacab042df3ff36422113a3ab72884962350229977285fd922928f2"
+    },
+    {
+      "file": "docs/release/evidence/regional-assumption-package-2026-09-20.json",
+      "gitBlob": "860f134c1e4938869a80e07d46eec0a3c3c7f1ef",
+      "bytes": 49076,
+      "sha256": "a3de6b9aa4f74444f89540e33be7fb5d93e376015b51546471974b044c418caf"
+    },
+    {
+      "file": "docs/release/evidence/regional-final-verification.json",
+      "gitBlob": "8d90eb70377a31b45dd43fdd9b22ddc04d7009dc",
+      "bytes": 28259,
+      "sha256": "5d442231b894cbed6dabc0618a87e157597cbf7867c1aa328c4d9fd64d432961"
+    },
+    {
+      "file": "docs/release/evidence/regional-live-site-check.json",
+      "gitBlob": "cf5c2c2fc08f682438e6b20cff58c3d8572c8b55",
+      "bytes": 2319,
+      "sha256": "1dbdf669249c0e6f40a1d9a47cac360abcae1ebf1816749c1b554b04ab7b4775"
+    },
+    {
+      "file": "docs/release/evidence/regional-production-closure-2026-09-20.md",
+      "gitBlob": "b21ada171894e2479cc7a1bde9d9cbc0c17b0637",
+      "bytes": 10978,
+      "sha256": "92aa454e2cbb9693058fc6ce0d53d4c1f5d7dba7393798c099fc296812021bb4"
+    },
+    {
+      "file": "docs/release/evidence/regional-release-package-check.json",
+      "gitBlob": "66203423e1d6ce2646d4e36c7bb692998ac494bf",
+      "bytes": 258,
+      "sha256": "69552d16e213ca60133949e59912de7abe862365654700ae14cf035852098d12"
+    },
+    {
+      "file": "docs/release/evidence/regional-source-integrity.json",
+      "gitBlob": "51b3f97dccafdcfcbc09c3415cc9df9b880dbe95",
+      "bytes": 1007,
+      "sha256": "0d22608b530ab7a16943dd53aa078d1abc60dc7754f59251626cf296da81949a"
+    },
+    {
+      "file": "docs/release/evidence/regional-stop-checks-2026-09-20.json",
+      "gitBlob": "f29a53bf4e3b4ffc66090b21b351990b43d08b63",
+      "bytes": 23956,
+      "sha256": "9f0b787c2dd106ba98a417c09fba4120d8034ba7ef6caab15cff5ca540995411"
+    },
+    {
+      "file": "docs/release/evidence/regional-stop-correction-2026-09-20.md",
+      "gitBlob": "ee710ea314e8a8d6f5a629f02e1da1faab9a7aff",
+      "bytes": 13377,
+      "sha256": "d0f2fbce5c7e857e47da9e2cfe9c2e0f05cdd793a002f8f3ea6ab1a2ddf21cdd"
+    },
+    {
+      "file": "docs/release/evidence/regional-stop-package-2026-09-20.json",
+      "gitBlob": "9222e272d12922370879678816d0cd8262b7cab4",
+      "bytes": 110303,
+      "sha256": "f3b8519efb04f2d679ea6fabdbeb85089e85525dc9191b29e9fa470554bb095d"
+    },
+    {
+      "file": "docs/release/evidence/regional-store-artifact-2026-09-20.md",
+      "gitBlob": "770a548a58ca46ffd689c27cb11fa9022f832626",
+      "bytes": 4624,
+      "sha256": "75eceb379178c27dae4dd19fc869c9c0558a122e607aac7233e4e0256453781d"
+    },
+    {
+      "file": "docs/release/evidence/regional-store-ipa-check.json",
+      "gitBlob": "408b507200fd0b34b009eba5d890609107095cf3",
+      "bytes": 1184,
+      "sha256": "747e32bbe369d181d2599733ad97f3ddd21c93c01bf78acc632c2f78e834f528"
+    },
+    {
+      "file": "docs/release/evidence/regional-store-native-evidence.json",
+      "gitBlob": "6eb461cb9dea0104ef933d0c77ba345d5e35cb07",
+      "bytes": 1370,
+      "sha256": "f532bcb909d93d7a814ca22853e66717f3112a1619dd86e7c76d1c49994dff69"
+    },
+    {
+      "file": "docs/release/evidence/regional-store-privacy-manifests.json",
+      "gitBlob": "b9ca11710f12fcb6e01799d975527b992648e960",
+      "bytes": 14229,
+      "sha256": "31f776450c427210b105c3e1f8776f873825051d8ab9e7b6bfce39b955e90c71"
+    },
+    {
+      "file": "docs/release/evidence/regional-store-verification.json",
+      "gitBlob": "8581b109b7ccb197a0f4b78e128e145d82082ff0",
+      "bytes": 1994,
+      "sha256": "b68fd2e62997fd16ae160723e1b7f6f4f0ec0f7efe75155672d4c26f184b6965"
+    },
+    {
+      "file": "docs/release/evidence/release-eligibility-2026-09-21.md",
+      "gitBlob": "842284763ee5e6f8c7e6bb6e6762b97c89928dd1",
+      "bytes": 18999,
+      "sha256": "8c6b448c80c0a2416de263a2d51e73810e30c983a3153a124541a352163d968b"
+    },
+    {
+      "file": "docs/release/evidence/release-eligibility-checks-2026-09-21.json",
+      "gitBlob": "060f8e18dec6d3b84175dce2e965a860ec4772f6",
+      "bytes": 105222,
+      "sha256": "f9fe85d18aa325f6dad579bd39f694baf4c9ee178142c6302abda985757b4828"
+    },
+    {
+      "file": "docs/release/evidence/release-eligibility-package-2026-09-21.json",
+      "gitBlob": "0f0ae695524c7fe1b8fe5ed2db700aae5a90887d",
+      "bytes": 52815,
+      "sha256": "6399cda5cb5062abeb6338d8e9f721aa116f28e52b2c16a23d771a9b923f319b"
+    },
+    {
+      "file": "docs/release/evidence/release-eligibility-website-2026-09-21.json",
+      "gitBlob": "b247c44a4241abf461639ba7641dc0a60691b71a",
+      "bytes": 800,
+      "sha256": "ca324c2d89752e542aaa656b1af21225ab27f1f15468bb1aa121d33e6cf77790"
+    },
+    {
+      "file": "docs/release/evidence/required-apple-age.json",
+      "gitBlob": "f407095fdbaa14b4afdbadee146e5a4a9c921707",
+      "bytes": 7043,
+      "sha256": "1a1b536196b43446aaa4b4659658a968be460c8d1e0a16d8dac7a1e9d4162a82"
+    },
+    {
+      "file": "docs/release/evidence/review-correction-checks-2026-09-21.json",
+      "gitBlob": "f545b694cbe1e07bff279e81e686386642d23c3a",
+      "bytes": 4317,
+      "sha256": "b9cccc26806b0a504596f32a6615ac4f0c546412f1ab707ddf372597ed2f051f"
+    },
+    {
+      "file": "docs/release/evidence/review-existing-device-artifact-2026-09-20.json",
+      "gitBlob": "aae3ba4d09e4f7a8fb8e0ea5c1e2c87e2438e123",
+      "bytes": 12996,
+      "sha256": "1762379fe4da059c29837612a2bd10657359ff99260f2397604e0d07e16f5345"
+    },
+    {
+      "file": "docs/release/evidence/review-successor-package-2026-09-20.json",
+      "gitBlob": "83b7661c8a775e7c18af1baab9d30196e4fd7efa",
+      "bytes": 48877,
+      "sha256": "02bc507aa961147dc90bad2aefef242941de8240f7030f729c8d2ee24331ef42"
+    },
+    {
+      "file": "docs/release/evidence/review-successor-resolution-2026-09-20.json",
+      "gitBlob": "cf0ec64fbd6b68d964315907077b35ba54fc3056",
+      "bytes": 30404,
+      "sha256": "3d4c88009bad91db61cf73f0fe9f1b71069920eacc37605b02cb63a38d6603fa"
+    },
+    {
+      "file": "docs/release/evidence/review-successor-resolution-2026-09-20.md",
+      "gitBlob": "a79fc22d3cefe58256db7e42920f9e562caeda35",
+      "bytes": 9649,
+      "sha256": "703f1744c8ae2d4c95d36d79bad7dd5fc5167baa777f544f94afce0acb04618c"
+    },
+    {
+      "file": "docs/release/evidence/site-publication-2026-09-20.json",
+      "gitBlob": "21042ca0f03587458f14a595f6f83c2dc9d9cc4a",
+      "bytes": 457,
+      "sha256": "731144f91bd8472d5d9c1ffee25f20d6a383ed3f681074dbf4ea68f44702aee1"
+    },
+    {
+      "file": "docs/release/evidence/source-archive-relocation-2026-09-21.json",
+      "gitBlob": "a949cc0a294116489c03273b5f4ea8d496ef78d8",
+      "bytes": 6844,
+      "sha256": "a32dc5143e21e7f34d7e2e7534b2c891b21484e983f2a7ed747444d1cfb02c96"
+    },
+    {
+      "file": "docs/release/evidence/source-organization-checks-2026-09-21.json",
+      "gitBlob": "543cdc7bf406d8832a85b1b24bd55bb31d1fa4cd",
+      "bytes": 1001,
+      "sha256": "18664fa707c93c375095ebaea8c67e412351ee7dc36cc159a66d12c7637d07c1"
+    },
+    {
+      "file": "docs/release/evidence/source-recovery-2026-09-21.md",
+      "gitBlob": "5b58eeec130efa3bda1dc88b9d47554c6580bbcc",
+      "bytes": 8888,
+      "sha256": "80fd250aeaab8fca15c726f8969571ebb1b759a0cb6c2199d674e20a081a25e7"
+    },
+    {
+      "file": "docs/release/evidence/source-recovery-checks-2026-09-21.json",
+      "gitBlob": "851d198aabf2b1e5cd8fe8940e01aaf46a72d71f",
+      "bytes": 34947,
+      "sha256": "9e4f4a08aea17de3ab183729f5cc8c36f252ee34d071ce06e5a2d24aa652bf7c"
+    },
+    {
+      "file": "docs/release/evidence/source-recovery-package-2026-09-21.json",
+      "gitBlob": "6009ec016e9a8eeaf0bb12d1e94b96dc0df86a06",
+      "bytes": 49771,
+      "sha256": "d0dea7f40fa2fdfd881e7978c1f17e93191d0066ce157c1464ff95545220454c"
+    },
+    {
+      "file": "docs/release/evidence/store-archive-diagnostics-2026-09-20.json",
+      "gitBlob": "c655f6daee12c9eec3f2761a2ad55e4fd7c8d72e",
+      "bytes": 14058,
+      "sha256": "4d75c00650cdd81d5f4ca59872e40d873e87420ba7d1a6473cc1d011238c81aa"
+    },
+    {
+      "file": "docs/release/evidence/summarize-ipa-privacy.py",
+      "gitBlob": "6cfee42759e829c38edb01dd46653ccc6886cfe0",
+      "bytes": 1269,
+      "sha256": "48cc4a35a72af4369b3850f31947e6a79dee9dbe4f8ccac3e6d35fbad701c02a"
+    },
+    {
+      "file": "docs/release/evidence/tasks-3-4-completion-2026-09-20.md",
+      "gitBlob": "b00f6d4dd96d9e85c523c21b71288f4d8c930264",
+      "bytes": 4275,
+      "sha256": "2380c8d17adbc3e984f9741e80089a4c8989408e6c0a08ba93b4697a76b706ec"
+    },
+    {
+      "file": "docs/release/evidence/tasks-3-4-verification-2026-09-20.json",
+      "gitBlob": "ef12e77f5ebb9d381408b6b24268f50b9143e7e2",
+      "bytes": 6544,
+      "sha256": "f8d02d1a1f28bf514c12ac6b481ca92ffaab04598832c9fc1d551d1e3eaaabf5"
+    },
+    {
+      "file": "docs/release/evidence/tasks-5-6-reconciliation-2026-09-20.md",
+      "gitBlob": "530805f0afec30ee6f3072df363bb0009d16a128",
+      "bytes": 7297,
+      "sha256": "037d66a935acd5e74cbc4808a5c3eb04648a853cff874528e1eb9115ecbf0b4f"
+    },
+    {
+      "file": "docs/release/evidence/tasks-5-6-verification-2026-09-20.json",
+      "gitBlob": "07fed2b03866c93b9a80b39242e9dfba0d408f9f",
+      "bytes": 11129,
+      "sha256": "0c264ace210085a101d4a58af13facaa376e84cf11ac6d8b31aca5da77a3942a"
+    },
+    {
+      "file": "docs/release/evidence/uri-decoder-verification-2026-09-19.json",
+      "gitBlob": "37542b34de28a9db1ce70792462b4a0fd532c08c",
+      "bytes": 490,
+      "sha256": "120451ca2d198e67f7efbb6c035688bdbcd76ad3dc1623efa51f1ddb23640b27"
+    },
+    {
+      "file": "docs/release/evidence/website-review-2026-09-21/privacy.html",
+      "gitBlob": "e798f68f041db4028638d0cf10156b0b7dea945d",
+      "bytes": 17241,
+      "sha256": "613849734cd76b497b76c9483d86677e1f34f6a0da9ab3250e09d4993634e513"
+    },
+    {
+      "file": "docs/release/evidence/website-review-2026-09-21/terms.html",
+      "gitBlob": "2e03b9f860cf5d9ccd02dea83860a11e9dd6e6e2",
+      "bytes": 7956,
+      "sha256": "9adb1980df34f86f6b3a86ad247709f6dec52398cb0bc97818f34f029a85944d"
+    },
+    {
+      "file": "docs/release/form-tracking-accepted-2026-09-18.md",
+      "gitBlob": "e49eee4a3d797491ae3bffed136f1fab5c87d083",
+      "bytes": 1333,
+      "sha256": "343324815d421093f8aa7bfbcaa6c5dd61161f645aa1961871eeb32bc5c31291"
+    },
+    {
+      "file": "docs/release/four-country-app-privacy-answers.md",
+      "gitBlob": "52a50b609edd8c4e37ae5714300c86bcb391d925",
+      "bytes": 11259,
+      "sha256": "cb4302c26b9ebc98118a64b578d6a9f52094cc77740dde990339779e8e396169"
+    },
+    {
+      "file": "docs/release/friend-code-retirement-2026-09-17.md",
+      "gitBlob": "2e6ed4d2979d86cd817b4d18cddc3c94c11e8e6a",
+      "bytes": 3197,
+      "sha256": "c0b166b8823c6d1e1a4ba46fe2956f3bd2975d4c76b30ec06ccedd60cccec0d8"
+    },
+    {
+      "file": "docs/release/google-data-safety.md",
+      "gitBlob": "94f09b3e3dfe256d4e37a9163c989da6682745bf",
+      "bytes": 9175,
+      "sha256": "94e4e1f781b07825ff4cc650874c4af4e5fb1079ab5882e8dafe9f50950c9aec"
+    },
+    {
+      "file": "docs/release/iphone-ipad-revenuecat-2026-09-17.md",
+      "gitBlob": "1e1e6b5c43543e773e6973d1694abc743cac39b3",
+      "bytes": 2824,
+      "sha256": "5c58ffb1dd5237f49d42da2ec1ab800260f368f90fb195d55ab40018e1b57af3"
+    },
+    {
+      "file": "docs/release/launch-audit-2026-09-17.md",
+      "gitBlob": "f2c794af17232b548e2b78706c1d38d91c81bede",
+      "bytes": 13975,
+      "sha256": "3ffec55dfa638cd3e370f7f7ff7e3eab7afed92e8dcdd5e2a811bcc76622ffb2"
+    },
+    {
+      "file": "docs/release/launch-audit-response-2026-09-18.md",
+      "gitBlob": "d2fd3067ad906e2801ed35adfb7c8bc5e6d69f42",
+      "bytes": 7232,
+      "sha256": "5f7ab9893bc6944f53482095b2ae1fd3bd09e5a6e83142e354bc3a3e5cb6f454"
+    },
+    {
+      "file": "docs/release/moderation-live-test-2026-09-16.md",
+      "gitBlob": "45e08b1f5b4ff41f159d575193cc64191c4fc515",
+      "bytes": 1339,
+      "sha256": "0f8077376ca2771b271ab2ec059ca55f7f5b92f3c2f97eb14ddb7a8b87c3bbaf"
+    },
+    {
+      "file": "docs/release/moderation-runbook.md",
+      "gitBlob": "93eef8b886d2148d9d26fb64a06dea789c939e2b",
+      "bytes": 7465,
+      "sha256": "8bca503e41912947ba19507cc371c0b6299b6bd3599401864f2fe4464f0387bd"
+    },
+    {
+      "file": "docs/release/monetization-integration-plan.md",
+      "gitBlob": "f4792d1b4dae19bfc2346f6aa54fdb301a8879e3",
+      "bytes": 9459,
+      "sha256": "f3b89a8cf35cfb0afc5e5965cedcce55e6b911a7c5a599926644a5a840e8b795"
+    },
+    {
+      "file": "docs/release/physical-test-matrix.md",
+      "gitBlob": "f2228f5373a7ab4dd5858ca8e006dbf3dbe44bc9",
+      "bytes": 18154,
+      "sha256": "91a99a2de3120df84ab9e46518a739ec846659d1339afa52085ebaaff83b6aae"
+    },
+    {
+      "file": "docs/release/privacy-remaining-review-2026-09-19.md",
+      "gitBlob": "00c3a020e594c294bbc235a2f600eb051b40eff4",
+      "bytes": 13226,
+      "sha256": "263eeff7c5eaceb9e7b709bb26f21cc698bcf093eeed0f9a44c16c7831d1327c"
+    },
+    {
+      "file": "docs/release/privacy-rights-2026-09-19.md",
+      "gitBlob": "a90a63ae2bf96699675111a248abf6c4af78bb51",
+      "bytes": 3516,
+      "sha256": "b1f94fa3145001ae6391cd5b1a5489daebdc1e5757f556aa9177fc4f909ebd87"
+    },
+    {
+      "file": "docs/release/privacy-startup-2026-09-19.md",
+      "gitBlob": "62aefe9e572b2240066d6a972ae73b6b22748c12",
+      "bytes": 2385,
+      "sha256": "fe103c71e9f62f97626202f16117b8c744aad16e27207e3335272b985d4ebdef"
+    },
+    {
+      "file": "docs/release/processing-readiness-2026-09-19.md",
+      "gitBlob": "ac7bf2802ec04effc3ea640b7202ff8a6ec3aa7c",
+      "bytes": 2783,
+      "sha256": "dfce0c026541b005b4a98205c49806c4942011139c661af3a14429e0e7e99202"
+    },
+    {
+      "file": "docs/release/pullup-floor-reference-2026-09-17.md",
+      "gitBlob": "354b7c2427b3039c5db4ca6947553758c58331f2",
+      "bytes": 13470,
+      "sha256": "9f5b987674173c02921baf2a4dd70c78b3f445b5dcb1f3a9b9eb5f1d7a2fe8a3"
+    },
+    {
+      "file": "docs/release/pullup-floor-reference-failure-2026-09-17.md",
+      "gitBlob": "4b3cb33ee1c34f8b5731232fed2e4160325dd23c",
+      "bytes": 4381,
+      "sha256": "f0c5e92207b091f1467839e16fbc051f9b6d1171f2416d6b74811a814f9f5b42"
+    },
+    {
+      "file": "docs/release/pullup-grab-reference-2026-09-17.md",
+      "gitBlob": "dfdf844a516c6e72590d40808d755ff411c37a1e",
+      "bytes": 4347,
+      "sha256": "c2345433c5bd86f54187f57be0240dd8964d7705e8c52f888328444cbfb96d99"
+    },
+    {
+      "file": "docs/release/pullup-investigation-2026-09-17.md",
+      "gitBlob": "9fef7d8aa792ca93695812e6f5d63b7b5c59cb5c",
+      "bytes": 11082,
+      "sha256": "36d00a051f3cf7ccefb26db5f022fe91cac77fd67fd0572b9d82e8e42ce97693"
+    },
+    {
+      "file": "docs/release/pullup-straight-leg-regression-2026-09-17.md",
+      "gitBlob": "724e84febd0167c0df227cdfa98646ea61441b4a",
+      "bytes": 2723,
+      "sha256": "3429a59dbcaddfdb2adf4553b1ea9cb93c06872aa3ddcaa5e2e0a3847a0ec685"
+    },
+    {
+      "file": "docs/release/pullup-support-handoff-2026-09-17.md",
+      "gitBlob": "2690b11300b957a8de628415ad96f8a052c1b539",
+      "bytes": 3740,
+      "sha256": "ac81606e3db5e6f6aa8dfeef54d0a63bb8bf79b771f09fb5a3a5552862ac1d2e"
+    },
+    {
+      "file": "docs/release/regional-processing-implementation-2026-09-19.md",
+      "gitBlob": "75cd9f856f82f142a5bb39a8b7ae9e7d4b4ea710",
+      "bytes": 14234,
+      "sha256": "4e6fc0c87613cbe29cc5244adefa57491dfff970a3ec5616b3cb9894d2aa9712"
+    },
+    {
+      "file": "docs/release/regression-candidate-2026-09-16.md",
+      "gitBlob": "57bcded7c3aa41aa50468c55b60af4cfda883f06",
+      "bytes": 29637,
+      "sha256": "8d9e55f1b2d7dfb4a25f8c9ff17b55d47d78cfea432677b98c34e08fb3e726a2"
+    },
+    {
+      "file": "docs/release/required-apple-age-2026-09-19.md",
+      "gitBlob": "258f046604440c4df324b50ba1be7aaded0e446f",
+      "bytes": 3486,
+      "sha256": "d01632987ecd19fc03b3ec66399c1df6743090cd01fdbc031bcc4e2172e33569"
+    },
+    {
+      "file": "docs/release/review-reconciliation-2026-09-19.md",
+      "gitBlob": "69b96ec63227ede08a5c9b052830313021e51f42",
+      "bytes": 9223,
+      "sha256": "141c1f9ee8e96cc302ad012a819ea85a70048f9f91840b381d611e6aa5c74432"
+    },
+    {
+      "file": "docs/release/reviewer-notes.md",
+      "gitBlob": "459fe95dc18f0a924eb7894219822c1b71a13751",
+      "bytes": 5576,
+      "sha256": "947e77600614d88ce9f40fcfcf10377b2ade0deb06c9786b92472e0e00e235b9"
+    },
+    {
+      "file": "docs/release/shipaton-demo-script.md",
+      "gitBlob": "99c187e606b59dc3cfa8baeb22f57c026e9d5ee8",
+      "bytes": 4632,
+      "sha256": "069eabe501e069c9d64f968cc466dbc0ce1c66f0b4d1251a415a07695c89ad6a"
+    },
+    {
+      "file": "docs/release/shipaton-entry-draft.md",
+      "gitBlob": "49eba7073bf50426ed21034db7f48dfc4e327850",
+      "bytes": 4400,
+      "sha256": "7d8c8af509cd86210bb138b35e758c075fa6f54184ba132b6da28ef081e4a79c"
+    },
+    {
+      "file": "docs/release/shipaton-submission.md",
+      "gitBlob": "b60bdd3e22fd4d2bf4cc0cfe72bd9585dab7d87c",
+      "bytes": 4261,
+      "sha256": "ca6bb8c692209d4ce6cd7d30e96b78d4ba96416e26ed523bc7d4ac2c3974fe03"
+    },
+    {
+      "file": "docs/release/source-organization-2026-09-21.md",
+      "gitBlob": "9c9d5f38e355ad34909bcf0e31ea73950de975eb",
+      "bytes": 5850,
+      "sha256": "19a56db519341bd71547723102078b51ae84a4b507a67e034bdebca7cf9f4997"
+    },
+    {
+      "file": "docs/release/store-listing-draft.md",
+      "gitBlob": "b52a3ea43bfff89c1f36847f8159cf069167add8",
+      "bytes": 4980,
+      "sha256": "a9e6bd5ed5d850e6b602f84b3e5e391a08693e3fb4b47604a5fa3c93313fba83"
+    },
+    {
+      "file": "docs/release/store-screenshot-production-plan.md",
+      "gitBlob": "17613fb84cf79e137c5d1a454a994bc306619cdd",
+      "bytes": 7839,
+      "sha256": "eaf767d441aa4aafdd48c980aec2af1ba4a1a7a228c4bb338f232936a57d9084"
+    },
+    {
+      "file": "docs/release/submission-gates.md",
+      "gitBlob": "2c6268af87f73b3efade864bae64305bc2b5dab3",
+      "bytes": 12775,
+      "sha256": "4ce5f13683a9221f0694f937fdc2215d3d8c6df703693364b55d1c20d24e409e"
+    },
+    {
+      "file": "docs/release/tester-change-summary.md",
+      "gitBlob": "b9bd09379234cbdc7889c1ac050b60584b438521",
+      "bytes": 13127,
+      "sha256": "215592b349ee9d56cae49c594f29061bcd09f058aeca7a9ad2b40f703862d411"
+    },
+    {
+      "file": "docs/release/third-party-audit-2026-09-21.md",
+      "gitBlob": "db67987249a22e050ffca0e4ece5d7717a096420",
+      "bytes": 13686,
+      "sha256": "af2a26256891e5619a9b1b664aa384a5d6e2f85ac360aef60ebd0dcf61d08f13"
+    },
+    {
+      "file": "docs/release/uri-decoder-backport-2026-09-19.md",
+      "gitBlob": "a365982ecc71e744980da8aea580f63ad4d06a54",
+      "bytes": 4421,
+      "sha256": "906abd0044f2aa23b39e013fee374717ec858672f16654d60918adf33fc301a6"
+    },
+    {
+      "file": "package.json",
+      "gitBlob": "ea7b56b821238822c28c8c014da0f6371a533053",
+      "bytes": 504,
+      "sha256": "81d5eb62b08075502c923f0796ff5f0bfd29a06f36b4dec41347b5c4095494e7"
+    },
+    {
+      "file": "services/apple-verifier/apple-roots.json",
+      "gitBlob": "1465850c962e78a033a91b23cd0abb5cafabb238",
+      "bytes": 2707,
+      "sha256": "ddb9f1486a79ac3cd34b351c87fc9a4b64b5c21940011d7142e7ab8d65eac2c2"
+    },
+    {
+      "file": "services/apple-verifier/package-lock.json",
+      "gitBlob": "5b0a4f1671fd1fa5a45cfb66a920943b98a41f1e",
+      "bytes": 20141,
+      "sha256": "eed0879abf47e5237100c66323ab856b54b310a536f6aa0597876da9deb957e9"
+    },
+    {
+      "file": "services/apple-verifier/package.json",
+      "gitBlob": "597771d31a44c1edfc2431918b680a85425ae107",
+      "bytes": 275,
+      "sha256": "47271ae7db75f1c20e3428984f2d4142b4f59426d64d62bb957a8ca542e493c8"
+    },
+    {
+      "file": "services/apple-verifier/server.cjs",
+      "gitBlob": "694d2fb43ca31b9661cee4340a57dd3ec14a08d5",
+      "bytes": 4831,
+      "sha256": "1abf0f79035a537107accc4ee8c5197c127ae38e1d6f3c858c2c378748e9bb47"
+    },
+    {
+      "file": "services/apple-verifier/server.test.cjs",
+      "gitBlob": "7a96dc754517c2668ca15f9f4fe0ff4635296b36",
+      "bytes": 3511,
+      "sha256": "75656496e974afd40f406e66998f1dcb25a5c7af037590646d3e99e2e2b25ae7"
+    },
+    {
+      "file": "supabase/config.toml",
+      "gitBlob": "0a06cb2b5f94e7175c460e58b8fa857b4dacdd73",
+      "bytes": 435,
+      "sha256": "90086a9c8d351ef2f41fe98a99e2fba7b9ade2dbc861423bd5e5839eb0eed8a0"
+    },
+    {
+      "file": "supabase/functions/flapfit-game/index.ts",
+      "gitBlob": "c14288ef65cb61d936c97d314fa4fde57fb3e88c",
+      "bytes": 14441,
+      "sha256": "1295e085d995efdb5c0c413e5362e1e3661238b187ded778357322d19e53b75f"
+    },
+    {
+      "file": "yarn.lock",
+      "gitBlob": "1e93f5978898bf7a221b1419003e1ad1cf952ef1",
+      "bytes": 429929,
+      "sha256": "5eb8039e089245aa85453593fd829aa47109a992ddf72339126b1c2a2afd2566"
+    }
+  ]
+}

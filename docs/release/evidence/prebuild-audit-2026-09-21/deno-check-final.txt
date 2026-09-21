@@ -1,0 +1,3 @@
+Check supabase/functions/flapfit-game/index.ts
+Check supabase/functions/flapfit-apple-consent/index.ts
+Check supabase/functions/flapfit-apple-consent-sandbox/index.ts

@@ -1,0 +1,83 @@
+Review and fix confirmed pre-build defects in FlapFit. Verify everything reasonably checkable before creating a mobile build.
+
+DO NOT create a build, compile/sign a mobile binary, upload, submit, deploy, publish, or change production configuration.
+
+The previous independent audit contains findings requiring validation. Do not treat its severity labels, legal interpretations or proposed solutions as established facts.
+
+Begin by inspecting the current repository, working tree, instructions and recent changes. Preserve existing work.
+
+SCOPE
+
+You may implement narrowly scoped corrections to demonstrated defects within the existing approved product behavior.
+
+Do not introduce new product requirements, access restrictions, consent mechanisms or architectural migrations merely because an audit recommends them.
+
+For every proposed fix, establish:
+1. The intended behavior and its source.
+2. The actual failure.
+3. The affected execution path and conditions.
+4. The smallest correction.
+5. A meaningful verification that demonstrates the correction.
+
+If a finding is unsupported or intentional behavior, explain that with evidence.
+
+PRESERVE
+
+- Camera access is required for normal Play and Record & Play.
+- Recording and microphone access remain optional.
+- Preserve calibration, exercise detection, scoring and recording unless a specific defect is reproduced.
+- Preserve existing approved regional advertising/reporting restrictions and local gameplay availability.
+- Verify precise age boundaries against actual owner instructions; do not infer approval solely from an AI-written handoff.
+- Do not add regional gameplay bans, mandatory login, a general ads-off switch, subscriptions, or a one-game quota.
+- Preserve saved refusals, applicable Google privacy controls and independent reporting choices.
+- Keep optional advertising requirements separate from gameplay.
+- Do not restore the removed geographic list in the privacy policy.
+
+INVESTIGATE THESE SPECIFIC CLAIMS
+
+A. Saved age restoration:
+The earlier audit observed game entry before restoration of a saved under-13 answer. Reproduce this through the complete startup/navigation path. Establish the intended minimum-age behavior before correcting any inconsistency.
+
+Do not interpret every pending/failed age lookup as permission to introduce a new gameplay restriction. Separate app audience policy, Apple age rating, applicable Apple requirements and optional advertising checks.
+
+B. Apple authorization:
+The server’s revocation lookup returns false for an unlinked identity. The client already links identities in its required Apple flow.
+
+Determine whether an actual applicable authorization requirement can be bypassed. Absence of a mapping alone is not sufficient proof. Do not require Apple linkage or device attestation universally as a shortcut.
+
+C. Advertising privacy:
+Review the current Google privacy controls, policy promises and support procedure. Establish whether a specific applicable withdrawal right lacks a workable route.
+
+Do not assume every preference requires stopping all advertising. Do not add an advertising-off mechanism based on an unverified interpretation. Document any demonstrated gap and its exact proposed remedy separately if it would change approved behavior.
+
+D. Remaining security concerns:
+Assess session storage, API abuse/cost controls, request-size handling, database defaults, moderation, deletion, retention, offline synchronization, dependencies and native patches.
+
+Separate exploitable defects, configuration unknowns and optional hardening. Avoid broad migrations or dependency upgrades without a demonstrated need.
+
+VERIFICATION
+
+Run the full relevant tests, TypeScript, lint and production configuration checks. Add regression coverage for confirmed defects.
+
+Check authorization/ownership failures, retries, deletion, storage failures, regional provider gating and asynchronous state changes.
+
+Inspect source packaging, required bundled assets, native patch integrity, privacy declarations, permission strings, dependency advisories and secret exposure.
+
+Review live backend configuration and public policy/support links read-only where access exists. Do not generate production abuse traffic or disclose credentials.
+
+Do not claim a test proves more than it exercises. Existing helper tests do not prove a reachable user workflow.
+
+DELIVER
+
+Report:
+- Exact source revision and changes.
+- Each finding: confirmed, fixed, disproved, intentional, optional hardening, or unresolved.
+- Reproduction and verification evidence.
+- Actual commands and test results.
+- Any necessary but unapplied backend/configuration changes.
+- Checks that genuinely require a future signed build/device.
+- Specific remaining pre-build blockers.
+
+Keep completed pre-build checks distinct from future binary/device verification. Do not call unavailable runtime evidence a passed check or an automatic source defect.
+
+Finish all independently actionable work, deliver the report, and STOP. No build or submission is authorized.
