@@ -1,0 +1,520 @@
+{
+  "recordedAt": "2026-09-21T00:13:47.580839+00:00",
+  "baseCommit": "269b6b320b533a4f070c4ff1156b2f5271a6c07b",
+  "sourceCoverage": "Per-file byte hashes identify the checked working source in this evidence commit.",
+  "fullSuite": {
+    "numPassedTestSuites": 60,
+    "numFailedTestSuites": 0,
+    "numPassedTests": 1254,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "checks": {
+    "full": {
+      "exitCode": 0,
+      "logSha256": "5c97dfe7dcf19cfa60e8c162bd0d9cab5b3ad4c57e890d34e372027e8a402cd7"
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "lint": {
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "release": {
+      "exitCode": 0,
+      "logSha256": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4"
+    }
+  },
+  "before": [
+    {
+      "name": "regional correction: unknown Canadian province is unresolved, not Quebec consent",
+      "status": "failed",
+      "failures": [
+        "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 2\n+ Received  + 2\n\n  Object {\n-   \"ads\": false,\n-   \"analytics\": false,\n+   \"ads\": true,\n+   \"analytics\": true,\n  }\n    at Object.toEqual (C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\privacy\\__tests__\\launchProcessingPolicy.test.ts:282:43)\n    at Promise.then.completed (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\utils.js:231:10)\n    at _callCircusTest (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:316:40)\n    at _runTest (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:252:3)\n    at _runTestsForDescribeBlock (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:126:9)\n    at run (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:71:3)\n    at runAndTransformResultsToJestFormat (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\legacy-code-todo-rewrite\\jestAdapterInit.js:122:21)\n    at jestAdapter (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\legacy-code-todo-rewrite\\jestAdapter.js:79:19)\n    at runTestInternal (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-runner\\build\\runTest.js:367:16)\n    at runTest (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-runner\\build\\runTest.js:444:34)"
+      ]
+    },
+    {
+      "name": "regional correction: unknown US state is unresolved, not Connecticut necessity",
+      "status": "failed",
+      "failures": [
+        "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"state-unresolved\"\nReceived: \"connecticut-ad-necessity-unresolved\"\n    at Object.toBe (C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\privacy\\__tests__\\launchProcessingPolicy.test.ts:289:30)\n    at Promise.then.completed (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\utils.js:231:10)\n    at _callCircusTest (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:316:40)\n    at _runTest (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:252:3)\n    at _runTestsForDescribeBlock (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:126:9)\n    at run (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:71:3)\n    at runAndTransformResultsToJestFormat (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\legacy-code-todo-rewrite\\jestAdapterInit.js:122:21)\n    at jestAdapter (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\legacy-code-todo-rewrite\\jestAdapter.js:79:19)\n    at runTestInternal (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-runner\\build\\runTest.js:367:16)\n    at runTest (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-runner\\build\\runTest.js:444:34)"
+      ]
+    }
+  ],
+  "regionalRegressions": [
+    {
+      "name": "regional correction: real Canadian result path chooses outside Quebec and configures ads while reporting remains refused across restart",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: closing unanswered Canada clarification records unknown, never an ad refusal or Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: unknown Canadian province is unresolved, not Quebec consent",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: unknown US state is unresolved, not Connecticut necessity",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada AB has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada BC has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada MB has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada NB has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada NL has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada NS has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada NT has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada NU has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada ON has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada PE has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada SK has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada YT has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: adult Canada NON-QC has permitted ads without Quebec activation",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: explicit Canadian resident selects only the supported rule",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: explicit Canadian not-resident selects only the supported rule",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: explicit Canadian unknown selects only the supported rule",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US AL does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US AK does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US AZ does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US AR does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US CA does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US CO does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US DE does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US DC does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US FL does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US GA does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US HI does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US ID does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US IL does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US IN does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US IA does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US KS does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US KY does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US LA does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US ME does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US MD does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US MA does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US MI does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US MN does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US MS does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US MO does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US MT does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US NE does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US NV does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US NH does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US NJ does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US NM does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US NY does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US NC does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US ND does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US OH does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US OK does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US OR does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US PA does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US RI does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US SC does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US SD does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US TN does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US TX does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US UT does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US VT does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US VA does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US WA does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US WV does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US WI does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: verified US WY does not receive Connecticut restrictions",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: AU adult does not acquire province/state consent from missing subdivision",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: MX adult does not acquire province/state consent from missing subdivision",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: rendered Canadian region controls remove unneeded ad switches outside Quebec without allowing reporting",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: rendered failed province save has an actionable retry",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: outside Quebec enables adult ads without consent grant and preserves reporting refusal after restart",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: Quebec answer cannot be replaced by a generic grant or country",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: US does not get a Quebec question",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: AU does not get a Quebec question",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: MX does not get a Quebec question",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: failed provincial save remains retryable without erasing a saved reporting refusal",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: unreadable province remains unknown; retry restores independent ads and refuses reporting",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: stale outside-Quebec save cannot override a newer Quebec answer",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "name": "regional correction: delayed province save cannot apply to another country",
+      "status": "passed",
+      "failures": []
+    }
+  ],
+  "modifiedSourceHashes": [
+    {
+      "path": "apps/mobile/src/components/PrivacyChoices.tsx",
+      "sha256": "f3b85cece62c8b8d61166ff06daab3587e505773acf7b96b556cba1d1ea5e3f8"
+    },
+    {
+      "path": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+      "sha256": "2b112bb594125845ee01dd43cd8c5e90bfe872db936a9adb504d27e2f85729f8"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+      "sha256": "068ced95d487974137a9021997071e87f61007bae6ecdcccc5a92c7fc6b08010"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/launchProcessingPolicy.test.ts",
+      "sha256": "6a63b3bbfe733d85d415bffddd2f81ec6982c1f95607887dbe9cb65b6a411e3c"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/__tests__/regionalClarification.test.ts",
+      "sha256": "246b682c1e9a19394825366be1176aba5a4e0a5ecb69932577adcdf19edb8dfc"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/launchProcessingControl.ts",
+      "sha256": "b0ff4a77b0dace2b904a474309b5e69b9bd49d46f4a1b23480d56eb1e21fa0c4"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/launchProcessingPolicy.ts",
+      "sha256": "7ca2bf3cf1623bcd5d6634e0f6e239d0545435376f3bcf3514c23100ecb38ee3"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/postGamePrivacy.ts",
+      "sha256": "e7f62a8980780f53aef9f20912662edc5a5f4226ed562448828a59a3aafc74a9"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/processingAccess.ts",
+      "sha256": "e06b94b70b0f0a9cd93253aaf108c2ba8dffdbdccc5bc461982a9eddfb767ba0"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/processingNotice.ts",
+      "sha256": "8f346985e4565675f88edeea755367e81ec9cd055d999759edcccdf833b8b2b5"
+    },
+    {
+      "path": "apps/mobile/src/services/privacy/regionalClarification.ts",
+      "sha256": "ea69450ad2cfab4872b5bfe3db5b096957958e98064dff6808ae73f99d0159c4"
+    }
+  ],
+  "reproductionCommands": [
+    "python run-region-before.py (locked Jest, selected two original failing cases)",
+    "node node_modules/jest/bin/jest.js --runInBand --watchman=false (apps/mobile)",
+    "node node_modules/typescript/bin/tsc --noEmit (apps/mobile)",
+    "node node_modules/oxlint/bin/oxlint --no-ignore --deny-warnings apps/mobile/src apps/mobile/scripts",
+    "node scripts/validate-release-config.cjs (apps/mobile, production EAS env, ios)"
+  ],
+  "buildHeld": true,
+  "worldwideNewYorkTeenFallback": "unresolved; not claimed fixed",
+  "newBuildUploadDeploymentOrAppleEdit": false
+}

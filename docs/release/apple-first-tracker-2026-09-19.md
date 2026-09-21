@@ -1,6 +1,13 @@
 # Apple-first completion tracker
 
-## Current three-finding account-audit successor — BUILD HELD
+## Regional assumption correction — BUILD HELD
+
+Unknown Canadian province no longer becomes Quebec-specific consent. A local Quebec/outside-Quebec answer in existing Info/result privacy selects the actual branch without erasing refusals; outside-Quebec adults use permitted notice-based ads without a new ad switch. Unknown US state is distinguished from confirmed Connecticut restrictions. **The separate worldwide New York teen-consent fallback remains an unresolved source/design release blocker**, including its effect outside the US. AU/MX national age/authority handling is not a province/state guess. No complete four-country monetization or release readiness claim.
+
+Evidence: **evidence/regional-assumption-correction-2026-09-20.md** with checks/package JSON. Both original regional assertions reproduced, then corrected. **60 suites / 1254 tests**, TypeScript, strict lint, production privacy/release validation and local package validation pass. Canadian rendered controls, retry/races and actual Google/RevenueCat configuration through restart are covered. No new build/upload, device request, account edit or deployment.
+
+
+## Prior three-finding account-audit successor — BUILD HELD
 
 All three reproduced source findings are corrected in the commit containing **evidence/audit-three-findings-2026-09-20.md**: unreadable saved refusal (retained from b2916d0), stale Allow overriding newer Stop, and Apple-required competition bypassing pending deletion. The latter two had eight failing regressions plus seven passing controls before correction on b2916d0. Final actual configuration/rendered/dispatcher regressions cover refusal recovery/restart, remount and delayed writes, all Apple/session combinations, deletion during preparation, deletion retry/support, and no revival of an old request after cleanup.
 
@@ -60,15 +67,15 @@ Evidence: `evidence/focused-privacy-review-2026-09-20.md` and machine-readable r
 
 | Item | Status | Evidence / remaining verification |
 | --- | --- | --- |
-| A1 candidate source/backup | Three-finding successor verified; BUILD HELD | All three account-audit findings reproduced/fixed with exact before/after cases in audit-three-findings-2026-09-20.md. Prior completed work preserved; containing commit supplies current source for independent verification. |
-| A2 actual upload contents | COMPLETE for the three-finding successor | Actual local EAS package 772 files / 285 required inputs matching source; inside-package release validator and private/signing/web/backup/cache exclusions pass. No cloud build or upload. |
+| A1 candidate source/backup | Regional correction verified; NY teen fallback OPEN; BUILD HELD | Canada/US unknown-region fixes and preserved audit corrections: regional-assumption-correction-2026-09-20.md. The separate worldwide New York teen-purpose fallback remains unfinished source/design work, not device testing. |
+| A2 actual upload contents | COMPLETE for the regional correction source | Actual local EAS package 775 files / 285 required inputs matching source; inside-package release validator and private/signing/web/backup/cache exclusions pass. No cloud build or upload. |
 | A3 ad resources | Source verified; device open | Existing lifecycle regressions pass. No new native lifecycle changes in this focused correction. Native terminal behavior still included in consolidated C4. |
 | A4 permission refresh | Source verified; device open | Existing Settings-return and foreground regressions pass; C5 remains. |
 | A5 accepted instructions/calibration | Complete in source | Preserved accepted onboarding and tracker; no threshold or exercise redesign. |
 | A6 unlock/Daily Challenge | Complete in source | Existing hydration/unlock/Daily Challenge regressions pass. |
-| B1 final automated checks | COMPLETE for the three-finding source | 60 suites/1171 tests, zero pending; TypeScript, strict lint, production manifest/release validation pass. Concrete read-recovery, stale-action, rendered-remount and pending-deletion cases recorded independently of test totals. |
+| B1 final automated checks | COMPLETE for the regional correction source | 60 suites/1254 tests, zero pending; TypeScript, strict lint, production manifest/release validation pass. Regional controls, retries, stale answers and real monetization/restart cases pass; previous three-audit regressions retained. This does not close the unresolved NY scope blocker. |
 | B2 scoped integrity | Changed source and actual package verified; corrected binary open | Locked dependencies/resolutions/three patches unchanged; actual package required inputs and secret/signing-file exclusions verified. Earlier full credential-scan evidence retains its dated scope. New signed artifact remains open. |
-| B3 signed corrected iOS builds | Final successor artifact OPEN; BUILD HELD | Existing 04cf2e97 / f4b191d lacks later competition wiring and the three account-audit corrections. It remains inspected historical evidence, not final acceptance. No new build/upload. |
+| B3 signed corrected iOS builds | Final successor artifact OPEN; BUILD HELD | Existing 04cf2e97 / f4b191d lacks later competition wiring, the three account-audit corrections and the latest regional correction. It remains inspected historical evidence, not final acceptance. No new build/upload. |
 | B4 native privacy/permissions | Existing artifact checks passed; final artifact still required; PDF DEFERRED | Actual 04cf2e97 has nine corrected app types/fourteen SDK manifests, required reasons, camera/mic descriptions, age entitlement, native fences and tracking assets. Final successor needs its own artifact checks. Organizer PDF not generated/deferred by owner. |
 | B5 installed artifact identity | Open | No corrected installed-device result. Expo build success is not installation success. |
 | C1 startup/play | Open; no testing request yet | Squats/Sky without Metro; existing onboarding, calibration/countdown, all result actions, saved progress after restart and bundled tracking. Source regressions do not close installed checks. |

@@ -1,7 +1,7 @@
 const settle = async () => { for (let i=0;i<30;i++) await Promise.resolve(); };
-async function fixture(memory = new Map<string,string>(), country: 'US' | 'CA' | 'AU' | 'MX' = 'US', adult = false) {
+async function fixture(memory = new Map<string,string>(), country: 'US' | 'CA' | 'AU' | 'MX' = 'US', adult = false, failQuebecRead = false) {
   jest.resetModules();
-  const storage = { getItem: jest.fn(async (key: string) => memory.get(key) ?? null),
+  const storage = { getItem: jest.fn(async (key: string) => { if (failQuebecRead && key === '@flapfit/quebec-residency-v1') throw new Error('read failed'); return memory.get(key) ?? null; }),
     setItem: jest.fn(async (key: string,value: string) => { memory.set(key,value); }) };
   jest.doMock('@react-native-async-storage/async-storage', () => storage);
   const access: typeof import('../processingAccess') = require('../processingAccess');
@@ -102,4 +102,78 @@ test('declining both purposes suppresses an unnecessary result clarification', a
   await f.access.setProcessingChoice('ads','denied'); await f.access.setProcessingChoice('analytics','denied');
   expect(f.regional.needsConnecticutClarification()).toBe(false);
   expect(f.regional.hasConnecticutClarificationControl()).toBe(true);
+});
+
+test('regional correction: outside Quebec enables adult ads without consent grant and preserves reporting refusal after restart', async () => {
+  let f=await fixture(new Map(),'CA',true);
+  expect(f.regional.needsQuebecClarification()).toBe(true);
+  expect(f.access.getProcessingInputs().launch?.plan?.quebecActivationRequired).toEqual({ads:false,analytics:false});
+  await f.access.setProcessingChoice('analytics','denied');
+  await f.access.setProcessingChoice('competition','granted');
+  await f.regional.saveQuebecResidency('not-resident');
+  expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
+  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'},competition:{allowed:true}});
+  const memory=f.memory;
+  expect(memory.get('@flapfit/quebec-residency-v1')).toBe('{"version":1,"answer":"not-resident"}');
+  f=await fixture(memory,'CA',true);
+  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'},competition:{allowed:true}});
+});
+test('regional correction: Quebec answer cannot be replaced by a generic grant or country', async () => {
+  const f=await fixture(new Map(),'CA',true);
+  await f.regional.saveQuebecResidency('resident');
+  await f.access.setProcessingChoice('ads','granted');
+  expect(f.access.getProcessingInputs().launch?.plan?.quebecActivationRequired.ads).toBe(true);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.regional.saveQuebecResidency('not-resident');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+});
+test.each(['US','AU','MX'] as const)('regional correction: %s does not get a Quebec question', async country => {
+  const f=await fixture(new Map(),country,true);
+  expect(f.regional.hasQuebecClarificationControl()).toBe(false);
+  await expect(f.regional.saveQuebecResidency('not-resident')).rejects.toThrow('eligibility changed');
+  expect(f.storage.setItem).not.toHaveBeenCalled();
+});
+test('regional correction: failed provincial save remains retryable without erasing a saved reporting refusal', async () => {
+  let f=await fixture(new Map(),'CA',true);
+  await f.regional.saveQuebecResidency('not-resident');
+  await f.access.setProcessingChoice('analytics','denied');
+  f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+  await expect(f.regional.saveQuebecResidency('resident')).rejects.toThrow('could not be saved');
+  await f.regional.restoreRegionalClarification();
+  expect(f.regional.quebecClarificationStatus()).toContain('not confirmed');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.regional.saveQuebecResidency('not-resident');
+  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'}});
+  f=await fixture(f.memory,'CA',true);
+  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'}});
+});
+test('regional correction: unreadable province remains unknown; retry restores independent ads and refuses reporting', async () => {
+  let f=await fixture(new Map(),'CA',true);
+  await f.regional.saveQuebecResidency('not-resident');
+  await f.access.setProcessingChoice('analytics','denied');
+  f=await fixture(f.memory,'CA',true,true);
+  expect(f.regional.quebecClarificationStatus()).toContain('unavailable');
+  expect(f.access.getProcessingInputs().launch?.plan?.quebecActivationRequired.ads).toBe(false);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  f.storage.getItem.mockImplementation(async key=>f.memory.get(key)??null);
+  await f.regional.restoreRegionalClarification();
+  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'}});
+});
+test('regional correction: stale outside-Quebec save cannot override a newer Quebec answer', async () => {
+  const f=await fixture(new Map(),'CA',true); let finish!:()=>void;
+  f.storage.setItem.mockImplementationOnce(async ()=>new Promise<void>(done=>{finish=done;}));
+  const old=f.regional.saveQuebecResidency('not-resident'); await settle();
+  const latest=f.regional.saveQuebecResidency('resident');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  finish(); await Promise.all([old,latest]);
+  expect(f.access.getProcessingInputs().launch?.options.quebecResidency).toBe('resident');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  expect(JSON.parse(f.memory.get('@flapfit/quebec-residency-v1')!).answer).toBe('resident');
+});
+test('regional correction: delayed province save cannot apply to another country', async () => {
+  const f=await fixture(new Map(),'CA',true); let finish!:()=>void;
+  f.storage.setItem.mockImplementationOnce(async ()=>new Promise<void>(done=>{finish=done;}));
+  const old=f.regional.saveQuebecResidency('not-resident'); await settle();
+  f.access.setLaunchProcessingCountry('US',true); finish(); await old;
+  expect(f.access.getProcessingInputs().launch).toMatchObject({country:'US',plan:null,options:{}});
 });

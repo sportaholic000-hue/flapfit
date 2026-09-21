@@ -38,7 +38,7 @@ export async function prepareLaunchProcessing(options: LaunchProcessingPresentat
     input.appleRequirement === 'pending' || input.appleRequirement === 'error' || !options.canPresent()) return Promise.resolve();
   if (launch.plan && input.verification?.mandatoryCheckSatisfied) return Promise.resolve();
   if (input.verification?.mandatoryCheckSatisfied && input.verification.treatment === 'unspecified') {
-    const resolved = resolveVerifiedAdultLaunchPlan({ country: launch.country, subdivision: null,
+    const resolved = resolveVerifiedAdultLaunchPlan({ ...launch.options, country: launch.country, subdivision: null,
       choices: input.choices, notices: { ads: false, analytics: false, competition: false } });
     const { decisions: _decisions, ...plan } = resolved;
     setLaunchProcessingPlan(plan, getAgeVerificationRevision());
@@ -65,7 +65,7 @@ export async function prepareLaunchProcessing(options: LaunchProcessingPresentat
 export function applyLaunchSubdivision(subdivision: string): boolean {
   const input = getProcessingInputs();
   if (!input.launch?.current || !input.launch.country || !input.launch.plan) return false;
-  const resolved = refineLaunchProcessingPlan(input.launch.plan, { country: input.launch.country, subdivision,
+  const resolved = refineLaunchProcessingPlan(input.launch.plan, { ...input.launch.options, country: input.launch.country, subdivision,
     choices: input.choices, notices: { ads: false, analytics: false, competition: false } });
   const { decisions: _decisions, ...plan } = resolved;
   return setLaunchProcessingPlan(plan, getAgeVerificationRevision());

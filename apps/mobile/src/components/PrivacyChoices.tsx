@@ -5,6 +5,7 @@ import { RELEASE_LINKS } from '@/config/release';
 import {
   connecticutClarificationStatus, hasConnecticutClarificationControl,
   restoreRegionalClarification, saveConnecticutResidency,
+  hasQuebecClarificationControl, quebecClarificationStatus, saveQuebecResidency,
 } from '@/services/privacy/regionalClarification';
 import { getCompetitionStopState, subscribeCompetitionStop, stopOnlineCompetition, getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
 import { getProcessingAccess, getProcessingInputs, hasProcessingChoicesReadError, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
@@ -53,6 +54,17 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
         if (!getProcessingInputs().hydrated) throw new Error('Saved privacy choices are still unavailable. Please retry.');
       })}
     </View> : null}
+    {hasQuebecClarificationControl() ? <View style={styles.group}>
+      <Text style={styles.heading}>Province privacy rules</Text>
+      <Text style={styles.body}>Do you live in Quebec?</Text>
+      <Text style={styles.note}>Your answer stays on this device. It selects the applicable privacy rules and does not change your advertising or reporting choices.</Text>
+      <Text style={styles.status}>{quebecClarificationStatus()}</Text>
+      <View style={styles.buttons}>
+        {button('Yes, Quebec', () => saveQuebecResidency('resident'))}
+        {button('No, another province or territory', () => saveQuebecResidency('not-resident'))}
+        {button('Not sure', () => saveQuebecResidency('unknown'))}
+      </View>
+    </View> : null}
     {hasConnecticutClarificationControl() ? <View style={styles.group}>
       <Text style={styles.heading}>State privacy rules</Text>
       <Text style={styles.body}>Do you live in Connecticut?</Text>
@@ -66,7 +78,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
     </View> : null}
     <View style={styles.group}>
       <Text style={styles.heading}>Google advertising</Text>
-      <Text style={styles.body}>Allow the device, approximate-location, and ad-interaction functions described above for non-personalized advertising?</Text>
+      <Text style={styles.body}>{advertisingChoice ? 'Allow the device, approximate-location, and ad-interaction functions described above for non-personalized advertising?' : 'Non-personalized ads help keep Flap Fit free. The applicable privacy rules and your Google choices determine when ads can run.'}</Text>
       <Text style={styles.status}>{processingPurposeStatus('ads')}</Text>
       {advertisingChoice && canChooseProcessingPurpose('ads') ? <View style={styles.buttons}>{!access.ads.allowed ? button('Allow advertising', () => allowProcessingPurpose('ads')) : null}{button(access.ads.allowed ? 'Stop advertising' : 'Not now', () => refuseProcessingPurpose('ads'))}</View> : null}
     </View>

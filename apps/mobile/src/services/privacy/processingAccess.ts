@@ -1,4 +1,4 @@
-import { evaluateLaunchProcessingPlan, refineLaunchProcessingPlan, resolveLaunchProcessingPolicy, type ConnecticutResidency, type LaunchProcessingPlan, type LaunchProcessingOptions } from './launchProcessingPolicy';
+import { evaluateLaunchProcessingPlan, refineLaunchProcessingPlan, resolveLaunchProcessingPolicy, type ConnecticutResidency, type QuebecResidency, type LaunchProcessingPlan, type LaunchProcessingOptions } from './launchProcessingPolicy';
 import type { LaunchCountry } from './privacyCountry';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -313,6 +313,24 @@ export function applyConnecticutResidency(residency: ConnecticutResidency): bool
   if (plan) {
     const { decisions: _decisions, ...refined } = refineLaunchProcessingPlan(plan, {
       ...options, country: 'US', subdivision: null, choices: input.choices,
+      notices: { ads: false, analytics: false, competition: false },
+    });
+    plan = refined;
+  }
+  publish({ ...input, launch: { ...input.launch, options, plan, resolution: null } });
+  return true;
+}
+
+/** A local Quebec answer changes regional applicability only, never purpose choices. */
+export function applyQuebecResidency(residency: QuebecResidency): boolean {
+  if (!['resident', 'not-resident', 'unknown'].includes(residency) ||
+      !input.hydrated || !input.launch?.current || input.launch.country !== 'CA') return false;
+  if (input.launch.options.quebecResidency === residency) return true;
+  const options = { ...input.launch.options, quebecResidency: residency };
+  let plan = input.launch.plan;
+  if (plan) {
+    const { decisions: _decisions, ...refined } = refineLaunchProcessingPlan(plan, {
+      ...options, country: 'CA', subdivision: null, choices: input.choices,
       notices: { ads: false, analytics: false, competition: false },
     });
     plan = refined;

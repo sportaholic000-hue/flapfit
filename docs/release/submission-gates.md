@@ -1,5 +1,14 @@
 # Flap Fit dual-store submission gates
 
+## Current regional monetization hold
+
+Canada/US unknown-region corrections are source-verified in
+[evidence/regional-assumption-correction-2026-09-20.md](evidence/regional-assumption-correction-2026-09-20.md).
+The separate New York teen-purpose fallback across all four countries remains unresolved.
+This is unfinished source/design work, not device acceptance. Prior source checks and
+account evidence do not authorize a build or close this blocker.
+
+
 Current instructions reconciled September 20, 2026 against the account audit and the
 successor recorded in [three-finding account-audit correction](evidence/audit-three-findings-2026-09-20.md).
 The [Apple-first tracker](apple-first-tracker-2026-09-19.md) records detailed evidence and

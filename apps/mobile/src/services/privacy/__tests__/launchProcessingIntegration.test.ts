@@ -1,9 +1,10 @@
 const settle = async () => { for (let i = 0; i < 40; i++) await Promise.resolve(); };
 const originalEnv = { ...process.env };
-async function load(options: { offline?: boolean; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string> } = {}) {
+async function load(options: { offline?: boolean; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string>; quebecResidency?: 'resident' | 'not-resident' } = {}) {
   jest.resetModules();
   process.env.EXPO_PUBLIC_ADS_MODE = 'test'; process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = 'appl_test_only';
   const memory = options.memory ?? new Map<string, string>();
+  if (options.quebecResidency) memory.set('@flapfit/quebec-residency-v1',JSON.stringify({version:1,answer:options.quebecResidency}));
   const storage = { getItem: jest.fn(async (key: string) => memory.get(key) ?? null), setItem: jest.fn(async (key: string, value: string) => { memory.set(key, value); }), removeItem: jest.fn(async (key: string) => { memory.delete(key); }) };
   jest.doMock('@react-native-async-storage/async-storage', () => storage);
   const listeners = new Set<(value: string) => void>(); const fence = jest.fn().mockResolvedValue(true);
@@ -159,7 +160,7 @@ test('reporting refusal through Info survives relaunch while permitted Google ad
   } finally { f.finish(); }
 });
 test('Canadian activation is purpose-specific and can allow ads with reporting refused', async () => {
-  const f = await load({ country: 'CA' }); try {
+  const f = await load({ country: 'CA', quebecResidency: 'resident' }); try {
     const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
     const notice: typeof import('../processingNotice') = require('../processingNotice');
     const choices = jest.fn(async () => {
@@ -231,7 +232,7 @@ test('saved reporting refusal survives an unrelated failed competition save and 
 
 
 test.each([false, true])('Google presentation waits for privacy dismissal; backgrounded=%s', async backgrounded => {
-  const f = await load({ country: 'CA' });
+  const f = await load({ country: 'CA', quebecResidency: 'resident' });
   try {
     const notice: typeof import('../processingNotice') = require('../processingNotice');
     const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
@@ -301,7 +302,7 @@ test.each([
   {country:'CA',lowerBound:14,upperBound:15,gates:[14,16,18]},
 ])('$country eligible teen: independent choices, withdrawal and restart use the production coordinator', async scenario => {
   const age={status:'shared',lowerBound:scenario.lowerBound,upperBound:scenario.upperBound};
-  let f=await load({country:scenario.country,age}); const memory=f.memory;
+  let f=await load({country:scenario.country,age,quebecResidency:scenario.country==='CA'?'resident':undefined}); const memory=f.memory;
   try {
     const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
     const notice: typeof import('../processingNotice')=require('../processingNotice');
@@ -353,7 +354,7 @@ test.each([
 });
 
 test.each(['US','CA','AU','MX'])('%s adult reporting refusal and competition permission persist independently across restart', async country => {
-  let f=await load({country}); const memory=f.memory;
+  let f=await load({country,quebecResidency:country==='CA'?'resident':undefined}); const memory=f.memory;
   try {
     const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
     const notice: typeof import('../processingNotice')=require('../processingNotice');
@@ -451,7 +452,7 @@ const orderedMemory = () => new Map([
 ]);
 
 test.each(['allow-only', 'stop-only', 'allow-then-stop'] as const)('audit continuation: delayed notice %s respects action order through the real Canadian coordinator and RC configuration', async (order) => {
-  const f = await load({ country: 'CA', memory: orderedMemory() });
+  const f = await load({ country: 'CA', memory: orderedMemory(), quebecResidency: 'resident' });
   let release!: (value: string | null) => void;
   const delayed = new Promise<string | null>(resolve => { release = resolve; });
   try {
@@ -475,7 +476,7 @@ test.each(['allow-only', 'stop-only', 'allow-then-stop'] as const)('audit contin
 });
 
 test.each(['choice-write', 'notice-write'] as const)('audit continuation: newer Stop wins while older Allow waits at %s', async boundary => {
-  const f = await load({ country: 'CA', memory: orderedMemory() });
+  const f = await load({ country: 'CA', memory: orderedMemory(), quebecResidency: 'resident' });
   let release!: () => void; const wait = new Promise<void>(resolve => { release = resolve; });
   let started!: () => void; const waiting = new Promise<void>(resolve => { started = resolve; });
   try {
@@ -500,4 +501,48 @@ test.each(['choice-write', 'notice-write'] as const)('audit continuation: newer 
     expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
     expect(f.access.getProcessingAccess().competition.allowed).toBe(true);
   } finally { release(); f.finish(); }
+});
+
+test('regional correction: real Canadian result path chooses outside Quebec and configures ads while reporting remains refused across restart', async () => {
+  let f=await load({country:'CA'});const memory=f.memory;
+  try {
+    const flow:typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    const regional:typeof import('../regionalClarification')=require('../regionalClarification');
+    const notice:typeof import('../processingNotice')=require('../processingNotice');
+    await notice.refuseProcessingPurpose('analytics');
+    const choices=jest.fn(async()=>{
+      expect(f.access.getProcessingInputs().launch?.plan?.quebecActivationRequired.ads).toBe(false);
+      expect(notice.canChooseProcessingPurpose('ads')).toBe(false);
+      await regional.saveQuebecResidency('not-resident');
+      expect(notice.needsSeparatePurposeChoice('ads')).toBe(false);
+      expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
+      await notice.acknowledgeProcessingNotice();
+      expect(f.consent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
+    });
+    await flow.preparePostGamePrivacy(()=>true,choices);await settle();
+    expect(choices).toHaveBeenCalledTimes(1);
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'}});
+  } finally {f.finish();}
+  f=await load({country:'CA',memory});
+  try {
+    const flow:typeof import('../postGamePrivacy')=require('../postGamePrivacy');const choices=jest.fn();
+    await flow.preparePostGamePrivacy(()=>true,choices);await settle();
+    expect(choices).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+  } finally {f.finish();}
+});
+test('regional correction: closing unanswered Canada clarification records unknown, never an ad refusal or Quebec activation', async () => {
+  const f=await load({country:'CA'});
+  try {
+    const flow:typeof import('../postGamePrivacy')=require('../postGamePrivacy');const choices=jest.fn().mockResolvedValue(undefined);
+    await flow.preparePostGamePrivacy(()=>true,choices);await flow.preparePostGamePrivacy(()=>true,choices);
+    expect(choices).toHaveBeenCalledTimes(1);
+    expect(f.access.getProcessingInputs().launch?.options.quebecResidency).toBe('unknown');
+    expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
+    expect(f.access.getProcessingInputs().launch?.plan?.quebecActivationRequired.ads).toBe(false);
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();expect(f.purchases.configure).not.toHaveBeenCalled();
+  } finally {f.finish();}
 });

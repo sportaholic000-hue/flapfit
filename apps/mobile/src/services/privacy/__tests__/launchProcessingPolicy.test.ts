@@ -51,9 +51,9 @@ test('unknown Canadian province does not disable requested competition fourteen 
   expect(result.missingFacts.ads).toContain('province');
   expect(result.decisions.competition.allowed).toBe(true);
 });
-test('exact current Quebec activation can satisfy that function even without province', () => {
+test('exact current Quebec activation satisfies that function for confirmed Quebec', () => {
   const result = resolveLaunchProcessingPolicy(input({
-    country: 'CA', subdivision: null,
+    country: 'CA', subdivision: 'QC',
     quebecFunctionsActivated: { ads: true, analytics: false },
   }));
   expect(result.decisions.ads.allowed).toBe(true);
@@ -214,7 +214,7 @@ test('new notice invalidates express grant, not a remembered refusal', () => {
   expect(result.decisions.analytics.reason).toBe('refused');
 });
 test('static plan supports later QC activation without a new Apple request', () => {
-  const base = input({ country: 'CA', subdivision: null });
+  const base = input({ country: 'CA', subdivision: 'QC' });
   const plan = resolveLaunchProcessingPolicy(base);
   const result = evaluateLaunchProcessingPlan(plan, base.notices, base.choices, {
     quebecFunctionsActivated: { ads: true, analytics: false },
@@ -274,4 +274,44 @@ test('US state refinement clears only state uncertainty while retaining NY conse
   const result = refineLaunchProcessingPlan(plan, { ...withoutAge, subdivision: 'CA' });
   expect(result.requirements.analytics).toBe('express-consent');
   expect(result.decisions.analytics.reason).toBe('permission-needed');
+});
+
+// Regional correction: unknown geography must never be a confirmed jurisdiction.
+test('regional correction: unknown Canadian province is unresolved, not Quebec consent', () => {
+  const result = resolveLaunchProcessingPolicy(input({ country: 'CA', subdivision: null, quebecFunctionsActivated: {ads:true, analytics:true} }));
+  expect(result.quebecActivationRequired).toEqual({ads:false,analytics:false});
+  expect(result.requirements.ads).toBe('unresolved');
+  expect(result.reasons.ads).toBe('province-unresolved');
+  expect(result.decisions.ads.allowed).toBe(false);
+});
+test('regional correction: unknown US state is unresolved, not Connecticut necessity', () => {
+  const result = resolveLaunchProcessingPolicy(input({ country: 'US', subdivision: null, age: teen }));
+  expect(result.reasons.ads).toBe('state-unresolved');
+  expect(result.missingFacts.ads).toEqual(['state']);
+  expect(result.reasons.analytics).toBe('state-unresolved');
+});
+
+test.each(['AB','BC','MB','NB','NL','NS','NT','NU','ON','PE','SK','YT','NON-QC'])(
+  'regional correction: adult Canada %s has permitted ads without Quebec activation', subdivision => {
+    const result=resolveLaunchProcessingPolicy(input({country:'CA',subdivision,choices:{ads:unset(),analytics:deny(),competition:grant()}}));
+    expect(result.quebecActivationRequired).toEqual({ads:false,analytics:false});
+    expect(result.requirements.ads).toBe('notice-and-opt-out');
+    expect(result.decisions).toMatchObject({ads:{allowed:true},analytics:{allowed:false,reason:'refused'},competition:{allowed:true}});
+});
+test.each(['resident','not-resident','unknown'] as const)('regional correction: explicit Canadian %s selects only the supported rule', quebecResidency => {
+  const result=resolveLaunchProcessingPolicy(input({country:'CA',subdivision:null,quebecResidency}));
+  expect(result.quebecActivationRequired.ads).toBe(quebecResidency==='resident');
+  expect(result.requirements.ads).toBe(quebecResidency==='resident'?'express-consent':quebecResidency==='not-resident'?'notice-and-opt-out':'unresolved');
+});
+test.each(['AL','AK','AZ','AR','CA','CO','DE','DC','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'])(
+ 'regional correction: verified US %s does not receive Connecticut restrictions', subdivision => {
+   const result=resolveLaunchProcessingPolicy(input({country:'US',subdivision,age:teen}));
+   expect(result.reasons.ads).not.toContain('connecticut');
+   expect(result.reasons.analytics).not.toContain('connecticut');
+});
+test.each(['AU','MX'])('regional correction: %s adult does not acquire province/state consent from missing subdivision', country => {
+  const result=resolveLaunchProcessingPolicy(input({country,subdivision:null,newYorkApplicability:undefined}));
+  expect(result.requirements.ads).toBe('notice-and-opt-out');
+  expect(result.quebecActivationRequired).toEqual({ads:false,analytics:false});
+  expect(result.decisions.ads.allowed).toBe(true);
 });

@@ -19,7 +19,10 @@ export type LaunchPolicyReason = 'notice-route' | 'requested-service' | 'country
   'new-york-express-consent-required' | 'connecticut-ad-necessity-unresolved' |
   'connecticut-reporting-not-necessary';
 export type ConnecticutResidency = 'resident' | 'not-resident' | 'unknown';
+export type QuebecResidency = 'resident' | 'not-resident' | 'unknown';
 export type LaunchProcessingOptions = {
+  /** Explicit local answer; Canadian country alone is not Quebec evidence. */
+  quebecResidency?: QuebecResidency;
   /** Explicit local clarification, not IP location or New York consent. */
   connecticutResidency?: ConnecticutResidency;
   /** Verified authority for this processing; never download permission. */
@@ -214,9 +217,10 @@ function resolveWithThresholds(
   const subdivision = input.subdivision?.trim().toUpperCase().replace(new RegExp('^' + country + '-'), '') ?? '';
   const knownProvince = country === 'CA' && PROVINCES.has(subdivision);
   const knownState = country === 'US' && STATES.has(subdivision);
-  const quebecPossible = country === 'CA' && (!knownProvince || subdivision === 'QC');
+  const quebecConfirmed = country === 'CA' && (subdivision === 'QC' || input.quebecResidency === 'resident');
+  const quebecUnresolved = country === 'CA' && !quebecConfirmed && !knownProvince && input.quebecResidency !== 'not-resident';
   plan.underAgeOfConsent = !adult && (
-    country === 'MX' || (quebecPossible && !thresholds.fourteen) || (country === 'AU' && !thresholds.fifteen)
+    country === 'MX' || ((quebecConfirmed || quebecUnresolved) && !thresholds.fourteen) || (country === 'AU' && !thresholds.fifteen)
   );
   plan.treatment = plan.underAgeOfConsent ? 'child' : adult ? 'unspecified' : 'teen';
   plan.adTreatment = plan.treatment;
@@ -226,19 +230,28 @@ function resolveWithThresholds(
     // No case-by-case capacity or verified guardian service is collected here.
     // OAIC B.61 does not let a CHILD ad tag stand in for under-15 consent.
     plan.parentalAuthorityRequired[purpose] = (!adult && country === 'MX') ||
-      (quebecPossible && !thresholds.fourteen) || (country === 'AU' && !thresholds.fifteen);
+      (quebecConfirmed && !thresholds.fourteen) || (country === 'AU' && !thresholds.fifteen);
+    // Missing geography is a recoverable fact, not inferred Quebec consent.
+    // An old purpose grant cannot substitute for the missing regional answer.
+    if (quebecUnresolved && (purpose !== 'competition' || !thresholds.fourteen)) {
+      block(purpose, 'province-unresolved', 'province');
+      continue;
+    }
     if (purpose === 'competition') continue;
-    if (quebecPossible) {
+    if (quebecConfirmed) {
       plan.quebecActivationRequired[purpose] = true;
       plan.requirements[purpose] = 'express-consent';
       plan.reasons[purpose] = 'quebec-activation-required';
-      if (!knownProvince) plan.missingFacts[purpose].push('province');
     }
-    const connecticutPossible = input.connecticutResidency === 'resident' || subdivision === 'CT' ||
-      (input.connecticutResidency !== 'not-resident' && !knownState);
-    if (!adult && country === 'US' && connecticutPossible) {
+    const connecticutConfirmed = input.connecticutResidency === 'resident' || subdivision === 'CT';
+    const connecticutUnresolved = !connecticutConfirmed && input.connecticutResidency !== 'not-resident' && !knownState;
+    if (!adult && country === 'US' && connecticutUnresolved && (purpose === 'analytics' || !input.connecticutContextualAdsReviewed)) {
+      block(purpose, 'state-unresolved', 'state');
+      continue;
+    }
+    if (!adult && country === 'US' && connecticutConfirmed) {
       if (purpose === 'analytics') {
-        block(purpose, knownState || input.connecticutResidency === 'resident' ? 'connecticut-reporting-not-necessary' : 'state-unresolved', knownState || input.connecticutResidency === 'resident' ? undefined : 'state');
+        block(purpose, 'connecticut-reporting-not-necessary');
         continue;
       }
       if (!input.connecticutContextualAdsReviewed) {

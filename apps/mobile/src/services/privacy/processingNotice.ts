@@ -144,6 +144,7 @@ export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
   const reason = input.launch?.resolution?.reasons[purpose];
   if (reason === 'connecticut-reporting-not-necessary') return 'Reporting is unavailable for this age and Connecticut privacy setting';
   if (reason === 'connecticut-ad-necessity-unresolved') return 'Advertising is unavailable for this age and regional privacy setting';
+  if (reason === 'province-unresolved') return 'Review Province privacy rules in this section';
   if (reason === 'state-unresolved') return 'Review State privacy rules in this section';
   if (decision.reason === 'age-unresolved') return 'Unavailable until age eligibility can be confirmed';
   return 'Waiting for applicable age and privacy checks';

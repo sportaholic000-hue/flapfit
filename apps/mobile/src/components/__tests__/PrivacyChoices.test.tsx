@@ -3,7 +3,7 @@ import type { ReactTestRenderer } from 'react-test-renderer';
 // First module load on the Windows release host can exceed Jest's default 5s.
 jest.setTimeout(20_000);
 
-async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetReporting = false) {
+async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetReporting = false, canadianRegion: 'resident' | 'unknown' = 'resident') {
   jest.resetModules();
   const React: typeof import('react') = require('react');
   const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
@@ -44,6 +44,10 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
   access.setAppleAgeRequirement('not-required'); access.setAppleRescissionPending(false);
   const country = canadianUnsetReporting ? 'CA' : 'US';
   access.setLaunchProcessingCountry(country, true);
+  if (canadianUnsetReporting && canadianRegion === 'resident') {
+    memory.set('@flapfit/quebec-residency-v1',JSON.stringify({version:1,answer:'resident'}));
+    access.applyQuebecResidency('resident');
+  }
   access.verifyLaunchAgeEvidence({ source: 'apple', status: 'shared', lowerBound: 18, upperBound: null }, country, access.getAgeVerificationRevision());
   access.setProcessingRequirements({ ads: 'express-consent', analytics: 'express-consent', competition: 'requested-service' });
   if (!failChoicesRead) for (const purpose of ['ads', 'analytics', 'competition'] as const) {
@@ -343,5 +347,32 @@ test('audit continuation: collapse/remount then Stop invalidates an older render
   // A genuinely later explicit Allow is still available after the stopped state.
   await f.press('Allow reporting');
   expect(f.access.getProcessingInputs().choices.analytics.decision).toBe('granted');
+  await f.unmount();
+});
+
+test('regional correction: rendered Canadian region controls remove unneeded ad switches outside Quebec without allowing reporting', async () => {
+  const f=await fixture('ios',false,true,'unknown');await f.mount();
+  expect(f.text()).toContain('Do you live in Quebec?');
+  expect(f.button('Allow advertising')).toBeUndefined();
+  expect(f.button('Stop advertising')).toBeUndefined();
+  await f.press('Stop reporting');
+  await f.press('No, another province or territory');
+  expect(f.button('Allow advertising')).toBeUndefined();
+  expect(f.button('Stop advertising')).toBeUndefined();
+  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'}});
+  await f.press('Yes, Quebec');
+  expect(f.button('Allow advertising')).toBeDefined();
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.unmount();
+});
+test('regional correction: rendered failed province save has an actionable retry', async () => {
+  const f=await fixture('ios',false,true,'unknown');await f.mount();
+  f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+  await f.press('No, another province or territory');
+  expect(f.text()).toContain('not confirmed');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  expect(f.button('No, another province or territory')).toBeDefined();
+  await f.press('No, another province or territory');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
   await f.unmount();
 });

@@ -1,5 +1,5 @@
 import { Alert } from 'react-native';
-import { needsConnecticutClarification, saveConnecticutResidency } from './regionalClarification';
+import { needsConnecticutClarification, saveConnecticutResidency, needsQuebecClarification, saveQuebecResidency } from './regionalClarification';
 import { isMonetizationPrepared, prepareMonetization } from '../monetization';
 import {
   acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, canPresentProcessingNotice,
@@ -19,17 +19,18 @@ export async function preparePostGamePrivacy(
   // because another eligible exit was tapped. Explicit privacy refreshes retain
   // their existing invalidation/race handling in the monetization adapter.
   if (isMonetizationPrepared() && isProcessingNoticeAcknowledged() &&
-      !needsConnecticutClarification() && !needsSeparatePurposeChoice('ads') && !needsSeparatePurposeChoice('analytics')) return;
+      !needsConnecticutClarification() && !needsQuebecClarification() && !needsSeparatePurposeChoice('ads') && !needsSeparatePurposeChoice('analytics')) return;
   await prepareMonetization(canPresent);
   await restoreProcessingNotice();
-  if (!canPresent() || (!canPresentProcessingNotice() && !needsConnecticutClarification())) return;
-  const requiredChoices = needsConnecticutClarification() || needsSeparatePurposeChoice('ads') || needsSeparatePurposeChoice('analytics');
+  if (!canPresent() || (!canPresentProcessingNotice() && !needsConnecticutClarification() && !needsQuebecClarification())) return;
+  const requiredChoices = needsConnecticutClarification() || needsQuebecClarification() || needsSeparatePurposeChoice('ads') || needsSeparatePurposeChoice('analytics');
   if (!isProcessingNoticeAcknowledged() || requiredChoices) {
     if (requiredChoices) {
       await openChoices();
       // Closing an explicit-permission request grants nothing and must not
       // repeatedly reopen the same request on subsequent result exits.
       if (canPresent()) {
+        if (needsQuebecClarification()) await saveQuebecResidency('unknown').catch(() => undefined);
         if (needsConnecticutClarification()) await saveConnecticutResidency('unknown').catch(() => undefined);
         if (needsSeparatePurposeChoice('analytics')) await refuseProcessingPurpose('analytics');
         if (needsSeparatePurposeChoice('ads')) await refuseProcessingPurpose('ads');
