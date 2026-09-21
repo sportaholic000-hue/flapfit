@@ -75,6 +75,9 @@ const privacy = read('dist/privacy/index.html');
 for (const phrase of ['bundled with the app', 'Supabase', 'Delete online profile', 'aged 13 and older', 'Google AdMob', 'RevenueCat', 'not proof of ownership', 'Ad privacy settings']) {
   check(privacy.includes(phrase), `privacy policy is missing: ${phrase}`);
 }
+for (const phrase of ['Quebec is not supported', 'first-game-started flag', 'New York No lasts only', 'one initial game', 'refusals remain respected']) {
+  check(privacy.includes(phrase), `availability disclosure is missing: ${phrase}`);
+}
 const terms = read('dist/terms/index.html');
 for (const phrase of ['at least 13', 'report', 'block', 'Record &amp; Play']) {
   check(terms.includes(phrase), `terms are missing: ${phrase}`);
