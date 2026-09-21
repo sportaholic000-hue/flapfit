@@ -55,8 +55,32 @@ function json(body: unknown, status = 200): Response {
 }
 
 async function bodyJson(req: Request): Promise<Record<string, unknown>> {
-  const text = await req.text();
-  if (text.length > 4096) throw new ApiError(413, 'Request body is too large.');
+  const maxBytes = 4096;
+  if (Number(req.headers.get('content-length')) > maxBytes) {
+    throw new ApiError(413, 'Request body is too large.');
+  }
+  const reader = req.body?.getReader();
+  if (!reader) return {};
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  try {
+    while (true) {
+      const part = await reader.read();
+      if (part.done) break;
+      size += part.value.byteLength;
+      if (size > maxBytes) {
+        // Cancel before retaining more input; a failed cancellation must not
+        // turn a known oversized request into an internal-server error.
+        try { await reader.cancel(); } catch { /* Still reject the body. */ }
+        throw new ApiError(413, 'Request body is too large.');
+      }
+      chunks.push(part.value);
+    }
+  } finally { reader.releaseLock(); }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  const text = new TextDecoder().decode(bytes);
   if (!text) return {};
   let value: unknown;
   try {

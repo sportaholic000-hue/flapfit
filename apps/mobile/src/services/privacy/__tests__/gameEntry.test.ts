@@ -32,3 +32,44 @@ test('Apple-restricted access is still checked before each new run',async()=>{
   f.access.setAppleAccessRestricted(true);
   expect(await f.entry.authorizeGameEntry()).toEqual({status:'unavailable',reason:'apple'});
 });
+
+test.each(['pending', 'error', 'unsupported', 'required'] as const)('a saved under-13 answer is not erased by Apple/country state %s', async requirement => {
+  const f = await fixture(new Map([['@flapfit/local-age-answer-v1', JSON.stringify({ version: 1, answer: 'under-13' })]]));
+  f.access.setAppleAgeRequirement(requirement); f.access.setLaunchProcessingCountry(null, false);
+  expect(await f.entry.authorizeGameEntry()).toEqual({ status: 'unavailable', reason: 'age' });
+  expect(f.access.getProcessingInputs().verification).toBeNull();
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+});
+
+test('current verified Apple evidence takes precedence over an older local answer', async () => {
+  const f = await fixture(new Map([['@flapfit/local-age-answer-v1', JSON.stringify({ version: 1, answer: 'under-13' })]]));
+  expect(await f.entry.authorizeGameEntry()).toEqual({ status: 'available' });
+});
+
+test('storage completion rechecks Apple authorization established during the read', async () => {
+  const f = await fixture(); f.access.clearAgeVerification();
+  let complete!: (value: string) => void;
+  f.storage.getItem.mockImplementationOnce(() => new Promise<string>(done => { complete = done; }));
+  const pending = f.entry.authorizeGameEntry();
+  f.access.setAppleAgeRequirement('required');
+  f.access.verifyMandatoryAppleAgeEvidence({ source: 'apple', status: 'shared', lowerBound: 18, upperBound: null }, f.access.getAgeVerificationRevision());
+  complete(JSON.stringify({ version: 1, answer: 'under-13' }));
+  expect(await pending).toEqual({ status: 'available' });
+});
+
+test('a local adult answer never satisfies a required Apple check', async () => {
+  const f = await fixture(new Map([['@flapfit/local-age-answer-v1', JSON.stringify({ version: 1, answer: '18-plus' })]]));
+  f.access.setAppleAgeRequirement('required');
+  expect(await f.entry.authorizeGameEntry()).toEqual({ status: 'unanswered', reason: 'age' });
+});
+
+test('an explicit saved correction updates the audience check without starting ads', async () => {
+  const f = await fixture(new Map([['@flapfit/local-age-answer-v1', JSON.stringify({ version: 1, answer: 'under-13' })]]));
+  jest.doMock('react-native', () => ({ Platform: { OS: 'ios', Version: '18.6' } }));
+  f.access.setAppleAgeRequirement('unsupported');
+  const local: typeof import('../localAgeAnswer') = require('../localAgeAnswer');
+  expect(await f.entry.authorizeGameEntry()).toEqual({ status: 'unavailable', reason: 'age' });
+  await local.saveLocalAgeAnswer('13-17');
+  expect(await f.entry.authorizeGameEntry()).toEqual({ status: 'available' });
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+});

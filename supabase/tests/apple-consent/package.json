@@ -2,7 +2,7 @@
   "name": "flapfit-apple-consent-tests",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node --test core.test.mjs database.test.mjs verifier.test.mjs vault.test.mjs crypto-compat.test.mjs" },
+  "scripts": { "test": "node --test core.test.mjs database.test.mjs verifier.test.mjs vault.test.mjs crypto-compat.test.mjs competition-database.test.mjs" },
   "devDependencies": {
     "@apple/app-store-server-library": "3.1.0",
     "@electric-sql/pglite": "0.3.14"

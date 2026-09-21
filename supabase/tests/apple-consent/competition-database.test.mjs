@@ -1,0 +1,92 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { dependency } from './dependencies.mjs';
+const { PGlite } = dependency('@electric-sql/pglite');
+const OWNER = '10000000-0000-4000-8000-000000000011';
+const OTHER = '10000000-0000-4000-8000-000000000012';
+const RULES = '2026-09-16.1';
+const migrations = [
+  '202609140001_flapfit_competition.sql', '202609140002_flapfit_retention.sql',
+  '202609140003_flapfit_advisor_hardening.sql', '202609150001_verified_game_runs.sql',
+  '202609150002_fix_challenge_run_lookup.sql', '202609150003_index_game_run_challenges.sql',
+  '202609160001_enforce_run_timing.sql', '20260917072007_bind_challenges_to_exercise.sql',
+];
+async function database() {
+  const db = new PGlite();
+  // Hosted Auth and the cron scheduler are boundaries, not simulated providers.
+  // PostgreSQL tables, grants, functions, constraints and triggers below are real.
+  await db.exec(`create role anon; create role authenticated; create role service_role bypassrls;
+    create schema auth; create table auth.users(id uuid primary key);
+    create schema cron; create table cron.job(id integer); create table cron.job_run_details(end_time timestamptz);
+    create function cron.schedule(text,text,text) returns bigint language sql as 'select 1::bigint';
+    insert into auth.users values ('${OWNER}'),('${OTHER}');`);
+  for (const name of migrations) {
+    const sql = await readFile(new URL('../../migrations/' + name, import.meta.url), 'utf8');
+    await db.exec(sql.replace(/^create extension if not exists (?:pgcrypto|pg_cron)(?: with schema pg_catalog)?;\r?\n/gm, ''));
+  }
+  return db;
+}
+async function begin(db, user = OWNER) {
+  return (await db.query("select * from public.begin_game_run($1,'leaderboard','pushups',null,$2)", [user, RULES])).rows[0].run_id;
+}
+const finalize = (db, id, user = OWNER, score = 1, duration = 2000) => db.query(
+  "select * from public.finalize_game_run($1,$2,'Player',$3,$4,'2026-09-14',$5)", [id,user,score,duration,RULES]);
+
+test('competition SQL rejects another user, conflicting replay, expiry and implausible timing; exact retry is idempotent', async () => {
+  const db = await database();
+  try {
+    const id = await begin(db);
+    await assert.rejects(finalize(db,id,OTHER), /not found/i);
+    assert.equal((await finalize(db,id)).rows[0].improved,true);
+    assert.equal((await finalize(db,id)).rows[0].improved,false);
+    await assert.rejects(finalize(db,id,OWNER,2), /already finalized/i);
+    const expired = await begin(db);
+    await db.query("update public.game_runs set started_at=now()-interval '8 hours',expires_at=now()-interval '1 hour' where id=$1",[expired]);
+    await assert.rejects(finalize(db,expired),/expired/i);
+    const forged = await begin(db);
+    await assert.rejects(finalize(db,forged,OWNER,10,2000),/implausible/i);
+    assert.equal((await db.query('select count(*)::int n from public.leaderboard_scores')).rows[0].n,1);
+  } finally { await db.close(); }
+});
+
+test('competition SQL denies direct client table/RPC access and enforces run cost limits', async () => {
+  const db = await database();
+  try {
+    for (const role of ['anon','authenticated']) {
+      await db.exec('set role ' + role);
+      await assert.rejects(db.query('select * from public.leaderboard_scores'),/permission denied/i);
+      await assert.rejects(begin(db),/permission denied/i);
+      await db.exec('reset role');
+    }
+    for (let i=0;i<30;i++) await begin(db);
+    await assert.rejects(begin(db),/run limit/i);
+    await db.query("update public.game_runs set started_at=now()-interval '1 hour' where user_id=$1",[OWNER]);
+    await db.query("insert into public.game_runs(user_id,run_kind,exercise,rules_version,started_at) select $1,'leaderboard','pushups',$2,now()-interval '1 hour' from generate_series(1,470)",[OWNER,RULES]);
+    await assert.rejects(begin(db),/daily game run limit/i);
+  } finally { await db.close(); }
+});
+
+test('deletion cascades competition records but minimizes retained moderation evidence; retention removes only expired records', async () => {
+  const db = await database();
+  try {
+    const id = await begin(db); await finalize(db,id);
+    const context=(await db.query('select id from public.leaderboard_scores')).rows[0].id;
+    await db.query('insert into public.player_blocks(blocker_id,blocked_id) values ($1,$2)',[OWNER,OTHER]);
+    await db.query("insert into public.content_reports(reporter_id,reported_user_id,context_type,context_id,reason) values ($1,$2,'leaderboard',$3,'cheating')",[OTHER,OWNER,context]);
+    await db.query('delete from auth.users where id=$1',[OWNER]);
+    for (const table of ['profiles','leaderboard_scores','game_runs','player_blocks']) {
+      assert.equal((await db.query(`select count(*)::int n from public.${table}`)).rows[0].n,0);
+    }
+    const report=(await db.query('select * from public.content_reports')).rows[0];
+    assert.equal(report.reported_user_id,null); assert.equal(report.reporter_id,OTHER);
+    await db.exec('select public.cleanup_flapfit_retention()');
+    assert.equal((await db.query('select count(*)::int n from public.content_reports')).rows[0].n,1);
+    await db.exec("update public.content_reports set status='dismissed'; update public.content_reports set resolved_at=now()-interval '181 days'");
+    const retained=await begin(db,OTHER), removed=await begin(db,OTHER);
+    await db.query("update public.game_runs set started_at=now()-interval '10 days', expires_at=now()-interval '8 days' where id=$1",[removed]);
+    await db.exec('select public.cleanup_flapfit_retention()');
+    assert.equal((await db.query('select count(*)::int n from public.content_reports')).rows[0].n,0);
+    assert.deepEqual((await db.query('select id from public.game_runs')).rows.map(x=>x.id),[retained]);
+  } finally { await db.close(); }
+});

@@ -1,0 +1,142 @@
+import type { ReactTestRenderer } from 'react-test-renderer';
+
+// Render the real RootLayout -> Home Play button -> GameScreen -> eligibility gate.
+// Native rendering, router transport and provider SDK boundaries are test adapters;
+// startup, eligibility, saved-age restoration and monetization controllers are real.
+const settle = async () => { for (let i = 0; i < 80; i++) await Promise.resolve(); };
+const originalEnv = { ...process.env };
+jest.setTimeout(30_000);
+
+async function mountApp(saved: string | null, options: { delayed?: boolean; failRead?: boolean; offline?: boolean } = {}) {
+  jest.resetModules(); jest.useFakeTimers();
+  const React: typeof import('react') = require('react');
+  const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
+  const { act } = React;
+  process.env.EXPO_PUBLIC_ADS_MODE = 'test';
+  const memory = new Map<string, string>();
+  if (saved !== null) memory.set('@flapfit/local-age-answer-v1', saved);
+  let releaseRead!: () => void;
+  const readBarrier = options.delayed ? new Promise<void>(done => { releaseRead = done; }) : Promise.resolve();
+  const storage = {
+    getItem: jest.fn(async (key: string) => {
+      if (key === '@flapfit/local-age-answer-v1') {
+        await readBarrier;
+        if (options.failRead) throw new Error('Local storage unavailable');
+      }
+      return memory.get(key) ?? null;
+    }),
+    setItem: jest.fn(async (key: string, value: string) => { memory.set(key, value); }),
+    removeItem: jest.fn(async (key: string) => { memory.delete(key); }),
+  };
+  jest.doMock('@react-native-async-storage/async-storage', () => storage);
+  const listeners = new Set<(state: string) => void>();
+  const appState = { currentState: 'active', addEventListener: jest.fn((_event, listener) => { listeners.add(listener); return { remove: () => listeners.delete(listener) }; }) };
+  const animation = () => ({ start: jest.fn(), stop: jest.fn() });
+  jest.doMock('react-native', () => ({
+    View: 'View', Text: 'Text', ScrollView: 'ScrollView', TouchableOpacity: 'TouchableOpacity', ActivityIndicator: 'ActivityIndicator',
+    Platform: { OS: 'ios', Version: '18.6', select: (values: Record<string, unknown>) => values.ios ?? values.default }, AppState: appState,
+    Alert: { alert: jest.fn() }, Linking: { openSettings: jest.fn() }, Share: {}, StyleSheet: { create: (styles: unknown) => styles },
+    Animated: { Value: class { interpolate = jest.fn(); setValue = jest.fn(); }, View: 'View', timing: animation, loop: animation, sequence: animation },
+    Easing: { linear: jest.fn(), out: jest.fn(), quad: jest.fn() }, useWindowDimensions: () => ({ width: 390, height: 844 }),
+    TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: jest.fn().mockResolvedValue(true) } },
+  }));
+  jest.doMock('lucide-react-native', () => new Proxy({}, { get: (_target, key) => key === '__esModule' ? true : String(key) }));
+  jest.doMock('react-native-svg', () => new Proxy({}, { get: (_target, key) => key === '__esModule' ? true : String(key) }));
+  jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: 'standalone', expoConfig: {} }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
+  jest.doMock('../../../../modules/flap-fit-age-range', () => ({ ...jest.requireActual('../../../../modules/flap-fit-age-range/src/gates'),
+    getAppleAgeRequirements: jest.fn().mockResolvedValue({ status: 'unsupported', ageRangeSupported: false }), requestAppleAgeRange: jest.fn() }));
+  const adLoad = jest.fn(() => { throw new Error('Advertising SDK must not load at game entry'); });
+  const rcLoad = jest.fn(() => { throw new Error('Reporting SDK must not load at game entry'); });
+  jest.doMock('react-native-google-mobile-ads', adLoad); jest.doMock('react-native-purchases', rcLoad);
+  jest.doMock('expo-image', () => ({ Image: 'Image' }));
+  jest.doMock('expo-status-bar', () => ({ StatusBar: 'StatusBar' }));
+  jest.doMock('expo-splash-screen', () => ({ preventAutoHideAsync: jest.fn().mockResolvedValue(undefined), hideAsync: jest.fn().mockResolvedValue(undefined) }));
+  jest.doMock('react-native-gesture-handler', () => ({ GestureHandlerRootView: 'View' }));
+  jest.doMock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }) }));
+  jest.doMock('react-native-webview', () => ({ WebView: 'WebView' }));
+  jest.doMock('@/components/BirdAvatar', () => ({ __esModule: true, default: 'BirdAvatar' }));
+  jest.doMock('@/components/PrivacyChoices', () => ({ usePrivacyChoicesSheet: () => ({ openChoices: jest.fn(), cancelChoices: jest.fn(), privacyChoicesSheet: null }) }));
+  jest.doMock('@/services/competitionApi', () => ({ startCompetitionForegroundRetry: () => () => {}, competitionIsConfigured: () => false }));
+  jest.doMock('@/services/recordingCache', () => ({ startRecordingCacheCleanup: () => () => {}, discardGameplayRecordingFile: jest.fn() }));
+  jest.doMock('@/services/videoSharing', () => ({ getVideoShareAvailability: jest.fn().mockResolvedValue({}) }));
+  jest.doMock('@/utils/game/mediapipeAssets', () => ({ prepareMediaPipeAssets: () => new Promise(() => {}) }));
+  jest.doMock('@/utils/game/birdWebAsset', () => ({ loadBirdAssetDataUri: () => new Promise(() => {}) }));
+  const camera = jest.fn(() => [{ granted: false, canAskAgain: true, status: 'undetermined' }, jest.fn(), jest.fn()]);
+  jest.doMock('expo-camera', () => ({ useCameraPermissions: camera, useMicrophonePermissions: () => [null, jest.fn(), jest.fn()] }));
+  jest.doMock('expo-haptics', () => ({ impactAsync: jest.fn().mockResolvedValue(undefined), ImpactFeedbackStyle: {} }));
+  const fetchDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'fetch');
+  const fetcher = options.offline ? jest.fn().mockRejectedValue(new Error('Offline')) : jest.fn().mockResolvedValue({ ok: true, status: 200, redirected: false,
+    url: 'https://flapfitapp.com/cdn-cgi/trace', headers: { get: (key: string) => key === 'content-type' ? 'text/plain' : null }, text: async () => 'h=flapfitapp.com\nloc=US\n' });
+  Object.defineProperty(globalThis, 'fetch', { configurable: true, writable: true, value: fetcher });
+  let params = {};
+  let navigate!: (route: string) => void;
+  const router = { push: jest.fn((route: { pathname: string; params: object }) => { params = route.params; navigate(route.pathname); }), back: jest.fn(), replace: jest.fn() };
+  const Tabs = Object.assign(function Tabs() { const Home = require('@/app/(tabs)/index').default; return React.createElement(Home); }, { Screen: 'TabScreen' });
+  jest.doMock('expo-router', () => ({
+    useRouter: () => router, useLocalSearchParams: () => params, useFocusEffect: (effect: () => void) => React.useEffect(effect, [effect]), Tabs,
+    Redirect: function Redirect({ href }: { href: string }) { React.useEffect(() => navigate(href), [href]); return null; },
+    Stack: function Stack() {
+      const [route, setRoute] = React.useState('/'); navigate = setRoute;
+      const Screen = route === '/game' ? require('@/app/game').default
+        : route === '/(tabs)' ? require('@/app/(tabs)/_layout').default : require('@/app/index').default;
+      return React.createElement(Screen);
+    },
+  }));
+  const { useGameStore } = require('@/utils/game/store');
+  await useGameStore.persist.rehydrate();
+  useGameStore.setState({ hydrated: true, hydrationError: null, hasOnboarded: true });
+  const Root = require('@/app/_layout').default;
+  let tree!: ReactTestRenderer;
+  await act(async () => { tree = renderer.create(React.createElement(Root)); await settle(); });
+  await act(async () => { jest.advanceTimersByTime(1400); await settle(); });
+  const play = async () => { await act(async () => {
+    const button = tree.root.findAll(node => node.props.accessibilityLabel === 'Play Level 1' && typeof node.props.onPress === 'function')[0];
+    expect(button).toBeDefined(); button.props.onPress(); await settle();
+  }); expect(router.push).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
+    expect(JSON.stringify(tree.toJSON())).not.toContain('Flap Fit hit a snag'); };
+  return { camera, storage, adLoad, rcLoad, play, tree,
+    release: async () => { await act(async () => { releaseRead?.(); await settle(); }); },
+    change: async (state: string) => { await act(async () => { appState.currentState = state; [...listeners].forEach(listener => listener(state)); await settle(); }); },
+    finish: async () => { await act(async () => { tree.unmount(); }); jest.clearAllTimers(); jest.useRealTimers();
+      if (fetchDescriptor) Object.defineProperty(globalThis, 'fetch', fetchDescriptor); },
+  };
+}
+afterEach(() => { process.env = { ...originalEnv }; jest.useRealTimers(); });
+
+test.each([false, true])('saved under-13 is restored before Home Play reaches camera setup (offline=%s)', async offline => {
+  const f = await mountApp(JSON.stringify({ version: 1, answer: 'under-13' }), { offline });
+  try { await f.play(); expect(f.camera).not.toHaveBeenCalled(); expect(JSON.stringify(f.tree.toJSON())).toContain('13');
+    expect(f.storage.getItem).toHaveBeenCalledWith('@flapfit/local-age-answer-v1'); expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally { await f.finish(); }
+});
+
+test('a delayed saved-age read finishes before the camera/game child can mount', async () => {
+  const f = await mountApp(JSON.stringify({ version: 1, answer: 'under-13' }), { delayed: true });
+  try { await f.play(); expect(f.camera).not.toHaveBeenCalled(); await f.release(); expect(f.camera).not.toHaveBeenCalled(); }
+  finally { await f.finish(); }
+});
+
+test.each([null, JSON.stringify({ version: 1, answer: '13-17' }), JSON.stringify({ version: 1, answer: '18-plus' }), 'invalid'])('optional unanswered/eligible/unreadable record %s permits Home Play without ad setup', async saved => {
+  const f = await mountApp(saved, { offline: true });
+  try { await f.play(); expect(f.camera).toHaveBeenCalled(); expect(JSON.stringify(f.tree.toJSON())).toContain('Camera access needed');
+    expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled(); }
+  finally { await f.finish(); }
+});
+
+test('failed local-age read does not turn a storage failure into a new gameplay ban', async () => {
+  const f = await mountApp(null, { failRead: true, offline: true });
+  try { await f.play(); expect(f.camera).toHaveBeenCalled(); }
+  finally { await f.finish(); }
+});
+
+test('backgrounding during saved-age restoration cannot mount a late game child', async () => {
+  const f = await mountApp(JSON.stringify({ version: 1, answer: '18-plus' }), { delayed: true });
+  try { await f.play(); await f.change('background'); await f.release(); expect(f.camera).not.toHaveBeenCalled();
+    await f.change('active'); expect(f.camera).toHaveBeenCalled(); }
+  finally { await f.finish(); }
+});
+
+test('leaving the route during restoration cancels the game continuation', async () => {
+  const f = await mountApp(JSON.stringify({ version: 1, answer: '18-plus' }), { delayed: true });
+  await f.play(); await f.finish(); await f.release(); expect(f.camera).not.toHaveBeenCalled();
+});

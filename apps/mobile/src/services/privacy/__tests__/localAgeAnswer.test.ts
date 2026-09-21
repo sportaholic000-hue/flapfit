@@ -140,3 +140,17 @@ test.each([
   const f = await fixture(undefined, country);
   expect(f.local.localAgeOptions().map(option => option.label)).toEqual(labels);
 });
+
+test('a failed correction cannot erase the saved under-13 answer discovered by an overlapping game-entry read', async () => {
+  const f = await fixture(new Map([[KEY, JSON.stringify({ version: 1, answer: 'under-13' })]]));
+  let finishRead!: (value: string) => void;
+  f.storage.getItem.mockImplementationOnce(() => new Promise<string>(done => { finishRead = done; }));
+  f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+  const reading = f.local.hasSavedUnder13Answer();
+  const saving = f.local.saveLocalAgeAnswer('18-plus');
+  const failedSave = expect(saving).rejects.toThrow('not confirmed');
+  await flush(); finishRead(JSON.stringify({ version: 1, answer: 'under-13' }));
+  await reading; await failedSave;
+  expect(await f.local.hasSavedUnder13Answer()).toBe(true);
+  expect(JSON.parse(f.memory.get(KEY)!).answer).toBe('under-13');
+});

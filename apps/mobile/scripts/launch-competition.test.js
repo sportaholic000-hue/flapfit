@@ -110,3 +110,68 @@ test('authenticated deletion bypasses revoked participation and renewed terms', 
   expect(response.status).toBe(200); expect(admin.rpc).not.toHaveBeenCalled();
   expect(admin.auth.admin.deleteUser).toHaveBeenCalledWith('viewer');
 });
+
+test.each([
+  { label: 'missing token', token: '', result: { data: { user: null } } },
+  { label: 'invalid/deleted session', token: 'expired', result: { data: { user: null }, error: { message: 'Invalid token' } } },
+  { label: 'non-anonymous identity', token: 'fixture', result: { data: { user: { id: 'other', is_anonymous: false } } } },
+])('$label cannot reach competition data or privileged RPCs', async ({ token, result }) => {
+  const admin = { auth: { getUser: jest.fn(async () => result) }, rpc: jest.fn(), from: jest.fn() };
+  const { handler } = createHandler(admin);
+  const response = await handler(new Request('https://test.invalid/flapfit-game/leaderboard?exercise=pushups', {
+    headers: { Authorization: token ? `Bearer ${token}` : '', 'X-FlapFit-Terms-Version': '2026-09-14' },
+  }));
+  expect(response.status).toBe(401); expect(admin.rpc).not.toHaveBeenCalled(); expect(admin.from).not.toHaveBeenCalled();
+});
+
+function bodyLimitFixture() {
+  const admin = {
+    auth: { getUser: jest.fn(async () => ({ data: { user: { id: 'viewer', is_anonymous: true } } })) },
+    rpc: jest.fn(name => name === 'apple_consent_user_is_revoked' ? Promise.resolve({ data: false, error: null })
+      : { single: async () => ({ data: { run_id: 'run', expires_at: 'later' } }) }),
+  };
+  return { ...createHandler(admin), admin };
+}
+
+test('streamed body stops at the byte limit without buffering the remainder', async () => {
+  const { handler, admin } = bodyLimitFixture();
+  const cancel = jest.fn(); let reads = 0;
+  const stream = new ReadableStream({
+    pull(controller) { ++reads; if (reads <= 3) controller.enqueue(new Uint8Array(2049)); else controller.close(); }, cancel,
+  }, { highWaterMark: 0 });
+  const response = await handler(new Request('https://test.invalid/flapfit-game/runs', {
+    method: 'POST', headers: { Authorization: 'Bearer fixture', 'X-FlapFit-Terms-Version': '2026-09-14' }, body: stream, duplex: 'half',
+  }));
+  expect(response.status).toBe(413); expect(cancel).toHaveBeenCalledTimes(1); expect(reads).toBe(2);
+  expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
+});
+
+test('body limit counts UTF-8 bytes, not JavaScript characters', async () => {
+  const { handler, admin } = bodyLimitFixture();
+  const response = await handler(request('/runs', { kind: 'leaderboard', exercise: 'pushups', unused: 'é'.repeat(2050) }));
+  expect(response.status).toBe(413); expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
+});
+
+test('declared oversize body is rejected without reading it', async () => {
+  const { handler } = bodyLimitFixture();
+  const pull = jest.fn(controller => controller.close());
+  const response = await handler(new Request('https://test.invalid/flapfit-game/runs', {
+    method: 'POST', headers: { Authorization: 'Bearer fixture', 'X-FlapFit-Terms-Version': '2026-09-14', 'Content-Length': '9000' },
+    body: new ReadableStream({ pull }, { highWaterMark: 0 }), duplex: 'half',
+  }));
+  expect(response.status).toBe(413); expect(pull).not.toHaveBeenCalled();
+});
+
+test('run ownership comes from the verified session, never a body user identifier', async () => {
+  const { handler, admin } = bodyLimitFixture();
+  expect((await handler(request('/runs', { kind: 'leaderboard', exercise: 'pushups', userId: 'victim' }))).status).toBe(201);
+  expect(admin.rpc).toHaveBeenCalledWith('begin_game_run', expect.objectContaining({ p_user_id: 'viewer' }));
+});
+
+test.each(['[]', 'null', '{broken'])('invalid body %s performs no game mutation', async body => {
+  const { handler, admin } = bodyLimitFixture();
+  const response = await handler(new Request('https://test.invalid/flapfit-game/runs', {
+    method: 'POST', headers: { Authorization: 'Bearer fixture', 'X-FlapFit-Terms-Version': '2026-09-14' }, body,
+  }));
+  expect(response.status).toBe(400); expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
+});

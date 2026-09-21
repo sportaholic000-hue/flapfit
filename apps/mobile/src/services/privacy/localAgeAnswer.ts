@@ -54,6 +54,30 @@ export const hasLocalAgeReadError = () => readFailed;
 function evidence(value: LocalAgeAnswer): AgeEvidence {
   return { source: 'self', status: 'shared', lowerBound: BANDS[value].lowerBound, upperBound: BANDS[value].upperBound };
 }
+/** Read the existing local answer independently of optional country/ad setup.
+ * Missing or unreadable data is unknown, never evidence that someone is under 13. */
+async function readSavedLocalAgeAnswer(): Promise<void> {
+  if (!readConfirmed && !reading) {
+    reading = (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(KEY);
+        const value = raw === null ? null : JSON.parse(raw);
+        if (raw !== null && (value?.version !== 1 || !validAnswer(value.answer))) throw new Error('Invalid age answer');
+        // Every writer awaits this read before persisting. A new save intent must
+        // not discard the durable answer if that later write fails.
+        answer = value?.answer ?? null;
+        readConfirmed = true; readFailed = false;
+      } catch { readFailed = true; }
+    })().finally(() => { reading = null; });
+  }
+  await reading;
+}
+/** Enforce only the owner's existing minimum age; this does not grant processing
+ * permission, request an age answer, or satisfy an Apple authorization check. */
+export async function hasSavedUnder13Answer(): Promise<boolean> {
+  await readSavedLocalAgeAnswer();
+  return answer === 'under-13';
+}
 /** Only the locally supplied band is saved. Apple's age response is never stored
  * here, and this answer is never sent to an advertising or competition provider. */
 export async function restoreLocalAgeAnswer(): Promise<void> {
@@ -62,19 +86,7 @@ export async function restoreLocalAgeAnswer(): Promise<void> {
   if (getProcessingInputs().verification?.localCheckSatisfied && !saving && !saveUnconfirmed) return;
   const revision = getAgeVerificationRevision();
   const country = getProcessingInputs().launch!.country!;
-  if (!readConfirmed && !reading) {
-    const before = intent;
-    reading = (async () => {
-      try {
-        const raw = await AsyncStorage.getItem(KEY);
-        const value = raw === null ? null : JSON.parse(raw);
-        if (raw !== null && (value?.version !== 1 || !validAnswer(value.answer))) throw new Error('Invalid age answer');
-        if (before === intent) answer = value?.answer ?? null;
-        readConfirmed = true; readFailed = false;
-      } catch { readFailed = true; }
-    })().finally(() => { reading = null; });
-  }
-  await reading;
+  await readSavedLocalAgeAnswer();
   if (answer !== null && readConfirmed && !readFailed && !saving && !saveUnconfirmed && hasLocalAgeControl()) {
     verifyLocalLaunchAgeEvidence(evidence(answer), country, revision);
   }
