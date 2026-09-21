@@ -1,5 +1,6 @@
 import { Alert } from 'react-native';
 import { needsConnecticutClarification, needsQuebecClarification } from './regionalClarification';
+import { needsLocalAgeAnswer } from './localAgeAnswer';
 import { isMonetizationPrepared, prepareMonetization } from '../monetization';
 import {
   acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, canPresentProcessingNotice,
@@ -18,11 +19,11 @@ export async function preparePostGamePrivacy(
   // because another eligible exit was tapped. Explicit privacy refreshes retain
   // their existing invalidation/race handling in the monetization adapter.
   if (isMonetizationPrepared() && isProcessingNoticeAcknowledged() &&
-      !needsConnecticutClarification() && !needsQuebecClarification() && !needsSeparatePurposeChoice('ads') && !needsSeparatePurposeChoice('analytics')) return;
+      !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification() && !needsSeparatePurposeChoice('ads') && !needsSeparatePurposeChoice('analytics')) return;
   await prepareMonetization(canPresent);
   await restoreProcessingNotice();
-  if (!canPresent() || (!canPresentProcessingNotice() && !needsConnecticutClarification() && !needsQuebecClarification())) return;
-  const requiredChoices = needsConnecticutClarification() || needsQuebecClarification() || needsSeparatePurposeChoice('ads') || needsSeparatePurposeChoice('analytics');
+  if (!canPresent() || (!canPresentProcessingNotice() && !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification())) return;
+  const requiredChoices = needsLocalAgeAnswer() || needsConnecticutClarification() || needsQuebecClarification() || needsSeparatePurposeChoice('ads') || needsSeparatePurposeChoice('analytics');
   if (!isProcessingNoticeAcknowledged() || requiredChoices) {
     if (requiredChoices) {
       await openChoices();

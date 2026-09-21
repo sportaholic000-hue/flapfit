@@ -41,6 +41,8 @@ export type ProcessingDecision = { allowed: boolean; reason: ProcessingReason };
 export type AgeVerification = {
   eligibility: ProcessingReason;
   mandatoryCheckSatisfied: boolean;
+  /** Local declaration on a system without Apple's API. Never satisfies an Apple duty. */
+  localCheckSatisfied?: boolean;
   treatment: 'child' | 'teen' | 'unspecified';
   underAgeOfConsent: boolean;
 };
@@ -134,6 +136,10 @@ export function initialProcessingRuntimeInputs(): ProcessingRuntimeInputs {
   const { age: _age, appleAgeCheckSatisfied: _checked, ...common } = initialProcessingInputs();
   return { ...common, verification: null };
 }
+export function hasLaunchAgeVerification(input: ProcessingRuntimeInputs): boolean {
+  return input.verification?.mandatoryCheckSatisfied === true ||
+    (input.appleRequirement === 'unsupported' && input.verification?.localCheckSatisfied === true);
+}
 function runtimeEligibility(input: ProcessingRuntimeInputs): ProcessingReason {
   if (!input.hydrated) return 'loading';
   if (input.appleAccessRestricted) return 'apple-access-restricted';
@@ -142,7 +148,7 @@ function runtimeEligibility(input: ProcessingRuntimeInputs): ProcessingReason {
   if (input.appleRequirement === 'required' && input.appleRescissionPending) return 'apple-access-check-pending';
   if (input.launch) {
     if (!input.launch.current || !input.launch.country) return 'region-unconfirmed';
-    if (!input.verification?.mandatoryCheckSatisfied) return 'age-unresolved';
+    if (!hasLaunchAgeVerification(input)) return 'age-unresolved';
     return input.launch.plan?.ageEligibility ?? 'age-unresolved';
   }
   if (input.europeanProvider) {

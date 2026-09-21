@@ -2,7 +2,7 @@ import { evaluateLaunchProcessingPlan, refineLaunchProcessingPlan, resolveLaunch
 import type { LaunchCountry } from './privacyCountry';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  AgeEvidence, AppleRequirement, EuropeanProviderDecisions, evaluateVerifiedProcessing, initialProcessingRuntimeInputs, verifyTransientAge,
+  AgeEvidence, AppleRequirement, EuropeanProviderDecisions, evaluateVerifiedProcessing, hasLaunchAgeVerification, initialProcessingRuntimeInputs, verifyTransientAge,
   PROCESSING_NOTICE_VERSION, ProcessingChoice, ProcessingRuntimeInputs, PrivacyRegion, Purpose, PurposeRequirement,
 } from './processingPolicy';
 
@@ -282,7 +282,7 @@ export function setLaunchProcessingCountry(country: LaunchCountry | null, curren
   return changed;
 }
 export function setLaunchProcessingPlan(plan: LaunchProcessingPlan, expectedRevision: number): boolean {
-  if (expectedRevision !== verificationRevision || !input.launch?.current || !input.verification?.mandatoryCheckSatisfied) return false;
+  if (expectedRevision !== verificationRevision || !input.launch?.current || !hasLaunchAgeVerification(input)) return false;
   publish({ ...input, launch: { ...input.launch, plan: JSON.parse(JSON.stringify(plan)) as LaunchProcessingPlan, resolution: null } });
   return expectedRevision === verificationRevision;
 }
@@ -294,6 +294,24 @@ export function verifyLaunchAgeEvidence(age: AgeEvidence, country: LaunchCountry
     choices: input.choices, notices: { ads: false, analytics: false, competition: false } });
   const { decisions: _decisions, ...plan } = resolved;
   publish({ ...input, verification, launch: { ...input.launch, plan, resolution: null } });
+  return expectedRevision === verificationRevision;
+}
+/** Local age evidence is permitted only when the native boundary confirmed that
+ * Apple's service is unsupported. It cannot replace a decline, error, pending
+ * requirement, required Apple check, rescission or an available Apple response. */
+export function verifyLocalLaunchAgeEvidence(age: AgeEvidence, country: LaunchCountry, expectedRevision: number): boolean {
+  if (input.appleRequirement !== 'unsupported' || age.source !== 'self' || age.status !== 'shared' ||
+    expectedRevision !== verificationRevision || !input.hydrated || !input.launch?.current ||
+    input.launch.country !== country || input.appleAccessRestricted) return false;
+  if (age.lowerBound === null || !Number.isSafeInteger(age.lowerBound) || age.lowerBound < 0 ||
+    (age.upperBound !== null && (!Number.isSafeInteger(age.upperBound) || age.upperBound < age.lowerBound))) return false;
+  const resolved = resolveLaunchProcessingPolicy({ ...input.launch.options, country, subdivision: null, age,
+    choices: input.choices, notices: { ads: false, analytics: false, competition: false } });
+  const { decisions: _decisions, ...plan } = resolved;
+  publish({ ...input, verification: {
+    eligibility: plan.ageEligibility, mandatoryCheckSatisfied: false, localCheckSatisfied: true,
+    treatment: plan.treatment, underAgeOfConsent: plan.underAgeOfConsent,
+  }, launch: { ...input.launch, plan, resolution: null } });
   return expectedRevision === verificationRevision;
 }
 /** Separate verified purpose controls; no change is inferred from UMP or download permission. */

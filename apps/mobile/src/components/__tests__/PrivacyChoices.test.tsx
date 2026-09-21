@@ -81,6 +81,46 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
   return { access, storage, memory, buttons, recover: () => { failChoicesRead = false; }, native, alert, act, mount, mountController, open, replaceRequest, cancel: () => controller.cancelChoices(), button, press, text, modal, unmount };
 }
 
+test('older-system rendered age choice permits notice-route ads without an ads-off switch and keeps reporting refused', async () => {
+  const f = await fixture('ios', false, false, 'resident', true);
+  await f.access.setProcessingChoice('analytics', 'denied');
+  f.access.setAppleAgeRequirement('unsupported');
+  await f.mount();
+  expect(f.text()).toContain('What is your age range?');
+  expect(f.text()).toContain('Age range not answered');
+  await f.press('18 or older');
+  expect(f.text()).toContain('Saved on this device: 18 or older');
+  expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { reason: 'refused' } });
+  expect(f.button('Stop advertising')).toBeUndefined();
+  expect(f.button('Allow advertising')).toBeUndefined();
+  await f.unmount(); await f.mount();
+  expect(f.text()).toContain('Saved on this device: 18 or older');
+  await f.unmount();
+});
+
+test('failed local age save has a working rendered retry after close/reopen', async () => {
+  const f = await fixture('ios', false, false, 'resident', true);
+  f.access.setAppleAgeRequirement('unsupported'); await f.mount();
+  f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+  await f.press('18 or older');
+  expect(f.text()).toContain('Age answer save not confirmed');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.unmount(); await f.mount();
+  expect(f.text()).toContain('Age answer save not confirmed');
+  await f.press('18 or older');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  await f.unmount();
+});
+
+test('available or required Apple service never shows the local-age substitute', async () => {
+  const f = await fixture(); await f.mount();
+  expect(f.text()).not.toContain('What is your age range?');
+  await f.act(async () => { f.access.setAppleAgeRequirement('required'); });
+  expect(f.text()).not.toContain('What is your age range?');
+  expect(f.button('18 or older')).toBeUndefined();
+  await f.unmount();
+});
+
 test.each(['save', 'native'] as const)('a failed reporting %s retains a rendered retry across remount without enabling reporting or stopping ads', async failure => {
   const f = await fixture(); await f.mount();
   if (failure === 'save') f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));

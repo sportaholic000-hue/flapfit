@@ -1,0 +1,66 @@
+{
+  "publication": {
+    "siteSource": "6b23ee3883ceda26d01f8d41839e8fe567227f0c",
+    "projectId": "appgprj_6aa368d995348191b4206fa03f951b3a",
+    "version": 31,
+    "versionId": "appgprj_6aa368d995348191b4206fa03f951b3a~appgver_f028caa32fec8191a09e29b3f264857e",
+    "archiveStorage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_00000000114881f68119d7f2e989dd05",
+      "content_hash": "sha256:aa5561cf26b438f2b9ff9c560dba8edbb59188f286401ffc984cadda68d304e4",
+      "size_bytes": 9748480,
+      "file_count": 41
+    },
+    "deployment": {
+      "id": "appgdep_6ab0e6eb7028819199feacd06712a044",
+      "project_id": "appgprj_6aa368d995348191b4206fa03f951b3a",
+      "title": "Flap Fit",
+      "version_id": "appgprj_6aa368d995348191b4206fa03f951b3a~appgver_f028caa32fec8191a09e29b3f264857e",
+      "type": "publish",
+      "status": "succeeded",
+      "url": "https://flap-fit.sportaholic000.chatgpt.site",
+      "screenshot_asset_pointer": null,
+      "provider_deployment_id": "site---6aa368d995348191b4206fa03f951b3a",
+      "failure_message": null,
+      "env_set_revision": 0,
+      "updated_at": "2026-09-21T08:12:32.871473+00:00"
+    },
+    "localArchiveSha256": "ac5bd03cfaa199a83d53199e129738bd8d50c1b7e6b8630bb93159d4f52e535e",
+    "sourceRemoteVerified": true
+  },
+  "readback": {
+    "checkedAt": "2026-09-21T08:13:22.778744+00:00",
+    "websiteCommit": "6b23ee3883ceda26d01f8d41839e8fe567227f0c",
+    "version": 31,
+    "deployment": "appgdep_6ab0e6eb7028819199feacd06712a044",
+    "comparison": "Every byte after LF/CRLF normalization and excluding only the recognized Cloudflare edge script; not raw-byte equivalence.",
+    "results": [
+      {
+        "route": "/privacy/",
+        "status": 200,
+        "url": "https://flapfitapp.com/privacy/",
+        "bytes": 15438,
+        "sha256": "4d3631aaefb5a22b2f0b19b8673a3db0fff3e3a8d7342a21b22549a4644ba4b2",
+        "sourceSha256": "0bf52d2333b03565162fbd8dc8212566e62f1ec966ea1b20ff1b94715ff7e986",
+        "rawByteMatch": false,
+        "cloudflareEdgeScriptsExcluded": 1,
+        "matchesPublishedSource": true,
+        "httpDate": "Mon, 21 Sep 2026 08:13:23 GMT",
+        "cacheStatus": "MISS"
+      },
+      {
+        "route": "/site-config.js",
+        "status": 200,
+        "url": "https://flapfitapp.com/site-config.js",
+        "bytes": 376,
+        "sha256": "ca36fa523e227575e566c2560796f3e47c3e721e42ac094306844afb4065521b",
+        "sourceSha256": "ca36fa523e227575e566c2560796f3e47c3e721e42ac094306844afb4065521b",
+        "rawByteMatch": true,
+        "cloudflareEdgeScriptsExcluded": 0,
+        "matchesPublishedSource": true,
+        "httpDate": "Mon, 21 Sep 2026 08:13:23 GMT",
+        "cacheStatus": "HIT"
+      }
+    ]
+  }
+}

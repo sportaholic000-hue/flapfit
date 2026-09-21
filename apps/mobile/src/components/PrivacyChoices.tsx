@@ -9,6 +9,7 @@ import {
 } from '@/services/privacy/regionalClarification';
 import { getAdvertisingWithdrawalState, subscribeAdvertisingWithdrawal, getCompetitionStopState, subscribeCompetitionStop, stopOnlineCompetition, getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
 import { getProcessingAccess, getProcessingInputs, hasProcessingChoicesReadError, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
+import { hasLocalAgeControl, hasLocalAgeReadError, localAgeAnswerStatus, localAgeOptions, restoreLocalAgeAnswer, saveLocalAgeAnswer } from '@/services/privacy/localAgeAnswer';
 import {
   acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, allowProcessingPurpose, canChooseProcessingPurpose,
   needsSeparatePurposeChoice, processingPurposeStatus, refuseProcessingPurpose, restoreProcessingNotice,
@@ -25,7 +26,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const [, refresh] = useState(0);
-  useEffect(() => { let active = true; void Promise.all([restoreProcessingNotice(), restoreRegionalClarification()]).then(() => { if (active) refresh(n => n + 1); }); return () => { active = false; }; }, []);
+  useEffect(() => { let active = true; void Promise.all([restoreProcessingNotice(), restoreRegionalClarification(), restoreLocalAgeAnswer()]).then(() => { if (active) refresh(n => n + 1); }); return () => { active = false; }; }, []);
   const input = getProcessingInputs();
   const current = () => mounted.current && (canInteract?.() ?? true);
   const action = async (operation: () => Promise<void>) => {
@@ -61,6 +62,17 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
         await restoreProcessingNotice();
         if (!getProcessingInputs().hydrated) throw new Error('Saved privacy choices are still unavailable. Please retry.');
       })}
+    </View> : null}
+    {hasLocalAgeControl() ? <View style={styles.group}>
+      <Text style={styles.heading}>Age range</Text>
+      <Text style={styles.body}>What is your age range?</Text>
+      <Text style={styles.note}>This system cannot provide Apple's age check. Your answer stays on this device to apply the appropriate rules. It is not permission for advertising, reporting or competition.</Text>
+      <Text style={styles.status}>{localAgeAnswerStatus()}</Text>
+      {hasLocalAgeReadError()
+        ? button('Retry loading age answer', restoreLocalAgeAnswer)
+        : <View style={styles.buttons}>{localAgeOptions().map(option => <View key={option.value}>
+          {button(option.label, () => saveLocalAgeAnswer(option.value))}
+        </View>)}</View>}
     </View> : null}
     {hasQuebecClarificationControl() ? <View style={styles.group}>
       <Text style={styles.heading}>Province privacy rules</Text>

@@ -706,6 +706,74 @@ test('supported older iOS never fakes age or starts provider SDKs; it reports th
   }finally{f.finish();}
 });
 
+test.each(['US','CA','AU','MX'])('older iOS %s adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart',async country=>{
+  let f=await load({unsupported:true,country,quebecResidency:country==='CA'?'not-resident':undefined});const memory=f.memory;
+  try{
+    await f.access.setProcessingChoice('analytics','denied');
+    const local:typeof import('../localAgeAnswer')=require('../localAgeAnswer');
+    const notice:typeof import('../processingNotice')=require('../processingNotice');
+    await local.saveLocalAgeAnswer('18-plus');
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+    await notice.acknowledgeProcessingNotice();
+    await f.adapter.prepareMonetization(()=>true);await settle();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.purchases.configure).not.toHaveBeenCalled();expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.requestAge).not.toHaveBeenCalled();
+    expect(f.access.getProcessingInputs().verification).toMatchObject({mandatoryCheckSatisfied:false,localCheckSatisfied:true});
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{reason:'refused'}});
+  }finally{f.finish();}
+  f=await load({unsupported:true,country,memory});
+  try{
+    const {preparePostGamePrivacy}:typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    const open=jest.fn().mockResolvedValue(undefined);
+    await preparePostGamePrivacy(()=>true,open);await settle();
+    expect(open).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.purchases.configure).not.toHaveBeenCalled();expect(f.requestAge).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess().revenueCat.reason).toBe('refused');
+  }finally{f.finish();}
+});
+
+test('older iOS opens the existing post-game panel for missing age, and dismissal records no answer',async()=>{
+  const f=await load({unsupported:true});
+  try{
+    const {preparePostGamePrivacy}:typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    const open=jest.fn().mockResolvedValue(undefined);
+    await preparePostGamePrivacy(()=>true,open);
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(f.memory.has('@flapfit/local-age-answer-v1')).toBe(false);
+    expect(f.adLoad).not.toHaveBeenCalled();expect(f.rcLoad).not.toHaveBeenCalled();
+  }finally{f.finish();}
+});
+
+test('older-system adult uses real permitted RevenueCat configuration and restricted result-ad requests',async()=>{
+  const f=await load({unsupported:true});
+  try{
+    const local:typeof import('../localAgeAnswer')=require('../localAgeAnswer');
+    const notice:typeof import('../processingNotice')=require('../processingNotice');
+    await local.saveLocalAgeAnswer('18-plus');await notice.acknowledgeProcessingNotice();
+    await f.adapter.prepareMonetization(()=>true);await settle();
+    expect(f.purchases.configure).toHaveBeenCalledTimes(1);
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    f.adapter.prepareResultInterstitial();
+    expect(f.interstitial.createForAdRequest).toHaveBeenCalledWith('test-interstitial',expect.objectContaining({requestNonPersonalizedAdsOnly:true,networkExtras:{rdp:'1'}}));
+    expect(JSON.stringify(f.purchases.configure.mock.calls)).not.toMatch(/18-plus|lowerBound|upperBound|self/);
+  }finally{f.finish();}
+});
+
+test.each([{country:'US',answer:'under-13'},{country:'AU',answer:'13-14'},{country:'MX',answer:'13-17'}] as const)('local minor answer %j cannot be treated as adulthood or parental permission',async scenario=>{
+  const f=await load({unsupported:true,country:scenario.country});
+  try{
+    const local:typeof import('../localAgeAnswer')=require('../localAgeAnswer');
+    const notice:typeof import('../processingNotice')=require('../processingNotice');
+    await local.saveLocalAgeAnswer(scenario.answer);await notice.acknowledgeProcessingNotice();
+    await f.adapter.prepareMonetization(()=>true);await settle();
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false},revenueCat:{allowed:false},competition:{allowed:false}});
+    expect(f.adLoad).not.toHaveBeenCalled();expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.access.getProcessingInputs().verification?.mandatoryCheckSatisfied).toBe(false);
+  }finally{f.finish();}
+});
+
 test('advertising withdrawal changes only its purpose and an unrelated failed save cannot erase the saved refusal',async()=>{
   let f=await load({country:'CA',quebecResidency:'resident'});const memory=f.memory;
   try{

@@ -15,6 +15,12 @@ and settings on your device. This information is not sent to Flap Fit unless a f
 below says otherwise. You can remove local information by clearing the app's data or deleting the
 app.
 
+On an iPhone or iPad whose system cannot provide Apple's age-range service, Flap Fit
+asks for the age band needed by the applicable country rules. Only that locally supplied
+answer is saved on the device. It is not an Apple-verified age and cannot replace a required
+Apple check, a parent or guardian's authority, or a separate privacy choice. The answer is
+not sent to advertising or competition providers. It can be updated in Info > Privacy & choices.
+
 ## Camera and Record & Play
 
 Flap Fit uses the front camera during gameplay to estimate body landmarks and translate movement

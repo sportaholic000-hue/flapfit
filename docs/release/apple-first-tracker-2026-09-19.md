@@ -1,5 +1,11 @@
 # Apple-first completion tracker
 
+## Older-iOS eligibility fallback — verified source, BUILD HELD
+
+The existing Info/results panel now provides a local age-range answer only when Apple's service is unsupported on iOS. It restores successful answers, preserves purpose refusals, retains truthful save/read retry, and never substitutes for an available/required Apple check. Actual four-country adult ad initialization and independent RevenueCat refusal/restart are verified. **63 suites / 1,335 tests**, TypeScript, strict lint, release/privacy checks and the actual local package (**792 files / 291 matching required inputs**) pass. Website version 31 has the matching disclosure and verified public readback.
+
+Evidence: **evidence/local-age-fallback-2026-09-21.md** and its checks/package/website JSON. This supersedes the older statement that every pre-iOS-26 user has no eligibility route. Regional monetization, unresolved/current-system age cases and the NY fallback remain open source decisions. It does not clear a build, device acceptance, provider receipt or submission. Existing work and unrelated local changes remain preserved.
+
 ## September 21 source recovery — regional monetization NOT complete
 
 The advertising-withdrawal controls, truthful save/retry state, orphan-recording cleanup,
