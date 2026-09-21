@@ -186,7 +186,7 @@ export default function GameScreen() {
     return () => { mounted = false; };
   }, [supportedMode]);
   if (hydrated && !supportedMode) return <Redirect href="/(tabs)" />;
-  if (supportedMode && privacySettled) return <GameEligibilityGate key={`${mode}:${levelId}`} hasExistingPlay={() => useGameStore.getState().sessions.length > 0 || useGameStore.getState().totalTutSeconds > 0}>
+  if (supportedMode && privacySettled) return <GameEligibilityGate key={`${mode}:${levelId}`}>
     {(newRun, prepareEntry) => <GameContent onNewRun={newRun} prepareEntry={prepareEntry} />}
   </GameEligibilityGate>;
   return (
@@ -576,7 +576,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     void prepareEntry().then(() => {
       if (active) { entryReadyRef.current = true; setEntryReady(true); }
     }).catch(() => {
-      if (active) setEntryError('Your first-game status could not be saved. Retry before starting.');
+      if (active) setEntryError('Game access could not be checked. Retry before starting.');
     });
     return () => { active = false; };
   }, [webSource, trackerLoadError, permission?.granted, recordRun, recordWithoutAudio, microphonePermission?.granted, prepareEntry, entryAttempt]);

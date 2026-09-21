@@ -3,7 +3,7 @@ import { needsConnecticutClarification, needsQuebecClarification } from './regio
 import { needsLocalAgeAnswer } from './localAgeAnswer';
 import { needsNewYorkClarification } from './newYorkClarification';
 import { getProcessingInputs } from './processingAccess';
-import { resolveReleaseEligibility } from './releaseEligibility';
+import { isRegionalAdvertisingDisabled } from './regionalAdvertising';
 import { isMonetizationPrepared, prepareMonetization } from '../monetization';
 import {
   acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, canPresentProcessingNotice,
@@ -25,9 +25,9 @@ export async function preparePostGamePrivacy(
       !needsNewYorkClarification() && !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification() && !needsSeparatePurposeChoice('ads') && !needsSeparatePurposeChoice('analytics')) return;
   await prepareMonetization(canPresent);
   await restoreProcessingNotice();
-  // Excluded release cohorts have no advertising activation to complete. Their
-  // existing withdrawals remain accessible in Info; do not solicit new consent.
-  if (resolveReleaseEligibility(getProcessingInputs()).status === 'unavailable') return;
+  // Regional restrictions disable providers, never the next workout. Existing
+  // withdrawal controls remain accessible in Info; do not solicit new consent.
+  if (isRegionalAdvertisingDisabled(getProcessingInputs())) return;
   if (!canPresent() || (!canPresentProcessingNotice() && !needsNewYorkClarification() && !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification())) return;
   const requiredChoices = needsNewYorkClarification() || needsLocalAgeAnswer() || needsConnecticutClarification() || needsQuebecClarification() || needsSeparatePurposeChoice('ads') || needsSeparatePurposeChoice('analytics');
   if (!isProcessingNoticeAcknowledged() || requiredChoices) {
@@ -39,7 +39,7 @@ export async function preparePostGamePrivacy(
     } else {
       const action = await new Promise<'continue' | 'choices' | 'cancel'>(resolve => {
         Alert.alert('Ads keep Flap Fit free', AD_PROCESSING_DISCLOSURE +
-          '\n\nContinue with these uses, or review them in Privacy & choices. You can stop RevenueCat reporting separately from ads.', [
+          '\n\nContinue with these uses, or review them in Privacy & choices. You can withdraw advertising data consent there at any time. Stopping RevenueCat reporting separately leaves permitted Google ads enabled.', [
           { text: 'Privacy & choices', onPress: () => resolve('choices') },
           { text: 'Continue', onPress: () => resolve('continue') },
         ], { cancelable: true, onDismiss: () => resolve('cancel') });

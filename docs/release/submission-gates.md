@@ -1,10 +1,15 @@
 # Flap Fit dual-store submission gates
 
-## Current source successor — build held
+## Current audit gate — September 21
 
-See [release eligibility evidence](evidence/release-eligibility-2026-09-21.md) for the current country/age/region behavior, exact dismissal/restart rules, all retained findings and 67-suite/1,383-test verification. Actual local EAS package: 805 files / 300 required inputs, packaged validator and exclusions passed. Quebec is excluded by explicit in-app answer, not a store province filter. NY worldwide fallback is removed without inventing a wholly-outside provider assessment; known minor context/history remains protected. Existing refusals remain independent and honored. No build/upload/submission is authorized by these results.
+The owner requires an independent inspection before any final app build. Source fixes, full checks and the website update are recorded in [the audit handoff](third-party-audit-2026-09-21.md). **67 suites / 1,392 tests**, TypeScript, strict lint and release validation pass. Website version 34 is published. No mobile build, Apple upload, metadata edit or submission occurred. Wait for the owner’s explicit build instruction after the audit. This supersedes earlier build-preparation wording below.
 
-**Non-device actions still blocked:** website version 32 is saved but deployment authorization was rejected automatically; live version 31 remains. The narrow Apple review-note replacement is prepared for an authorized console edit. These are not described as device tests. Older dated source records below are historical where superseded here.
+
+## Current owner correction — regional advertising only
+
+See [regional advertising correction](evidence/regional-advertising-correction-2026-09-21.md). Regional restrictions disable advertising and reporting without excluding gameplay. No trial quota or advertising-notice game gate remains. Both New York answers persist; camera access is required for all gameplay. The earlier exclusion-based source/package evidence is historical and must not be used as acceptance evidence for the corrected source.
+
+The proposed exclusion-based Apple reviewer paragraph is cancelled. An authorized read-only check confirmed it was not saved; Apple settings remain unchanged. Do not publish website version 32. Use the corrected website and its recorded publication result. Native build, upload, device acceptance and submission remain separate from this source correction.
 
 Current instructions reconciled September 20, 2026 against the account audit and the
 successor recorded in [three-finding account-audit correction](evidence/audit-three-findings-2026-09-20.md).
@@ -49,8 +54,8 @@ their archived implementation is excluded from the app and EAS package.
       direct access, validation, run/outbox protections, moderation, deletion and retention have
       retained source/backend evidence. Native rights and genuine Apple delivery remain separate.
 - [x] Existing website/provider/support and seller-file setup is retained with its dated readback evidence.
-- [ ] Publish saved version 32 after authorization, then verify current privacy/terms readback;
-      version 31 is still live and does not describe the new release eligibility. No new hosting service.
+- [x] Corrected advertising-only privacy/terms and required-camera wording published as website
+      version 33. Superseded version 32 was not deployed. See the current correction evidence.
 - [x] Support receive/reply and independent deletion/moderation operations are retained in tracker D4.
       This does not mark installed-app rights access complete.
 
@@ -95,7 +100,7 @@ reopen completed setup. No change to hosting or plan is authorized by this check
 - [ ] Accepted Store-distribution artifact, authorized Apple upload, actual processing/validation,
       any real export-compliance prompt, and selected version build. TestFlight currently has no
       builds. TestFlight is optional for registered Ad Hoc acceptance; it is not a required extra
-      tester session or authorization to upload. Contacts and Content Rights are done; the prepared narrow eligibility-note correction must be saved/read back before review.
+      tester session or authorization to upload. Contacts and Content Rights are done; the exclusion-based eligibility-note correction is cancelled and must not be saved. The current Notes were verified read-only.
 - [ ] Final owner review and authorized Add for Review / Submit for Review. Confirm any actual
       account/compliance prompt then; do not manufacture new unfinished fields from generic guidance.
 

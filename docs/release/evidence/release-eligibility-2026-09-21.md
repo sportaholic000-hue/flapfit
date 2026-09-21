@@ -1,10 +1,12 @@
 # Release eligibility and retained audit findings — source verified, build held
 
+**Superseded September 21, 2026: the owner clarified that regional restrictions apply to advertising, not gameplay. Do not build, publish or apply the regional gameplay-exclusion instructions below. See [the correction](regional-advertising-correction-2026-09-21.md).**
+
 Base: `73be3871c51a1e980759f32e541f94ee6750e47e`; branch `wip/crash-protection-20260920`. The commit containing this evidence identifies the successor. Exact source and package hashes are in the adjacent JSON. No native/cloud build, app upload, Apple edit, App Privacy publication or submission was performed.
 
 ## What changed and the exact behavior
 
-The owner authorized necessary regional/age-wide release exclusions independently of consent, retained free-with-ads monetization, and required no inferred answers. The answer/dismissal behavior was described before adding the game-entry check. No paywall, GPS/location permission, new service, new consent interface or dependency was added. Existing Info/results Privacy & choices is used.
+The prior implementation incorrectly interpreted the owner’s advertising-only request as authorization for regional gameplay exclusions. The owner explicitly rejected that interpretation on September 21. The following describes the superseded implementation, not an approved release decision. The answer/dismissal behavior was described before adding the game-entry check. No paywall, GPS/location permission, new service, new consent interface or dependency was added. Existing Info/results Privacy & choices is used.
 
 | Country / age | Regional answer and result |
 |---|---|

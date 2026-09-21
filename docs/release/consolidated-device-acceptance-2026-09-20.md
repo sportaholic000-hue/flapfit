@@ -1,7 +1,7 @@
 # Flap Fit — consolidated device acceptance (held)
 
 **Do not start yet.** This is a prepared procedure, not a testing request or build authorization.
-The current eligibility successor and retained three-finding fixes are recorded in `evidence/release-eligibility-2026-09-21.md`.
+The current owner correction is recorded in `evidence/regional-advertising-correction-2026-09-21.md`. Regional gameplay exclusions and the trial quota are superseded.
 The build remains held pending the owner's next instruction; no device testing is requested.
 Finish authorized source/configuration work and inspect its matching artifact before supplying an
 installation route. Source tests, signed artifacts, installed results and provider receipt are separate.
@@ -25,6 +25,10 @@ installed version/build, candidate source, test-ad configuration and observation
 unavailable case is not a pass.
 
 ## Part 1 — play, permissions and layouts (C1/C5/C7, A4)
+
+- Verify repeated gameplay for Quebec, CT/NY minors, AU ages 13–14 and MX ages 13–17 with applicable advertising and ad reporting off. Unanswered optional region/notice questions and offline country lookup must not block games. Retain separate required Apple checks and the known under-13 audience rule.
+- Save each New York answer, close/reopen and background/return: do not automatically ask again. Confirm explicit updating in Info remains available. Legacy New York Yes keeps providers off without blocking gameplay.
+- Denying camera access prevents both normal Play and Record & Play until permission is restored. Normal Play and silent Record & Play do not require microphone permission.
 
 - Cold launch without Metro. Check existing onboarding, Home, camera startup, accepted calibration/countdown, Squats/Sky, results and Done / Try Again / Next Level. Verify progress after closing/reopening and no external tracking-code download. Check Stats, Daily Challenge and unlock behavior without changing saved progress to manufacture a pass.
 - Normal Play works without microphone permission. Exercise camera denial → Settings grant → return, microphone denial and permitted silent Record & Play. Include a short auto-lock and background/return interruption, then another run. Camera/microphone capture must stop after leaving their flow. Record OS process-death recovery as untested unless actually observed.
@@ -60,7 +64,7 @@ fill the device's disk, or add developer controls to the release.
 | No optional pregame interruption | First ordinary Squats/Sky run; record any system sheet and its actual requirement. Optional Info/result choices must not become new onboarding. |
 | Native handoff | At the applicable result exit, exercise the existing sheet's Close and Save paths, then background/return while a sheet is visible. Record the chosen action and visible presentations. If Google requires no form for this device, record that fact; do not claim the Google-form transition was physically exercised. |
 | Ad timing and empty readiness | Record eligible exit counts and times of actual ad openings across the session. Confirm first exit free, every-second eligibility and 90-second spacing. If no ad is ready, the action must continue immediately and no later ad may cover gameplay. Do not force live ad clicks. |
-| Offline and unanswered eligibility | During an admitted run, disconnect/return and finish without losing the recording. Before a new run, unavailable country/age/region evidence must show truthful recovery, not repeat ad-free admission. Close/Back/restart leaves an unanswered question unanswered. Restore connectivity and answer only the actual applicable question in Info, then retry. This is distinct from a no-fill callback: unavailable ads must not block an otherwise eligible continuation. |
+| Offline and unanswered advertising questions | Disconnect/return and finish without losing the recording. Start additional local games with missing optional country/age/region evidence or an unread advertising notice; affected providers must remain off. Close/Back/restart must not infer an answer or impose a trial quota. A saved New York answer must not be automatically asked again. Separate required Apple account checks remain applicable. |
 | Reporting receipt and withdrawal | Record a fresh installed RC ID when genuinely created and its permitted event/impression ID, placement and UTC times from available SDK/provider evidence. Match that exact event in the existing RC account. Stop reporting in Info, then background and cold-launch while independently permitted Google ads remain. If the provider view exposes insufficient evidence, keep receipt open; do not use customer-info GET or a connection badge as a substitute. |
 | Failure-specific Retry controls | The two rendered failure/retry regressions already passed. No storage/native failure is manufactured on the owner's device. Any physical failure observed must retain Retry; absent one, these failure cases retain their source-test evidence and are not called physical passes. |
 | Withdrawal while native ad is open | There is no pretend in-ad Info control. Only a genuine applicable external authorization change could exercise this physically. If unavailable, retain the source and worker native cancellation evidence and explicitly leave the physical scenario unexercised. |

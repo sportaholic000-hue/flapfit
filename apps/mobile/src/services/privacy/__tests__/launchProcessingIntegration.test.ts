@@ -42,7 +42,22 @@ async function load(options: { offline?: boolean; unsupported?: boolean; age?: u
 }
 afterEach(() => { process.env = { ...originalEnv }; });
 
-test('excluded Quebec with legacy grants never initializes providers, and withdrawal survives lost eligibility and restart', async () => {
+test.each([['AU', 13], ['MX', 17]] as const)('%s age %s can keep playing without starting advertising providers', async (country, lowerBound) => {
+  const f = await load({ country, age: { status: 'shared', lowerBound, upperBound: 17 } });
+  try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    await flow.preparePostGamePrivacy(() => true, jest.fn()); await settle();
+    expect(await entry.authorizeGameEntry()).toEqual({ status: 'available' });
+    expect(await entry.authorizeGameEntry()).toEqual({ status: 'available' });
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.interstitial.createForAdRequest).not.toHaveBeenCalled();
+    expect(f.nativeAd.show).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+test('Quebec keeps gameplay with legacy grants, providers stay off and withdrawal survives restart', async () => {
   const memory = orderedMemory();
   let f = await load({ country: 'CA', quebecResidency: 'resident', memory });
   try {
@@ -52,7 +67,10 @@ test('excluded Quebec with legacy grants never initializes providers, and withdr
     await flow.preparePostGamePrivacy(() => true, choices); await settle();
     expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.purchases.configure).not.toHaveBeenCalled();
     expect(f.alert).not.toHaveBeenCalled(); expect(choices).not.toHaveBeenCalled();
-    expect(f.access.getProcessingAccess().ads.reason).toBe('release-unavailable');
+    expect(f.access.getProcessingAccess().ads.reason).toBe('regional-advertising-disabled');
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    expect(await entry.authorizeGameEntry()).toEqual({status:'available'});
+    expect(f.interstitial.createForAdRequest).not.toHaveBeenCalled();
     f.access.setLaunchProcessingCountry('CA', false);
     await notice.refuseProcessingPurpose('ads');
     expect(JSON.parse(memory.get('@flapfit/processing-choices-v1')!).choices.ads.decision).toBe('denied');
@@ -65,7 +83,7 @@ test('excluded Quebec with legacy grants never initializes providers, and withdr
   } finally { f.finish(); }
 });
 
-test.each(['CT', 'NY'] as const)('excluded %s minor cannot initialize native ad or reporting SDKs through the result coordinator', async region => {
+test.each(['CT', 'NY'] as const)('%s minor can play while the result coordinator never initializes native ad or reporting SDKs', async region => {
   const f = await load({ age: { status: 'shared', lowerBound: 13, upperBound: 17 } });
   try {
     const regional: typeof import('../regionalClarification') = require('../regionalClarification');
@@ -81,6 +99,10 @@ test.each(['CT', 'NY'] as const)('excluded %s minor cannot initialize native ad 
     expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
     expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
     expect(f.access.getProcessingInputs().choices.analytics.decision).toBe('unset');
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    expect(await entry.authorizeGameEntry()).toEqual({status:'available'});
+    expect(f.interstitial.createForAdRequest).not.toHaveBeenCalled();
+    expect(f.nativeAd.show).not.toHaveBeenCalled();
   } finally { f.finish(); }
 });
 
@@ -102,7 +124,7 @@ test('a newly established New York context disposes a ready teen ad and stops re
     expect(ad!.isReady()).toBe(false);
     expect(f.fence).toHaveBeenLastCalledWith(false);
     const gate: typeof import('../gameEntry') = require('../gameEntry');
-    expect(await gate.authorizeGameEntry(true)).toEqual({ status: 'unavailable', reason: 'new-york-minor' });
+    expect(await gate.authorizeGameEntry()).toEqual({ status: 'available' });
   } finally { f.finish(); }
 });
 

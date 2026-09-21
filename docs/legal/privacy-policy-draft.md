@@ -1,8 +1,8 @@
 # Flap Fit Privacy Policy
 
 Status: historical working draft; do not publish this document over the current website.
-The source-backed release policy is preserved in archive/project-backup-20260921/website-release-eligibility/dist/privacy/index.html.
-See docs/release/evidence/release-eligibility-2026-09-21.md for current availability, disclosure and publication evidence. Final native-artifact reconciliation remains required.
+The archived regional-gameplay-exclusion policy is superseded and must not be published.
+See docs/release/evidence/regional-advertising-correction-2026-09-21.md for the corrected website and current evidence. Final native-artifact reconciliation remains required.
 
 Effective date: set to the actual publication date
 
@@ -24,8 +24,9 @@ not sent to advertising or competition providers. It can be updated in Info > Pr
 
 ## Camera and Record & Play
 
-Flap Fit uses the front camera during gameplay to estimate body landmarks and translate movement
-into bird movement. Pose estimation runs on your device using a model bundled with the app. During
+Camera access is required for all gameplay, including normal Play and Record & Play. If you deny
+or revoke camera access, you cannot start a workout until you enable it in device settings.
+Flap Fit uses the front camera to estimate body landmarks and translate movement into bird movement. Pose estimation runs on your device using a model bundled with the app. During
 normal Play, Flap Fit does not record or upload camera images.
 
 If you select Record & Play, Flap Fit can request microphone permission and create a video containing
@@ -115,8 +116,9 @@ will be updated before that change applies to user data.
 
 ## Your choices and deletion
 
-You may decline camera permission, use normal Play instead of Record & Play, avoid Compete, or stop
-using Compete at any time. In the app, open Info and select Delete online profile to permanently
+You control camera permission in device settings, but camera access is required to play. Normal
+Play also uses the camera. Recording is optional, and microphone permission is optional for audio.
+You may use normal Play without recording, avoid Compete, or stop using Compete at any time. In the app, open Info and select Delete online profile to permanently
 delete the anonymous competition account and its associated profile, scores, blocks, and any challenge data retained from earlier testing. A minimized moderation report may remain until review and for up to 180 days after
 resolution, but the deleted account's user identifier is removed from it. Local game progress stays
 on the device. This action deletes the competition profile; it does not automatically delete

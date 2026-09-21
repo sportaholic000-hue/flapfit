@@ -345,7 +345,7 @@ export default function InfoScreen() {
     'Device: ' + Platform.OS + ' ' + String(Platform.Version),
   ].join('\n');
 
-  const emailSupport = async (kind: 'contact' | 'bug') => {
+  const emailSupport = async (kind: 'contact' | 'bug' | 'ad') => {
     if (!supportEmail) {
       Alert.alert(
         'Support address needed',
@@ -353,8 +353,14 @@ export default function InfoScreen() {
       );
       return;
     }
-    const subject = kind === 'bug' ? 'Flap Fit bug report' : 'Flap Fit support';
-    const details = kind === 'bug' ? '\n\n' + bugReportDetails : '';
+    const subject = kind === 'ad' ? 'Flap Fit inappropriate ad report' : kind === 'bug' ? 'Flap Fit bug report' : 'Flap Fit support';
+    const details = kind === 'ad' ? [
+      'Advertiser or app shown:', '',
+      'Why the ad is inappropriate or unsuitable for your age:', '',
+      'Approximate date and time shown:', '',
+      'Optional: attach a screenshot of the ad. Do not include camera footage or sensitive personal information.',
+      '', 'Flap Fit version: ' + version,
+    ].join('\n') : kind === 'bug' ? '\n\n' + bugReportDetails : '';
     const url = `mailto:${supportEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(details)}`;
     try {
       await Linking.openURL(url);
@@ -635,6 +641,12 @@ export default function InfoScreen() {
               onPress={() => void openAdPrivacy()}
             />
           ) : null}
+          <ActionRow
+            icon={<MessageSquareWarning size={21} color="#DC2626" />}
+            title="Report an inappropriate ad"
+            subtitle="Report offensive or age-inappropriate advertising to support"
+            onPress={() => void emailSupport('ad')}
+          />
           <ActionRow
             icon={<TriangleAlert size={21} color="#EA580C" />}
             title="Fitness safety"

@@ -9,12 +9,11 @@
   "exactReplacementCharacters": 3937,
   "maxlengthAttribute": null,
   "saveDisabledAfterRead": true,
-  "status": "PREPARED_NOT_SAVED",
+  "status": "CANCELLED_DO_NOT_APPLY",
   "replaceExactly": "Optional features require usable Apple age and regional eligibility evidence. Where the required Apple APIs or authorization are unavailable, including older iOS versions, local gameplay remains available while online competition, ads and reporting may be restricted.",
-  "replacement": "Release availability: Canada outside Quebec 13+, Australia 15+, Mexico 18+, and US 13+ except Connecticut residents under 18 and users under 18 with established New York protections. Quebec is excluded in-app by a local Yes/No answer; the rest of Canada remains available. A saved New York Yes retains the minor restriction after leaving New York, until adult eligibility. Availability is independent of consent/refusal. One initial game precedes optional setup unless already known ineligible or restricted by Apple. Missing age/region answers and the ad notice must then be resolved in Info > Privacy & choices before another game; Close/restart infers nothing. Unsupported older iOS uses a local age-band answer, never a substitute for required Apple checks. Existing refusals and support/deletion remain accessible; ad no-fill does not block eligible continuation.",
   "preserve": "All other existing notes, contacts, no-login choice, listing, rating, countries, pricing and release choice.",
-  "authorization": "App Store edits remain held under the source-only boundary; a specific approval is needed before filling/saving this replacement.",
-  "verificationRequiredAfterAuthorizedSave": "Reload Notes and compare its actual value to the original with this exact two-sentence replacement. No success or persistence is claimed yet.",
+  "authorization": "The owner rejected the proposed regional gameplay exclusions. Do not fill or save the superseded replacement. Apple access for this correction is read-only.",
+  "verificationRequiredAfterAuthorizedSave": "Cancelled: no Apple text edit is required for this regional correction.",
   "websiteReadback": {
     "version": 32,
     "versionId": "appgprj_6aa368d995348191b4206fa03f951b3a~appgver_f3e9049c52088191a4211d624b014535",
@@ -23,5 +22,15 @@
     "deploymentId": null,
     "status": "SAVED_NOT_DEPLOYED",
     "method": "Existing Sites version readback; no deploy retry. Automatic approval rejection and pending owner question remain in effect."
+  },
+  "supersededReplacement": "Release availability: Canada outside Quebec 13+, Australia 15+, Mexico 18+, and US 13+ except Connecticut residents under 18 and users under 18 with established New York protections. Quebec is excluded in-app by a local Yes/No answer; the rest of Canada remains available. A saved New York Yes retains the minor restriction after leaving New York, until adult eligibility. Availability is independent of consent/refusal. One initial game precedes optional setup unless already known ineligible or restricted by Apple. Missing age/region answers and the ad notice must then be resolved in Info > Privacy & choices before another game; Close/restart infers nothing. Unsupported older iOS uses a local age-band answer, never a substitute for required Apple checks. Existing refusals and support/deletion remain accessible; ad no-fill does not block eligible continuation.",
+  "readOnlyVerification": {
+    "checkedOn": "2026-09-21",
+    "version": "1.0",
+    "status": "Prepare for Submission",
+    "saveDisabled": true,
+    "regionalGameplayExclusionsPresent": false,
+    "localGameplayFallbackPresent": true,
+    "method": "Authorized read-only browser inspection of the saved Notes textbox; no input, Save or submission action."
   }
 }

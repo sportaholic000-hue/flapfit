@@ -1,0 +1,67 @@
+{
+  "recordedAt": "2026-09-21T17:26:30.689Z",
+  "baselineCommit": "bb12be76639c4cfeb1a130767555979fd697f244",
+  "branch": "wip/crash-protection-20260920",
+  "appBuildStarted": false,
+  "appUploaded": false,
+  "submittedForReview": false,
+  "appleSettingsChanged": false,
+  "admobSettingsChanged": false,
+  "revenueCatSettingsChanged": false,
+  "checks": {
+    "fullJest": {
+      "suites": 67,
+      "tests": 1392,
+      "failedTests": 0,
+      "success": true
+    },
+    "focusedPrivacyUi": {
+      "tests": 41,
+      "success": true
+    },
+    "typeScript": "passed",
+    "strictOxlint": "passed",
+    "productionReleaseConfiguration": "passed",
+    "websiteValidation": "passed"
+  },
+  "hashEncoding": "UTF-8 with LF-normalized line endings",
+  "changedRuntimeSourceSha256": {
+    "apps/mobile/src/app/(tabs)/info.tsx": "a5649232babb27334ae7caddc3e003430073dffb9a6a131d55656fcedbdb78a6",
+    "apps/mobile/src/app/game.tsx": "111b06a2ab5be9e7d6f2de1b5e39c297e38f58f98aab28456adda73e01539a8a",
+    "apps/mobile/src/components/GameEligibilityGate.tsx": "a92fb067c70d440bf26d91e11bc87e8a922eabd3f98135e7f2da9e77ec09baee",
+    "apps/mobile/src/components/PrivacyChoices.tsx": "275eb80efc9ea009a4860d20928fc87f1f4a8946e09bd614f14e372f985c8aed",
+    "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx": "8a6afd521025c1b600924557a6f500328b0c2dcad8489e79f6658297686cbbcc",
+    "apps/mobile/src/components/__tests__/GameEligibilityGate.test.tsx": "b08edd611eeaaf6fdf11935f19249189adafd0f3947c9224ae06e6d3b6e57824",
+    "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx": "ef3f74dacdc4a017111900eb6a469ebd32f568cc7fa72e80b7c909ebceb0c39d",
+    "apps/mobile/src/services/privacy/__tests__/gameEntry.test.ts": "50c25bc141c6b464a78dbde685a6be8b29239f211b1e642a34f1c4f4143515ff",
+    "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts": "3fe87ce71a08ad6996d97a0095983a4ee1c857d75cbfc1a1cb1c964eab7eefc5",
+    "apps/mobile/src/services/privacy/__tests__/newYorkClarification.test.ts": "ea6ad735e86771de9b647e73ccd3c65db5f23440cdad15236d6e86a161382629",
+    "apps/mobile/src/services/privacy/__tests__/releaseEligibility.test.ts": "5a263b0d6df238d81484b4a2be12768ad334a5667ace54196269c62f007d1dde",
+    "apps/mobile/src/services/privacy/gameEntry.ts": "4ca988a2ede65aff01d072e4940ba948759aea71a6c918ac2e2510eeb7d9f017",
+    "apps/mobile/src/services/privacy/launchProcessingPolicy.ts": "ed10bbf32d311ece31d8d8a4fd5b68e611bdf10b2243a7490adcabab8f25c937",
+    "apps/mobile/src/services/privacy/newYorkClarification.ts": "57a815df6ab1a5271e1c707e94f326a5f3976b450cd80dbec8d6ec419ddc0541",
+    "apps/mobile/src/services/privacy/postGamePrivacy.ts": "217d0ee28c5798734fdde59e7be7c106796778e8ffb806eef63557f36cbbc860",
+    "apps/mobile/src/services/privacy/processingAccess.ts": "7836b65ca61912313506caaff40b8da2d4e2e113a1eb5d9cc8d2862ffa12a801",
+    "apps/mobile/src/services/privacy/processingAvailability.ts": "25de81b41f69c5a8040d7fb3040bfcf72769e9d2412b67585e754dd77f7eba78",
+    "apps/mobile/src/services/privacy/processingNotice.ts": "61c94dd781cbee25a39162ae6357ca4f6ef604253a0f86a4fae947b032e5ad7f",
+    "apps/mobile/src/services/privacy/processingPolicy.ts": "f6fd4afb296890b822011b2c3e44eff40b01477f85352f5206eac488dfb2960c",
+    "apps/mobile/src/services/privacy/regionalAdvertising.ts": "8ad75555914d4ba5ccc2fe35bfaad5c5d41a82d1d02f47c311d5790171937a32",
+    "apps/mobile/src/services/privacy/releaseEligibility.ts": "23ed77aa57225fe790a71c0bb374b75a51f5158193c7c1c7805fa887d4fe323a"
+  },
+  "website": {
+    "commit": "9137dd210a7f89e49c487f73e002e59799d9f4da",
+    "version": 34,
+    "deploymentId": "appgdep_6ab167bc2bd081918cb4e68b7bd75384",
+    "status": "succeeded",
+    "archiveSha256": "cf70749990bbf2d5cfe49fc46763997224e6478e5986433394fffa16d63ec1d6",
+    "files": 41
+  },
+  "remaining": [
+    "Independent source audit before build",
+    "AU/MX minor ad eligibility route remains restricted and is not a blanket Apple prohibition",
+    "Actual compiled artifact and physical-device behavior not verified",
+    "AdMob public store linkage and readiness review",
+    "Genuine permitted RevenueCat receipt",
+    "Final screenshot sets, privacy publication and submission authorization"
+  ]
+}

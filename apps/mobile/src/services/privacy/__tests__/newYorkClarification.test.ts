@@ -27,19 +27,18 @@ test('current No permits independent ads without consent; reporting refusal stay
   await f.regional.saveNewYorkPresence('not-present');
   expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
   expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: false, reason: 'refused' }, competition: { allowed: true } });
-  expect(f.memory.has(KEY)).toBe(false);
+  expect(JSON.parse(f.memory.get(KEY)!)).toEqual({version:2,answer:'not-present',protectedHistory:false});
 });
-test('No is not a durable location; refresh and restart require a current answer without erasing refusals', async () => {
+test('saved No survives refresh and restart without repeating the question or erasing refusals', async () => {
   let f = await fixture();
   await f.access.setProcessingChoice('analytics', 'denied');
   await f.regional.saveNewYorkPresence('not-present');
   f.access.setLaunchProcessingCountry(null, false);
   f.access.setLaunchProcessingCountry('US', true);
-  expect(f.regional.needsNewYorkClarification()).toBe(true);
-  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
-  await f.regional.saveNewYorkPresence('not-present');
+  expect(f.regional.needsNewYorkClarification()).toBe(false);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
   f = await fixture(f.memory);
-  expect(f.regional.needsNewYorkClarification()).toBe(true);
+  expect(f.regional.needsNewYorkClarification()).toBe(false);
   expect(f.access.getProcessingAccess().revenueCat.reason).toBe('refused');
 });
 test('Yes survives country change and restart; a later No is not an eraser of protected history', async () => {
@@ -47,7 +46,7 @@ test('Yes survives country change and restart; a later No is not an eraser of pr
   await f.regional.saveNewYorkPresence('present');
   await f.regional.saveNewYorkPresence('not-present');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
-  expect(JSON.parse(f.memory.get(KEY)!)).toEqual({ version: 1, protectedHistory: true });
+  expect(JSON.parse(f.memory.get(KEY)!)).toEqual({ version: 2, answer: 'not-present', protectedHistory: true });
   f.access.setLaunchProcessingCountry('AU', true);
   f.access.verifyLaunchAgeEvidence({ source: 'apple', status: 'shared', lowerBound: 15, upperBound: 17 }, 'AU', f.access.getAgeVerificationRevision());
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
@@ -106,4 +105,22 @@ test('adults and a confirmed CT minor do not get an unnecessary NY question', as
   f.access.applyConnecticutResidency('not-resident');
   f.access.verifyLaunchAgeEvidence({ source: 'apple', status: 'shared', lowerBound: 18, upperBound: null }, 'US', f.access.getAgeVerificationRevision());
   expect(f.regional.hasNewYorkClarificationControl()).toBe(false);
+});
+
+test('legacy Yes migrates without asking again and never restricts gameplay',async()=>{
+  const f=await fixture(new Map([[KEY,JSON.stringify({version:1,protectedHistory:true})]]));
+  expect(f.regional.hasSavedNewYorkAnswer()).toBe(true);
+  expect(f.regional.needsNewYorkClarification()).toBe(false);
+  const entry:typeof import('../gameEntry')=require('../gameEntry');
+  expect(await entry.authorizeGameEntry()).toEqual({status:'available'});
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+});
+test('failed No save cannot enable ads or falsely suppress the unanswered question',async()=>{
+  const f=await fixture();f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+  await expect(f.regional.saveNewYorkPresence('not-present')).rejects.toThrow('not confirmed');
+  expect(f.regional.hasSavedNewYorkAnswer()).toBe(false);
+  expect(f.regional.needsNewYorkClarification()).toBe(true);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.regional.saveNewYorkPresence('not-present');
+  expect(f.regional.needsNewYorkClarification()).toBe(false);
 });

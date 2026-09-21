@@ -295,9 +295,6 @@ export function setLaunchProcessingCountry(country: LaunchCountry | null, curren
         ...(previous?.options.newYorkProtectedHistory || previous?.plan?.newYorkKnownContext ? { newYorkProtectedHistory: true } : {}),
         ...(previous?.options.newYorkHistoryReadConfirmed !== undefined ? { newYorkHistoryReadConfirmed: previous.options.newYorkHistoryReadConfirmed } : {}),
       } : previous?.options ?? {} } });
-  if (!current && input.launch?.options.newYorkPresence === 'not-present') {
-    applyNewYorkContext({ newYorkPresence: 'unknown' });
-  }
   return changed;
 }
 export function setLaunchProcessingPlan(plan: LaunchProcessingPlan, expectedRevision: number): boolean {

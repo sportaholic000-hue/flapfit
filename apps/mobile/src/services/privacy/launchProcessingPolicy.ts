@@ -25,7 +25,7 @@ export type LaunchProcessingOptions = {
   quebecResidency?: QuebecResidency;
   /** Explicit local clarification, not IP location or New York consent. */
   connecticutResidency?: ConnecticutResidency;
-  /** Current-session location answer, never inferred from residence or storefront. */
+  /** Saved local declaration, not a verified location or consent grant. */
   newYorkPresence?: 'present' | 'not-present' | 'unknown';
   /** Known prior covered-user context is retained across country changes. */
   newYorkProtectedHistory?: boolean;
@@ -70,8 +70,8 @@ export type LaunchProcessingResolution = LaunchProcessingPlan & {
 /** No birthday; at most three Apple thresholds in any request. */
 export function launchAppleAgeGates(country: string | null): [number, number, number] {
   switch (country?.trim().toUpperCase()) {
-    // Quebec is outside this release's availability. The supported Canadian
-    // audience starts at 13; do not lose thirteen-year-olds to a 14 boundary.
+    // Gameplay includes Quebec; its ad providers remain disabled. Establish the
+    // 13+ audience without using the advertising authority threshold for play.
     case 'CA': return [13, 16, 18];
     case 'AU': return [13, 15, 18];
     default: return [13, 16, 18];

@@ -1,5 +1,9 @@
 # Regional processing requirement resolver
 
+Current release behavior (September 21 owner correction): `regionalAdvertising.ts` disables advertising and ad-event reporting for Quebec, CT/NY minors, Australian ages 13–14 and Mexican minors even if a lower-level resolver could permit a purpose. `releaseEligibility.ts` keeps these regional decisions separate from gameplay. Both New York answers persist locally; foreground refresh does not require a new answer. The resolver rows below describe processing prerequisites, not gameplay exclusions or permission to bypass the release advertising policy.
+
+Advertising-data withdrawal correction (September 21): notice-based users and explicit-consent users have an accessible withdrawal control in Info. This supersedes older no-switch guidance: eligible ads continue by default; only a privacy withdrawal stops new requests. Reporting withdrawal remains independent. Known under-13 users remain excluded by the owner-confirmed 13+ minimum.
+
 This pure resolver covers the reviewed Canada/US launch scope. It does not start an SDK, present UI, persist age evidence, change app availability, or replace the central processing policy. No policy is selected from locale, timezone, missing age, a privacy-policy link alone, or an Apple API failure.
 
 Import resolveRegionalPolicy from ./regionalPolicy. Supply verified country/state codes and Quebec status (QC or explicit CA-NON-QC; exact province is unnecessary), ephemeral age evidence, purpose-specific New York applicability evidence, explicit data-flow assessments and purpose-specific signals. Pass the returned region/requirements to the central processing policy; keep reasons/unresolvedConditions for implementation diagnostics, not analytics. That policy still checks the Apple age requirement, current notice version and independent choices.
@@ -44,7 +48,7 @@ Competition is only a requested-service requirement after the common age/region 
 
 ## Integration boundaries
 
-Use available Apple system age information and required regional features before considering a custom question. A suitable Apple threshold-14 request can refine Quebec eligibility when the system shares sufficient bounds; errors, refusal and cached broad ranges remain unresolved. UMP manages its configured messages before ad initialization, but does not establish age, every applicable jurisdiction or RevenueCat permission. Existing onboarding/Info can provide the required notice. No standalone disclosure screen, custom location/age questionnaire or discretionary ads switch is authorized by this resolver.
+Use available Apple system age information and required regional features before considering a custom question. A suitable Apple threshold-14 request can refine Quebec eligibility when the system shares sufficient bounds; errors, refusal and cached broad ranges remain unresolved. UMP manages its configured messages before ad initialization, but does not establish age, every applicable jurisdiction or RevenueCat permission. Existing onboarding/Info can provide the required notice. This resolver does not itself authorize a new disclosure screen or questionnaire. The current release UI and accessible advertising-data withdrawal are documented above.
 
 Resolve each actual missing applicability or processing fact before proposing a fallback. In particular, a residence question alone cannot resolve NY scope. Honor purpose-specific refusal/withdrawal, UMP and central-policy denials independently. Generic consent cannot establish CT necessity; analytics refusal does not disable separately permitted ads. These requirements do not select a worldwide production policy.
 

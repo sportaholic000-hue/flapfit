@@ -1,8 +1,13 @@
 # Apple-first completion tracker
 
-## September 21 release eligibility — CURRENT SOURCE VERIFIED; BUILD HELD
+## Current audit gate — September 21
 
-Current source closes the dismissal bypass, regional scope and older-OS/unknown-age behavior with eligibility independent of consent. Quebec is excluded by explicit in-app answer; CA outside QC 13+, AU15+, MX18+, US13+ except CT/known-NY minors. Saved refusals remain honored, not erased or used to deny access. **67 suites / 1,383 tests**, TypeScript, strict lint, release/privacy validators and actual local EAS packaging (**805 files / 300 matching inputs**) pass. See **evidence/release-eligibility-2026-09-21.md** for exact behavior, all finding dispositions and limits. Website version 32 is saved and source-backed but publication was blocked by automatic approval review; version 31 remains live. Apple fallback-note replacement is prepared, not saved. Build/Apple upload/submission remain held. Earlier dated checkpoints below retain only their original scope.
+The owner requires an independent inspection before any final app build. Source fixes, full checks and the website update are recorded in [the audit handoff](third-party-audit-2026-09-21.md). **67 suites / 1,392 tests**, TypeScript, strict lint and release validation pass. Website version 34 is published. No mobile build, Apple upload, metadata edit or submission occurred. Wait for the owner’s explicit build instruction after the audit. This supersedes earlier build-preparation wording below.
+
+
+## September 21 owner correction — regional advertising only
+
+Regional gameplay exclusions were not authorized. Current source separates game access from advertising and reporting, removes the first-run quota and notice requirement, and saves both New York answers without automatic re-questioning. Camera permission is required for all gameplay; recording and microphone audio remain optional. Existing privacy withdrawals, competition controls and ad cadence are retained. See **evidence/regional-advertising-correction-2026-09-21.md** for current checks and publication status. The exclusion-based Apple review-note draft is cancelled; the saved Apple notes were checked read-only and do not contain those bans. No native build, Apple edit, upload or submission is part of this correction.
 
 ## Older-iOS eligibility fallback — verified source, BUILD HELD
 
@@ -139,7 +144,7 @@ Evidence: `evidence/focused-privacy-review-2026-09-20.md` and machine-readable r
 | E6 pricing/territory/release | Complete saved selection | Free; exactly AU/CA/MX/US available at release; future-country automatic availability unchecked; automatic release after approval retained. Earlier 172-country selection is superseded. |
 | E7 Apple upload/processing/attachment | Authentication COMPLETE; no Apple builds or selected build | Task 4 secure credential/authentication results preserved unchanged. Current TestFlight explicitly shows No Builds; version 1.0 has no selected build and no processing row or build-specific compliance prompt. Final binary transfer, Apple validation/processing and version attachment await separate authorization. Evidence: tasks-5-6-reconciliation-2026-09-20.md; tasks-3-4-completion-2026-09-20.md. |
 | F1 evidence sheet/backups | Current scoped source/evidence backed up | Current commit contains source checks, package hashes/Git reconciliation, saved website source and explicit remaining authorization/artifact/device/provider/Apple actions. Unrelated local work preserved. |
-| F2 readiness | NOT acceptance- or submission-ready | Source/package verification complete. Website publication authorization and narrow Apple-note alignment remain non-device actions; signed artifact, consolidated devices, genuine receipts, screenshots and final Apple actions remain distinct. Organizer PDF deferred, not required/completed. |
+| F2 readiness | NOT acceptance- or submission-ready | Regional advertising-only source correction is verified in the current correction evidence. Use its website publication result. The exclusion-based Apple-note draft is cancelled; a read-only check confirmed it was never saved. Signed artifact, consolidated devices, genuine receipts, screenshots and final Apple actions remain distinct. Organizer PDF deferred, not required/completed. |
 | F3 Submit for Review | Not performed | Owner reviews concrete completed submission before final send. |
 
 

@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { applyNewYorkContext, getAgeVerificationRevision, getProcessingInputs, hydrateProcessingAccess } from './processingAccess';
 
 const KEY = '@flapfit/new-york-eligibility-v1';
+type Answer = 'present' | 'not-present';
+let savedAnswer: Answer | null = null;
 let readConfirmed = false;
 let protectedHistory = false;
 let pendingRead: Promise<void> | null = null;
@@ -10,8 +12,8 @@ let revision = 0;
 let changing = false;
 let saveUnconfirmed = false;
 
-/** Only a local yes/history bit is stored. No location coordinates, raw Apple
- * age range, ad permission or provider identifier belongs in this record. */
+/** Both explicit answers persist locally. A declaration is not a live location,
+ * consent grant or age record. Preserve legacy positive protection history. */
 export async function restoreNewYorkClarification(): Promise<void> {
   await hydrateProcessingAccess();
   const current = getProcessingInputs().launch;
@@ -22,45 +24,50 @@ export async function restoreNewYorkClarification(): Promise<void> {
       try {
         const raw = await AsyncStorage.getItem(KEY);
         const value = raw === null ? null : JSON.parse(raw);
-        if (raw !== null && (value?.version !== 1 || typeof value.protectedHistory !== 'boolean')) throw new Error('Invalid eligibility record');
-        protectedHistory ||= value?.protectedHistory === true;
+        if (raw !== null) {
+          if ((value?.version !== 1 && value?.version !== 2) || typeof value.protectedHistory !== 'boolean' ||
+              (value.version === 2 && !['present', 'not-present'].includes(value.answer))) throw new Error('Invalid regional answer');
+          protectedHistory ||= value.protectedHistory === true || value.answer === 'present';
+          savedAnswer = value.version === 2 ? value.answer : value.protectedHistory ? 'present' : null;
+        }
         readConfirmed = true;
-      } catch { /* Retry remains available; unread history never becomes a clean history. */ }
+      } catch { /* Unknown saved answers never enable processing. Retry is explicit. */ }
     })().finally(() => { pendingRead = null; });
   }
   await pendingRead;
-  applyNewYorkContext({ newYorkProtectedHistory: protectedHistory, newYorkHistoryReadConfirmed: readConfirmed });
+  applyNewYorkContext({ newYorkProtectedHistory: protectedHistory, newYorkHistoryReadConfirmed: readConfirmed,
+    ...(getProcessingInputs().launch?.country === 'US' && !changing && !saveUnconfirmed
+      ? { newYorkPresence: readConfirmed ? savedAnswer ?? 'unknown' : 'unknown' } : {}) });
 }
 
 export function hasNewYorkClarificationControl(): boolean {
   const input = getProcessingInputs();
   return input.hydrated && !!input.launch?.current && input.launch.country === 'US' &&
     input.launch.plan?.ageEligibility === 'allowed' && input.launch.plan.treatment !== 'unspecified' &&
-    input.launch.options.connecticutResidency === 'not-resident' &&
-    !input.appleAccessRestricted;
+    input.launch.options.connecticutResidency === 'not-resident' && !input.appleAccessRestricted;
+}
+export function hasSavedNewYorkAnswer(): boolean {
+  return readConfirmed && savedAnswer !== null && !saveUnconfirmed;
 }
 export function needsNewYorkClarification(): boolean {
-  const input = getProcessingInputs();
-  return hasNewYorkClarificationControl() && (saveUnconfirmed || changing || !readConfirmed ||
-    (!input.launch?.options.newYorkProtectedHistory && input.launch?.options.newYorkPresence !== 'not-present'));
+  return hasNewYorkClarificationControl() && (changing || !hasSavedNewYorkAnswer());
 }
 export function newYorkClarificationStatus(): string {
   if (saveUnconfirmed) return 'Answer save not confirmed · retry loading or saving your answer';
   if (changing) return 'Saving your answer';
   if (!readConfirmed) return 'Saved regional status unavailable · retry loading';
-  const context = getProcessingInputs().launch?.options;
-  if (context?.newYorkProtectedHistory) return 'New York protections retained for this age group';
-  return context?.newYorkPresence === 'not-present' ? 'Outside New York for this session' : 'Not answered';
+  if (protectedHistory) return 'New York advertising protections retained. Gameplay remains available.';
+  return savedAnswer === 'not-present' ? 'Saved answer: No. Update it here if your situation changes.' : 'Not answered';
 }
 export const hasNewYorkReadError = () => !readConfirmed;
 
-export async function saveNewYorkPresence(answer: 'present' | 'not-present'): Promise<void> {
+export async function saveNewYorkPresence(answer: Answer): Promise<void> {
   if (!['present', 'not-present'].includes(answer)) throw new Error('Choose Yes or No.');
-  if (!hasNewYorkClarificationControl()) throw new Error('Eligibility changed. Reopen Info to review your answer.');
+  if (!hasNewYorkClarificationControl()) throw new Error('Privacy settings changed. Reopen Info to review your answer.');
   const token = ++revision;
   const ageRevision = getAgeVerificationRevision();
   changing = true;
-  // A No never clears an existing protection or a failed Yes save.
+  // A positive answer closes providers immediately; No cannot erase known history.
   if (answer === 'present') {
     protectedHistory = true;
     applyNewYorkContext({ newYorkPresence: 'present', newYorkProtectedHistory: true });
@@ -68,8 +75,9 @@ export async function saveNewYorkPresence(answer: 'present' | 'not-present'): Pr
   const operation = writes.catch(() => undefined).then(async () => {
     await restoreNewYorkClarification();
     if (!readConfirmed) throw new Error('Saved regional status could not be read. Retry loading before answering.');
-    if (protectedHistory) await AsyncStorage.setItem(KEY, JSON.stringify({ version: 1, protectedHistory: true }));
+    await AsyncStorage.setItem(KEY, JSON.stringify({ version: 2, answer, protectedHistory }));
     if (token !== revision) return;
+    savedAnswer = answer;
     saveUnconfirmed = false;
     if (ageRevision === getAgeVerificationRevision() && hasNewYorkClarificationControl()) {
       applyNewYorkContext({ newYorkPresence: answer, newYorkProtectedHistory: protectedHistory });
@@ -79,6 +87,6 @@ export async function saveNewYorkPresence(answer: 'present' | 'not-present'): Pr
   try { await operation; }
   catch {
     if (token === revision) saveUnconfirmed = true;
-    throw new Error('Your answer is not confirmed. Retry loading or saving in Info. An unanswered question does not allow advertising.');
+    throw new Error('Your answer is not confirmed. Retry loading or saving in Info. Gameplay remains available; an unanswered question does not allow advertising.');
   } finally { if (token === revision) changing = false; }
 }

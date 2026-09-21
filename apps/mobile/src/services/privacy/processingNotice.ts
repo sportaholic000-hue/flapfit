@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ageProcessingAvailability } from './processingAvailability';
-import { releaseEligibilityMessage, resolveReleaseEligibility } from './releaseEligibility';
+import { isRegionalAdvertisingDisabled } from './regionalAdvertising';
 import {
   beginProcessingChoice, getProcessingAccess, getProcessingInputs, hydrateProcessingAccess, isProcessingChoiceCurrent, isCurrentProcessingSaveFailure,
   markProcessingNoticePresented, notifyProcessingChoiceIntent, setLaunchProcessingOptions, setProcessingChoice,
@@ -130,7 +130,7 @@ export function canChooseProcessingPurpose(purpose: 'ads' | 'analytics'): boolea
   const input = getProcessingInputs();
   const plan = input.launch?.plan;
   return input.hydrated && !!input.launch?.current && !!plan && plan.ageEligibility === 'allowed' &&
-    resolveReleaseEligibility(input).status === 'available' &&
+    !isRegionalAdvertisingDisabled(input) &&
     !input.appleAccessRestricted && !plan.parentalAuthorityRequired[purpose] &&
     plan.requirements[purpose] !== 'unresolved';
 }
@@ -138,7 +138,7 @@ export function canChooseProcessingPurpose(purpose: 'ads' | 'analytics'): boolea
 export function needsSeparatePurposeChoice(purpose: 'ads' | 'analytics'): boolean {
   const input = getProcessingInputs();
   const plan = input.launch?.plan;
-  if (resolveReleaseEligibility(input).status !== 'available') return false;
+  if (isRegionalAdvertisingDisabled(input)) return false;
   if (!plan || plan.ageEligibility !== 'allowed' || plan.parentalAuthorityRequired[purpose] ||
       plan.requirements[purpose] === 'unresolved' || input.choices[purpose].decision === 'denied') return false;
   if (plan.requirements[purpose] !== 'express-consent') return false;
@@ -169,10 +169,9 @@ export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
   }
   if (!input.hydrated) return 'Saved privacy choices are unavailable · retry loading';
   if (input.choices[purpose].decision === 'denied') return 'Off by your choice';
+  if (isRegionalAdvertisingDisabled(input)) return 'Off for your regional privacy setting. Gameplay remains available.';
   const ageAvailability = ageProcessingAvailability();
   if (ageAvailability) return ageAvailability;
-  const availability = resolveReleaseEligibility(input);
-  if (input.launch && availability.status !== 'available') return releaseEligibilityMessage(availability);
   if (decision.allowed) return purpose === 'ads' ? 'Permitted · Google choices also apply' : 'On';
   if (needsSeparatePurposeChoice(purpose)) return 'Your permission is needed';
   if (decision.reason === 'notice-needed') return 'Available after this notice';
@@ -190,6 +189,6 @@ export function canPresentProcessingNotice(): boolean {
   const input = getProcessingInputs();
   const plan = input.launch?.plan;
   return input.hydrated && !!input.launch?.current && !!plan && plan.ageEligibility === 'allowed' &&
-    !input.appleAccessRestricted && (['ads', 'analytics'] as Purpose[]).some(purpose =>
+    !input.appleAccessRestricted && !isRegionalAdvertisingDisabled(input) && (['ads', 'analytics'] as Purpose[]).some(purpose =>
       input.choices[purpose].decision !== 'denied' && plan.requirements[purpose] !== 'unresolved' && !plan.parentalAuthorityRequired[purpose]);
 }
