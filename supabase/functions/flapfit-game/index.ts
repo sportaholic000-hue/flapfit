@@ -228,7 +228,7 @@ Deno.serve(async (req) => {
           profile_id: row.user_id,
           player_name: Array.isArray(row.profiles)
             ? row.profiles[0]?.player_name
-            : row.profiles?.player_name,
+            : (row.profiles as { player_name: string } | null)?.player_name,
           score: row.score,
           exercise: row.exercise,
           is_me: row.user_id === user.id,
@@ -251,7 +251,7 @@ Deno.serve(async (req) => {
           p_challenge_code: null,
           p_rules_version: CURRENT_RUN_RULES_VERSION,
         })
-        .single();
+        .single<{ run_id: string; expires_at: string }>();
       if (runResult.error) throw databaseApiError(runResult.error) ?? runResult.error;
       return json({ run_id: runResult.data.run_id, expires_at: runResult.data.expires_at }, 201);
     }
@@ -272,7 +272,7 @@ Deno.serve(async (req) => {
           p_terms_version: requestTermsVersion ?? CURRENT_TERMS_VERSION,
           p_rules_version: CURRENT_RUN_RULES_VERSION,
         })
-        .single();
+        .single<{ improved: boolean; result_kind: string; exercise_name: string; challenge_code: string | null }>();
       if (finalizeResult.error) {
         throw databaseApiError(finalizeResult.error) ?? finalizeResult.error;
       }
