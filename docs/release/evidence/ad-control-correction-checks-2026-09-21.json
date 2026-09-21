@@ -1,0 +1,84 @@
+{
+  "recordedAt": "2026-09-21T20:22:30.328Z",
+  "baselineCommit": "040ea662b56d963bf90d98002b69cabda45d4b84",
+  "branch": "wip/crash-protection-20260920",
+  "appBuildStarted": false,
+  "appUploaded": false,
+  "submittedForReview": false,
+  "accountSettingsChanged": false,
+  "checks": {
+    "fullJest": {
+      "suites": 67,
+      "tests": 1400,
+      "failedTests": 0,
+      "success": true
+    },
+    "focusedPrivacyUi": {
+      "tests": 49,
+      "success": true
+    },
+    "typeScript": "passed",
+    "strictOxlint": "passed",
+    "productionReleaseConfiguration": "passed",
+    "websiteValidation": "passed"
+  },
+  "hashEncoding": "UTF-8 with LF-normalized line endings",
+  "changedRuntimeSourceSha256": {
+    "apps/mobile/src/app/(tabs)/info.tsx": "a5649232babb27334ae7caddc3e003430073dffb9a6a131d55656fcedbdb78a6",
+    "apps/mobile/src/app/game.tsx": "111b06a2ab5be9e7d6f2de1b5e39c297e38f58f98aab28456adda73e01539a8a",
+    "apps/mobile/src/components/GameEligibilityGate.tsx": "a92fb067c70d440bf26d91e11bc87e8a922eabd3f98135e7f2da9e77ec09baee",
+    "apps/mobile/src/components/PrivacyChoices.tsx": "9029435a18e7dedb582e6706c2cbf9cf1b3672c8069362ae64b557bcb4de6b7c",
+    "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx": "8a6afd521025c1b600924557a6f500328b0c2dcad8489e79f6658297686cbbcc",
+    "apps/mobile/src/components/__tests__/GameEligibilityGate.test.tsx": "b08edd611eeaaf6fdf11935f19249189adafd0f3947c9224ae06e6d3b6e57824",
+    "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx": "be8593cad4b3cad84b84382cb1315a410fb60bf1dd699b2d3691c5dbfbbcaa4b",
+    "apps/mobile/src/services/privacy/__tests__/gameEntry.test.ts": "50c25bc141c6b464a78dbde685a6be8b29239f211b1e642a34f1c4f4143515ff",
+    "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts": "3fe87ce71a08ad6996d97a0095983a4ee1c857d75cbfc1a1cb1c964eab7eefc5",
+    "apps/mobile/src/services/privacy/__tests__/newYorkClarification.test.ts": "ea6ad735e86771de9b647e73ccd3c65db5f23440cdad15236d6e86a161382629",
+    "apps/mobile/src/services/privacy/__tests__/releaseEligibility.test.ts": "5a263b0d6df238d81484b4a2be12768ad334a5667ace54196269c62f007d1dde",
+    "apps/mobile/src/services/privacy/gameEntry.ts": "4ca988a2ede65aff01d072e4940ba948759aea71a6c918ac2e2510eeb7d9f017",
+    "apps/mobile/src/services/privacy/launchProcessingPolicy.ts": "ed10bbf32d311ece31d8d8a4fd5b68e611bdf10b2243a7490adcabab8f25c937",
+    "apps/mobile/src/services/privacy/newYorkClarification.ts": "57a815df6ab1a5271e1c707e94f326a5f3976b450cd80dbec8d6ec419ddc0541",
+    "apps/mobile/src/services/privacy/postGamePrivacy.ts": "69a7448f431e2ea13431355136423a62acb43f6111fc0ee93d46da62914ab878",
+    "apps/mobile/src/services/privacy/processingAccess.ts": "7836b65ca61912313506caaff40b8da2d4e2e113a1eb5d9cc8d2862ffa12a801",
+    "apps/mobile/src/services/privacy/processingAvailability.ts": "25de81b41f69c5a8040d7fb3040bfcf72769e9d2412b67585e754dd77f7eba78",
+    "apps/mobile/src/services/privacy/processingNotice.ts": "2d9b0e2fa326c0b7b78dbfffe25ac2e8c88a73bf89a456431b13e23b0c933fb2",
+    "apps/mobile/src/services/privacy/processingPolicy.ts": "f6fd4afb296890b822011b2c3e44eff40b01477f85352f5206eac488dfb2960c",
+    "apps/mobile/src/services/privacy/regionalAdvertising.ts": "8ad75555914d4ba5ccc2fe35bfaad5c5d41a82d1d02f47c311d5790171937a32",
+    "apps/mobile/src/services/privacy/releaseEligibility.ts": "23ed77aa57225fe790a71c0bb374b75a51f5158193c7c1c7805fa887d4fe323a"
+  },
+  "website": {
+    "saved": {
+      "id": "appgprj_6aa368d995348191b4206fa03f951b3a~appgver_18e85705f15c81918be66f6da06f8a85",
+      "project_id": "appgprj_6aa368d995348191b4206fa03f951b3a",
+      "version_number": 35,
+      "source": {
+        "commit_sha": "7e1fa070144f4404fda2b7fa0523af429c71cc75"
+      },
+      "archive_storage": {
+        "archive_format": "tar",
+        "sediment_file_id": "file_00000000570481f6b7e08b9709b7089e",
+        "content_hash": "sha256:ddcedb3400da10b8bfc945a48afe49fa167a7c078c609e1319e4613c8b25a09b",
+        "size_bytes": 9758720,
+        "file_count": 41
+      },
+      "screenshot_url": null,
+      "deployment_id": null
+    },
+    "deployment": {
+      "id": "appgdep_6ab19159d0f081919b99fc468da28ff2",
+      "project_id": "appgprj_6aa368d995348191b4206fa03f951b3a",
+      "title": "Flap Fit",
+      "version_id": "appgprj_6aa368d995348191b4206fa03f951b3a~appgver_18e85705f15c81918be66f6da06f8a85",
+      "type": "publish",
+      "status": "succeeded",
+      "url": "https://flap-fit.sportaholic000.chatgpt.site",
+      "screenshot_asset_pointer": null,
+      "provider_deployment_id": "site---6aa368d995348191b4206fa03f951b3a",
+      "failure_message": null,
+      "env_set_revision": 0,
+      "updated_at": "2026-09-21T20:19:42.463890+00:00"
+    }
+  },
+  "scope": "Remove the unapproved general ads-off control and its notice/site instructions. Preserve regional exclusions, saved refusals, Google privacy controls, age/access gates, gameplay and cadence. No mobile build.",
+  "supersedes": "The general withdrawal-button behavior and related UI test expectations in review-correction-checks-2026-09-21.json are superseded. The older evidence remains historical."
+}

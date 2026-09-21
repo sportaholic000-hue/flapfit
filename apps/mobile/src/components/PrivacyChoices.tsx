@@ -15,7 +15,7 @@ import { releaseEligibilityMessage, resolveReleaseEligibility } from '@/services
 import { isRegionalAdvertisingDisabled } from '@/services/privacy/regionalAdvertising';
 import {
   acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, allowProcessingPurpose, canChooseProcessingPurpose,
-  isProcessingAllowPending, isProcessingNoticeAcknowledged, needsSeparatePurposeChoice, processingPurposeStatus, refuseProcessingPurpose, restoreProcessingNotice,
+  isProcessingAllowPending, needsSeparatePurposeChoice, processingPurposeStatus, refuseProcessingPurpose, restoreProcessingNotice,
 } from '@/services/privacy/processingNotice';
 
 /** Shared by the permanent Info section and a required post-game choice sheet.
@@ -53,14 +53,11 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const retryAdvertising = input.choices.ads.decision === 'denied' && advertisingWithdrawal.status === 'save-unconfirmed';
   const advertisingPending = input.choices.ads.decision === 'denied' && advertisingWithdrawal.status === 'pending';
   const advertisingAllowPending = isProcessingAllowPending('ads');
-  // Notice-based permission needs the same reachable withdrawal as an explicit
-  // grant. Keep that right available even if country or age later becomes unknown.
-  const canWithdrawAdvertising = input.choices.ads.decision === 'granted' || access.ads.allowed ||
-    (isProcessingNoticeAcknowledged() && input.choices.ads.decision !== 'denied');
-  // Keep withdrawal reachable after required advertising consent was granted.
-  const advertisingChoice = !regionalAdvertisingDisabled &&
-    (input.launch?.plan?.requirements.ads === 'express-consent' || input.choices.ads.decision === 'denied');
-  const expressAds = !regionalAdvertisingDisabled && input.launch?.plan?.separateExpressChoiceRequired.ads === true;
+  // Eligible advertising is the release default. Do not expose a general
+  // ads-off choice, including for an older saved grant or a restored refusal.
+  // Previously saved refusals remain effective until the user restores ads.
+  const canRestoreAdvertising = !regionalAdvertisingDisabled &&
+    input.choices.ads.decision === 'denied' && canChooseProcessingPurpose('ads');
   const expressReporting = !regionalAdvertisingDisabled && input.launch?.plan?.separateExpressChoiceRequired.analytics === true;
   return <View style={styles.root}>
     <Text style={styles.heading}>Advertising & reporting</Text>
@@ -127,17 +124,13 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
     </View> : null}
     <View style={styles.group}>
       <Text style={styles.heading}>Google advertising</Text>
-      <Text style={styles.body}>{advertisingChoice ? 'Allow the device, approximate-location, and ad-interaction functions described above for non-personalized advertising?' : 'Non-personalized ads help keep Flap Fit free. The applicable privacy rules and your Google choices determine when ads can run.'}</Text>
+      <Text style={styles.body}>Non-personalized ads support Flap Fit. Eligible users receive ads under the applicable privacy rules and Google choices.</Text>
       <Text style={styles.status}>{processingPurposeStatus('ads')}</Text>
-      <Text style={styles.note}>You can withdraw permission for advertising data use here. This stops new Google ad requests without blocking gameplay. It does not delete information already received by Google; contact support for data requests.</Text>
-      {canWithdrawAdvertising || advertisingAllowPending || retryAdvertising || advertisingPending || (advertisingChoice && canChooseProcessingPurpose('ads')) ? <View style={styles.buttons}>
-        {canWithdrawAdvertising || advertisingAllowPending || retryAdvertising || advertisingPending
-          ? button(retryAdvertising ? 'Retry stopping advertising' : 'Withdraw advertising data consent', () => refuseProcessingPurpose('ads'), expressAds)
-          : input.choices.ads.decision !== 'denied' && advertisingChoice && canChooseProcessingPurpose('ads')
-            ? button('Not now', () => refuseProcessingPurpose('ads'), expressAds) : null}
-        {!retryAdvertising && !advertisingPending && !advertisingAllowPending && !access.ads.allowed && advertisingChoice && canChooseProcessingPurpose('ads')
-          ? button('Allow advertising', () => allowProcessingPurpose('ads')) : null}
-      </View> : null}
+      <Text style={styles.note}>Where available, use Ad privacy settings in Info to manage Google's privacy choices. For other advertising-data requests, use Contact us in Info.</Text>
+      {input.choices.ads.decision === 'denied' ? <Text style={styles.note}>Your previous advertising-data refusal is still respected. You can choose to allow advertising again when eligible.</Text> : null}
+      {retryAdvertising ? button('Retry saving privacy choice', () => refuseProcessingPurpose('ads')) : null}
+      {!retryAdvertising && !advertisingPending && !advertisingAllowPending && canRestoreAdvertising
+        ? button('Allow advertising', () => allowProcessingPurpose('ads')) : null}
     </View>
     <View style={styles.group}>
       <Text style={styles.heading}>Ad performance reporting</Text>

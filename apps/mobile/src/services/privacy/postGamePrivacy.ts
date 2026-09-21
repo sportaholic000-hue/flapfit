@@ -39,7 +39,7 @@ export async function preparePostGamePrivacy(
     } else {
       const action = await new Promise<'continue' | 'choices' | 'cancel'>(resolve => {
         Alert.alert('Ads keep Flap Fit free', AD_PROCESSING_DISCLOSURE +
-          '\n\nContinue with these uses, or review them in Privacy & choices. You can withdraw advertising data consent there at any time. Stopping RevenueCat reporting separately leaves permitted Google ads enabled.', [
+          '\n\nContinue with these uses, or review them in Privacy & choices. Stopping RevenueCat reporting separately leaves permitted Google ads enabled.', [
           { text: 'Privacy & choices', onPress: () => resolve('choices') },
           { text: 'Continue', onPress: () => resolve('continue') },
         ], { cancelable: true, onDismiss: () => resolve('cancel') });

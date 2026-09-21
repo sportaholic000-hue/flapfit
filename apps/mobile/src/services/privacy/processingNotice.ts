@@ -122,7 +122,7 @@ export async function refuseProcessingPurpose(purpose: 'ads' | 'analytics'): Pro
         ? 'Native reporting stopped.' : 'Native stop not confirmed.'} Use Retry stopping reporting.`);
   } else {
     const result = await withdrawAdvertisingConsent();
-    if (result.status !== 'completed') throw new Error('Advertising refusal save not confirmed. New ad requests are blocked for this session. Use Retry stopping advertising.');
+    if (result.status !== 'completed') throw new Error('Advertising refusal save not confirmed. New ad requests are blocked for this session. Use Retry saving privacy choice.');
   }
 }
 

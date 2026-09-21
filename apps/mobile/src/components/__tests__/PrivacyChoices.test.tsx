@@ -3,7 +3,7 @@ import type { ReactTestRenderer } from 'react-test-renderer';
 // First module load on the Windows release host can exceed Jest's default 5s.
 jest.setTimeout(20_000);
 
-async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetReporting = false, canadianRegion: 'resident' | 'not-resident' | 'unknown' = 'resident', freshChoices = false, lowerBound = 18) {
+async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetReporting = false, canadianRegion: 'resident' | 'not-resident' | 'unknown' = 'resident', freshChoices = false, lowerBound = 18, countryOverride?: 'CA' | 'US' | 'AU' | 'MX') {
   jest.resetModules();
   const React: typeof import('react') = require('react');
   const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
@@ -42,7 +42,7 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
   await access.hydrateProcessingAccess();
   if (!failChoicesRead) await access.setPrivacyRegion('us');
   access.setAppleAgeRequirement('not-required'); access.setAppleRescissionPending(false);
-  const country = canadianUnsetReporting ? 'CA' : 'US';
+  const country = countryOverride ?? (canadianUnsetReporting ? 'CA' : 'US');
   access.setLaunchProcessingCountry(country, true);
   if (canadianUnsetReporting && canadianRegion !== 'unknown') {
     memory.set('@flapfit/quebec-residency-v1',JSON.stringify({version:1,answer:canadianRegion}));
@@ -99,7 +99,7 @@ test.each(['Yes', 'No'])('New York %s is asked once, stays saved after remount a
   await f.unmount();
 });
 
-test('older-system age choice permits ads with reachable withdrawal and keeps reporting refused', async () => {
+test('older-system adult age choice permits ads without an ads-off control and keeps reporting refused', async () => {
   const f = await fixture('ios', false, false, 'resident', true);
   await f.access.setProcessingChoice('analytics', 'denied');
   f.access.setAppleAgeRequirement('unsupported');
@@ -109,7 +109,7 @@ test('older-system age choice permits ads with reachable withdrawal and keeps re
   await f.press('18 or older');
   expect(f.text()).toContain('Saved on this device: 18 or older');
   expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { reason: 'refused' } });
-  expect(f.button('Withdraw advertising data consent')).toBeDefined();
+  expect(f.button('Withdraw advertising data consent')).toBeUndefined();
   expect(f.button('Allow advertising')).toBeUndefined();
   await f.unmount(); await f.mount();
   expect(f.text()).toContain('Saved on this device: 18 or older');
@@ -409,7 +409,7 @@ test('audit continuation: collapse/remount then Stop invalidates an older render
   await f.unmount();
 });
 
-test('Canadian region controls permit eligible ads and withdrawal independently of reporting', async () => {
+test('Canadian region controls permit eligible ads without an ads-off control independently of reporting', async () => {
   const f=await fixture('ios',false,true,'unknown',true);await f.mount();
   expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
   expect(f.text()).toContain('Do you live in Quebec?');
@@ -418,7 +418,7 @@ test('Canadian region controls permit eligible ads and withdrawal independently 
   await f.press('Stop reporting');
   await f.press('No');
   expect(f.button('Allow advertising')).toBeUndefined();
-  expect(f.button('Withdraw advertising data consent')).toBeDefined();
+  expect(f.button('Withdraw advertising data consent')).toBeUndefined();
   expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'}});
   await f.press('Yes');
   expect(f.text()).toContain('Gameplay is available in Quebec');
@@ -438,42 +438,57 @@ test('regional correction: rendered failed province save has an actionable retry
   await f.unmount();
 });
 
-test('fresh notice-based adult can withdraw advertising data consent and later restore it explicitly',async()=>{
-  const f=await fixture('ios',false,true,'unknown',true);await f.mount();
-  expect(f.access.getProcessingInputs().launch?.plan?.requirements.ads).toBe('unresolved');
-  expect(f.button('Allow advertising')).toBeUndefined();
-  await f.press('No');
+test.each(
+  (['CA', 'US', 'AU', 'MX'] as const).flatMap(country => [true, false].map(fresh => ({ country, fresh }))),
+)('eligible $country adult has no ads-off control with fresh choices=$fresh, including after remount', async ({ country, fresh }) => {
+  const f = await fixture('ios', false, country === 'CA', 'not-resident', fresh, 18, country);
+  await f.mount();
   await f.press('Save & continue');
-  expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
-  expect(f.button('Withdraw advertising data consent')).toBeDefined();
-  expect(f.button('Allow advertising')).toBeUndefined();
-  expect(f.button('Not now')).toBeUndefined();
+  for (const label of ['Withdraw advertising data consent', 'Stop advertising', 'Not now', 'Allow advertising']) {
+    expect(f.button(label)).toBeUndefined();
+  }
   await f.press('Stop reporting');
-  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
-  expect(f.access.getProcessingAccess().revenueCat.allowed).toBe(false);
-  await f.press('Withdraw advertising data consent');
-  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
-  expect(JSON.parse(f.memory.get('@flapfit/processing-choices-v1')!).choices.ads.decision).toBe('denied');
+  expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: false } });
   await f.unmount(); await f.mount();
-  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
-  await f.press('Allow advertising');
-  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false}});
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  expect(f.button('Withdraw advertising data consent')).toBeUndefined();
+  expect(f.button('Stop advertising')).toBeUndefined();
+  expect(f.button('Not now')).toBeUndefined();
   await f.unmount();
 });
 
-test('non-Quebec Canadian teen retains notice-based ads with an accessible data-consent withdrawal',async()=>{
+test('a saved adult advertising refusal is honored until explicitly restored, without exposing another ads-off control', async () => {
+  const f = await fixture('ios', false, true, 'not-resident', true);
+  await f.access.setProcessingChoice('ads', 'denied');
+  await f.access.setProcessingChoice('analytics', 'denied');
+  await f.mount(); await f.press('Save & continue');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  expect(f.button('Allow advertising')).toBeDefined();
+  expect(f.button('Withdraw advertising data consent')).toBeUndefined();
+  await f.press('Allow advertising');
+  expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: false } });
+  expect(f.button('Allow advertising')).toBeUndefined();
+  expect(f.button('Withdraw advertising data consent')).toBeUndefined();
+  expect(f.button('Stop advertising')).toBeUndefined();
+  await f.unmount(); await f.mount();
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  expect(f.button('Withdraw advertising data consent')).toBeUndefined();
+  await f.unmount();
+});
+
+test('non-Quebec Canadian teen retains notice-based ads without an ads-off control',async()=>{
   const f=await fixture('ios',false,true,'unknown',true,14);await f.mount();
   await f.press('No');
   expect(f.access.getProcessingInputs().launch?.resolution?.reasons.ads).toBe('notice-route');
   expect(f.button('Not now')).toBeUndefined();expect(f.button('Allow advertising')).toBeUndefined();
-  expect(f.button('Withdraw advertising data consent')).toBeDefined();
+  expect(f.button('Withdraw advertising data consent')).toBeUndefined();
   await f.press('Stop reporting');await f.press('Save & continue');
   expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false}});
   await f.unmount();
 });
 
-test.each(['country','age','apple'] as const)('existing Quebec ad consent remains withdrawable with %s eligibility unavailable',async unavailable=>{
+test.each(['country','age','apple'] as const)('existing Quebec advertising refusal remains honored with %s eligibility unavailable',async unavailable=>{
   const f=await fixture('ios',false,true);await f.mount();
   expect(f.access.getProcessingInputs().choices.ads.decision).toBe('granted');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
@@ -484,8 +499,11 @@ test.each(['country','age','apple'] as const)('existing Quebec ad consent remain
     if(unavailable==='apple')f.access.setAppleAccessRestricted(true);
   });
   expect(f.button('Allow advertising')).toBeUndefined();
-  expect(f.button('Withdraw advertising data consent')).toBeDefined();
-  await f.press('Withdraw advertising data consent');
+  expect(f.button('Withdraw advertising data consent')).toBeUndefined();
+  await f.act(async () => {
+    const notice: typeof import('@/services/privacy/processingNotice') = require('@/services/privacy/processingNotice');
+    await notice.refuseProcessingPurpose('ads').catch(() => undefined);
+  });
   expect(f.access.getProcessingInputs().choices.ads.decision).toBe('denied');
   expect(JSON.parse(f.memory.get('@flapfit/processing-choices-v1')!).choices.ads.decision).toBe('denied');
   await f.unmount();await f.mount();
@@ -498,15 +516,18 @@ test('failed advertising withdrawal retains honest retry after region loss and p
   expect(f.access.getProcessingInputs().choices.ads.decision).toBe('granted');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
   f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
-  await f.press('Withdraw advertising data consent');
+  await f.act(async () => {
+    const notice: typeof import('@/services/privacy/processingNotice') = require('@/services/privacy/processingNotice');
+    await notice.refuseProcessingPurpose('ads').catch(() => undefined);
+  });
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
   expect(f.text()).toContain('Advertising refusal save not confirmed');
-  expect(f.button('Retry stopping advertising')).toBeDefined();
+  expect(f.button('Retry saving privacy choice')).toBeDefined();
   expect(f.button('Allow advertising')).toBeUndefined();
   await f.act(async()=>f.access.setLaunchProcessingCountry(null,false));
   await f.unmount();await f.mount();
-  expect(f.button('Retry stopping advertising')).toBeDefined();
-  await f.press('Retry stopping advertising');
+  expect(f.button('Retry saving privacy choice')).toBeDefined();
+  await f.press('Retry saving privacy choice');
   expect(f.text()).toContain('Advertising refusal saved');
   expect(JSON.parse(f.memory.get('@flapfit/processing-choices-v1')!).choices.ads.decision).toBe('denied');
   await f.unmount();
@@ -532,15 +553,20 @@ test.each([true,false])('regional binary answers: Quebec=%s renders only clear Y
 });
 
 
-test('notice-based withdrawal remains available after age evidence expires and persists through relaunch', async () => {
+test('expired age evidence does not create a saved advertising refusal or expose an ads-off control', async () => {
   const f = await fixture('ios', false, true, 'not-resident', true); await f.mount();
   await f.press('Save & continue');
   await f.act(async () => f.access.clearAgeVerification());
-  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
-  expect(f.button('Withdraw advertising data consent')).toBeDefined();
-  await f.press('Withdraw advertising data consent');
+  expect(f.access.getProcessingAccess().ads.reason).toBe('age-unresolved');
+  expect(f.button('Withdraw advertising data consent')).toBeUndefined();
+  expect(f.button('Stop advertising')).toBeUndefined();
+  expect(f.button('Not now')).toBeUndefined();
   await f.unmount(); await f.mount();
-  expect(f.access.getProcessingInputs().choices.ads.decision).toBe('denied');
-  expect(JSON.parse(f.memory.get('@flapfit/processing-choices-v1')!).choices.ads.decision).toBe('denied');
+  expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
+  await f.act(async () => {
+    f.access.verifyLaunchAgeEvidence({ source: 'apple', status: 'shared', lowerBound: 18, upperBound: null }, 'CA', f.access.getAgeVerificationRevision());
+  });
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  expect(f.button('Withdraw advertising data consent')).toBeUndefined();
   await f.unmount();
 });

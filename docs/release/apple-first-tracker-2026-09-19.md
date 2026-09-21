@@ -2,7 +2,7 @@
 
 ## Current audit gate — September 21
 
-The owner requires an independent inspection before any final app build. Source fixes, full checks and the website update are recorded in [the audit handoff](third-party-audit-2026-09-21.md). **67 suites / 1,392 tests**, TypeScript, strict lint and release validation pass. Website version 34 is published. No mobile build, Apple upload, metadata edit or submission occurred. Wait for the owner’s explicit build instruction after the audit. This supersedes earlier build-preparation wording below.
+The owner requires an independent inspection before any final app build. Source fixes, full checks and the website update are recorded in [the audit handoff](third-party-audit-2026-09-21.md). **67 suites / 1,400 tests**, TypeScript, strict lint and release validation pass. The unapproved general ads-off controls are removed; regression tests cover eligible adults across all four launch countries. Website version 35 is published with the corresponding wording corrected. No mobile build, Apple upload, metadata edit or submission occurred. Wait for the owner’s explicit build instruction after the audit. This supersedes earlier build-preparation wording below.
 
 
 ## September 21 owner correction — regional advertising only

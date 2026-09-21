@@ -8,7 +8,7 @@ Status: source corrections and automated checks complete; independent audit must
 - No Quebec, Connecticut, New York, Australian or Mexican regional gameplay bans. No one-game quota or gameplay gate tied to the advertising notice or optional regional answers.
 - Both New York answers persist locally. Foreground/restart does not re-ask; Info provides manual Update. Previously unsaved legacy No answers cannot be recovered. Saved No is not a live travel/location check.
 - Owner reaffirmed the approved release decision: disable advertising for Australia ages 13–14 and Mexico ages 13–17 while keeping local gameplay available. These advertising exclusions are accepted release scope, not unfinished monetization work or a reason to delay the source audit.
-- Advertising is the business model. Eligible advertising remains enabled by default subject to the disclosed processing requirements. Reporting refusal does not disable separately permitted Google ads. A user's advertising-data withdrawal stops future ad requests and is not a paid remove-ads product.
+- Advertising is the business model. Eligible advertising remains enabled by default subject to the disclosed processing requirements. Reporting refusal does not disable separately permitted Google ads. No general ads-off button is authorized. Previously saved advertising-data refusals remain respected until the user explicitly restores advertising; applicable Google privacy controls and the support route for other data-rights requests remain available.
 - Camera is required for every game; recording and microphone permission are optional. Do not add payments, subscriptions, mandatory online competition, or new regional gameplay restrictions.
 - Build and upload are expressly held for independent inspection. Do not treat passing source tests or this document as authorization to build or submit.
 
@@ -19,9 +19,9 @@ The baseline for this task is `bb12be76639c4cfeb1a130767555979fd697f244` on `wip
 1. `releaseEligibility.ts`, `gameEntry.ts`, `GameEligibilityGate.tsx`, `game.tsx`: separate gameplay from regional advertising and remove the first-run quota. Known under-13 and required Apple access gates remain. An admitted game is not interrupted by a background refresh.
 2. `regionalAdvertising.ts`, `processingPolicy.ts`, `launchProcessingPolicy.ts`, `processingNotice.ts`, `postGamePrivacy.ts`: regional provider gates are independent of gameplay. Old saved grants cannot reopen a disabled regional provider. Existing purpose refusals are retained.
 3. `newYorkClarification.ts`, `processingAccess.ts`, `PrivacyChoices.tsx`: durable Yes/No, migration of legacy Yes, no automatic No invalidation, clear saved status and manual Update, honest failed-write retry.
-4. `PrivacyChoices.tsx`: a notice-based user can now select **Withdraw advertising data consent**, not just users whose earlier choice was an explicit grant. That right remains reachable after age/country evidence expires. The existing synchronous deny, persisted refusal and retry mechanism is reused. The disclosure explains that this stops new Google ad requests, not deletion of already received data or a global Google SDK shutdown.
+4. `PrivacyChoices.tsx`: the unapproved general **Withdraw advertising data consent** / **Stop advertising** / **Not now** advertising controls are removed. Eligible adults in CA outside Quebec, US, AU and MX receive no such control, including when an older explicit grant exists or after restoring a prior refusal. Existing refusals are preserved; **Allow advertising** only restores a refused choice when eligible. A failed prior refusal can be retried without creating a new opt-out. Google privacy settings, independent reporting controls and support for other data-rights requests remain.
 5. `info.tsx`: **Report an inappropriate ad** opens an email draft addressed to the established support mailbox with optional advertiser/time/reason information. It does not auto-send, capture a screenshot, attach camera footage, or transmit the competition identity. Failure to open mail displays the support address.
-6. Website privacy policy: provider-protection requirement, usable withdrawal instructions, inappropriate-ad reporting route, accurate required-camera description. Current source and live website are aligned. Superseded exclusion-based Apple review-note draft remains cancelled.
+6. Website privacy policy: instructions for the removed general ads-off button are removed. Provider protection, applicable Google privacy controls, support for other data-rights requests, ad reporting and required-camera wording remain. Current source and published website are aligned. Superseded exclusion-based Apple review-note draft remains cancelled.
 
 ## Current four-country behavior
 
@@ -47,11 +47,11 @@ Eligible does not guarantee an impression. The first result exit is free; ads ar
 
 ## Automated verification
 
-- Full mobile Jest run: **67 suites / 1,392 tests passed**, zero failures. Focused privacy UI run: **41 tests passed**.
+- Full mobile Jest run: **67 suites / 1,400 tests passed**, zero failures. Focused privacy UI run: **49 tests passed**.
 - TypeScript `tsc --noEmit`, strict Oxlint, production-profile release configuration, and source diff checks passed.
 - Website validation: five routes, links, scripts/assets and public-site controls passed. Static archive validated by the Sites packaging helper: 41 files.
-- Machine-readable evidence: `evidence/review-correction-checks-2026-09-21.json`. It records checks and hashes of the changed source inputs; no account secrets are included.
-- Rendered withdrawal tests exercise default ad eligibility, refusal persistence through panel remount, explicit later re-allow, expired-age withdrawal access, and independently refused reporting. Older tests separately exercise storage restoration, provider invalidation, and lifecycle behavior. These are not physical-device or provider-receipt results.
+- Machine-readable evidence: `evidence/ad-control-correction-checks-2026-09-21.json`. It records checks and hashes of the changed source inputs; no account secrets are included.
+- Rendered tests cover adult ad eligibility and absence of general ads-off controls across all four launch countries, fresh and older saved grants, refusal restoration, panel remount, expired-age recovery, independent reporting refusal, and failed-refusal save recovery. Existing tests separately cover storage restoration, provider invalidation, regional exclusions and lifecycle behavior. These are not physical-device or provider-receipt results.
 
 ## Browser observations — read-only
 
@@ -87,6 +87,6 @@ The public provider documents support the stated protection requirements and des
 
 ## Website release
 
-Privacy source commit `9137dd210a7f89e49c487f73e002e59799d9f4da`, website version **34**, was pushed and published successfully at `2026-09-21T17:22:09.262719+00:00`. Site `appgprj_6aa368d995348191b4206fa03f951b3a`; deployment `appgdep_6ab167bc2bd081918cb4e68b7bd75384`; version `appgprj_6aa368d995348191b4206fa03f951b3a~appgver_06c524807b848191b166edae57924d2d`. Production URL returned by Sites: https://flap-fit.sportaholic000.chatgpt.site . The public audience and existing custom domain are unchanged.
+Privacy source commit `7e1fa070144f4404fda2b7fa0523af429c71cc75`, website version **35**, was pushed and published successfully at `2026-09-21T20:19:42.463890+00:00`. Deployment `appgdep_6ab19159d0f081919b99fc468da28ff2`. Production URL returned by Sites: https://flap-fit.sportaholic000.chatgpt.site . The public audience and existing custom domain are unchanged. This supersedes the version 34 general ads-off instructions.
 
-Website source copies of the changed privacy/terms pages are retained under `evidence/website-review-2026-09-21/` so an auditor of the app repository can read the exact text without needing access to the separate website repository. They are evidence copies, not a second deployment source.
+The current privacy/terms source copies are under `evidence/website-review-2026-09-21/`. The app build remains on hold for independent audit.
