@@ -1,5 +1,14 @@
 # Apple-first completion tracker
 
+## Regional behavior and competition Stop successor — BUILD HELD
+
+Preserves the Canada Quebec / established non-Quebec / unresolved distinction from 14863f8 and adds direct ad-request/presentation plus fresh rendered-control proof: non-Quebec Canadian adults receive restricted result-exit ads without a discretionary advertising-off switch, while reporting refusal stays independent. Quebec remains available with required choices; no province-only exclusion is claimed. Unknown US state is not Connecticut. Unproved New York processing scope is now explicitly distinct from confirmed NY activity; the teen consent fallback remains because the territorial/data-history exemption is not established. **That narrowing remains open, not a device-test task.**
+
+The separately reported competition Stop/accept/Stop race is reproduced and fixed through real Compete acceptance, durable restart and actual API gates on both Apple paths. Prior privacy/deletion, gameplay/calibration and full-run recording behavior is preserved. **60 suites / 1272 tests**, TypeScript, strict lint, production privacy/release checks and actual local package validation pass (**778 files / 285 matching required inputs**).
+
+Evidence and full country/age/region table: **evidence/regional-stop-correction-2026-09-20.md**, with adjacent checks/package JSON. Native providers are mocked in source tests. No compiled candidate, device acceptance, provider receipt or submission readiness is claimed. No build, upload, deployment or Apple edit. Older sections below retain their original evidence scope.
+
+
 ## Regional assumption correction — BUILD HELD
 
 Unknown Canadian province no longer becomes Quebec-specific consent. A local Quebec/outside-Quebec answer in existing Info/result privacy selects the actual branch without erasing refusals; outside-Quebec adults use permitted notice-based ads without a new ad switch. Unknown US state is distinguished from confirmed Connecticut restrictions. **The separate worldwide New York teen-consent fallback remains an unresolved source/design release blocker**, including its effect outside the US. AU/MX national age/authority handling is not a province/state guess. No complete four-country monetization or release readiness claim.

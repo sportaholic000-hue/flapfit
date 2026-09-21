@@ -315,3 +315,23 @@ test.each(['AU','MX'])('regional correction: %s adult does not acquire province/
   expect(result.quebecActivationRequired).toEqual({ads:false,analytics:false});
   expect(result.decisions.ads.allowed).toBe(true);
 });
+
+test.each(['CA','US','AU','MX'])('adult %s never inherits New York minor consent from missing scope',country=>{
+  const result=resolveLaunchProcessingPolicy(input({country,subdivision:null,quebecResidency:'not-resident',newYorkApplicability:undefined}));
+  expect(result.separateExpressChoiceRequired).toEqual({ads:false,analytics:false});
+  expect(result.decisions.ads.allowed).toBe(true);
+});
+
+test('known New York activity cannot be contradicted by a stale wholly-outside exemption',()=>{
+  const result=resolveLaunchProcessingPolicy(input({country:'US',subdivision:'NY',age:teen}));
+  expect(result.reasons.ads).toBe('new-york-express-consent-required');
+  expect(result.decisions.ads.allowed).toBe(false);
+});
+
+test.each(['CA','US','AU'])('%s teen missing processing scope is expressly unresolved, never identified as New York',country=>{
+  const result=resolveLaunchProcessingPolicy(input({country,subdivision:country==='US'?'CA':null,
+    quebecResidency:'not-resident',age:{...teen,lowerBound:15},newYorkApplicability:undefined}));
+  expect(result.reasons.ads).toBe('new-york-applicability-unresolved');
+  expect(result.missingFacts.ads).toContain('new-york-applicability');
+  expect(result.requirements.ads).toBe('express-consent');
+});

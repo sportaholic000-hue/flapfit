@@ -3,7 +3,7 @@ import type { ReactTestRenderer } from 'react-test-renderer';
 // First module load on the Windows release host can exceed Jest's default 5s.
 jest.setTimeout(20_000);
 
-async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetReporting = false, canadianRegion: 'resident' | 'unknown' = 'resident') {
+async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetReporting = false, canadianRegion: 'resident' | 'unknown' = 'resident', freshChoices = false, lowerBound = 18) {
   jest.resetModules();
   const React: typeof import('react') = require('react');
   const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
@@ -48,9 +48,9 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
     memory.set('@flapfit/quebec-residency-v1',JSON.stringify({version:1,answer:'resident'}));
     access.applyQuebecResidency('resident');
   }
-  access.verifyLaunchAgeEvidence({ source: 'apple', status: 'shared', lowerBound: 18, upperBound: null }, country, access.getAgeVerificationRevision());
+  access.verifyLaunchAgeEvidence({ source: 'apple', status: 'shared', lowerBound, upperBound: lowerBound < 18 ? 17 : null }, country, access.getAgeVerificationRevision());
   access.setProcessingRequirements({ ads: 'express-consent', analytics: 'express-consent', competition: 'requested-service' });
-  if (!failChoicesRead) for (const purpose of ['ads', 'analytics', 'competition'] as const) {
+  if (!failChoicesRead && !freshChoices) for (const purpose of ['ads', 'analytics', 'competition'] as const) {
     if (!(canadianUnsetReporting && purpose === 'analytics')) await access.setProcessingChoice(purpose, 'granted');
   }
   access.markProcessingNoticePresented(1);
@@ -78,7 +78,7 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
   const text = () => tree.root.findAllByType('Text' as never).map(node => node.children.join('')).join('\n');
   const modal = () => tree.root.findByType('Modal' as never);
   const unmount = async () => { await act(async () => { tree.unmount(); }); };
-  return { access, storage, memory, recover: () => { failChoicesRead = false; }, native, alert, act, mount, mountController, open, replaceRequest, cancel: () => controller.cancelChoices(), button, press, text, modal, unmount };
+  return { access, storage, memory, buttons, recover: () => { failChoicesRead = false; }, native, alert, act, mount, mountController, open, replaceRequest, cancel: () => controller.cancelChoices(), button, press, text, modal, unmount };
 }
 
 test.each(['save', 'native'] as const)('a failed reporting %s retains a rendered retry across remount without enabling reporting or stopping ads', async failure => {
@@ -374,5 +374,36 @@ test('regional correction: rendered failed province save has an actionable retry
   expect(f.button('No, another province or territory')).toBeDefined();
   await f.press('No, another province or territory');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  await f.unmount();
+});
+
+test('fresh non-Quebec adult has no discretionary advertising off or allow control',async()=>{
+  const f=await fixture('ios',false,true,'unknown',true);await f.mount();
+  expect(f.access.getProcessingInputs().launch?.plan?.requirements.ads).toBe('unresolved');
+  expect(f.button('Allow advertising')).toBeUndefined();
+  await f.press('No, another province or territory');
+  await f.press('Save & continue');
+  expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  expect(f.button('Stop advertising')).toBeUndefined();
+  expect(f.button('Allow advertising')).toBeUndefined();
+  expect(f.button('Not now')).toBeUndefined();
+  await f.press('Stop reporting');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  expect(f.access.getProcessingAccess().revenueCat.allowed).toBe(false);
+  await f.unmount();
+});
+
+test('teen fallback consent explains optional data use and makes refusal the first prominent choice',async()=>{
+  const f=await fixture('ios',false,true,'unknown',true,14);await f.mount();
+  await f.press('No, another province or territory');
+  expect(f.access.getProcessingInputs().launch?.resolution?.reasons.ads).toBe('new-york-applicability-unresolved');
+  expect(f.text()).toContain('not strictly necessary to play');
+  const buttons=f.buttons();
+  expect(buttons.indexOf(f.button('Not now')!)).toBeLessThan(buttons.indexOf(f.button('Allow advertising')!));
+  expect(f.button('Not now')!.props.style).toEqual(expect.arrayContaining([expect.objectContaining({borderWidth:2})]));
+  expect(buttons.indexOf(f.button('Stop reporting')!)).toBeLessThan(buttons.indexOf(f.button('Allow reporting')!));
+  await f.press('Not now');await f.press('Stop reporting');
+  expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false},revenueCat:{allowed:false}});
   await f.unmount();
 });

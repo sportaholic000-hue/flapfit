@@ -17,7 +17,13 @@ async function load(options: { offline?: boolean; age?: unknown; required?: bool
     getAppleAgeRequirements: jest.fn().mockResolvedValue({ status: 'available', ageRangeSupported: true, eligibility: options.required ?? false,
       regulatoryFeaturesSupported: true, regulatoryFeatures: [], compiledCapabilities: { ageRange: true, regionalEligibility: true, regulatoryFeatures: true, confirmedAssurance: true } }), requestAppleAgeRange: requestAge }));
   const nativeAds = { setRequestConfiguration: jest.fn().mockResolvedValue(undefined), initialize: jest.fn().mockResolvedValue(undefined) };
-  const sdk = { default: () => nativeAds, AdsConsent: { requestInfoUpdate: jest.fn().mockResolvedValue({ canRequestAds: true, privacyOptionsRequirementStatus: 'NOT_REQUIRED' }), loadAndShowConsentFormIfRequired: jest.fn().mockResolvedValue({ canRequestAds: true, privacyOptionsRequirementStatus: 'NOT_REQUIRED' }) }, AdsConsentPrivacyOptionsRequirementStatus: { REQUIRED: 'REQUIRED' }, MaxAdContentRating: { PG: 'PG' } };
+  const events = new Map<string, (value?: unknown) => void>();
+  const nativeAd = { load: jest.fn(), show: jest.fn().mockResolvedValue(undefined), destroy: jest.fn(),
+    addAdEventListener: jest.fn((name, listener) => { events.set(name, listener); return jest.fn(); }) };
+  const interstitial = { createForAdRequest: jest.fn(() => nativeAd) };
+  const sdk = { InterstitialAd: interstitial, TestIds: { INTERSTITIAL: 'test-interstitial' },
+    AdEventType: { LOADED:'loaded', OPENED:'opened', CLICKED:'clicked', PAID:'paid', ERROR:'error', CLOSED:'closed' },
+    default: () => nativeAds, AdsConsent: { requestInfoUpdate: jest.fn().mockResolvedValue({ canRequestAds: true, privacyOptionsRequirementStatus: 'NOT_REQUIRED' }), loadAndShowConsentFormIfRequired: jest.fn().mockResolvedValue({ canRequestAds: true, privacyOptionsRequirementStatus: 'NOT_REQUIRED' }) }, AdsConsentPrivacyOptionsRequirementStatus: { REQUIRED: 'REQUIRED' }, MaxAdContentRating: { PG: 'PG' } };
   const purchases = { configure: jest.fn(), adTracker: {} };
   const adLoad = jest.fn(() => sdk), rcLoad = jest.fn(() => ({ default: purchases }));
   jest.doMock('react-native-google-mobile-ads', adLoad); jest.doMock('react-native-purchases', rcLoad);
@@ -30,7 +36,7 @@ async function load(options: { offline?: boolean; age?: unknown; required?: bool
   const startup: typeof import('../privacyStartup') = require('../privacyStartup');
   const country: typeof import('../privacyCountry') = require('../privacyCountry');
   const stop = startup.startPrivacyStartup(); await Promise.all([startup.preparePrivacyStartup(), country.refreshPrivacyCountry()]);
-  return { access, adapter, country, requestAge, nativeAds, consent: sdk.AdsConsent, purchases, adLoad, rcLoad, storage, fence, memory, alert,
+  return { access, adapter, country, requestAge, nativeAds, nativeAd, events, interstitial, consent: sdk.AdsConsent, purchases, adLoad, rcLoad, storage, fence, memory, alert,
     change: (value: string) => { appState.currentState = value; [...listeners].forEach((listener) => listener(value)); },
     finish: () => { stop(); if (descriptor) Object.defineProperty(globalThis, 'fetch', descriptor); } };
 }
@@ -544,5 +550,100 @@ test('regional correction: closing unanswered Canada clarification records unkno
     expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
     expect(f.access.getProcessingInputs().launch?.plan?.quebecActivationRequired.ads).toBe(false);
     expect(f.nativeAds.initialize).not.toHaveBeenCalled();expect(f.purchases.configure).not.toHaveBeenCalled();
+  } finally {f.finish();}
+});
+
+test('non-Quebec adult with no ad grant receives a restricted result-exit ad while reporting stays refused', async () => {
+  const f=await load({country:'CA',quebecResidency:'not-resident'});
+  try {
+    const notice:typeof import('../processingNotice')=require('../processingNotice');
+    const flow:typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    const {ResultAdGate}=require('../../monetization/resultAdGate');
+    await notice.refuseProcessingPurpose('analytics');
+    const choices=jest.fn();
+    await flow.preparePostGamePrivacy(()=>true,choices);await settle();
+    expect(choices).not.toHaveBeenCalled();
+    expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
+    const gate=new ResultAdGate();
+    const environment={isActive:()=>true,onActive:jest.fn(()=>jest.fn())};
+    const first=jest.fn();
+    gate.createResult(null,environment).exit(false,first);
+    expect(first).toHaveBeenCalledTimes(1);
+    expect(f.nativeAd.show).not.toHaveBeenCalled();
+    const ad=f.adapter.prepareResultInterstitial();
+    expect(ad).not.toBeNull();
+    expect(f.interstitial.createForAdRequest).toHaveBeenCalledWith('test-interstitial',
+      {requestNonPersonalizedAdsOnly:true,networkExtras:{rdp:'1'}});
+    expect(f.nativeAd.load).toHaveBeenCalledTimes(1);
+    f.events.get('loaded')!();expect(ad!.isReady()).toBe(true);
+    const nextGame=jest.fn();
+    const result=gate.createResult(ad,environment);
+    expect(f.nativeAd.show).not.toHaveBeenCalled();
+    expect(result.exit(false,nextGame)).toBe(true);
+    expect(f.nativeAd.show).toHaveBeenCalledTimes(1);
+    f.events.get('opened')!();
+    expect(nextGame).not.toHaveBeenCalled();
+    f.events.get('closed')!();f.events.get('closed')!();
+    expect(nextGame).toHaveBeenCalledTimes(1);
+    expect(result.exit(false,nextGame)).toBe(false);
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess().revenueCat.reason).toBe('refused');
+  } finally {f.finish();}
+});
+
+test.each([false,true])('competition Stop/accept/Stop survives restart and blocks actual Auth/request boundary; Apple required=%s',async required=>{
+  let f=await load({country:'CA',quebecResidency:'not-resident',required});
+  const memory=f.memory;
+  // Model an already-cleared Apple account check; the native age lookup remains real to this fixture.
+  f.access.setAppleRescissionPending(false);
+  const boundary=()=>{
+    const createClient=jest.fn();
+    jest.doMock('@supabase/supabase-js',()=>({createClient}));
+    jest.doMock('react-native-url-polyfill/auto',()=>({}));
+    jest.doMock('@/config/release',()=>({ONLINE_SERVICES:{supabaseUrl:'https://test.supabase.co',supabasePublishableKey:'public-test'}}));
+    jest.doMock('@/utils/game/store',()=>({COMPETITION_TERMS_VERSION:1,useGameStore:{getState:()=>({competitionTermsVersion:1}),subscribe:()=>jest.fn()}}));
+    jest.doMock('../appleRescission',()=>({
+      ensureCurrentAppleRescissionStatus:jest.fn().mockResolvedValue({status:'no-revocation-recorded',revision:1}),
+      getAppleRescissionStatus:()=>({status:'no-revocation-recorded',revision:1}),isAppleRescissionStatusFresh:()=>true,
+      linkAppleRescissionToExistingAccount:jest.fn(),startAppleRescissionMonitoring:()=>jest.fn(),
+    }));
+    const api:typeof import('../../competitionApi')=jest.requireActual('../../competitionApi');
+    return {api,createClient};
+  };
+  try {
+    const notice:typeof import('../processingNotice')=require('../processingNotice');
+    const flow:typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    const rights:typeof import('../privacyRights')=require('../privacyRights');
+    await notice.refuseProcessingPurpose('analytics');
+    await flow.preparePostGamePrivacy(()=>true,jest.fn());
+    await f.access.setProcessingChoice('competition','granted');
+    expect(f.access.getProcessingAccess().competition.allowed).toBe(true);
+    const network=boundary();
+    let release!:()=>void;
+    const saving=new Promise<void>(resolve=>{release=resolve;});
+    const write=f.storage.setItem.getMockImplementation()!;
+    f.storage.setItem.mockImplementationOnce(async(key,value)=>{await saving;await write(key,value);});
+    const first=rights.stopOnlineCompetition();
+    const accepting=f.access.setProcessingChoice('competition','granted');
+    const latest=rights.stopOnlineCompetition();
+    release();await Promise.all([first,accepting,latest]);
+    expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false},competition:{allowed:false}});
+    (global.fetch as jest.Mock).mockClear();
+    await expect(network.api.competitionRequest('/leaderboard')).rejects.toBeInstanceOf(network.api.CompetitionAccessRequiredError);
+    await expect(network.api.beginCompetitionRun({kind:'leaderboard',exercise:'squats'})).rejects.toBeInstanceOf(network.api.CompetitionAccessRequiredError);
+    expect(network.createClient).not.toHaveBeenCalled();expect(global.fetch).not.toHaveBeenCalled();
+  } finally {f.finish();}
+  f=await load({country:'CA',memory,required});
+  f.access.setAppleRescissionPending(false);
+  try {
+    const flow:typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+    await flow.preparePostGamePrivacy(()=>true,jest.fn());
+    await f.adapter.prepareCompetitionEligibility(()=>true);
+    expect(f.access.getProcessingInputs().choices.competition.decision).toBe('denied');
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);expect(f.purchases.configure).not.toHaveBeenCalled();
+    const network=boundary();(global.fetch as jest.Mock).mockClear();
+    await expect(network.api.competitionRequest('/leaderboard')).rejects.toBeInstanceOf(network.api.CompetitionAccessRequiredError);
+    expect(network.createClient).not.toHaveBeenCalled();expect(global.fetch).not.toHaveBeenCalled();
   } finally {f.finish();}
 });

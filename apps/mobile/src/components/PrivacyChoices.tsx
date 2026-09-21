@@ -34,8 +34,8 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
     catch (error) { if (current()) Alert.alert('Privacy choice not confirmed', error instanceof Error ? error.message : 'Please try again.'); }
     finally { if (mounted.current) setBusy(false); }
   };
-  const button = (title: string, operation: () => Promise<void>) => (
-    <TouchableOpacity accessibilityRole="button" disabled={busy} onPress={() => void action(operation)} style={[styles.button, busy && styles.disabled]}>
+  const button = (title: string, operation: () => Promise<void>, prominent = false) => (
+    <TouchableOpacity accessibilityRole="button" disabled={busy} onPress={() => void action(operation)} style={[styles.button, prominent && styles.prominentChoice, busy && styles.disabled]}>
       <Text style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
   );
@@ -44,6 +44,8 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const reportingPending = withdrawal.status === 'pending';
   // Keep withdrawal reachable after required advertising consent was granted.
   const advertisingChoice = input.launch?.plan?.requirements.ads === 'express-consent' || input.choices.ads.decision === 'denied';
+  const expressAds = input.launch?.plan?.separateExpressChoiceRequired.ads === true;
+  const expressReporting = input.launch?.plan?.separateExpressChoiceRequired.analytics === true;
   return <View style={styles.root}>
     <Text style={styles.heading}>Advertising & reporting</Text>
     <Text style={styles.body}>{AD_PROCESSING_DISCLOSURE}</Text>
@@ -80,17 +82,22 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       <Text style={styles.heading}>Google advertising</Text>
       <Text style={styles.body}>{advertisingChoice ? 'Allow the device, approximate-location, and ad-interaction functions described above for non-personalized advertising?' : 'Non-personalized ads help keep Flap Fit free. The applicable privacy rules and your Google choices determine when ads can run.'}</Text>
       <Text style={styles.status}>{processingPurposeStatus('ads')}</Text>
-      {advertisingChoice && canChooseProcessingPurpose('ads') ? <View style={styles.buttons}>{!access.ads.allowed ? button('Allow advertising', () => allowProcessingPurpose('ads')) : null}{button(access.ads.allowed ? 'Stop advertising' : 'Not now', () => refuseProcessingPurpose('ads'))}</View> : null}
+      {expressAds ? <Text style={styles.note}>This use of your personal data is not strictly necessary to play. You can decline and keep playing, or stop it here later.</Text> : null}
+      {advertisingChoice && canChooseProcessingPurpose('ads') ? <View style={styles.buttons}>
+        {button(access.ads.allowed ? 'Stop advertising' : 'Not now', () => refuseProcessingPurpose('ads'), expressAds)}
+        {!access.ads.allowed ? button('Allow advertising', () => allowProcessingPurpose('ads')) : null}
+      </View> : null}
     </View>
     <View style={styles.group}>
       <Text style={styles.heading}>Ad performance reporting</Text>
       <Text style={styles.body}>RevenueCat reporting is separate from advertising. Stopping reporting leaves separately permitted Google ads enabled.</Text>
       <Text style={styles.status}>{processingPurposeStatus('analytics')}</Text>
+      {expressReporting ? <Text style={styles.note}>This use of your personal data is not strictly necessary to play. You can decline and keep playing, or stop it here later.</Text> : null}
       <View style={styles.buttons}>
+        {retryReporting || reportingPending || input.choices.analytics.decision !== 'denied' || access.revenueCat.allowed
+          ? button(retryReporting ? 'Retry stopping reporting' : 'Stop reporting', () => refuseProcessingPurpose('analytics'), expressReporting) : null}
         {!retryReporting && !reportingPending && canChooseProcessingPurpose('analytics') && (needsSeparatePurposeChoice('analytics') || input.choices.analytics.decision === 'denied')
           ? button('Allow reporting', () => allowProcessingPurpose('analytics')) : null}
-        {retryReporting || reportingPending || input.choices.analytics.decision !== 'denied' || access.revenueCat.allowed
-          ? button(retryReporting ? 'Retry stopping reporting' : 'Stop reporting', () => refuseProcessingPurpose('analytics')) : null}
       </View>
       <Text style={styles.note}>Stopping future reporting does not delete information already received by RevenueCat. Contact support for data requests.</Text>
     </View>
@@ -206,6 +213,7 @@ const styles = StyleSheet.create({
   note: { color: '#64748B', fontSize: 12, lineHeight: 18 }, status: { color: '#334155', fontSize: 13, fontWeight: '700' },
   buttons: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   button: { minHeight: 44, paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, backgroundColor: '#EFF6FF', justifyContent: 'center' },
+  prominentChoice: { backgroundColor: '#BFDBFE', borderColor: '#075985', borderWidth: 2 },
   buttonText: { color: '#075985', fontSize: 14, fontWeight: '800' }, disabled: { opacity: 0.5 },
   link: { minHeight: 44, justifyContent: 'center' }, linkText: { color: '#0369A1', fontSize: 14, fontWeight: '700' },
   sheet: { flex: 1, backgroundColor: '#0F172A' }, header: { paddingHorizontal: 20, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },

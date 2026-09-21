@@ -2,11 +2,14 @@
 
 ## Current regional monetization hold
 
-Canada/US unknown-region corrections are source-verified in
-[evidence/regional-assumption-correction-2026-09-20.md](evidence/regional-assumption-correction-2026-09-20.md).
-The separate New York teen-purpose fallback across all four countries remains unresolved.
-This is unfinished source/design work, not device acceptance. Prior source checks and
-account evidence do not authorize a build or close this blocker.
+Canada's Quebec / established non-Quebec / unresolved distinction and the competition
+Stop race successor are verified in
+[evidence/regional-stop-correction-2026-09-20.md](evidence/regional-stop-correction-2026-09-20.md).
+Non-Quebec adult ad request/presentation and absence of a discretionary ads-off control
+are source-tested. Quebec is not excluded. New York territorial/data-history proof for
+narrowing the existing teen consent fallback remains unestablished; uncertainty is now
+labelled separately from confirmed applicability. This is not a device-test task.
+No build, upload or release is authorized by these source/package results.
 
 
 Current instructions reconciled September 20, 2026 against the account audit and the

@@ -16,7 +16,7 @@ export type LaunchMissingFact = 'country' | 'age' | 'province' | 'state' |
 export type LaunchPolicyReason = 'notice-route' | 'requested-service' | 'country-unresolved' |
   'outside-launch-scope' | 'age-unresolved' | 'outside-audience' | 'province-unresolved' |
   'state-unresolved' | 'parental-authority-required' | 'quebec-activation-required' |
-  'new-york-express-consent-required' | 'connecticut-ad-necessity-unresolved' |
+  'new-york-express-consent-required' | 'new-york-applicability-unresolved' | 'connecticut-ad-necessity-unresolved' |
   'connecticut-reporting-not-necessary';
 export type ConnecticutResidency = 'resident' | 'not-resident' | 'unknown';
 export type QuebecResidency = 'resident' | 'not-resident' | 'unknown';
@@ -261,13 +261,16 @@ function resolveWithThresholds(
     }
     // Residence/current country does not exclude covered NY activity or retained data.
     // Exact NY-compliant purpose consent may satisfy uncertain applicability.
-    if (!adult && !outsideNewYork(input.newYorkApplicability?.[purpose])) {
+    const newYorkConfirmed = (country === 'US' && subdivision === 'NY') ||
+      input.newYorkApplicability?.[purpose]?.status === 'applies';
+    if (!adult && (newYorkConfirmed || !outsideNewYork(input.newYorkApplicability?.[purpose]))) {
       plan.requirements[purpose] = 'express-consent';
       plan.separateExpressChoiceRequired[purpose] = true;
-      plan.reasons[purpose] = 'new-york-express-consent-required';
-      if (input.newYorkApplicability?.[purpose]?.status !== 'applies') {
-        plan.missingFacts[purpose].push('new-york-applicability');
-      }
+      // Consent is the fallback when the whole processing exemption is unproved;
+      // that is not evidence that this user lives in New York.
+      plan.reasons[purpose] = newYorkConfirmed
+        ? 'new-york-express-consent-required' : 'new-york-applicability-unresolved';
+      if (!newYorkConfirmed) plan.missingFacts[purpose].push('new-york-applicability');
     }
   }
   return finish();

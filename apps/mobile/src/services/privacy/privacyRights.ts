@@ -39,6 +39,7 @@ function confirmWithin<T>(operation: Promise<T>): Promise<Confirmation<T>> {
 let reportingWithdrawal: Promise<PrivacyWithdrawalResult> | null = null;
 let reportingChoiceRevision = 0;
 let competitionWithdrawal: Promise<PrivacyWithdrawalResult> | null = null;
+let competitionChoiceRevision = 0;
 let competitionStopState: 'not-requested' | 'pending' | PrivacyWithdrawalResult['status'] = 'not-requested';
 const competitionStopListeners = new Set<() => void>();
 export const getCompetitionStopState = () => competitionStopState;
@@ -119,14 +120,19 @@ export function withdrawAdPerformanceReporting(): Promise<PrivacyWithdrawalResul
 /** Stop participation without signing out, deleting the profile, or changing
  * analytics/ads. Existing authenticated deletion and support remain available. */
 export function stopOnlineCompetition(): Promise<PrivacyWithdrawalResult> {
-  if (competitionWithdrawal && getProcessingInputs().choices.competition.decision === 'denied') {
+  if (competitionWithdrawal && getProcessingInputs().choices.competition.decision === 'denied' &&
+      isProcessingChoiceCurrent('competition', competitionChoiceRevision)) {
     return competitionWithdrawal;
   }
   publishCompetitionStop('pending');
+  // Acceptance reserves a new intent before its write, while the runtime can
+  // still show denied. Only the same intent may reuse an earlier Stop.
   const saving = confirmWithin(setProcessingChoice('competition', 'denied'));
+  const intent = competitionChoiceRevision = getProcessingChoiceRevision('competition');
   const operation = (async (): Promise<PrivacyWithdrawalResult> => {
     const saved = await saving;
-    const current = getProcessingInputs().choices.competition.decision === 'denied';
+    const current = getProcessingInputs().choices.competition.decision === 'denied' &&
+      (!saved.confirmed || isProcessingChoiceCurrent('competition', intent));
     return {
       status: !current ? 'superseded' : saved.confirmed ? 'completed' : 'save-unconfirmed',
       saved: saved.confirmed,

@@ -156,3 +156,36 @@ test('an intervening Allow intention prevents reusing an older pending Stop conf
   stopping.resolve({state:'stopped',error:null});
   await expect(latest).resolves.toMatchObject({status:'completed',saved:true,nativeStopped:true});
 });
+
+test('competition Stop reserves a new refusal after an intervening pending acceptance', async () => {
+  const saving = deferred<void>(); save.mockReturnValue(saving.promise);
+  const first = api.stopOnlineCompetition();
+  ++choiceRevision; // Acceptance reserves its intent before its storage write.
+  const latest = api.stopOnlineCompetition();
+  expect(latest).not.toBe(first);
+  expect(setChoice).toHaveBeenCalledTimes(2);
+  saving.resolve();
+  await expect(latest).resolves.toMatchObject({status:'completed',saved:true});
+});
+
+test('repeated competition Stop without a newer intent shares its pending save', async () => {
+  const saving = deferred<void>(); save.mockReturnValue(saving.promise);
+  const first = api.stopOnlineCompetition();
+  expect(api.stopOnlineCompetition()).toBe(first);
+  expect(setChoice).toHaveBeenCalledTimes(1);
+  saving.resolve(); await first;
+});
+
+test('an older successful competition Stop cannot confirm a newer pending acceptance',async()=>{
+  const saving=deferred<void>();save.mockReturnValue(saving.promise);
+  const stopping=api.stopOnlineCompetition();
+  ++choiceRevision;
+  saving.resolve();
+  await expect(stopping).resolves.toMatchObject({status:'superseded'});
+});
+test('competition save failure remains retryable without changing ads or reporting',async()=>{
+  save.mockRejectedValueOnce(new Error('disk full'));
+  await expect(api.stopOnlineCompetition()).resolves.toMatchObject({status:'save-unconfirmed',saved:false});
+  await expect(api.stopOnlineCompetition()).resolves.toMatchObject({status:'completed',saved:true});
+  expect(access.ads.allowed).toBe(true);expect(access.revenueCat.allowed).toBe(true);
+});
