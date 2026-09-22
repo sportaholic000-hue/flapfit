@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-09-22T15:01:19.740Z",
+  "sourceCommit": "e4a7f03b885f0de88bbc22c90c4999b3a11eb16a",
+  "easCli": "24.7.0",
+  "method": "Actual EAS GitClient.makeShallowCopyAsync with Windows core.autocrlf=true; exact Git blob comparison with no newline normalization",
+  "assets": [
+    {
+      "name": "pose_landmarker_lite.task.mpasset",
+      "bytes": 5777746,
+      "sha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+      "exactGitBlobMatch": true
+    },
+    {
+      "name": "vision_bundle.mjs.mpasset",
+      "bytes": 136870,
+      "sha256": "e77f281f9619150d937023c355bae170e9120e3b9e43f1e23a2a7bee07197669",
+      "exactGitBlobMatch": true
+    },
+    {
+      "name": "vision_wasm_internal.js.mpasset",
+      "bytes": 209826,
+      "sha256": "9440cf0cc0cea21800e31581ec32aeedcc5fbf9df4509796bbc7d3f99e52ab9c",
+      "exactGitBlobMatch": true
+    },
+    {
+      "name": "vision_wasm_internal.wasm.mpasset",
+      "bytes": 9423986,
+      "sha256": "f82a8e6c05e08a44cc9f9e7ec5f845935bcbb1b1500ebe8c2f4812fb4e2917dc",
+      "exactGitBlobMatch": true
+    },
+    {
+      "name": "vision_wasm_nosimd_internal.js.mpasset",
+      "bytes": 209735,
+      "sha256": "abe9b6fbeaf86fcb53a5edce3926c82ccb0619e18fed4d9d9ce561ee7f55e054",
+      "exactGitBlobMatch": true
+    },
+    {
+      "name": "vision_wasm_nosimd_internal.wasm.mpasset",
+      "bytes": 9294247,
+      "sha256": "38b61feab2fd7934e05cbe9f68baa308978a5e3b7f85c1913bb8ae89b8ef8b97",
+      "exactGitBlobMatch": true
+    }
+  ],
+  "buildHookExit": 0,
+  "buildHookOutput": "All six bundled tracker assets match the exact on-device byte requirements.\nSkipping production release validation for this EAS build profile."
+}

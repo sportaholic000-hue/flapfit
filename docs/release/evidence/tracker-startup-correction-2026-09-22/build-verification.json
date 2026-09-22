@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-09-22T15:20:14.110Z",
+  "status": "FINISHED",
+  "buildId": "c3a053bb-eaf4-4b25-a57b-641c9022ae9c",
+  "sourceCommit": "e4a7f03b885f0de88bbc22c90c4999b3a11eb16a",
+  "buildProfile": "ios-device-check",
+  "distribution": "INTERNAL",
+  "version": "1.0.0",
+  "buildNumber": "4",
+  "createdAt": "2026-09-22T15:10:14.388Z",
+  "completedAt": "2026-09-22T15:17:34.696Z",
+  "installPage": "https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/c3a053bb-eaf4-4b25-a57b-641c9022ae9c",
+  "ipaSha256": "ff6299d316664802568dfce39f8c976e7c3f419395d979128ecd8c3565a8862f",
+  "nativeWorkerChecks": {
+    "All six bundled tracker assets match the exact on-device byte requirements.": true,
+    "UMP native nullable GDPR and independent P1/P7 checks passed without advertising initialization.": true,
+    "RevenueCat 5.88.0 consent fence verified (10 files patched).": true,
+    "RevenueCat native fence: cold launch, active cancellation, persistent purge, stale generation rejection and fresh grant passed.": true,
+    "Retained the actual signed Xcode archive as a separate EAS artifact.": true
+  },
+  "expoDoctor": {
+    "passed": 20,
+    "total": 21,
+    "remainingCheck": "Seven pre-existing Expo patch version recommendations; unchanged dependency baseline",
+    "messages": [
+      "Start phase: RUN_EXPO_DOCTOR",
+      "Running \"expo doctor\"",
+      "Running 21 checks on your project...",
+      "20/21 checks passed. 1 checks failed. Possible issues detected:",
+      "Use the --verbose flag to see more details about passed checks.",
+      "",
+      "✖ Check that packages match versions required by installed Expo SDK",
+      "",
+      "🔧 Patch version mismatches",
+      "package                expected  found    ",
+      "expo                   ~57.0.24  57.0.22  ",
+      "expo-asset             ~57.0.18  57.0.17  ",
+      "expo-build-properties  ~57.0.21  57.0.17  ",
+      "expo-constants         ~57.0.19  57.0.18  ",
+      "expo-router            ~57.0.22  57.0.21  ",
+      "expo-sharing           ~57.0.21  57.0.19  ",
+      "@expo/metro-runtime    ~57.0.16  57.0.15  ",
+      "",
+      "Changelogs:",
+      "- expo-asset → https://github.com/expo/expo/blob/sdk-57/packages/expo-asset/CHANGELOG.md",
+      "- expo-build-properties → https://github.com/expo/expo/blob/sdk-57/packages/expo-build-properties/CHANGELOG.md",
+      "- expo-constants → https://github.com/expo/expo/blob/sdk-57/packages/expo-constants/CHANGELOG.md",
+      "- expo-router → https://github.com/expo/expo/blob/sdk-57/packages/expo-router/CHANGELOG.md",
+      "- expo-sharing → https://github.com/expo/expo/blob/sdk-57/packages/expo-sharing/CHANGELOG.md",
+      "",
+      "7 packages out of date.",
+      "Advice:",
+      "Use 'npx expo install --check' to review and upgrade your dependencies.",
+      "To ignore specific packages, add them to \"expo.install.exclude\" in package.json. Learn more: https://expo.fyi/dependency-validation",
+      "1 check failed, indicating possible issues with the project.",
+      "Command \"expo doctor\" failed.",
+      "End phase: RUN_EXPO_DOCTOR"
+    ],
+    "fullyPassing": false
+  },
+  "xcode": {
+    "archiveSucceeded": true,
+    "compilerErrors": [],
+    "linesContainingWarnings": 1960,
+    "privacyWarnings": [],
+    "logSha256": "d726fd6dbe677f367192167bf61a84c8de15d7b683e31e8ebcd301769dfef347"
+  },
+  "billing": {
+    "plan": "Free",
+    "iosBuilds": {
+      "used": 10,
+      "limit": 15,
+      "percentUsed": 66
+    },
+    "buildOverageCents": 0,
+    "estimatedTotalCents": 0
+  },
+  "physicalAcceptance": "Pending owner retest on iPad; actual native camera execution not verified by artifact inspection",
+  "appleReviewSubmitted": false
+}
