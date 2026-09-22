@@ -4,6 +4,8 @@ The demonstrated saved-age and request-body defects are corrected locally. All 1
 
 This report covers the latest attached request, which expressly prohibits creating or signing a mobile binary, uploading, submitting, deploying, publishing, or changing production configuration. None of those actions occurred. Website content and account settings were unchanged. Tests using simulated native boundaries are distinguished below from future device evidence.
 
+**Authenticated account follow-up:** The owner subsequently provided signed-in access and explicitly authorized the Google account timezone correction and necessary AdSense/AdMob fixes. The reporting timezone was corrected and verified in both services. Current provider settings and empty App Store screenshot slots are now inspected; see [account verification and exact change record](account-readback-2026-09-21.md). The paragraphs describing the original audit above are historical. No app or website code changed in this follow-up.
+
 **Source and changes**
 
 | Item | Exact revision / state |
@@ -139,7 +141,7 @@ Commands below used Node 24.13.1. Unless indicated otherwise, the working direct
 | `corepack yarn npm audit --recursive --all --json`, repository root | Exit 1 with the advisory/deprecation counts explained above. Full output retained. |
 | `node <audit>/verify-uri-decoder.cjs --installed` | 35 legacy vectors, 135 upstream vectors (165 upstream calls), and 2 query-string callers passed; stress evidence retained. |
 | Actual EAS CLI 24.7.0 `GitClient.makeShallowCopyAsync`, with `requireCommit=true` | Accepted clean code revision `2f9b8a3`; 460 files / 55,953,778 bytes. Committed included contents unchanged; only intentionally ignored tracked files omitted. Generated exports, nested install state, archive and signing metadata absent. SHA-256 manifest retained. This was local copying only. |
-| Live backend metadata/source and public privacy/support inspection | Read-only. No customer rows, abuse traffic, deployment or configuration writes. Apple, AdMob and RevenueCat account consoles were not available in the current browser inventory; old screenshots are not treated as fresh verification. |
+| Live backend metadata/source and public privacy/support inspection | Original audit was read-only. No customer rows, abuse traffic or deployment. Apple, AdMob and RevenueCat were unavailable at that checkpoint; subsequent authenticated inspection is recorded in the linked account follow-up, including the separately authorized Google reporting-timezone correction. |
 
 The complete mobile run preceded the final backend type-only annotations. The backend handler suite and Deno checks were then rerun, and unchanged emitted JavaScript was verified. Repeating the entire mobile suite after those annotations would not add evidence about changed behavior.
 
@@ -153,9 +155,9 @@ No additional demonstrated mobile-source defect remains from these investigated 
 | --- | --- | --- |
 | Advertising withdrawal/support coverage | Resolve the specific purpose/basis and working route described in finding C; verify any applicable request can actually be fulfilled. | Legal/processing scope and operational effect were not fully established. A behavior-changing remedy is explicitly outside this audit's authorization. |
 | Corrected API body limit in production | A separately authorized deployment of the corrected `flapfit-game` source, followed by readback and bounded verification. | Live version 8 still matches the pre-fix baseline. Deployment was expressly forbidden. It is inaccurate to call the live defect fixed. No database migration is needed for this correction. |
-| Provider/account readiness and cost settings | Read current AdMob app/store linkage, readiness and serving/consent configuration; RevenueCat connection/event settings; relevant Auth rate/spend controls and Apple metadata. | The corresponding signed-in consoles were unavailable in the current browser. No current account approval or ad-serving guarantee is claimed. |
+| Provider/account readiness and cost settings | AdMob remains Requires review with no public store listing linked and an inactivity warning. Link the published listing when available and complete Google review. Actual ad/RevenueCat receipt still needs device evidence; backend Auth rate/spend controls remain separately unverified. | Signed-in AdMob, AdSense, RevenueCat and Apple settings have now been inspected. Google message coverage, revenue-reporting setting and RevenueCat connection are present. Timezone fixed to Atlantic. A store listing/review and genuine runtime receipt cannot be replaced by account edits; see the follow-up record. |
 | Moderation/support operations | Establish monitored ownership and evidence that requests/reports can be processed using the documented routes. | Source and public mail links do not establish staffed operations. |
-| Store screenshots | Capture and review appropriate assets for the eventual tested candidate; check actual App Store Connect slots. | The local store-asset validator fails for missing planned captures. This is submission preparation, not a reason to change gameplay or a mobile compilation defect. |
+| Store screenshots | Capture and review appropriate assets for the eventual tested candidate and populate the required App Store slots. | Confirmed in the current English (U.S.) media manager: all eight listed iPhone and all five listed iPad size groups have zero screenshots. This does not mean Apple requires every size group or eight images. Local planned captures also remain absent. |
 
 The following checks genuinely require the future native candidate/device or provider runtime. They were **not passed** by this audit:
 
@@ -166,4 +168,4 @@ The following checks genuinely require the future native candidate/device or pro
 - Native reporting-stop acknowledgement, absence of late prohibited transport after privacy changes, genuine permitted ad impressions and RevenueCat event receipt.
 - Installed offline/reconnect/deletion flows, moderation workflow evidence, actual support delivery and final store metadata/assets.
 
-No mobile build, prebuild/native compile, cloud upload, push, website publication, account edit, backend deployment or submission was performed. This completes the authorized pre-build investigation and local corrections; acceptance and monetization are not guaranteed by passing source tests.
+The original audit performed no mobile build, prebuild/native compile, cloud upload, push, website publication, account edit, backend deployment or submission. The later account follow-up changed only the explicitly authorized Google reporting timezone; all other listed actions remain unperformed. Acceptance and monetization are not guaranteed by passing source tests or account readback.
