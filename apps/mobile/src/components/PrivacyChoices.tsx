@@ -76,7 +76,8 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   return <View style={styles.root}>
     <Text style={styles.heading}>Advertising & reporting</Text>
     <Text style={styles.body}>{AD_PROCESSING_DISCLOSURE}</Text>
-    {input.launch ? <Text style={styles.status}>{releaseEligibilityMessage(resolveReleaseEligibility(input))}</Text> : null}
+    {input.launch ? <Text style={styles.status}>{resolveReleaseEligibility(input).status === 'available'
+      ? 'Review your setup below.' : releaseEligibilityMessage(resolveReleaseEligibility(input))}</Text> : null}
     {Platform.OS === 'ios' && resolveReleaseEligibility(input).status === 'unanswered'
       ? button('Retry availability check', async () => {
         const retry = require('@/services/privacy/retryGameEligibility') as typeof import('@/services/privacy/retryGameEligibility');
@@ -141,7 +142,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       <Text style={styles.heading}>Google advertising</Text>
       <Text style={styles.body}>Non-personalized ads support Flap Fit.</Text>
       {advertisingStatus ? <Text style={styles.status}>{advertisingStatus}</Text> : null}
-      <Text style={styles.note}>Where available, use Ad privacy settings in Info to manage Google's privacy choices. For other advertising-data requests, use Contact us in Info.</Text>
+      <Text style={styles.note}>Where available, use Ad privacy settings in Info to manage Google's privacy choices. For other advertising-data requests, use Privacy requests in Info.</Text>
       {input.choices.ads.decision === 'denied' ? <Text style={styles.note}>Your previous advertising-data refusal is still respected. You can choose to allow advertising again when eligible.</Text> : null}
       {retryAdvertising ? button('Retry saving privacy choice', () => refuseProcessingPurpose('ads')) : null}
       {!retryAdvertising && !advertisingPending && !advertisingAllowPending && canRestoreAdvertising

@@ -1,5 +1,7 @@
 # Apple readiness audit — September 22, 2026
 
+Follow-up: the owner subsequently authorized [these applied corrections](apple-review-corrections-2026-09-22.md). The audit below records the state before that work.
+
 Audited source: `0c6f805`, clean `main` synchronized with `origin/main`. Scope: current source checks, the live App Store Connect record, public policies/support/deletion pages, and a read-only AdMob readiness check. No app code, website, provider settings, Apple notes or declarations were changed. No build, upload or submission was started. No subagents were used.
 
 The code checks pass. Submission is not yet fully ready: current policies/reviewer guidance contain setup inconsistencies, a previously identified privacy-request completion gap is still present, the final privacy publication status is unconfirmed, and the tested release candidate still needs to be attached to Apple after device testing.

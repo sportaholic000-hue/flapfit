@@ -1,4 +1,6 @@
-# Proposed review-copy corrections — not applied
+# Historical review-copy proposal
+
+The owner subsequently authorized corrections. See [the applied corrections and current verification](apple-review-corrections-2026-09-22.md). The original proposal below is retained as historical context, not current implementation status.
 
 These are copy-only proposals from the September 22 readiness audit. Nothing below changes eligibility, advertising decisions, the website, Apple settings, or the app. No list of advertising-exempt ages or regions is proposed.
 

@@ -1,5 +1,7 @@
 # Specific advertising-data withdrawal assessment
 
+Historical assessment. The September 22 authorized source now includes a device-specific support response mechanism; see [the correction record](apple-review-corrections-2026-09-22.md) and [operator procedure](moderation-runbook.md#device-specific-privacy-response--september-22). Physical-device/provider verification remains distinct from the source implementation.
+
 September 21, 2026 (America/Halifax). Assessment of source `2f9b8a33404c9ed2eb809d03e41cbff8055e6a01`, unchanged in `e9acd2d8a8d359b3c24c3cb1bd48487e62bc6d1d`.
 
 **Conclusion:** the current controls cover separate RevenueCat reporting withdrawal, saved advertising refusals and applicable Google privacy forms. They do not provide a working route for a new, valid withdrawal of consent to Google's personal-data processing on a Canadian installation where Google reports that no privacy form is required. This is a specific support/product capability gap. It does not establish a right to remove all advertising, or justify giving every adult an ads-off button. No such control was added.

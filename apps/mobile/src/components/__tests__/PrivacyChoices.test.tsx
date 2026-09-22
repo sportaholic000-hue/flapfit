@@ -101,7 +101,7 @@ test.each(['Yes', 'No'])('New York %s is asked once, stays saved after remount a
   await f.act(async () => { nyButtons[nyButtons.length - 1].props.onPress(); });
   expect(f.text()).not.toContain('Are you in New York right now?');
   expect(f.button('Update New York answer')).toBeDefined();
-  expect(f.text()).toContain('Gameplay is available');
+  expect(f.text()).toContain('Review your setup below.');
   await f.unmount(); await f.mount();
   expect(f.text()).not.toContain('Are you in New York right now?');
   await f.press('Update New York answer');
@@ -347,7 +347,7 @@ test.each([
   await f.access.setProcessingChoice('analytics','denied');
   await f.mount();
   expect(f.button('Allow advertising')).toBeUndefined(); expect(f.button('Allow reporting')).toBeUndefined();
-  expect(f.text()).toContain('Gameplay is available');
+  expect(f.text()).toContain('Review your setup below.');
   expect(f.button('Save & continue')).toBeDefined();
   await f.unmount();
 });
@@ -550,8 +550,9 @@ test.each(['unsupported','unknown'] as const)('Info renders accurate %s age avai
   f.access.clearAgeVerification();f.access.setAppleAgeRequirement(state==='unsupported'?'unsupported':'not-required');
   await f.mount();
   expect(f.text()).toContain(state==='unsupported'?'This system cannot provide the age check':'Age eligibility has not been confirmed');
-  expect(f.text()).toContain('Gameplay is available');
-  expect(f.text()).toContain('local gameplay and saved progress remain available');
+  expect(f.text()).toContain('Review your setup below.');
+  expect(f.text().toLowerCase()).toContain('your saved progress is retained');
+  expect(f.text()).not.toContain('Gameplay is available');
   expect(f.button('Withdraw advertising data consent')).toBeUndefined();expect(f.button('Allow advertising')).toBeUndefined();
   await f.unmount();
 });
@@ -588,7 +589,7 @@ const privacyPreviews: PreviewScreen[] = [];
 const expectedAdvertisingText = [
   'Google advertising',
   'Non-personalized ads support Flap Fit.',
-  "Where available, use Ad privacy settings in Info to manage Google's privacy choices. For other advertising-data requests, use Contact us in Info.",
+  "Where available, use Ad privacy settings in Info to manage Google's privacy choices. For other advertising-data requests, use Privacy requests in Info.",
 ].join('\n');
 function capturePrivacy(f: Awaited<ReturnType<typeof fixture>>, country: string, audience: string, state: string) {
   const text = f.text();

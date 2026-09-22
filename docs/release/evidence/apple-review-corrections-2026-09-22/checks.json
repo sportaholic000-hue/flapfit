@@ -1,0 +1,49 @@
+{
+  "checkedAtUtc": "2026-09-22T22:49:28.407Z",
+  "baseCommit": "7919aa8",
+  "tests": {
+    "suites": 71,
+    "passed": 1530,
+    "failed": 0,
+    "pending": 0
+  },
+  "testMethod": "Latest result per suite from a full run and affected-suite reruns after correcting stale copy assertions and adding the newer-choice race guard.",
+  "typecheckExit": 0,
+  "strictLintExit": 0,
+  "productionConfigExit": 0,
+  "securityAuditExit": 0,
+  "securityAdvisories": 0,
+  "iosJavaScriptHermesExportExit": 0,
+  "signedNativeBuildStarted": false,
+  "site": {
+    "version": 38,
+    "sourceCommit": "52375219e347e5f93fb14f587a35599a536e7160",
+    "deploymentId": "appgdep_6ab3044fe7a881919c41c3ba1e3c53c5",
+    "status": "succeeded",
+    "url": "https://flap-fit.sportaholic000.chatgpt.site"
+  },
+  "appleNotes": {
+    "saved": true,
+    "reloaded": true,
+    "characters": 3558
+  },
+  "applePrivacyPublication": "Final legal-statement confirmation requested; not clicked",
+  "files": [
+    {
+      "name": "tests.json",
+      "sha256": "83d1d1722e2fad23b67d788be49d42d2f4e72673014970ea1ab24132987a7b94"
+    },
+    {
+      "name": "corrected-tests.json",
+      "sha256": "2915541863c2710199fdf2134398a1499f908fdcc1e1fd4b40cd6bd405c32b38"
+    },
+    {
+      "name": "privacy-copy-tests.json",
+      "sha256": "d13fe4334b9acdee7941cdf5ee606d0d19818e317905490153aa3520aef8b768"
+    },
+    {
+      "name": "support-final-tests.json",
+      "sha256": "ee2d202665cdfe7d9dec0afe4eb43015b35c56e64a0487bad4259b96b24866be"
+    }
+  ]
+}
