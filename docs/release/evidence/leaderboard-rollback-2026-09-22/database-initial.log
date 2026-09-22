@@ -1,0 +1,46 @@
+✔ reproduces duplicate names on the previous schema; migration refuses collisions without changing profiles (14855.0438ms)
+✔ names are unique across capitalization, repeated whitespace and Unicode compatibility forms (5521.0205ms)
+✔ two queued claims have exactly one owner; the owner can retain or change capitalization (8140.2174ms)
+✔ a conflicting finalization rolls back the score and leaves the same run retryable under a free name (8253.6152ms)
+✔ one player keeps their name across exercises; deleting the profile releases the name (6834.4595ms)
+✔ competition SQL rejects another user, conflicting replay, expiry and implausible timing; exact retry is idempotent (6686.1158ms)
+✔ competition SQL denies direct client table/RPC access and enforces run cost limits (6636.9425ms)
+✔ deletion cascades competition records but minimizes retained moderation evidence; retention removes only expired records (10028.4453ms)
+✖ owner-requested attestation removal preserves scores, names and restricted run RPCs (9669.5791ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 8
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 77982.7073
+
+✖ failing tests:
+
+test at supabase\tests\apple-consent\competition-database.test.mjs:167:1
+✖ owner-requested attestation removal preserves scores, names and restricted run RPCs (9669.5791ms)
+  AssertionError [ERR_ASSERTION]: The "nameConflict" validation function is expected to return "true". Received false
+
+  Caught error:
+
+  error: permission denied for table profiles
+      at async TestContext.<anonymous> (file:///C:/Users/money/Projects/flapfit/anything/supabase/tests/apple-consent/competition-database.test.mjs:194:5)
+      at async Test.run (node:internal/test_runner/test:1110:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:785:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: error: permission denied for table profiles
+        at be.$r (C:\Users\money\Documents\Codex\2026-09-16\g\work\apple-consent-tools\node_modules\@electric-sql\pglite\dist\index.cjs:3:22154)
+        at be.za (C:\Users\money\Documents\Codex\2026-09-16\g\work\apple-consent-tools\node_modules\@electric-sql\pglite\dist\index.cjs:3:19524)
+        at be.parse (C:\Users\money\Documents\Codex\2026-09-16\g\work\apple-consent-tools\node_modules\@electric-sql\pglite\dist\index.cjs:3:18257)
+        at C:\Users\money\Documents\Codex\2026-09-16\g\work\apple-consent-tools\node_modules\@electric-sql\pglite\dist\index.cjs:12:191877
+        at wasm://wasm/021cbcb2:wasm-function[3707]:0x27cef1
+        at wasm://wasm/021cbcb2:wasm-function[3717]:0x27d268
+        at wasm://wasm/021cbcb2:wasm-function[9494]:0x509d72
+        at wasm://wasm/021cbcb2:wasm-function[175]:0x598a3
+        at invoke_v (C:\Users\money\Documents\Codex\2026-09-16\g\work\apple-consent-tools\node_modules\@electric-sql\pglite\dist\index.cjs:12:176458)
+        at wasm://wasm/021cbcb2:wasm-function[178]:0x5a0e8,
+    operator: 'rejects',
+    diff: 'simple'
+  }

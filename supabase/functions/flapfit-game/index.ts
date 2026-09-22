@@ -1,7 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.109.0';
 import { requiresAppleCompetitionCheck } from '../_shared/apple-consent-competition.ts';
-import { attestKey, proofBytes, resultPayload, verifyResult } from './integrity.ts';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -39,8 +38,6 @@ class ApiError extends Error {
 
 function databaseApiError(error: { message?: string; code?: string }): ApiError | null {
   const message = error.message ?? '';
-  if (/integrity registration limit/i.test(message)) return new ApiError(429, 'App verification needs a later retry.');
-  if (/integrity|assertion/i.test(message)) return new ApiError(422, 'This result could not be verified.', 'INTEGRITY_REQUIRED');
   if (error.code === '23505' && message.includes('profiles_player_name_key')) {
     return new ApiError(409, 'Name already taken. Choose a different player name.', 'PLAYER_NAME_TAKEN');
   }
@@ -61,7 +58,8 @@ function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: RESPONSE_HEADERS });
 }
 
-async function bodyJson(req: Request, maxBytes = 4096): Promise<Record<string, unknown>> {
+async function bodyJson(req: Request): Promise<Record<string, unknown>> {
+  const maxBytes = 4096;
   if (Number(req.headers.get('content-length')) > maxBytes) {
     throw new ApiError(413, 'Request body is too large.');
   }
@@ -221,43 +219,6 @@ Deno.serve(async (req) => {
       return playerName;
     };
 
-    const integrityError = () => new ApiError(422, 'This result could not be verified. Update Flap Fit and start a new run.', 'INTEGRITY_REQUIRED');
-    const readKeyId = (value: unknown): string => {
-      try { if (proofBytes(value, 32).length === 32) return value as string; } catch { /* Fail closed. */ }
-      throw integrityError();
-    };
-    const readKey = async (keyId: string) => {
-      const result = await admin.from('game_integrity_keys').select('public_key').eq('key_id',keyId).eq('user_id',user.id).maybeSingle();
-      if (result.error) throw result.error;
-      return result.data;
-    };
-
-    if (req.method === 'POST' && route === '/integrity/challenge') {
-      const body = await bodyJson(req);
-      const keyId = readKeyId(body.keyId);
-      if (await readKey(keyId)) return json({ registered: true });
-      const nonce = Array.from(crypto.getRandomValues(new Uint8Array(32)), value => value.toString(16).padStart(2,'0')).join('');
-      const result = await admin.rpc('game_integrity_challenge',{p_user_id:user.id,p_key_id:keyId,p_nonce:nonce}).single<{nonce:string}>();
-      if (result.error) throw databaseApiError(result.error) ?? result.error;
-      return json({ registered:false, challenge:result.data.nonce });
-    }
-    if (req.method === 'POST' && route === '/integrity/register') {
-      // Only Apple's one-time certificate enrollment needs the larger bound.
-      const body = await bodyJson(req, 24000);
-      const keyId = readKeyId(body.keyId);
-      if (await readKey(keyId)) return json({ registered:true });
-      const challenge = await admin.from('game_integrity_challenges').select('nonce,expires_at').eq('user_id',user.id).eq('key_id',keyId).maybeSingle();
-      if (challenge.error) throw challenge.error;
-      if (!challenge.data || Date.parse(challenge.data.expires_at) <= Date.now()) throw integrityError();
-      let verified;
-      try { verified = attestKey(keyId,body.attestation,challenge.data.nonce); } catch { throw integrityError(); }
-      const saved = await admin.rpc('register_game_integrity_key',{
-        p_user_id:user.id,p_key_id:keyId,p_nonce:challenge.data.nonce,p_public_key:verified.publicKey,
-      });
-      if (saved.error) throw databaseApiError(saved.error) ?? saved.error;
-      return json({ registered:true });
-    }
-
     if (req.method === 'POST' && route === '/profile') {
       const body = await bodyJson(req);
       return json({ player_name: await savePlayerName(body.playerName) });
@@ -304,23 +265,20 @@ Deno.serve(async (req) => {
       const exercise = typeof body.exercise === 'string' ? body.exercise : '';
       if (!ALLOWED_RUN_KINDS.has(kind)) return json({ error: 'Game run type is invalid.' }, 400);
       if (!ALLOWED_EXERCISES.has(exercise)) return json({ error: 'Exercise is invalid.' }, 400);
-      const keyId = readKeyId(body.keyId);
-      const nonce = Array.from(crypto.getRandomValues(new Uint8Array(32)), value => value.toString(16).padStart(2,'0')).join('');
       // Check older locally saved names before play. The unique database index
       // also protects finalization and older clients that omit this field.
       if (body.playerName !== undefined) await savePlayerName(body.playerName);
       const runResult = await admin
-        .rpc('begin_attested_game_run', {
+        .rpc('begin_game_run', {
           p_user_id: user.id,
-          p_key_id: keyId,
-          p_nonce: nonce,
           p_kind: kind,
           p_exercise: exercise,
+          p_challenge_code: null,
           p_rules_version: CURRENT_RUN_RULES_VERSION,
         })
         .single<{ run_id: string; expires_at: string }>();
       if (runResult.error) throw databaseApiError(runResult.error) ?? runResult.error;
-      return json({ run_id: runResult.data.run_id, expires_at: runResult.data.expires_at, key_id:keyId, nonce }, 201);
+      return json({ run_id: runResult.data.run_id, expires_at: runResult.data.expires_at }, 201);
     }
 
     if (req.method === 'POST' && route === '/runs/finalize') {
@@ -329,20 +287,8 @@ Deno.serve(async (req) => {
       const playerName = cleanPlayerName(body.playerName);
       const score = integer(body.score, 0, 100000, 'Score');
       const durationMs = integer(body.durationMs, 0, 6 * 60 * 60 * 1000, 'Run duration');
-      const run = await admin.from('game_runs').select('integrity_key_id,integrity_nonce').eq('id',runId).eq('user_id',user.id).maybeSingle();
-      if (run.error) throw run.error;
-      if (!run.data?.integrity_key_id || !run.data.integrity_nonce) throw integrityError();
-      const key = await readKey(run.data.integrity_key_id);
-      if (!key) throw integrityError();
-      let verified;
-      try {
-        verified = verifyResult(body.assertion,key.public_key,resultPayload(runId,run.data.integrity_nonce,score,durationMs));
-      } catch { throw integrityError(); }
       const finalizeResult = await admin
-        .rpc('finalize_attested_game_run', {
-          p_key_id:run.data.integrity_key_id,
-          p_counter:verified.counter,
-          p_assertion_hash:verified.hash,
+        .rpc('finalize_game_run', {
           p_run_id: runId,
           p_user_id: user.id,
           p_player_name: playerName,

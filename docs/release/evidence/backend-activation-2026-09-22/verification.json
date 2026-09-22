@@ -1,0 +1,845 @@
+{
+  "project": "yhrleungvipsqlmayrfg",
+  "sourceCommit": "f360385b545b4a664da5a41d0c0430df792ef88c",
+  "authorization": "Owner requested backend update after asking why saved fixes were not active.",
+  "deployment": {
+    "id": "9bdc3d48-9040-425a-a3cf-b9ad9d124e19",
+    "slug": "flapfit-game",
+    "name": "flapfit-game",
+    "status": "ACTIVE",
+    "version": 9,
+    "created_at": 1789403748592,
+    "updated_at": 1790057364872,
+    "verify_jwt": true,
+    "import_map": true,
+    "entrypoint_path": "file:///tmp/user_fn_yhrleungvipsqlmayrfg_9bdc3d48-9040-425a-a3cf-b9ad9d124e19_9/source/supabase/functions/flapfit-game/index.ts",
+    "import_map_path": "file:///tmp/user_fn_yhrleungvipsqlmayrfg_9bdc3d48-9040-425a-a3cf-b9ad9d124e19_9/source/supabase/functions/flapfit-game/deno.json",
+    "ezbr_sha256": "804395a2898954d63d2837d35a68739593693d4cd821d9ac2c00e3c8f1286b11"
+  },
+  "migrations": [
+    {
+      "version": "20260922060854",
+      "name": "unique_player_names"
+    },
+    {
+      "version": "20260922060909",
+      "name": "attest_leaderboard_results"
+    }
+  ],
+  "sourceFiles": {
+    "supabase/functions/flapfit-game/index.ts": "cce0f5eec9f991f30948348277aa30115150197e5d9a4be0a70a4e3396523808",
+    "supabase/functions/flapfit-game/integrity.ts": "be615dfb6806d92b833a5f987e47c46aa9bbee81bd215ae66eed34da586f49f4",
+    "supabase/functions/flapfit-game/deno.json": "64671c91618ea653245c1cff455cbe5c68050853f9c571e56831f45fc307c852",
+    "supabase/functions/flapfit-game/deno.lock": "0b2521e8f59a908dc8631782ff13312ab44cc83ae3d08b423316db1aae8ce168",
+    "supabase/functions/flapfit-game/app-attest/verifyAttestation.js": "8b64be38ecbc111271a647253581192ab705746ba7c071c0c595e6b31c0c66c0",
+    "supabase/functions/flapfit-game/app-attest/verifyAssertion.js": "e11eea9d0fceda33e14c2dca7e6ca7905ddb531aa1820122beca287a03fde4dd",
+    "supabase/functions/flapfit-game/app-attest/LICENSE": "07d7909aa6b8fc35921a0a2b5ef307a32d00c3f6a17f4ffb76588f6c58e705b0",
+    "supabase/functions/_shared/apple-consent-competition.ts": "71b2c06f8b95882b34e0d192267c407875a20e78e6cb65c1e8919e3b29765927",
+    "supabase/functions/flapfit-apple-consent/crypto-compat.ts": "fa91bf546962ee2a8c6cae2fe68dfa802ae77d811b29b65522925f362420dc23"
+  },
+  "readback": [
+    {
+      "file": "supabase/functions/flapfit-game/index.ts",
+      "match": true,
+      "status": "matched"
+    },
+    {
+      "file": "supabase/functions/flapfit-game/integrity.ts",
+      "match": true,
+      "status": "matched"
+    },
+    {
+      "file": "supabase/functions/flapfit-game/deno.json",
+      "match": true,
+      "status": "matched"
+    },
+    {
+      "file": "supabase/functions/flapfit-game/deno.lock",
+      "match": false,
+      "status": "not included in Supabase source readback"
+    },
+    {
+      "file": "supabase/functions/flapfit-game/app-attest/verifyAttestation.js",
+      "match": true,
+      "status": "matched"
+    },
+    {
+      "file": "supabase/functions/flapfit-game/app-attest/verifyAssertion.js",
+      "match": true,
+      "status": "matched"
+    },
+    {
+      "file": "supabase/functions/flapfit-game/app-attest/LICENSE",
+      "match": false,
+      "status": "not included in Supabase source readback"
+    },
+    {
+      "file": "supabase/functions/_shared/apple-consent-competition.ts",
+      "match": true,
+      "status": "matched"
+    },
+    {
+      "file": "supabase/functions/flapfit-apple-consent/crypto-compat.ts",
+      "match": true,
+      "status": "matched"
+    }
+  ],
+  "database": [
+    {
+      "verification": {
+        "tables": [
+          {
+            "rls": true,
+            "table": "game_integrity_keys",
+            "anon_select": false,
+            "service_insert": true,
+            "authenticated_insert": false,
+            "authenticated_select": false
+          },
+          {
+            "rls": true,
+            "table": "game_integrity_challenges",
+            "anon_select": false,
+            "service_insert": true,
+            "authenticated_insert": false,
+            "authenticated_select": false
+          }
+        ],
+        "profiles": 3,
+        "functions": [
+          {
+            "name": "begin_attested_game_run",
+            "search_path": [
+              "search_path=\"\""
+            ],
+            "anon_execute": false,
+            "service_execute": true,
+            "authenticated_execute": false
+          },
+          {
+            "name": "begin_game_run",
+            "search_path": [
+              "search_path=public, pg_temp"
+            ],
+            "anon_execute": false,
+            "service_execute": false,
+            "authenticated_execute": false
+          },
+          {
+            "name": "finalize_attested_game_run",
+            "search_path": [
+              "search_path=\"\""
+            ],
+            "anon_execute": false,
+            "service_execute": true,
+            "authenticated_execute": false
+          },
+          {
+            "name": "finalize_game_run_internal",
+            "search_path": [
+              "search_path=public, pg_temp"
+            ],
+            "anon_execute": false,
+            "service_execute": false,
+            "authenticated_execute": false
+          },
+          {
+            "name": "game_integrity_challenge",
+            "search_path": [
+              "search_path=\"\""
+            ],
+            "anon_execute": false,
+            "service_execute": true,
+            "authenticated_execute": false
+          },
+          {
+            "name": "register_game_integrity_key",
+            "search_path": [
+              "search_path=\"\""
+            ],
+            "anon_execute": false,
+            "service_execute": true,
+            "authenticated_execute": false
+          }
+        ],
+        "name_unique_index": true,
+        "cron_anon_job_select": true,
+        "cron_anon_schema_usage": false,
+        "cron_authenticated_job_select": true,
+        "cron_authenticated_schema_usage": false
+      }
+    }
+  ],
+  "beforeChecks": {
+    "runs": 146,
+    "scores": 7,
+    "profiles": 3,
+    "auth_users": 4
+  },
+  "afterChecks": {
+    "runs": 146,
+    "scores": 7,
+    "profiles": 3,
+    "auth_users": 4,
+    "integrity_keys": 0,
+    "integrity_challenges": 0
+  },
+  "http": {
+    "passed": true,
+    "checkedAt": "2026-09-22T06:13:23.444Z",
+    "checks": [
+      {
+        "label": "Function startup / preflight",
+        "status": 204
+      },
+      {
+        "label": "Unauthenticated request rejected",
+        "status": 401
+      },
+      {
+        "label": "Terms required",
+        "status": 428
+      },
+      {
+        "label": "Leaderboard read",
+        "status": 200
+      },
+      {
+        "label": "Normalized duplicate name rejected",
+        "status": 409,
+        "code": "PLAYER_NAME_TAKEN"
+      },
+      {
+        "label": "Legacy claimed score rejected",
+        "status": 410
+      },
+      {
+        "label": "Unsigned run creation rejected",
+        "status": 422,
+        "code": "INTEGRITY_REQUIRED"
+      },
+      {
+        "label": "Unregistered key rejected",
+        "status": 422,
+        "code": "INTEGRITY_REQUIRED"
+      },
+      {
+        "label": "Invented unsigned result rejected",
+        "status": 422,
+        "code": "INTEGRITY_REQUIRED"
+      },
+      {
+        "label": "Oversized request rejected",
+        "status": 413
+      },
+      {
+        "label": "Enrollment challenge issued",
+        "status": 200
+      },
+      {
+        "label": "Enrollment challenge retry",
+        "status": 200
+      },
+      {
+        "label": "Fabricated attestation rejected",
+        "status": 422,
+        "code": "INTEGRITY_REQUIRED"
+      },
+      {
+        "label": "Direct integrity table access denied",
+        "status": 403,
+        "code": "42501"
+      },
+      {
+        "label": "Direct score-writing RPC denied",
+        "status": 403,
+        "code": "42501"
+      },
+      {
+        "label": "Retired challenge route rejected",
+        "status": 410
+      },
+      {
+        "label": "Temporary verification identity deleted",
+        "status": 200
+      }
+    ],
+    "deviceAcceptancePending": true
+  },
+  "scoreSurface": [
+    {
+      "score_surface": {
+        "policies": [
+          {
+            "cmd": "ALL",
+            "qual": "false",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "tablename": "challenges",
+            "permissive": "PERMISSIVE",
+            "policyname": "challenges_deny_direct_client_access",
+            "schemaname": "public",
+            "with_check": "false"
+          },
+          {
+            "cmd": "ALL",
+            "qual": "false",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "tablename": "profiles",
+            "permissive": "PERMISSIVE",
+            "policyname": "profiles_deny_direct_client_access",
+            "schemaname": "public",
+            "with_check": "false"
+          },
+          {
+            "cmd": "ALL",
+            "qual": "false",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "tablename": "leaderboard_scores",
+            "permissive": "PERMISSIVE",
+            "policyname": "leaderboard_scores_deny_direct_client_access",
+            "schemaname": "public",
+            "with_check": "false"
+          },
+          {
+            "cmd": "ALL",
+            "qual": "false",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "tablename": "challenge_attempts",
+            "permissive": "PERMISSIVE",
+            "policyname": "challenge_attempts_deny_direct_client_access",
+            "schemaname": "public",
+            "with_check": "false"
+          },
+          {
+            "cmd": "ALL",
+            "qual": "false",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "tablename": "player_blocks",
+            "permissive": "PERMISSIVE",
+            "policyname": "player_blocks_deny_direct_client_access",
+            "schemaname": "public",
+            "with_check": "false"
+          },
+          {
+            "cmd": "ALL",
+            "qual": "false",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "tablename": "content_reports",
+            "permissive": "PERMISSIVE",
+            "policyname": "content_reports_deny_direct_client_access",
+            "schemaname": "public",
+            "with_check": "false"
+          },
+          {
+            "cmd": "ALL",
+            "qual": "false",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "tablename": "game_runs",
+            "permissive": "PERMISSIVE",
+            "policyname": "game_runs_deny_direct_client_access",
+            "schemaname": "public",
+            "with_check": "false"
+          }
+        ],
+        "write_grants": [
+          {
+            "rls": true,
+            "role": "authenticated",
+            "table": "challenges",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "anon",
+            "table": "challenges",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "authenticated",
+            "table": "challenge_attempts",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "anon",
+            "table": "challenge_attempts",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "authenticated",
+            "table": "player_blocks",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "anon",
+            "table": "player_blocks",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "authenticated",
+            "table": "profiles",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "anon",
+            "table": "profiles",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "authenticated",
+            "table": "leaderboard_scores",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "anon",
+            "table": "leaderboard_scores",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "authenticated",
+            "table": "game_runs",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "anon",
+            "table": "game_runs",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "authenticated",
+            "table": "content_reports",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "anon",
+            "table": "content_reports",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "authenticated",
+            "table": "game_integrity_challenges",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "anon",
+            "table": "game_integrity_challenges",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "authenticated",
+            "table": "game_integrity_keys",
+            "delete": false,
+            "insert": false,
+            "update": false
+          },
+          {
+            "rls": true,
+            "role": "anon",
+            "table": "game_integrity_keys",
+            "delete": false,
+            "insert": false,
+            "update": false
+          }
+        ],
+        "public_functions": [
+          {
+            "anon": false,
+            "args": "p_transaction_hash text",
+            "definer": false,
+            "function": "apple_consent_is_revoked",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_user_id uuid, p_environment text",
+            "definer": false,
+            "function": "apple_consent_user_is_revoked",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_user_id uuid, p_key_id text, p_nonce text, p_kind text, p_exercise text, p_rules_version text",
+            "definer": true,
+            "function": "begin_attested_game_run",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_user_id uuid, p_kind text, p_exercise text, p_challenge_code text, p_rules_version text",
+            "definer": true,
+            "function": "begin_game_run",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "",
+            "definer": false,
+            "function": "cleanup_flapfit_retention",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_user_id uuid, p_player_name text, p_terms_version text, p_target_score integer, p_code text",
+            "definer": true,
+            "function": "create_challenge_limited",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_user_id uuid, p_player_name text, p_terms_version text, p_target_score integer, p_code text, p_exercise text",
+            "definer": false,
+            "function": "create_challenge_limited",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_run_id uuid, p_user_id uuid, p_player_name text, p_score integer, p_duration_ms integer, p_terms_version text, p_rules_version text, p_key_id text, p_counter bigint, p_assertion_hash text",
+            "definer": true,
+            "function": "finalize_attested_game_run",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_run_id uuid, p_user_id uuid, p_player_name text, p_score integer, p_duration_ms integer, p_terms_version text, p_rules_version text",
+            "definer": true,
+            "function": "finalize_game_run_internal",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "",
+            "definer": false,
+            "function": "flapfit_enforce_challenge_exercise",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "",
+            "definer": false,
+            "function": "flapfit_enforce_run_timing",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_run_kind text, p_score integer",
+            "definer": false,
+            "function": "flapfit_minimum_run_duration_ms",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_user_id uuid, p_key_id text, p_nonce text",
+            "definer": false,
+            "function": "game_integrity_challenge",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "",
+            "definer": false,
+            "function": "get_apple_consent_hmac_key",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_transaction_hash text, p_user_id uuid",
+            "definer": false,
+            "function": "link_apple_consent_identity",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_notification_id uuid, p_transaction_hash text, p_environment text, p_signed_at timestamp with time zone",
+            "definer": false,
+            "function": "record_apple_consent_revocation",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_user_id uuid, p_key_id text, p_nonce text, p_public_key text",
+            "definer": false,
+            "function": "register_game_integrity_key",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "",
+            "definer": false,
+            "function": "set_content_report_resolved_at",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_user_id uuid, p_challenge_id uuid, p_score integer",
+            "definer": true,
+            "function": "upsert_challenge_attempt",
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "args": "p_user_id uuid, p_exercise text, p_score integer",
+            "definer": true,
+            "function": "upsert_leaderboard_score",
+            "authenticated": false
+          }
+        ]
+      }
+    }
+  ],
+  "advisors": {
+    "security": {
+      "result": {
+        "lints": [
+          {
+            "name": "rls_enabled_no_policy",
+            "title": "RLS Enabled No Policy",
+            "level": "INFO",
+            "facing": "EXTERNAL",
+            "categories": [
+              "SECURITY"
+            ],
+            "description": "Detects cases where row level security (RLS) has been enabled on a table but no RLS policies have been created.",
+            "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+            "count": 5,
+            "findings": [
+              {
+                "detail": "Table \\`flapfit_private.apple_consent_identities\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "apple_consent_identities",
+                  "type": "table",
+                  "schema": "flapfit_private"
+                },
+                "observed_at": "2026-09-22T06:09:46.690Z"
+              },
+              {
+                "detail": "Table \\`flapfit_private.apple_consent_notifications\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "apple_consent_notifications",
+                  "type": "table",
+                  "schema": "flapfit_private"
+                },
+                "observed_at": "2026-09-22T06:09:46.690Z"
+              },
+              {
+                "detail": "Table \\`flapfit_private.apple_consent_revocations\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "apple_consent_revocations",
+                  "type": "table",
+                  "schema": "flapfit_private"
+                },
+                "observed_at": "2026-09-22T06:09:46.690Z"
+              },
+              {
+                "detail": "Table \\`public.game_integrity_challenges\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "game_integrity_challenges",
+                  "type": "table",
+                  "schema": "public"
+                },
+                "observed_at": "2026-09-22T06:09:46.690Z"
+              },
+              {
+                "detail": "Table \\`public.game_integrity_keys\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "game_integrity_keys",
+                  "type": "table",
+                  "schema": "public"
+                },
+                "observed_at": "2026-09-22T06:09:46.690Z"
+              }
+            ]
+          },
+          {
+            "name": "auth_allow_anonymous_sign_ins",
+            "title": "Anonymous Access Policies",
+            "level": "WARN",
+            "facing": "EXTERNAL",
+            "categories": [
+              "SECURITY"
+            ],
+            "description": "Detects row level security (RLS) policies that allow access to anonymous users.",
+            "remediation": "Table `cron.job` has policies enforced on roles that allow access to anonymous users. Policies include `{cron_job_policy}`",
+            "count": 1,
+            "findings": [
+              {
+                "detail": "https://supabase.com/docs/guides/database/database-advisors?queryGroups=lint&lint=0012_auth_allow_anonymous_sign_ins",
+                "metadata": {
+                  "name": "job",
+                  "type": "table",
+                  "schema": "cron"
+                },
+                "observed_at": "2026-09-22T06:09:46.690Z"
+              }
+            ]
+          },
+          {
+            "name": "auth_allow_anonymous_sign_ins",
+            "title": "Anonymous Access Policies",
+            "level": "WARN",
+            "facing": "EXTERNAL",
+            "categories": [
+              "SECURITY"
+            ],
+            "description": "Detects row level security (RLS) policies that allow access to anonymous users.",
+            "remediation": "Table `cron.job_run_details` has policies enforced on roles that allow access to anonymous users. Policies include `{cron_job_run_details_policy}`",
+            "count": 1,
+            "findings": [
+              {
+                "detail": "https://supabase.com/docs/guides/database/database-advisors?queryGroups=lint&lint=0012_auth_allow_anonymous_sign_ins",
+                "metadata": {
+                  "name": "job_run_details",
+                  "type": "table",
+                  "schema": "cron"
+                },
+                "observed_at": "2026-09-22T06:09:46.690Z"
+              }
+            ]
+          },
+          {
+            "name": "auth_leaked_password_protection",
+            "title": "Leaked Password Protection Disabled",
+            "level": "WARN",
+            "facing": "EXTERNAL",
+            "categories": [
+              "SECURITY"
+            ],
+            "description": "Leaked password protection is currently disabled.",
+            "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection",
+            "count": 1,
+            "findings": [
+              {
+                "detail": "Supabase Auth prevents the use of compromised passwords by checking against HaveIBeenPwned.org. Enable this feature to enhance security.",
+                "metadata": {
+                  "type": "auth",
+                  "entity": "Auth"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "performance": {
+      "result": {
+        "lints": [
+          {
+            "name": "unused_index",
+            "title": "Unused Index",
+            "level": "INFO",
+            "facing": "EXTERNAL",
+            "categories": [
+              "PERFORMANCE"
+            ],
+            "description": "Detects if an index has never been used and may be a candidate for removal.",
+            "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index",
+            "count": 3,
+            "findings": [
+              {
+                "detail": "Index \\`game_runs_integrity_key_idx\\` on table \\`public.game_runs\\` has not been used",
+                "metadata": {
+                  "name": "game_runs",
+                  "type": "table",
+                  "schema": "public"
+                },
+                "observed_at": "2026-09-22T06:09:46.940Z"
+              },
+              {
+                "detail": "Index \\`apple_consent_identity_user\\` on table \\`flapfit_private.apple_consent_identities\\` has not been used",
+                "metadata": {
+                  "name": "apple_consent_identities",
+                  "type": "table",
+                  "schema": "flapfit_private"
+                },
+                "observed_at": "2026-09-22T06:09:46.940Z"
+              },
+              {
+                "detail": "Index \\`game_integrity_keys_user_idx\\` on table \\`public.game_integrity_keys\\` has not been used",
+                "metadata": {
+                  "name": "game_integrity_keys",
+                  "type": "table",
+                  "schema": "public"
+                },
+                "observed_at": "2026-09-22T06:09:46.940Z"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "limits": [
+    "Native signing accepts the score and duration supplied by the JavaScript game; backend does not reconstruct gameplay or prove physical exercise.",
+    "Successful App Attest enrollment and score publication from the matching native build remain unverified on a device.",
+    "Existing published scores were retained and not retroactively verified.",
+    "Supabase readback returned seven executable/configuration files, all matched; lockfile and MIT license were included in upload but omitted by source readback.",
+    "The rolled-back SQL collision probe was refused by the read-only query tool before any update; live API duplicate-name rejection was verified instead."
+  ],
+  "mobileBuilt": false
+}

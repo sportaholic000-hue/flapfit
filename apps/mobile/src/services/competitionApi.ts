@@ -7,7 +7,6 @@ import { getProcessingAccess, getProcessingInputs, subscribeProcessingAccess } f
 import { ensureCurrentAppleRescissionStatus, getAppleRescissionStatus, isAppleRescissionStatusFresh,
   linkAppleRescissionToExistingAccount, startAppleRescissionMonitoring } from './privacy/appleRescission';
 import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
-import { prepareCompetitionIntegrity, sealCompetitionResult, forgetCompetitionIntegrity } from './competitionIntegrity';
 
 const FUNCTION_NAME = 'flapfit-game';
 
@@ -317,8 +316,6 @@ export type CompetitionRunKind = 'leaderboard';
 export type CompetitionRunSession = {
   runId: string;
   expiresAt: string;
-  keyId?: string;
-  nonce?: string;
 };
 
 type PendingCompetitionResult = {
@@ -329,7 +326,6 @@ type PendingCompetitionResult = {
   expiresAt: string;
   createdAt: string;
   needsPlayerName?: boolean;
-  assertion?: string;
 };
 
 export type CompetitionSubmissionNotice = {
@@ -579,18 +575,6 @@ async function performCompetitionRequest<T>(
         if (requiresCurrentTerms && requiresAppleRescission() && !appleProfileIsCurrent(session.user.id)) {
           throw new CompetitionAccessRequiredError();
         }
-        let body = options.body;
-        if (method === 'POST' && path === '/runs') {
-          const assert = () => {
-            access?.assert();
-            assertDeletionClear();
-            if (controller.signal.aborted) throw new CompetitionRequestError('App verification timed out. Start a new run to retry.', 408);
-          };
-          const keyId = await prepareCompetitionIntegrity(session.user.id, (integrityPath, integrityBody) =>
-            performCompetitionRequest(integrityPath, { method:'POST', body:integrityBody, existingSession:session }, access), assert);
-          assert();
-          body = { ...(options.body as Record<string, unknown>), keyId };
-        }
         const response = await fetch(
           `${ONLINE_SERVICES.supabaseUrl}/functions/v1/${FUNCTION_NAME}${path}`,
           {
@@ -603,7 +587,7 @@ async function performCompetitionRequest<T>(
                 ? { 'X-FlapFit-Terms-Version': COMPETITION_TERMS_VERSION }
                 : {}),
             },
-            body: body === undefined ? undefined : JSON.stringify(body),
+            body: options.body === undefined ? undefined : JSON.stringify(options.body),
             signal: controller.signal,
           }
         );
@@ -666,7 +650,7 @@ export async function beginCompetitionRun(input: {
   exercise: string;
 }): Promise<CompetitionRunSession> {
   const savedName = useGameStore.getState().playerName;
-  const response = await competitionRequest<{ run_id: string; expires_at: string; key_id: string; nonce: string }>('/runs', {
+  const response = await competitionRequest<{ run_id: string; expires_at: string }>('/runs', {
     method: 'POST',
     body: {
       kind: input.kind,
@@ -676,7 +660,7 @@ export async function beginCompetitionRun(input: {
         : {}),
     },
   });
-  return { runId: response.run_id, expiresAt: response.expires_at, keyId:response.key_id, nonce:response.nonce };
+  return { runId: response.run_id, expiresAt: response.expires_at };
 }
 
 // Keep an intentional local run distinct from an online session that failed.
@@ -761,11 +745,7 @@ async function flushCompetitionOutbox(): Promise<CompetitionFlushResult> {
         });
         continue;
       }
-      if (entry.needsPlayerName) { remaining.push(entry); retryLater = true; continue; }
-      if (typeof entry.assertion !== 'string' || !entry.assertion) {
-        rejected.push({ runId:entry.runId,status:422,message:'This older result cannot be verified. Start a new run to publish a score.' });
-        continue;
-      }
+      if (entry.needsPlayerName) { remaining.push(entry); continue; }
       if (retryLater) {
         remaining.push(entry);
         continue;
@@ -777,7 +757,6 @@ async function flushCompetitionOutbox(): Promise<CompetitionFlushResult> {
       } catch (error) {
         if (error instanceof CompetitionRequestError && error.code === 'PLAYER_NAME_TAKEN') {
           remaining.push({ ...entry, needsPlayerName: true });
-          retryLater = true; // Preserve signature-counter order while the name is corrected.
           rejected.push({ runId: entry.runId, status: 409,
             message: 'Name already taken. Save a different name in Compete, then tap Refresh to publish this result before it expires.' });
           continue;
@@ -856,8 +835,6 @@ export function startCompetitionForegroundRetry(onSubmitted: () => void): () => 
 export async function submitCompetitionRunResult(input: {
   runId: string;
   expiresAt: string;
-  keyId?: string;
-  nonce?: string;
   playerName: string;
   score: number;
   durationMs: number;
@@ -887,21 +864,9 @@ export async function submitCompetitionRunResult(input: {
       const pending = await readCompetitionOutbox();
       if (pending.some((item) => item.runId === entry.runId)) return true;
       if (pending.length >= MAX_PENDING_RESULTS) return false;
-      try {
-        // Sign the completed result once, before writing it to editable local
-        // storage. Retries send exactly this proof; they never sign queued data.
-        entry.assertion = await sealCompetitionResult({ ...input, score:entry.score, durationMs:entry.durationMs });
-      } catch {
-        return 'unverified' as const;
-      }
-      if (await AsyncStorage.getItem(COMPETITION_DELETION_KEY) ||
-          useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION) return 'unverified' as const;
       await writeCompetitionOutbox([...pending, entry]);
       return true;
     })();
-    if (queued === 'unverified') return competitionAccessAllowed()
-      ? { status:'rejected',message:'This result could not be verified and was not published. Your local progress is saved.' }
-      : localCompetitionOutcome();
     if (!queued) {
       if (!competitionAccessAllowed()) return localCompetitionOutcome();
       const message =
@@ -997,7 +962,6 @@ export async function deleteCompetitionIdentity(): Promise<void> {
 
     await writeCompetitionOutbox([]);
     await AsyncStorage.removeItem(COMPETITION_NOTICE_KEY);
-    if (session || pending) await forgetCompetitionIntegrity((pending?.userId ?? session?.user.id)!);
     if (session || pending) {
       const signedOut = await supabase.auth.signOut({ scope: 'local' });
       if (signedOut?.error) throw signedOut.error;

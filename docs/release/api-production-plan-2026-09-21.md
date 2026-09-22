@@ -1,5 +1,8 @@
 # Prepared API production correction
 
+**Superseded by owner-requested rollback — September 22:** Production API version 10 and the app source have returned to the implementation with unique names and no score attestation. The additional attestation requests and dependencies are removed. The unique-name fix remains. See the [current rollback record](leaderboard-rollback-2026-09-22.md). Earlier activation plans and no-rollback recommendations below are historical and superseded by the owner's explicit instruction.
+
+
 September 21, 2026. **Prepared only; deployment is not authorized and was not performed.**
 
 Target: project `yhrleungvipsqlmayrfg`, function `flapfit-game`. Fresh authenticated readback still shows ACTIVE version **8**, gateway JWT verification **true**, and source matching baseline `368f829e671a39aed32cd3bfb5debbf82e3ba916`. Production therefore still contains the old body-reading defect.

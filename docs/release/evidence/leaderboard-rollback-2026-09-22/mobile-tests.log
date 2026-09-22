@@ -1,0 +1,11 @@
+(node:364100) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS src/services/__tests__/competitionApi-outbox.test.ts (76.026 s)
+PASS src/services/privacy/__tests__/launchProcessingIntegration.test.ts (21.461 s)
+PASS scripts/launch-competition.test.js (14.245 s)
+PASS src/services/__tests__/competition-processing-access.test.ts (14.815 s)
+
+Test Suites: 4 passed, 4 total
+Tests:       175 passed, 175 total
+Snapshots:   0 total
+Time:        137.004 s

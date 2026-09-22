@@ -162,3 +162,38 @@ test('deletion cascades competition records but minimizes retained moderation ev
     assert.deepEqual((await db.query('select id from public.game_runs')).rows.map(x=>x.id),[retained]);
   } finally { await db.close(); }
 });
+
+
+test('owner-requested attestation removal preserves scores, names and restricted run RPCs', async () => {
+  const db = await database();
+  try {
+    const priorRun = await begin(db); await finalize(db, priorRun);
+    const beforeScores = (await db.query('select * from leaderboard_scores order by id')).rows;
+    const beforeProfiles = (await db.query('select * from profiles order by user_id')).rows;
+    for (const name of ['20260922050821_attest_leaderboard_results.sql','20260922062925_remove_score_attestation.sql']) {
+      await db.exec(await readFile(new URL('../../migrations/' + name, import.meta.url), 'utf8'));
+    }
+    assert.deepEqual((await db.query('select * from leaderboard_scores order by id')).rows, beforeScores);
+    assert.deepEqual((await db.query('select * from profiles order by user_id')).rows, beforeProfiles);
+    assert.equal((await db.query("select to_regclass('public.game_integrity_keys') as table_name")).rows[0].table_name, null);
+    assert.equal((await db.query("select to_regprocedure('public.finalize_attested_game_run(uuid,uuid,text,integer,integer,text,text,text,bigint,text)') as rpc")).rows[0].rpc, null);
+    assert.equal((await db.query("select count(*)::int n from information_schema.columns where table_schema='public' and table_name='game_runs' and column_name in ('integrity_key_id','integrity_nonce','assertion_hash')")).rows[0].n, 0);
+    for (const role of ['anon','authenticated']) {
+      await db.exec('set role '+role);
+      await assert.rejects(begin(db), /permission denied/i);
+      await assert.rejects(finalize(db,priorRun), /permission denied/i);
+      await assert.rejects(db.query("insert into leaderboard_scores(user_id,exercise,score) values ($1,'pushups',999)",[OTHER]), /permission denied/i);
+      await db.exec('reset role');
+    }
+    await db.exec('set role service_role');
+    const next = await begin(db);
+    assert.equal((await finalize(db,next)).rows[0].result_kind,'leaderboard');
+    await assert.rejects(finalize(db,next,OWNER,2), /already finalized/i);
+    const impossible = await begin(db);
+    await assert.rejects(finalize(db,impossible,OWNER,100000,1), /implausible/i);
+    const conflictingRun = await begin(db, OTHER);
+    await assert.rejects(finalize(db,conflictingRun,OTHER),nameConflict);
+    await db.exec('reset role');
+    assert.equal((await db.query('select count(*)::int n from leaderboard_scores')).rows[0].n, 1);
+  } finally { await db.close(); }
+});

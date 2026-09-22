@@ -1,8 +1,3 @@
-jest.mock('@/services/competitionIntegrity', () => ({
-  prepareCompetitionIntegrity: jest.fn(async () => 'test-key'),
-  sealCompetitionResult: jest.fn(async () => 'signed-result'),
-  forgetCompetitionIntegrity: jest.fn(async () => undefined),
-}));
 type Api = typeof import('../competitionApi');
 let AsyncStorage: typeof import('@react-native-async-storage/async-storage').default;
 let createClient: typeof import('@supabase/supabase-js').createClient;
@@ -41,7 +36,6 @@ const auth = {
 };
 const run = (runId: string, expiresAt = new Date(Date.now() + 60_000).toISOString()) => ({
   runId,
-  assertion: 'signed-result',
   expiresAt,
   playerName: 'Jay Bird',
   score: 5,
@@ -76,28 +70,6 @@ afterEach(() => {
 });
 
 describe('online result delivery', () => {
-  test('retries preserve the original result signature instead of signing editable queued values',async()=>{
-    const {sealCompetitionResult}=require('../competitionIntegrity');
-    (global.fetch as jest.Mock).mockResolvedValueOnce(reply(500,{error:'Offline'})).mockResolvedValueOnce(reply(200,{saved:true}));
-    await submitCompetitionRunResult(run('signed-once'));
-    await flushPendingCompetitionResults();
-    expect(sealCompetitionResult).toHaveBeenCalledTimes(1);
-    for(const call of (global.fetch as jest.Mock).mock.calls) expect(JSON.parse(call[1].body).assertion).toBe('signed-result');
-  });
-  test('an old unsigned queue entry is rejected without being signed or sent',async()=>{
-    const {sealCompetitionResult}=require('../competitionIntegrity');
-    await AsyncStorage.setItem('@flapfit/competition-result-outbox-v1',JSON.stringify([{...run('unsigned'),assertion:undefined,createdAt:new Date().toISOString()}]));
-    const result=await flushPendingCompetitionResults();
-    expect(result.rejected).toEqual([expect.objectContaining({runId:'unsigned',status:422})]);
-    expect(sealCompetitionResult).not.toHaveBeenCalled(); expect(global.fetch).not.toHaveBeenCalled();
-  });
-  test('native signing failure cannot publish or enqueue an unsigned score',async()=>{
-    const {sealCompetitionResult}=require('../competitionIntegrity');
-    sealCompetitionResult.mockRejectedValueOnce(new Error('Secure key unavailable'));
-    expect(await submitCompetitionRunResult(run('failed-proof'))).toMatchObject({status:'rejected'});
-    expect(global.fetch).not.toHaveBeenCalled();
-    expect(await AsyncStorage.getItem('@flapfit/competition-result-outbox-v1')).toBeNull();
-  });
   test('a confirmed rename updates older queued names so a later upload cannot undo it', async () => {
     const {saveCompetitionPlayerName}=require('../competitionApi') as Api;
     (global.fetch as jest.Mock).mockResolvedValueOnce(reply(500,{error:'Offline'}));
@@ -135,7 +107,7 @@ describe('online result delivery', () => {
     useGameStore.setState({playerName:'Jay Bird'});
     (global.fetch as jest.Mock).mockResolvedValue(reply(201,{run_id:'new-run',expires_at:'later'}));
     await beginCompetitionRun({kind:'leaderboard',exercise:'pushups'});
-    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body)).toEqual({kind:'leaderboard',exercise:'pushups',playerName:'Jay Bird',keyId:'test-key'});
+    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body)).toEqual({kind:'leaderboard',exercise:'pushups',playerName:'Jay Bird'});
   });
   test('a permanent name rejection is visible and never retried', async () => {
     (global.fetch as jest.Mock).mockResolvedValue(

@@ -1,5 +1,8 @@
 # Unique leaderboard player names — September 22, 2026
 
+**Superseded by owner-requested rollback — September 22:** Production API version 10 and the app source have returned to the implementation with unique names and no score attestation. The additional attestation requests and dependencies are removed. The unique-name fix remains. See the [current rollback record](leaderboard-rollback-2026-09-22.md). Earlier activation plans and no-rollback recommendations below are historical and superseded by the owner's explicit instruction.
+
+
 Update: commit `57f995b` containing this correction is now pushed to GitHub main.
 The subsequent [score-integrity change](score-integrity-2026-09-22.md) supersedes
 the API deployment/rollback instructions below. Activate the combined migrations

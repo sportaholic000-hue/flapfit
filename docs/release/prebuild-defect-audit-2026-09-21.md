@@ -1,5 +1,8 @@
 FlapFit pre-build defect audit — September 21, 2026
 
+**Superseded by owner-requested rollback — September 22:** Production API version 10 and the app source have returned to the implementation with unique names and no score attestation. The additional attestation requests and dependencies are removed. The unique-name fix remains. See the [current rollback record](leaderboard-rollback-2026-09-22.md). Earlier activation plans and no-rollback recommendations below are historical and superseded by the owner's explicit instruction.
+
+
 **Latest September 22 update:** All six saved commits through `57f995b` are now pushed to GitHub main. The [score-integrity correction](score-integrity-2026-09-22.md) adds Apple-backed result signatures and closes the unsigned score-writing route in the prepared migration/API. Its evidence and activation plan supersede earlier claims that timing checks alone prevented invented scores. Production activation and real-device verification remain pending; earlier checkpoints below are historical.
 
 **September 22 update:** The current source now includes the [unique-player-name correction](unique-player-names-2026-09-22.md), with new database, API, UI and queued-result verification. Earlier revision and completion statements below describe historical checkpoints. The name migration/API activation remains unapplied pending production-write authorization.

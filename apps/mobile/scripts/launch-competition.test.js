@@ -2,9 +2,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
-const keyId = Buffer.alloc(32,1).toString('base64');
-const proofBytes = value => { if(typeof value !== 'string') throw new Error('invalid'); return Buffer.from(value,'base64'); };
-const verifyResult = jest.fn(value => { if(value !== 'valid-assertion') throw new Error('invalid proof'); return {counter:1,hash:'a'.repeat(64)}; });
 
 function createHandler(admin) {
   const source = fs.readFileSync(path.join(__dirname, '../../../supabase/functions/flapfit-game/index.ts'), 'utf8')
@@ -20,9 +17,9 @@ function createHandler(admin) {
   new Function('exports', sharedCompiled)(shared);
   let handler;
   const createClient = jest.fn(() => admin);
-  new Function('Deno', 'createClient', 'requiresAppleCompetitionCheck', 'proofBytes', 'verifyResult', 'resultPayload', compiled)({
+  new Function('Deno', 'createClient', 'requiresAppleCompetitionCheck', compiled)({
     env: { get: () => 'configured' }, serve: fn => { handler = fn; },
-  }, createClient, shared.requiresAppleCompetitionCheck, proofBytes, verifyResult, (...args)=>JSON.stringify(args));
+  }, createClient, shared.requiresAppleCompetitionCheck);
   return { handler, createClient };
 }
 
@@ -30,7 +27,7 @@ function request(route, body) {
   return new Request('https://test.invalid/functions/v1/flapfit-game' + route, {
     method: body === undefined ? 'GET' : 'POST',
     headers: { Authorization: 'Bearer fixture', 'X-FlapFit-Terms-Version': '2026-09-14' },
-    ...(body === undefined ? {} : { body: JSON.stringify({keyId,assertion:'valid-assertion',...body}) }),
+    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
   });
 }
 
@@ -39,11 +36,8 @@ function profileAdmin(error = null) {
     auth: { getUser: jest.fn(async () => ({ data: { user: { id: 'owner', is_anonymous: true } } })) },
     rpc: jest.fn(name => name === 'apple_consent_user_is_revoked'
       ? Promise.resolve({ data: false, error: null })
-      : { single: async () => ({ error, data:{improved:true,result_kind:'leaderboard',exercise_name:'pushups',challenge_code:null} }) }),
-    from: jest.fn(table => table === 'profiles' ? { upsert: jest.fn(async () => ({ error })) } : {
-      select(){return this;},eq(){return this;},maybeSingle:async()=>({data:table==='game_runs'
-        ? {integrity_key_id:keyId,integrity_nonce:'b'.repeat(64)} : {public_key:'test-public-key'}}),
-    }),
+      : { single: async () => ({ error }) }),
+    from: jest.fn(() => ({ upsert: jest.fn(async () => ({ error })) })),
   };
 }
 
@@ -65,7 +59,7 @@ test.each(['/profile','/runs','/runs/finalize'])('%s reports name conflicts clea
   const response=await handler(request(route,{playerName:'Codex',kind:'leaderboard',exercise:'pushups',runId:'10000000-0000-4000-8000-000000000011',score:1,durationMs:2000}));
   expect(response.status).toBe(409);
   expect(await response.json()).toEqual({error:'Name already taken. Choose a different player name.',code:'PLAYER_NAME_TAKEN'});
-  if(route==='/runs') expect(admin.rpc).not.toHaveBeenCalledWith('begin_attested_game_run',expect.anything());
+  if(route==='/runs') expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run',expect.anything());
 });
 
 test('profile mutation keeps existing participation, terms and authentication protections', async () => {
@@ -106,9 +100,9 @@ test('friend run tickets cannot be issued, while verified leaderboard tickets st
   };
   const { handler } = createHandler(admin);
   expect((await handler(request('/runs', { kind: 'challenge', exercise: 'pushups', challengeCode: 'ABC234' }))).status).toBe(400);
-  expect(admin.rpc).not.toHaveBeenCalledWith('begin_attested_game_run', expect.anything());
+  expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
   expect((await handler(request('/runs', { kind: 'leaderboard', exercise: 'pushups' }))).status).toBe(201);
-  expect(admin.rpc).toHaveBeenCalledWith('begin_attested_game_run', expect.objectContaining({ p_kind: 'leaderboard', p_key_id:keyId }));
+  expect(admin.rpc).toHaveBeenCalledWith('begin_game_run', expect.objectContaining({ p_kind: 'leaderboard', p_challenge_code: null }));
 });
 
 test.each(['pushups', 'squats', 'pullups'])('%s retains 50 entries, global ranks and blocked-player filtering', async exercise => {
@@ -198,13 +192,13 @@ test('streamed body stops at the byte limit without buffering the remainder', as
     method: 'POST', headers: { Authorization: 'Bearer fixture', 'X-FlapFit-Terms-Version': '2026-09-14' }, body: stream, duplex: 'half',
   }));
   expect(response.status).toBe(413); expect(cancel).toHaveBeenCalledTimes(1); expect(reads).toBe(2);
-  expect(admin.rpc).not.toHaveBeenCalledWith('begin_attested_game_run', expect.anything());
+  expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
 });
 
 test('body limit counts UTF-8 bytes, not JavaScript characters', async () => {
   const { handler, admin } = bodyLimitFixture();
   const response = await handler(request('/runs', { kind: 'leaderboard', exercise: 'pushups', unused: 'é'.repeat(2050) }));
-  expect(response.status).toBe(413); expect(admin.rpc).not.toHaveBeenCalledWith('begin_attested_game_run', expect.anything());
+  expect(response.status).toBe(413); expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
 });
 
 test('declared oversize body is rejected without reading it', async () => {
@@ -220,7 +214,7 @@ test('declared oversize body is rejected without reading it', async () => {
 test('run ownership comes from the verified session, never a body user identifier', async () => {
   const { handler, admin } = bodyLimitFixture();
   expect((await handler(request('/runs', { kind: 'leaderboard', exercise: 'pushups', userId: 'victim' }))).status).toBe(201);
-  expect(admin.rpc).toHaveBeenCalledWith('begin_attested_game_run', expect.objectContaining({ p_user_id: 'viewer' }));
+  expect(admin.rpc).toHaveBeenCalledWith('begin_game_run', expect.objectContaining({ p_user_id: 'viewer' }));
 });
 
 test.each(['[]', 'null', '{broken'])('invalid body %s performs no game mutation', async body => {
@@ -228,25 +222,5 @@ test.each(['[]', 'null', '{broken'])('invalid body %s performs no game mutation'
   const response = await handler(new Request('https://test.invalid/flapfit-game/runs', {
     method: 'POST', headers: { Authorization: 'Bearer fixture', 'X-FlapFit-Terms-Version': '2026-09-14' }, body,
   }));
-  expect(response.status).toBe(400); expect(admin.rpc).not.toHaveBeenCalledWith('begin_attested_game_run', expect.anything());
-});
-
-test('a guest JWT and plausible score without an Apple assertion cannot publish', async()=>{
-  const admin=profileAdmin(); const {handler}=createHandler(admin);
-  const response=await handler(request('/runs/finalize',{runId:'10000000-0000-4000-8000-000000000011',playerName:'Player',score:1,durationMs:2000,assertion:undefined}));
-  expect(response.status).toBe(422);
-  expect(admin.rpc).not.toHaveBeenCalledWith('finalize_attested_game_run',expect.anything());
-  expect(admin.rpc).not.toHaveBeenCalledWith('finalize_game_run',expect.anything());
-});
-test('an unsigned run request has no legacy fallback',async()=>{
-  const admin=profileAdmin(); const {handler}=createHandler(admin);
-  const response=await handler(request('/runs',{kind:'leaderboard',exercise:'pushups',keyId:undefined}));
-  expect(response.status).toBe(422);
-  expect(admin.rpc).not.toHaveBeenCalledWith('begin_attested_game_run',expect.anything());
-});
-test('successful signature verification supplies the atomic RPC counter and proof receipt',async()=>{
-  const admin=profileAdmin(); const {handler}=createHandler(admin);
-  const response=await handler(request('/runs/finalize',{runId:'10000000-0000-4000-8000-000000000011',playerName:'Player',score:1,durationMs:2000,counter:999,keyId:'attacker-key'}));
-  expect(response.status).toBe(200);
-  expect(admin.rpc).toHaveBeenCalledWith('finalize_attested_game_run',expect.objectContaining({p_user_id:'owner',p_key_id:keyId,p_counter:1,p_assertion_hash:'a'.repeat(64)}));
+  expect(response.status).toBe(400); expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
 });

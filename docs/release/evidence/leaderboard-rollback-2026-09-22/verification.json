@@ -1,0 +1,278 @@
+{
+  "authorization": "Owner explicitly rejected attestation and its additional operating usage, requested reverting leaderboard behavior, and explicitly required retaining unique names.",
+  "restoredSource": "57f995b",
+  "migration": {
+    "local": "20260922062925_remove_score_attestation.sql",
+    "remote": {
+      "version": "20260922063434",
+      "name": "remove_score_attestation"
+    }
+  },
+  "deployment": {
+    "id": "9bdc3d48-9040-425a-a3cf-b9ad9d124e19",
+    "slug": "flapfit-game",
+    "name": "flapfit-game",
+    "status": "ACTIVE",
+    "version": 10,
+    "created_at": 1789403748592,
+    "updated_at": 1790058924715,
+    "verify_jwt": true,
+    "import_map": true,
+    "entrypoint_path": "file:///tmp/user_fn_yhrleungvipsqlmayrfg_9bdc3d48-9040-425a-a3cf-b9ad9d124e19_10/source/supabase/functions/flapfit-game/index.ts",
+    "import_map_path": "file:///tmp/user_fn_yhrleungvipsqlmayrfg_9bdc3d48-9040-425a-a3cf-b9ad9d124e19_10/source/supabase/functions/flapfit-game/deno.json",
+    "ezbr_sha256": "9d8a43609e9a5b81860ee7181687cdf06684c53e991d896e2a053877fbf341a2"
+  },
+  "readback": [
+    {
+      "file": "supabase/functions/flapfit-game/index.ts",
+      "match": true
+    },
+    {
+      "file": "supabase/functions/_shared/apple-consent-competition.ts",
+      "match": true
+    },
+    {
+      "file": "supabase/functions/flapfit-game/deno.json",
+      "match": true
+    }
+  ],
+  "preflight": [
+    {
+      "rollback_preflight": {
+        "keys": 0,
+        "runs": 146,
+        "scores": 7,
+        "profiles": 3,
+        "finalizer": "finalize_game_run_internal(uuid,uuid,text,integer,integer,text,text)",
+        "auth_users": 4,
+        "challenges": 0
+      }
+    }
+  ],
+  "database": [
+    {
+      "rollback_verification": {
+        "runs": 146,
+        "scores": 7,
+        "profiles": 3,
+        "auth_users": 4,
+        "rpc_grants": [
+          {
+            "anon": false,
+            "name": "begin_game_run",
+            "service_role": true,
+            "authenticated": false
+          },
+          {
+            "anon": false,
+            "name": "finalize_game_run",
+            "service_role": true,
+            "authenticated": false
+          }
+        ],
+        "integrity_keys": null,
+        "name_index_valid": true,
+        "integrity_columns": 0,
+        "integrity_challenges": null
+      }
+    }
+  ],
+  "finalCounts": [
+    {
+      "final_counts": {
+        "runs": 146,
+        "scores": 7,
+        "profiles": 3,
+        "auth_users": 4
+      }
+    }
+  ],
+  "http": {
+    "passed": true,
+    "checkedAt": "2026-09-22T06:37:27.062Z",
+    "checks": [
+      {
+        "label": "Function starts",
+        "status": 204
+      },
+      {
+        "label": "Unauthenticated request rejected",
+        "status": 401
+      },
+      {
+        "label": "Leaderboard readable",
+        "status": 200
+      },
+      {
+        "label": "Unique names retained",
+        "status": 409,
+        "code": "PLAYER_NAME_TAKEN"
+      },
+      {
+        "label": "Removed attestation endpoint",
+        "status": 404
+      },
+      {
+        "label": "Run starts without attestation",
+        "status": 201
+      },
+      {
+        "label": "Existing timing guard retained",
+        "status": 422
+      },
+      {
+        "label": "Legacy direct-score endpoint stays closed",
+        "status": 410
+      },
+      {
+        "label": "Temporary identity and run deleted",
+        "status": 200
+      }
+    ],
+    "noScorePublished": true
+  },
+  "tests": {
+    "mobile": {
+      "exit": 0,
+      "tests": 175,
+      "suites": 4
+    },
+    "database": {
+      "previousTestsPassed": 8,
+      "rollbackTestPassed": 1,
+      "initialFailure": "The new test attempted direct profile writes as the service role in the minimal test fixture. Corrected to exercise collisions through the real scoring RPC; no production grants changed for this.",
+      "finalRollbackTestExit": 0
+    },
+    "typecheckExit": 0,
+    "denoCheckExit": 0
+  },
+  "advisors": {
+    "security": {
+      "result": {
+        "lints": [
+          {
+            "name": "rls_enabled_no_policy",
+            "title": "RLS Enabled No Policy",
+            "level": "INFO",
+            "facing": "EXTERNAL",
+            "categories": [
+              "SECURITY"
+            ],
+            "description": "Detects cases where row level security (RLS) has been enabled on a table but no RLS policies have been created.",
+            "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+            "count": 3,
+            "findings": [
+              {
+                "detail": "Table \\`flapfit_private.apple_consent_identities\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "apple_consent_identities",
+                  "type": "table",
+                  "schema": "flapfit_private"
+                },
+                "observed_at": "2026-09-22T06:36:08.964Z"
+              },
+              {
+                "detail": "Table \\`flapfit_private.apple_consent_notifications\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "apple_consent_notifications",
+                  "type": "table",
+                  "schema": "flapfit_private"
+                },
+                "observed_at": "2026-09-22T06:36:08.964Z"
+              },
+              {
+                "detail": "Table \\`flapfit_private.apple_consent_revocations\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "apple_consent_revocations",
+                  "type": "table",
+                  "schema": "flapfit_private"
+                },
+                "observed_at": "2026-09-22T06:36:08.964Z"
+              }
+            ]
+          },
+          {
+            "name": "auth_allow_anonymous_sign_ins",
+            "title": "Anonymous Access Policies",
+            "level": "WARN",
+            "facing": "EXTERNAL",
+            "categories": [
+              "SECURITY"
+            ],
+            "description": "Detects row level security (RLS) policies that allow access to anonymous users.",
+            "remediation": "Table `cron.job` has policies enforced on roles that allow access to anonymous users. Policies include `{cron_job_policy}`",
+            "count": 1,
+            "findings": [
+              {
+                "detail": "https://supabase.com/docs/guides/database/database-advisors?queryGroups=lint&lint=0012_auth_allow_anonymous_sign_ins",
+                "metadata": {
+                  "name": "job",
+                  "type": "table",
+                  "schema": "cron"
+                },
+                "observed_at": "2026-09-22T06:36:08.964Z"
+              }
+            ]
+          },
+          {
+            "name": "auth_allow_anonymous_sign_ins",
+            "title": "Anonymous Access Policies",
+            "level": "WARN",
+            "facing": "EXTERNAL",
+            "categories": [
+              "SECURITY"
+            ],
+            "description": "Detects row level security (RLS) policies that allow access to anonymous users.",
+            "remediation": "Table `cron.job_run_details` has policies enforced on roles that allow access to anonymous users. Policies include `{cron_job_run_details_policy}`",
+            "count": 1,
+            "findings": [
+              {
+                "detail": "https://supabase.com/docs/guides/database/database-advisors?queryGroups=lint&lint=0012_auth_allow_anonymous_sign_ins",
+                "metadata": {
+                  "name": "job_run_details",
+                  "type": "table",
+                  "schema": "cron"
+                },
+                "observed_at": "2026-09-22T06:36:08.964Z"
+              }
+            ]
+          },
+          {
+            "name": "auth_leaked_password_protection",
+            "title": "Leaked Password Protection Disabled",
+            "level": "WARN",
+            "facing": "EXTERNAL",
+            "categories": [
+              "SECURITY"
+            ],
+            "description": "Leaked password protection is currently disabled.",
+            "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection",
+            "count": 1,
+            "findings": [
+              {
+                "detail": "Supabase Auth prevents the use of compromised passwords by checking against HaveIBeenPwned.org. Enable this feature to enhance security.",
+                "metadata": {
+                  "type": "auth",
+                  "entity": "Auth"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "performance": {
+      "result": {
+        "lints": []
+      }
+    }
+  },
+  "differencesFromBaseline": [
+    "Minimal deno.json explicitly replaces Supabase's retained import-map path. It imports no attestation dependencies. App and API implementation match 57f995b."
+  ],
+  "boundaries": [
+    "No replacement anti-cheat service, extra recurring verification requests, paid upgrade, advertising change, or mobile build introduced.",
+    "Existing backend usage remains; this rollback is not a guarantee that all hosting is free at any scale.",
+    "The previous timing/ownership/replay checks are restored; they do not prove a physical exercise run."
+  ]
+}
