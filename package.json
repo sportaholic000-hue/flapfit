@@ -13,6 +13,13 @@
   },
   "packageManager": "yarn@4.12.0",
   "resolutions": {
-    "decode-uri-component@npm:^0.2.2": "patch:decode-uri-component@npm%3A0.2.2#~/.yarn/patches/decode-uri-component-npm-0.2.2-flapfit.patch"
+    "decode-uri-component@npm:^0.2.2": "patch:decode-uri-component@npm%3A0.2.2#~/.yarn/patches/decode-uri-component-npm-0.2.2-flapfit.patch",
+    "@xmldom/xmldom@npm:^0.8.8": "npm:0.8.15",
+    "@xmldom/xmldom@npm:^0.9.10": "npm:0.9.12",
+    "js-yaml@npm:^3.13.1": "npm:3.15.2",
+    "js-yaml@npm:^4.1.0": "npm:4.3.2",
+    "js-yaml@npm:^4.3.0": "npm:4.3.2",
+    "uuid@npm:^3.3.2": "npm:11.1.1",
+    "uuid@npm:^7.0.3": "npm:11.1.1"
   }
 }

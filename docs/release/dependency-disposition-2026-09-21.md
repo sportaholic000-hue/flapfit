@@ -1,5 +1,7 @@
 # Flap Fit per-advisory disposition — September 21, 2026
 
+> **Superseded September 22:** all 18 advisories below have now been repaired. See [dependency remediation](dependency-remediation-2026-09-22.md) for current versions and passing checks. The following is the historical pre-repair assessment.
+
 This assessment supersedes generic deferral wording in the earlier dependency audit. The retained locked-graph scan has **28 security rows, 18 unique advisories, 22 high rows, 6 moderate rows and no critical rows**, plus six deprecation notices. No dependency upgrade was made; the scan is not clean. Advisory metadata and patched versions were retrieved from GitHub's publisher-linked advisory records during this continuation.
 
 ## Verified input boundaries

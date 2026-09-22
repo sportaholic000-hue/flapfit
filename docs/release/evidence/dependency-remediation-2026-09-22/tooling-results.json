@@ -1,0 +1,14 @@
+{
+  "passed": 9,
+  "checks": [
+    "@expo/plist native property-list round trip",
+    "plist native property-list round trip",
+    "@istanbuljs/load-nyc-config YAML configuration",
+    "@eslint/eslintrc YAML configuration",
+    "project PostCSS / Tailwind / Autoprefixer pipeline",
+    "xcode CommonJS UUID compatibility and buffer validation",
+    "@expo/ngrok CommonJS UUID compatibility and buffer validation",
+    "xcode PBX project parse / generate UUID / write / reparse",
+    "ngrok actual connect path with mocked process and network"
+  ]
+}

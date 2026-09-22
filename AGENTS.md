@@ -4,3 +4,5 @@
 - Preserve unique leaderboard player names. The owner explicitly retained that fix when rejecting score attestation.
 - Do not reintroduce the rejected App Attest leaderboard system or add a replacement anti-cheat service without the owner's explicit instruction and cost approval.
 - New leaderboard results use one score submission after gameplay. Do not reintroduce pre-play server run tickets. Preserve RLS, verified-session ownership, normalized unique names, request-size limits and the single-step client/backend contract.
+
+- Do not use subagents. The owner explicitly requires this work to be completed by the primary agent.

@@ -1,6 +1,10 @@
 # Flap Fit dual-store submission gates
 
-## Current audit gate — September 21
+## Current dependency and build status — September 22
+
+All 18 recorded dependency security advisories are repaired; 68 suites / 1,448 tests pass. See [the remediation record](dependency-remediation-2026-09-22.md). The owner has now authorized a signed physical-device test build after checks complete, superseding the earlier build hold below. The existing Free-plan allowance has seven iOS builds remaining. This authorizes the test build, not Apple review submission before device acceptance.
+
+## Historical audit gate — September 21
 
 The owner requires an independent inspection before any final app build. Source fixes, full checks and the website update are recorded in [the audit handoff](third-party-audit-2026-09-21.md). **67 suites / 1,400 tests**, TypeScript, strict lint and release validation pass. The unapproved general ads-off controls are removed; regression tests cover eligible adults across all four launch countries. Website version 36 is published; the public regional audience list was removed in the website-only successor. See [the current source record](source-organization-2026-09-21.md) for the authoritative branch, archived copies and build-input cleanup. No mobile build, Apple upload, metadata edit or submission occurred. Wait for the owner’s explicit build instruction after the audit. This supersedes earlier build-preparation wording below.
 

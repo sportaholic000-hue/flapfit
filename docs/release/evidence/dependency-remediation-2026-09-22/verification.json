@@ -1,0 +1,90 @@
+{
+  "checkedAt": "2026-09-22T07:31:02.959Z",
+  "baselineCommit": "a15f541267958b1872053f930643314ef036f858",
+  "security": {
+    "beforeRows": 28,
+    "beforeUniqueAdvisories": 18,
+    "afterRows": 0,
+    "afterUniqueAdvisories": 0,
+    "remainingDeprecationNotices": 6,
+    "resolvedAdvisories": [
+      "https://github.com/advisories/GHSA-6gmq-8vp8-gcm6",
+      "https://github.com/advisories/GHSA-6mj3-qw4j-hgrw",
+      "https://github.com/advisories/GHSA-g53g-w8rj-fmg7",
+      "https://github.com/advisories/GHSA-w2rr-34g9-rvrj",
+      "https://github.com/advisories/GHSA-4w3w-2rp5-g8jm",
+      "https://github.com/advisories/GHSA-c7q8-3ch8-vqpv",
+      "https://github.com/advisories/GHSA-27p8-2357-5qqv",
+      "https://github.com/advisories/GHSA-3px3-54cx-rmw9",
+      "https://github.com/advisories/GHSA-vr34-hp96-76pp",
+      "https://github.com/advisories/GHSA-6h8r-xr42-gp59",
+      "https://github.com/advisories/GHSA-8344-3jmq-59r6",
+      "https://github.com/advisories/GHSA-x4fp-j954-r2f4",
+      "https://github.com/advisories/GHSA-965w-775f-mr7g",
+      "https://github.com/advisories/GHSA-93r5-fhx6-vmg9",
+      "https://github.com/advisories/GHSA-2883-xcg3-v3hh",
+      "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp",
+      "https://github.com/advisories/GHSA-r28c-9q8g-f849",
+      "https://github.com/advisories/GHSA-w5hq-g745-h8pq"
+    ],
+    "securityOnlyAuditExit": 0,
+    "fullAuditExit": 1,
+    "fullAuditExitReason": "Six upstream package deprecation notices; no vulnerability advisories"
+  },
+  "versions": {
+    "@xmldom/xmldom": [
+      "0.8.15",
+      "0.9.12"
+    ],
+    "js-yaml": [
+      "3.15.2",
+      "4.3.2"
+    ],
+    "postcss": [
+      "8.5.26",
+      "8.5.28"
+    ],
+    "uuid": [
+      "11.1.1"
+    ]
+  },
+  "mobileTests": {
+    "suites": 68,
+    "passed": 1448,
+    "failed": 0
+  },
+  "toolingCompatibility": {
+    "passed": 9,
+    "checks": [
+      "@expo/plist native property-list round trip",
+      "plist native property-list round trip",
+      "@istanbuljs/load-nyc-config YAML configuration",
+      "@eslint/eslintrc YAML configuration",
+      "project PostCSS / Tailwind / Autoprefixer pipeline",
+      "xcode CommonJS UUID compatibility and buffer validation",
+      "@expo/ngrok CommonJS UUID compatibility and buffer validation",
+      "xcode PBX project parse / generate UUID / write / reparse",
+      "ngrok actual connect path with mocked process and network"
+    ]
+  },
+  "typecheckExit": 0,
+  "strictLintExit": 0,
+  "productionConfigExit": 0,
+  "immutableInstallExit": 0,
+  "nativePatchChecks": {
+    "admob": "passed",
+    "revenuecat": "passed with pinned upstream 5.88.0 source"
+  },
+  "preservedBaselineFiles": 315,
+  "changedBaselineFiles": [
+    "apps/mobile/package.json"
+  ],
+  "scope": "Dependency manifests/lockfile and a tooling verification script. Existing gameplay, camera, monetization, regional logic, leaderboard, backend, native plugins and patch sources retain their baseline hashes. No website or provider configuration changes.",
+  "billing": {
+    "account": "flapfitapp",
+    "plan": "Free",
+    "iosBuildsUsedBefore": 8,
+    "iosBuildLimit": 15,
+    "addedChargesAuthorized": false
+  }
+}
