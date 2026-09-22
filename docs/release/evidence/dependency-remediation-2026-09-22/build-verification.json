@@ -53,6 +53,13 @@
     "buildOverageCents": 0,
     "estimatedTotalCents": 0
   },
-  "physicalAcceptance": "Pending owner testing on registered devices",
-  "appleReviewSubmitted": false
+  "physicalAcceptance": "Failed on owner iPad before calibration",
+  "appleReviewSubmitted": false,
+  "subsequentDeviceFinding": {
+    "recordedAt": "2026-09-22T14:58:14.976Z",
+    "finding": "Owner iPad tracker startup failed. Three JavaScript assets were changed by CRLF conversion and violate runtime byte requirements.",
+    "acceptance": "FAILED_TRACKER_STARTUP",
+    "replacementRecord": "../../tracker-startup-correction-2026-09-22.md",
+    "earlierInspectionLimitation": "Normalized JavaScript comparison missed the exact-size runtime integrity check."
+  }
 }

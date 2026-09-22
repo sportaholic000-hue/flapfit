@@ -39,17 +39,19 @@ The owner explicitly authorized starting the test build after repairs and checks
 
 The iOS bundle export and signed device build both completed successfully. Source tests do not replace the owner's physical-device acceptance. Apple review submission remains after that testing.
 
-## Completed signed test build
+## Completed signed test build — superseded after iPad startup failure
+
+**Do not use this build as device-ready evidence.** The owner encountered a tracker startup failure. The earlier normalized-asset check missed the runtime exact-byte requirement. See [the confirmed defect and correction](tracker-startup-correction-2026-09-22.md). The historical build evidence below is retained with that limitation.
 
 - Build [8391a757-6092-49c1-b7f6-ecd82e90c4c2](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/8391a757-6092-49c1-b7f6-ecd82e90c4c2) finished at 2026-09-22T07:51:28.798Z, from source commit 36c48a1d9e11891eb54430c745fa9659442f629d.
 - Existing ios-device-check profile; standalone signed internal distribution for the two registered devices. Version 1.0.0, build 4. Test advertising is selected by this existing profile; production advertising remains unchanged.
 - Local iOS Hermes export passed with 106 assets. The actual IPA passed ZIP integrity, bundle/version identity, signed age-range entitlement, two-device profile/expiry, camera/microphone wording, nine app-owned privacy declarations and required-reason checks.
 - Native AdMob and RevenueCat checks passed on the macOS worker. Xcode archived successfully with zero compiler errors and zero privacy/manifest warnings. General upstream compiler warnings are counted in the retained evidence; this is not a warning-free build.
-- The six embedded tracking resources match the built commit: WASM and model files byte-for-byte; the three JavaScript assets differ only by LF/CRLF conversion in EAS's Windows source copy. No tracking asset contents were changed by this repair.
+- **Failed tracker acceptance:** WASM/model files byte match, but the three JavaScript assets contain CRLF conversions and fail the runtime size requirements. The earlier normalized comparison was insufficient. This packaged difference prevents the on-device tracker from starting.
 - Expo Doctor passed 20/21 checks. Its sole failed check recommends seven newer Expo patch releases already listed in the earlier audit. The tested SDK baseline was retained; this is explicitly recorded separately from the clean security audit.
 - Account readback after completion: Free plan, 9/15 iOS builds used, $0 build overage, $0 estimated total. No plan or billing configuration changed.
 - IPA SHA-256: 80f2f1ef7513f3b0b2b828145c327e9ab0524b62b1019deed0906224894ae553.
 
 [Signed artifact inspection](evidence/dependency-remediation-2026-09-22/signed-artifact-verification.json) and [build/billing/native-worker results](evidence/dependency-remediation-2026-09-22/build-verification.json) are saved. The installable IPA is retained locally in the task workspace; the binary and temporary signed provider URLs are not committed to Git.
 
-Physical-device testing remains for the owner. This internal build has not been submitted to Apple review. Subsequent evidence-only commits do not change its application source.
+Physical-device testing found the tracker startup defect described above. This internal build has not been submitted to Apple review. A corrected replacement is required.

@@ -6,3 +6,6 @@ apps/mobile/app.config.js text eol=lf
 apps/mobile/script/build_and_run.sh text eol=lf
 apps/mobile/src/app/_layout.tsx text eol=lf
 apps/mobile/src/utils/game/__tests__/camera-preview.test.ts text eol=lf
+
+# Opaque bundled tracker assets must retain their exact runtime-validated bytes.
+apps/mobile/assets/mediapipe/*.mpasset -text

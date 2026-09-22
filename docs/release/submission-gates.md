@@ -1,8 +1,12 @@
 # Flap Fit dual-store submission gates
 
-## Current dependency and build status — September 22
+## Current device failure and correction — September 22
 
-All 18 recorded dependency security advisories are repaired; 68 suites / 1,448 tests pass. See [the remediation record](dependency-remediation-2026-09-22.md). The owner has now authorized a signed physical-device test build after checks complete, superseding the earlier build hold below. The signed test build [8391a757-6092-49c1-b7f6-ecd82e90c4c2](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/8391a757-6092-49c1-b7f6-ecd82e90c4c2) has now finished and its IPA passed inspection. Source: 36c48a1d9e11891eb54430c745fa9659442f629d. The Free plan now has six iOS builds remaining and $0 overage. This authorizes the test build, not Apple review submission before device acceptance.
+The owner's iPad exposed a tracker startup failure in build 8391a757. Three bundled JavaScript assets had CRLF-converted sizes that the runtime rejects. [The correction record](tracker-startup-correction-2026-09-22.md) supersedes the earlier tracker artifact acceptance. The fix preserves the exact bytes during EAS packaging and validates them before every build. A corrected signed test build and physical retest are required.
+
+## Dependency repair and earlier build record — September 22
+
+All 18 recorded dependency security advisories are repaired; 68 suites / 1,448 tests pass. See [the remediation record](dependency-remediation-2026-09-22.md). The owner has now authorized a signed physical-device test build after checks complete, superseding the earlier build hold below. The signed test build [8391a757-6092-49c1-b7f6-ecd82e90c4c2](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/8391a757-6092-49c1-b7f6-ecd82e90c4c2) finished, but the initial IPA inspection missed the tracker size defect identified above. Source: 36c48a1d9e11891eb54430c745fa9659442f629d. The Free plan now has six iOS builds remaining and $0 overage. This authorizes the test build, not Apple review submission before device acceptance.
 
 ## Historical audit gate — September 21
 

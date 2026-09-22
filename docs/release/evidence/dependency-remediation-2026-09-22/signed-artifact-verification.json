@@ -1,6 +1,6 @@
 {
   "checkedAt": "2026-09-22T07:57:55.464334+00:00",
-  "status": "PASS",
+  "status": "SUPERSEDED_TRACKER_STARTUP_FAILURE",
   "buildId": "8391a757-6092-49c1-b7f6-ecd82e90c4c2",
   "sourceCommit": "36c48a1d9e11891eb54430c745fa9659442f629d",
   "profile": "ios-device-check",
@@ -85,6 +85,14 @@
   },
   "trackingAssetReference": "Exact Git blobs; binary assets byte matched, JavaScript differs only by Windows CRLF conversion in the EAS source copy",
   "appOwnedPrivacyDataTypes": 9,
-  "physicalDeviceAcceptance": "Pending owner testing",
-  "appleReviewSubmitted": false
+  "physicalDeviceAcceptance": "Failed on owner iPad before calibration",
+  "appleReviewSubmitted": false,
+  "subsequentDeviceFinding": {
+    "recordedAt": "2026-09-22T14:58:14.976Z",
+    "finding": "Owner iPad tracker startup failed. Three JavaScript assets were changed by CRLF conversion and violate runtime byte requirements.",
+    "acceptance": "FAILED_TRACKER_STARTUP",
+    "replacementRecord": "../../tracker-startup-correction-2026-09-22.md",
+    "earlierInspectionLimitation": "Normalized JavaScript comparison missed the exact-size runtime integrity check."
+  },
+  "originalInspectionStatus": "PASS"
 }
