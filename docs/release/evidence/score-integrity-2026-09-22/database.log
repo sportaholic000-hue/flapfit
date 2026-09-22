@@ -1,0 +1,16 @@
+▶ attested scores: real PostgreSQL registration, grants, replay and atomic publication
+  ✔ unregistered key cannot start an eligible run; enrollment challenge is owner-bound, expiring and single-use (288.4371ms)
+  ✔ clients cannot access integrity tables or call any score-writing RPC, including the old bypass (114.7311ms)
+  ✔ counter, score and proof receipt commit together; exact retry works after a newer result (204.5847ms)
+  ✔ another owner, repeated counter, missing proof and impossible score are rejected without consuming counters (71.284ms)
+  ✔ name collision rolls back the counter; correction can publish the same signed score (61.3017ms)
+  ✔ expired and legacy unsigned runs cannot publish; deletion cascades integrity records (112.55ms)
+✔ attested scores: real PostgreSQL registration, grants, replay and atomic publication (9798.6177ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10613.6345

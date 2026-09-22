@@ -8,6 +8,37 @@ public class FlapFitAgeRangeModule: Module {
   public func definition() -> ModuleDefinition {
     Name("FlapFitAgeRange")
 
+    AsyncFunction("getIntegrityKey") { (userId: String, promise: Promise) in
+      Task { @MainActor in
+        do { promise.resolve(try await FlapFitIntegrityBridge.key(userId)) }
+        catch { promise.reject("INTEGRITY_ERROR", error.localizedDescription, error) }
+      }
+    }
+    AsyncFunction("attestIntegrityKey") { (userId: String, keyId: String, challenge: String, promise: Promise) in
+      Task { @MainActor in
+        do { promise.resolve(try await FlapFitIntegrityBridge.attest(userId, keyId, challenge)) }
+        catch { promise.reject("INTEGRITY_ERROR", error.localizedDescription, error) }
+      }
+    }
+    AsyncFunction("signCompetitionResult") { (keyId: String, runId: String, nonce: String, score: Int, duration: Int, promise: Promise) in
+      Task { @MainActor in
+        do { promise.resolve(try await FlapFitIntegrityBridge.sign(keyId, runId, nonce, score, duration)) }
+        catch { promise.reject("INTEGRITY_ERROR", error.localizedDescription, error) }
+      }
+    }
+    AsyncFunction("forgetIntegrityKey") { (userId: String, promise: Promise) in
+      Task { @MainActor in
+        do { try await FlapFitIntegrityBridge.forget(userId); promise.resolve(nil) }
+        catch { promise.reject("INTEGRITY_ERROR", error.localizedDescription, error) }
+      }
+    }
+    AsyncFunction("confirmIntegrityKey") { (userId: String, keyId: String, promise: Promise) in
+      Task { @MainActor in
+        do { try FlapFitIntegrityBridge.confirm(userId, keyId); promise.resolve(nil) }
+        catch { promise.reject("INTEGRITY_ERROR", error.localizedDescription, error) }
+      }
+    }
+
     AsyncFunction("getVerifiedAppTransaction") { (promise: Promise) in
       Task { @MainActor in
         promise.resolve(await FlapFitAppTransactionBridge.getVerifiedAppTransaction())

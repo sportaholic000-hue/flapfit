@@ -1,5 +1,10 @@
 # Unique leaderboard player names — September 22, 2026
 
+Update: commit `57f995b` containing this correction is now pushed to GitHub main.
+The subsequent [score-integrity change](score-integrity-2026-09-22.md) supersedes
+the API deployment/rollback instructions below. Activate the combined migrations
+and API; do not restore the unsigned finalizer when rolling back.
+
 Implemented locally after the owner requested that multiple players must not share the same leaderboard name. The starting commit was c9ff1b8d24ae68d3d854eb1ffe48f523db4704c8; the commit containing this report is the saved candidate. Production is unchanged pending the separately reserved production-write authorization.
 
 - A database unique index compares NFKC-normalized, lowercase names with whitespace collapsed and trimmed. Original display spelling remains intact. The database arbitrates concurrent claims; UI availability checks alone are insufficient.

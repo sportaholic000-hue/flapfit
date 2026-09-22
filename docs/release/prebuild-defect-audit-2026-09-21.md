@@ -1,5 +1,7 @@
 FlapFit pre-build defect audit — September 21, 2026
 
+**Latest September 22 update:** All six saved commits through `57f995b` are now pushed to GitHub main. The [score-integrity correction](score-integrity-2026-09-22.md) adds Apple-backed result signatures and closes the unsigned score-writing route in the prepared migration/API. Its evidence and activation plan supersede earlier claims that timing checks alone prevented invented scores. Production activation and real-device verification remain pending; earlier checkpoints below are historical.
+
 **September 22 update:** The current source now includes the [unique-player-name correction](unique-player-names-2026-09-22.md), with new database, API, UI and queued-result verification. Earlier revision and completion statements below describe historical checkpoints. The name migration/API activation remains unapplied pending production-write authorization.
 
 The demonstrated saved-age and request-body defects are corrected locally. All 1,429 mobile tests pass, as do 42 separate backend/SQL tests, mobile TypeScript, strict lint, the production configuration validator, and type checking of all three Edge Function entrypoints. The investigation did not establish the claimed universal Apple-link authorization bypass. The continuation below resolves the assessment to one concrete Canadian withdrawal scenario and a separately reviewable, unapplied remedy. No advertising-off mechanism was added.

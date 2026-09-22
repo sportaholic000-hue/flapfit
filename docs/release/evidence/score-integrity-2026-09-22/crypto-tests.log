@@ -1,0 +1,21 @@
+Check supabase/tests/score-integrity/integrity.test.ts
+Check supabase/tests/score-integrity/legacy-runtime.test.ts
+running 7 tests from ./supabase/tests/score-integrity/integrity.test.ts
+real Apple production attestation validates at issuance; another App ID does not ... ok (250ms)
+real Apple assertion validates; unsigned, wrong-app and modified-payload submissions fail ... ok (29ms)
+expired, wrong-challenge and development attestations fail closed ... ok (73ms)
+certificate substitution or signature corruption cannot register a key ... ok (35ms)
+signed FlapFit score cannot be changed, moved to another run, or assigned another nonce ... ok (50ms)
+iOS 27 distribution signals reject re-signed/development/unknown apps ... ok (81ms)
+wrong RP ID, zero counter, trailing CBOR items and oversized proofs fail ... ok (22ms)
+running 8 tests from ./supabase/tests/score-integrity/legacy-runtime.test.ts
+real Apple production attestation validates at issuance; another App ID does not ... ok (3s)
+real Apple assertion validates; unsigned, wrong-app and modified-payload submissions fail ... ok (29ms)
+expired, wrong-challenge and development attestations fail closed ... ok (3s)
+certificate substitution or signature corruption cannot register a key ... ok (1s)
+signed FlapFit score cannot be changed, moved to another run, or assigned another nonce ... ok (54ms)
+iOS 27 distribution signals reject re-signed/development/unknown apps ... ok (83ms)
+wrong RP ID, zero counter, trailing CBOR items and oversized proofs fail ... ok (22ms)
+App Attest uses the hosted-runtime X509 compatibility class ... ok (634µs)
+
+ok | 15 passed | 0 failed (11s)

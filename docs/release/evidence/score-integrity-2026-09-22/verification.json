@@ -1,0 +1,93 @@
+{
+  "verifiedAt": "2026-09-22T05:46:50.489Z",
+  "baseCommit": "57f995b0c8c6d323755abb797eba945423fde914",
+  "productionDeployed": false,
+  "nativeBuilt": false,
+  "realDeviceVerified": false,
+  "checks": [
+    {
+      "name": "typecheck",
+      "exit": 0,
+      "milliseconds": 54878
+    },
+    {
+      "name": "lint",
+      "exit": 0,
+      "milliseconds": 3177
+    },
+    {
+      "name": "production-config",
+      "exit": 0,
+      "milliseconds": 660
+    },
+    {
+      "name": "deno-check",
+      "exit": 0,
+      "milliseconds": 857
+    }
+  ],
+  "mobile": {
+    "suites": 3,
+    "tests": 63
+  },
+  "existingNativeBridge": {
+    "suites": 2,
+    "tests": 84
+  },
+  "database": {
+    "tests": 7,
+    "failures": 0,
+    "usesRealPostgresEngine": "PGlite",
+    "serviceRoleAndClientGrantsChecked": true
+  },
+  "cryptography": {
+    "tests": 15,
+    "failures": 0,
+    "realAppleFixtures": true,
+    "legacyCompatibilityBranch": true,
+    "actualHostedRuntime": false
+  },
+  "backendAdvisories": {
+    "packages": 55,
+    "advisories": 0
+  },
+  "entitlements": {
+    "productionAppAttest": true,
+    "existingPreserved": true
+  },
+  "sourceHashes": {
+    "apps/mobile/modules/flap-fit-age-range/app.plugin.js": "5d28ca8c4bdf3f778bb74783d943ed885886d76d055d3e5dbd073fb93e7efd2d",
+    "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRange.podspec": "8993145e1be27a70c75d125de91b4e503011088fba2498bdc42b4d8809a24b28",
+    "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRangeModule.swift": "9ff7774924357b54d230bb31fa794ad040395bf4a2e152845d6a39de3f60fb5c",
+    "apps/mobile/modules/flap-fit-age-range/ios/FlapFitIntegrityBridge.swift": "ef6a743a39d63bb23eddac89d76da12e65365cca33ca47794194edf1f9c7c768",
+    "apps/mobile/scripts/launch-competition.test.js": "6f029acc86c5a7903590dd44d7de1e9e0de4ce95d937c3b00981b8b4318a2e82",
+    "apps/mobile/src/services/__tests__/competition-processing-access.test.ts": "74a4e876d95ad6f5d13db872ed085d103fdb8c13c9a95bfadd1b27a0af48828d",
+    "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts": "0caf5f6ea255fac5b77ff64f18ac86fba4fd0509d340d3c10472644359d40fcf",
+    "apps/mobile/src/services/__tests__/competitionIntegrity.test.ts": "590ea2681733ced3ba62a78caf2ab85fc6b00415817714b5b07fa610bef63bbc",
+    "apps/mobile/src/services/competitionApi.ts": "c361eb63ec1e3b70e743d93702f64043cff0c3efbbc66a89dedfe95a5e26d90b",
+    "apps/mobile/src/services/competitionIntegrity.ts": "474233c2e05899707e510c3c4b7a34e08e61990dda72abb4e28dd070136f8899",
+    "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts": "f651ab550e1c1e249937dd5377adf9327c6a40006a29bae71734504a00dffc5c",
+    "supabase/functions/_shared/apple-consent-competition.ts": "71b2c06f8b95882b34e0d192267c407875a20e78e6cb65c1e8919e3b29765927",
+    "supabase/functions/flapfit-game/app-attest/LICENSE": "07d7909aa6b8fc35921a0a2b5ef307a32d00c3f6a17f4ffb76588f6c58e705b0",
+    "supabase/functions/flapfit-game/app-attest/README.md": "d3dcab44329a709bcb7f962b941041081869db96bd6eda8845e507af736fb9a6",
+    "supabase/functions/flapfit-game/app-attest/verifyAssertion.js": "e11eea9d0fceda33e14c2dca7e6ca7905ddb531aa1820122beca287a03fde4dd",
+    "supabase/functions/flapfit-game/app-attest/verifyAttestation.js": "8b64be38ecbc111271a647253581192ab705746ba7c071c0c595e6b31c0c66c0",
+    "supabase/functions/flapfit-game/deno.json": "64671c91618ea653245c1cff455cbe5c68050853f9c571e56831f45fc307c852",
+    "supabase/functions/flapfit-game/deno.lock": "0b2521e8f59a908dc8631782ff13312ab44cc83ae3d08b423316db1aae8ce168",
+    "supabase/functions/flapfit-game/index.ts": "cce0f5eec9f991f30948348277aa30115150197e5d9a4be0a70a4e3396523808",
+    "supabase/functions/flapfit-game/integrity.ts": "be615dfb6806d92b833a5f987e47c46aa9bbee81bd215ae66eed34da586f49f4",
+    "supabase/migrations/20260922050821_attest_leaderboard_results.sql": "a27dd5e7c8a77c521838456c81b5470c5ef585018b06ad05f8dd80224560b380",
+    "supabase/tests/apple-consent/score-integrity-database.test.mjs": "d472c61580664e06154721f28d3d78c24bb6ff59c1c7f20decdbcc3b6173a629",
+    "supabase/tests/score-integrity/fixtures/LICENSE": "07d7909aa6b8fc35921a0a2b5ef307a32d00c3f6a17f4ffb76588f6c58e705b0",
+    "supabase/tests/score-integrity/fixtures/README.md": "f89b3d312a9d0a734cdd87876812c3c2e40cc8df19adea67a9b6e75b862b6451",
+    "supabase/tests/score-integrity/fixtures/attestation-development.json": "77950c2323211d3518b32fd5ed1f3bf88b62df6a24e06ba11626e11341fd8fac",
+    "supabase/tests/score-integrity/fixtures/attestation-production.json": "ee3fc12282522ac8531ab234e7a9465a0d74f23c6d3ae83c2225cf9642dbab35",
+    "supabase/tests/score-integrity/integrity.test.ts": "b88e7e11ad826a3a6e077cab644b35d6fc08abb3e4643acfe767817676e2e613",
+    "supabase/tests/score-integrity/legacy-runtime.test.ts": "66e4162dc984ba47d6ea25ace2ef486e2891e08e04d18d5c48ef306d52fa772c"
+  },
+  "limits": [
+    "The iOS DeviceCheck/Keychain code is not compiled or device-tested on Windows.",
+    "The migration and API have not been deployed.",
+    "App Attest does not prove physical exercise or guarantee resistance to a fully compromised device."
+  ]
+}

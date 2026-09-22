@@ -1,0 +1,10 @@
+{
+  "nodeModulesDir": "none",
+  "lock": "deno.lock",
+  "imports": {
+    "asn1js": "npm:asn1js@3.0.10",
+    "pkijs": "npm:pkijs@3.4.1",
+    "cbor": "npm:cbor@10.0.11",
+    "jsrsasign": "npm:jsrsasign@11.1.5"
+  }
+}

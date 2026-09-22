@@ -1,0 +1,11 @@
+(node:360044) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS src/services/__tests__/competitionApi-outbox.test.ts (46.551 s)
+PASS scripts/launch-competition.test.js (12.471 s)
+PASS src/services/__tests__/competitionIntegrity.test.ts
+
+Test Suites: 3 passed, 3 total
+Tests:       63 passed, 63 total
+Snapshots:   0 total
+Time:        63.865 s
+Test results written to: ..\..\..\..\..\Documents\Codex\2026-09-21\can-you-ch\work\score-integrity\final-mobile-results.json

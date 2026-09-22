@@ -1,3 +1,8 @@
+jest.mock('@/services/competitionIntegrity', () => ({
+  prepareCompetitionIntegrity: jest.fn(async () => 'test-key'),
+  sealCompetitionResult: jest.fn(async () => 'signed-result'),
+  forgetCompetitionIntegrity: jest.fn(async () => undefined),
+}));
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 const deferred = <T,>() => {
@@ -179,7 +184,7 @@ test('withdrawal preserves queued local scores and foreground retry sends nothin
 });
 
 test('revocation during score submission preserves it and suppresses foreground success', async () => {
-  const pendingEntry = { runId: 'in-flight', expiresAt: new Date(Date.now() + 60_000).toISOString(), createdAt: new Date().toISOString(), playerName: 'Bird', score: 5, durationMs: 10000 };
+  const pendingEntry = { assertion: 'signed-result', runId: 'in-flight', expiresAt: new Date(Date.now() + 60_000).toISOString(), createdAt: new Date().toISOString(), playerName: 'Bird', score: 5, durationMs: 10000 };
   await storage.setItem('@flapfit/competition-result-outbox-v1', JSON.stringify([pendingEntry]));
   setAccess(true);
   const started = deferred<void>();

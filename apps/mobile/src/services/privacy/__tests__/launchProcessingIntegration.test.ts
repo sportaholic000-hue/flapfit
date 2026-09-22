@@ -1,3 +1,8 @@
+jest.mock('@/services/competitionIntegrity', () => ({
+  prepareCompetitionIntegrity: jest.fn(async () => 'test-key'),
+  sealCompetitionResult: jest.fn(async () => 'signed-result'),
+  forgetCompetitionIntegrity: jest.fn(async () => undefined),
+}));
 const settle = async () => { for (let i = 0; i < 40; i++) await Promise.resolve(); };
 const originalEnv = { ...process.env };
 async function load(options: { offline?: boolean; unsupported?: boolean; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string>; quebecResidency?: 'resident' | 'not-resident' } = {}) {
