@@ -66,7 +66,7 @@ const config = read('dist/site-config.js');
 check(config.includes('developerName: "Flap Fit"'), 'app identity is not configured');
 check(config.includes('supportEmail: "support@flapfitapp.com"'), 'support email is not configured');
 check(config.includes('privacyEmail: "support@flapfitapp.com"'), 'privacy email is not configured');
-check(config.includes('privacyEffectiveDate: "September 21, 2026"'), 'privacy effective date is not configured');
+check(config.includes('privacyEffectiveDate: "September 22, 2026"'), 'privacy effective date is not configured');
 check(config.includes('releaseStatus: "development"'), 'release status must remain development until store URLs exist');
 
 const homepage = read('dist/index.html');
@@ -78,12 +78,15 @@ for (const phrase of ['bundled with the app', 'Supabase', 'Delete online profile
 for (const phrase of ['Regional advertising restrictions do not exclude you from gameplay', 'Answers are saved so the questions are not asked again', 'Camera access is required for all Flap Fit gameplay', 'refusals remain respected']) {
   check(privacy.includes(phrase), `privacy disclosure is missing: ${phrase}`);
 }
-for (const stale of ['Quebec is not supported', 'New York No lasts only', 'permits one initial game', 'before another game', 'You may decline camera permission,']) {
+for (const stale of ['Quebec is not supported', 'New York No lasts only', 'does not prevent another game', 'without creating a one-game limit', 'advertising notice are not requirements', 'You may decline camera permission,']) {
   check(!privacy.includes(stale), 'outdated privacy restriction remains: ' + stale);
 }
 const terms = read('dist/terms/index.html');
 check(terms.includes('Camera access is required for all gameplay'), 'terms must explain camera requirement');
 check(!terms.includes('Quebec is not supported'), 'terms must not exclude Quebec gameplay');
+check(!terms.includes('do not impose a one-game limit'), 'terms contain outdated setup behavior');
+check(terms.includes('before starting another run') && privacy.includes('before starting another run'), 'setup requirements must agree');
+check(privacy.includes('Privacy requests') && privacy.includes('close and reopen'), 'privacy request instructions must explain completion');
 for (const phrase of ['at least 13', 'report', 'block', 'Record &amp; Play']) {
   check(terms.includes(phrase), `terms are missing: ${phrase}`);
 }
