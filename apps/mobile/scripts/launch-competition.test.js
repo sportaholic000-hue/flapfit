@@ -53,13 +53,12 @@ test('saving a player name reserves the normalized name for the authenticated ow
   expect(upsert).toHaveBeenCalledWith(expect.objectContaining({user_id:'owner',player_name:'Jay Bird',terms_version:'2026-09-14'}),{onConflict:'user_id'});
 });
 
-test.each(['/profile','/runs','/runs/finalize'])('%s reports name conflicts clearly', async route => {
+test.each(['/profile','/leaderboard','/runs/finalize'])('%s reports name conflicts clearly', async route => {
   const admin=profileAdmin({code:'23505',message:'duplicate key value violates unique constraint "profiles_player_name_key"'});
   const {handler}=createHandler(admin);
   const response=await handler(request(route,{playerName:'Codex',kind:'leaderboard',exercise:'pushups',runId:'10000000-0000-4000-8000-000000000011',score:1,durationMs:2000}));
   expect(response.status).toBe(409);
   expect(await response.json()).toEqual({error:'Name already taken. Choose a different player name.',code:'PLAYER_NAME_TAKEN'});
-  if(route==='/runs') expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run',expect.anything());
 });
 
 test('profile mutation keeps existing participation, terms and authentication protections', async () => {
@@ -91,18 +90,12 @@ test.each([
   expect(createClient).not.toHaveBeenCalled();
 });
 
-test('friend run tickets cannot be issued, while verified leaderboard tickets still work', async () => {
-  const admin = {
-    auth: { getUser: jest.fn(async () => ({ data: { user: { id: 'viewer', is_anonymous: true } } })) },
-    rpc: jest.fn((name) => name === 'apple_consent_user_is_revoked'
-      ? Promise.resolve({ data: false, error: null })
-      : { single: async () => ({ data: { run_id: 'run', expires_at: 'later' } }) }),
-  };
-  const { handler } = createHandler(admin);
-  expect((await handler(request('/runs', { kind: 'challenge', exercise: 'pushups', challengeCode: 'ABC234' }))).status).toBe(400);
-  expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
-  expect((await handler(request('/runs', { kind: 'leaderboard', exercise: 'pushups' }))).status).toBe(201);
-  expect(admin.rpc).toHaveBeenCalledWith('begin_game_run', expect.objectContaining({ p_kind: 'leaderboard', p_challenge_code: null }));
+test('new run tickets are retired before authentication or database work', async () => {
+  const { handler, createClient } = createHandler({});
+  for (const kind of ['challenge','leaderboard']) {
+    expect((await handler(request('/runs', {kind,exercise:'pushups'}))).status).toBe(410);
+  }
+  expect(createClient).not.toHaveBeenCalled();
 });
 
 test.each(['pushups', 'squats', 'pullups'])('%s retains 50 entries, global ranks and blocked-player filtering', async exercise => {
@@ -177,7 +170,7 @@ function bodyLimitFixture() {
   const admin = {
     auth: { getUser: jest.fn(async () => ({ data: { user: { id: 'viewer', is_anonymous: true } } })) },
     rpc: jest.fn(name => name === 'apple_consent_user_is_revoked' ? Promise.resolve({ data: false, error: null })
-      : { single: async () => ({ data: { run_id: 'run', expires_at: 'later' } }) }),
+      : { single: async () => ({ data: { score: 5 } }) }),
   };
   return { ...createHandler(admin), admin };
 }
@@ -188,39 +181,49 @@ test('streamed body stops at the byte limit without buffering the remainder', as
   const stream = new ReadableStream({
     pull(controller) { ++reads; if (reads <= 3) controller.enqueue(new Uint8Array(2049)); else controller.close(); }, cancel,
   }, { highWaterMark: 0 });
-  const response = await handler(new Request('https://test.invalid/flapfit-game/runs', {
+  const response = await handler(new Request('https://test.invalid/flapfit-game/leaderboard', {
     method: 'POST', headers: { Authorization: 'Bearer fixture', 'X-FlapFit-Terms-Version': '2026-09-14' }, body: stream, duplex: 'half',
   }));
   expect(response.status).toBe(413); expect(cancel).toHaveBeenCalledTimes(1); expect(reads).toBe(2);
-  expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
+  expect(admin.rpc).not.toHaveBeenCalledWith('submit_leaderboard_score', expect.anything());
 });
 
 test('body limit counts UTF-8 bytes, not JavaScript characters', async () => {
   const { handler, admin } = bodyLimitFixture();
-  const response = await handler(request('/runs', { kind: 'leaderboard', exercise: 'pushups', unused: 'é'.repeat(2050) }));
-  expect(response.status).toBe(413); expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
+  const response = await handler(request('/leaderboard', { playerName: 'Player', exercise: 'pushups', score: 5, unused: 'é'.repeat(2050) }));
+  expect(response.status).toBe(413); expect(admin.rpc).not.toHaveBeenCalledWith('submit_leaderboard_score', expect.anything());
 });
 
 test('declared oversize body is rejected without reading it', async () => {
   const { handler } = bodyLimitFixture();
   const pull = jest.fn(controller => controller.close());
-  const response = await handler(new Request('https://test.invalid/flapfit-game/runs', {
+  const response = await handler(new Request('https://test.invalid/flapfit-game/leaderboard', {
     method: 'POST', headers: { Authorization: 'Bearer fixture', 'X-FlapFit-Terms-Version': '2026-09-14', 'Content-Length': '9000' },
     body: new ReadableStream({ pull }, { highWaterMark: 0 }), duplex: 'half',
   }));
   expect(response.status).toBe(413); expect(pull).not.toHaveBeenCalled();
 });
 
-test('run ownership comes from the verified session, never a body user identifier', async () => {
+test('score ownership comes from the verified session, never a body user identifier', async () => {
   const { handler, admin } = bodyLimitFixture();
-  expect((await handler(request('/runs', { kind: 'leaderboard', exercise: 'pushups', userId: 'victim' }))).status).toBe(201);
-  expect(admin.rpc).toHaveBeenCalledWith('begin_game_run', expect.objectContaining({ p_user_id: 'viewer' }));
+  expect((await handler(request('/leaderboard', { playerName: 'Player', exercise: 'pushups', score: 5, userId: 'victim' }))).status).toBe(200);
+  expect(admin.rpc).toHaveBeenCalledWith('submit_leaderboard_score', expect.objectContaining({ p_user_id: 'viewer' }));
 });
 
 test.each(['[]', 'null', '{broken'])('invalid body %s performs no game mutation', async body => {
   const { handler, admin } = bodyLimitFixture();
-  const response = await handler(new Request('https://test.invalid/flapfit-game/runs', {
+  const response = await handler(new Request('https://test.invalid/flapfit-game/leaderboard', {
     method: 'POST', headers: { Authorization: 'Bearer fixture', 'X-FlapFit-Terms-Version': '2026-09-14' }, body,
   }));
-  expect(response.status).toBe(400); expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run', expect.anything());
+  expect(response.status).toBe(400); expect(admin.rpc).not.toHaveBeenCalledWith('submit_leaderboard_score', expect.anything());
+});
+
+
+test.each([
+  {exercise:'other',score:1}, {exercise:'pushups',score:-1},
+  {exercise:'pushups',score:1.5}, {exercise:'pushups',score:100001},
+])('invalid one-step score is rejected before scoring RPC: %j', async body => {
+  const {handler,admin}=bodyLimitFixture();
+  expect((await handler(request('/leaderboard',{playerName:'Player',...body}))).status).toBe(400);
+  expect(admin.rpc).not.toHaveBeenCalledWith('submit_leaderboard_score',expect.anything());
 });

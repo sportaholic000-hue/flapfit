@@ -314,11 +314,14 @@ type CompetitionRequestOptions = {
 export type CompetitionRunKind = 'leaderboard';
 
 export type CompetitionRunSession = {
+  exercise: string;
   runId: string;
   expiresAt: string;
 };
 
 type PendingCompetitionResult = {
+  // Absent only on results queued by the previous two-request client.
+  exercise?: string;
   runId: string;
   playerName: string;
   score: number;
@@ -645,22 +648,26 @@ export async function saveCompetitionPlayerName(value: string): Promise<string> 
   return response.player_name;
 }
 
+let localResultSequence = 0;
+
+// Prepare only local queue metadata. No Auth, API request or server run ticket
+// is needed before play; this identifier is not a security credential.
 export async function beginCompetitionRun(input: {
   kind: CompetitionRunKind;
   exercise: string;
 }): Promise<CompetitionRunSession> {
-  const savedName = useGameStore.getState().playerName;
-  const response = await competitionRequest<{ run_id: string; expires_at: string }>('/runs', {
-    method: 'POST',
-    body: {
-      kind: input.kind,
-      exercise: input.exercise,
-      ...(typeof savedName === 'string' && competitionPlayerNameError(savedName) === null
-        ? { playerName: normalizeCompetitionPlayerName(savedName) }
-        : {}),
-    },
-  });
-  return { runId: response.run_id, expiresAt: response.expires_at };
+  if (useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION) throw new CompetitionTermsRequiredError();
+  const generation = accessGeneration;
+  await assertNoPendingDeletion();
+  if (!competitionAccessAllowed() || generation !== accessGeneration) throw new CompetitionAccessRequiredError();
+  if (input.kind !== 'leaderboard' || !['pushups', 'squats', 'pullups'].includes(input.exercise)) {
+    throw new CompetitionRequestError('Exercise is invalid.', 400);
+  }
+  return {
+    runId: 'local-' + Date.now().toString(36) + '-' + (++localResultSequence).toString(36) + '-' + Math.random().toString(36).slice(2),
+    expiresAt: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
+    exercise: input.exercise,
+  };
 }
 
 // Keep an intentional local run distinct from an online session that failed.
@@ -698,7 +705,7 @@ export async function submitPreparedCompetitionRunResult(
   if (run.kind === 'local') return localCompetitionOutcome();
   if (run.kind === 'unavailable') {
     return competitionAccessAllowed()
-      ? { status: 'rejected', message: 'Online verification did not start, so this result was not published.' }
+      ? { status: 'rejected', message: 'Online result could not be prepared, so it was not published.' }
       : localCompetitionOutcome();
   }
   // A previously requested online run can remain in the local outbox after
@@ -751,7 +758,14 @@ async function flushCompetitionOutbox(): Promise<CompetitionFlushResult> {
         continue;
       }
       try {
-        await competitionRequest('/runs/finalize', { method: 'POST', body: entry });
+        if (entry.exercise) {
+          await competitionRequest('/leaderboard', {
+            method: 'POST', body: { exercise: entry.exercise, playerName: entry.playerName, score: entry.score },
+          });
+        } else {
+          // Drain old queued results without creating any new server run.
+          await competitionRequest('/runs/finalize', { method: 'POST', body: entry });
+        }
         if (!competitionAccessAllowed() || generation !== accessGeneration) { remaining.push(entry); continue; }
         submittedRunIds.push(entry.runId);
       } catch (error) {
@@ -833,6 +847,7 @@ export function startCompetitionForegroundRetry(onSubmitted: () => void): () => 
 }
 
 export async function submitCompetitionRunResult(input: {
+  exercise?: string;
   runId: string;
   expiresAt: string;
   playerName: string;
@@ -846,6 +861,7 @@ export async function submitCompetitionRunResult(input: {
     };
   }
   const entry: PendingCompetitionResult = {
+    ...(input.exercise ? { exercise: input.exercise } : {}),
     runId: input.runId,
     expiresAt: input.expiresAt,
     playerName: normalizeCompetitionPlayerName(input.playerName),

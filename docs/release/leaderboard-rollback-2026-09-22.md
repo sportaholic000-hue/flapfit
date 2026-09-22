@@ -1,5 +1,8 @@
 # Leaderboard attestation rollback — September 22, 2026
 
+**Current submission flow — September 22:** The subsequent [single-step leaderboard update](single-step-leaderboard-2026-09-22.md) is deployed as API version 11. New games make no run-ticket request; completed scores use POST /leaderboard. Unique names, RLS, ownership and body limits remain. Earlier two-request/attestation descriptions below are historical.
+
+
 The owner rejected the attestation change and any increased operating costs, explicitly requested rollback, and confirmed that unique player names must remain. This instruction supersedes the previous attestation report's no-rollback recommendation.
 
 ## Current implementation

@@ -1,128 +1,55 @@
 const { createClient } = require('@supabase/supabase-js');
-
+const { randomUUID } = require('node:crypto');
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const key = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-const termsVersion = '2026-09-14';
-
-if (!url || !key) {
-  throw new Error('Supabase public configuration is required.');
-}
-
-const client = createClient(url, key, {
-  auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
-});
-
-async function request(path, { method = 'GET', body, includeTerms = true } = {}) {
-  const session = await client.auth.getSession();
-  const token = session.data.session?.access_token;
-  if (!token) throw new Error('Anonymous verification session is unavailable.');
-  const response = await fetch(`${url}/functions/v1/flapfit-game${path}`, {
-    method,
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      ...(includeTerms ? { 'X-FlapFit-Terms-Version': termsVersion } : {}),
-    },
-    body: body === undefined ? undefined : JSON.stringify(body),
+if (!url || !key) throw new Error('Supabase public configuration is required.');
+const client = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
+const checks = [];
+let token;
+async function request(path, { method = 'GET', body, raw, includeTerms = true, rest = false } = {}) {
+  const response = await fetch(url + (rest ? '/rest/v1' : '/functions/v1/flapfit-game') + path, {
+    method, headers: { apikey: key, ...(token ? { Authorization: 'Bearer ' + token } : {}),
+      'Content-Type': 'application/json', ...(includeTerms ? { 'X-FlapFit-Terms-Version': '2026-09-14' } : {}) },
+    body: raw ?? (body === undefined ? undefined : JSON.stringify(body)), signal: AbortSignal.timeout(30000),
   });
-  const payload = await response.json().catch(() => null);
-  return { status: response.status, payload };
+  return { status: response.status, data: await response.json().catch(() => null) };
 }
-
-function expectStatus(label, result, expected) {
-  if (result.status !== expected) {
-    throw new Error(`${label}: expected ${expected}, received ${result.status}.`);
-  }
-  console.log(`${label}: ${result.status}`);
+function check(label, result, status, code) {
+  if (result.status !== status || (code && result.data?.code !== code)) throw new Error(label + ': ' + result.status + ' ' + JSON.stringify(result.data));
+  checks.push({ label, status, ...(code ? { code } : {}) }); return result.data;
 }
-
 async function main() {
-  const signIn = await client.auth.signInAnonymously();
-  if (signIn.error || !signIn.data.session)
-    throw signIn.error ?? new Error('Anonymous sign-in failed.');
-
+  check('Function startup', await request('/', { method: 'OPTIONS' }), 204);
+  check('Unauthenticated submission denied', await request('/leaderboard', { method: 'POST', body: {} }), 401);
+  const auth = await client.auth.signInAnonymously();
+  if (auth.error || !auth.data.session) throw auth.error ?? new Error('Missing test session');
+  token = auth.data.session.access_token;
   try {
-    expectStatus(
-      'Terms required',
-      await request('/leaderboard?exercise=pushups', { includeTerms: false }),
-      428
-    );
-    expectStatus('Leaderboard read', await request('/leaderboard?exercise=pushups'), 200);
-    expectStatus(
-      'Legacy claimed score rejected',
-      await request('/leaderboard', {
-        method: 'POST',
-        body: { playerName: 'LaunchTest', exercise: 'pushups', score: 100 },
-      }),
-      410
-    );
-
-    const run = await request('/runs', {
-      method: 'POST',
-      body: { kind: 'leaderboard', exercise: 'pushups' },
-    });
-    expectStatus('Verified run created', run, 201);
-    const runId = run.payload?.run_id;
-    if (typeof runId !== 'string') throw new Error('Verified run did not return an ID.');
-
-    const finalBody = { runId, playerName: 'LaunchTest', score: 1, durationMs: 1000 };
-    expectStatus(
-      'Verified run finalized',
-      await request('/runs/finalize', { method: 'POST', body: finalBody }),
-      200
-    );
-    expectStatus(
-      'Exact retry is idempotent',
-      await request('/runs/finalize', { method: 'POST', body: finalBody }),
-      200
-    );
-    expectStatus(
-      'Changed replay rejected',
-      await request('/runs/finalize', {
-        method: 'POST',
-        body: { ...finalBody, score: 2 },
-      }),
-      409
-    );
-
-    const impossibleRun = await request('/runs', {
-      method: 'POST',
-      body: { kind: 'leaderboard', exercise: 'pullups' },
-    });
-    expectStatus('Second verified run created', impossibleRun, 201);
-    expectStatus(
-      'Implausible result rejected',
-      await request('/runs/finalize', {
-        method: 'POST',
-        body: {
-          runId: impossibleRun.payload?.run_id,
-          playerName: 'LaunchTest',
-          score: 125,
-          durationMs: 30000,
-        },
-      }),
-      422
-    );
-
-    expectStatus('Retired code creation rejected', await request('/challenges', {
-      method: 'POST', body: { creatorName: 'LaunchTest', targetScore: 10, exercise: 'pushups' },
-    }), 410);
-    expectStatus('Retired code lookup rejected', await request('/challenges?code=ABC234'), 410);
-    expectStatus('Retired attempt submission rejected', await request('/challenges/attempts', {
-      method: 'POST', body: {},
-    }), 410);
-    expectStatus('Retired game mode rejected', await request('/runs', {
-      method: 'POST', body: { kind: 'challenge', exercise: 'pushups', challengeCode: 'ABC234' },
-    }), 400);
+    check('Terms required', await request('/leaderboard', { method: 'POST', body: {}, includeTerms: false }), 428);
+    const board = check('Leaderboard read', await request('/leaderboard?exercise=pushups'), 200);
+    const previousName = board.scores?.[0]?.player_name;
+    if (!previousName) throw new Error('Existing name required for collision verification');
+    check('Unique name enforced on score submission', await request('/leaderboard', { method: 'POST', body: { playerName: previousName.toUpperCase(), exercise: 'pushups', score: 1 } }), 409, 'PLAYER_NAME_TAKEN');
+    check('Run ticket creation retired', await request('/runs', { method: 'POST', body: { kind: 'leaderboard', exercise: 'pushups' } }), 410);
+    check('Body byte limit retained', await request('/leaderboard', { method: 'POST', raw: JSON.stringify({ padding: 'x'.repeat(4096) }) }), 413);
+    check('Invalid score rejected', await request('/leaderboard', { method: 'POST', body: { playerName: 'FlowProbe', exercise: 'pushups', score: -1 } }), 400);
+    const name = 'Flow' + randomUUID().replaceAll('-', '').slice(0, 12);
+    const body = { playerName: name, exercise: 'pushups', score: 1, userId: randomUUID() };
+    check('One-step score accepted', await request('/leaderboard', { method: 'POST', body }), 200);
+    check('Identical retry accepted', await request('/leaderboard', { method: 'POST', body }), 200);
+    const lower = check('Lower retry preserves best score', await request('/leaderboard', { method: 'POST', body: { ...body, score: 0 } }), 200);
+    if (lower.score !== 1) throw new Error('Retry changed best score');
+    const updated = check('Submitted result readable', await request('/leaderboard?exercise=pushups'), 200);
+    const mine = updated.scores.filter(row => row.profile_id === auth.data.user.id);
+    if (mine.length !== 1 || mine[0].score !== 1 || mine[0].player_name !== name) throw new Error('Ownership/best score verification failed');
+    check('Direct score table access denied', await request('/leaderboard_scores?select=score', { rest: true }), 403, '42501');
+    check('Direct scoring RPC denied', await request('/rpc/submit_leaderboard_score', { rest: true, method: 'POST', body: {
+      p_user_id: auth.data.user.id, p_player_name: name, p_exercise: 'pushups', p_score: 1, p_terms_version: '2026-09-14',
+    } }), 403, '42501');
   } finally {
-    const deletion = await request('/me', { method: 'DELETE', includeTerms: false });
-    expectStatus('Temporary verification profile deleted', deletion, 200);
+    check('Temporary identity and score deleted', await request('/me', { method: 'DELETE', includeTerms: false }), 200);
     await client.auth.signOut({ scope: 'local' });
   }
+  console.log(JSON.stringify({ passed: true, checkedAt: new Date().toISOString(), checks }, null, 2));
 }
-
-main().catch((error) => {
-  console.error(error instanceof Error ? error.message : error);
-  process.exitCode = 1;
-});
+main().catch(error => { console.error(JSON.stringify({ passed: false, checks, error: error.message })); process.exitCode = 1; });

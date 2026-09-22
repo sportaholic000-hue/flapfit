@@ -36,6 +36,7 @@ const auth = {
 };
 const run = (runId: string, expiresAt = new Date(Date.now() + 60_000).toISOString()) => ({
   runId,
+  exercise: 'pushups',
   expiresAt,
   playerName: 'Jay Bird',
   score: 5,
@@ -90,7 +91,7 @@ describe('online result delivery', () => {
     expect(JSON.parse((global.fetch as jest.Mock).mock.calls[1][1].body)).toEqual({playerName:'Free Bird'});
     (global.fetch as jest.Mock).mockResolvedValueOnce(reply(200,{saved:true}));
     expect((await flushPendingCompetitionResults()).submittedRunIds).toEqual(['name-conflict']);
-    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[2][1].body)).toMatchObject({runId:'name-conflict',playerName:'Free Bird',score:5,durationMs:10000});
+    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[2][1].body)).toEqual({exercise:'pushups',playerName:'Free Bird',score:5});
   });
 
   test('failed name claim preserves the queued result and its original name', async () => {
@@ -102,13 +103,28 @@ describe('online result delivery', () => {
     expect(pending[0]).toMatchObject({playerName:'Jay Bird',needsPlayerName:true});
   });
 
-  test('a new online run sends the saved name for a server uniqueness check', async () => {
+  test('run preparation performs no Auth or HTTP; its score uses exactly one leaderboard POST', async () => {
     const {beginCompetitionRun}=require('../competitionApi') as Api;
-    useGameStore.setState({playerName:'Jay Bird'});
-    (global.fetch as jest.Mock).mockResolvedValue(reply(201,{run_id:'new-run',expires_at:'later'}));
-    await beginCompetitionRun({kind:'leaderboard',exercise:'pushups'});
-    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body)).toEqual({kind:'leaderboard',exercise:'pushups',playerName:'Jay Bird'});
+    const prepared=await beginCompetitionRun({kind:'leaderboard',exercise:'pushups'});
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(createClient).not.toHaveBeenCalled();
+    (global.fetch as jest.Mock).mockResolvedValue(reply(200,{saved:true,score:5}));
+    expect(await submitCompetitionRunResult({...prepared,playerName:'Jay Bird',score:5,durationMs:10000})).toMatchObject({status:'accepted'});
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect((global.fetch as jest.Mock).mock.calls[0][0]).toMatch(/\/leaderboard$/);
+    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body)).toEqual({exercise:'pushups',playerName:'Jay Bird',score:5});
   });
+
+  test('a previously queued ticket result can finish without creating another ticket', async () => {
+    const legacy={...run('old-ticket'),createdAt:new Date().toISOString()} as Record<string,unknown>;
+    delete legacy.exercise;
+    await AsyncStorage.setItem('@flapfit/competition-result-outbox-v1',JSON.stringify([legacy]));
+    (global.fetch as jest.Mock).mockResolvedValue(reply(200,{saved:true}));
+    expect((await flushPendingCompetitionResults()).submittedRunIds).toEqual(['old-ticket']);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect((global.fetch as jest.Mock).mock.calls[0][0]).toMatch(/\/runs\/finalize$/);
+  });
+
   test('a permanent name rejection is visible and never retried', async () => {
     (global.fetch as jest.Mock).mockResolvedValue(
       reply(400, { error: 'Choose a different player name.' })
@@ -257,13 +273,13 @@ describe('launch audit regressions', () => {
   test("an overlapping rejection never borrows another run's successful status", async () => {
     (global.fetch as jest.Mock).mockImplementation(async (_url: string, options: RequestInit) => {
       const entry = JSON.parse(String(options.body));
-      return entry.runId === 'rejected-overlap'
+      return entry.score === 6
         ? reply(422, { error: 'Score invalid' })
         : reply(200);
     });
     const results = await Promise.all([
       submitCompetitionRunResult(run('accepted-overlap')),
-      submitCompetitionRunResult(run('rejected-overlap')),
+      submitCompetitionRunResult({ ...run('rejected-overlap'), score: 6 }),
     ]);
     expect(results.map((result) => result.status)).toEqual(['accepted', 'rejected']);
   });

@@ -197,3 +197,36 @@ test('owner-requested attestation removal preserves scores, names and restricted
     assert.equal((await db.query('select count(*)::int n from leaderboard_scores')).rows[0].n, 1);
   } finally { await db.close(); }
 });
+
+
+test('single-step submission keeps unique names, ownership grants and best-score retries without run rows', async () => {
+  const db=await database();
+  try {
+    await db.exec(await readFile(new URL('../../migrations/20260922064932_single_step_leaderboard_submission.sql',import.meta.url),'utf8'));
+    const submit=(user,name,score,exercise='pushups')=>db.query("select * from submit_leaderboard_score($1,$2,$3,$4,'2026-09-14')",[user,name,exercise,score]);
+    for(const role of ['anon','authenticated']) {
+      await db.exec('set role '+role);
+      await assert.rejects(submit(OWNER,'Player',5),/permission denied/i);
+      await assert.rejects(db.query('select * from leaderboard_scores'),/permission denied/i);
+      await db.exec('reset role');
+    }
+    await db.exec('set role service_role');
+    await assert.rejects(begin(db),/permission denied/i);
+    assert.equal((await submit(OWNER,'Player',5)).rows[0].score,5);
+    assert.equal((await submit(OWNER,'Player',5)).rows[0].score,5);
+    assert.equal((await submit(OWNER,'Player',2)).rows[0].score,5);
+    await assert.rejects(submit(OTHER,'PLAYER',99),nameConflict);
+    assert.equal((await submit(OTHER,'Other Player',8)).rows[0].score,8);
+    await assert.rejects(submit(OTHER,'Player',100),nameConflict);
+    assert.equal((await submit(OWNER,'Player',7,'squats')).rows[0].score,7);
+    await assert.rejects(submit(OWNER,'Player',100001),/invalid/i);
+    await assert.rejects(submit(OWNER,'Player',3,'invalid'),/invalid/i);
+    await db.exec('reset role');
+    const scores=(await db.query('select user_id,exercise,score from leaderboard_scores order by user_id,exercise')).rows;
+    assert.equal(scores.length,3);
+    assert.equal(scores.find(row=>row.user_id===OTHER).score,8);
+    assert.equal((await db.query('select player_name from profiles where user_id=$1',[OTHER])).rows[0].player_name,'Other Player');
+    assert.equal((await db.query('select count(*)::int n from game_runs')).rows[0].n,0);
+    assert.equal((await db.query("select bool_and(relrowsecurity) enabled from pg_class where relname in ('profiles','leaderboard_scores','game_runs')")).rows[0].enabled,true);
+  }finally{await db.close();}
+});

@@ -23,7 +23,6 @@ const BLOCKED_NAME_PATTERN =
   /(?:fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i;
 const CURRENT_TERMS_VERSION = '2026-09-14';
 const CURRENT_RUN_RULES_VERSION = '2026-09-16.1';
-const ALLOWED_RUN_KINDS = new Set(['leaderboard']);
 
 class ApiError extends Error {
   constructor(
@@ -173,6 +172,10 @@ Deno.serve(async (req) => {
       return json({ error: 'Friend challenge codes are no longer available. Share a gameplay video instead.' }, 410);
     }
 
+    if (req.method === 'POST' && route === '/runs') {
+      return json({ error: 'Run tickets are no longer used. Update Flap Fit to submit your score after playing.' }, 410);
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     if (!supabaseUrl || !serviceRoleKey) return json({ error: 'Service is not configured.' }, 503);
@@ -259,28 +262,6 @@ Deno.serve(async (req) => {
       return json({ scores });
     }
 
-    if (req.method === 'POST' && route === '/runs') {
-      const body = await bodyJson(req);
-      const kind = typeof body.kind === 'string' ? body.kind : '';
-      const exercise = typeof body.exercise === 'string' ? body.exercise : '';
-      if (!ALLOWED_RUN_KINDS.has(kind)) return json({ error: 'Game run type is invalid.' }, 400);
-      if (!ALLOWED_EXERCISES.has(exercise)) return json({ error: 'Exercise is invalid.' }, 400);
-      // Check older locally saved names before play. The unique database index
-      // also protects finalization and older clients that omit this field.
-      if (body.playerName !== undefined) await savePlayerName(body.playerName);
-      const runResult = await admin
-        .rpc('begin_game_run', {
-          p_user_id: user.id,
-          p_kind: kind,
-          p_exercise: exercise,
-          p_challenge_code: null,
-          p_rules_version: CURRENT_RUN_RULES_VERSION,
-        })
-        .single<{ run_id: string; expires_at: string }>();
-      if (runResult.error) throw databaseApiError(runResult.error) ?? runResult.error;
-      return json({ run_id: runResult.data.run_id, expires_at: runResult.data.expires_at }, 201);
-    }
-
     if (req.method === 'POST' && route === '/runs/finalize') {
       const body = await bodyJson(req);
       const runId = uuid(body.runId, 'Game run');
@@ -311,7 +292,19 @@ Deno.serve(async (req) => {
     }
 
     if (req.method === 'POST' && route === '/leaderboard') {
-      return json({ error: 'Update Flap Fit to submit verified leaderboard runs.' }, 410);
+      const body = await bodyJson(req);
+      const exercise = typeof body.exercise === 'string' ? body.exercise : '';
+      if (!ALLOWED_EXERCISES.has(exercise)) return json({ error: 'Exercise is invalid.' }, 400);
+      const playerName = cleanPlayerName(body.playerName);
+      const score = integer(body.score, 0, 100000, 'Score');
+      // Ownership comes only from the verified session. Name reservation and
+      // best-score update commit together in the same existing database call.
+      const result = await admin.rpc('submit_leaderboard_score', {
+        p_user_id: user.id, p_player_name: playerName, p_exercise: exercise,
+        p_score: score, p_terms_version: requestTermsVersion ?? CURRENT_TERMS_VERSION,
+      }).single<{ score: number }>();
+      if (result.error) throw databaseApiError(result.error) ?? result.error;
+      return json({ saved: true, exercise, score: result.data.score });
     }
 
     if (req.method === 'POST' && route === '/reports') {

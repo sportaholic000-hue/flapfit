@@ -1,0 +1,51 @@
+(node:355812) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+FAIL src/services/__tests__/competitionApi-outbox.test.ts (64.782 s)
+  ● launch audit regressions › an overlapping rejection never borrows another run's successful status
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Array [
+        "accepted",
+    -   "rejected",
+    +   "accepted",
+      ]
+
+      282 |       submitCompetitionRunResult(run('rejected-overlap')),
+      283 |     ]);
+    > 284 |     expect(results.map((result) => result.status)).toEqual(['accepted', 'rejected']);
+          |                                                    ^
+      285 |   });
+      286 |
+      287 |   test('a lost deletion acknowledgement is reconciled only after Auth confirms user removal', async () => {
+
+      at Object.toEqual (src/services/__tests__/competitionApi-outbox.test.ts:284:52)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+PASS src/services/privacy/__tests__/launchProcessingIntegration.test.ts (13.36 s)
+FAIL src/services/__tests__/competition-processing-access.test.ts (10.721 s)
+  ● withdrawal while publishing yields local status rather than a failed upload message
+
+    thrown: "Exceeded timeout of 5000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      377 | });
+      378 |
+    > 379 | test('withdrawal while publishing yields local status rather than a failed upload message', async () => {
+          | ^
+      380 |   setAccess(true);
+      381 |   (global.fetch as jest.Mock).mockResolvedValueOnce(response({ run_id: 'withdrawn-upload', expires_at: new Date(Date.now() + 60_000).toISOString() }));
+      382 |   const run = await api.prepareCompetitionRun({ kind: 'leaderboard', exercise: 'squats' });
+
+      at Object.test (src/services/__tests__/competition-processing-access.test.ts:379:1)
+
+PASS scripts/launch-competition.test.js (7.299 s)
+
+Test Suites: 2 failed, 2 passed, 4 total
+Tests:       2 failed, 178 passed, 180 total
+Snapshots:   0 total
+Time:        102.841 s, estimated 127 s

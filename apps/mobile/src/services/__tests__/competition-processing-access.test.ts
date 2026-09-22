@@ -255,7 +255,7 @@ test('concurrent first-use requests share one anonymous identity and its returne
 
   const read = api.competitionRequest('/leaderboard');
   await signupStarted.promise;
-  const run = api.beginCompetitionRun({ kind: 'leaderboard', exercise: 'squats' });
+  const run = api.competitionRequest('/leaderboard?exercise=squats');
   await new Promise((resolve) => setTimeout(resolve, 0));
   expect(auth.signInAnonymously).toHaveBeenCalledTimes(1);
   expect(global.fetch).not.toHaveBeenCalled();
@@ -280,7 +280,7 @@ test('a failed shared signup is cleared so a later request can recover', async (
 
   const first = api.competitionRequest('/leaderboard');
   await signupStarted.promise;
-  const second = api.beginCompetitionRun({ kind: 'leaderboard', exercise: 'pullups' });
+  const second = api.competitionRequest('/leaderboard?exercise=pullups');
   const outcomes = Promise.allSettled([first, second]);
   await new Promise((resolve) => setTimeout(resolve, 0));
   expect(auth.signInAnonymously).toHaveBeenCalledTimes(1);
@@ -324,42 +324,32 @@ test('granting processing later does not retroactively publish a run that began 
   expect(createClient).not.toHaveBeenCalled();
 });
 
-test('actual online run creation failure stays distinct from a deliberate local run', async () => {
+test('an offline start stays eligible and queues its one-step result for retry', async () => {
   setAccess(true);
-  (global.fetch as jest.Mock).mockResolvedValue({ ok: false, status: 503, json: async () => ({ error: 'Temporarily unavailable' }) });
-  const run = await api.prepareCompetitionRun({ kind: 'leaderboard', exercise: 'squats' });
-  expect(run.kind).toBe('unavailable');
-  const publishStatus = jest.fn();
-  await expect(api.submitPreparedCompetitionRunResult(run, {
-    playerName: 'Bird', score: 4, durationMs: 8000,
-  }, publishStatus)).resolves.toMatchObject({ status: 'rejected' });
-  expect(publishStatus).not.toHaveBeenCalled();
+  (global.fetch as jest.Mock).mockResolvedValue({ok:false,status:503,json:async()=>({error:'Temporarily unavailable'})});
+  const run=await api.prepareCompetitionRun({kind:'leaderboard',exercise:'squats'});
+  expect(run.kind).toBe('online');
+  expect(global.fetch).not.toHaveBeenCalled();
+  const publishStatus=jest.fn();
+  expect(await api.submitPreparedCompetitionRunResult(run,{playerName:'Bird',score:4,durationMs:8000},publishStatus)).toMatchObject({status:'pending'});
   expect(global.fetch).toHaveBeenCalledTimes(1);
+  expect(publishStatus).toHaveBeenCalledTimes(1);
 });
 
-test('withdrawal during run creation settles as local even after an immediate regrant', async () => {
+test('withdrawal during local preparation settles as local after an immediate regrant', async () => {
   setAccess(true);
-  const started = deferred<void>();
-  const reply = deferred<Response>();
-  (global.fetch as jest.Mock).mockImplementation(() => { started.resolve(); return reply.promise; });
-  const runPromise = api.prepareCompetitionRun({ kind: 'leaderboard', exercise: 'squats' });
-  await started.promise;
-  setAccess(false);
-  setAccess(true);
-  reply.resolve(response({ run_id: 'late-run', expires_at: new Date(Date.now() + 60_000).toISOString() }));
-  const run = await runPromise;
+  const preparing=api.prepareCompetitionRun({kind:'leaderboard',exercise:'squats'});
+  setAccess(false);setAccess(true);
+  const run=await preparing;
   expect(run.kind).toBe('local');
-  const publishStatus = jest.fn();
-  await expect(api.submitPreparedCompetitionRunResult(run, {
-    playerName: 'Bird', score: 4, durationMs: 8000,
-  }, publishStatus)).resolves.toMatchObject({ status: 'local' });
+  const publishStatus=jest.fn();
+  expect(await api.submitPreparedCompetitionRunResult(run,{playerName:'Bird',score:4,durationMs:8000},publishStatus)).toMatchObject({status:'local'});
   expect(publishStatus).not.toHaveBeenCalled();
-  expect(global.fetch).toHaveBeenCalledTimes(1);
+  expect(global.fetch).not.toHaveBeenCalled();
 });
 
 test('withdrawal after online run creation keeps its score locally without publishing status or transport', async () => {
   setAccess(true);
-  (global.fetch as jest.Mock).mockResolvedValue(response({ run_id: 'authorized-run', expires_at: new Date(Date.now() + 60_000).toISOString() }));
   const run = await api.prepareCompetitionRun({ kind: 'leaderboard', exercise: 'squats' });
   setAccess(false);
   (global.fetch as jest.Mock).mockClear();
@@ -369,12 +359,11 @@ test('withdrawal after online run creation keeps its score locally without publi
   }, publishStatus)).resolves.toMatchObject({ status: 'local' });
   expect(publishStatus).not.toHaveBeenCalled();
   expect(global.fetch).not.toHaveBeenCalled();
-  expect(await storage.getItem('@flapfit/competition-result-outbox-v1')).toContain('authorized-run');
+  expect(await storage.getItem('@flapfit/competition-result-outbox-v1')).toContain('local-');
 });
 
 test('the result-status callback reports a real online upload and accepted outcome', async () => {
   setAccess(true);
-  (global.fetch as jest.Mock).mockResolvedValueOnce(response({ run_id: 'online-run', expires_at: new Date(Date.now() + 60_000).toISOString() }));
   const run = await api.prepareCompetitionRun({ kind: 'leaderboard', exercise: 'squats' });
   const statuses: string[] = [];
   const outcome = await api.submitPreparedCompetitionRunResult(run, {
@@ -382,12 +371,11 @@ test('the result-status callback reports a real online upload and accepted outco
   }, () => { statuses.push('publishing'); });
   statuses.push(outcome.status);
   expect(statuses).toEqual(['publishing', 'accepted']);
-  expect(global.fetch).toHaveBeenCalledTimes(2);
+  expect(global.fetch).toHaveBeenCalledTimes(1);
 });
 
 test('withdrawal while publishing yields local status rather than a failed upload message', async () => {
   setAccess(true);
-  (global.fetch as jest.Mock).mockResolvedValueOnce(response({ run_id: 'withdrawn-upload', expires_at: new Date(Date.now() + 60_000).toISOString() }));
   const run = await api.prepareCompetitionRun({ kind: 'leaderboard', exercise: 'squats' });
   const started = deferred<void>();
   const reply = deferred<Response>();
@@ -401,7 +389,7 @@ test('withdrawal while publishing yields local status rather than a failed uploa
   reply.resolve(response({ accepted: true }));
   statuses.push((await result).status);
   expect(statuses).toEqual(['publishing', 'local']);
-  expect(await storage.getItem('@flapfit/competition-result-outbox-v1')).toContain('withdrawn-upload');
+  expect(await storage.getItem('@flapfit/competition-result-outbox-v1')).toContain('local-');
 });
 
 test('a full online outbox does not turn a withdrawn run into an upload failure', async () => {
@@ -413,7 +401,7 @@ test('a full online outbox does not turn a withdrawn run into an upload failure'
   await storage.setItem('@flapfit/competition-result-outbox-v1', saved);
   const publishStatus = jest.fn();
   await expect(api.submitPreparedCompetitionRunResult({
-    kind: 'online', session: { runId: 'withdrawn-new-run', expiresAt: new Date(Date.now() + 60_000).toISOString() },
+    kind: 'online', session: { exercise: 'pushups', runId: 'withdrawn-new-run', expiresAt: new Date(Date.now() + 60_000).toISOString() },
   }, { playerName: 'Bird', score: 4, durationMs: 8000 }, publishStatus)).resolves.toMatchObject({ status: 'local' });
   expect(publishStatus).not.toHaveBeenCalled();
   expect(global.fetch).not.toHaveBeenCalled();

@@ -1,5 +1,8 @@
 # Production backend activation — September 22, 2026
 
+**Current submission flow — September 22:** The subsequent [single-step leaderboard update](single-step-leaderboard-2026-09-22.md) is deployed as API version 11. New games make no run-ticket request; completed scores use POST /leaderboard. Unique names, RLS, ownership and body limits remain. Earlier two-request/attestation descriptions below are historical.
+
+
 **Superseded by owner-requested rollback — September 22:** Production API version 10 and the app source have returned to the implementation with unique names and no score attestation. The additional attestation requests and dependencies are removed. The unique-name fix remains. See the [current rollback record](leaderboard-rollback-2026-09-22.md). Earlier activation plans and no-rollback recommendations below are historical and superseded by the owner's explicit instruction.
 
 
