@@ -86,5 +86,15 @@
     "iosBuildsUsedBefore": 8,
     "iosBuildLimit": 15,
     "addedChargesAuthorized": false
+  },
+  "localIosExport": {
+    "sourceCommit": "36c48a1d9e11891eb54430c745fa9659442f629d",
+    "platform": "ios",
+    "profileEnvironment": "preview (inherited by ios-device-check)",
+    "exit": 0,
+    "hermesBundle": "_expo/static/js/ios/index-92af58f2b2bee9f0060446f9e40bad7e.hbc",
+    "bundleBytes": 9114391,
+    "sha256": "c7a60d712ab385540ec718e95987608a65018cc0795eab600652f7b47fbc879e",
+    "assets": 106
   }
 }

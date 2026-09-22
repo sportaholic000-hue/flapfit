@@ -1,0 +1,58 @@
+{
+  "checkedAt": "2026-09-22T07:59:33.143Z",
+  "status": "FINISHED",
+  "buildId": "8391a757-6092-49c1-b7f6-ecd82e90c4c2",
+  "sourceCommit": "36c48a1d9e11891eb54430c745fa9659442f629d",
+  "buildProfile": "ios-device-check",
+  "distribution": "INTERNAL",
+  "version": "1.0.0",
+  "buildNumber": "4",
+  "createdAt": "2026-09-22T07:43:44.897Z",
+  "completedAt": "2026-09-22T07:51:28.798Z",
+  "installPage": "https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/8391a757-6092-49c1-b7f6-ecd82e90c4c2",
+  "ipaSha256": "80f2f1ef7513f3b0b2b828145c327e9ab0524b62b1019deed0906224894ae553",
+  "ipaBytes": 48645433,
+  "nativeWorkerChecks": {
+    "EXPO_PUBLIC_ADS_MODE=test": true,
+    "EAS_BUILD_PROFILE=ios-device-check": true,
+    "UMP native nullable GDPR and independent P1/P7 checks passed without advertising initialization.": true,
+    "RevenueCat 5.88.0 consent fence verified (10 files patched).": true,
+    "RevenueCat native fence: cold launch, active cancellation, persistent purge, stale generation rejection and fresh grant passed.": true,
+    "RevenueCat native fence: separate-process relaunch starts closed and purges retained event files.": true,
+    "Retained the actual signed Xcode archive as a separate EAS artifact.": true
+  },
+  "xcode": {
+    "archiveSucceeded": true,
+    "compilerErrors": [],
+    "linesContainingWarnings": 1960,
+    "privacyWarnings": [],
+    "logSha256": "3048d108aa16a4a554f84516eb00be4802d29fd4a4d5e3086856f93fc3cc70b1"
+  },
+  "expoDoctor": {
+    "passed": 20,
+    "total": 21,
+    "remainingCheck": "SDK patch version recommendations",
+    "recommendedUpdates": [
+      "expo 57.0.22 -> 57.0.24",
+      "expo-asset 57.0.17 -> 57.0.18",
+      "expo-build-properties 57.0.17 -> 57.0.21",
+      "expo-constants 57.0.18 -> 57.0.19",
+      "expo-router 57.0.21 -> 57.0.22",
+      "expo-sharing 57.0.19 -> 57.0.21",
+      "@expo/metro-runtime 57.0.15 -> 57.0.16"
+    ],
+    "disposition": "Pre-existing recommendations retained with the tested SDK baseline. No security advisory remains in the Yarn audit. Do not describe Expo Doctor as fully passing."
+  },
+  "billing": {
+    "plan": "Free",
+    "iosBuilds": {
+      "used": 9,
+      "limit": 15,
+      "percentUsed": 60
+    },
+    "buildOverageCents": 0,
+    "estimatedTotalCents": 0
+  },
+  "physicalAcceptance": "Pending owner testing on registered devices",
+  "appleReviewSubmitted": false
+}
