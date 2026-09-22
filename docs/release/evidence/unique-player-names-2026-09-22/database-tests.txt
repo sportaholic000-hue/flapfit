@@ -1,0 +1,16 @@
+✔ reproduces duplicate names on the previous schema; migration refuses collisions without changing profiles (13439.858ms)
+✔ names are unique across capitalization, repeated whitespace and Unicode compatibility forms (7786.315ms)
+✔ two queued claims have exactly one owner; the owner can retain or change capitalization (7944.4224ms)
+✔ a conflicting finalization rolls back the score and leaves the same run retryable under a free name (9868.4847ms)
+✔ one player keeps their name across exercises; deleting the profile releases the name (10170.8955ms)
+✔ competition SQL rejects another user, conflicting replay, expiry and implausible timing; exact retry is idempotent (8181.0843ms)
+✔ competition SQL denies direct client table/RPC access and enforces run cost limits (8894.6516ms)
+✔ deletion cascades competition records but minimizes retained moderation evidence; retention removes only expired records (8059.2819ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 75381.8673

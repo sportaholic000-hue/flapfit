@@ -31,6 +31,55 @@ function request(route, body) {
   });
 }
 
+function profileAdmin(error = null) {
+  return {
+    auth: { getUser: jest.fn(async () => ({ data: { user: { id: 'owner', is_anonymous: true } } })) },
+    rpc: jest.fn(name => name === 'apple_consent_user_is_revoked'
+      ? Promise.resolve({ data: false, error: null })
+      : { single: async () => ({ error }) }),
+    from: jest.fn(() => ({ upsert: jest.fn(async () => ({ error })) })),
+  };
+}
+
+test('saving a player name reserves the normalized name for the authenticated owner only', async () => {
+  const admin = profileAdmin(); const upsert = jest.fn(async () => ({ error: null }));
+  admin.from.mockReturnValue({ upsert });
+  const { handler } = createHandler(admin);
+  const response = await handler(request('/profile',{playerName:'  Ｊａｙ   Bird  ',user_id:'someone-else'}));
+  expect(response.status).toBe(200);
+  expect(await response.json()).toEqual({player_name:'Jay Bird'});
+  expect(admin.rpc).toHaveBeenCalledWith('apple_consent_user_is_revoked',expect.anything());
+  expect(admin.from).toHaveBeenCalledWith('profiles');
+  expect(upsert).toHaveBeenCalledWith(expect.objectContaining({user_id:'owner',player_name:'Jay Bird',terms_version:'2026-09-14'}),{onConflict:'user_id'});
+});
+
+test.each(['/profile','/runs','/runs/finalize'])('%s reports name conflicts clearly', async route => {
+  const admin=profileAdmin({code:'23505',message:'duplicate key value violates unique constraint "profiles_player_name_key"'});
+  const {handler}=createHandler(admin);
+  const response=await handler(request(route,{playerName:'Codex',kind:'leaderboard',exercise:'pushups',runId:'10000000-0000-4000-8000-000000000011',score:1,durationMs:2000}));
+  expect(response.status).toBe(409);
+  expect(await response.json()).toEqual({error:'Name already taken. Choose a different player name.',code:'PLAYER_NAME_TAKEN'});
+  if(route==='/runs') expect(admin.rpc).not.toHaveBeenCalledWith('begin_game_run',expect.anything());
+});
+
+test('profile mutation keeps existing participation, terms and authentication protections', async () => {
+  const admin=profileAdmin(); const {handler}=createHandler(admin);
+  const noTerms=request('/profile',{playerName:'Player'}); noTerms.headers.delete('X-FlapFit-Terms-Version');
+  expect((await handler(noTerms)).status).toBe(428);
+  expect(admin.from).not.toHaveBeenCalled();
+  admin.rpc.mockResolvedValueOnce({data:true,error:null});
+  expect((await handler(request('/profile',{playerName:'Player'}))).status).toBe(403);
+  expect(admin.from).not.toHaveBeenCalled();
+  admin.auth.getUser.mockResolvedValueOnce({data:{user:null},error:null});
+  expect((await handler(request('/profile',{playerName:'Player'}))).status).toBe(401);
+  expect(admin.from).not.toHaveBeenCalled();
+});
+
+test('other unique-constraint errors are not misreported as name conflicts', async () => {
+  const {handler}=createHandler(profileAdmin({code:'23505',message:'duplicate key value violates unique constraint "profiles_pkey"'}));
+  expect((await handler(request('/profile',{playerName:'Player'}))).status).toBe(500);
+});
+
 test.each([
   ['/challenges?code=ABC234', undefined],
   ['/challenges', { creatorName: 'Tester', targetScore: 10, exercise: 'pushups' }],

@@ -12,7 +12,7 @@ const migrations = [
   '202609150002_fix_challenge_run_lookup.sql', '202609150003_index_game_run_challenges.sql',
   '202609160001_enforce_run_timing.sql', '20260917072007_bind_challenges_to_exercise.sql',
 ];
-async function database() {
+async function database(uniqueNames = true) {
   const db = new PGlite();
   // Hosted Auth and the cron scheduler are boundaries, not simulated providers.
   // PostgreSQL tables, grants, functions, constraints and triggers below are real.
@@ -25,6 +25,7 @@ async function database() {
     const sql = await readFile(new URL('../../migrations/' + name, import.meta.url), 'utf8');
     await db.exec(sql.replace(/^create extension if not exists (?:pgcrypto|pg_cron)(?: with schema pg_catalog)?;\r?\n/gm, ''));
   }
+  if (uniqueNames) await db.exec(await readFile(new URL('../../migrations/20260922042503_unique_player_names.sql', import.meta.url), 'utf8'));
   return db;
 }
 async function begin(db, user = OWNER) {
@@ -32,6 +33,77 @@ async function begin(db, user = OWNER) {
 }
 const finalize = (db, id, user = OWNER, score = 1, duration = 2000) => db.query(
   "select * from public.finalize_game_run($1,$2,'Player',$3,$4,'2026-09-14',$5)", [id,user,score,duration,RULES]);
+
+const claimName = (db, user, name) => db.query(`
+  insert into public.profiles(user_id,player_name,terms_version,terms_accepted_at)
+  values ($1,$2,'2026-09-14',now()) on conflict(user_id) do update set player_name=excluded.player_name`, [user,name]);
+const nameConflict = error => error.code === '23505' && error.constraint === 'profiles_player_name_key';
+
+test('reproduces duplicate names on the previous schema; migration refuses collisions without changing profiles', async () => {
+  const db = await database(false);
+  try {
+    await claimName(db, OWNER, 'Codex'); await claimName(db, OTHER, ' codex ');
+    const before = (await db.query('select user_id,player_name from profiles order by user_id')).rows;
+    assert.equal(before.length,2);
+    const migration = await readFile(new URL('../../migrations/20260922042503_unique_player_names.sql', import.meta.url), 'utf8');
+    await assert.rejects(db.exec(migration), error => error.code === '23505');
+    assert.deepEqual((await db.query('select user_id,player_name from profiles order by user_id')).rows,before);
+  } finally { await db.close(); }
+});
+
+test('names are unique across capitalization, repeated whitespace and Unicode compatibility forms', async () => {
+  const db = await database();
+  try {
+    await claimName(db, OWNER, 'Jay Bird');
+    for (const name of ['Jay Bird','jay bird','  JAY   BIRD  ','Ｊａｙ Ｂｉｒｄ','Jay\u00a0Bird']) {
+      await assert.rejects(claimName(db,OTHER,name), nameConflict);
+    }
+    await claimName(db, OWNER, 'Élan');
+    await assert.rejects(claimName(db,OTHER,'élan'),nameConflict);
+    await assert.rejects(claimName(db,OTHER,'E\u0301lan'),nameConflict);
+    await claimName(db, OTHER, 'Other Player');
+    await assert.rejects(claimName(db,OTHER,'Élan'),nameConflict);
+    assert.equal((await db.query('select player_name from profiles where user_id=$1',[OTHER])).rows[0].player_name,'Other Player');
+  } finally { await db.close(); }
+});
+
+test('two queued claims have exactly one owner; the owner can retain or change capitalization', async () => {
+  const db = await database();
+  try {
+    const results = await Promise.allSettled([claimName(db,OWNER,'Codex'),claimName(db,OTHER,'CODEX')]);
+    assert.equal(results.filter(result=>result.status==='fulfilled').length,1);
+    assert.equal(results.filter(result=>result.status==='rejected' && nameConflict(result.reason)).length,1);
+    const owner = (await db.query('select user_id from profiles')).rows[0].user_id;
+    await claimName(db,owner,'cOdEx');
+    assert.equal((await db.query('select count(*)::int n from profiles')).rows[0].n,1);
+  } finally { await db.close(); }
+});
+
+test('a conflicting finalization rolls back the score and leaves the same run retryable under a free name', async () => {
+  const db = await database();
+  try {
+    const first = await begin(db); await finalize(db,first);
+    const second = await begin(db,OTHER);
+    await assert.rejects(finalize(db,second,OTHER),nameConflict);
+    assert.equal((await db.query('select finalized_at from game_runs where id=$1',[second])).rows[0].finalized_at,null);
+    assert.equal((await db.query('select count(*)::int n from leaderboard_scores')).rows[0].n,1);
+    await db.query("select * from finalize_game_run($1,$2,'Different Player',1,2000,'2026-09-14',$3)",[second,OTHER,RULES]);
+    assert.equal((await db.query('select count(*)::int n from leaderboard_scores')).rows[0].n,2);
+  } finally { await db.close(); }
+});
+
+test('one player keeps their name across exercises; deleting the profile releases the name', async () => {
+  const db = await database();
+  try {
+    await claimName(db,OWNER,'Player');
+    const first=await begin(db); await finalize(db,first);
+    const second=(await db.query("select * from begin_game_run($1,'leaderboard','squats',null,$2)",[OWNER,RULES])).rows[0].run_id;
+    await finalize(db,second);
+    assert.equal((await db.query('select count(*)::int n from leaderboard_scores')).rows[0].n,2);
+    await db.query('delete from auth.users where id=$1',[OWNER]);
+    await claimName(db,OTHER,'PLAYER');
+  } finally { await db.close(); }
+});
 
 test('competition SQL rejects another user, conflicting replay, expiry and implausible timing; exact retry is idempotent', async () => {
   const db = await database();

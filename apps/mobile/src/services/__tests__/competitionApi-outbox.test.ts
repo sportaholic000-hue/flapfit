@@ -70,6 +70,45 @@ afterEach(() => {
 });
 
 describe('online result delivery', () => {
+  test('a confirmed rename updates older queued names so a later upload cannot undo it', async () => {
+    const {saveCompetitionPlayerName}=require('../competitionApi') as Api;
+    (global.fetch as jest.Mock).mockResolvedValueOnce(reply(500,{error:'Offline'}));
+    await submitCompetitionRunResult(run('older-name'));
+    (global.fetch as jest.Mock).mockResolvedValueOnce(reply(200,{player_name:'New Name'}));
+    await saveCompetitionPlayerName('New Name');
+    const pending=JSON.parse((await AsyncStorage.getItem('@flapfit/competition-result-outbox-v1'))!);
+    expect(pending[0]).toMatchObject({runId:'older-name',playerName:'New Name',score:5,durationMs:10000});
+  });
+  test('a taken name retains the result without retry spam; saving a free name permits the same run to publish', async () => {
+    const {saveCompetitionPlayerName}=require('../competitionApi') as Api;
+    (global.fetch as jest.Mock).mockResolvedValueOnce(reply(409,{error:'Name already taken.',code:'PLAYER_NAME_TAKEN'}));
+    expect(await submitCompetitionRunResult(run('name-conflict'))).toMatchObject({status:'rejected',message:expect.stringContaining('Save a different name')});
+    expect((await flushPendingCompetitionResults()).pendingRunIds).toEqual(['name-conflict']);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    (global.fetch as jest.Mock).mockResolvedValueOnce(reply(200,{player_name:'Free Bird'}));
+    await expect(saveCompetitionPlayerName(' Free   Bird ')).resolves.toBe('Free Bird');
+    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[1][1].body)).toEqual({playerName:'Free Bird'});
+    (global.fetch as jest.Mock).mockResolvedValueOnce(reply(200,{saved:true}));
+    expect((await flushPendingCompetitionResults()).submittedRunIds).toEqual(['name-conflict']);
+    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[2][1].body)).toMatchObject({runId:'name-conflict',playerName:'Free Bird',score:5,durationMs:10000});
+  });
+
+  test('failed name claim preserves the queued result and its original name', async () => {
+    const {saveCompetitionPlayerName}=require('../competitionApi') as Api;
+    (global.fetch as jest.Mock).mockResolvedValue(reply(409,{error:'Name already taken.',code:'PLAYER_NAME_TAKEN'}));
+    await submitCompetitionRunResult(run('keep-name'));
+    await expect(saveCompetitionPlayerName('Taken')).rejects.toThrow('Name already taken');
+    const pending=JSON.parse((await AsyncStorage.getItem('@flapfit/competition-result-outbox-v1'))!);
+    expect(pending[0]).toMatchObject({playerName:'Jay Bird',needsPlayerName:true});
+  });
+
+  test('a new online run sends the saved name for a server uniqueness check', async () => {
+    const {beginCompetitionRun}=require('../competitionApi') as Api;
+    useGameStore.setState({playerName:'Jay Bird'});
+    (global.fetch as jest.Mock).mockResolvedValue(reply(201,{run_id:'new-run',expires_at:'later'}));
+    await beginCompetitionRun({kind:'leaderboard',exercise:'pushups'});
+    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body)).toEqual({kind:'leaderboard',exercise:'pushups',playerName:'Jay Bird'});
+  });
   test('a permanent name rejection is visible and never retried', async () => {
     (global.fetch as jest.Mock).mockResolvedValue(
       reply(400, { error: 'Choose a different player name.' })

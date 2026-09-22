@@ -325,6 +325,7 @@ type PendingCompetitionResult = {
   durationMs: number;
   expiresAt: string;
   createdAt: string;
+  needsPlayerName?: boolean;
 };
 
 export type CompetitionSubmissionNotice = {
@@ -355,7 +356,8 @@ let outboxOperation = Promise.resolve();
 export class CompetitionRequestError extends Error {
   constructor(
     message: string,
-    readonly status: number
+    readonly status: number,
+    readonly code?: string
   ) {
     super(message);
     this.name = 'CompetitionRequestError';
@@ -591,13 +593,14 @@ async function performCompetitionRequest<T>(
         );
 
         const payload = (await response.json().catch(() => null)) as
-          | (T & { error?: string })
+          | (T & { error?: string; code?: string })
           | null;
         access?.assert();
         if (!response.ok) {
           throw new CompetitionRequestError(
             payload?.error || `Online request failed (${response.status}).`,
-            response.status
+            response.status,
+            payload?.code
           );
         }
         if (payload == null) throw new Error('Online service returned an empty response.');
@@ -618,15 +621,43 @@ async function performCompetitionRequest<T>(
   }
 }
 
+export async function saveCompetitionPlayerName(value: string): Promise<string> {
+  const playerName = normalizeCompetitionPlayerName(value);
+  const error = competitionPlayerNameError(playerName);
+  if (error) throw new CompetitionRequestError(error, 400);
+  const generation = deletionGeneration;
+  const response = await competitionRequest<{ player_name: string }>('/profile', {
+    method: 'POST', body: { playerName },
+  });
+  await withOutboxLock(async () => {
+    await assertNoPendingDeletion(generation);
+    if (!competitionAccessAllowed()) throw new CompetitionAccessRequiredError();
+    const pending = await readCompetitionOutbox();
+    assertDeletionClear(generation);
+    if (!competitionAccessAllowed()) throw new CompetitionAccessRequiredError();
+    if (pending.length > 0) {
+      // Older queued results must not rename the profile back on finalization.
+      await writeCompetitionOutbox(pending.map(entry => ({
+        ...entry, playerName: response.player_name, needsPlayerName: false,
+      })));
+    }
+  });
+  return response.player_name;
+}
+
 export async function beginCompetitionRun(input: {
   kind: CompetitionRunKind;
   exercise: string;
 }): Promise<CompetitionRunSession> {
+  const savedName = useGameStore.getState().playerName;
   const response = await competitionRequest<{ run_id: string; expires_at: string }>('/runs', {
     method: 'POST',
     body: {
       kind: input.kind,
       exercise: input.exercise,
+      ...(typeof savedName === 'string' && competitionPlayerNameError(savedName) === null
+        ? { playerName: normalizeCompetitionPlayerName(savedName) }
+        : {}),
     },
   });
   return { runId: response.run_id, expiresAt: response.expires_at };
@@ -714,6 +745,7 @@ async function flushCompetitionOutbox(): Promise<CompetitionFlushResult> {
         });
         continue;
       }
+      if (entry.needsPlayerName) { remaining.push(entry); continue; }
       if (retryLater) {
         remaining.push(entry);
         continue;
@@ -723,6 +755,12 @@ async function flushCompetitionOutbox(): Promise<CompetitionFlushResult> {
         if (!competitionAccessAllowed() || generation !== accessGeneration) { remaining.push(entry); continue; }
         submittedRunIds.push(entry.runId);
       } catch (error) {
+        if (error instanceof CompetitionRequestError && error.code === 'PLAYER_NAME_TAKEN') {
+          remaining.push({ ...entry, needsPlayerName: true });
+          rejected.push({ runId: entry.runId, status: 409,
+            message: 'Name already taken. Save a different name in Compete, then tap Refresh to publish this result before it expires.' });
+          continue;
+        }
         const permanent =
           error instanceof CompetitionRequestError &&
           [400, 404, 409, 410, 422].includes(error.status);

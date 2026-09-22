@@ -35,6 +35,7 @@ import {
   consumeCompetitionSubmissionNotices,
   flushPendingCompetitionResults,
   normalizeCompetitionPlayerName,
+  saveCompetitionPlayerName,
 } from '@/services/competitionApi';
 import { EXERCISE_IMAGES } from '@/utils/game/exerciseImages';
 import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
@@ -552,10 +553,12 @@ export default function CompeteScreen() {
   const hydrated = useGameStore((s) => s.hydrated);
   const processingAccess = useSyncExternalStore(subscribeProcessingAccess, getProcessingAccess, getProcessingAccess);
   const acceptingTerms = useRef(false);
+  const savingName = useRef(false);
 
   const [nameDraft, setNameDraft] = useState(playerName);
   const hasLoadedNameDraft = useRef(false);
-  const [nameSaveState, setNameSaveState] = useState<'idle' | 'saved' | 'invalid'>('idle');
+  const [nameSaveState, setNameSaveState] = useState<'idle' | 'saved' | 'invalid' | 'saving' | 'online'>('idle');
+  const [nameSaveError, setNameSaveError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [boardTab, setBoardTab] = useState<LeaderboardExercise>('pushups');
   const [showCompetitionTerms, setShowCompetitionTerms] = useState(false);
@@ -610,16 +613,40 @@ export default function CompeteScreen() {
       .catch((flushError) => console.warn('Competition results remain queued', flushError));
   }, [hasAcceptedCompetitionTerms, processingAccess.competition.allowed, queryClient]);
 
-  const saveName = () => {
-    if (!hydrated) return;
+  const saveName = async () => {
+    if (!hydrated || savingName.current) return;
     const nextName = normalizeCompetitionPlayerName(nameDraft);
+    setNameSaveError(null);
     if (competitionPlayerNameError(nextName)) {
       setNameSaveState('invalid');
       return;
     }
-    setNameDraft(nextName);
-    setPlayerName(nextName);
-    setNameSaveState('saved');
+    if (!hasAcceptedCompetitionTerms || !processingAccess.competition.allowed || !competitionIsConfigured) {
+      setNameDraft(nextName);
+      setPlayerName(nextName);
+      setNameSaveState('saved');
+      return;
+    }
+    savingName.current = true;
+    setNameSaveState('saving');
+    try {
+      const confirmedName = await saveCompetitionPlayerName(nextName);
+      if (!getProcessingAccess().competition.allowed ||
+          useGameStore.getState().competitionTermsVersion !== COMPETITION_TERMS_VERSION) {
+        setNameSaveState('idle');
+        return;
+      }
+      setNameDraft(confirmedName);
+      setPlayerName(confirmedName);
+      setNameSaveState('online');
+      setError(null);
+      void queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
+    } catch (saveError) {
+      setNameSaveState('invalid');
+      setNameSaveError(saveError instanceof Error ? saveError.message : 'Could not save your player name. Try again.');
+    } finally {
+      savingName.current = false;
+    }
   };
 
   return (
@@ -659,10 +686,11 @@ export default function CompeteScreen() {
           <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
             <TextInput
               value={nameDraft}
-              editable={hydrated}
+              editable={hydrated && nameSaveState !== 'saving'}
               onChangeText={(value) => {
                 setNameDraft(value);
                 setNameSaveState('idle');
+                setNameSaveError(null);
               }}
               onBlur={saveName}
               onSubmitEditing={saveName}
@@ -686,7 +714,7 @@ export default function CompeteScreen() {
             />
             <TouchableOpacity
               onPress={saveName}
-              disabled={!hydrated}
+              disabled={!hydrated || nameSaveState === 'saving'}
               accessibilityRole="button"
               accessibilityLabel="Save player name"
               style={{
@@ -694,10 +722,10 @@ export default function CompeteScreen() {
                 borderRadius: 12,
                 paddingHorizontal: 16,
                 justifyContent: 'center',
-                opacity: hydrated ? 1 : 0.55,
+                opacity: hydrated && nameSaveState !== 'saving' ? 1 : 0.55,
               }}
             >
-              <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>Save</Text>
+              <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>{nameSaveState === 'saving' ? 'Saving…' : 'Save'}</Text>
             </TouchableOpacity>
           </View>
           <Text
@@ -706,7 +734,7 @@ export default function CompeteScreen() {
               color:
                 nameSaveState === 'invalid'
                   ? '#DC2626'
-                  : nameSaveState === 'saved' && hasName
+                  : (nameSaveState === 'saved' || nameSaveState === 'online') && hasName
                     ? '#15803D'
                     : '#94A3B8',
               fontSize: 11,
@@ -716,10 +744,14 @@ export default function CompeteScreen() {
             {!hydrated
               ? 'Loading your saved player name…'
               : nameSaveState === 'invalid'
-                ? competitionPlayerNameError(nameDraft)
-                : nameSaveState === 'saved' && hasName
-                  ? 'Saved on this device as ' + playerName + '.'
-                  : 'Tap Save or Done on the keyboard to keep your leaderboard name.'}
+                ? nameSaveError ?? competitionPlayerNameError(nameDraft)
+                : nameSaveState === 'saving'
+                  ? 'Checking player name…'
+                  : nameSaveState === 'online' && hasName
+                    ? 'Player name saved as ' + playerName + '.'
+                    : nameSaveState === 'saved' && hasName
+                      ? 'Saved on this device as ' + playerName + '. Availability is checked when you go online.'
+                      : 'Tap Save or Done on the keyboard to keep your leaderboard name.'}
           </Text>
         </View>
 

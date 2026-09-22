@@ -1,9 +1,13 @@
-function fixture(options: { existingTerms?: boolean; allowed?: boolean } = {}) {
+function fixture(options: { existingTerms?: boolean; allowed?: boolean; granted?: boolean } = {}) {
   jest.resetModules();
   const acceptTerms = jest.fn();
   const effects: Array<() => unknown> = [];
   const setters: jest.Mock[] = [];
-  const input = { choices: { competition: { decision: 'undecided', noticeVersion: 1 } } };
+  const input = { choices: { competition: { decision: options.granted ? 'granted' : 'undecided', noticeVersion: 1 } } };
+  const saveName = jest.fn(async (name: string) => name);
+  const setPlayerName = jest.fn();
+  const gameState = { playerName: 'Player', setPlayerName,
+    competitionTermsVersion: options.existingTerms ? 1 : 0, acceptCompetitionTerms: acceptTerms, hydrated: true };
   const access = { competition: { allowed: options.allowed ?? false } };
   const setChoice = jest.fn(async () => { input.choices.competition = { decision: 'granted', noticeVersion: 1 }; });
   const flush = jest.fn().mockResolvedValue({ submitted: 0, pending: 0, rejected: [] });
@@ -27,13 +31,12 @@ function fixture(options: { existingTerms?: boolean; allowed?: boolean } = {}) {
   jest.doMock('@/config/release', () => ({ RELEASE_LINKS: { termsUrl: 'https://example.test/terms', privacyUrl: 'https://example.test/privacy' } }));
   jest.doMock('@/utils/game/exerciseImages', () => ({ EXERCISE_IMAGES: {} }));
   jest.doMock('@/utils/game/store', () => ({ COMPETITION_TERMS_VERSION: 1,
-    useGameStore: (select: (value: unknown) => unknown) => select({ playerName: 'Player', setPlayerName: jest.fn(),
-      competitionTermsVersion: options.existingTerms ? 1 : 0, acceptCompetitionTerms: acceptTerms, hydrated: true }) }));
+    useGameStore: Object.assign((select: (value: unknown) => unknown) => select(gameState), { getState: () => gameState }) }));
   jest.doMock('@/services/privacy/processingPolicy', () => ({ PROCESSING_NOTICE_VERSION: 1 }));
   jest.doMock('@/services/privacy/processingAccess', () => ({ getProcessingAccess: () => access,
     getProcessingInputs: () => input, setProcessingChoice: setChoice, subscribeProcessingAccess: jest.fn() }));
   jest.doMock('@/services/competitionApi', () => ({ competitionIsConfigured: true, competitionPlayerNameError: () => null,
-    normalizeCompetitionPlayerName: (name: string) => name, competitionRequest: jest.fn(),
+    normalizeCompetitionPlayerName: (name: string) => name, competitionRequest: jest.fn(), saveCompetitionPlayerName: saveName,
     consumeCompetitionSubmissionNotices: jest.fn().mockResolvedValue([]), flushPendingCompetitionResults: flush }));
   const Screen = require('../../app/(tabs)/compete').default;
   const tree = Screen();
@@ -46,8 +49,39 @@ function fixture(options: { existingTerms?: boolean; allowed?: boolean } = {}) {
   walk(tree);
   const terms = nodes.find((node) => node.type?.name === 'CompetitionTermsModal')!;
   const board = nodes.find((node) => node.type?.name === 'LeaderboardPanel')!;
-  return { terms, board, input, access, setChoice, acceptTerms, effects, setters, flush };
+  const saveButton = nodes.find(node => node.props.accessibilityLabel === 'Save player name')!;
+  return { terms, board, input, access, setChoice, acceptTerms, effects, setters, flush, saveName, setPlayerName, saveButton, gameState };
 }
+
+test('name conflict is displayed without replacing the previous saved name', async () => {
+  const f=fixture({existingTerms:true,allowed:true,granted:true});
+  f.saveName.mockRejectedValueOnce(new Error('Name already taken. Choose a different player name.'));
+  await f.saveButton.props.onPress();
+  expect(f.saveName).toHaveBeenCalledWith('Player');
+  expect(f.setPlayerName).not.toHaveBeenCalled();
+  expect(f.setters.some(setter=>setter.mock.calls.some(([value])=>value==='Name already taken. Choose a different player name.'))).toBe(true);
+});
+
+test('name is saved only after server confirmation and duplicate presses share one request', async () => {
+  const f=fixture({existingTerms:true,allowed:true,granted:true}); let finish!: (name:string)=>void;
+  f.saveName.mockImplementationOnce(()=>new Promise<string>(resolve=>{finish=resolve;}));
+  const pending=f.saveButton.props.onPress(); await f.saveButton.props.onPress();
+  expect(f.saveName).toHaveBeenCalledTimes(1); expect(f.setPlayerName).not.toHaveBeenCalled();
+  finish('Player'); await pending;
+  expect(f.setPlayerName).toHaveBeenCalledWith('Player');
+});
+
+test('saving a name before online participation remains local', async () => {
+  const f=fixture(); await f.saveButton.props.onPress();
+  expect(f.saveName).not.toHaveBeenCalled(); expect(f.setPlayerName).toHaveBeenCalledWith('Player');
+});
+
+test('withdrawal during name save does not restore the local online profile', async () => {
+  const f=fixture({existingTerms:true,allowed:true,granted:true}); let finish!: (name:string)=>void;
+  f.saveName.mockImplementationOnce(()=>new Promise<string>(resolve=>{finish=resolve;}));
+  const pending=f.saveButton.props.onPress(); f.access.competition.allowed=false; finish('Player'); await pending;
+  expect(f.setPlayerName).not.toHaveBeenCalled();
+});
 
 test('the existing affirmative action persists only competition permission before accepting terms', async () => {
   const f = fixture(); let finish!: () => void;

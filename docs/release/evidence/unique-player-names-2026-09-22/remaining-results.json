@@ -1,0 +1,1093 @@
+{
+  "success": false,
+  "numPassedTestSuites": 14,
+  "numFailedTestSuites": 1,
+  "numPassedTests": 196,
+  "numFailedTests": 2,
+  "testResults": [
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\privacy\\__tests__\\launchProcessingIntegration.test.ts",
+      "status": "failed",
+      "assertionResults": [
+        {
+          "fullName": "AU age 13 can keep playing without starting advertising providers",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX age 17 can keep playing without starting advertising providers",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Quebec keeps gameplay with legacy grants, providers stay off and withdrawal survives restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CT minor can play while the result coordinator never initializes native ad or reporting SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "NY minor can play while the result coordinator never initializes native ad or reporting SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a newly established New York context disposes a ready teen ad and stops reporting before any result ad can show",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "failed reporting Allow at @flapfit/processing-notice-v1 preserves the previous refusal through actual configuration and restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "failed reporting Allow at @flapfit/processing-choices-v1 preserves the previous refusal through actual configuration and restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "real cold startup connects trusted country and native Apple before eligibility; only actual disclosure callback unlocks adult notice route",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "analytics refusal leaves separately permitted restricted advertising functioning",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "unknown country or age {\"offline\":true} cannot initialize SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "unknown country or age {\"age\":{\"status\":\"declined\"}} cannot initialize SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "same-country foreground reuses verified plan while background immediately stops processing and preserves withdrawal",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "game entry cancels queued native privacy presentation without changing gameplay",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a refused required country-specific Apple request never falls back to a second system sheet",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a stale background age response does not consume the fresh same-country attempt",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a fresh lobby caller joining an old native sheet recovers after foreground returns before the old response",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "first-play preparation requests no optional age, advertising, or reporting permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a genuine required Apple check remains before play without starting optional SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "US adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "reporting refusal through Info survives relaunch while permitted Google ads initialize",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Canadian regional clarification permits independent ads with reporting refused",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "post-game unknown evidence {\"offline\":true} grants nothing and shows no misleading consent request",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "post-game unknown evidence {\"age\":{\"status\":\"declined\"}} grants nothing and shows no misleading consent request",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a stale post-game alert response cannot acknowledge the notice or initialize providers",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "saved reporting refusal survives an unrelated failed competition save and restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Google presentation waits for privacy dismissal; backgrounded=false",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Google presentation waits for privacy dismissal; backgrounded=true",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "US teen result flow resolves residency and current location separately from consent in one sheet before Google presentation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "closing the US teen clarification does not complete the unanswered question or initialize SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU eligible teen: independent choices, withdrawal and restart use the production coordinator",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CA eligible teen: independent choices, withdrawal and restart use the production coordinator",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU 13-14 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX 13-15 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX 16-17 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CA 0-13 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "US adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CA adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "US Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CA Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Compete eligibility does not request Apple evidence for unset competition choice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Compete eligibility does not request Apple evidence for denied competition choice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "leaving Compete for gameplay cancels a queued eligibility presentation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CA regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "visiting Compete preserves an already verified plan and independently prepared ads",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: delayed notice allow-only respects action order through the real Canadian coordinator and RC configuration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: delayed notice stop-only respects action order through the real Canadian coordinator and RC configuration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: delayed notice allow-then-stop respects action order through the real Canadian coordinator and RC configuration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: newer Stop wins while older Allow waits at choice-write",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: newer Stop wins while older Allow waits at notice-write",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "regional correction: real Canadian result path chooses outside Quebec and configures ads while reporting remains refused across restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "regional correction: closing unanswered Canada clarification records nothing and never marks the question complete",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "non-Quebec adult with no ad grant receives a restricted result-exit ad while reporting stays refused",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "competition Stop/accept/Stop survives restart and blocks actual Auth/request boundary; Apple required=false",
+          "status": "failed",
+          "failureMessages": [
+            "Error: expect(received).rejects.toBeInstanceOf(expected)\n\nExpected constructor: CompetitionAccessRequiredError\nReceived constructor: TypeError\n\n    at Object.toBeInstanceOf (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\expect\\build\\index.js:218:22)\n    at toBeInstanceOf (C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\privacy\\__tests__\\launchProcessingIntegration.test.ts:745:99)\n    at Generator.next (<anonymous>)\n    at asyncGeneratorStep (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\@babel\\runtime\\helpers\\asyncToGenerator.js:3:17)\n    at _next (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\@babel\\runtime\\helpers\\asyncToGenerator.js:17:9)"
+          ]
+        },
+        {
+          "fullName": "competition Stop/accept/Stop survives restart and blocks actual Auth/request boundary; Apple required=true",
+          "status": "failed",
+          "failureMessages": [
+            "Error: expect(received).rejects.toBeInstanceOf(expected)\n\nExpected constructor: CompetitionAccessRequiredError\nReceived constructor: TypeError\n\n    at Object.toBeInstanceOf (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\expect\\build\\index.js:218:22)\n    at toBeInstanceOf (C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\privacy\\__tests__\\launchProcessingIntegration.test.ts:745:99)\n    at Generator.next (<anonymous>)\n    at asyncGeneratorStep (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\@babel\\runtime\\helpers\\asyncToGenerator.js:3:17)\n    at _next (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\@babel\\runtime\\helpers\\asyncToGenerator.js:17:9)"
+          ]
+        },
+        {
+          "fullName": "existing Canadian consent withdrawal survives lost eligibility, recovery and restart; failed first save=false",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "existing Canadian consent withdrawal survives lost eligibility, recovery and restart; failed first save=true",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "supported older iOS never fakes age or starts provider SDKs; it reports the actual compatibility limit",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older iOS US adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older iOS CA adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older iOS AU adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older iOS MX adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older iOS opens the existing post-game panel for missing age, and dismissal records no answer",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older-system adult uses real permitted RevenueCat configuration and restricted result-ad requests",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "local minor answer {\"country\":\"US\",\"answer\":\"under-13\"} cannot be treated as adulthood or parental permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "local minor answer {\"country\":\"AU\",\"answer\":\"13-14\"} cannot be treated as adulthood or parental permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "local minor answer {\"country\":\"MX\",\"answer\":\"13-17\"} cannot be treated as adulthood or parental permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "advertising withdrawal changes only its purpose and an unrelated failed save cannot erase the saved refusal",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "regional binary answers: dismissing CA clarification writes no regional fact, consent or refusal and remains unanswered after restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "regional binary answers: dismissing US clarification writes no regional fact, consent or refusal and remains unanswered after restart",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\modules\\flap-fit-age-range\\__tests__\\app-transaction.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "reads only the passive StoreKit method without refreshing or requesting age UI",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "only signed transport and its verified route are returned; identifiers, age, error and consent claims are discarded",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "unverified never exposes a stale signed value",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "unsupported never exposes a stale signed value",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "unavailable never exposes a stale signed value",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "error never exposes a stale signed value",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result null fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result [] fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result {} fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result {\"status\":\"futureStatus\",\"signedAppTransaction\":\"header.payload.signature\"} fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result {\"status\":\"verified\",\"environment\":\"Production\",\"signedAppTransaction\":null} fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result {\"status\":\"verified\",\"environment\":\"Production\",\"signedAppTransaction\":123} fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result {\"status\":\"verified\",\"environment\":\"Production\",\"signedAppTransaction\":\"\"} fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result {\"status\":\"verified\",\"environment\":\"Production\",\"signedAppTransaction\":\"not-a-jws\"} fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result {\"status\":\"verified\",\"environment\":\"Production\",\"signedAppTransaction\":\"a.b.\"} fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result {\"status\":\"verified\",\"environment\":\"Production\",\"signedAppTransaction\":\".b.c\"} fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result {\"status\":\"verified\",\"environment\":\"Production\",\"signedAppTransaction\":\"a.b.c.d\"} fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result {\"status\":\"verified\",\"environment\":\"Production\",\"signedAppTransaction\":\"a.b.c\\n\"} fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "malformed native result {\"status\":\"verified\",\"environment\":\"Production\",\"signedAppTransaction\":\"a. b.c\"} fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "android never attempts to load StoreKit",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "web never attempts to load StoreKit",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "missing module or older native client null is unsupported",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "missing module or older native client {} is unsupported",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "missing module or older native client {\"getVerifiedAppTransaction\":\"not-a-function\"} is unsupported",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "missing native bridge exception does not expose error text",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "native rejection fails closed without exposing localized private error data",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "does not cache an earlier signed identity across subsequent reads",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "passes through native-verified Production only for server routing",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "passes through native-verified Sandbox only for server routing",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "missing or unsupported native environment undefined fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "missing or unsupported native environment \"Xcode\" fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "missing or unsupported native environment \"production\" fails closed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "missing or unsupported native environment \"unknown\" fails closed",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\utils\\game\\__tests__\\store-hydration.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "persisted store hydration marks the loaded store ready",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "persisted store hydration uses a non-destructive fallback when hydration fails before state is available",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "persisted store hydration preserves stored progress when a real storage read fails",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "persisted store hydration keeps malformed saved bytes untouched until a valid copy can be restored",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "persisted store hydration starts cleanly with empty storage and can save new progress",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\utils\\game\\__tests__\\pullup-top-reference.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "comfortable bent starting arms establish reference",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a fresh 5fps camera can establish a starting reference",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a fresh 4fps camera can establish a starting reference",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a fresh 2fps camera can establish a starting reference",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "widening grip cannot replace body rise",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "legitimate widened grip with actual body rise is accepted",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a narrow neutral grip with actual body rise is accepted",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a narrow neutral grip without body rise is rejected",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "head-only motion is rejected",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a single lower-shoulder outlier does not replace valid top-position context",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "single-side shoulder estimate cannot count as bilateral rise",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "moving continuously from stable hang to held top keeps fixed reference",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "very slow continuous pull cannot walk the starting reference upward",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a valid top pose does not require any preceding hang or movement observation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a higher grip still requires the eyes at that higher bar",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "checks recorded endpoint geometry 1789673008978-032236 (body rise=false)",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "checks recorded endpoint geometry 1789673030761-568610 (body rise=false)",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "checks recorded endpoint geometry 1789673195521-118848 (body rise=false)",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "checks recorded endpoint geometry 1789673384644-607392 (body rise=false)",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "checks recorded endpoint geometry 1789673255404-780287 (body rise=true)",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\utils\\game\\birdVisual.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "canonical bird visual gives Stage 10 a greater than 20 percent size jump over Stage 9",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "canonical bird visual maps each exercise morphology input to its own anatomy channel",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "canonical bird visual uses exactly two named wings and two leg paths in either pose",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "canonical bird visual removes the ground shadow and tucks the legs in flying pose",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\__tests__\\videoSharing.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "Messages attaches the complete existing video and returns only after the composer ends",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Mail attaches that same complete video without choosing recipients",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "social sharing retains one file and its correct MP4 metadata",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "unavailable iPhone composers offer the existing share route without losing the video",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Android continues using its existing system share flow",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Expo Go keeps the complete video on the system share path until the patched native build is installed",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\__tests__\\revenueCatTestDiagnostics.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "records a bounded local callback with correlation fields without claiming server receipt",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "does not log in ads mode live",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "does not log in ads mode undefined",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "does not log in ads mode ",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "does not log in ads mode TEST",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "withdrawal and regrant cannot revive stale callbacks",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "rejects missing event correlation, malformed generations and arbitrary kinds",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "omits custom identity, unstructured metadata and invalid build labels",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "stops at 100 local records without queues or retry timers",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "context, clock and sink errors never escape",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\__tests__\\settingsPermissionRecovery.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "ordinary foreground events do not reread permissions or restart a run",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "returning from camera settings rereads only that permission once",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "returning from microphone settings rereads only that permission once",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "failed Settings navigation does not leave a pending refresh",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a failed permission refresh can retry on the next return",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\utils\\game\\game-web-navigation.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "game WebView navigation keeps both forms of the private game origin inside the WebView",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "game WebView navigation blocks external, script, and app-link navigation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "game WebView navigation routes every attempted URL through the explicit navigation guard",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\scripts\\validate-monetization-config.test.js",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "validateMonetizationConfig accepts the current pre-monetization candidate",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "validateMonetizationConfig rejects an ad-free production launch candidate",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "validateMonetizationConfig rejects a partial native-package installation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "validateMonetizationConfig rejects purchase and paywall packages from the ads-only 1.0 candidate",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "validateMonetizationConfig accepts a complete production monetization configuration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "validateMonetizationConfig accepts Google sample IDs only for preview ad testing",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "validateMonetizationConfig rejects unapproved monetization package versions",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "validateMonetizationConfig rejects RevenueCat versions older than the ad-tracking minimum",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "validateMonetizationConfig rejects sample ad IDs, early measurement, and ATT configuration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "validateMonetizationConfig rejects missing production monetization values",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\utils\\game\\__tests__\\evolution-core.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "evolution core defines all ten tracked-training-time stages",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "evolution core changes stage at every threshold boundary",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "evolution core keeps collision and raster draw-box size invariant across evolution",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "evolution core keeps daily chart totals separated by exercise",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "evolution core recovers missing legacy chart buckets without double-counting saved values",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\utils\\game\\__tests__\\camera-preview.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "camera preview after calibration clears Sky after both positions and keeps the camera active through gameplay",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "camera preview after calibration keeps the preview available when the second calibration position is rejected",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "camera preview after calibration preserves the active camera source in full-screen Camera mode",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\scripts\\validate-privacy-manifest.test.js",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "current declarations cover the existing backend and ads-only reporting data",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "rejects a missing existing OtherDataTypes collection declaration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "rejects a missing existing OtherDiagnosticData collection declaration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "rejects a missing existing CoarseLocation collection declaration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "rejects a missing existing AdvertisingData collection declaration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "rejects a missing existing ProductInteraction collection declaration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "rejects the prior four-category manifest and omitted reporting purpose",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "rejects missing UserID purpose Analytics",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "rejects missing OtherDataTypes purpose AppFunctionality",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "rejects an incorrect authorization-record NSPrivacyCollectedDataTypeLinked declaration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "rejects an incorrect authorization-record NSPrivacyCollectedDataTypeTracking declaration",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\utils\\game\\__tests__\\stats-history.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "Stats training history keeps the combined chart separate from each exercise chart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Stats training history recovers missing chart buckets without double-counting persisted totals",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Stats training history does not guess an exercise for older unattributed sessions",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\utils\\game\\__tests__\\recording-boundaries.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "recording gameplay boundaries starts after 3-2-1, includes the crash frame, and never records the result overlay",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "recording gameplay boundaries includes the completed level score in the terminal frame",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    }
+  ]
+}

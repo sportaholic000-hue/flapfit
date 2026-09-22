@@ -1,5 +1,7 @@
 FlapFit pre-build defect audit — September 21, 2026
 
+**September 22 update:** The current source now includes the [unique-player-name correction](unique-player-names-2026-09-22.md), with new database, API, UI and queued-result verification. Earlier revision and completion statements below describe historical checkpoints. The name migration/API activation remains unapplied pending production-write authorization.
+
 The demonstrated saved-age and request-body defects are corrected locally. All 1,429 mobile tests pass, as do 42 separate backend/SQL tests, mobile TypeScript, strict lint, the production configuration validator, and type checking of all three Edge Function entrypoints. The investigation did not establish the claimed universal Apple-link authorization bypass. The continuation below resolves the assessment to one concrete Canadian withdrawal scenario and a separately reviewable, unapplied remedy. No advertising-off mechanism was added.
 
 This report covers the latest attached request, which expressly prohibits creating or signing a mobile binary, uploading, submitting, deploying, publishing, or changing production configuration. None of those actions occurred. Website content and account settings were unchanged. Tests using simulated native boundaries are distinguished below from future device evidence.

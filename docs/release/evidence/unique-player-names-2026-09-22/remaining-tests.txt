@@ -1,0 +1,61 @@
+FAIL src/services/privacy/__tests__/launchProcessingIntegration.test.ts (22.987 s)
+  ● competition Stop/accept/Stop survives restart and blocks actual Auth/request boundary; Apple required=false
+
+    expect(received).rejects.toBeInstanceOf(expected)
+
+    Expected constructor: CompetitionAccessRequiredError
+    Received constructor: TypeError
+
+      743 |     (global.fetch as jest.Mock).mockClear();
+      744 |     await expect(network.api.competitionRequest('/leaderboard')).rejects.toBeInstanceOf(network.api.CompetitionAccessRequiredError);
+    > 745 |     await expect(network.api.beginCompetitionRun({kind:'leaderboard',exercise:'squats'})).rejects.toBeInstanceOf(network.api.CompetitionAccessRequiredError);
+          |                                                                                                   ^
+      746 |     expect(network.createClient).not.toHaveBeenCalled();expect(global.fetch).not.toHaveBeenCalled();
+      747 |   } finally {f.finish();}
+      748 |   f=await load({country:'CA',memory,required});
+
+      at Object.toBeInstanceOf (../../node_modules/expect/build/index.js:218:22)
+      at toBeInstanceOf (src/services/privacy/__tests__/launchProcessingIntegration.test.ts:745:99)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+  ● competition Stop/accept/Stop survives restart and blocks actual Auth/request boundary; Apple required=true
+
+    expect(received).rejects.toBeInstanceOf(expected)
+
+    Expected constructor: CompetitionAccessRequiredError
+    Received constructor: TypeError
+
+      743 |     (global.fetch as jest.Mock).mockClear();
+      744 |     await expect(network.api.competitionRequest('/leaderboard')).rejects.toBeInstanceOf(network.api.CompetitionAccessRequiredError);
+    > 745 |     await expect(network.api.beginCompetitionRun({kind:'leaderboard',exercise:'squats'})).rejects.toBeInstanceOf(network.api.CompetitionAccessRequiredError);
+          |                                                                                                   ^
+      746 |     expect(network.createClient).not.toHaveBeenCalled();expect(global.fetch).not.toHaveBeenCalled();
+      747 |   } finally {f.finish();}
+      748 |   f=await load({country:'CA',memory,required});
+
+      at Object.toBeInstanceOf (../../node_modules/expect/build/index.js:218:22)
+      at toBeInstanceOf (src/services/privacy/__tests__/launchProcessingIntegration.test.ts:745:99)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+PASS modules/flap-fit-age-range/__tests__/app-transaction.test.ts
+PASS src/utils/game/__tests__/store-hydration.test.ts
+PASS src/utils/game/__tests__/pullup-top-reference.test.ts
+PASS src/utils/game/birdVisual.test.ts
+PASS src/services/__tests__/videoSharing.test.ts
+PASS src/services/__tests__/revenueCatTestDiagnostics.test.ts
+PASS src/services/__tests__/settingsPermissionRecovery.test.ts
+PASS src/utils/game/game-web-navigation.test.ts
+PASS scripts/validate-monetization-config.test.js
+PASS src/utils/game/__tests__/evolution-core.test.ts
+PASS src/utils/game/__tests__/camera-preview.test.ts
+PASS scripts/validate-privacy-manifest.test.js
+PASS src/utils/game/__tests__/stats-history.test.ts
+PASS src/utils/game/__tests__/recording-boundaries.test.ts
+
+Test Suites: 1 failed, 14 passed, 15 total
+Tests:       2 failed, 196 passed, 198 total
+Snapshots:   0 total
+Time:        48.003 s
+Test results written to: ..\..\..\..\..\Documents\Codex\2026-09-21\can-you-ch\work\unique-names\remaining-results.json

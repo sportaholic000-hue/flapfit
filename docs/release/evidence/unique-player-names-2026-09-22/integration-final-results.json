@@ -1,0 +1,531 @@
+{
+  "success": true,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPassedTests": 102,
+  "numFailedTests": 0,
+  "testResults": [
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\privacy\\__tests__\\launchProcessingIntegration.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "AU age 13 can keep playing without starting advertising providers",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX age 17 can keep playing without starting advertising providers",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Quebec keeps gameplay with legacy grants, providers stay off and withdrawal survives restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CT minor can play while the result coordinator never initializes native ad or reporting SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "NY minor can play while the result coordinator never initializes native ad or reporting SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a newly established New York context disposes a ready teen ad and stops reporting before any result ad can show",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "failed reporting Allow at @flapfit/processing-notice-v1 preserves the previous refusal through actual configuration and restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "failed reporting Allow at @flapfit/processing-choices-v1 preserves the previous refusal through actual configuration and restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "real cold startup connects trusted country and native Apple before eligibility; only actual disclosure callback unlocks adult notice route",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "analytics refusal leaves separately permitted restricted advertising functioning",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "unknown country or age {\"offline\":true} cannot initialize SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "unknown country or age {\"age\":{\"status\":\"declined\"}} cannot initialize SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "same-country foreground reuses verified plan while background immediately stops processing and preserves withdrawal",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "game entry cancels queued native privacy presentation without changing gameplay",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a refused required country-specific Apple request never falls back to a second system sheet",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a stale background age response does not consume the fresh same-country attempt",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a fresh lobby caller joining an old native sheet recovers after foreground returns before the old response",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "first-play preparation requests no optional age, advertising, or reporting permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a genuine required Apple check remains before play without starting optional SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "US adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "reporting refusal through Info survives relaunch while permitted Google ads initialize",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Canadian regional clarification permits independent ads with reporting refused",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "post-game unknown evidence {\"offline\":true} grants nothing and shows no misleading consent request",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "post-game unknown evidence {\"age\":{\"status\":\"declined\"}} grants nothing and shows no misleading consent request",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a stale post-game alert response cannot acknowledge the notice or initialize providers",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "saved reporting refusal survives an unrelated failed competition save and restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Google presentation waits for privacy dismissal; backgrounded=false",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Google presentation waits for privacy dismissal; backgrounded=true",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "US teen result flow resolves residency and current location separately from consent in one sheet before Google presentation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "closing the US teen clarification does not complete the unanswered question or initialize SDKs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU eligible teen: independent choices, withdrawal and restart use the production coordinator",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CA eligible teen: independent choices, withdrawal and restart use the production coordinator",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU 13-14 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX 13-15 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX 16-17 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CA 0-13 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "US adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CA adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "US Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CA Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Compete eligibility does not request Apple evidence for unset competition choice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Compete eligibility does not request Apple evidence for denied competition choice",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "leaving Compete for gameplay cancels a queued eligibility presentation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "AU regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "MX regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "CA regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "visiting Compete preserves an already verified plan and independently prepared ads",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: delayed notice allow-only respects action order through the real Canadian coordinator and RC configuration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: delayed notice stop-only respects action order through the real Canadian coordinator and RC configuration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: delayed notice allow-then-stop respects action order through the real Canadian coordinator and RC configuration",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: newer Stop wins while older Allow waits at choice-write",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: newer Stop wins while older Allow waits at notice-write",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "regional correction: real Canadian result path chooses outside Quebec and configures ads while reporting remains refused across restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "regional correction: closing unanswered Canada clarification records nothing and never marks the question complete",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "non-Quebec adult with no ad grant receives a restricted result-exit ad while reporting stays refused",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "competition Stop/accept/Stop survives restart and blocks actual Auth/request boundary; Apple required=false",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "competition Stop/accept/Stop survives restart and blocks actual Auth/request boundary; Apple required=true",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "existing Canadian consent withdrawal survives lost eligibility, recovery and restart; failed first save=false",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "existing Canadian consent withdrawal survives lost eligibility, recovery and restart; failed first save=true",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "supported older iOS never fakes age or starts provider SDKs; it reports the actual compatibility limit",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older iOS US adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older iOS CA adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older iOS AU adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older iOS MX adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older iOS opens the existing post-game panel for missing age, and dismissal records no answer",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "older-system adult uses real permitted RevenueCat configuration and restricted result-ad requests",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "local minor answer {\"country\":\"US\",\"answer\":\"under-13\"} cannot be treated as adulthood or parental permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "local minor answer {\"country\":\"AU\",\"answer\":\"13-14\"} cannot be treated as adulthood or parental permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "local minor answer {\"country\":\"MX\",\"answer\":\"13-17\"} cannot be treated as adulthood or parental permission",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "advertising withdrawal changes only its purpose and an unrelated failed save cannot erase the saved refusal",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "regional binary answers: dismissing CA clarification writes no regional fact, consent or refusal and remains unanswered after restart",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "regional binary answers: dismissing US clarification writes no regional fact, consent or refusal and remains unanswered after restart",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\__tests__\\competitionApi-outbox.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "online result delivery a confirmed rename updates older queued names so a later upload cannot undo it",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a taken name retains the result without retry spam; saving a free name permits the same run to publish",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery failed name claim preserves the queued result and its original name",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a new online run sends the saved name for a server uniqueness check",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a permanent name rejection is visible and never retried",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery an expired run is rejected locally, not promised an overnight retry",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a server outage keeps the result pending and a later flush accepts it",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a server-expired response is visible and removed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery reading a support ID does not create an anonymous account",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a full offline queue keeps earlier results and visibly rejects the new run",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery retrying an existing run does not evict another entry at capacity",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery deleting the online identity clears pending results and notices",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "whole-request timeout covers a stalled session read",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "whole-request timeout covers a stalled response body",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions overlapping successful submissions each report their own accepted result",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions an overlapping rejection never borrows another run's successful status",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions a lost deletion acknowledgement is reconciled only after Auth confirms user removal",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions retry completes cleanup after an ambiguous delete followed by a 401",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions a 401 or expired session is not proof of deletion and does not clear pending scores",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions a confirmed deletion survives local signout failure and does not resend DELETE",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions a missing session after an uncertain deletion cannot create a new guest or claim success",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "bounded foreground recovery returning to the app retries pending scores once and refreshes rankings",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "bounded foreground recovery deletion verification times out without claiming success or discarding the session",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a submission waiting behind deletion cannot recreate a guest or repopulate the outbox",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    }
+  ]
+}

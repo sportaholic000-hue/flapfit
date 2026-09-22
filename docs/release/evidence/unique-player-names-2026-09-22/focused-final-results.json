@@ -1,0 +1,558 @@
+{
+  "success": true,
+  "numPassedTestSuites": 4,
+  "numFailedTestSuites": 0,
+  "numPassedTests": 105,
+  "numFailedTests": 0,
+  "testResults": [
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\__tests__\\competitionApi-outbox.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "online result delivery a confirmed rename updates older queued names so a later upload cannot undo it",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a taken name retains the result without retry spam; saving a free name permits the same run to publish",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery failed name claim preserves the queued result and its original name",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a new online run sends the saved name for a server uniqueness check",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a permanent name rejection is visible and never retried",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery an expired run is rejected locally, not promised an overnight retry",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a server outage keeps the result pending and a later flush accepts it",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a server-expired response is visible and removed",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery reading a support ID does not create an anonymous account",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery a full offline queue keeps earlier results and visibly rejects the new run",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery retrying an existing run does not evict another entry at capacity",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "online result delivery deleting the online identity clears pending results and notices",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "whole-request timeout covers a stalled session read",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "whole-request timeout covers a stalled response body",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions overlapping successful submissions each report their own accepted result",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions an overlapping rejection never borrows another run's successful status",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions a lost deletion acknowledgement is reconciled only after Auth confirms user removal",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions retry completes cleanup after an ambiguous delete followed by a 401",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions a 401 or expired session is not proof of deletion and does not clear pending scores",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions a confirmed deletion survives local signout failure and does not resend DELETE",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "launch audit regressions a missing session after an uncertain deletion cannot create a new guest or claim success",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "bounded foreground recovery returning to the app retries pending scores once and refreshes rankings",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "bounded foreground recovery deletion verification times out without claiming success or discarding the session",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a submission waiting behind deletion cannot recreate a guest or repopulate the outbox",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\scripts\\launch-competition.test.js",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "saving a player name reserves the normalized name for the authenticated owner only",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "/profile reports name conflicts clearly",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "/runs reports name conflicts clearly",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "/runs/finalize reports name conflicts clearly",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "profile mutation keeps existing participation, terms and authentication protections",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "other unique-constraint errors are not misreported as name conflicts",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "retired route /challenges?code=ABC234 closes before any auth or database client work",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "retired route /challenges closes before any auth or database client work",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "retired route /challenges/attempts closes before any auth or database client work",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "friend run tickets cannot be issued, while verified leaderboard tickets still work",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "pushups retains 50 entries, global ranks and blocked-player filtering",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "squats retains 50 entries, global ranks and blocked-player filtering",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "pullups retains 50 entries, global ranks and blocked-player filtering",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Apple denial/status failure blocks competition before data access: {\"data\":true,\"error\":null,\"status\":403}",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Apple denial/status failure blocks competition before data access: {\"data\":null,\"error\":{\"message\":\"unavailable\"},\"status\":503}",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Apple denial/status failure blocks competition before data access: {\"data\":null,\"error\":null,\"status\":503}",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "authenticated deletion bypasses revoked participation and renewed terms",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "missing token cannot reach competition data or privileged RPCs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "invalid/deleted session cannot reach competition data or privileged RPCs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "non-anonymous identity cannot reach competition data or privileged RPCs",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "streamed body stops at the byte limit without buffering the remainder",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "body limit counts UTF-8 bytes, not JavaScript characters",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "declared oversize body is rejected without reading it",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "run ownership comes from the verified session, never a body user identifier",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "invalid body [] performs no game mutation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "invalid body null performs no game mutation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "invalid body {broken performs no game mutation",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\__tests__\\competition-processing-access.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "unknown eligibility blocks public reads and run creation before anonymous Auth",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "competition remains available when RevenueCat analytics is refused",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "community terms remain necessary even with independently allowed processing",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "withdrawal during session loading cannot create a guest or later send a request",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "withdrawal aborts an in-flight request and ignores its late success after regrant",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Supabase transport is gated independently of periodic refresh",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "withdrawal preserves queued local scores and foreground retry sends nothing until reauthorized",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "revocation during score submission preserves it and suppresses foreground success",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "withdrawal does not block deletion of an existing identity or create a replacement guest",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "support ID lookup after withdrawal only uses an existing identity",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a late Supabase Auth response body cannot complete after withdrawal",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "concurrent first-use requests share one anonymous identity and its returned token",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a failed shared signup is cleared so a later request can recover",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "an intentionally local run has a local outcome without upload activity: privacy denied",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "an intentionally local run has a local outcome without upload activity: terms missing",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "granting processing later does not retroactively publish a run that began locally",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "actual online run creation failure stays distinct from a deliberate local run",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "withdrawal during run creation settles as local even after an immediate regrant",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "withdrawal after online run creation keeps its score locally without publishing status or transport",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "the result-status callback reports a real online upload and accepted outcome",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "withdrawal while publishing yields local status rather than a failed upload message",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a full online outbox does not turn a withdrawn run into an upload failure",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "one first-use caller timing out does not cancel another caller sharing its identity lookup",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a timed-out identity lookup cannot poison retries or create a guest from its late result",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "the last caller timing out aborts shared Auth transport and rejects its late body",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "required Apple status is checked before any anonymous identity exists",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "required first use shares one identity and waits for verified link before all competition dispatches",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "fresh linked profile is reused without repeatedly starting link checks",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "required link revoked cannot dispatch a game request",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "required link unavailable cannot dispatch a game request",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a status invalidated during required authentication prevents linking or dispatch",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "stale link completion cannot dispatch or bypass an independent competition refusal",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "required Apple denial still permits authenticated deletion and support without status, link, or signup",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "the existing root foreground service already starts required Apple monitoring without competition participation",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "an already-required duty starts monitoring at root-service mount without an Auth session",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "required monitoring is not duplicated by synchronous restriction publication and stops when the duty clears",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":false,\"hasSession\":true}",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":false,\"hasSession\":false}",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":true,\"hasSession\":true}",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: pending deletion blocks ordinary identity and dispatch {\"required\":true,\"hasSession\":false}",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: a real failed delete blocks begin-run but retains support and deletion retry when Apple-required=false",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: a real failed delete blocks begin-run but retains support and deletion retry when Apple-required=true",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: deletion during pending apple-status invalidates ordinary preparation without replacement signup or game dispatch",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: deletion during pending session-read invalidates ordinary preparation without replacement signup or game dispatch",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: deletion during pending apple-link invalidates ordinary preparation without replacement signup or game dispatch",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "audit continuation: completed deletion cannot revive an older preparation after new terms are accepted",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\__tests__\\competition-terms-action.test.ts",
+      "status": "passed",
+      "assertionResults": [
+        {
+          "fullName": "name conflict is displayed without replacing the previous saved name",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "name is saved only after server confirmation and duplicate presses share one request",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "saving a name before online participation remains local",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "withdrawal during name save does not restore the local online profile",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "the existing affirmative action persists only competition permission before accepting terms",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "failed persistence never marks terms accepted and remains retryable",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "existing saved terms and screen mount never silently grant participation or retry local-only work",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "a newer refusal during persistence is not overridden by the earlier acceptance continuation",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    }
+  ]
+}

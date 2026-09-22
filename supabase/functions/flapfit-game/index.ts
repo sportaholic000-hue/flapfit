@@ -28,15 +28,19 @@ const ALLOWED_RUN_KINDS = new Set(['leaderboard']);
 class ApiError extends Error {
   constructor(
     readonly status: number,
-    message: string
+    message: string,
+    readonly code?: string
   ) {
     super(message);
     this.name = 'ApiError';
   }
 }
 
-function databaseApiError(error: { message?: string }): ApiError | null {
+function databaseApiError(error: { message?: string; code?: string }): ApiError | null {
   const message = error.message ?? '';
+  if (error.code === '23505' && message.includes('profiles_player_name_key')) {
+    return new ApiError(409, 'Name already taken. Choose a different player name.', 'PLAYER_NAME_TAKEN');
+  }
   if (/run limit/i.test(message))
     return new ApiError(429, 'Too many game runs. Try again shortly.');
   if (/already finalized/i.test(message))
@@ -202,6 +206,24 @@ Deno.serve(async (req) => {
     const requestTermsVersion =
       req.method === 'DELETE' && route === '/me' ? null : requireCurrentTerms(req);
 
+    const savePlayerName = async (value: unknown): Promise<string> => {
+      const playerName = cleanPlayerName(value);
+      const result = await admin.from('profiles').upsert({
+        user_id: user.id,
+        player_name: playerName,
+        terms_version: requestTermsVersion,
+        terms_accepted_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'user_id' });
+      if (result.error) throw databaseApiError(result.error) ?? result.error;
+      return playerName;
+    };
+
+    if (req.method === 'POST' && route === '/profile') {
+      const body = await bodyJson(req);
+      return json({ player_name: await savePlayerName(body.playerName) });
+    }
+
     if (req.method === 'GET' && route === '/leaderboard') {
       const exercise = url.searchParams.get('exercise') ?? '';
       if (!ALLOWED_EXERCISES.has(exercise)) return json({ error: 'Exercise is invalid.' }, 400);
@@ -243,6 +265,9 @@ Deno.serve(async (req) => {
       const exercise = typeof body.exercise === 'string' ? body.exercise : '';
       if (!ALLOWED_RUN_KINDS.has(kind)) return json({ error: 'Game run type is invalid.' }, 400);
       if (!ALLOWED_EXERCISES.has(exercise)) return json({ error: 'Exercise is invalid.' }, 400);
+      // Check older locally saved names before play. The unique database index
+      // also protects finalization and older clients that omit this field.
+      if (body.playerName !== undefined) await savePlayerName(body.playerName);
       const runResult = await admin
         .rpc('begin_game_run', {
           p_user_id: user.id,
@@ -349,7 +374,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error(error);
     if (error instanceof ApiError) {
-      return json({ error: error.message }, error.status);
+      return json({ error: error.message, ...(error.code ? { code: error.code } : {}) }, error.status);
     }
     return json({ error: 'Online service is temporarily unavailable.' }, 500);
   }
