@@ -44,6 +44,9 @@ export function localAgeOptions(): { value: LocalAgeAnswer; label: string }[] {
       : ['under-13', '13-17', '18-plus'];
   return values.map(value => ({ value, label: BANDS[value].label }));
 }
+export function getSavedLocalAgeAnswer(): LocalAgeAnswer | null {
+  return !readConfirmed || readFailed || saving || saveUnconfirmed ? null : answer;
+}
 export function localAgeAnswerStatus(): string {
   if (saveUnconfirmed) return 'Age answer save not confirmed · select your answer again to retry';
   if (saving) return 'Saving age answer';

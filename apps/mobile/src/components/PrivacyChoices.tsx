@@ -3,14 +3,14 @@ import { Alert, Linking, Modal, Platform, ScrollView, StyleSheet, Text, Touchabl
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RELEASE_LINKS } from '@/config/release';
 import {
-  connecticutClarificationStatus, hasConnecticutClarificationControl,
+  connecticutClarificationStatus, hasConnecticutClarificationControl, getSavedConnecticutResidency, getSavedQuebecResidency,
   restoreRegionalClarification, saveConnecticutResidency,
   hasQuebecClarificationControl, quebecClarificationStatus, saveQuebecResidency,
 } from '@/services/privacy/regionalClarification';
 import { getAdvertisingWithdrawalState, subscribeAdvertisingWithdrawal, getCompetitionStopState, subscribeCompetitionStop, stopOnlineCompetition, getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
 import { getProcessingAccess, getProcessingInputs, hasProcessingChoicesReadError, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
-import { hasLocalAgeControl, hasLocalAgeReadError, localAgeAnswerStatus, localAgeOptions, restoreLocalAgeAnswer, saveLocalAgeAnswer } from '@/services/privacy/localAgeAnswer';
-import { hasNewYorkClarificationControl, hasSavedNewYorkAnswer, hasNewYorkReadError, newYorkClarificationStatus, restoreNewYorkClarification, saveNewYorkPresence } from '@/services/privacy/newYorkClarification';
+import { getSavedLocalAgeAnswer, hasLocalAgeControl, hasLocalAgeReadError, localAgeAnswerStatus, localAgeOptions, restoreLocalAgeAnswer, saveLocalAgeAnswer } from '@/services/privacy/localAgeAnswer';
+import { getSavedNewYorkPresence, hasNewYorkClarificationControl, hasSavedNewYorkAnswer, hasNewYorkReadError, newYorkClarificationStatus, restoreNewYorkClarification, saveNewYorkPresence } from '@/services/privacy/newYorkClarification';
 import { releaseEligibilityMessage, resolveReleaseEligibility } from '@/services/privacy/releaseEligibility';
 import { isRegionalAdvertisingDisabled } from '@/services/privacy/regionalAdvertising';
 import { ageProcessingAvailability } from '@/services/privacy/processingAvailability';
@@ -35,6 +35,10 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const input = getProcessingInputs();
   const regionalAdvertisingDisabled = isRegionalAdvertisingDisabled(input);
   const ageAvailability = ageProcessingAvailability();
+  const savedAge = getSavedLocalAgeAnswer();
+  const savedQuebec = getSavedQuebecResidency();
+  const savedConnecticut = getSavedConnecticutResidency();
+  const savedNewYork = getSavedNewYorkPresence();
   const advertisingStatus = processingPurposeStatus('ads');
   const reportingStatus = processingPurposeStatus('analytics');
   const current = () => mounted.current && (canInteract?.() ?? true);
@@ -48,6 +52,12 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const button = (title: string, operation: () => Promise<void>, prominent = false) => (
     <TouchableOpacity accessibilityRole="button" disabled={busy} onPress={() => void action(operation)} style={[styles.button, prominent && styles.prominentChoice, busy && styles.disabled]}>
       <Text style={styles.buttonText}>{title}</Text>
+    </TouchableOpacity>
+  );
+  const answerButton = (title: string, selected: boolean, operation: () => Promise<void>) => (
+    <TouchableOpacity accessibilityRole="radio" accessibilityLabel={title} accessibilityState={{ checked: selected, disabled: busy }} disabled={busy} onPress={() => void action(operation)} style={[styles.answer, selected && styles.selectedAnswer, busy && styles.disabled]}>
+      <View accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[styles.answerMark, selected && styles.selectedMark]}><Text style={styles.checkmark}>{selected ? '✓' : ''}</Text></View>
+      <Text style={[styles.answerText, selected && styles.selectedAnswerText]}>{title}</Text>
     </TouchableOpacity>
   );
   const retryReporting = input.choices.analytics.decision === 'denied' &&
@@ -87,29 +97,29 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       <Text style={styles.status}>{localAgeAnswerStatus()}</Text>
       {hasLocalAgeReadError()
         ? button('Retry loading age answer', restoreLocalAgeAnswer)
-        : <View style={styles.buttons}>{localAgeOptions().map(option => <View key={option.value}>
-          {button(option.label, () => saveLocalAgeAnswer(option.value))}
+        : <View accessibilityRole="radiogroup" accessibilityLabel="Age range" style={styles.buttons}>{localAgeOptions().map(option => <View key={option.value} style={styles.ageAnswer}>
+          {answerButton(option.label, savedAge === option.value, () => saveLocalAgeAnswer(option.value))}
         </View>)}</View>}
     </View> : null}
     {hasQuebecClarificationControl() ? <View style={styles.group}>
       <Text style={styles.heading}>Province</Text>
       <Text style={styles.body}>Do you live in Quebec?</Text>
       <Text style={styles.note}>Your answer is saved on this device.</Text>
-      <Text style={styles.status}>{quebecClarificationStatus()}</Text>
-      <View style={styles.buttons}>
-        {button('Yes', () => saveQuebecResidency('resident'))}
-        {button('No', () => saveQuebecResidency('not-resident'))}
+      <View accessibilityRole="radiogroup" accessibilityLabel="Do you live in Quebec?" style={styles.buttons}>
+        {answerButton('Yes', savedQuebec === 'resident', () => saveQuebecResidency('resident'))}
+        {answerButton('No', savedQuebec === 'not-resident', () => saveQuebecResidency('not-resident'))}
       </View>
+      <Text style={styles.status}>{savedQuebec === null ? quebecClarificationStatus() : 'Saved answer: ' + (savedQuebec === 'resident' ? 'Yes' : 'No')}</Text>
     </View> : null}
     {hasConnecticutClarificationControl() ? <View style={styles.group}>
       <Text style={styles.heading}>State</Text>
       <Text style={styles.body}>Do you live in Connecticut?</Text>
       <Text style={styles.note}>Your answer is saved on this device.</Text>
-      <Text style={styles.status}>{connecticutClarificationStatus()}</Text>
-      <View style={styles.buttons}>
-        {button('Yes', () => saveConnecticutResidency('resident'))}
-        {button('No', () => saveConnecticutResidency('not-resident'))}
+      <View accessibilityRole="radiogroup" accessibilityLabel="Do you live in Connecticut?" style={styles.buttons}>
+        {answerButton('Yes', savedConnecticut === 'resident', () => saveConnecticutResidency('resident'))}
+        {answerButton('No', savedConnecticut === 'not-resident', () => saveConnecticutResidency('not-resident'))}
       </View>
+      <Text style={styles.status}>{savedConnecticut === null ? connecticutClarificationStatus() : 'Saved answer: ' + (savedConnecticut === 'resident' ? 'Yes' : 'No')}</Text>
     </View> : null}
     {hasNewYorkReadError() && input.launch?.plan && input.launch.plan.treatment !== 'unspecified' ? <View style={styles.group}>
       <Text style={styles.status}>Saved regional status could not be confirmed.</Text>
@@ -121,9 +131,9 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       {!hasSavedNewYorkAnswer() || editingNewYork ? <>
         <Text style={styles.body}>Are you in New York right now?</Text>
         <Text style={styles.note}>Your answer is saved on this device so we do not ask again. You can update it here if your situation changes.</Text>
-        <View style={styles.buttons}>
-          {button('Yes', async () => { await saveNewYorkPresence('present'); setEditingNewYork(false); })}
-          {button('No', async () => { await saveNewYorkPresence('not-present'); setEditingNewYork(false); })}
+        <View accessibilityRole="radiogroup" accessibilityLabel="Are you in New York right now?" style={styles.buttons}>
+          {answerButton('Yes', savedNewYork === 'present', async () => { await saveNewYorkPresence('present'); setEditingNewYork(false); })}
+          {answerButton('No', savedNewYork === 'not-present', async () => { await saveNewYorkPresence('not-present'); setEditingNewYork(false); })}
         </View>
       </> : button('Update New York answer', async () => { setEditingNewYork(true); })}
     </View> : null}
@@ -262,6 +272,14 @@ const styles = StyleSheet.create({
   note: { color: '#64748B', fontSize: 12, lineHeight: 18 }, status: { color: '#334155', fontSize: 13, fontWeight: '700' },
   buttons: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   button: { minHeight: 44, paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, backgroundColor: '#EFF6FF', justifyContent: 'center' },
+  ageAnswer: { flexGrow: 1, flexBasis: '40%', minWidth: 112 },
+  answer: { flexGrow: 1, flexBasis: 0, minWidth: 100, minHeight: 60, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingHorizontal: 14, paddingVertical: 14, borderRadius: 14, borderWidth: 2, borderColor: '#CBD5E1', backgroundColor: '#FFFFFF' },
+  selectedAnswer: { backgroundColor: '#036CAA', borderColor: '#075985', boxShadow: '0 0 0 3px #E0F2FE' },
+  answerText: { color: '#334155', fontSize: 16, fontWeight: '700', flexShrink: 1 },
+  selectedAnswerText: { color: '#FFFFFF' },
+  answerMark: { width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: '#A5B3C4', alignItems: 'center', justifyContent: 'center' },
+  selectedMark: { backgroundColor: '#FFFFFF', borderColor: '#FFFFFF' },
+  checkmark: { color: '#036CAA', fontSize: 14, lineHeight: 18, fontWeight: '800' },
   prominentChoice: { backgroundColor: '#BFDBFE', borderColor: '#075985', borderWidth: 2 },
   buttonText: { color: '#075985', fontSize: 14, fontWeight: '800' }, disabled: { opacity: 0.5 },
   link: { minHeight: 44, justifyContent: 'center' }, linkText: { color: '#0369A1', fontSize: 14, fontWeight: '700' },

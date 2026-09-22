@@ -43,6 +43,10 @@ export function needsConnecticutClarification(): boolean {
   return hasConnecticutClarificationControl() && (changing || saveUnconfirmed || !validAnswer(input.launch?.options.connecticutResidency)) &&
     !input.launch?.options.newYorkProtectedHistory && !input.launch?.plan?.newYorkKnownContext;
 }
+/** Confirmed saved answer for UI selection only; never infer it from protection state. */
+export function getSavedConnecticutResidency(): RegionalAnswer | null {
+  return changing || saveUnconfirmed ? null : answer;
+}
 export function connecticutClarificationStatus(): string {
   if (saveUnconfirmed) return 'Answer save not confirmed · choose your answer again to retry';
   if (changing) return 'Saving your answer';
@@ -116,6 +120,9 @@ export function needsQuebecClarification(): boolean {
   return hasQuebecClarificationControl() && (quebecChanging || quebecSaveUnconfirmed || !validAnswer(input.launch?.options.quebecResidency)) &&
     !(input.launch?.plan?.treatment !== 'unspecified' &&
       (input.launch?.options.newYorkProtectedHistory || input.launch?.plan?.newYorkKnownContext));
+}
+export function getSavedQuebecResidency(): RegionalAnswer | null {
+  return !quebecReadConfirmed || quebecReadFailed || quebecChanging || quebecSaveUnconfirmed ? null : quebecAnswer;
 }
 export function quebecClarificationStatus(): string {
   if (quebecSaveUnconfirmed) return 'Answer save not confirmed · choose your answer again to retry';

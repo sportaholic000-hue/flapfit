@@ -1,0 +1,87 @@
+{
+  "checkedAt": "2026-09-22T20:11:35.561Z",
+  "status": "PASS",
+  "scope": "Approved setup presentation and confirmed age/location answer selection",
+  "tests": {
+    "suites": 6,
+    "passed": 313,
+    "failed": 0,
+    "results": [
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/startupGameEntry.test.tsx",
+        "status": "passed",
+        "tests": 14
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+        "status": "passed",
+        "tests": 95
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+        "status": "passed",
+        "tests": 78
+      },
+      {
+        "file": "apps/mobile/src/services/__tests__/monetization.test.ts",
+        "status": "passed",
+        "tests": 94
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/GameEligibilityGate.test.tsx",
+        "status": "passed",
+        "tests": 15
+      },
+      {
+        "file": "apps/mobile/src/services/privacy/__tests__/gameEntry.test.ts",
+        "status": "passed",
+        "tests": 17
+      }
+    ]
+  },
+  "checks": {
+    "typeScript": "passed",
+    "strictLint": "passed",
+    "browserReview": "Actual captured React trees rendered with React Native Web; not native device testing"
+  },
+  "previewStates": 84,
+  "unchangedBehaviorFiles": [
+    "apps/mobile/src/services/privacy/gameEntry.ts",
+    "apps/mobile/src/services/privacy/gameSetup.ts",
+    "apps/mobile/src/services/privacy/postGamePrivacy.ts",
+    "apps/mobile/src/services/privacy/processingNotice.ts",
+    "apps/mobile/src/services/privacy/regionalAdvertising.ts",
+    "apps/mobile/src/services/privacy/launchProcessingPolicy.ts",
+    "apps/mobile/src/services/privacy/processingPolicy.ts",
+    "apps/mobile/src/services/privacy/processingAccess.ts",
+    "apps/mobile/src/services/monetization/index.ts",
+    "apps/mobile/src/services/monetization/resultAdGate.ts",
+    "apps/mobile/src/app/game.tsx",
+    "apps/mobile/src/utils/game/store.ts",
+    "apps/mobile/eas.json",
+    "apps/mobile/package.json"
+  ],
+  "sourceHashes": {
+    "components/GameSetupScreen.tsx": "ea754655b7126301690429dbb6e5e6bb2d4fe5fc394f7fe2985c0d1a5c277a1f",
+    "components/PrivacyChoices.tsx": "c81aba5655a12f8aa123e94ac409fcdcb427f684ee070be5eb3c7b2d0ecd3d88",
+    "components/GameEligibilityGate.tsx": "efb554632a192628a6152edbf0f2250d0c3807a3b789dea36edc5be6d88bd03f",
+    "services/privacy/processingNotice.ts": "32bed21574123867bcbe879097542decc7d6066275632adf3fad3addd48a056e",
+    "services/privacy/processingAvailability.ts": "40954e363d57dfeb400f230d5c051bb5cc97a661200798c935130d08af833837",
+    "services/privacy/newYorkClarification.ts": "70676bfeb2017773ca595e1830ee90489f0fb163fee97760d1901a6e709a9a1b",
+    "services/privacy/regionalClarification.ts": "292370824bb45a1aee37ff082120585bf60c5daba173e0cbc2f156153bdd79f5",
+    "services/privacy/localAgeAnswer.ts": "48c27732730d57a38aee2bf2a3abc31c0644603c694b0c23f3304aab04c7e17d",
+    "services/privacy/releaseEligibility.ts": "5d3b53cdb1cfff794850ded9980d4f3ad5257bdca326ec874b09b8da298ba4bc",
+    "services/privacy/postGamePrivacy.ts": "5742b563b80a8348e465edf840c3c958685e5e3261e67757c7b06a9c6327e6ef"
+  },
+  "bundledImage": {
+    "file": "apps/mobile/assets/images/evolution/sky/stage-10.png",
+    "sha256": "fa1331ab6f2f70b78d2cf6f4210412aaef8387d20851cdcfc54d1c799c7585a0"
+  },
+  "installedBuild": "f0cf64c3-04c1-43fe-97d9-44f409e2f809",
+  "newCloudBuildStarted": false,
+  "newDependency": false,
+  "newProviderRequest": false,
+  "newStorageRecord": false,
+  "newMonetaryCost": false,
+  "deviceAcceptance": "These UI updates require inclusion in a later build and physical-device verification"
+}

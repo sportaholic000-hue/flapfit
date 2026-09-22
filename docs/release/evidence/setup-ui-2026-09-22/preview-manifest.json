@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-09-22T20:10:44.880Z",
+  "screenCount": 84,
+  "countries": {
+    "CA": "Canada",
+    "US": "United States",
+    "AU": "Australia",
+    "MX": "Mexico"
+  },
+  "sourceFiles": {
+    "components/GameSetupScreen.tsx": "ea754655b7126301690429dbb6e5e6bb2d4fe5fc394f7fe2985c0d1a5c277a1f",
+    "components/PrivacyChoices.tsx": "c81aba5655a12f8aa123e94ac409fcdcb427f684ee070be5eb3c7b2d0ecd3d88",
+    "components/GameEligibilityGate.tsx": "efb554632a192628a6152edbf0f2250d0c3807a3b789dea36edc5be6d88bd03f",
+    "services/privacy/processingNotice.ts": "32bed21574123867bcbe879097542decc7d6066275632adf3fad3addd48a056e",
+    "services/privacy/processingAvailability.ts": "40954e363d57dfeb400f230d5c051bb5cc97a661200798c935130d08af833837",
+    "services/privacy/newYorkClarification.ts": "70676bfeb2017773ca595e1830ee90489f0fb163fee97760d1901a6e709a9a1b",
+    "services/privacy/regionalClarification.ts": "292370824bb45a1aee37ff082120585bf60c5daba173e0cbc2f156153bdd79f5",
+    "services/privacy/localAgeAnswer.ts": "48c27732730d57a38aee2bf2a3abc31c0644603c694b0c23f3304aab04c7e17d",
+    "services/privacy/releaseEligibility.ts": "5d3b53cdb1cfff794850ded9980d4f3ad5257bdca326ec874b09b8da298ba4bc",
+    "services/privacy/postGamePrivacy.ts": "5742b563b80a8348e465edf840c3c958685e5e3261e67757c7b06a9c6327e6ef"
+  },
+  "rendering": "Actual captured React component tree and source styles rendered with installed React Native Web; browser preview, not a physical-device screenshot. Native alerts show exact app-supplied text; provider-owned dialogs are not fabricated."
+}

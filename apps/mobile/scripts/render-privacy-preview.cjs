@@ -16,8 +16,30 @@ function nativeTree(node, key = 'root') {
   if (typeof node === 'string' || typeof node === 'number') return node;
   if (Array.isArray(node)) return node.map((child, i) => nativeTree(child, key + '-' + i));
   const props = { ...node.props, key };
+  // The web renderer uses ARIA props; preserve native captured selection semantics.
+  if (props.accessibilityState) {
+    for (const key of ['checked', 'selected', 'busy', 'disabled', 'expanded']) {
+      if (props.accessibilityState[key] !== undefined) props['aria-' + key] = props.accessibilityState[key];
+    }
+    delete props.accessibilityState;
+  }
+  if (props.accessibilityElementsHidden || props.importantForAccessibility === 'no-hide-descendants') props['aria-hidden'] = true;
   let component = Native[node.type];
   if (node.type === 'Modal') { component = Native.View; Object.assign(props, { style: { flex: 1, minHeight: 0 } }); }
+  if (node.type === 'Image' && props.accessibilityLabel === 'Sky Legend bird') {
+    props.source = { uri: 'data:image/png;base64,' + fs.readFileSync(path.join(repo, 'apps/mobile/assets/images/evolution/sky/stage-10.png')).toString('base64') };
+    props.resizeMode = props.contentFit;
+    delete props.contentFit; delete props.transition;
+  }
+  if (node.type === 'LinearGradient') {
+    component = 'div';
+    props.style = { display: 'flex', flexDirection: 'column', position: 'relative', minHeight: 0, ...Native.StyleSheet.flatten(props.style), backgroundImage: 'linear-gradient(to bottom, ' + props.colors.join(', ') + ')' };
+    delete props.colors;
+  }
+  if (node.type === 'Svg' || node.type === 'Path') {
+    component = node.type === 'Svg' ? 'svg' : 'path';
+    props.style = Native.StyleSheet.flatten(props.style);
+  }
   if (!component) throw Error('Unsupported captured native component: ' + node.type);
   for (const name of Object.keys(props)) if (name.startsWith('on') || ['visible', 'animationType', 'presentationStyle'].includes(name)) delete props[name];
   return React.createElement(component, props, nativeTree(node.children, key + '-c'));
@@ -36,7 +58,7 @@ for (const gate of read('gates.json')) screens.push({ id: 'gate-' + screens.leng
   markup: ReactDOMServer.renderToStaticMarkup(nativeTree(gate.tree)) });
 const metadata = screens.map(({ markup: _markup, ...rest }) => rest);
 const templates = screens.map(screen => '<template id="' + screen.id + '">' + screen.markup + '</template>').join('\n');
-const sourceFiles = ['components/PrivacyChoices.tsx', 'components/GameEligibilityGate.tsx', 'services/privacy/processingNotice.ts', 'services/privacy/processingAvailability.ts', 'services/privacy/newYorkClarification.ts', 'services/privacy/regionalClarification.ts', 'services/privacy/localAgeAnswer.ts', 'services/privacy/releaseEligibility.ts', 'services/privacy/postGamePrivacy.ts'];
+const sourceFiles = ['components/GameSetupScreen.tsx', 'components/PrivacyChoices.tsx', 'components/GameEligibilityGate.tsx', 'services/privacy/processingNotice.ts', 'services/privacy/processingAvailability.ts', 'services/privacy/newYorkClarification.ts', 'services/privacy/regionalClarification.ts', 'services/privacy/localAgeAnswer.ts', 'services/privacy/releaseEligibility.ts', 'services/privacy/postGamePrivacy.ts'];
 const sourceHashes = Object.fromEntries(sourceFiles.map(file => [file, crypto.createHash('sha256').update(fs.readFileSync(path.join(repo, 'apps/mobile/src', file))).digest('hex')]));
 const manifest = { generatedAt: new Date().toISOString(), screenCount: screens.length, countries: countryNames, sourceFiles: sourceHashes, rendering: 'Actual captured React component tree and source styles rendered with installed React Native Web; browser preview, not a physical-device screenshot. Native alerts show exact app-supplied text; provider-owned dialogs are not fabricated.' };
 fs.writeFileSync(path.join(captureDirectory, 'preview-manifest.json'), JSON.stringify(manifest, null, 2) + '\n');

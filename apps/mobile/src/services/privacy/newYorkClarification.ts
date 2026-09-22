@@ -52,6 +52,9 @@ export function hasSavedNewYorkAnswer(): boolean {
 export function needsNewYorkClarification(): boolean {
   return hasNewYorkClarificationControl() && (changing || !hasSavedNewYorkAnswer());
 }
+export function getSavedNewYorkPresence(): Answer | null {
+  return !readConfirmed || changing || saveUnconfirmed ? null : savedAnswer;
+}
 export function newYorkClarificationStatus(): string {
   if (saveUnconfirmed) return 'Answer save not confirmed · retry loading or saving your answer';
   if (changing) return 'Saving your answer';

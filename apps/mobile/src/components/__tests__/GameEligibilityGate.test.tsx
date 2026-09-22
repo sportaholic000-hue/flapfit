@@ -8,7 +8,11 @@ async function fixture(first: { status: string; reason?: string } = { status: 'u
   const { act } = React;
   const listeners = new Set<(state: string) => void>();
   const appState = { currentState: 'active', addEventListener: jest.fn((_event, listener) => { listeners.add(listener); return { remove: () => listeners.delete(listener) }; }) };
-  jest.doMock('react-native', () => ({ View: 'View', Text: 'Text', ActivityIndicator: 'ActivityIndicator', TouchableOpacity: 'TouchableOpacity', Platform: { OS: 'ios' }, AppState: appState }));
+  jest.doMock('react-native', () => ({ View: 'View', ScrollView: 'ScrollView', Text: 'Text', ActivityIndicator: 'ActivityIndicator', TouchableOpacity: 'TouchableOpacity', Platform: { OS: 'ios' }, AppState: appState }));
+  jest.doMock('expo-image', () => ({ Image: 'Image' }));
+  jest.doMock('expo-linear-gradient', () => ({ LinearGradient: 'LinearGradient' }));
+  jest.doMock('react-native-svg', () => ({ __esModule: true, default: 'Svg', Path: 'Path' }));
+  jest.doMock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: 24, bottom: 20, left: 0, right: 0 }) }));
   const replace = jest.fn(); jest.doMock('expo-router', () => ({ useRouter: () => ({ replace }) }));
   const openChoices = jest.fn().mockResolvedValue(undefined);
   const cancelChoices = jest.fn();
@@ -137,19 +141,19 @@ test('repeat-run setup dismissal cannot mount gameplay; a later completed setup 
   f.completeRun(); f.authorize.mockResolvedValue({ status: 'setup-required' });
   await f.act(async () => { f.next(); });
   expect(f.authorize).toHaveBeenLastCalledWith(true);
-  expect(f.text()).toContain('Finish setup'); expect(f.text()).not.toContain('Game running');
-  await f.press('Review setup');
+  expect(f.text()).toContain('Almost ready to fly'); expect(f.text()).not.toContain('Game running');
+  await f.press('Finish setup');
   expect(f.openChoices).toHaveBeenCalledTimes(1);
-  expect(f.text()).toContain('Finish setup'); expect(f.text()).not.toContain('Game running');
+  expect(f.text()).toContain('Almost ready to fly'); expect(f.text()).not.toContain('Game running');
   f.openChoices.mockImplementationOnce(async () => { f.authorize.mockResolvedValue({ status: 'available' }); });
-  await f.press('Review setup'); expect(f.text()).toContain('Game running');
+  await f.press('Finish setup'); expect(f.text()).toContain('Game running');
   await f.unmount();
 });
 
 test('leaving during setup prevents a late sheet dismissal from starting a game', async () => {
   const f = await fixture({ status: 'setup-required' }); f.completeRun(); await f.mount();
   let close!: () => void; f.openChoices.mockReturnValueOnce(new Promise<void>(done => { close = done; }));
-  await f.press('Review setup'); const before = f.authorize.mock.calls.length;
+  await f.press('Finish setup'); const before = f.authorize.mock.calls.length;
   await f.unmount(); f.authorize.mockResolvedValue({ status: 'available' });
   await f.act(async () => { close(); }); expect(f.authorize).toHaveBeenCalledTimes(before);
   expect(f.cancelChoices).toHaveBeenCalled();

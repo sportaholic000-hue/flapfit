@@ -48,6 +48,7 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
   const adLoad = jest.fn(() => { throw new Error('Advertising SDK must not load at game entry'); });
   const rcLoad = jest.fn(() => { throw new Error('Reporting SDK must not load at game entry'); });
   jest.doMock('react-native-google-mobile-ads', adLoad); jest.doMock('react-native-purchases', rcLoad);
+  jest.doMock('expo-linear-gradient', () => ({ LinearGradient: 'LinearGradient' }));
   jest.doMock('expo-image', () => ({ Image: 'Image' }));
   jest.doMock('expo-status-bar', () => ({ StatusBar: 'StatusBar' }));
   jest.doMock('expo-splash-screen', () => ({ preventAutoHideAsync: jest.fn().mockResolvedValue(undefined), hideAsync: jest.fn().mockResolvedValue(undefined) }));

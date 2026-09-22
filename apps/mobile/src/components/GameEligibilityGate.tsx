@@ -6,6 +6,7 @@ import { releaseEligibilityMessage } from '@/services/privacy/releaseEligibility
 import { retryGameEligibility } from '@/services/privacy/retryGameEligibility';
 import { settlePrivacyBeforeGameplay } from '@/services/monetization';
 import { usePrivacyChoicesSheet } from './PrivacyChoices';
+import { GameSetupScreen } from './GameSetupScreen';
 
 const noCompletedRun = () => false;
 
@@ -84,12 +85,16 @@ export function GameEligibilityGate({ children, hasCompletedRun = noCompletedRun
     }
   }, [hasCompletedRun]);
   if (decision?.status === 'available') return <View key={entry} style={{ flex: 1 }}>{children(newRun, prepareEntry)}</View>;
-  const setupRequired = decision?.status === 'setup-required';
+  if (decision?.status === 'setup-required') return <View style={{ flex: 1 }}>
+    <GameSetupScreen busy={busy} error={error} onSetup={() => void check(true, true)}
+      onHome={() => router.replace('/(tabs)')} onInfo={() => router.replace('/(tabs)/info')} />
+    {privacyChoicesSheet}
+  </View>;
   return <View style={{ flex: 1, backgroundColor: '#0F172A', padding: 28, justifyContent: 'center', gap: 18 }}>
-    <Text accessibilityRole="header" style={{ color: '#FFFFFF', fontSize: 24, fontWeight: '800' }}>{setupRequired ? 'Finish setup' : 'Flap Fit availability'}</Text>
-    <Text style={{ color: '#FFFFFF', fontSize: 16, lineHeight: 24 }}>{error ?? (decision?.status === 'setup-required' ? 'Complete the unanswered setup questions and acknowledge the notice before another game.' : decision ? releaseEligibilityMessage(decision) : 'Checking availability…')}</Text>
-    {busy ? <ActivityIndicator color="#FFFFFF" /> : <TouchableOpacity accessibilityRole="button" onPress={() => void check(true, setupRequired)} style={{ padding: 16 }}>
-      <Text style={{ color: '#7DD3FC', fontWeight: '700' }}>{setupRequired ? 'Review setup' : 'Retry check'}</Text>
+    <Text accessibilityRole="header" style={{ color: '#FFFFFF', fontSize: 24, fontWeight: '800' }}>Flap Fit availability</Text>
+    <Text style={{ color: '#FFFFFF', fontSize: 16, lineHeight: 24 }}>{error ?? (decision ? releaseEligibilityMessage(decision) : 'Checking availability…')}</Text>
+    {busy ? <ActivityIndicator color="#FFFFFF" /> : <TouchableOpacity accessibilityRole="button" onPress={() => void check(true)} style={{ padding: 16 }}>
+      <Text style={{ color: '#7DD3FC', fontWeight: '700' }}>Retry check</Text>
     </TouchableOpacity>}
     <TouchableOpacity accessibilityRole="button" onPress={() => router.replace('/(tabs)/info')} style={{ padding: 16 }}>
       <Text style={{ color: '#7DD3FC', fontWeight: '700' }}>Review in Info</Text>
