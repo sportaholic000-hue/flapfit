@@ -1,0 +1,42 @@
+{
+  "checkedAtUtc": "2026-09-22T20:51:13.6731463Z",
+  "sourceCommit": "0c6f805",
+  "appOrExternalChanges": false,
+  "jest": {
+    "pending": 0,
+    "exitCode": 0,
+    "suites": 69,
+    "success": true,
+    "failed": 0,
+    "passed": 1514
+  },
+  "typecheckExit": 0,
+  "strictLintExit": 0,
+  "productionConfigExit": 0,
+  "networkPublicLinksExit": 0,
+  "securityAuditExit": 0,
+  "securityAdvisories": 0,
+  "deprecations": [
+    "abab",
+    "domexception",
+    "eslint",
+    "glob",
+    "inflight",
+    "whatwg-encoding"
+  ],
+  "appAdsTxt": {
+    "status": 200,
+    "correctPublisherEntry": true
+  },
+  "artifacts": {
+    "testsSha256": "4E2B43C970500BFDA4CEB5C0467988E6AAE45EC8710DC19879D6BB4E387881FA",
+    "securityAuditSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  "limitations": [
+    "No physical device result asserted",
+    "No Apple approval asserted",
+    "Final App Privacy publication status unconfirmed",
+    "Latest setup presentation is source-only until a successor build",
+    "No provider traffic capture performed"
+  ]
+}
