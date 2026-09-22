@@ -5,13 +5,18 @@ import { authorizeGameEntry, type GameEntryDecision } from '@/services/privacy/g
 import { releaseEligibilityMessage } from '@/services/privacy/releaseEligibility';
 import { retryGameEligibility } from '@/services/privacy/retryGameEligibility';
 import { settlePrivacyBeforeGameplay } from '@/services/monetization';
+import { usePrivacyChoicesSheet } from './PrivacyChoices';
+
+const noCompletedRun = () => false;
 
 /** One owner for entry from Home/deep links and each Retry/Next. Authorization is
  * latched for the active run; refreshes never interrupt play, recording or sharing. */
-export function GameEligibilityGate({ children }: {
+export function GameEligibilityGate({ children, hasCompletedRun = noCompletedRun }: {
+  hasCompletedRun?: () => boolean;
   children: (newRun: () => void, prepareEntry: () => Promise<void>) => ReactNode;
 }) {
   const router = useRouter();
+  const { openChoices, cancelChoices, privacyChoicesSheet } = usePrivacyChoicesSheet();
   const [entry, setEntry] = useState(0);
   const [decision, setDecision] = useState<GameEntryDecision | null>(null);
   const [busy, setBusy] = useState(false);
@@ -20,9 +25,9 @@ export function GameEligibilityGate({ children }: {
   const generation = useRef(0);
   const admitted = useRef(false);
   const inFlight = useRef<Promise<void> | null>(null);
-  const cancelPending = useCallback(() => { mounted.current = false; ++generation.current; inFlight.current = null; }, []);
+  const cancelPending = useCallback(() => { mounted.current = false; ++generation.current; inFlight.current = null; cancelChoices(); }, [cancelChoices]);
   useEffect(() => { mounted.current = true; return cancelPending; }, [cancelPending]);
-  const check = (retry: boolean) => {
+  const check = (retry: boolean, reviewSetup = false) => {
     if (inFlight.current) return inFlight.current;
     const token = generation.current;
     const current = () => mounted.current && generation.current === token && AppState.currentState === 'active';
@@ -33,7 +38,12 @@ export function GameEligibilityGate({ children }: {
       if (Platform.OS !== 'ios') { admitted.current = true; setDecision({ status: 'available' }); return; }
       if (retry && current()) await retryGameEligibility(current);
       if (!current()) return;
-      const next = await authorizeGameEntry();
+      let next = await authorizeGameEntry(hasCompletedRun());
+      if (current() && reviewSetup && next.status === 'setup-required') {
+        await openChoices();
+        if (!current()) return;
+        next = await authorizeGameEntry(hasCompletedRun());
+      }
       if (current()) {
         admitted.current = next.status === 'available';
         setDecision(next);
@@ -66,19 +76,20 @@ export function GameEligibilityGate({ children }: {
   const prepareEntry = useCallback(async () => {
     if (Platform.OS !== 'ios') return;
     const token = generation.current;
-    const next = await authorizeGameEntry();
+    const next = await authorizeGameEntry(hasCompletedRun());
     if (!mounted.current || generation.current !== token) throw new Error('Game entry changed.');
     if (next.status !== 'available') {
       admitted.current = false; setDecision(next);
       throw new Error('Review availability before another game.');
     }
-  }, []);
+  }, [hasCompletedRun]);
   if (decision?.status === 'available') return <View key={entry} style={{ flex: 1 }}>{children(newRun, prepareEntry)}</View>;
+  const setupRequired = decision?.status === 'setup-required';
   return <View style={{ flex: 1, backgroundColor: '#0F172A', padding: 28, justifyContent: 'center', gap: 18 }}>
-    <Text accessibilityRole="header" style={{ color: '#FFFFFF', fontSize: 24, fontWeight: '800' }}>Flap Fit availability</Text>
-    <Text style={{ color: '#FFFFFF', fontSize: 16, lineHeight: 24 }}>{error ?? (decision ? releaseEligibilityMessage(decision) : 'Checking availability…')}</Text>
-    {busy ? <ActivityIndicator color="#FFFFFF" /> : <TouchableOpacity accessibilityRole="button" onPress={() => void check(true)} style={{ padding: 16 }}>
-      <Text style={{ color: '#7DD3FC', fontWeight: '700' }}>Retry check</Text>
+    <Text accessibilityRole="header" style={{ color: '#FFFFFF', fontSize: 24, fontWeight: '800' }}>{setupRequired ? 'Finish setup' : 'Flap Fit availability'}</Text>
+    <Text style={{ color: '#FFFFFF', fontSize: 16, lineHeight: 24 }}>{error ?? (decision?.status === 'setup-required' ? 'Complete the unanswered setup questions and acknowledge the notice before another game.' : decision ? releaseEligibilityMessage(decision) : 'Checking availability…')}</Text>
+    {busy ? <ActivityIndicator color="#FFFFFF" /> : <TouchableOpacity accessibilityRole="button" onPress={() => void check(true, setupRequired)} style={{ padding: 16 }}>
+      <Text style={{ color: '#7DD3FC', fontWeight: '700' }}>{setupRequired ? 'Review setup' : 'Retry check'}</Text>
     </TouchableOpacity>}
     <TouchableOpacity accessibilityRole="button" onPress={() => router.replace('/(tabs)/info')} style={{ padding: 16 }}>
       <Text style={{ color: '#7DD3FC', fontWeight: '700' }}>Review in Info</Text>
@@ -86,5 +97,6 @@ export function GameEligibilityGate({ children }: {
     <TouchableOpacity accessibilityRole="button" onPress={() => router.replace('/(tabs)')} style={{ padding: 16 }}>
       <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>Back to Home</Text>
     </TouchableOpacity>
+    {privacyChoicesSheet}
   </View>;
 }

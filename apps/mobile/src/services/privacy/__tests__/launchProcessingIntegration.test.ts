@@ -947,3 +947,102 @@ test.each(['CA', 'US', 'AU', 'MX'])('%s captures the actual shared post-game not
     previewNotices.push({ country, title: notice![0], body: notice![1], buttons: notice![2].map((button: { text: string }) => button.text) });
   } finally { f.finish(); }
 });
+
+test.each(['CA', 'US', 'AU', 'MX'])('%s notice -> Privacy & choices -> Close cannot authorize the result action or a repeat run', async country => {
+  let f = await load({ country, quebecResidency: country === 'CA' ? 'not-resident' : undefined });
+  const memory = f.memory;
+  try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    f.alert.mockImplementation((_title, _body, buttons) => buttons.find((button: { text: string }) => button.text === 'Privacy & choices')?.onPress());
+    const closeWithoutAnswer = jest.fn().mockResolvedValue(undefined);
+    for (let i = 0; i < 2; i++) {
+      expect(await flow.preparePostGamePrivacy(() => true, closeWithoutAnswer)).toBe(false);
+      expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+    }
+    expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+    expect(closeWithoutAnswer).toHaveBeenCalledTimes(2);
+  } finally { f.finish(); }
+  f = await load({ country, memory });
+  try {
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+    expect(await flow.preparePostGamePrivacy(() => true, jest.fn())).toBe(true);
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+  } finally { f.finish(); }
+});
+
+test.each(['CA', 'US'])('%s unanswered regional sheet cannot authorize repeat gameplay', async country => {
+  const f = await load({ country, age: { status: 'shared', lowerBound: 15, upperBound: 17 } });
+  try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    expect(await flow.preparePostGamePrivacy(() => true, jest.fn().mockResolvedValue(undefined))).toBe(false);
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+test.each([
+  { country: 'CA', age: 18, region: 'quebec' },
+  { country: 'US', age: 15, region: 'connecticut' },
+  { country: 'US', age: 15, region: 'new-york' },
+  { country: 'AU', age: 13, region: '' },
+  { country: 'MX', age: 17, region: '' },
+])('established protected audience $country/$age/$region retains repeat gameplay without accepting ads', async ({ country, age, region }) => {
+  const f = await load({ country, age: { status: 'shared', lowerBound: age, upperBound: age < 18 ? 17 : null } });
+  try {
+    await f.adapter.prepareMonetization(() => true, { eligibilityOnly: true });
+    const regional: typeof import('../regionalClarification') = require('../regionalClarification');
+    if (region === 'quebec') await regional.saveQuebecResidency('resident');
+    if (region === 'connecticut') await regional.saveConnecticutResidency('resident');
+    if (region === 'new-york') {
+      await regional.saveConnecticutResidency('not-resident');
+      await (require('../newYorkClarification') as typeof import('../newYorkClarification')).saveNewYorkPresence('present');
+    }
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+    expect(await flow.preparePostGamePrivacy(() => true, jest.fn())).toBe(true);
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.purchases.configure).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+test('Google refusing ad requests after completed setup does not gate gameplay', async () => {
+  const f = await load({ country: 'US' });
+  try {
+    f.consent.requestInfoUpdate.mockResolvedValue({ canRequestAds: false, privacyOptionsRequirementStatus: 'NOT_REQUIRED' });
+    f.consent.loadAndShowConsentFormIfRequired.mockResolvedValue({ canRequestAds: false, privacyOptionsRequirementStatus: 'NOT_REQUIRED' });
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    expect(await flow.preparePostGamePrivacy(() => true, jest.fn())).toBe(true);
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+test('Canada age 13 must answer the province question before being classified; No retains permitted ads', async () => {
+  const f = await load({ country: 'CA', age: { status: 'shared', lowerBound: 13, upperBound: 13 } });
+  try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    const regional: typeof import('../regionalClarification') = require('../regionalClarification');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const close = jest.fn().mockResolvedValue(undefined);
+    expect(await flow.preparePostGamePrivacy(() => true, close)).toBe(false);
+    expect(close).toHaveBeenCalledTimes(1);
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+    expect(await flow.preparePostGamePrivacy(() => true, async () => {
+      await regional.saveQuebecResidency('not-resident'); await notice.acknowledgeProcessingNotice();
+    })).toBe(true);
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+  } finally { f.finish(); }
+});

@@ -10,6 +10,11 @@ async function fixture(first: { status: string; reason?: string } = { status: 'u
   const appState = { currentState: 'active', addEventListener: jest.fn((_event, listener) => { listeners.add(listener); return { remove: () => listeners.delete(listener) }; }) };
   jest.doMock('react-native', () => ({ View: 'View', Text: 'Text', ActivityIndicator: 'ActivityIndicator', TouchableOpacity: 'TouchableOpacity', Platform: { OS: 'ios' }, AppState: appState }));
   const replace = jest.fn(); jest.doMock('expo-router', () => ({ useRouter: () => ({ replace }) }));
+  const openChoices = jest.fn().mockResolvedValue(undefined);
+  const cancelChoices = jest.fn();
+  jest.doMock('../PrivacyChoices', () => ({ usePrivacyChoicesSheet: () => ({ openChoices, cancelChoices, privacyChoicesSheet: null }) }));
+  let completedRun = false;
+  const hasCompletedRun = () => completedRun;
   const authorize = jest.fn().mockResolvedValue(first);
   const settleNative = jest.fn().mockResolvedValue(undefined);
   const retry = jest.fn().mockResolvedValue(undefined);
@@ -24,7 +29,7 @@ async function fixture(first: { status: string; reason?: string } = { status: 'u
   let tree: ReactTestRenderer; let newRun!: () => void; let prepareEntry!: () => Promise<void>;
   const mount = async (strict = false) => {
     const child = (next: () => void, prepare: () => Promise<void>) => { newRun = next; prepareEntry = prepare; return React.createElement('Text', null, 'Game running'); };
-    const gate = <GameEligibilityGate>{child}</GameEligibilityGate>;
+    const gate = <GameEligibilityGate hasCompletedRun={hasCompletedRun}>{child}</GameEligibilityGate>;
     await act(async () => { tree = renderer.create(strict ? React.createElement(React.StrictMode, null, gate) : gate); });
   };
   const text = () => tree.root.findAllByType('Text' as never).map(node => node.children.join('')).join('\n');
@@ -34,7 +39,7 @@ async function fixture(first: { status: string; reason?: string } = { status: 'u
   };
   const change = async (state: string) => { await act(async () => { appState.currentState = state; [...listeners].forEach(listener => listener(state)); }); };
   const unmount = async () => { await act(async () => { tree.unmount(); }); };
-  return { json: () => tree.toJSON(), mount, text, press, change, unmount, authorize, settleNative, retry, replace, act, next: () => newRun(), prepare: () => prepareEntry() };
+  return { openChoices, cancelChoices, completeRun: () => { completedRun = true; }, json: () => tree.toJSON(), mount, text, press, change, unmount, authorize, settleNative, retry, replace, act, next: () => newRun(), prepare: () => prepareEntry() };
 }
 
 test('unanswered entry renders recovery and Back; neither is a consent or a game-start action', async () => {
@@ -56,10 +61,10 @@ test('a real retry recovers eligibility; opening the gate does not automatically
 
 test('the prepared-game boundary still honors an Apple access restriction before play', async () => {
   const f = await fixture({ status: 'available' }); await f.mount();
-  expect(f.authorize.mock.calls[0]).toHaveLength(0);
+  expect(f.authorize).toHaveBeenLastCalledWith(false);
   f.authorize.mockRejectedValueOnce(new Error('claim write failed'));
   await expect(f.prepare()).rejects.toThrow('claim write failed');
-  expect(f.authorize).toHaveBeenLastCalledWith();
+  expect(f.authorize).toHaveBeenLastCalledWith(false);
   await f.act(async () => { await f.prepare(); });
   f.authorize.mockResolvedValueOnce({ status: 'unavailable', reason: 'apple' });
   await f.act(async () => { await expect(f.prepare()).rejects.toThrow('Review availability'); });
@@ -124,5 +129,35 @@ test('captures the common availability error screen', async () => {
   const f = await fixture(); f.authorize.mockRejectedValueOnce(new Error('test failure')); await f.mount();
   expect(f.text()).not.toMatch(/advertis|\bads\b/i);
   previewGates.push({ label: 'Availability check could not complete', text: f.text(), tree: f.json() });
+  await f.unmount();
+});
+
+test('repeat-run setup dismissal cannot mount gameplay; a later completed setup can', async () => {
+  const f = await fixture({ status: 'available' }); await f.mount();
+  f.completeRun(); f.authorize.mockResolvedValue({ status: 'setup-required' });
+  await f.act(async () => { f.next(); });
+  expect(f.authorize).toHaveBeenLastCalledWith(true);
+  expect(f.text()).toContain('Finish setup'); expect(f.text()).not.toContain('Game running');
+  await f.press('Review setup');
+  expect(f.openChoices).toHaveBeenCalledTimes(1);
+  expect(f.text()).toContain('Finish setup'); expect(f.text()).not.toContain('Game running');
+  f.openChoices.mockImplementationOnce(async () => { f.authorize.mockResolvedValue({ status: 'available' }); });
+  await f.press('Review setup'); expect(f.text()).toContain('Game running');
+  await f.unmount();
+});
+
+test('leaving during setup prevents a late sheet dismissal from starting a game', async () => {
+  const f = await fixture({ status: 'setup-required' }); f.completeRun(); await f.mount();
+  let close!: () => void; f.openChoices.mockReturnValueOnce(new Promise<void>(done => { close = done; }));
+  await f.press('Review setup'); const before = f.authorize.mock.calls.length;
+  await f.unmount(); f.authorize.mockResolvedValue({ status: 'available' });
+  await f.act(async () => { close(); }); expect(f.authorize).toHaveBeenCalledTimes(before);
+  expect(f.cancelChoices).toHaveBeenCalled();
+});
+
+test('captures incomplete setup without advertising-outcome wording', async () => {
+  const f = await fixture({ status: 'setup-required' }); await f.mount();
+  expect(f.text()).not.toMatch(/advertis|\bads\b|Quebec|Connecticut|New York/i);
+  previewGates.push({ label: 'Unfinished setup after initial run', text: f.text(), tree: f.json() });
   await f.unmount();
 });

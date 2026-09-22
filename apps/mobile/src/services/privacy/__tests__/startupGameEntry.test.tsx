@@ -7,7 +7,7 @@ const settle = async () => { for (let i = 0; i < 80; i++) await Promise.resolve(
 const originalEnv = { ...process.env };
 jest.setTimeout(30_000);
 
-async function mountApp(saved: string | null, options: { delayed?: boolean; failRead?: boolean; offline?: boolean } = {}) {
+async function mountApp(saved: string | null, options: { delayed?: boolean; failRead?: boolean; offline?: boolean; completedRun?: boolean; playable?: boolean } = {}) {
   jest.resetModules(); jest.useFakeTimers();
   const React: typeof import('react') = require('react');
   const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
@@ -55,15 +55,16 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
   jest.doMock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }) }));
   jest.doMock('react-native-webview', () => ({ WebView: 'WebView' }));
   jest.doMock('@/components/BirdAvatar', () => ({ __esModule: true, default: 'BirdAvatar' }));
-  jest.doMock('@/components/PrivacyChoices', () => ({ usePrivacyChoicesSheet: () => ({ openChoices: jest.fn(), cancelChoices: jest.fn(), privacyChoicesSheet: null }) }));
+  const sheet = { openChoices: jest.fn(), cancelChoices: jest.fn(), privacyChoicesSheet: null };
+  jest.doMock('@/components/PrivacyChoices', () => ({ usePrivacyChoicesSheet: () => sheet }));
   jest.doMock('@/services/competitionApi', () => ({ startCompetitionForegroundRetry: () => () => {}, competitionIsConfigured: () => false }));
   jest.doMock('@/services/recordingCache', () => ({ startRecordingCacheCleanup: () => () => {}, discardGameplayRecordingFile: jest.fn() }));
   jest.doMock('@/services/videoSharing', () => ({ getVideoShareAvailability: jest.fn().mockResolvedValue({}) }));
-  jest.doMock('@/utils/game/mediapipeAssets', () => ({ prepareMediaPipeAssets: () => new Promise(() => {}) }));
-  jest.doMock('@/utils/game/birdWebAsset', () => ({ loadBirdAssetDataUri: () => new Promise(() => {}) }));
-  const camera = jest.fn(() => [{ granted: false, canAskAgain: true, status: 'undetermined' }, jest.fn(), jest.fn()]);
+  jest.doMock('@/utils/game/mediapipeAssets', () => ({ prepareMediaPipeAssets: () => options.playable ? Promise.resolve({}) : new Promise(() => {}) }));
+  jest.doMock('@/utils/game/birdWebAsset', () => ({ loadBirdAssetDataUri: () => options.playable ? Promise.resolve('data:image/png;base64,test') : new Promise(() => {}) }));
+  const camera = jest.fn(() => [{ granted: options.playable === true, canAskAgain: true, status: 'undetermined' }, jest.fn(), jest.fn()]);
   jest.doMock('expo-camera', () => ({ useCameraPermissions: camera, useMicrophonePermissions: () => [null, jest.fn(), jest.fn()] }));
-  jest.doMock('expo-haptics', () => ({ impactAsync: jest.fn().mockResolvedValue(undefined), ImpactFeedbackStyle: {} }));
+  jest.doMock('expo-haptics', () => ({ impactAsync: jest.fn().mockResolvedValue(undefined), ImpactFeedbackStyle: {}, notificationAsync: jest.fn().mockResolvedValue(undefined), NotificationFeedbackType: { Success: 'success', Error: 'error' } }));
   const fetchDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'fetch');
   const fetcher = options.offline ? jest.fn().mockRejectedValue(new Error('Offline')) : jest.fn().mockResolvedValue({ ok: true, status: 200, redirected: false,
     url: 'https://flapfitapp.com/cdn-cgi/trace', headers: { get: (key: string) => key === 'content-type' ? 'text/plain' : null }, text: async () => 'h=flapfitapp.com\nloc=US\n' });
@@ -85,6 +86,7 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
   const { useGameStore } = require('@/utils/game/store');
   await useGameStore.persist.rehydrate();
   useGameStore.setState({ hydrated: true, hydrationError: null, hasOnboarded: true });
+  if (options.completedRun) useGameStore.getState().recordSession({ exercise: 'squats', mode: 'daily', levelId: 1, score: 0, pushups: 0, tutSeconds: 0 });
   const Root = require('@/app/_layout').default;
   let tree!: ReactTestRenderer;
   await act(async () => { tree = renderer.create(React.createElement(Root)); await settle(); });
@@ -94,7 +96,15 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
     expect(button).toBeDefined(); button.props.onPress(); await settle();
   }); expect(router.push).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
     expect(JSON.stringify(tree.toJSON())).not.toContain('Flap Fit hit a snag'); };
-  return { camera, storage, adLoad, rcLoad, play, tree,
+  return { camera, storage, adLoad, rcLoad, play, tree, sheet, router,
+    completeGame: async () => { await act(async () => {
+      tree.root.findByType('WebView' as never).props.onMessage({ nativeEvent: { data: JSON.stringify({ type: 'gameover', score: 5, pushups: 0, tutSeconds: 0, runDurationMs: 1000 }) } });
+      await settle();
+    }); },
+    pressResult: async (title: string) => { await act(async () => {
+      const button = tree.root.findAllByType('TouchableOpacity' as never).find(node => node.findAllByType('Text' as never).some(child => child.children.join('') === title));
+      expect(button).toBeDefined(); expect(button!.props.disabled).not.toBe(true); button!.props.onPress(); await settle();
+    }); },
     release: async () => { await act(async () => { releaseRead?.(); await settle(); }); },
     change: async (state: string) => { await act(async () => { appState.currentState = state; [...listeners].forEach(listener => listener(state)); await settle(); }); },
     finish: async () => { await act(async () => { tree.unmount(); }); jest.clearAllTimers(); jest.useRealTimers();
@@ -139,4 +149,38 @@ test('backgrounding during saved-age restoration cannot mount a late game child'
 test('leaving the route during restoration cancels the game continuation', async () => {
   const f = await mountApp(JSON.stringify({ version: 1, answer: '18-plus' }), { delayed: true });
   await f.play(); await f.finish(); await f.release(); expect(f.camera).not.toHaveBeenCalled();
+});
+
+test('actual Home -> game route uses completed-run history to prevent a fresh-route setup bypass', async () => {
+  const f = await mountApp(null, { completedRun: true });
+  try {
+    await f.play(); expect(f.camera).not.toHaveBeenCalled();
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Finish setup');
+    expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally { await f.finish(); }
+});
+
+test.each(['Done', 'Try again', 'Next level'])('actual result %s -> unanswered choices -> Close keeps the saved result and cancels navigation', async action => {
+  const f = await mountApp(null, { playable: true });
+  try {
+    await f.play(); await f.completeGame();
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await f.pressResult(action);
+      expect(f.sheet.openChoices).toHaveBeenCalledTimes(attempt + 1);
+      expect(f.router.back).not.toHaveBeenCalled(); expect(f.router.replace).not.toHaveBeenCalled();
+      expect(JSON.stringify(f.tree.toJSON())).toContain('Try again');
+      expect(JSON.stringify(f.tree.toJSON())).not.toContain('Finish setup');
+      expect(f.adLoad).not.toHaveBeenCalled();
+    }
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
+    const local: typeof import('../localAgeAnswer') = require('../localAgeAnswer');
+    await local.saveLocalAgeAnswer('18-plus'); await notice.acknowledgeProcessingNotice();
+    await f.pressResult(action);
+    if (action === 'Done') expect(f.router.back).toHaveBeenCalledTimes(1);
+    else {
+      expect(JSON.stringify(f.tree.toJSON())).not.toContain('Try again');
+      if (action === 'Next level') expect(f.router.replace).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
+    }
+  } finally { await f.finish(); }
 });

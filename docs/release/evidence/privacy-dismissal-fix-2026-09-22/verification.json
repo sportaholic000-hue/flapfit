@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-09-22T18:01:25.291Z",
+  "baseCommit": "9f1a3d8",
+  "focusedSuites": 6,
+  "uniqueTests": 223,
+  "failedTests": 0,
+  "actualResultActions": [
+    "Done",
+    "Try again",
+    "Next level"
+  ],
+  "checks": {
+    "typecheck": "passed",
+    "strictLint": "passed",
+    "productionReleaseValidation": "passed"
+  },
+  "unchanged": [
+    "apps/mobile/src/services/privacy/regionalAdvertising.ts",
+    "apps/mobile/src/services/privacy/launchProcessingPolicy.ts",
+    "apps/mobile/src/services/privacy/processingPolicy.ts",
+    "apps/mobile/src/services/privacy/processingAccess.ts",
+    "apps/mobile/src/services/monetization/index.ts",
+    "apps/mobile/src/services/monetization/resultAdGate.ts",
+    "apps/mobile/src/utils/game/store.ts"
+  ],
+  "sourceHashes": {
+    "apps/mobile/src/app/game.tsx": "43cedfb130f39b7bce787bfb3e181e65201f6ca2341b2442beefb73b836db3c4",
+    "apps/mobile/src/components/GameEligibilityGate.tsx": "de3469a248dbd95c6713a74034d0a35f5280c6f2b05551af67ef0186d39efebd",
+    "apps/mobile/src/services/privacy/gameEntry.ts": "a5c5709dc391404013abddc66536033739c868f110aa303834c9123a83b15845",
+    "apps/mobile/src/services/privacy/gameSetup.ts": "2e015678fa86610c1cb79525247b15080c90426d34b73d6413a3237f8cdfcbb7",
+    "apps/mobile/src/services/privacy/postGamePrivacy.ts": "5742b563b80a8348e465edf840c3c958685e5e3261e67757c7b06a9c6327e6ef"
+  },
+  "previewStates": 84,
+  "deviceStatus": "Source tests and browser preview only; installed c3a053bb build still contains the dismissal bypass.",
+  "newService": false,
+  "newStorageRecord": false,
+  "providerAccountsChanged": false,
+  "websiteChanged": false,
+  "newCloudBuildStarted": false
+}

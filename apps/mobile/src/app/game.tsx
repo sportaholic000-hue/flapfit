@@ -171,6 +171,7 @@ function normalizeVideoExtension(extension?: string, mimeType?: string) {
 
 export default function GameScreen() {
   const { mode, levelId } = useLocalSearchParams<{ mode?: string; levelId?: string }>();
+  const hasCompletedRun = useCallback(() => useGameStore.getState().sessions.length > 0, []);
   const hydrated = useGameStore((s) => s.hydrated);
   const hydrationError = useGameStore((s) => s.hydrationError);
   const unlockedLevel = useGameStore((s) => s.unlockedLevel);
@@ -186,7 +187,7 @@ export default function GameScreen() {
     return () => { mounted = false; };
   }, [supportedMode]);
   if (hydrated && !supportedMode) return <Redirect href="/(tabs)" />;
-  if (supportedMode && privacySettled) return <GameEligibilityGate key={`${mode}:${levelId}`}>
+  if (supportedMode && privacySettled) return <GameEligibilityGate key={`${mode}:${levelId}`} hasCompletedRun={hasCompletedRun}>
     {(newRun, prepareEntry) => <GameContent onNewRun={newRun} prepareEntry={prepareEntry} />}
   </GameEligibilityGate>;
   return (
@@ -335,7 +336,16 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     };
     // Only a claimed result action can begin optional setup. It never waits for
     // an ad to load or replaces the existing session/cooldown placement gate.
-    void preparePostGamePrivacy(current, openPrivacyChoices).catch(() => undefined).then(continueExit);
+    void preparePostGamePrivacy(current, openPrivacyChoices).catch(() => false).then(complete => {
+      if (generation !== resultLifetime.generation) return;
+      if (complete) continueExit();
+      else {
+        // Back/Close is cancellation, not permission to perform Retry/Next/Done.
+        // Keep the saved result and allow another explicit action.
+        resultActionClaimed.current = false;
+        setResultActionBusy(false);
+      }
+    });
   };
   const [videoShareAvailability, setVideoShareAvailability] = useState({ messages: false, mail: false });
   useEffect(() => {

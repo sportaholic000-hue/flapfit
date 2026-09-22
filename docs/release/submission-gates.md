@@ -1,5 +1,9 @@
 # Flap Fit dual-store submission gates
 
+## Current device setup-dismissal correction — September 22
+
+[The setup-dismissal correction](privacy-dismissal-fix-2026-09-22.md) closes the reported Privacy & choices → Back/Close → repeat-run bypass in source. It preserves the approved regional exceptions, permission choices and ad-placement rules. The updated 84-state review includes its neutral recovery screen. The installed c3a053bb build still needs replacement and device verification.
+
 ## Current device copy correction and review — September 22
 
 The installed tracker replacement exposed unapproved age/location advertising-outcome copy. [The neutral-copy correction and 83-state visual review](neutral-privacy-copy-2026-09-22.md) records the corrected source and preserved advertising rules. The installed build still needs a successor for those changes. Camera startup performance and the reported bird-response problem remain open; the tracker packaging check does not establish their acceptance.

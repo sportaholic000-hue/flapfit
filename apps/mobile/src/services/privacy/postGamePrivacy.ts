@@ -1,4 +1,5 @@
 import { Alert } from 'react-native';
+import { needsGameSetup } from './gameSetup';
 import { needsConnecticutClarification, needsQuebecClarification } from './regionalClarification';
 import { needsLocalAgeAnswer } from './localAgeAnswer';
 import { needsNewYorkClarification } from './newYorkClarification';
@@ -15,20 +16,21 @@ import {
 export async function preparePostGamePrivacy(
   canPresent: () => boolean,
   openChoices: () => Promise<void>,
-): Promise<void> {
+): Promise<boolean> {
   await restoreProcessingNotice();
-  if (!canPresent()) return;
+  if (!canPresent()) return false;
   // Do not begin a new consent refresh or discard a ready result ad merely
   // because another eligible exit was tapped. Explicit privacy refreshes retain
   // their existing invalidation/race handling in the monetization adapter.
   if (isMonetizationPrepared() && isProcessingNoticeAcknowledged() &&
-      !needsNewYorkClarification() && !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification() && !needsSeparatePurposeChoice('ads') && !needsSeparatePurposeChoice('analytics')) return;
+      !needsNewYorkClarification() && !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification() && !needsSeparatePurposeChoice('ads') && !needsSeparatePurposeChoice('analytics') && !needsGameSetup()) return true;
   await prepareMonetization(canPresent);
   await restoreProcessingNotice();
   // Regional restrictions disable providers, never the next workout. Existing
   // withdrawal controls remain accessible in Info; do not solicit new consent.
-  if (isRegionalAdvertisingDisabled(getProcessingInputs())) return;
-  if (!canPresent() || (!canPresentProcessingNotice() && !needsNewYorkClarification() && !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification())) return;
+  if (isRegionalAdvertisingDisabled(getProcessingInputs()) && !needsGameSetup()) return true;
+  if (!canPresent()) return false;
+  if (!canPresentProcessingNotice() && !needsNewYorkClarification() && !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification()) return !needsGameSetup();
   const requiredChoices = needsNewYorkClarification() || needsLocalAgeAnswer() || needsConnecticutClarification() || needsQuebecClarification() || needsSeparatePurposeChoice('ads') || needsSeparatePurposeChoice('analytics');
   if (!isProcessingNoticeAcknowledged() || requiredChoices) {
     if (requiredChoices) {
@@ -44,10 +46,11 @@ export async function preparePostGamePrivacy(
           { text: 'Continue', onPress: () => resolve('continue') },
         ], { cancelable: true, onDismiss: () => resolve('cancel') });
       });
-      if (!canPresent()) return;
+      if (!canPresent()) return false;
       if (action === 'choices') await openChoices();
       else if (action === 'continue') await acknowledgeProcessingNotice();
     }
   }
   if (canPresent() && !isMonetizationPrepared()) await prepareMonetization(canPresent);
+  return canPresent() && !needsGameSetup();
 }

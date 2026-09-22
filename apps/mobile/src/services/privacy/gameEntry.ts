@@ -2,13 +2,15 @@ import { getProcessingInputs } from './processingAccess';
 import { hasSavedUnder13Answer } from './localAgeAnswer';
 import { resolveReleaseEligibility, type ReleaseEligibility } from './releaseEligibility';
 
-export type GameEntryDecision = ReleaseEligibility;
+import { needsGameSetup, restoreGameSetup } from './gameSetup';
 
-/** No trial quota or optional advertising prerequisite. Restore the existing
+export type GameEntryDecision = ReleaseEligibility | { status: 'setup-required' };
+
+/** Restore the existing
  * local audience answer before admitting a new game, independently of country
  * lookup. Current verified Apple evidence takes precedence over an older local
  * answer; the local answer can never satisfy a required Apple check. */
-export async function authorizeGameEntry(): Promise<GameEntryDecision> {
+async function authorizeAudience(): Promise<ReleaseEligibility> {
   const initial = getProcessingInputs();
   if (initial.appleAccessRestricted || initial.verification?.mandatoryCheckSatisfied) {
     return resolveReleaseEligibility(initial);
@@ -22,4 +24,15 @@ export async function authorizeGameEntry(): Promise<GameEntryDecision> {
     return { status: 'unavailable', reason: 'age' };
   }
   return decision;
+}
+
+/** Completed-run history already lives in the game store. Recheck at every new
+ * run, including Home/deep links and relaunch; never interrupt an active game. */
+export async function authorizeGameEntry(afterCompletedRun = false): Promise<GameEntryDecision> {
+  const audience = await authorizeAudience();
+  if (audience.status !== 'available' || !afterCompletedRun) return audience;
+  await restoreGameSetup();
+  const current = resolveReleaseEligibility(getProcessingInputs());
+  if (current.status !== 'available') return current;
+  return needsGameSetup() ? { status: 'setup-required' } : current;
 }

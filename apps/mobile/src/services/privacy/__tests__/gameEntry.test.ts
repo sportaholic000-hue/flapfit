@@ -73,3 +73,53 @@ test('an explicit saved correction updates the audience check without starting a
   expect(await f.entry.authorizeGameEntry()).toEqual({ status: 'available' });
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
 });
+
+test('closing setup cannot admit repeat games, including after module restart', async () => {
+  let f = await fixture(); const memory = f.memory;
+  expect(await f.entry.authorizeGameEntry(false)).toEqual({ status: 'available' });
+  for (let i = 0; i < 3; i++) expect(await f.entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+  expect(memory.has('@flapfit/quebec-residency-v1')).toBe(false);
+  f = await fixture(memory);
+  expect(await f.entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+  const regional: typeof import('../regionalClarification') = require('../regionalClarification');
+  const notice: typeof import('../processingNotice') = require('../processingNotice');
+  await regional.saveQuebecResidency('not-resident');
+  expect(await f.entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+  await f.access.setProcessingChoice('analytics', 'denied');
+  await notice.acknowledgeProcessingNotice();
+  expect(await f.entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+  expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: false } });
+});
+
+test('an established Quebec answer permits repeat gameplay without an advertising notice', async () => {
+  const f = await fixture();
+  const regional: typeof import('../regionalClarification') = require('../regionalClarification');
+  const notice: typeof import('../processingNotice') = require('../processingNotice');
+  await regional.saveQuebecResidency('resident');
+  expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
+  expect(await f.entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+});
+
+test('a failed notice save remains incomplete instead of silently permitting another run', async () => {
+  const f = await fixture();
+  const regional: typeof import('../regionalClarification') = require('../regionalClarification');
+  const notice: typeof import('../processingNotice') = require('../processingNotice');
+  await regional.saveQuebecResidency('not-resident');
+  f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+  await expect(notice.acknowledgeProcessingNotice()).rejects.toThrow('disk full');
+  expect(await f.entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+  await notice.acknowledgeProcessingNotice();
+  expect(await f.entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+});
+
+test('a country-service outage does not create an offline ban or mark missing setup complete', async () => {
+  const f = await fixture();
+  expect(await f.entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+  f.access.setLaunchProcessingCountry(null, false);
+  expect(await f.entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+  f.access.setLaunchProcessingCountry('CA', true);
+  f.access.verifyLaunchAgeEvidence({ source: 'apple', status: 'shared', lowerBound: 18, upperBound: null }, 'CA', f.access.getAgeVerificationRevision());
+  expect(await f.entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+});
