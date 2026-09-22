@@ -20,4 +20,4 @@ No regional advertising rules, provider configuration, ad frequency, motion/came
 
 ## Device status
 
-These results verify source and simulated native boundaries. The installed c3a053bb device build still contains the reported bypass and requires a replacement build for a physical-device retest. No new cloud build was started. The owner said the earlier bird behavior may have been their movement; no motion/tracking adjustment is claimed here. The camera startup speed report has not been resolved by this fix.
+These results verify source and simulated native boundaries. The installed c3a053bb device build contains the reported bypass. A [replacement signed build](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/f0cf64c3-04c1-43fe-97d9-44f409e2f809) is now complete with these fixes; see the [artifact verification record](privacy-replacement-build-2026-09-22.md). Physical-device acceptance remains pending. The owner said the earlier bird behavior may have been their movement; no motion/tracking adjustment is claimed here. The camera startup speed report has not been resolved by this fix.

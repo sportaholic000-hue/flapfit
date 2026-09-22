@@ -2,15 +2,15 @@
 
 ## Current device setup-dismissal correction — September 22
 
-[The setup-dismissal correction](privacy-dismissal-fix-2026-09-22.md) closes the reported Privacy & choices → Back/Close → repeat-run bypass in source. It preserves the approved regional exceptions, permission choices and ad-placement rules. The updated 84-state review includes its neutral recovery screen. The installed c3a053bb build still needs replacement and device verification.
+[The setup-dismissal correction](privacy-dismissal-fix-2026-09-22.md) closes the reported Privacy & choices → Back/Close → repeat-run bypass in source. It preserves the approved regional exceptions, permission choices and ad-placement rules. The updated 84-state review includes its neutral recovery screen. The [replacement signed build](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/f0cf64c3-04c1-43fe-97d9-44f409e2f809) is complete from 69b0696 and passes artifact inspection. See [build evidence](privacy-replacement-build-2026-09-22.md). Device verification remains pending.
 
 ## Current device copy correction and review — September 22
 
-The installed tracker replacement exposed unapproved age/location advertising-outcome copy. [The neutral-copy correction and 83-state visual review](neutral-privacy-copy-2026-09-22.md) records the corrected source and preserved advertising rules. The installed build still needs a successor for those changes. Camera startup performance and the reported bird-response problem remain open; the tracker packaging check does not establish their acceptance.
+The installed tracker replacement exposed unapproved age/location advertising-outcome copy. [The neutral-copy correction and 83-state visual review](neutral-privacy-copy-2026-09-22.md) records the corrected source and preserved advertising rules. The completed privacy replacement build above includes those changes. Camera startup performance and the reported bird-response problem remain open; the tracker packaging check does not establish their acceptance.
 
 ## Current device failure and correction — September 22
 
-The owner's iPad exposed a tracker startup failure in build 8391a757. Three bundled JavaScript assets had CRLF-converted sizes that the runtime rejects. [The correction record](tracker-startup-correction-2026-09-22.md) supersedes the earlier tracker artifact acceptance. The fix preserves the exact bytes during EAS packaging and validates them before every build. The corrected [signed test build](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/c3a053bb-eaf4-4b25-a57b-641c9022ae9c) is complete and passes exact-byte source/IPA inspection. Physical iPad retest remains required. Current account readback: 10/15 free iOS builds used, $0.00 overage.
+The owner's iPad exposed a tracker startup failure in build 8391a757. Three bundled JavaScript assets had CRLF-converted sizes that the runtime rejects. [The correction record](tracker-startup-correction-2026-09-22.md) supersedes the earlier tracker artifact acceptance. The fix preserves the exact bytes during EAS packaging and validates them before every build. The corrected [signed test build](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/c3a053bb-eaf4-4b25-a57b-641c9022ae9c) is complete and passes exact-byte source/IPA inspection. Physical iPad retest remains required. At that earlier build completion: 10/15 free iOS builds used, $0.00 overage.
 
 ## Dependency repair and earlier build record — September 22
 
