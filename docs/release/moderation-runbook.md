@@ -115,3 +115,8 @@ Exact guarded update returned one row; independent database readback confirms
 `dismissed`, resolved at `2026-09-20 07:30:54.336501+00`, both deleted account links
 null. Full identifiers and guard evidence are recorded in
 `evidence/regional-production-closure-2026-09-20.md`. Existing retention applies.
+
+
+## Specific advertising withdrawal handling — September 21 review
+
+Use the completed [assessment](privacy-withdrawal-assessment-2026-09-21.md) to distinguish an actual applicable Google processing-withdrawal request from targeting preferences, RevenueCat reporting, historical deletion and commercial ad removal. For the assessed Canadian case with no available Google privacy form, current support cannot apply the refusal to the installation. Record the request and affected purpose as pending; do not report completion, prescribe online-profile deletion, change the user's region, or promise that NPA/RDP stops all collection. A scope-specific completion route is proposed but not implemented or approved. Existing reporting/Google-form/saved-refusal procedures remain effective in their own scope. Do not send support correspondence or modify provider records without the owner's authorization.

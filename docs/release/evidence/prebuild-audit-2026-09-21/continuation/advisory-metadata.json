@@ -1,0 +1,1177 @@
+[
+  {
+    "id": "GHSA-6gmq-8vp8-gcm6",
+    "summary": "xmldom: XML fragment injection via invalid EntityReference.nodeName during requireWellFormed serialization",
+    "updated": "2026-09-02T15:18:21Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.7.0, <= 0.8.14",
+        "first_patched_version": "0.8.15",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0, <= 0.9.11",
+        "first_patched_version": "0.9.12",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "xmldom"
+        },
+        "vulnerable_version_range": "<= 0.6.0",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-6gmq-8vp8-gcm6",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83610",
+      "https://github.com/xmldom/xmldom/pull/1071",
+      "https://github.com/xmldom/xmldom/pull/1072",
+      "https://github.com/xmldom/xmldom/commit/4664386e4f4d99d17b416a151dbe8323e245284b",
+      "https://github.com/xmldom/xmldom/commit/6c3fb5ffeafe7901ec928ce9010988dd716c94a0",
+      "https://github.com/xmldom/xmldom/releases/tag/0.8.15",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.12",
+      "https://github.com/advisories/GHSA-6gmq-8vp8-gcm6"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1158517,
+          "Issue": "xmldom: XML fragment injection via invalid EntityReference.nodeName during requireWellFormed serialization",
+          "URL": "https://github.com/advisories/GHSA-6gmq-8vp8-gcm6",
+          "Severity": "moderate",
+          "Vulnerable Versions": ">=0.9.0 <=0.9.11",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      },
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1158518,
+          "Issue": "xmldom: XML fragment injection via invalid EntityReference.nodeName during requireWellFormed serialization",
+          "URL": "https://github.com/advisories/GHSA-6gmq-8vp8-gcm6",
+          "Severity": "moderate",
+          "Vulnerable Versions": ">=0.7.0 <=0.8.14",
+          "Tree Versions": [
+            "0.8.13"
+          ],
+          "Dependents": [
+            "@expo/plist@npm:0.8.1"
+          ]
+        }
+      }
+    ],
+    "input": "Attacker-controlled EntityReference name passed to xmldom serialization.",
+    "disposition": "Defer: plist callers use xmldom to parse; both plist writers use xmlbuilder. This entity-creation/serialization operation is absent."
+  },
+  {
+    "id": "GHSA-6mj3-qw4j-hgrw",
+    "summary": "xmldom: HTML raw-text closing-tag case mismatch causes output amplification",
+    "updated": "2026-09-08T20:59:55Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0-beta.1, <= 0.9.11",
+        "first_patched_version": "0.9.12",
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-6mj3-qw4j-hgrw",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83612",
+      "https://github.com/xmldom/xmldom/pull/1071",
+      "https://github.com/xmldom/xmldom/commit/7ced40c06c28d151e996a97045018c3559ae4707",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.12",
+      "https://github.com/advisories/GHSA-6mj3-qw4j-hgrw"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193671,
+          "Issue": "xmldom: HTML raw-text closing-tag case mismatch causes output amplification",
+          "URL": "https://github.com/advisories/GHSA-6mj3-qw4j-hgrw",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.9.0-beta.1 <=0.9.11",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      }
+    ],
+    "input": "Attacker HTML with mixed-case raw-text closing tags.",
+    "disposition": "Defer: plist input is XML, not text/html; no untrusted HTML enters this tool path."
+  },
+  {
+    "id": "GHSA-g53g-w8rj-fmg7",
+    "summary": "xmldom PI grammar regex ReDoS: quadratic backtracking on unterminated processing instructions",
+    "updated": "2026-09-08T20:31:51Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0-beta.9, <= 0.9.10",
+        "first_patched_version": "0.9.11",
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-g53g-w8rj-fmg7",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83606",
+      "https://github.com/xmldom/xmldom/pull/1039",
+      "https://github.com/xmldom/xmldom/commit/73df6b8bdbd86f904b9e8c3ab9c49aa54ef2802e",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.11",
+      "https://github.com/advisories/GHSA-g53g-w8rj-fmg7"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193687,
+          "Issue": "xmldom PI grammar regex ReDoS: quadratic backtracking on unterminated processing instructions",
+          "URL": "https://github.com/advisories/GHSA-g53g-w8rj-fmg7",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.9.0-beta.9 <=0.9.10",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      }
+    ],
+    "input": "Malformed XML with a long unterminated processing instruction.",
+    "disposition": "Defer: parser handles reviewed project/provider plist/configuration files; the app and API accept no user XML through this parser. Malicious replacement build inputs could still stall tooling."
+  },
+  {
+    "id": "GHSA-w2rr-34g9-rvrj",
+    "summary": "xmldom: Element name injection via createElement() bypasses requireWellFormed",
+    "updated": "2026-09-08T20:31:09Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0, <= 0.9.10",
+        "first_patched_version": "0.9.11",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.7.0, <= 0.8.13",
+        "first_patched_version": "0.8.14",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "xmldom"
+        },
+        "vulnerable_version_range": "<= 0.6.0",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-w2rr-34g9-rvrj",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83607",
+      "https://github.com/xmldom/xmldom/pull/1043",
+      "https://github.com/xmldom/xmldom/pull/1050",
+      "https://github.com/xmldom/xmldom/commit/cba1321218b069182695813fa7565653708e172e",
+      "https://github.com/xmldom/xmldom/commit/d8212e632507eaf1d9f609657dd4c56abeb12d44",
+      "https://github.com/xmldom/xmldom/releases/tag/0.8.14",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.11",
+      "https://github.com/advisories/GHSA-w2rr-34g9-rvrj"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193689,
+          "Issue": "xmldom: Element name injection via createElement() bypasses requireWellFormed",
+          "URL": "https://github.com/advisories/GHSA-w2rr-34g9-rvrj",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.7.0 <=0.8.13",
+          "Tree Versions": [
+            "0.8.13"
+          ],
+          "Dependents": [
+            "@expo/plist@npm:0.8.1"
+          ]
+        }
+      },
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193690,
+          "Issue": "xmldom: Element name injection via createElement() bypasses requireWellFormed",
+          "URL": "https://github.com/advisories/GHSA-w2rr-34g9-rvrj",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.9.0 <=0.9.10",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      }
+    ],
+    "input": "Attacker-controlled element name passed to createElement then serialized.",
+    "disposition": "Defer: no affected xmldom element-creation/serialization caller; plist generation uses xmlbuilder."
+  },
+  {
+    "id": "GHSA-4w3w-2rp5-g8jm",
+    "summary": "xmldom: Attribute name injection via setAttribute() bypasses requireWellFormed",
+    "updated": "2026-09-08T20:30:52Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0, <= 0.9.10",
+        "first_patched_version": "0.9.11",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.7.0, <= 0.8.13",
+        "first_patched_version": "0.8.14",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "xmldom"
+        },
+        "vulnerable_version_range": "<= 0.6.0",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-4w3w-2rp5-g8jm",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83605",
+      "https://github.com/xmldom/xmldom/pull/1043",
+      "https://github.com/xmldom/xmldom/pull/1050",
+      "https://github.com/xmldom/xmldom/commit/cba1321218b069182695813fa7565653708e172e",
+      "https://github.com/xmldom/xmldom/commit/d8212e632507eaf1d9f609657dd4c56abeb12d44",
+      "https://github.com/xmldom/xmldom/releases/tag/0.8.14",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.11",
+      "https://github.com/advisories/GHSA-4w3w-2rp5-g8jm"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193692,
+          "Issue": "xmldom: Attribute name injection via setAttribute() bypasses requireWellFormed",
+          "URL": "https://github.com/advisories/GHSA-4w3w-2rp5-g8jm",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.7.0 <=0.8.13",
+          "Tree Versions": [
+            "0.8.13"
+          ],
+          "Dependents": [
+            "@expo/plist@npm:0.8.1"
+          ]
+        }
+      },
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193693,
+          "Issue": "xmldom: Attribute name injection via setAttribute() bypasses requireWellFormed",
+          "URL": "https://github.com/advisories/GHSA-4w3w-2rp5-g8jm",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.9.0 <=0.9.10",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      }
+    ],
+    "input": "Attacker-controlled attribute name passed to setAttribute then serialized.",
+    "disposition": "Defer: no affected xmldom attribute-writing/serialization caller; plist generation uses xmlbuilder."
+  },
+  {
+    "id": "GHSA-c7q8-3ch8-vqpv",
+    "summary": "xmldom: Processing Instruction Target Injection Bypasses requireWellFormed",
+    "updated": "2026-09-08T21:03:31Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.7.0, <= 0.8.14",
+        "first_patched_version": "0.8.15",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0, <= 0.9.11",
+        "first_patched_version": "0.9.12",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "xmldom"
+        },
+        "vulnerable_version_range": "<= 0.6.0",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-c7q8-3ch8-vqpv",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83616",
+      "https://github.com/xmldom/xmldom/pull/1071",
+      "https://github.com/xmldom/xmldom/pull/1072",
+      "https://github.com/xmldom/xmldom/commit/1cde3e31a07c41c87cfd368d6946aa477f16b4f9",
+      "https://github.com/xmldom/xmldom/commit/3b694872bcb5c7e3cbadba961a4be2488750ce5b",
+      "https://github.com/xmldom/xmldom/releases/tag/0.8.15",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.12",
+      "https://github.com/advisories/GHSA-c7q8-3ch8-vqpv"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193695,
+          "Issue": "xmldom: Processing Instruction Target Injection Bypasses requireWellFormed",
+          "URL": "https://github.com/advisories/GHSA-c7q8-3ch8-vqpv",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.9.0 <=0.9.11",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      },
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193696,
+          "Issue": "xmldom: Processing Instruction Target Injection Bypasses requireWellFormed",
+          "URL": "https://github.com/advisories/GHSA-c7q8-3ch8-vqpv",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.7.0 <=0.8.14",
+          "Tree Versions": [
+            "0.8.13"
+          ],
+          "Dependents": [
+            "@expo/plist@npm:0.8.1"
+          ]
+        }
+      }
+    ],
+    "input": "Attacker-controlled processing-instruction target serialized as XML.",
+    "disposition": "Defer: no affected xmldom PI-creation/serialization caller."
+  },
+  {
+    "id": "GHSA-27p8-2357-5qqv",
+    "summary": "xmldom: DocType `name` Injection Bypasses requireWellFormed",
+    "updated": "2026-09-08T21:02:54Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.7.0, <= 0.8.14",
+        "first_patched_version": "0.8.15",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0, <= 0.9.11",
+        "first_patched_version": "0.9.12",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "xmldom"
+        },
+        "vulnerable_version_range": "<= 0.6.0",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-27p8-2357-5qqv",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83608",
+      "https://github.com/xmldom/xmldom/pull/1071",
+      "https://github.com/xmldom/xmldom/pull/1072",
+      "https://github.com/xmldom/xmldom/commit/57aec90ac57b4408ae7c5d1746bf2a693b5ed90e",
+      "https://github.com/xmldom/xmldom/commit/85f12eb4d14b44de33216cfb72b50af4d24e9fdd",
+      "https://github.com/xmldom/xmldom/releases/tag/0.8.15",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.12",
+      "https://github.com/advisories/GHSA-27p8-2357-5qqv"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193699,
+          "Issue": "xmldom: DocType `name` Injection Bypasses requireWellFormed",
+          "URL": "https://github.com/advisories/GHSA-27p8-2357-5qqv",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.9.0 <=0.9.11",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      },
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193700,
+          "Issue": "xmldom: DocType `name` Injection Bypasses requireWellFormed",
+          "URL": "https://github.com/advisories/GHSA-27p8-2357-5qqv",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.7.0 <=0.8.14",
+          "Tree Versions": [
+            "0.8.13"
+          ],
+          "Dependents": [
+            "@expo/plist@npm:0.8.1"
+          ]
+        }
+      }
+    ],
+    "input": "Attacker-controlled document-type name serialized as XML.",
+    "disposition": "Defer: no affected xmldom DocType-creation/serialization caller."
+  },
+  {
+    "id": "GHSA-3px3-54cx-rmw9",
+    "summary": "xmldom: Creation-time XML Name/QName validation is bypassable via an embedded line terminator, allowing injection on the default serialization path",
+    "updated": "2026-09-08T21:02:34Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0, <= 0.9.11",
+        "first_patched_version": "0.9.12",
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-3px3-54cx-rmw9",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83609",
+      "https://github.com/xmldom/xmldom/pull/1071",
+      "https://github.com/xmldom/xmldom/commit/7b2ec67e1750daadd0bb06c92e875e726544a362",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.12",
+      "https://github.com/advisories/GHSA-3px3-54cx-rmw9"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193701,
+          "Issue": "xmldom: Creation-time XML Name/QName validation is bypassable via an embedded line terminator, allowing injection on the default serialization path",
+          "URL": "https://github.com/advisories/GHSA-3px3-54cx-rmw9",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.9.0 <=0.9.11",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      }
+    ],
+    "input": "Line-terminated attacker Name/QName passed to DOM creation and serialization.",
+    "disposition": "Defer: affected programmatic creation/serialization is absent in the plist caller paths."
+  },
+  {
+    "id": "GHSA-vr34-hp96-76pp",
+    "summary": "xmldom: requireWellFormed DocType publicId/systemId validation is bypassable via an embedded line terminator",
+    "updated": "2026-09-08T21:02:26Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.10, <= 0.9.11",
+        "first_patched_version": "0.9.12",
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-vr34-hp96-76pp",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83618",
+      "https://github.com/xmldom/xmldom/pull/1071",
+      "https://github.com/xmldom/xmldom/commit/7b2ec67e1750daadd0bb06c92e875e726544a362",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.12",
+      "https://github.com/advisories/GHSA-vr34-hp96-76pp"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193702,
+          "Issue": "xmldom: requireWellFormed DocType publicId/systemId validation is bypassable via an embedded line terminator",
+          "URL": "https://github.com/advisories/GHSA-vr34-hp96-76pp",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.9.10 <=0.9.11",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      }
+    ],
+    "input": "Attacker DocType publicId/systemId passed to requireWellFormed serialization.",
+    "disposition": "Defer: no affected xmldom DocType serialization path in the reviewed consumers."
+  },
+  {
+    "id": "GHSA-6h8r-xr42-gp59",
+    "summary": "xmldom: Parser silently accepts a not-well-formed end tag whose name is followed by a line break and trailing content",
+    "updated": "2026-09-08T21:02:13Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.7.0, <= 0.8.14",
+        "first_patched_version": "0.8.15",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0, <= 0.9.11",
+        "first_patched_version": "0.9.12",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "xmldom"
+        },
+        "vulnerable_version_range": "<= 0.6.0",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-6h8r-xr42-gp59",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83611",
+      "https://github.com/xmldom/xmldom/pull/1071",
+      "https://github.com/xmldom/xmldom/pull/1072",
+      "https://github.com/xmldom/xmldom/commit/4430189660b0d380ee9c9ee7550a1358688e8828",
+      "https://github.com/xmldom/xmldom/commit/7b2ec67e1750daadd0bb06c92e875e726544a362",
+      "https://github.com/xmldom/xmldom/releases/tag/0.8.15",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.12",
+      "https://github.com/advisories/GHSA-6h8r-xr42-gp59"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193704,
+          "Issue": "xmldom: Parser silently accepts a not-well-formed end tag whose name is followed by a line break and trailing content",
+          "URL": "https://github.com/advisories/GHSA-6h8r-xr42-gp59",
+          "Severity": "moderate",
+          "Vulnerable Versions": ">=0.9.0 <=0.9.11",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      },
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193705,
+          "Issue": "xmldom: Parser silently accepts a not-well-formed end tag whose name is followed by a line break and trailing content",
+          "URL": "https://github.com/advisories/GHSA-6h8r-xr42-gp59",
+          "Severity": "moderate",
+          "Vulnerable Versions": ">=0.7.0 <=0.8.14",
+          "Tree Versions": [
+            "0.8.13"
+          ],
+          "Dependents": [
+            "@expo/plist@npm:0.8.1"
+          ]
+        }
+      }
+    ],
+    "input": "Malformed XML end tag with line break and trailing content.",
+    "disposition": "Defer: trusted build configuration is parsed, not an XML security-validation boundary. No user XML validation/authorization depends on this parser."
+  },
+  {
+    "id": "GHSA-8344-3jmq-59r6",
+    "summary": "xmldom: Quadratic-time attribute deduplication",
+    "updated": "2026-09-08T21:01:33Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.7.0, <= 0.8.14",
+        "first_patched_version": "0.8.15",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0, <= 0.9.11",
+        "first_patched_version": "0.9.12",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "xmldom"
+        },
+        "vulnerable_version_range": "<= 0.6.0",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-27p8-2357-5qqv",
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-8344-3jmq-59r6",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83613",
+      "https://github.com/xmldom/xmldom/pull/1071",
+      "https://github.com/xmldom/xmldom/pull/1072",
+      "https://github.com/xmldom/xmldom/commit/2c548f200cfec991cd5846627ef8f03542309213",
+      "https://github.com/xmldom/xmldom/commit/cfb09b5dbeb035fdfedc9f01e2bbaf226bf47cf3",
+      "https://github.com/xmldom/xmldom/releases/tag/0.8.15",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.12",
+      "https://github.com/advisories/GHSA-8344-3jmq-59r6"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193707,
+          "Issue": "xmldom: Quadratic-time attribute deduplication",
+          "URL": "https://github.com/advisories/GHSA-8344-3jmq-59r6",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.9.0 <=0.9.11",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      },
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193708,
+          "Issue": "xmldom: Quadratic-time attribute deduplication",
+          "URL": "https://github.com/advisories/GHSA-8344-3jmq-59r6",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.7.0 <=0.8.14",
+          "Tree Versions": [
+            "0.8.13"
+          ],
+          "Dependents": [
+            "@expo/plist@npm:0.8.1"
+          ]
+        }
+      }
+    ],
+    "input": "XML element containing very many unique attributes.",
+    "disposition": "Defer: no network/user XML input to the build parser. Checked-in/generated plist input is bounded by review; malicious external build input could consume CPU."
+  },
+  {
+    "id": "GHSA-x4fp-j954-r2f4",
+    "summary": "xmldom: End-tag Whitespace-Trim Regex ReDoS — quadratic backtracking in the 0.8.x end-tag parser",
+    "updated": "2026-09-08T21:01:11Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.7.0, <= 0.8.14",
+        "first_patched_version": "0.8.15",
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-x4fp-j954-r2f4",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83619",
+      "https://github.com/xmldom/xmldom/pull/1072",
+      "https://github.com/xmldom/xmldom/commit/3abb0934f5a8a84d83a1f9cde0f2bd04c08b2a09",
+      "https://github.com/xmldom/xmldom/releases/tag/0.8.15",
+      "https://github.com/advisories/GHSA-x4fp-j954-r2f4"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193709,
+          "Issue": "xmldom: End-tag Whitespace-Trim Regex ReDoS — quadratic backtracking in the 0.8.x end-tag parser",
+          "URL": "https://github.com/advisories/GHSA-x4fp-j954-r2f4",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.7.0 <=0.8.14",
+          "Tree Versions": [
+            "0.8.13"
+          ],
+          "Dependents": [
+            "@expo/plist@npm:0.8.1"
+          ]
+        }
+      }
+    ],
+    "input": "Malformed XML end tag with long whitespace then non-whitespace.",
+    "disposition": "Defer: only the 0.8 plist parser path; no user XML intake. External unreviewed configuration must not enter this build path."
+  },
+  {
+    "id": "GHSA-965w-775f-mr7g",
+    "summary": "xmldom: Quadratic-memory consumption",
+    "updated": "2026-09-08T21:00:54Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.7.0, <= 0.8.14",
+        "first_patched_version": "0.8.15",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0, <= 0.9.11",
+        "first_patched_version": "0.9.12",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "xmldom"
+        },
+        "vulnerable_version_range": ">= 0.1.5, <= 0.6.0",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-965w-775f-mr7g",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83615",
+      "https://github.com/xmldom/xmldom/pull/1071",
+      "https://github.com/xmldom/xmldom/pull/1072",
+      "https://github.com/xmldom/xmldom/commit/954370f58c046223faf95ba77efcbc8ce014409d",
+      "https://github.com/xmldom/xmldom/commit/dabffe884e864eeecb1f515c716f875e1bc47ec1",
+      "https://github.com/xmldom/xmldom/releases/tag/0.8.15",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.12",
+      "https://github.com/advisories/GHSA-965w-775f-mr7g"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193711,
+          "Issue": "xmldom: Quadratic-memory consumption",
+          "URL": "https://github.com/advisories/GHSA-965w-775f-mr7g",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.9.0 <=0.9.11",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      },
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193712,
+          "Issue": "xmldom: Quadratic-memory consumption",
+          "URL": "https://github.com/advisories/GHSA-965w-775f-mr7g",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.7.0 <=0.8.14",
+          "Tree Versions": [
+            "0.8.13"
+          ],
+          "Dependents": [
+            "@expo/plist@npm:0.8.1"
+          ]
+        }
+      }
+    ],
+    "input": "Deeply nested XML declaring a new namespace at every level.",
+    "disposition": "Defer: no user XML intake; reviewed plist inputs do not have that shape. Hostile replacement build XML remains an availability risk."
+  },
+  {
+    "id": "GHSA-93r5-fhx6-vmg9",
+    "summary": "xmldom: Quadratic-time parsing via the malformed-input recovery path — `parseElementStartPart` re-scan and `normalize()` adjacent-text merge",
+    "updated": "2026-09-08T21:00:43Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.7.0, <= 0.8.14",
+        "first_patched_version": "0.8.15",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "@xmldom/xmldom"
+        },
+        "vulnerable_version_range": ">= 0.9.0, <= 0.9.11",
+        "first_patched_version": "0.9.12",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "xmldom"
+        },
+        "vulnerable_version_range": ">= 0.3.0, <= 0.6.0",
+        "first_patched_version": null,
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/xmldom/xmldom/security/advisories/GHSA-93r5-fhx6-vmg9",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-83614",
+      "https://github.com/xmldom/xmldom/pull/1071",
+      "https://github.com/xmldom/xmldom/pull/1072",
+      "https://github.com/xmldom/xmldom/commit/0748720b620555f8c222782dcab575cf0cf403b4",
+      "https://github.com/xmldom/xmldom/commit/f40ccb861eee0acbf5ee4feb9a34932e87b329c9",
+      "https://github.com/xmldom/xmldom/releases/tag/0.8.15",
+      "https://github.com/xmldom/xmldom/releases/tag/0.9.12",
+      "https://github.com/advisories/GHSA-93r5-fhx6-vmg9"
+    ],
+    "installed": [
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193714,
+          "Issue": "xmldom: Quadratic-time parsing via the malformed-input recovery path — `parseElementStartPart` re-scan and `normalize()` adjacent-text merge",
+          "URL": "https://github.com/advisories/GHSA-93r5-fhx6-vmg9",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.9.0 <=0.9.11",
+          "Tree Versions": [
+            "0.9.10"
+          ],
+          "Dependents": [
+            "plist@npm:3.1.1"
+          ]
+        }
+      },
+      {
+        "value": "@xmldom/xmldom",
+        "children": {
+          "ID": 1193715,
+          "Issue": "xmldom: Quadratic-time parsing via the malformed-input recovery path — `parseElementStartPart` re-scan and `normalize()` adjacent-text merge",
+          "URL": "https://github.com/advisories/GHSA-93r5-fhx6-vmg9",
+          "Severity": "high",
+          "Vulnerable Versions": ">=0.7.0 <=0.8.14",
+          "Tree Versions": [
+            "0.8.13"
+          ],
+          "Dependents": [
+            "@expo/plist@npm:0.8.1"
+          ]
+        }
+      }
+    ],
+    "input": "Malformed XML recovery or programmatic adjacent-text normalization.",
+    "disposition": "Defer: no user XML intake or direct affected normalize caller. Malicious build configuration remains a tooling CPU risk."
+  },
+  {
+    "id": "GHSA-2883-xcg3-v3hh",
+    "summary": "js-yaml: maxTotalMergeKeys does not limit CPU use for empty merge sources",
+    "updated": "2026-09-08T21:24:52Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "js-yaml"
+        },
+        "vulnerable_version_range": ">= 4.0.0, < 4.3.2",
+        "first_patched_version": "4.3.2",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "js-yaml"
+        },
+        "vulnerable_version_range": ">= 3.0.0, < 3.15.2",
+        "first_patched_version": "3.15.2",
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/nodeca/js-yaml/security/advisories/GHSA-2883-xcg3-v3hh",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-84375",
+      "https://github.com/nodeca/js-yaml/pull/797",
+      "https://github.com/nodeca/js-yaml/commit/3485bc06ff8a0251505f44a00414d90df2466639",
+      "https://github.com/nodeca/js-yaml/commit/6a8e05f9a485188ed730ac81e81ae221352ef480",
+      "https://github.com/nodeca/js-yaml/commit/d90b6612a5a84385bdcb556c44578eac76dc0f6b",
+      "https://github.com/nodeca/js-yaml/releases/tag/3.15.2",
+      "https://github.com/nodeca/js-yaml/releases/tag/4.3.2",
+      "https://github.com/advisories/GHSA-2883-xcg3-v3hh"
+    ],
+    "installed": [
+      {
+        "value": "js-yaml",
+        "children": {
+          "ID": 1193726,
+          "Issue": "js-yaml: maxTotalMergeKeys does not limit CPU use for empty merge sources",
+          "URL": "https://github.com/advisories/GHSA-2883-xcg3-v3hh",
+          "Severity": "high",
+          "Vulnerable Versions": ">=3.0.0 <3.15.2",
+          "Tree Versions": [
+            "3.15.1"
+          ],
+          "Dependents": [
+            "@istanbuljs/load-nyc-config@npm:1.1.0"
+          ]
+        }
+      },
+      {
+        "value": "js-yaml",
+        "children": {
+          "ID": 1193727,
+          "Issue": "js-yaml: maxTotalMergeKeys does not limit CPU use for empty merge sources",
+          "URL": "https://github.com/advisories/GHSA-2883-xcg3-v3hh",
+          "Severity": "high",
+          "Vulnerable Versions": ">=4.0.0 <4.3.2",
+          "Tree Versions": [
+            "4.3.1"
+          ],
+          "Dependents": [
+            "@eslint/eslintrc@npm:3.3.6"
+          ]
+        }
+      }
+    ],
+    "input": "YAML with repeated merges of large empty-mapping sequences.",
+    "disposition": "Defer: consumers load repository test/lint configuration, not user YAML. Current app uses Jest package configuration and oxlint; arbitrary submitted YAML is not executed by this release workflow."
+  },
+  {
+    "id": "GHSA-fxqj-rqcc-2cmp",
+    "summary": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
+    "updated": "2026-08-03T17:11:40Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "postcss"
+        },
+        "vulnerable_version_range": "<= 8.5.22",
+        "first_patched_version": "8.5.23",
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/postcss/postcss/security/advisories/GHSA-fxqj-rqcc-2cmp",
+      "https://github.com/postcss/postcss/commit/7beca139e70f9075c6b19700fcb00dd8033e5da8",
+      "https://github.com/postcss/postcss/releases/tag/8.5.19",
+      "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp"
+    ],
+    "installed": [
+      {
+        "value": "postcss",
+        "children": {
+          "ID": 1130709,
+          "Issue": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
+          "URL": "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp",
+          "Severity": "moderate",
+          "Vulnerable Versions": "<=8.5.22",
+          "Tree Versions": [
+            "8.5.12"
+          ],
+          "Dependents": [
+            "mobile@workspace:apps/mobile"
+          ]
+        }
+      }
+    ],
+    "input": "Attacker CSS sourceMappingURL and reachable local .map file, with from unset.",
+    "disposition": "Defer: this is web/build processing of reviewed project CSS, not phone/API input. No user CSS import/render service; no current CSS sourceMappingURL input route. Revisit before accepting external styles or opening preview compilation to untrusted content."
+  },
+  {
+    "id": "GHSA-r28c-9q8g-f849",
+    "summary": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+    "updated": "2026-08-13T17:55:56Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "postcss"
+        },
+        "vulnerable_version_range": "<= 8.5.17",
+        "first_patched_version": "8.5.18",
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/postcss/postcss/security/advisories/GHSA-r28c-9q8g-f849",
+      "https://github.com/postcss/postcss/commit/95663d3eb7ba26f4854dd19d3b4f4425760cf56c",
+      "https://github.com/postcss/postcss/releases/tag/8.5.18",
+      "https://github.com/advisories/GHSA-r28c-9q8g-f849"
+    ],
+    "installed": [
+      {
+        "value": "postcss",
+        "children": {
+          "ID": 1139510,
+          "Issue": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+          "URL": "https://github.com/advisories/GHSA-r28c-9q8g-f849",
+          "Severity": "high",
+          "Vulnerable Versions": "<=8.5.17",
+          "Tree Versions": [
+            "8.5.12"
+          ],
+          "Dependents": [
+            "mobile@workspace:apps/mobile"
+          ]
+        }
+      }
+    ],
+    "input": "Attacker CSS sourceMappingURL traversing to local .map files.",
+    "disposition": "Defer: same checked-in CSS input boundary. No attacker CSS -> PostCSS -> returned sourcemap flow in the current product."
+  },
+  {
+    "id": "GHSA-w5hq-g745-h8pq",
+    "summary": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+    "updated": "2026-05-21T18:25:57Z",
+    "vulnerabilities": [
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "uuid"
+        },
+        "vulnerable_version_range": ">= 12.0.0, < 12.0.1",
+        "first_patched_version": "12.0.1",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "uuid"
+        },
+        "vulnerable_version_range": ">= 13.0.0, < 13.0.1",
+        "first_patched_version": "13.0.1",
+        "vulnerable_functions": []
+      },
+      {
+        "package": {
+          "ecosystem": "npm",
+          "name": "uuid"
+        },
+        "vulnerable_version_range": "< 11.1.1",
+        "first_patched_version": "11.1.1",
+        "vulnerable_functions": []
+      }
+    ],
+    "references": [
+      "https://github.com/uuidjs/uuid/security/advisories/GHSA-w5hq-g745-h8pq",
+      "https://github.com/uuidjs/uuid/commit/3d2c5b0342f0fcb52a5ac681c3d47c13e7444b34",
+      "https://github.com/uuidjs/uuid/releases/tag/v14.0.0",
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-41907",
+      "https://github.com/uuidjs/uuid/commit/32389c887c9e75f90442ee4cc95bbab0c4e8346e",
+      "https://github.com/uuidjs/uuid/commit/3d61d6ac1f782cf6b1dd8661c60f11722cd49a0d",
+      "https://github.com/uuidjs/uuid/commit/9d27ddf7046ce496ef39569ff84d948eeff9cb2a",
+      "https://github.com/uuidjs/uuid/releases/tag/v11.1.1",
+      "https://github.com/uuidjs/uuid/releases/tag/v12.0.1",
+      "https://github.com/uuidjs/uuid/releases/tag/v13.0.1",
+      "https://github.com/advisories/GHSA-w5hq-g745-h8pq"
+    ],
+    "installed": [
+      {
+        "value": "uuid",
+        "children": {
+          "ID": 1119441,
+          "Issue": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+          "URL": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+          "Severity": "moderate",
+          "Vulnerable Versions": "<11.1.1",
+          "Tree Versions": [
+            "3.4.0",
+            "7.0.3"
+          ],
+          "Dependents": [
+            "@expo/ngrok@npm:4.1.3",
+            "xcode@npm:3.0.1"
+          ]
+        }
+      }
+    ],
+    "input": "v3/v5/v6 API call with too-small output buffer or invalid offset.",
+    "disposition": "Defer: xcode and optional ngrok call v4() without an output buffer. The affected API call is absent; moving these old consumers to uuid 11 would cross major versions without fixing a used operation."
+  }
+]

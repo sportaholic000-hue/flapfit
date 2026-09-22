@@ -1,0 +1,10 @@
+PASS src/services/privacy/__tests__/startupGameEntry.test.tsx (41.86 s)
+PASS src/services/privacy/__tests__/localAgeAnswer.test.ts
+PASS scripts/launch-competition.test.js (7.253 s)
+PASS src/services/privacy/__tests__/gameEntry.test.ts
+
+Test Suites: 4 passed, 4 total
+Tests:       63 passed, 63 total
+Snapshots:   0 total
+Time:        60.486 s
+Test results written to: ..\..\..\..\..\Documents\Codex\2026-09-21\can-you-ch\work\prebuild-audit\continuation\focused-results.json

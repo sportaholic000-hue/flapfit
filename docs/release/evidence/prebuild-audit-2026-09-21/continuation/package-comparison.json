@@ -1,0 +1,1542 @@
+[
+  {
+    "file": ".easignore",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": ".gitattributes",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": ".yarn/patches/decode-uri-component-npm-0.2.2-flapfit.patch",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": ".yarn/patches/expo-sms-npm-57.0.2-32281c0cc4.patch",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": ".yarn/patches/react-native-google-mobile-ads-npm-16.5.0-flapfit.patch",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": ".yarnrc.yml",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/.eas/workflows/register-apple-test-devices.yml",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/.easignore",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/.env.example",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/app.config.js",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/app.json",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/adaptive-icon.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/kiwi/stage-01.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/kiwi/stage-02.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/kiwi/stage-03.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/kiwi/stage-04.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/kiwi/stage-05.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/kiwi/stage-06.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/kiwi/stage-07.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/kiwi/stage-08.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/kiwi/stage-09.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/kiwi/stage-10.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/onyx/stage-01.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/onyx/stage-02.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/onyx/stage-03.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/onyx/stage-04.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/onyx/stage-05.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/onyx/stage-06.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/onyx/stage-07.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/onyx/stage-08.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/onyx/stage-09.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/onyx/stage-10.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/pearl/stage-01.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/pearl/stage-02.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/pearl/stage-03.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/pearl/stage-04.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/pearl/stage-05.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/pearl/stage-06.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/pearl/stage-07.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/pearl/stage-08.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/pearl/stage-09.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/pearl/stage-10.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/ruby/stage-01.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/ruby/stage-02.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/ruby/stage-03.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/ruby/stage-04.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/ruby/stage-05.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/ruby/stage-06.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/ruby/stage-07.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/ruby/stage-08.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/ruby/stage-09.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/ruby/stage-10.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sky/stage-01.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sky/stage-02.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sky/stage-03.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sky/stage-04.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sky/stage-05.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sky/stage-06.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sky/stage-07.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sky/stage-08.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sky/stage-09.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sky/stage-10.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sunny/stage-01.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sunny/stage-02.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sunny/stage-03.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sunny/stage-04.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sunny/stage-05.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sunny/stage-06.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sunny/stage-07.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sunny/stage-08.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sunny/stage-09.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/sunny/stage-10.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/violet/stage-01.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/violet/stage-02.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/violet/stage-03.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/violet/stage-04.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/violet/stage-05.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/violet/stage-06.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/violet/stage-07.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/violet/stage-08.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/violet/stage-09.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/evolution/violet/stage-10.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/exercises/biceps.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/exercises/lateral-raise.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/exercises/pullups.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/exercises/pushups.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/exercises/shoulder-press.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/exercises/squats.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/favicon.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/flapfit-splash-logo.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/icon.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/images/splash-icon.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/mediapipe/pose_landmarker_lite.task.mpasset",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/mediapipe/vision_bundle.mjs.mpasset",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/assets/mediapipe/vision_wasm_internal.js.mpasset",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/assets/mediapipe/vision_wasm_internal.wasm.mpasset",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/assets/mediapipe/vision_wasm_nosimd_internal.js.mpasset",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/assets/mediapipe/vision_wasm_nosimd_internal.wasm.mpasset",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/babel.config.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/config/admob-skadnetwork-ids.json",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/design/evolution/EvolutionAssetProcessor.cs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/design/evolution/EvolutionAssetProcessor.dll",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/design/evolution/New-EvolutionContactSheet.ps1",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/design/evolution/Test-EvolutionAssets.ps1",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/design/evolution/build-evolution-assets.ps1",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/design/evolution/preview-sunny-stages-01-10.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/design/evolution/source/legend-stage-10-chroma.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/design/evolution/source/stages-01-09-sprite-chroma.png",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/eas.json",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/expo-env.d.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/global.d.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/index.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/index.web.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/jest.setup.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/metro.config.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/__tests__/app-transaction.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/__tests__/bridge.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/app-transaction.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/app.plugin.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/expo-module.config.json",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/index.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRange.podspec",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRangeModule.swift",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAppTransactionBridge.swift",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/src/appTransactionTypes.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/src/gates.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/src/normalize.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/modules/flap-fit-age-range/src/types.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/package.json",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/plugins/with-share-return.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/plugins/withAdMobPrivacy.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/plugins/withRevenueCatProcessing.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/native/textinput.native.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/web/SafeAreaView.web.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/web/alerts.web.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/web/camera.web.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/web/haptics.web.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/web/linking.web.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/web/refreshControl.web.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/web/safeAreaContext.web.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/web/scrollview.web.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/web/statusBar.web.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/web/tabbar.web.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/polyfills/web/webview.web.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/postcss.config.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/script/build_and_run.sh",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/scripts/ad-sdk-lifecycle.test.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/check-release-links.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/eas-build-post-install.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/launch-competition.test.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/patch-admob-privacy.cjs",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/scripts/patch-revenuecat-processing.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/retain-ios-archive.cjs",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/scripts/retain-ios-archive.test.js",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/scripts/share-return.test.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/start-expo-go.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/test-admob-privacy-native.cjs",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/scripts/test-admob-privacy-patch.cjs",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/scripts/test-revenuecat-processing-native.cjs",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/scripts/test-revenuecat-processing-patch.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/validate-monetization-config.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/validate-monetization-config.test.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/validate-privacy-manifest.cjs",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/scripts/validate-release-config.cjs",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/scripts/validate-store-assets.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/validate-tracker-release.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/validate-tracker-release.test.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/scripts/verify-live-competition.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/app/(tabs)/_layout.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/app/(tabs)/compete.tsx",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/app/(tabs)/index.tsx",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/app/(tabs)/info.tsx",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/app/(tabs)/levels.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/app/(tabs)/stats.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/app/+not-found.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/app/_layout.tsx",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/app/game.tsx",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/app/index.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/app/onboarding.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/components/AppErrorBoundary.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/components/BirdAvatar.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/components/GameEligibilityGate.tsx",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/components/KeyboardAvoidingAnimatedView.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/components/PrivacyChoices.tsx",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/components/__tests__/GameEligibilityGate.test.tsx",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/components/__tests__/RecordingCleanupRoot.test.tsx",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/config/release.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/__tests__/competition-terms-action.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/__tests__/competitionApi.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/__tests__/monetization.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/__tests__/recordingCache.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/__tests__/resultAdGate.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/__tests__/revenueCatTestDiagnostics.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/__tests__/settingsPermissionRecovery.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/__tests__/videoSharing.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/competitionApi.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/monetization/index.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/monetization/resultAdGate.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/monetization/revenueCatTestDiagnostics.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/appleAgeControl.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/appleRescission.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/europeanProviderProcessing.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/gameEntry.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingPolicy.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/localAgeAnswer.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/newYorkClarification.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/privacyCountry.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/privacyStartup.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/processingPolicy.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/regionalClarification.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/regionalPolicy.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/releaseEligibility.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/startupGameEntry.test.tsx",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/umpPrivacyControls.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/umpProcessingControls.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/__tests__/umpStoredSignals.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/appleAgeControl.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/appleRescission.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/europeanProviderPolicy.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/europeanProviderProcessing.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/gameEntry.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/launchProcessingControl.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/launchProcessingPolicy.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/localAgeAnswer.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/newYorkClarification.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/postGamePrivacy.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/privacyCountry.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/privacyRights.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/privacyStartup.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/processingAccess.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/processingAvailability.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/processingNotice.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/processingPolicy.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/regionalAdvertising.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/regionalClarification.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/regionalPolicy.README.md",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/regionalPolicy.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/releaseEligibility.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/retryGameEligibility.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/umpPrivacyControls.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/privacy/umpStoredSignals.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/recordingCache.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/services/settingsPermissionRecovery.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/services/videoSharing.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/bird-stage-assets.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/camera-preview.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/competition-profile-reset.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/continuous-gameplay.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/evolution-core.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/fixtures/chromium-audio-duration-defect.mp4",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/fixtures/chromium-duration-defect.mp4",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/form-tracking.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/game-modes.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/level-rules.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "byte-equal"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/mediapipe-recovery.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/pullup-elbow-clearance.test.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/pullup-gameplay-flow.test.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/pullup-grab-entry.test.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/pullup-standing-reach.test.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/pullup-support-reference.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/pullup-top-entry.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/pullup-top-first.test.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/pullup-top-reference.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/recording-boundaries.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/recording-mp4.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/stats-history.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/__tests__/store-hydration.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/achievements.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/birdStageArt.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/birdVisual.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/birdVisual.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/birdWebAsset.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/birdWebAsset.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/birds.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/exerciseImages.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/game-web-navigation.test.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/game-web-navigation.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/gameHtml.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/gameModes.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/html/scriptCore.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/html/scriptFormTracking.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/html/scriptGame.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/html/scriptPullupSupport.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/html/scriptRecordingMp4.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/levels.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/mediapipeAssets.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/store.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/src/utils/game/testUtils/pullupGameplayHarness.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/tailwind.config.js",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "apps/mobile/tsconfig.json",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "package.json",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "services/apple-verifier/apple-roots.json",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "services/apple-verifier/package-lock.json",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "services/apple-verifier/package.json",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "services/apple-verifier/server.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "services/apple-verifier/server.test.cjs",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "supabase/config.toml",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "supabase/functions/flapfit-game/index.ts",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  },
+  {
+    "file": "yarn.lock",
+    "gitBlobMatches": true,
+    "comparison": "LF-worktree-versus-CRLF-package"
+  }
+]

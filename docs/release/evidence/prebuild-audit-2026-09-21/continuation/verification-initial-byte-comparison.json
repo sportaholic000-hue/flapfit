@@ -1,0 +1,603 @@
+{
+  "date": "2026-09-22T00:37:13.015Z",
+  "head": "e9acd2d8a8d359b3c24c3cb1bd48487e62bc6d1d",
+  "codeEquivalentTo": "2f9b8a33404c9ed2eb809d03e41cbff8055e6a01",
+  "codeDiffEmpty": true,
+  "checks": [
+    {
+      "name": "focused-regressions",
+      "exit": 0
+    },
+    {
+      "name": "typecheck",
+      "exit": 0
+    },
+    {
+      "name": "lint",
+      "exit": 0
+    },
+    {
+      "name": "production-config",
+      "exit": 0
+    }
+  ],
+  "priorMobileTests": {
+    "suites": 68,
+    "passed": 1429,
+    "failed": 0,
+    "success": true
+  },
+  "priorBackendTests": {
+    "apple": 39,
+    "competitionSql": 3,
+    "failed": 0
+  },
+  "sourcePackageFilesCompared": 308,
+  "packageByteMismatches": [
+    {
+      "file": ".yarn/patches/decode-uri-component-npm-0.2.2-flapfit.patch",
+      "hash": "8205dd3564af0d958ccf9034df81f3d36095b91d2a88765374caae47b0a5eeb7"
+    },
+    {
+      "file": ".yarn/patches/expo-sms-npm-57.0.2-32281c0cc4.patch",
+      "hash": "f16d26c32bb2bff3d79a01b02de0a0299c05de3b14c761c25e4925a430f02a9a"
+    },
+    {
+      "file": ".yarn/patches/react-native-google-mobile-ads-npm-16.5.0-flapfit.patch",
+      "hash": "1e24b208c0bf2ae2c126f497cbf07f41250581c007ace2bf9a84fa1c3da01d5f"
+    },
+    {
+      "file": ".yarnrc.yml",
+      "hash": "52d8c88a00f313398c76e12fbd086245628f7a25a597e1ae4ba6dfaf477dd325"
+    },
+    {
+      "file": "apps/mobile/.eas/workflows/register-apple-test-devices.yml",
+      "hash": "f4cd9cf6460d68d0f0f23b58798387c1a885c6b09d15f7852f01d8c85f255822"
+    },
+    {
+      "file": "apps/mobile/.env.example",
+      "hash": "fdcaf50fb0212748e6cd6309ff43f7381ac320517ecaf615af4882cf3cf331fc"
+    },
+    {
+      "file": "apps/mobile/assets/mediapipe/vision_bundle.mjs.mpasset",
+      "hash": "e77f281f9619150d937023c355bae170e9120e3b9e43f1e23a2a7bee07197669"
+    },
+    {
+      "file": "apps/mobile/assets/mediapipe/vision_wasm_internal.js.mpasset",
+      "hash": "9440cf0cc0cea21800e31581ec32aeedcc5fbf9df4509796bbc7d3f99e52ab9c"
+    },
+    {
+      "file": "apps/mobile/assets/mediapipe/vision_wasm_nosimd_internal.js.mpasset",
+      "hash": "abe9b6fbeaf86fcb53a5edce3926c82ccb0619e18fed4d9d9ce561ee7f55e054"
+    },
+    {
+      "file": "apps/mobile/babel.config.js",
+      "hash": "aa5baa1726a0d5caad8574ab6589e104ebea74cda47206c04e43fde1d3b48c96"
+    },
+    {
+      "file": "apps/mobile/config/admob-skadnetwork-ids.json",
+      "hash": "8939f515c5733e30516641967b56dd9ce9c674f75de4e9a698fa4553d8cb9899"
+    },
+    {
+      "file": "apps/mobile/design/evolution/EvolutionAssetProcessor.cs",
+      "hash": "c9d1d265c78529c4282d0b16293e4beb30fd1cdcdb47588c0f6a11e39c287060"
+    },
+    {
+      "file": "apps/mobile/design/evolution/New-EvolutionContactSheet.ps1",
+      "hash": "9026d7e5255adc87ae889f917713d29433dc6c7d965bc61517fcc068a5fd8912"
+    },
+    {
+      "file": "apps/mobile/design/evolution/Test-EvolutionAssets.ps1",
+      "hash": "272540bac54771cd7cba521ab1462e761e0c4bab771d06829cca948f30590a77"
+    },
+    {
+      "file": "apps/mobile/design/evolution/build-evolution-assets.ps1",
+      "hash": "0320ad1d99ace845808e1c19a85028f9a31eab42981826c405773bad423a2d0d"
+    },
+    {
+      "file": "apps/mobile/expo-env.d.ts",
+      "hash": "6fc02634da46d3edc5a88eec9173ba6bf709726be3cba83c73ebd8e859d5c147"
+    },
+    {
+      "file": "apps/mobile/global.d.ts",
+      "hash": "acdcf4b4afaf4ffa81e9ba16d2644dc7b32b954847bcbd3248a95d8f7ceafe55"
+    },
+    {
+      "file": "apps/mobile/index.tsx",
+      "hash": "c7322d3a8716f4314709acaa9b0a5fdee1a87011a7b045af879c526f34529012"
+    },
+    {
+      "file": "apps/mobile/index.web.tsx",
+      "hash": "b2e084da15050c935582a0054dc66064e0a32b5ad6e5cc04c6f62e627d3bf672"
+    },
+    {
+      "file": "apps/mobile/jest.setup.cjs",
+      "hash": "ce5b518f7d41d3bf167d51f695e154c450d520b4a2b9e14dac5af2228ce587f4"
+    },
+    {
+      "file": "apps/mobile/metro.config.js",
+      "hash": "9313b8e9f48fe1f7376927a8ca9c37e1d6ed184a2cbb49a1ca12407ea3d62116"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/__tests__/app-transaction.test.ts",
+      "hash": "3bf18864ca93b4421b879c316b6d385e33de6c5d505b00131234b13ed7019f4e"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/__tests__/bridge.test.ts",
+      "hash": "ff31ae689c306afae28d6fab4037a7e054b768abe6b21a5b0284f7493d1fc2c7"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/app-transaction.ts",
+      "hash": "0853c7a19031d8f44911c48951caf2a54134b820fafc831b1338e504d7752128"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/app.plugin.js",
+      "hash": "00e7db22d4994f3a35cfc46c1ac522288642e892a909cc8e1ce04d98ce74cf61"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/expo-module.config.json",
+      "hash": "f171309abc175933665370250c8e5db6312c90cdf2fe4c5724bffbecffb5d40c"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/index.ts",
+      "hash": "496e5bb33b1082ab03515c3ad18ffbde14519f3054e330f5121249ee02f486f3"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRange.podspec",
+      "hash": "334119e6c6596cbd26bafa6998c2e034ff251b180c4c347e364d5e330789fee6"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAgeRangeModule.swift",
+      "hash": "acfbaf771ecab4f11ea8232b816277fe4b410a87ebc703d7e213f05dab5a5bf4"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/ios/FlapFitAppTransactionBridge.swift",
+      "hash": "a5d7ea04d06cb98b2e4244b508b2fb6912fed8113ea682f359a8caed5544f779"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/src/appTransactionTypes.ts",
+      "hash": "43d0edb4c27cb54df9111be60d92622498263e4ae00e92b0c46fca8c28d6f028"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/src/gates.ts",
+      "hash": "18acd65355c060cf7f6d2fb3996d04c2395353001e65b46ce05b7f3f84a21d8b"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/src/normalize.ts",
+      "hash": "b38c0afd755fe3466d9b56d36eaab93fd85a8f03bd1d4b90e9a7298c61ebd359"
+    },
+    {
+      "file": "apps/mobile/modules/flap-fit-age-range/src/types.ts",
+      "hash": "55ef8e87dfd5bf89fdb4545e6dd50a0950bad377fa0e355c0e2e78bafd0ffd28"
+    },
+    {
+      "file": "apps/mobile/plugins/with-share-return.cjs",
+      "hash": "4802719a24253ae5d2e20a873a096bba08c6a3799d575f8001a2ded400807927"
+    },
+    {
+      "file": "apps/mobile/plugins/withAdMobPrivacy.cjs",
+      "hash": "b786f790f603db6dbdb1a37e1bfb3fc0a95604eacbbd487f79a0c84405bd81d7"
+    },
+    {
+      "file": "apps/mobile/plugins/withRevenueCatProcessing.cjs",
+      "hash": "63828aa2f5f881dd87795e25bdd81a9d9a3b97fafc3f804c5fa7484e31fd70fc"
+    },
+    {
+      "file": "apps/mobile/polyfills/native/textinput.native.tsx",
+      "hash": "f99d5a55f5ccc4d7b8017990313b0f6477c505a6e09368c2ae9b38af8a524070"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/SafeAreaView.web.tsx",
+      "hash": "e663cc0aadce2d118a64c7347c1c34363b0cd58f764d26fedc7582ce38333f8f"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/alerts.web.tsx",
+      "hash": "de6b9688a99dad779d5a9fc819e99de53679f789dd604de4e544a41fbde1b884"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/camera.web.tsx",
+      "hash": "29e592cc4531d3dd701af235717bc2edfddd3e2aa2c32b81cd496032a328d2cb"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/haptics.web.ts",
+      "hash": "58f50f925abf7d70edf108bb40d436ccbe28d99691eeed0dc2b180441cd48d45"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/linking.web.ts",
+      "hash": "e7414bb7377585f132a31e49a3bf66d8492eca23d27548d8f7ab87ef7f9ee279"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/refreshControl.web.tsx",
+      "hash": "d338f2689e01e2950929145012d98469ca1390731f48d9f31a8beae30d336f93"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/safeAreaContext.web.tsx",
+      "hash": "6830fc262474fee50687475d37f80f16365e1b70199118bacb4c0509228e3125"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/scrollview.web.tsx",
+      "hash": "df2ae81dc289a58b8d62151907857228131afe2206b1e8c3be29fdc29ac3584d"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/statusBar.web.tsx",
+      "hash": "a8d3efce68388ee908536a4e6379f01172a7eb2c1a84e34c99f85519247f8eaf"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/tabbar.web.tsx",
+      "hash": "c244e4d4d57a1774750dfab84e5c39b6dc20811e30fad562cd3264190db1c00c"
+    },
+    {
+      "file": "apps/mobile/polyfills/web/webview.web.tsx",
+      "hash": "fc72c8144e036785f5d34ab96e96d24c6b476a82e07c6d57628354cebf7963d5"
+    },
+    {
+      "file": "apps/mobile/postcss.config.js",
+      "hash": "fa650b380adfabb151a0b352f7135e107e6352345f899060f1c5c231228f94bf"
+    },
+    {
+      "file": "apps/mobile/scripts/ad-sdk-lifecycle.test.js",
+      "hash": "18a0db0697c3e6cdcb4926115d350799130dd2ab2f5dccd972c8a3f28ab4bfd3"
+    },
+    {
+      "file": "apps/mobile/scripts/check-release-links.cjs",
+      "hash": "0e7a2b31bee75e77bfdc6aff44ba389f86fb60455bdc6ed95cd1b977fdf86384"
+    },
+    {
+      "file": "apps/mobile/scripts/eas-build-post-install.cjs",
+      "hash": "8a8caf6d4f5e18a0e534045424234e068c0d523a293f0f59a020b20dad100801"
+    },
+    {
+      "file": "apps/mobile/scripts/launch-competition.test.js",
+      "hash": "a24be781f1c7fa84d38cc6d91449c68e2c30bc357e2eeb19296d92c81a8c4a4f"
+    },
+    {
+      "file": "apps/mobile/scripts/patch-revenuecat-processing.cjs",
+      "hash": "de3506fa18f74ca10ca16772d38ae95e0d06c0e524c6b2fb70d7f3142efc69bc"
+    },
+    {
+      "file": "apps/mobile/scripts/share-return.test.js",
+      "hash": "e605659c4128dc1f0f2b40e7ce8a4d98d9eaad6e12abbf5fa7bd7ceb20f39cf6"
+    },
+    {
+      "file": "apps/mobile/scripts/start-expo-go.cjs",
+      "hash": "c57b23032f89c2fa82eddb3c5d3b67f90bded2868c8ba03cd6f6b367cca25c46"
+    },
+    {
+      "file": "apps/mobile/scripts/test-revenuecat-processing-patch.cjs",
+      "hash": "7f244c2461d71827a8e6f6816a395fb43d4ea4c57bd0fb1da68f4f9b3ec683dd"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-monetization-config.cjs",
+      "hash": "5bb4757fdf2feb54ba7b35d61fe64f0fd920e12062107a38cb6056e7365ba6da"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-monetization-config.test.js",
+      "hash": "6ca938d339088acf1e4c0ce9c3f38d17eebb2c140b075a8bfbc324f1f719f137"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-store-assets.cjs",
+      "hash": "fc63b668dd22872aa18218df2d7971d147ebc29cffe2ad2eaccb519ec72ab74e"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-tracker-release.cjs",
+      "hash": "cc242c34a9a40859c036cda87fadc872c537665a2918c70ec28db4f8ae42dd5e"
+    },
+    {
+      "file": "apps/mobile/scripts/validate-tracker-release.test.js",
+      "hash": "218caea9249b1b3d7ec95a2f5bb04b5d178fc50e69f91422e92b545642fb2a47"
+    },
+    {
+      "file": "apps/mobile/scripts/verify-live-competition.cjs",
+      "hash": "fb91d64b9ed7ec428c033edb600eb24de3c97674252da8d0abe98687dd74c28b"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/_layout.tsx",
+      "hash": "0c46905b259eea011b0b683cad486fdbf3f765df89424b9faeb69701d9f39e45"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/levels.tsx",
+      "hash": "02ec170d4cdcdc40d4927404a6a31379718b800d4e9afec14417eb4ed449d2c4"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/stats.tsx",
+      "hash": "f35fe6e34c7cc3c64398cfafcd570f469f3f0745f9441f53d30a8781ce0a9d8a"
+    },
+    {
+      "file": "apps/mobile/src/app/+not-found.tsx",
+      "hash": "843ea9a1f36dae95ae362a42c6a54eb15a76466284563b4bf07489cf1180d03c"
+    },
+    {
+      "file": "apps/mobile/src/app/index.tsx",
+      "hash": "e87a6870c99c019e1785233a8df7cf6379fefe1b3c3f2f8ecce4012323d3c31e"
+    },
+    {
+      "file": "apps/mobile/src/app/onboarding.tsx",
+      "hash": "ad1f2c2d63909160660aa95df0b230d5e726eda6eba8a345797d9059f269cfbe"
+    },
+    {
+      "file": "apps/mobile/src/components/AppErrorBoundary.tsx",
+      "hash": "6db6288c75ee591821efd94e09d3398ee1f1ebbcd5c06775277f3fd68cd8d824"
+    },
+    {
+      "file": "apps/mobile/src/components/BirdAvatar.tsx",
+      "hash": "0348a1602c3de7735bf653682bd328e29ba940e13bb9de2f57244b051dd2b85d"
+    },
+    {
+      "file": "apps/mobile/src/components/KeyboardAvoidingAnimatedView.tsx",
+      "hash": "7c6daace5373e84917473f32f1f8fd4eaff82a6f1cbab03036d384d6754a952e"
+    },
+    {
+      "file": "apps/mobile/src/config/release.ts",
+      "hash": "87eb8dd112264b11c4128bac60ba719ae636d3cba30b1665ee9fb10e3cb9775e"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/competitionApi.test.ts",
+      "hash": "daa5075637addb7376de78fdadc3cf6cedf786641e7852554a33ef0314e58755"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/settingsPermissionRecovery.test.ts",
+      "hash": "ec5dbe8396f2d006cd7729ecc91e814991a69631281f0613d480b854b5455dbb"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/videoSharing.test.ts",
+      "hash": "d17d94de2fdf29b9eed4c08ae1513edec3e49e335bd65169de467f4e103e9ed3"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/appleAgeControl.test.ts",
+      "hash": "71e5527a6d8466eb83014429f502137d85bc9bf62cb0812a56630307e9b3ab86"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/appleRescission.test.ts",
+      "hash": "c1b2fe0c7d379869944a04fb19a3ed59932500acac15a61ebbcd5a2588fbb1f4"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/gameEntry.test.ts",
+      "hash": "59b9133a137691ed5719c57c4cf0c7171a2a921c496a4945662de25149319deb"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/localAgeAnswer.test.ts",
+      "hash": "5ae35f470f95008fb76ab0d242bd0c1b855b258ba0a225a7362d118e2e8dc903"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/processingPolicy.test.ts",
+      "hash": "6cf611794a4b8e93a177bc01e6553629e11288a1c168b5f0a75dcce8f84b5306"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/startupGameEntry.test.tsx",
+      "hash": "94336124e9e85cf9c788ac08002d8b97e651436ee6528b3b1ce12e5da0d1819e"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/umpPrivacyControls.test.ts",
+      "hash": "244f6c16a1e1eaf66932545e04bfbd4b41757752c4043a52fe502ee7c53b49ea"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/appleRescission.ts",
+      "hash": "c447733b5bd21cb905088af8c5bb134f607ac63f49fe8d8b581fb0c2e444b3ea"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/gameEntry.ts",
+      "hash": "55d6c8a1385b52adc178004904d739a7a1eff7865c16075b489dd2cf0ca286ad"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/localAgeAnswer.ts",
+      "hash": "3fa1dd5c1b1fb210af007c7885e9ed23b52e341a9047f6b325792875cd2770bf"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/regionalPolicy.ts",
+      "hash": "e5ab67bc59fda1e6e39ae026e14dabdfda3619f68c393f1aa51cc2ec4515a744"
+    },
+    {
+      "file": "apps/mobile/src/services/settingsPermissionRecovery.ts",
+      "hash": "d3b93beefe1b6bd3e192634cd0cf263d8d25bc610bf133cb6748488a816d039e"
+    },
+    {
+      "file": "apps/mobile/src/services/videoSharing.ts",
+      "hash": "c32c0c74ec943414bdf4fbe86d9586f7056e02bd18ff637f3043ed6abf36c176"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/bird-stage-assets.test.ts",
+      "hash": "2ea4dc8e44c36f77472af882699156e4e31e97ac52ffb3d36dffc5417df6f6d8"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/competition-profile-reset.test.ts",
+      "hash": "dd3db45ac48d07948d90e6e775243c69f33bab330437429ef94ed9c935b958ba"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/continuous-gameplay.test.ts",
+      "hash": "07f755f1947a3f965e2346c28fc45de9728811fd705e3e6cc130e94fb1c64063"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/evolution-core.test.ts",
+      "hash": "be990a38183a1207930f3b1ab722aa365827161a935b0d5ff990879b26e2f468"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/form-tracking.test.ts",
+      "hash": "38906991cb3611ddb4ba7a37a8b9015dcea52ffa0429d047627535d05929d0e6"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/game-modes.test.ts",
+      "hash": "255706c52a212e92dc96d4bf2de65388017185f9f564e032a017f8bbdc52b507"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/mediapipe-recovery.test.ts",
+      "hash": "421b843d39e4f4a3bf941e9c07a3a1727bf8fc70352c941dc25d9c0c8a0a1cbe"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-elbow-clearance.test.js",
+      "hash": "96375f352a0918b471b1b8739ef90cc39a0a6af80def5a38d03f75535bd54636"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-gameplay-flow.test.js",
+      "hash": "53c52abcf2b5d8c51784789d15de33a4d0db890352a2c056f020f9fd6e83d3a5"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-grab-entry.test.js",
+      "hash": "772956a1bdb12cd56817898337e9681fcc5a4e4cbf9edd0c370f2d2e86b6b1b8"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-standing-reach.test.js",
+      "hash": "303ac9ba0278250c42dc87d73e5f03854b5d214b5bb3cc7ea45dab9ecb4cc71f"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-support-reference.test.ts",
+      "hash": "6309ac95220411110750a94e3f43952c7f1eb56fd3e696117081318c331c85d1"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-top-entry.test.ts",
+      "hash": "9a1837268b2ed615a0e72c577f714eb74915535f78298bb5bb5d3f0cb69cb5d5"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-top-first.test.js",
+      "hash": "18aaecc89c6547bbc0f1a6acdbf8a537c442b7d4c87c54719c674845aee3928f"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/pullup-top-reference.test.ts",
+      "hash": "f4ee76b8097015934e1942a9043065d090639620f0c41357a2007fec7eb8ddb9"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/recording-boundaries.test.ts",
+      "hash": "e6c816d630d6d4e72c8bc1b208449921ffa46c4ab1e8d6591f19164abe40c174"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/recording-mp4.test.ts",
+      "hash": "d66de32f3b9c35ef3c014d7b676aecff666bc7f6925264eccc41411512a4ccf0"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/stats-history.test.ts",
+      "hash": "343dc5495b6943349d1297056621a73f6e7215352e8747b403d0e39b0ca46d23"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/store-hydration.test.ts",
+      "hash": "4be4fe6304fe99c573df47e1c129bec37b75f1004d6ad0b392e918050b64c0bc"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/achievements.ts",
+      "hash": "8a6c015405771fd02e96a2d1a6d3a23ac315f863c43a5c8166413eec22b00fe6"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birdStageArt.ts",
+      "hash": "b625c99c39a51422385002b2c1a5cd060f4033cd3f95bdc38c670780c7d90bce"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birdVisual.test.ts",
+      "hash": "c0497f511159fe58fddc9fabc822ed10f55f1a3e22106bc04a6698e502435fd1"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birdVisual.ts",
+      "hash": "042443e77555bc3b11aa941fc0d7ba979cf49eab178a898ad5d753fdb2bfc8fd"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birdWebAsset.test.ts",
+      "hash": "7c2378d4be19f51657a248c66fe17913c5b3718572f7799bc0dae8ad3e196104"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birdWebAsset.ts",
+      "hash": "25a5db0714ec90d4e9347fdc6134da2986ffe7c2eac5d65d83614e1261cb5b85"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/birds.ts",
+      "hash": "da24960398adb94844d1d7505ffe562541108041d993505dc7a9ccb721ee3e1a"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/exerciseImages.ts",
+      "hash": "0c970371500a7dea2c874ff250bede996732a0ee5aba7792a795bde5c5f158ce"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/game-web-navigation.test.ts",
+      "hash": "31c8e6079f180e8863f82ba39630c43820dd8e1ba2932067f37ccd049d28baa5"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/game-web-navigation.ts",
+      "hash": "34b58181a1539fd28c391529f30efc6820b7556c465913baca5b0c58ddfcdbd2"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/gameHtml.ts",
+      "hash": "1b5b84108766e65cdb5baae527fe4c0b6cb3331b5d5a3271c70cfcc995273373"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/gameModes.ts",
+      "hash": "58747d768b12b8f3f6a720c33a5b7426afc86f6d7ed50ad002cb04e9402126f5"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptCore.ts",
+      "hash": "ba12862d9192d97ae6f374de0c6c7f16705d976eb45518e03c50cfd9ee585e24"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptFormTracking.ts",
+      "hash": "d0dabe46f881fae43aff784a5f0c4543c9a0c0236cad954546ca51d4811821bf"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptGame.ts",
+      "hash": "55055246457ab00d2ca76296c9c63655af80e694068cf142ba00bc088dc23d37"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptPullupSupport.ts",
+      "hash": "dc3cd6397ab3f4f69601142505d14286a49f2b4fdd2d021ce812136131b19baf"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptRecordingMp4.ts",
+      "hash": "e4d5ab846558d9d6655892aa3ce58c4db0f867ae53e796ff1998adc1db8e2030"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/levels.ts",
+      "hash": "693492f1cfa0622a866ef9bfe0366da3a77997315d2e5aec67b836e8c9d5aa63"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/mediapipeAssets.ts",
+      "hash": "4e04d92254d63147163b0b5f7ba55cee613892c96890e086912043bb51162802"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/store.ts",
+      "hash": "de5d443cdc0db89c8578211b3bcaebc0b3c4078f5fd73b006087c9ed1c85edb1"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/testUtils/pullupGameplayHarness.js",
+      "hash": "bb2a0b0ad92ec7632d2401d12a54d5ab2f3230922e0c356e912b8c823d33ca96"
+    },
+    {
+      "file": "apps/mobile/tailwind.config.js",
+      "hash": "4bcdf129cccd951f82990323f7f09ec4a6f686263f811383a57d09d2fe51dab4"
+    },
+    {
+      "file": "apps/mobile/tsconfig.json",
+      "hash": "97f08eea973ea254e6486833d987b8b52ff0456b95135601238d9b8b5f32a7a5"
+    },
+    {
+      "file": "package.json",
+      "hash": "c4505fdef2a34c3ee80fad3200c01af2b508f19a7ced7310cb01b37a2044287f"
+    },
+    {
+      "file": "services/apple-verifier/apple-roots.json",
+      "hash": "252dd1b8aa2922fdf46802cefcff911a0ba74430d5252c35e24ee1f72e8f1026"
+    },
+    {
+      "file": "services/apple-verifier/package-lock.json",
+      "hash": "e35c8e717376392aa4bbfb0ea67140b1a23018235c2aef8b55b55d63ee0cc26d"
+    },
+    {
+      "file": "services/apple-verifier/package.json",
+      "hash": "05f7f31bbab214bdf6fdb7a61bca2a067061bc728eb39c733d6916c3469cb83e"
+    },
+    {
+      "file": "services/apple-verifier/server.cjs",
+      "hash": "2158af67c2ad7f779ad3246a0e725ab94cd556754433b8a98e9bc275bcac229b"
+    },
+    {
+      "file": "services/apple-verifier/server.test.cjs",
+      "hash": "5ae61e53b47967e5feb794d00d95563336567aec9c0c80f6fa9fb677cbd2cd63"
+    },
+    {
+      "file": "supabase/config.toml",
+      "hash": "1125aa53b8ed574608c52059ecbbfb9adfb991ed30f54416044ebb09406e976a"
+    },
+    {
+      "file": "supabase/functions/flapfit-game/index.ts",
+      "hash": "ce5ad11ef513d786914b16e4d5b3e7767f5f44346e704c96d02317f6f14cc1c0"
+    },
+    {
+      "file": "yarn.lock",
+      "hash": "70625858620f62b3811cf462ed0a605b25ce28c08cac0a030bfed450fb26ac6b"
+    }
+  ],
+  "notes": "No mobile binary generated. Existing full-suite/backend/native-patch evidence is reused only for unchanged inputs. Focused regressions rechecked current on-disk execution."
+}

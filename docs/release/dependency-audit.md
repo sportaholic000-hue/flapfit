@@ -60,3 +60,8 @@ Git-history scan, exhaustive entropy scan or a claim of zero vulnerabilities.
 The prior referenced-asset, production-entry, native-patch and packaged-validator
 evidence remains applicable to the unchanged compiled source. Full current
 results: evidence/current-release-integrity-2026-09-20.json.
+
+
+## September 21 completed per-advisory review
+
+The current disposition is [dependency-disposition-2026-09-21.md](dependency-disposition-2026-09-21.md): 28 affected rows, 18 distinct advisories. It replaces older generic monitoring language with installed versions, actual caller/input boundaries, individual fix/deferral decisions and publisher-linked fixed versions. The URI-decoder backport remains verified; no additional package was upgraded. Do not describe this scan as clean or infer an App Store blocker from tooling severity alone.

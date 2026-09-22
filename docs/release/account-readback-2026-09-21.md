@@ -54,3 +54,25 @@ Current-console access is no longer the reason provider settings are unresolved.
 Still outstanding: public listing/linkage and Google readiness review; inactivity risk until legitimate serving resumes; current Google crawl verification; appropriate store screenshots; real device ad/privacy/RevenueCat receipt; the specifically scoped withdrawal/support question in finding C; separately unverified backend Auth rate/spend settings; operational support/moderation evidence; and deployment of the local API fix when authorized. Console inspection does not resolve those by itself.
 
 No source tests were rerun for this documentation-only follow-up. The prior test evidence remains applicable to unchanged code. Only local documentation is committed; no push or deployment is part of this follow-up.
+
+
+## Supabase continuation — read-only, September 21, 2026
+
+Owner explicitly authorized read-only Supabase Auth/provider/rate/abuse/project-limit inspection after an initial automatic approval review misclassified dashboard access. Access then succeeded; this is no longer a barrier. Project yhrleungvipsqlmayrfg, organization Flap Fit, production main, AWS us-east-2 nano. No settings were saved.
+
+| Actual setting | Readback |
+| --- | --- |
+| New user signup / anonymous sign-in | Both enabled. |
+| Email provider / confirmation | Email enabled; Confirm email unchecked. The app itself uses anonymous signup. Social providers, including Apple, disabled; this is distinct from the app's custom Apple signed-transaction verifier. |
+| Manual identity linking | Off. |
+| Anonymous signup limit | 30 requests/hour per IP. |
+| Other Auth limits | Refresh 150/5 minutes/IP; token verification 30/5 minutes/IP; non-anonymous signup/sign-in 30/5 minutes/IP. IP forwarding switch off. |
+| Attack protection | CAPTCHA disabled; leaked-password protection disabled. No CAPTCHA token flow in current anonymous app sign-in. Enabling it alone could break Compete; no change made. |
+| Plan and overages | Free; September 14–October 14, 2026 cycle. Usage page says no quota exceeded and no overage billing; excess can cause restrictions. |
+| Usage | Database 0.027/0.5 GB (detailed maximum 26.23 MB); Edge Function invocations 550/500,000; egress 0.002/5 GB; cached egress 0/5 GB; MAU displayed 0/50,000; storage 0/1 GB; Realtime 0/200 peak and 0/2 million messages. Dashboard counts can lag; zero displayed MAU is not proof that no Auth users exist. |
+
+The 30/IP/hour limit bounds a single IP, not distributed abuse. Calibration occurs in the camera gameplay client; scripts can reach the public Auth endpoint without doing a workout. CAPTCHA is a provider-recommended defense, not an established Apple approval requirement or a required gameplay feature. Free-plan limits currently create an availability/usage concern rather than unbounded overage charges. Existing run caps do not stop fresh anonymous identities. There is no demonstrated current quota problem, and no production abuse test was sent. [Supabase anonymous-auth guidance](https://supabase.com/docs/guides/auth/auth-anonymous#security-and-abuse-prevention)
+
+Unused Email signup is an additional Auth resource surface; app-side anonymous-only checks do not disable that provider endpoint. Turning Email off could be reviewed as narrow hardening because the app does not use it, but the latest instruction permits inspection only. No silent provider/security change was made. Existing competition retention does not constitute automatic cleanup of all abandoned Auth users; do not delete such users indiscriminately, which could destroy legitimate anonymous account access.
+
+Fresh Supabase function readback also reconfirmed flapfit-game version 8 with JWT verification true and old source. Deployment preparation and rollback are in api-production-plan-2026-09-21.md. No deployment occurred. Existing AdMob/RevenueCat/ASC readbacks above remain the actual observed settings; this follow-up did not change or republish them. Store-capture work is excluded from this continuation.

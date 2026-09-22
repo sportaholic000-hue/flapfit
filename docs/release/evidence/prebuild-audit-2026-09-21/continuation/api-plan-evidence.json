@@ -1,0 +1,25 @@
+{
+  "status": "prepared-not-applied",
+  "project": "yhrleungvipsqlmayrfg",
+  "liveVersion": 8,
+  "liveVerifyJwt": true,
+  "baseline": "368f829e671a39aed32cd3bfb5debbf82e3ba916",
+  "testedSource": "2f9b8a33404c9ed2eb809d03e41cbff8055e6a01",
+  "files": [
+    {
+      "name": "flapfit-game/index.ts",
+      "sha256": "ce5ad11ef513d786914b16e4d5b3e7767f5f44346e704c96d02317f6f14cc1c0",
+      "liveSha256": "56d962031e1f371a520e5dc4036e4018544840684517d990773bd2987ebf2043",
+      "liveMatchesBaseline": true
+    },
+    {
+      "name": "_shared/apple-consent-competition.ts",
+      "sha256": "9471e0e00c6239275420d66dbce22a1b48e053f8cde6b6483e26ce12b346800f",
+      "liveSha256": "9471e0e00c6239275420d66dbce22a1b48e053f8cde6b6483e26ce12b346800f",
+      "liveMatchesBaseline": true
+    }
+  ],
+  "noMigration": true,
+  "noSecretChanges": true,
+  "noConfigChanges": true
+}

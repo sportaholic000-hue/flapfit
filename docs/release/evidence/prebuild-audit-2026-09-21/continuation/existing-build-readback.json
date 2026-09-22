@@ -1,0 +1,34 @@
+{
+  "inspectionDateLocal": "2026-09-21",
+  "timezone": "America/Halifax",
+  "source": "Authenticated EAS CLI build:list --platform ios --limit 10 --json --non-interactive; returned nine records; read-only",
+  "latestInternal": {
+    "id": "04cf2e97-63f0-43f2-af1a-0002414c9d13",
+    "status": "FINISHED",
+    "distribution": "INTERNAL",
+    "buildProfile": "ios-device-check",
+    "gitCommitHash": "f4b191dbda7eb17bcb5811cafb8c34eb9b7c6657",
+    "appBuildVersion": "4",
+    "createdAt": "2026-09-20T19:27:07.777Z",
+    "completedAt": "2026-09-20T19:35:20.05Z",
+    "localIpa": "C:/Users/money/Documents/Codex/2026-09-19/hop/work/FlapFit-task8-04cf2e97.ipa",
+    "recheckedSha256": "410c26d7765da88d07b903eb1257fb0e9da91b2389aa2fc7d4783231b61830c0",
+    "matchesExistingArtifactEvidence": true,
+    "currentMobileChangedFilesSinceSource": 48,
+    "sourceDevelopmentClient": false,
+    "expoUpdatesConfigured": false,
+    "installedDeviceBehaviorVerified": false
+  },
+  "latestStore": {
+    "id": "103c8936-9447-4190-a45b-6912b1027c69",
+    "status": "FINISHED",
+    "distribution": "STORE",
+    "buildProfile": "production",
+    "gitCommitHash": "c05f497180c89af21ddb9b9fe014e97e2a23b80a",
+    "appBuildVersion": "4",
+    "createdAt": "2026-09-20T09:52:30.11Z",
+    "completedAt": "2026-09-20T10:00:03.202Z",
+    "appStoreUploadProvenByThisRecord": false
+  },
+  "conclusion": "Available signed test artifact predates current source; no existing device launch/install failure established. A new authorized internal build is needed to test the current standalone app source. No build was created."
+}
