@@ -1,5 +1,9 @@
 # Flap Fit dual-store submission gates
 
+## Current device copy correction and review — September 22
+
+The installed tracker replacement exposed unapproved age/location advertising-outcome copy. [The neutral-copy correction and 83-state visual review](neutral-privacy-copy-2026-09-22.md) records the corrected source and preserved advertising rules. The installed build still needs a successor for those changes. Camera startup performance and the reported bird-response problem remain open; the tracker packaging check does not establish their acceptance.
+
 ## Current device failure and correction — September 22
 
 The owner's iPad exposed a tracker startup failure in build 8391a757. Three bundled JavaScript assets had CRLF-converted sizes that the runtime rejects. [The correction record](tracker-startup-correction-2026-09-22.md) supersedes the earlier tracker artifact acceptance. The fix preserves the exact bytes during EAS packaging and validates them before every build. The corrected [signed test build](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/c3a053bb-eaf4-4b25-a57b-641c9022ae9c) is complete and passes exact-byte source/IPA inspection. Physical iPad retest remains required. Current account readback: 10/15 free iOS builds used, $0.00 overage.

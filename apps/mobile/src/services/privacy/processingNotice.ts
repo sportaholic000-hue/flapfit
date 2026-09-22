@@ -1,8 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ageProcessingAvailability } from './processingAvailability';
 import { isRegionalAdvertisingDisabled } from './regionalAdvertising';
 import {
-  beginProcessingChoice, getProcessingAccess, getProcessingInputs, hydrateProcessingAccess, isProcessingChoiceCurrent, isCurrentProcessingSaveFailure,
+  beginProcessingChoice, getProcessingInputs, hydrateProcessingAccess, isProcessingChoiceCurrent, isCurrentProcessingSaveFailure,
   markProcessingNoticePresented, notifyProcessingChoiceIntent, setLaunchProcessingOptions, setProcessingChoice,
 } from './processingAccess';
 import { PROCESSING_NOTICE_VERSION, type Purpose } from './processingPolicy';
@@ -150,7 +149,6 @@ export function needsSeparatePurposeChoice(purpose: 'ads' | 'analytics'): boolea
 
 export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
   const input = getProcessingInputs();
-  const decision = purpose === 'ads' ? getProcessingAccess().ads : getProcessingAccess().revenueCat;
   if (isProcessingAllowPending(purpose)) return 'Allow request pending · you can stop it before confirmation';
   if (purpose === 'ads' && input.choices.ads.decision === 'denied') {
     const withdrawal = getAdvertisingWithdrawalState();
@@ -169,20 +167,10 @@ export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {
   }
   if (!input.hydrated) return 'Saved privacy choices are unavailable · retry loading';
   if (input.choices[purpose].decision === 'denied') return 'Off by your choice';
-  if (isRegionalAdvertisingDisabled(input)) return 'Off for your regional privacy setting. Gameplay remains available.';
-  const ageAvailability = ageProcessingAvailability();
-  if (ageAvailability) return ageAvailability;
-  if (decision.allowed) return purpose === 'ads' ? 'Permitted · Google choices also apply' : 'On';
-  if (needsSeparatePurposeChoice(purpose)) return 'Your permission is needed';
-  if (decision.reason === 'notice-needed') return 'Available after this notice';
-  if (decision.reason === 'parent-permission-required') return 'Unavailable: verified parent or guardian permission is required. Flap Fit does not collect that permission.';
-  const reason = input.launch?.resolution?.reasons[purpose];
-  if (reason === 'connecticut-reporting-not-necessary') return 'Reporting is unavailable for this age and Connecticut privacy setting';
-  if (reason === 'connecticut-ad-necessity-unresolved') return 'Advertising is unavailable for this age and regional privacy setting';
-  if (reason === 'province-unresolved') return 'Review Province privacy rules in this section';
-  if (reason === 'state-unresolved') return 'Review State privacy rules in this section';
-  if (decision.reason === 'age-unresolved') return 'Unavailable until age eligibility can be confirmed';
-  return 'Waiting for applicable age and privacy checks';
+  // Report explicit privacy choices only. Age/location policy decisions must not
+  // become an advertising-outcome hint beside the questions or saved answers.
+  if (purpose === 'analytics' && input.choices.analytics.decision === 'granted') return 'Reporting permission saved';
+  return '';
 }
 
 export function canPresentProcessingNotice(): boolean {

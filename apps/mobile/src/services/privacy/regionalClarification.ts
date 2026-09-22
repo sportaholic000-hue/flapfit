@@ -71,7 +71,7 @@ export async function saveConnecticutResidency(value: RegionalAnswer): Promise<v
   });
   writes = operation;
   try { await operation; }
-  catch { if (token === revision) saveUnconfirmed = true; throw new Error('Your answer could not be saved. Advertising and reporting stay restricted for now. Choose your answer again to retry.'); }
+  catch { if (token === revision) saveUnconfirmed = true; throw new Error('Your answer could not be saved. Choose your answer again to retry.'); }
   finally { if (token === revision) changing = false; }
 }
 

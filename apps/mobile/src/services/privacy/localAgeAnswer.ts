@@ -111,6 +111,6 @@ export async function saveLocalAgeAnswer(value: LocalAgeAnswer): Promise<void> {
   try { await operation; }
   catch {
     if (token === intent) saveUnconfirmed = true;
-    throw new Error('The age answer was not confirmed as saved. Processing remains unavailable for this session. Select your answer again to retry.');
+    throw new Error('The age answer was not confirmed as saved. Select your answer again to retry.');
   } finally { if (token === intent) saving = false; }
 }

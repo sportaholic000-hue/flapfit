@@ -1,0 +1,458 @@
+[
+  {
+    "label": "Under 13",
+    "text": "Flap Fit availability\nFlap Fit is for ages 13 and older.\nRetry check\nReview in Info\nBack to Home",
+    "tree": {
+      "type": "View",
+      "props": {
+        "style": {
+          "flex": 1,
+          "backgroundColor": "#0F172A",
+          "padding": 28,
+          "justifyContent": "center",
+          "gap": 18
+        }
+      },
+      "children": [
+        {
+          "type": "Text",
+          "props": {
+            "accessibilityRole": "header",
+            "style": {
+              "color": "#FFFFFF",
+              "fontSize": 24,
+              "fontWeight": "800"
+            }
+          },
+          "children": [
+            "Flap Fit availability"
+          ]
+        },
+        {
+          "type": "Text",
+          "props": {
+            "style": {
+              "color": "#FFFFFF",
+              "fontSize": 16,
+              "lineHeight": 24
+            }
+          },
+          "children": [
+            "Flap Fit is for ages 13 and older."
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#7DD3FC",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Retry check"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#7DD3FC",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Review in Info"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#FFFFFF",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Back to Home"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "Required Apple age check",
+    "text": "Flap Fit availability\nComplete the required Apple age check before another game.\nRetry check\nReview in Info\nBack to Home",
+    "tree": {
+      "type": "View",
+      "props": {
+        "style": {
+          "flex": 1,
+          "backgroundColor": "#0F172A",
+          "padding": 28,
+          "justifyContent": "center",
+          "gap": 18
+        }
+      },
+      "children": [
+        {
+          "type": "Text",
+          "props": {
+            "accessibilityRole": "header",
+            "style": {
+              "color": "#FFFFFF",
+              "fontSize": 24,
+              "fontWeight": "800"
+            }
+          },
+          "children": [
+            "Flap Fit availability"
+          ]
+        },
+        {
+          "type": "Text",
+          "props": {
+            "style": {
+              "color": "#FFFFFF",
+              "fontSize": 16,
+              "lineHeight": 24
+            }
+          },
+          "children": [
+            "Complete the required Apple age check before another game."
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#7DD3FC",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Retry check"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#7DD3FC",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Review in Info"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#FFFFFF",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Back to Home"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "Apple account access restriction",
+    "text": "Flap Fit availability\nApple account access must be restored before another game.\nRetry check\nReview in Info\nBack to Home",
+    "tree": {
+      "type": "View",
+      "props": {
+        "style": {
+          "flex": 1,
+          "backgroundColor": "#0F172A",
+          "padding": 28,
+          "justifyContent": "center",
+          "gap": 18
+        }
+      },
+      "children": [
+        {
+          "type": "Text",
+          "props": {
+            "accessibilityRole": "header",
+            "style": {
+              "color": "#FFFFFF",
+              "fontSize": 24,
+              "fontWeight": "800"
+            }
+          },
+          "children": [
+            "Flap Fit availability"
+          ]
+        },
+        {
+          "type": "Text",
+          "props": {
+            "style": {
+              "color": "#FFFFFF",
+              "fontSize": 16,
+              "lineHeight": 24
+            }
+          },
+          "children": [
+            "Apple account access must be restored before another game."
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#7DD3FC",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Retry check"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#7DD3FC",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Review in Info"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#FFFFFF",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Back to Home"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "Availability check could not complete",
+    "text": "Flap Fit availability\nGame access could not be checked. Please retry. Your progress and privacy choices are unchanged.\nRetry check\nReview in Info\nBack to Home",
+    "tree": {
+      "type": "View",
+      "props": {
+        "style": {
+          "flex": 1,
+          "backgroundColor": "#0F172A",
+          "padding": 28,
+          "justifyContent": "center",
+          "gap": 18
+        }
+      },
+      "children": [
+        {
+          "type": "Text",
+          "props": {
+            "accessibilityRole": "header",
+            "style": {
+              "color": "#FFFFFF",
+              "fontSize": 24,
+              "fontWeight": "800"
+            }
+          },
+          "children": [
+            "Flap Fit availability"
+          ]
+        },
+        {
+          "type": "Text",
+          "props": {
+            "style": {
+              "color": "#FFFFFF",
+              "fontSize": 16,
+              "lineHeight": 24
+            }
+          },
+          "children": [
+            "Game access could not be checked. Please retry. Your progress and privacy choices are unchanged."
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#7DD3FC",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Retry check"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#7DD3FC",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Review in Info"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TouchableOpacity",
+          "props": {
+            "accessibilityRole": "button",
+            "style": {
+              "padding": 16
+            }
+          },
+          "children": [
+            {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "color": "#FFFFFF",
+                  "fontWeight": "700"
+                }
+              },
+              "children": [
+                "Back to Home"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

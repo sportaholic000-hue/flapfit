@@ -78,7 +78,13 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
   const text = () => tree.root.findAllByType('Text' as never).map(node => node.children.join('')).join('\n');
   const modal = () => tree.root.findByType('Modal' as never);
   const unmount = async () => { await act(async () => { tree.unmount(); }); };
-  return { access, storage, memory, buttons, recover: () => { failChoicesRead = false; }, native, alert, act, mount, mountController, open, replaceRequest, cancel: () => controller.cancelChoices(), button, press, text, modal, unmount };
+  const json = () => tree.toJSON();
+  const groupText = (heading: string) => {
+    const group = tree.root.findAllByType('View' as never).find(node => node.children.some(child => typeof child !== 'string' && String(child.type) === 'Text' && child.children.join('') === heading));
+    if (!group) throw new Error('Missing group: ' + heading);
+    return group.findAllByType('Text' as never).map(node => node.children.join('')).join('\n');
+  };
+  return { json, groupText, access, storage, memory, buttons, recover: () => { failChoicesRead = false; }, native, alert, act, mount, mountController, open, replaceRequest, cancel: () => controller.cancelChoices(), button, press, text, modal, unmount };
 }
 
 test.each(['Yes', 'No'])('New York %s is asked once, stays saved after remount and can be updated explicitly', async answer => {
@@ -375,7 +381,7 @@ test('unreadable choices retain an actionable load retry across failure and rest
   const original = f.memory.get('@flapfit/processing-choices-v1');
   expect(f.button('Retry loading privacy choices')).toBeDefined();
   expect(f.button('Allow reporting')).toBeUndefined();
-  expect(f.text()).toContain('Optional processing is paused');
+  expect(f.text()).toContain('Saved privacy choices could not be read. Please retry loading them.');
   await f.press('Retry loading privacy choices');
   expect(f.alert).toHaveBeenCalledWith('Privacy choice not confirmed', expect.stringContaining('still unavailable'));
   expect(f.button('Retry loading privacy choices')).toBeDefined();
@@ -421,7 +427,7 @@ test('Canadian region controls permit eligible ads without an ads-off control in
   expect(f.button('Withdraw advertising data consent')).toBeUndefined();
   expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'}});
   await f.press('Yes');
-  expect(f.text()).toContain('Gameplay is available in Quebec');
+  expect(f.text()).toContain('Your answer is saved on this device.');
   expect(f.button('Allow advertising')).toBeUndefined();
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
   await f.unmount();
@@ -492,7 +498,7 @@ test.each(['country','age','apple'] as const)('existing Quebec advertising refus
   const f=await fixture('ios',false,true);await f.mount();
   expect(f.access.getProcessingInputs().choices.ads.decision).toBe('granted');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
-  expect(f.text()).toContain('Gameplay is available in Quebec');
+  expect(f.text()).toContain('Your answer is saved on this device.');
   await f.act(async()=>{
     if(unavailable==='country')f.access.setLaunchProcessingCountry(null,false);
     if(unavailable==='age')f.access.clearAgeVerification();
@@ -568,5 +574,139 @@ test('expired age evidence does not create a saved advertising refusal or expose
   });
   expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
   expect(f.button('Withdraw advertising data consent')).toBeUndefined();
+  await f.unmount();
+});
+
+type PreviewScreen = { id: string; country: string; audience: string; state: string; context: string; text: string; tree: unknown; alerts?: unknown };
+const privacyPreviews: PreviewScreen[] = [];
+const expectedAdvertisingText = [
+  'Google advertising',
+  'Non-personalized ads support Flap Fit.',
+  "Where available, use Ad privacy settings in Info to manage Google's privacy choices. For other advertising-data requests, use Contact us in Info.",
+].join('\n');
+function capturePrivacy(f: Awaited<ReturnType<typeof fixture>>, country: string, audience: string, state: string) {
+  const text = f.text();
+  expect(f.groupText('Google advertising')).toBe(expectedAdvertisingText);
+  expect(text).not.toMatch(/ad[- ]free|without advertising|without ads|\bno ads\b|advertising protections|yes keeps|(?:advertising|ads|reporting)[^.\n]{0,100}\b(?:disabled|off|unavailable|enabled|permitted|blocked)\b|\boff for your\b/i);
+  expect(f.button('Withdraw advertising data consent')).toBeUndefined();
+  expect(f.button('Stop advertising')).toBeUndefined();
+  privacyPreviews.push({ id: `privacy-${privacyPreviews.length + 1}`, country, audience, state,
+    context: 'FlapFit Privacy & choices; the same body is used in Info and the post-game sheet.', text, tree: f.json(), alerts: f.alert.mock.calls });
+}
+afterAll(() => {
+  const output = process.env.FLAPFIT_PRIVACY_PREVIEW_OUTPUT;
+  if (output) require('node:fs').writeFileSync(output, JSON.stringify({ capturedFrom: 'Actual PrivacyChoices / PrivacyChoicesSheet component using the real local privacy state modules; native APIs mocked for review', screens: privacyPreviews }, null, 2) + '\n');
+});
+
+test.each([13, 14, 17, 18])('Canada age %s keeps identical advertising copy before/after either province answer and remount', async age => {
+  const f = await fixture('ios', false, true, 'unknown', true, age, 'CA');
+  await f.mount(true);
+  capturePrivacy(f, 'Canada', `${age === 18 ? '18+' : age}`, 'Province unanswered');
+  await f.press('No');
+  capturePrivacy(f, 'Canada', `${age === 18 ? '18+' : age}`, 'Quebec: No');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  await f.press('Yes');
+  capturePrivacy(f, 'Canada', `${age === 18 ? '18+' : age}`, 'Quebec: Yes');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.unmount(); await f.mount(true);
+  capturePrivacy(f, 'Canada', `${age === 18 ? '18+' : age}`, 'Saved Quebec Yes after reopening');
+  await f.unmount();
+});
+
+test.each([13, 17])('US age %s has neutral CT/NY answers and retains New York history without describing its ad outcome', async age => {
+  const f = await fixture('ios', false, false, 'unknown', true, age, 'US');
+  await f.mount(true);
+  capturePrivacy(f, 'United States', `${age}`, 'Connecticut unanswered');
+  await f.press('Yes');
+  capturePrivacy(f, 'United States', `${age}`, 'Connecticut: Yes');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.press('No');
+  capturePrivacy(f, 'United States', `${age}`, 'Connecticut: No; New York unanswered');
+  const answerNewYork = async (answer: string) => {
+    const choices = f.buttons().filter(node => node.findAllByType('Text' as never).some(text => text.children.join('') === answer));
+    await f.act(async () => { choices[choices.length - 1].props.onPress(); });
+  };
+  await answerNewYork('No');
+  capturePrivacy(f, 'United States', `${age}`, 'New York: No');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  await f.press('Update New York answer');
+  capturePrivacy(f, 'United States', `${age}`, 'Editing saved New York No');
+  await answerNewYork('Yes');
+  capturePrivacy(f, 'United States', `${age}`, 'New York: Yes');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.unmount(); await f.mount(true);
+  capturePrivacy(f, 'United States', `${age}`, 'Saved New York Yes after reopening');
+  expect(f.text()).not.toContain('Are you in New York right now?');
+  await f.press('Update New York answer'); await answerNewYork('No');
+  capturePrivacy(f, 'United States', `${age}`, 'New York: No after an earlier Yes');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  expect(f.text()).toContain('Saved answer: No.');
+  await f.unmount();
+});
+
+test.each([
+  { country: 'US', name: 'United States', age: 18, allowed: true },
+  { country: 'AU', name: 'Australia', age: 13, allowed: false },
+  { country: 'AU', name: 'Australia', age: 14, allowed: false },
+  { country: 'AU', name: 'Australia', age: 15, allowed: true },
+  { country: 'AU', name: 'Australia', age: 17, allowed: true },
+  { country: 'AU', name: 'Australia', age: 18, allowed: true },
+  { country: 'MX', name: 'Mexico', age: 13, allowed: false },
+  { country: 'MX', name: 'Mexico', age: 17, allowed: false },
+  { country: 'MX', name: 'Mexico', age: 18, allowed: true },
+] as const)('$name age $age never describes the age-based advertising outcome', async ({ country, name, age, allowed }) => {
+  const f = await fixture('ios', false, false, 'unknown', true, age, country);
+  await f.mount(true);
+  capturePrivacy(f, name, `${age === 18 ? '18+' : age}`, 'Apple age answer received');
+  await f.press('Save & continue');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(allowed);
+  await f.unmount(); await f.mount(true);
+  capturePrivacy(f, name, `${age === 18 ? '18+' : age}`, 'After Save & continue / reopening');
+  await f.unmount();
+});
+
+test.each([
+  ['CA', 'Canada'], ['US', 'United States'], ['AU', 'Australia'], ['MX', 'Mexico'],
+] as const)('%s local age form has no ad outcome before or after every offered age answer', async (country, name) => {
+  const f = await fixture('ios', false, country === 'CA', 'unknown', true, 18, country);
+  f.access.clearAgeVerification(); f.access.setAppleAgeRequirement('unsupported');
+  await f.mount(true);
+  capturePrivacy(f, name, 'Local age question', 'Age unanswered');
+  const local: typeof import('@/services/privacy/localAgeAnswer') = require('@/services/privacy/localAgeAnswer');
+  for (const option of local.localAgeOptions()) {
+    await f.press(option.label);
+    capturePrivacy(f, name, 'Local age question', `Saved age: ${option.label}`);
+    expect(f.text()).toContain(`Saved on this device: ${option.label}`);
+  }
+  await f.unmount();
+});
+
+test.each([
+  ['CA', 'Canada'], ['US', 'United States'], ['AU', 'Australia'], ['MX', 'Mexico'],
+] as const)('%s local age save errors show recovery without an advertising consequence', async (country, name) => {
+  const f = await fixture('ios', false, country === 'CA', 'unknown', true, 18, country);
+  f.access.clearAgeVerification(); f.access.setAppleAgeRequirement('unsupported');
+  await f.mount(true);
+  f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+  await f.press('18 or older');
+  capturePrivacy(f, name, 'Local age question', 'Age answer could not be saved');
+  expect(JSON.stringify(f.alert.mock.calls)).not.toMatch(/advertis|processing remains|reporting/i);
+  await f.unmount();
+});
+
+test.each([['CA', 'Canada'], ['US', 'United States']] as const)('%s regional save errors never advertise the consequence of an unanswered question', async (country, name) => {
+  const f = await fixture('ios', false, country === 'CA', 'unknown', true, 15, country);
+  await f.mount(true);
+  f.storage.setItem.mockRejectedValueOnce(new Error('disk full')); await f.press('Yes');
+  capturePrivacy(f, name, '15', 'Province/state answer could not be saved');
+  expect(JSON.stringify(f.alert.mock.calls)).not.toMatch(/advertis|reporting|processing/i);
+  if (country === 'US') {
+    await f.press('No');
+    f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+    const choices = f.buttons().filter(node => node.findAllByType('Text' as never).some(text => text.children.join('') === 'Yes'));
+    await f.act(async () => { choices[choices.length - 1].props.onPress(); });
+    capturePrivacy(f, name, '15', 'New York answer could not be saved');
+    expect(JSON.stringify(f.alert.mock.calls)).not.toMatch(/advertis|reporting|processing/i);
+  }
   await f.unmount();
 });

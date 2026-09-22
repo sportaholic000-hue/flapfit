@@ -814,7 +814,7 @@ test('supported older iOS never fakes age or starts provider SDKs; it reports th
     expect(f.requestAge).not.toHaveBeenCalled();
     expect(f.adLoad).not.toHaveBeenCalled();expect(f.rcLoad).not.toHaveBeenCalled();
     expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:false},revenueCat:{allowed:false},competition:{allowed:false}});
-    expect(notice.processingPurposeStatus('ads')).toContain('This system cannot provide the age check');
+    expect(notice.processingPurposeStatus('ads')).toBe('');
   }finally{f.finish();}
 });
 
@@ -929,4 +929,21 @@ test.each(['CA','US'] as const)('regional binary answers: dismissing %s clarific
     expect(f.storage.setItem).not.toHaveBeenCalled();
     expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
   }finally{f.finish();}
+});
+
+const previewNotices: unknown[] = [];
+afterAll(() => {
+  const output = process.env.FLAPFIT_PRIVACY_PREVIEW_OUTPUT;
+  if (output) require('node:fs').writeFileSync(require('node:path').join(require('node:path').dirname(output), 'notices.json'), JSON.stringify(previewNotices, null, 2) + '\n');
+});
+test.each(['CA', 'US', 'AU', 'MX'])('%s captures the actual shared post-game notice without describing age/location ad outcomes', async country => {
+  const f = await load({ country, quebecResidency: country === 'CA' ? 'not-resident' : undefined });
+  try {
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    await flow.preparePostGamePrivacy(() => true, jest.fn());
+    const notice = f.alert.mock.calls.find(call => call[0] === 'Ads keep Flap Fit free');
+    expect(notice).toBeDefined();
+    expect(notice![1]).not.toMatch(/Quebec|Connecticut|New York|Australia|Mexico|under 18|ads enabled|advertising off/i);
+    previewNotices.push({ country, title: notice![0], body: notice![1], buttons: notice![2].map((button: { text: string }) => button.text) });
+  } finally { f.finish(); }
 });

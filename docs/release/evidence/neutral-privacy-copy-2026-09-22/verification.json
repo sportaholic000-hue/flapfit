@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-09-22T16:23:36.6624534Z",
+  "focusedSuites": 8,
+  "focusedTests": 250,
+  "failedTests": 0,
+  "typecheck": "passed",
+  "strictLint": "passed",
+  "unchangedPolicyFiles": [
+    "apps/mobile/src/services/privacy/regionalAdvertising.ts",
+    "apps/mobile/src/services/privacy/launchProcessingPolicy.ts",
+    "apps/mobile/src/services/privacy/processingPolicy.ts",
+    "apps/mobile/src/services/privacy/processingAccess.ts",
+    "apps/mobile/src/services/privacy/gameEntry.ts"
+  ],
+  "preview": {
+    "generatedAt": "2026-09-22T16:23:00.605Z",
+    "screenCount": 83,
+    "countries": {
+      "CA": "Canada",
+      "US": "United States",
+      "AU": "Australia",
+      "MX": "Mexico"
+    },
+    "sourceFiles": {
+      "components/PrivacyChoices.tsx": "47bef37ef4e25644c7922116ad9a6ba47403b2bdf51997f7b6139d5e5b499f75",
+      "components/GameEligibilityGate.tsx": "e5a1396d153e59ccb264c345099c027746b653af4c44279b667e6c53c9ceb5ae",
+      "services/privacy/processingNotice.ts": "32bed21574123867bcbe879097542decc7d6066275632adf3fad3addd48a056e",
+      "services/privacy/processingAvailability.ts": "40954e363d57dfeb400f230d5c051bb5cc97a661200798c935130d08af833837",
+      "services/privacy/newYorkClarification.ts": "a63b8151429558f2117bc590a6a691e54ddf19e93758408f1f4aacf7ffe999f0",
+      "services/privacy/regionalClarification.ts": "7b0378f1911aae048d52f5a1c2dc7c73ef9a3a3c65793a98406f31b9416f3417",
+      "services/privacy/localAgeAnswer.ts": "e7d3a734e4471e6fed706eed6b9cd1371e5b0325d81036c27b6dcfae8661d76c",
+      "services/privacy/releaseEligibility.ts": "5d3b53cdb1cfff794850ded9980d4f3ad5257bdca326ec874b09b8da298ba4bc",
+      "services/privacy/postGamePrivacy.ts": "6dd1376c559f2db472ae80766a29ef598f9a327dab6b759eccce2cfe086200a7"
+    },
+    "rendering": "Actual captured React component tree and source styles rendered with installed React Native Web; browser preview, not a physical-device screenshot. Native alerts show exact app-supplied text; provider-owned dialogs are not fabricated."
+  },
+  "deviceStatus": "Installed c3a053bb build contains previous copy; this record covers source and local browser preview",
+  "physicalReportsStillOpen": [
+    "Camera startup feels slow",
+    "Bird flight feels wrong; specific behavior requested from owner"
+  ],
+  "productionWebsiteChanged": false,
+  "providerAccountsChanged": false,
+  "newCloudBuildStarted": false,
+  "productionReleaseValidation": "passed, including six bundled tracker asset byte checks"
+}

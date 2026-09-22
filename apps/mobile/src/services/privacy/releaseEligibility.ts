@@ -17,11 +17,11 @@ export function resolveReleaseEligibility(input: ProcessingRuntimeInputs): Relea
 }
 
 export function releaseEligibilityMessage(value: ReleaseEligibility): string {
-  if (value.status === 'available') return 'Gameplay is available. Advertising, reporting and competition have separate privacy checks.';
+  if (value.status === 'available') return 'Gameplay is available.';
   if (value.status === 'unavailable') {
     return value.reason === 'apple'
       ? 'Apple account access must be restored before another game.'
       : 'Flap Fit is for ages 13 and older.';
   }
-  return 'Complete the required Apple age check before another game. This is separate from permission for advertising or reporting.';
+  return 'Complete the required Apple age check before another game.';
 }

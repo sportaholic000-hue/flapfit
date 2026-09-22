@@ -34,7 +34,7 @@ async function fixture(first: { status: string; reason?: string } = { status: 'u
   };
   const change = async (state: string) => { await act(async () => { appState.currentState = state; [...listeners].forEach(listener => listener(state)); }); };
   const unmount = async () => { await act(async () => { tree.unmount(); }); };
-  return { mount, text, press, change, unmount, authorize, settleNative, retry, replace, act, next: () => newRun(), prepare: () => prepareEntry() };
+  return { json: () => tree.toJSON(), mount, text, press, change, unmount, authorize, settleNative, retry, replace, act, next: () => newRun(), prepare: () => prepareEntry() };
 }
 
 test('unanswered entry renders recovery and Back; neither is a consent or a game-start action', async () => {
@@ -103,4 +103,26 @@ test('failed storage check displays a retry and strict effect remount does not l
   await f.mount(); expect(f.text()).toContain('Game access could not be checked');
   await f.press('Retry check'); expect(f.text()).toContain('Game running'); await f.unmount();
   await f.mount(true); expect(f.text()).toContain('Game running'); await f.unmount();
+});
+
+const previewGates: unknown[] = [];
+afterAll(() => {
+  const output = process.env.FLAPFIT_PRIVACY_PREVIEW_OUTPUT;
+  if (output) require('node:fs').writeFileSync(require('node:path').join(require('node:path').dirname(output), 'gates.json'), JSON.stringify(previewGates, null, 2) + '\n');
+});
+test.each([
+  { label: 'Under 13', status: 'unavailable', reason: 'age' },
+  { label: 'Required Apple age check', status: 'unanswered', reason: 'age' },
+  { label: 'Apple account access restriction', status: 'unavailable', reason: 'apple' },
+])('captures the common $label screen without an advertising message', async ({ label, status, reason }) => {
+  const f = await fixture({ status, reason }); await f.mount();
+  expect(f.text()).not.toMatch(/advertis|\bads\b/i);
+  previewGates.push({ label, text: f.text(), tree: f.json() });
+  await f.unmount();
+});
+test('captures the common availability error screen', async () => {
+  const f = await fixture(); f.authorize.mockRejectedValueOnce(new Error('test failure')); await f.mount();
+  expect(f.text()).not.toMatch(/advertis|\bads\b/i);
+  previewGates.push({ label: 'Availability check could not complete', text: f.text(), tree: f.json() });
+  await f.unmount();
 });

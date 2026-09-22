@@ -56,8 +56,8 @@ export function newYorkClarificationStatus(): string {
   if (saveUnconfirmed) return 'Answer save not confirmed · retry loading or saving your answer';
   if (changing) return 'Saving your answer';
   if (!readConfirmed) return 'Saved regional status unavailable · retry loading';
-  if (protectedHistory) return 'New York advertising protections retained. Gameplay remains available.';
-  return savedAnswer === 'not-present' ? 'Saved answer: No. Update it here if your situation changes.' : 'Not answered';
+  return savedAnswer === null ? 'Not answered' :
+    `Saved answer: ${savedAnswer === 'present' ? 'Yes' : 'No'}. Update it here if your situation changes.`;
 }
 export const hasNewYorkReadError = () => !readConfirmed;
 
@@ -87,6 +87,6 @@ export async function saveNewYorkPresence(answer: Answer): Promise<void> {
   try { await operation; }
   catch {
     if (token === revision) saveUnconfirmed = true;
-    throw new Error('Your answer is not confirmed. Retry loading or saving in Info. Gameplay remains available; an unanswered question does not allow advertising.');
+    throw new Error('Your answer is not confirmed. Retry loading or saving in Info.');
   } finally { if (token === revision) changing = false; }
 }
