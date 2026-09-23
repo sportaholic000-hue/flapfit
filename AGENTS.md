@@ -10,3 +10,5 @@
 - Age and location questions, explanatory copy, saved-answer labels, status messages and errors must not reveal or hint which age/location answers enable or disable advertising. Use neutral factual questions and confirmations across every country. Preserve the approved advertising eligibility rules; do not add a general advertising opt-out. Verify both rendered copy and actual advertising decisions when changing these flows.
 
 - Closing or backing out of unfinished age/location setup or its notice must not allow unlimited repeat runs. Use existing local completed-run history to check unfinished setup at new-game entry; preserve approved regional exceptions and independent optional reporting/Google choices. Do not treat dismissal as an answer or acknowledgement.
+
+- Done must allow leaving a completed result even when setup is dismissed or fails. Retry, Next level and later game entry remain subject to unfinished setup. Preserve the existing eligible result-ad opportunity for Done; do not turn the exit fix into an advertising bypass.

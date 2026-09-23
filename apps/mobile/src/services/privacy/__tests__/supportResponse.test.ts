@@ -14,7 +14,7 @@ async function fixture() {
   const storage = { getItem: jest.fn(async (key: string) => memory.get(key) ?? null), setItem: jest.fn(async (key: string, value: string) => { memory.set(key, value); }) };
   jest.doMock('@react-native-async-storage/async-storage', () => storage);
   const nextId = jest.fn(() => id);
-  jest.doMock('expo-modules-core', () => ({ uuid: { v4: nextId } }));
+  jest.doMock('expo-crypto', () => ({ randomUUID: nextId }));
   jest.doMock('../supportResponseSignature', () => {
     const actual = jest.requireActual<typeof import('../supportResponseSignature')>('../supportResponseSignature');
     return { ...actual, verifySupportResponse: (code: string, request: string) => actual.verifySupportResponse(code, request, Date.now(), publicKey) };

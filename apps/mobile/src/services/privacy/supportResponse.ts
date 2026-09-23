@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { uuid } from 'expo-modules-core';
+import { randomUUID } from 'expo-crypto';
 import { getProcessingChoiceRevision, getProcessingInputs, hydrateProcessingAccess } from './processingAccess';
 import type { ProcessingChoice } from './processingPolicy';
 import { withdrawAdvertisingConsent } from './privacyRights';
@@ -44,7 +44,7 @@ export function preparePrivacySupportRequest(): Promise<string> {
     await ready();
     const previous = await readRequest();
     if (previous && (matches(previous) || getProcessingInputs().choices.ads.decision === 'denied')) return previous.id;
-    const request: Request = { version: 1, id: uuid.v4(), choice: getProcessingInputs().choices.ads };
+    const request: Request = { version: 1, id: randomUUID(), choice: getProcessingInputs().choices.ads };
     if (!REQUEST_ID_PATTERN.test(request.id)) throw new Error('The device could not create a request. Please try again.');
     await bounded(AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(request)));
     return request.id;

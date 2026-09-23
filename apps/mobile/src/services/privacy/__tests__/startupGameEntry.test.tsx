@@ -72,7 +72,7 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
   Object.defineProperty(globalThis, 'fetch', { configurable: true, writable: true, value: fetcher });
   let params = {};
   let navigate!: (route: string) => void;
-  const router = { push: jest.fn((route: { pathname: string; params: object }) => { params = route.params; navigate(route.pathname); }), back: jest.fn(), replace: jest.fn() };
+  const router = { push: jest.fn((route: { pathname: string; params: object }) => { params = route.params; navigate(route.pathname); }), back: jest.fn(() => navigate('/(tabs)')), replace: jest.fn() };
   const Tabs = Object.assign(function Tabs() { const Home = require('@/app/(tabs)/index').default; return React.createElement(Home); }, { Screen: 'TabScreen' });
   jest.doMock('expo-router', () => ({
     useRouter: () => router, useLocalSearchParams: () => params, useFocusEffect: (effect: () => void) => React.useEffect(effect, [effect]), Tabs,
@@ -93,7 +93,7 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
   await act(async () => { tree = renderer.create(React.createElement(Root)); await settle(); });
   await act(async () => { jest.advanceTimersByTime(1400); await settle(); });
   const play = async () => { await act(async () => {
-    const button = tree.root.findAll(node => node.props.accessibilityLabel === 'Play Level 1' && typeof node.props.onPress === 'function')[0];
+    const button = tree.root.findAll(node => /^Play Level \d+$/.test(node.props.accessibilityLabel ?? '') && typeof node.props.onPress === 'function')[0];
     expect(button).toBeDefined(); button.props.onPress(); await settle();
   }); expect(router.push).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
     expect(JSON.stringify(tree.toJSON())).not.toContain('Flap Fit hit a snag'); };
@@ -161,7 +161,7 @@ test('actual Home -> game route uses completed-run history to prevent a fresh-ro
   } finally { await f.finish(); }
 });
 
-test.each(['Done', 'Try again', 'Next level'])('actual result %s -> unanswered choices -> Close keeps the saved result and cancels navigation', async action => {
+test.each(['Try again', 'Next level'])('actual result %s -> unanswered choices -> Close keeps the saved result and cancels navigation', async action => {
   const f = await mountApp(null, { playable: true });
   try {
     await f.play(); await f.completeGame();
@@ -178,10 +178,47 @@ test.each(['Done', 'Try again', 'Next level'])('actual result %s -> unanswered c
     const local: typeof import('../localAgeAnswer') = require('../localAgeAnswer');
     await local.saveLocalAgeAnswer('18-plus'); await notice.acknowledgeProcessingNotice();
     await f.pressResult(action);
-    if (action === 'Done') expect(f.router.back).toHaveBeenCalledTimes(1);
-    else {
-      expect(JSON.stringify(f.tree.toJSON())).not.toContain('Try again');
-      if (action === 'Next level') expect(f.router.replace).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
-    }
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Try again');
+    if (action === 'Next level') expect(f.router.replace).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
+  } finally { await f.finish(); }
+});
+
+test.each(['dismissed', 'failed'])('Done leaves the result when setup is %s, but Home cannot start another run', async outcome => {
+  const f = await mountApp(null, { playable: true });
+  try {
+    await f.play(); await f.completeGame();
+    if (outcome === 'failed') f.sheet.openChoices.mockRejectedValueOnce(new Error('Setup unavailable'));
+    await f.pressResult('Done');
+    expect(f.router.back).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Try again');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
+    expect(f.storage.setItem.mock.calls.some(([key]) => key === '@flapfit/local-age-answer-v1')).toBe(false);
+    f.camera.mockClear();
+    await f.play();
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Finish setup');
+    expect(f.camera).not.toHaveBeenCalled();
+    expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally { await f.finish(); }
+});
+
+test('Done still uses the existing eligible result-ad opportunity before returning Home', async () => {
+  const f = await mountApp(null, { playable: true });
+  try {
+    await f.play();
+    const monetization: typeof import('../../monetization') = require('../../monetization');
+    const privacy: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    jest.spyOn(privacy, 'preparePostGamePrivacy').mockResolvedValue(true);
+    let closeAd!: () => void;
+    const ad = { isReady: () => true, show: jest.fn(async (callbacks: { opened: () => void; closed: () => void }) => { callbacks.opened(); closeAd = callbacks.closed; }), dispose: jest.fn() };
+    jest.spyOn(monetization, 'prepareResultInterstitial').mockReturnValue(ad);
+    // Preserve the real scheduler and move past its first completed exit.
+    monetization.resultAdGate.createResult(null, monetization.adEnvironment).exit(false, jest.fn());
+    await f.completeGame(); await f.pressResult('Done');
+    expect(ad.show).toHaveBeenCalledTimes(1);
+    expect(f.router.back).not.toHaveBeenCalled();
+    const { act } = require('react');
+    await act(async () => { closeAd(); await settle(); });
+    expect(f.router.back).toHaveBeenCalledTimes(1);
   } finally { await f.finish(); }
 });

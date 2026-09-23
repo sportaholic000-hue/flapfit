@@ -1,0 +1,30 @@
+{
+  "scope": "Done/Home exit and Expo SDK 57 compatibility corrections",
+  "baselineCommit": "6d07b559c397c0a87604672ff59524d0bec698fb",
+  "tests": {
+    "passed": 1532,
+    "total": 1532,
+    "suites": 71,
+    "failed": 0
+  },
+  "typecheckExit": 0,
+  "strictLintExit": 0,
+  "securityAudit": {
+    "exit": 0,
+    "advisories": 0,
+    "command": "corepack yarn npm audit --all --recursive --no-deprecations --json"
+  },
+  "productionConfigExit": 0,
+  "iosHermesExportExit": 0,
+  "physicalDeviceAcceptance": "Pending replacement build installation",
+  "backendChanges": false,
+  "newPerRunRequests": false,
+  "recurringCostAdded": false,
+  "expoDoctor": {
+    "version": "1.20.4",
+    "passed": 21,
+    "total": 21,
+    "exit": 0,
+    "networkNote": "Initial HTTPS connection reset to the real Expo schema API; a diagnostic-only fetch retry obtained HTTP 200 on attempt 2. TLS validation remained enabled. No checks, versions or schema were substituted or excluded."
+  }
+}

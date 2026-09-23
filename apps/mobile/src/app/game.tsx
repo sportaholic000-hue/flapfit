@@ -317,7 +317,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       recordingIsFinalizing ? null : prepareResultInterstitial(), adEnvironment,
     );
   }, [result, runKey, recordingIsFinalizing, resultLifetime]);
-  const performResultAction = (action: () => void) => {
+  const performResultAction = (action: () => void, startsNewRun = true) => {
     if (!result || shareBusyRef.current || resultActionClaimed.current || !adEnvironment.isActive()) return;
     resultActionClaimed.current = true;
     setResultActionBusy(true);
@@ -338,9 +338,10 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     // an ad to load or replaces the existing session/cooldown placement gate.
     void preparePostGamePrivacy(current, openPrivacyChoices).catch(() => false).then(complete => {
       if (generation !== resultLifetime.generation) return;
-      if (complete) continueExit();
+      if (complete || !startsNewRun) continueExit();
       else {
-        // Back/Close is cancellation, not permission to perform Retry/Next/Done.
+        // Back/Close cannot authorize Retry/Next. Done may leave the result;
+        // completed-run history still requires setup at the next game entry.
         // Keep the saved result and allow another explicit action.
         resultActionClaimed.current = false;
         setResultActionBusy(false);
@@ -1830,7 +1831,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
             </TouchableOpacity>
             <TouchableOpacity
               disabled={shareBusy || resultActionBusy}
-              onPress={() => performResultAction(leaveGame)}
+              onPress={() => performResultAction(leaveGame, false)}
               style={{
                 marginTop: 10,
                 backgroundColor: '#F1F5F9',
