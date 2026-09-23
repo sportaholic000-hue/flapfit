@@ -25,19 +25,21 @@ type Props = {
   region: 'province' | 'state';
   options: readonly (readonly [string, string])[];
   expanded: boolean;
-  answered: boolean;
+  savedAnswer: string | null;
   disabled: boolean;
   onToggle: () => void;
   onSelect: (code: string) => void;
 };
 
 /** The exact selection is never retained here. The caller saves only the existing residency flag. */
-export function ResidencyDropdown({ region, options, expanded, answered, disabled, onToggle, onSelect }: Props) {
+export function ResidencyDropdown({ region, options, expanded, savedAnswer, disabled, onToggle, onSelect }: Props) {
+  const answered = savedAnswer !== null;
   const label = `${answered ? 'Change' : 'Select'} ${region} or territory`;
   return <View style={styles.root}>
     <TouchableOpacity accessibilityRole="button" accessibilityLabel={label} accessibilityState={{ expanded, disabled }}
+      accessibilityValue={{ text: savedAnswer ?? 'Not answered' }}
       disabled={disabled} onPress={onToggle} style={[styles.trigger, answered && styles.savedTrigger, disabled && styles.disabled]}>
-      <Text style={[styles.triggerText, answered && styles.savedText]}>{answered ? 'Answer saved · Change' : label}</Text>
+      <Text style={[styles.triggerText, answered && styles.savedText]}>{answered ? `${savedAnswer} · Change` : label}</Text>
       <Text accessible={false} style={[styles.arrow, answered && styles.savedText]}>{expanded ? '⌃' : '⌄'}</Text>
     </TouchableOpacity>
     {expanded ? <View style={styles.menu}>

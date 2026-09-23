@@ -892,3 +892,18 @@ test('Android launch context does not turn unknown processing into permission', 
   await f.adapter.prepareMonetization(() => true);
   expect(f.nativeLoad).not.toHaveBeenCalled(); expect(f.purchasesLoad).not.toHaveBeenCalled(); expect(f.ageRequest).not.toHaveBeenCalled();
 });
+
+
+test.each([true, false])('a privacy row becoming NOT_REQUIRED preserves current Google permission %s without a form', async canRequestAds => {
+  const f = loadAdapter({ umpBridge: true, rcAllowed: false });
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.adapter.prepareResultInterstitial()).not.toBeNull();
+  f.umpInfo.privacyOptionsRequirementStatus = 'NOT_REQUIRED';
+  f.umpInfo.canRequestAds = canRequestAds;
+  await f.adapter.showAdPrivacyOptions();
+  expect(f.ump.showPrivacyOptionsForm).not.toHaveBeenCalled();
+  expect(f.adapter.isAdPrivacyRequired()).toBe(false);
+  expect(f.adapter.prepareResultInterstitial() !== null).toBe(canRequestAds);
+  expect(f.getAccess().ads.allowed).toBe(true);
+  expect(f.purchasesLoad).not.toHaveBeenCalled();
+});

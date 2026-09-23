@@ -12,3 +12,5 @@
 - Closing or backing out of unfinished age/location setup or its notice must not allow unlimited repeat runs. Use existing local completed-run history to check unfinished setup at new-game entry; preserve approved regional exceptions and independent optional reporting/Google choices. Do not treat dismissal as an answer or acknowledgement.
 
 - Done must allow leaving a completed result even when setup is dismissed or fails. Retry, Next level and later game entry remain subject to unfinished setup. Preserve the existing eligible result-ad opportunity for Done; do not turn the exit fix into an advertising bypass.
+
+- Google advertising privacy controls use the single **Manage Privacy Choices** row in Info and Google UMP’s native privacy-options form, with visibility based on the SDK requirement state. Do not reintroduce the rejected privacy-support email/request-ID/response-code/signing workflow. Preserve existing regional ad eligibility and keep saved residency labels factual, without advertising outcomes.

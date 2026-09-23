@@ -27,7 +27,7 @@ export async function preparePostGamePrivacy(
   await prepareMonetization(canPresent);
   await restoreProcessingNotice();
   // Regional restrictions disable providers, never the next workout. Existing
-  // withdrawal controls remain accessible in Info; do not solicit new consent.
+  // Google privacy options remain managed by UMP; do not solicit new consent.
   if (isRegionalAdvertisingDisabled(getProcessingInputs()) && !needsGameSetup()) return true;
   if (!canPresent()) return false;
   if (!canPresentProcessingNotice() && !needsNewYorkClarification() && !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification()) return !needsGameSetup();

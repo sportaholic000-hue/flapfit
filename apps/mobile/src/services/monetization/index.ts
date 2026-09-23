@@ -469,9 +469,11 @@ async function openAdPrivacyOptions(canPresent: () => boolean): Promise<void> {
       const info = await bounded(controls.getConsentInfo());
       if (epoch !== consentEpoch || !adEnvironment.isActive() || !canPresent()) return;
       publishPrivacyRequirement(info.required);
-      if (info.required === false) return;
       if (info.required === null) throw new Error('Privacy requirement is unavailable');
-      consent = await presentPrivacy(() => controls.showPrivacyOptionsForm());
+      // A stale visible row can become NOT_REQUIRED before the tap is handled.
+      // Reuse Google's current permission so that this no-form path does not
+      // leave otherwise eligible advertising disabled by the invalidation above.
+      consent = info.required ? await presentPrivacy(() => controls.showPrivacyOptionsForm()) : info;
     } else {
       // Compatibility with older supported native builds. A missing bridge may
       // never cause an ineligible session to evaluate or start the ad SDK.

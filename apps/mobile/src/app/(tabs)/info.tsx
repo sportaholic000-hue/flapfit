@@ -37,7 +37,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BirdAvatar from '@/components/BirdAvatar';
 import { PrivacyChoices } from '@/components/PrivacyChoices';
-import { PrivacySupportRequest } from '@/components/PrivacySupportRequest';
 import { RELEASE_LINKS } from '@/config/release';
 import {
   competitionIsConfigured,
@@ -117,23 +116,27 @@ function ActionRow({
   title,
   subtitle,
   onPress,
+  disabled = false,
 }: {
   icon: ReactNode;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   onPress: () => void;
+  disabled?: boolean;
 }) {
   return (
     <TouchableOpacity
       accessibilityRole="button"
-      accessibilityLabel={`${title}. ${subtitle}`}
+      accessibilityLabel={subtitle ? `${title}. ${subtitle}` : title}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
       onPress={onPress}
       style={styles.actionRow}
     >
       <View style={styles.actionIcon}>{icon}</View>
       <View style={{ flex: 1 }}>
         <Text style={styles.actionTitle}>{title}</Text>
-        <Text style={styles.actionSubtitle}>{subtitle}</Text>
+        {subtitle ? <Text style={styles.actionSubtitle}>{subtitle}</Text> : null}
       </View>
       <ChevronRight size={20} color="#94A3B8" />
     </TouchableOpacity>
@@ -213,8 +216,8 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
                 RevenueCat receives ad events such as loads, displays, clicks, and revenue, linked
                 to a separate anonymous app identifier. Flap Fit does not attach your exercise,
                 player name, scores, camera footage, recordings, or training history to these events.
-                Where required, you can review advertising choices through Ad privacy settings in
-                Info. Camera and microphone permissions remain separate from advertising choices.
+                Google's privacy form is available through Manage Privacy Choices when Google
+                requires it. Camera and microphone permissions remain separate from advertising choices.
               </Text>
               <Text style={styles.modalHeading}>Public content and moderation</Text>
               <Text style={styles.modalText}>
@@ -315,7 +318,6 @@ export default function InfoScreen() {
   const router = useRouter();
   const [modalPage, setModalPage] = useState<ModalPage>(null);
   const [privacyChoicesExpanded, setPrivacyChoicesExpanded] = useState(false);
-  const [privacyRequestExpanded, setPrivacyRequestExpanded] = useState(false);
   const [onlineDeleteBusy, setOnlineDeleteBusy] = useState(false);
   const adPrivacyRequired = useSyncExternalStore(subscribeAdPrivacy, isAdPrivacyRequired, () => false);
   const [adPrivacyBusy, setAdPrivacyBusy] = useState(false);
@@ -616,20 +618,22 @@ export default function InfoScreen() {
           title="Privacy & choices"
           icon={<ShieldCheck size={23} color={AMBER} />}
         >
+          {adPrivacyRequired ? (
+            <ActionRow
+              icon={<ShieldCheck size={21} color="#2563EB" />}
+              title="Manage Privacy Choices"
+              subtitle={adPrivacyBusy ? 'Opening…' : undefined}
+              disabled={adPrivacyBusy}
+              onPress={() => void openAdPrivacy()}
+            />
+          ) : null}
           <ActionRow
             icon={<ShieldCheck size={21} color="#2563EB" />}
-            title="Advertising & reporting choices"
-            subtitle={privacyChoicesExpanded ? 'Hide your choices' : 'Manage Google advertising and RevenueCat reporting separately'}
+            title="Your setup"
+            subtitle={privacyChoicesExpanded ? 'Hide your saved answers and preferences' : 'Review your saved answers and preferences'}
             onPress={() => setPrivacyChoicesExpanded(value => !value)}
           />
           {privacyChoicesExpanded ? <PrivacyChoices includeCompetition onDone={() => setPrivacyChoicesExpanded(false)} /> : null}
-          <ActionRow
-            icon={<Mail size={21} color="#2563EB" />}
-            title="Privacy requests"
-            subtitle="Contact support or apply a response to your request"
-            onPress={() => setPrivacyRequestExpanded(value => !value)}
-          />
-          {privacyRequestExpanded ? <PrivacySupportRequest /> : null}
           <ActionRow
             icon={<ShieldCheck size={21} color="#2563EB" />}
             title="Privacy & camera data"
@@ -642,14 +646,6 @@ export default function InfoScreen() {
             subtitle={RELEASE_LINKS.privacyUrl || 'Public link required before release'}
             onPress={() => void openReleasePage('Privacy policy', RELEASE_LINKS.privacyUrl)}
           />
-          {adPrivacyRequired ? (
-            <ActionRow
-              icon={<ShieldCheck size={21} color="#2563EB" />}
-              title="Ad privacy settings"
-              subtitle={adPrivacyBusy ? 'Opening privacy settings…' : 'Review or change your advertising choices'}
-              onPress={() => void openAdPrivacy()}
-            />
-          ) : null}
           <ActionRow
             icon={<MessageSquareWarning size={21} color="#DC2626" />}
             title="Report an inappropriate ad"

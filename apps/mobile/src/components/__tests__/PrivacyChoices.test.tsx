@@ -633,7 +633,9 @@ test.each(['CA', 'US'] as const)('%s dropdown saves only the original binary fla
     expect(JSON.parse(f.memory.get(key)!)).toEqual({ version: 1, answer: resident ? 'resident' : 'not-resident' });
     expect(f.access.getProcessingAccess().ads.allowed).toBe(!resident);
     expect(f.button(`Change ${region} or territory`)!.props.accessibilityState.expanded).toBe(false);
-    expect(f.text()).toContain('Answer saved · Change');
+    const savedAnswer = canada ? (resident ? 'Quebec resident' : 'Outside Quebec') : (resident ? 'Connecticut resident' : 'Outside Connecticut');
+    expect(f.text()).toContain(`${savedAnswer} · Change`);
+    expect(f.button(`Change ${region} or territory`)!.props.accessibilityValue.text).toBe(savedAnswer);
   }
   await f.selectRegion(region, canada ? 'I live outside Canada' : 'I live outside the United States');
   expect(JSON.parse(f.memory.get(key)!)).toEqual({ version: 1, answer: 'not-resident' });
@@ -723,11 +725,6 @@ test('compact setup never acknowledges a failed save and allows retry', async ()
 });
 
 const privacyPreviews: PreviewScreen[] = [];
-const expectedAdvertisingText = [
-  'Google advertising',
-  'Non-personalized ads support Flap Fit.',
-  "Where available, use Ad privacy settings in Info to manage Google's privacy choices. For other advertising-data requests, use Privacy requests in Info.",
-].join('\n');
 function capturePrivacy(f: Awaited<ReturnType<typeof fixture>>, country: string, audience: string, state: string) {
   const text = f.text();
   if (f.button('Agree & Play')) {
@@ -735,7 +732,8 @@ function capturePrivacy(f: Awaited<ReturnType<typeof fixture>>, country: string,
     expect(text).toContain(AD_PROCESSING_SUMMARY);
     expect(text).not.toMatch(/Google AdMob|RevenueCat|IP address|diagnostics/);
     expect(f.button('Learn more')).toBeUndefined();
-  } else expect(f.groupText('Google advertising')).toBe(expectedAdvertisingText);
+  }
+  expect(text).not.toMatch(/Google advertising|Non-personalized ads support Flap Fit|Privacy requests in Info|Contact support for data requests/);
   expect(text).not.toMatch(/ad[- ]free|without advertising|without ads|\bno ads\b|advertising protections|yes keeps|(?:advertising|ads|reporting)[^.\n]{0,100}\b(?:disabled|off|unavailable|enabled|permitted|blocked)\b|\boff for your\b/i);
   expect(f.button('Withdraw advertising data consent')).toBeUndefined();
   expect(f.button('Stop advertising')).toBeUndefined();
@@ -907,5 +905,19 @@ test.each(['Quebec', 'Connecticut', 'New York', 'age'] as const)('%s never highl
   if (kind === 'New York') await f.press('Update New York answer');
   if (region) expect(f.button(`Change ${region} or territory`)).toBeDefined();
   else expect(f.selectedAnswers(group)).toEqual([target]);
+  await f.unmount();
+});
+
+
+test.each(['resident', 'not-resident'] as const)('saved Canadian %s status survives remount without changing advertising eligibility', async residency => {
+  const f = await fixture('ios', false, true, residency, true);
+  await f.mount();
+  const label = residency === 'resident' ? 'Quebec resident' : 'Outside Quebec';
+  expect(f.text()).toContain(`${label} · Change`);
+  expect(f.text()).not.toContain('Answer saved · Change');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(residency === 'not-resident');
+  await f.unmount(); await f.mount();
+  expect(f.text()).toContain(`${label} · Change`);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(residency === 'not-resident');
   await f.unmount();
 });

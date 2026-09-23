@@ -120,7 +120,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       <Text style={styles.body}>Which province or territory do you live in?</Text>
       {!compact ? <Text style={styles.note}>Your answer is saved on this device.</Text> : null}
       <ResidencyDropdown region="province" options={CANADIAN_PROVINCES_AND_TERRITORIES} expanded={expandedRegion === 'province'}
-        answered={savedQuebec !== null} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'province' ? null : 'province')}
+        savedAnswer={savedQuebec === 'resident' ? 'Quebec resident' : savedQuebec === 'not-resident' ? 'Outside Quebec' : null} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'province' ? null : 'province')}
         onSelect={code => void action(async () => { await saveQuebecResidency(code === 'QC' ? 'resident' : 'not-resident'); if (current()) setExpandedRegion(null); })} />
       {savedQuebec === null && quebecClarificationStatus() !== 'Not answered' ? <Text style={styles.status}>{quebecClarificationStatus()}</Text> : null}
     </View> : null}
@@ -129,7 +129,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       <Text style={styles.body}>Which state or territory do you live in?</Text>
       {!compact ? <Text style={styles.note}>Your answer is saved on this device.</Text> : null}
       <ResidencyDropdown region="state" options={US_STATES_AND_TERRITORIES} expanded={expandedRegion === 'state'}
-        answered={savedConnecticut !== null} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'state' ? null : 'state')}
+        savedAnswer={savedConnecticut === 'resident' ? 'Connecticut resident' : savedConnecticut === 'not-resident' ? 'Outside Connecticut' : null} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'state' ? null : 'state')}
         onSelect={code => void action(async () => { await saveConnecticutResidency(code === 'CT' ? 'resident' : 'not-resident'); if (current()) setExpandedRegion(null); })} />
       {savedConnecticut === null && connecticutClarificationStatus() !== 'Not answered' ? <Text style={styles.status}>{connecticutClarificationStatus()}</Text> : null}
     </View> : null}
@@ -149,11 +149,9 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
         </View>
       </> : button('Update New York answer', async () => { setEditingNewYork(true); })}
     </View> : null}
-    {showDetails ? <View style={styles.group}>
-      <Text style={styles.heading}>Google advertising</Text>
-      <Text style={styles.body}>Non-personalized ads support Flap Fit.</Text>
+    {showDetails && input.choices.ads.decision === 'denied' ? <View style={styles.group}>
+      <Text style={styles.heading}>Saved advertising preference</Text>
       {advertisingStatus ? <Text style={styles.status}>{advertisingStatus}</Text> : null}
-      <Text style={styles.note}>Where available, use Ad privacy settings in Info to manage Google's privacy choices. For other advertising-data requests, use Privacy requests in Info.</Text>
       {input.choices.ads.decision === 'denied' ? <Text style={styles.note}>Your previous advertising-data refusal is still respected. You can choose to allow advertising again when eligible.</Text> : null}
       {retryAdvertising ? button('Retry saving privacy choice', () => refuseProcessingPurpose('ads')) : null}
       {!retryAdvertising && !advertisingPending && !advertisingAllowPending && canRestoreAdvertising
@@ -170,7 +168,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
         {!retryReporting && !reportingPending && !reportingAllowPending && canChooseProcessingPurpose('analytics') && (needsSeparatePurposeChoice('analytics') || input.choices.analytics.decision === 'denied')
           ? button('Allow reporting', () => allowProcessingPurpose('analytics')) : null}
       </View>
-      <Text style={styles.note}>Stopping future reporting does not delete information already received by RevenueCat. Contact support for data requests.</Text>
+      <Text style={styles.note}>Stopping future reporting does not delete information already received by RevenueCat.</Text>
     </View> : null}
     {includeCompetition ? <View style={styles.group}>
       <Text style={styles.heading}>Online competition</Text>
