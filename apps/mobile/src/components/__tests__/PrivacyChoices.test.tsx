@@ -18,14 +18,15 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
     removeItem: jest.fn(async (key: string) => { memory.delete(key); }),
   };
   const alert = jest.fn();
+  const openURL = jest.fn().mockResolvedValue(undefined);
   jest.doMock('@react-native-async-storage/async-storage', () => storage);
   jest.doMock('react-native', () => ({
     View: 'View', Text: 'Text', TouchableOpacity: 'TouchableOpacity', Modal: 'Modal', ScrollView: 'ScrollView',
     StyleSheet: { create: (value: unknown) => value }, Platform: { OS: platform },
-    Alert: { alert }, Linking: { openURL: jest.fn() },
+    Alert: { alert }, Linking: { openURL },
   }));
   jest.doMock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) }));
-  jest.doMock('@/config/release', () => ({ RELEASE_LINKS: { privacyUrl: 'https://flapfitapp.com/privacy/' } }));
+  jest.doMock('@/config/release', () => ({ RELEASE_LINKS: { privacyUrl: 'https://flapfitapp.com/privacy/', termsUrl: 'https://flapfitapp.com/terms/' } }));
   const native = {
     getRevenueCatWithdrawalStatus: jest.fn(() => ({ state: 'pending', error: null })),
     settleRevenueCatWithdrawal: jest.fn().mockResolvedValue({ state: 'stopped', error: null }),
@@ -59,9 +60,9 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
   let controller!: ReturnType<typeof usePrivacyChoicesSheet>;
   function Harness() { controller = usePrivacyChoicesSheet(); return controller.privacyChoicesSheet; }
   const mountController = async () => { await act(async () => { tree = renderer.create(React.createElement(Harness)); }); };
-  const open = async () => {
+  const open = async (showDetails = false) => {
     let completion!: Promise<void>;
-    await act(async () => { completion = controller.openChoices(); });
+    await act(async () => { completion = controller.openChoices(showDetails); });
     return { completion };
   };
   const mount = async (sheet = false, onClose = jest.fn(), includeCompetition = false) => {
@@ -82,6 +83,11 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
     await press(name);
   };
   const text = () => tree.root.findAllByType('Text' as never).map(node => node.children.join('')).join('\n');
+  const pressPolicyLink = async (label: string) => {
+    const link = tree.root.findAllByType('Text' as never).find(node => node.props.accessibilityRole === 'link' && node.children.join('') === label);
+    expect(link).toBeDefined();
+    await act(async () => { link!.props.onPress(); });
+  };
   const modal = () => tree.root.findByType('Modal' as never);
   const unmount = async () => { await act(async () => { tree.unmount(); }); };
   const json = () => tree.toJSON();
@@ -95,7 +101,7 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
     expect(group).toBeDefined();
     return group!.findAllByType('TouchableOpacity' as never).filter(node => node.props.accessibilityState?.checked).map(node => node.props.accessibilityLabel);
   };
-  return { selectRegion, selectedAnswers, json, groupText, access, storage, memory, buttons, recover: () => { failChoicesRead = false; }, native, alert, act, mount, mountController, open, replaceRequest, cancel: () => controller.cancelChoices(), button, press, text, modal, unmount };
+  return { selectRegion, selectedAnswers, json, groupText, pressPolicyLink, openURL, access, storage, memory, buttons, recover: () => { failChoicesRead = false; }, native, alert, act, mount, mountController, open, replaceRequest, cancel: () => controller.cancelChoices(), button, press, text, modal, unmount };
 }
 
 test.each(['Yes', 'No'])('New York %s is asked once, stays saved after remount and can be updated explicitly', async answer => {
@@ -177,7 +183,7 @@ test.each(['save', 'native'] as const)('a failed reporting %s retains a rendered
   await f.unmount();
 });
 
-test.each(['Close', 'Save & continue'])('%s waits for iOS native dismissal and completes only once', async action => {
+test.each(['Close', 'Agree & Play'])('%s waits for iOS native dismissal and completes only once', async action => {
   const f = await fixture(); const closed = jest.fn(); await f.mount(true, closed);
   await f.act(async () => { f.modal().props.onShow?.(); });
   await f.press(action);
@@ -257,7 +263,7 @@ test('closing during a pending save cannot present a late alert or complete befo
   await f.act(async () => { f.modal().props.onShow(); });
   let fail!: (error: Error) => void;
   f.storage.setItem.mockImplementationOnce(() => new Promise<void>((_resolve, reject) => { fail = reject; }));
-  await f.press('Save & continue');
+  await f.press('Agree & Play');
   await f.press('Close');
   await f.act(async () => { fail(new Error('late failed save')); });
   expect(f.alert).not.toHaveBeenCalled();
@@ -640,6 +646,82 @@ test.each(['CA', 'US'] as const)('%s dropdown saves only the original binary fla
 });
 
 type PreviewScreen = { id: string; country: string; audience: string; state: string; context: string; text: string; tree: unknown; alerts?: unknown };
+test.each([
+  ['CA', 'Canada'], ['US', 'United States'], ['AU', 'Australia'], ['MX', 'Mexico'],
+] as const)('%s compact setup uses policy links without extra detail controls and preserves purpose decisions', async (country, name) => {
+  const f = await fixture('ios', false, country === 'CA', 'not-resident', true, 18, country);
+  await f.mount(true);
+  const notice: typeof import('@/services/privacy/processingNotice') = require('@/services/privacy/processingNotice');
+  const choices = JSON.stringify(f.access.getProcessingInputs().choices);
+  expect(f.text()).toContain('By tapping Agree & Play, you agree to our');
+  expect(f.button('Agree & Play')).toBeDefined();
+  expect(f.text()).not.toMatch(/Google AdMob|RevenueCat/);
+  expect(f.text()).not.toMatch(/A couple of quick questions|Review your setup below|Your answer is saved on this device/);
+  expect(f.button('Stop reporting')).toBeUndefined();
+  expect(f.button('Learn more')).toBeUndefined();
+  expect(f.button('Hide details')).toBeUndefined();
+  expect(f.button('Allow advertising')).toBeUndefined();
+  capturePrivacy(f, name, '18+', 'Compact setup with policy links');
+  await f.pressPolicyLink('Terms of Service');
+  await f.pressPolicyLink('Privacy Policy');
+  expect(f.openURL.mock.calls).toEqual([['https://flapfitapp.com/terms/'], ['https://flapfitapp.com/privacy/']]);
+  expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
+  expect(JSON.stringify(f.access.getProcessingInputs().choices)).toBe(choices);
+  expect(f.memory.has('@flapfit/processing-notice-v1')).toBe(false);
+  await f.press('Agree & Play');
+  expect(notice.isProcessingNoticeAcknowledged()).toBe(true);
+  expect(JSON.stringify(f.access.getProcessingInputs().choices)).toBe(choices);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  await f.unmount();
+});
+
+test('existing reporting refusal in Info persists through Agree & Play without changing eligible ads', async () => {
+  const f = await fixture('ios', false, true, 'not-resident', true);
+  await f.mount();
+  await f.press('Stop reporting');
+  await f.unmount(); await f.mount(true);
+  expect(f.button('Stop reporting')).toBeUndefined();
+  expect(f.button('Allow reporting')).toBeUndefined();
+  await f.press('Agree & Play');
+  expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: false, reason: 'refused' } });
+  await f.unmount(); await f.mount();
+  expect(f.button('Allow reporting')).toBeDefined();
+  expect(f.text()).toContain('Google AdMob');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  await f.unmount();
+});
+
+test('explicit Privacy & choices request opens full details immediately without granting a choice', async () => {
+  const f = await fixture();
+  await f.mountController();
+  const { completion } = await f.open(true);
+  expect(f.text()).toContain('Google AdMob');
+  expect(f.text()).toContain('RevenueCat');
+  expect(f.button('Learn more')).toBeUndefined();
+  const notice: typeof import('@/services/privacy/processingNotice') = require('@/services/privacy/processingNotice');
+  expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
+  await f.act(async () => { f.modal().props.onShow(); });
+  await f.press('Close');
+  await f.act(async () => { f.modal().props.onDismiss(); });
+  await completion;
+  expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
+  await f.unmount();
+});
+
+test('compact setup never acknowledges a failed save and allows retry', async () => {
+  const f = await fixture();
+  await f.mount(true);
+  const notice: typeof import('@/services/privacy/processingNotice') = require('@/services/privacy/processingNotice');
+  f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
+  await f.press('Agree & Play');
+  expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
+  expect(f.modal().props.visible).toBe(true);
+  expect(f.alert).toHaveBeenCalled();
+  await f.press('Agree & Play');
+  expect(notice.isProcessingNoticeAcknowledged()).toBe(true);
+  await f.unmount();
+});
+
 const privacyPreviews: PreviewScreen[] = [];
 const expectedAdvertisingText = [
   'Google advertising',
@@ -648,12 +730,17 @@ const expectedAdvertisingText = [
 ].join('\n');
 function capturePrivacy(f: Awaited<ReturnType<typeof fixture>>, country: string, audience: string, state: string) {
   const text = f.text();
-  expect(f.groupText('Google advertising')).toBe(expectedAdvertisingText);
+  if (f.button('Agree & Play')) {
+    const { AD_PROCESSING_SUMMARY }: typeof import('@/services/privacy/processingNotice') = require('@/services/privacy/processingNotice');
+    expect(text).toContain(AD_PROCESSING_SUMMARY);
+    expect(text).not.toMatch(/Google AdMob|RevenueCat|IP address|diagnostics/);
+    expect(f.button('Learn more')).toBeUndefined();
+  } else expect(f.groupText('Google advertising')).toBe(expectedAdvertisingText);
   expect(text).not.toMatch(/ad[- ]free|without advertising|without ads|\bno ads\b|advertising protections|yes keeps|(?:advertising|ads|reporting)[^.\n]{0,100}\b(?:disabled|off|unavailable|enabled|permitted|blocked)\b|\boff for your\b/i);
   expect(f.button('Withdraw advertising data consent')).toBeUndefined();
   expect(f.button('Stop advertising')).toBeUndefined();
   privacyPreviews.push({ id: `privacy-${privacyPreviews.length + 1}`, country, audience, state,
-    context: 'FlapFit Privacy & choices; the same body is used in Info and the post-game sheet.', text, tree: f.json(), alerts: f.alert.mock.calls });
+    context: 'Actual FlapFit component. Required setup uses short copy and policy links; full details remain in Info.', text, tree: f.json(), alerts: f.alert.mock.calls });
 }
 afterAll(() => {
   const output = process.env.FLAPFIT_PRIVACY_PREVIEW_OUTPUT;
@@ -735,10 +822,10 @@ test.each([
   const f = await fixture('ios', false, false, 'unknown', true, age, country);
   await f.mount(true);
   capturePrivacy(f, name, `${age === 18 ? '18+' : age}`, 'Apple age answer received');
-  await f.press('Save & continue');
+  await f.press('Agree & Play');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(allowed);
   await f.unmount(); await f.mount(true);
-  capturePrivacy(f, name, `${age === 18 ? '18+' : age}`, 'After Save & continue / reopening');
+  capturePrivacy(f, name, `${age === 18 ? '18+' : age}`, 'After Agree & Play / reopening');
   await f.unmount();
 });
 

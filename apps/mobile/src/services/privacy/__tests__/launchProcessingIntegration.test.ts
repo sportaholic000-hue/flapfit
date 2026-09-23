@@ -941,8 +941,11 @@ test.each(['CA', 'US', 'AU', 'MX'])('%s captures the actual shared post-game not
   try {
     const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
     await flow.preparePostGamePrivacy(() => true, jest.fn());
-    const notice = f.alert.mock.calls.find(call => call[0] === 'Ads keep Flap Fit free');
+    const notice = f.alert.mock.calls.find(call => call[0] === 'Ads support Flap Fit');
     expect(notice).toBeDefined();
+    const { AD_PROCESSING_SUMMARY }: typeof import('../processingNotice') = require('../processingNotice');
+    expect(notice![1]).toBe(AD_PROCESSING_SUMMARY);
+    expect(notice![1]).not.toMatch(/Google AdMob|RevenueCat|IP address|diagnostics/);
     expect(notice![1]).not.toMatch(/Quebec|Connecticut|New York|Australia|Mexico|under 18|ads enabled|advertising off/i);
     previewNotices.push({ country, title: notice![0], body: notice![1], buttons: notice![2].map((button: { text: string }) => button.text) });
   } finally { f.finish(); }
@@ -964,6 +967,7 @@ test.each(['CA', 'US', 'AU', 'MX'])('%s notice -> Privacy & choices -> Close can
     expect(notice.isProcessingNoticeAcknowledged()).toBe(false);
     expect(f.nativeAds.initialize).not.toHaveBeenCalled();
     expect(closeWithoutAnswer).toHaveBeenCalledTimes(2);
+    expect(closeWithoutAnswer).toHaveBeenCalledWith(true);
   } finally { f.finish(); }
   f = await load({ country, memory });
   try {

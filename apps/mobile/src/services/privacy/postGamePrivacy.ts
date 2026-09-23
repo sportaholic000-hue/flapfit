@@ -7,7 +7,7 @@ import { getProcessingInputs } from './processingAccess';
 import { isRegionalAdvertisingDisabled } from './regionalAdvertising';
 import { isMonetizationPrepared, prepareMonetization } from '../monetization';
 import {
-  acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, canPresentProcessingNotice,
+  acknowledgeProcessingNotice, AD_PROCESSING_SUMMARY, canPresentProcessingNotice,
   isProcessingNoticeAcknowledged, needsSeparatePurposeChoice, restoreProcessingNotice,
 } from './processingNotice';
 
@@ -15,7 +15,7 @@ import {
  * Sharing, result appearance and foreground events never invoke this. */
 export async function preparePostGamePrivacy(
   canPresent: () => boolean,
-  openChoices: () => Promise<void>,
+  openChoices: (showDetails?: boolean) => Promise<void>,
 ): Promise<boolean> {
   await restoreProcessingNotice();
   if (!canPresent()) return false;
@@ -40,14 +40,13 @@ export async function preparePostGamePrivacy(
       // An unanswered clarification remains pending, including after restart.
     } else {
       const action = await new Promise<'continue' | 'choices' | 'cancel'>(resolve => {
-        Alert.alert('Ads keep Flap Fit free', AD_PROCESSING_DISCLOSURE +
-          '\n\nContinue to acknowledge this notice, or review it in Privacy & choices.', [
+        Alert.alert('Ads support Flap Fit', AD_PROCESSING_SUMMARY, [
           { text: 'Privacy & choices', onPress: () => resolve('choices') },
           { text: 'Continue', onPress: () => resolve('continue') },
         ], { cancelable: true, onDismiss: () => resolve('cancel') });
       });
       if (!canPresent()) return false;
-      if (action === 'choices') await openChoices();
+      if (action === 'choices') await openChoices(true);
       else if (action === 'continue') await acknowledgeProcessingNotice();
     }
   }

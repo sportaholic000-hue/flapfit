@@ -16,13 +16,13 @@ import { releaseEligibilityMessage, resolveReleaseEligibility } from '@/services
 import { isRegionalAdvertisingDisabled } from '@/services/privacy/regionalAdvertising';
 import { ageProcessingAvailability } from '@/services/privacy/processingAvailability';
 import {
-  acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, allowProcessingPurpose, canChooseProcessingPurpose,
+  acknowledgeProcessingNotice, AD_PROCESSING_DISCLOSURE, AD_PROCESSING_SUMMARY, allowProcessingPurpose, canChooseProcessingPurpose,
   isProcessingAllowPending, needsSeparatePurposeChoice, processingPurposeStatus, refuseProcessingPurpose, restoreProcessingNotice,
 } from '@/services/privacy/processingNotice';
 
 /** Shared by the permanent Info section and a required post-game choice sheet.
  * Opening/reading it does not record agreement or initialize either SDK. */
-export function PrivacyChoices({ onDone, canInteract, includeCompetition = false }: { onDone?: () => void; canInteract?: () => boolean; includeCompetition?: boolean }) {
+export function PrivacyChoices({ onDone, canInteract, includeCompetition = false, compact = false }: { onDone?: () => void; canInteract?: () => boolean; includeCompetition?: boolean; compact?: boolean }) {
   const access = useSyncExternalStore(subscribeProcessingAccess, getProcessingAccess, getProcessingAccess);
   const advertisingWithdrawal = useSyncExternalStore(subscribeAdvertisingWithdrawal, getAdvertisingWithdrawalState, getAdvertisingWithdrawalState);
   const withdrawal = useSyncExternalStore(subscribeReportingWithdrawal, getReportingWithdrawalState, getReportingWithdrawalState);
@@ -30,6 +30,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const [busy, setBusy] = useState(false);
   const [editingNewYork, setEditingNewYork] = useState(false);
   const [expandedRegion, setExpandedRegion] = useState<'province' | 'state' | null>(null);
+  const showDetails = !compact;
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const [, refresh] = useState(0);
@@ -44,6 +45,10 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const advertisingStatus = processingPurposeStatus('ads');
   const reportingStatus = processingPurposeStatus('analytics');
   const current = () => mounted.current && (canInteract?.() ?? true);
+  const openPolicy = (url: string, name: string) => {
+    if (!current()) return;
+    void Linking.openURL(url).catch(() => { if (current()) Alert.alert(`Unable to open ${name}`, 'Please try again when online.'); });
+  };
   const action = async (operation: () => Promise<void>) => {
     if (busy || !current()) return;
     setBusy(true);
@@ -78,11 +83,13 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   return <View style={styles.root}>
     <View style={styles.intro}>
       <Text accessibilityRole="header" style={styles.introHeading}>Let’s get you started</Text>
-      <Text style={styles.body}>A couple of quick questions to set up Flap Fit.</Text>
+      {!compact ? <Text style={styles.body}>A couple of quick questions to set up Flap Fit.</Text> : null}
     </View>
-    <Text style={styles.heading}>Advertising & reporting</Text>
-    <Text style={styles.body}>{AD_PROCESSING_DISCLOSURE}</Text>
-    {input.launch ? <Text style={styles.status}>{resolveReleaseEligibility(input).status === 'available'
+    {!compact ? <>
+      <Text style={styles.heading}>Advertising & reporting</Text>
+      <Text style={styles.body}>{AD_PROCESSING_DISCLOSURE}</Text>
+    </> : null}
+    {input.launch && (!compact || resolveReleaseEligibility(input).status !== 'available') ? <Text style={styles.status}>{resolveReleaseEligibility(input).status === 'available'
       ? 'Review your setup below.' : releaseEligibilityMessage(resolveReleaseEligibility(input))}</Text> : null}
     {Platform.OS === 'ios' && resolveReleaseEligibility(input).status === 'unanswered'
       ? button('Retry availability check', async () => {
@@ -98,9 +105,9 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       })}
     </View> : null}
     {hasLocalAgeControl() ? <View style={styles.group}>
-      <Text style={styles.heading}>Age range</Text>
+      {!compact ? <Text style={styles.heading}>Age range</Text> : null}
       <Text style={styles.body}>What is your age range?</Text>
-      <Text style={styles.note}>Your answer is saved on this device. Please choose your current age range.</Text>
+      {!compact ? <Text style={styles.note}>Your answer is saved on this device. Please choose your current age range.</Text> : null}
       <Text style={styles.status}>{localAgeAnswerStatus()}</Text>
       {hasLocalAgeReadError()
         ? button('Retry loading age answer', restoreLocalAgeAnswer)
@@ -109,18 +116,18 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
         </View>)}</View>}
     </View> : null}
     {hasQuebecClarificationControl() ? <View style={styles.group}>
-      <Text style={styles.heading}>Province or territory</Text>
+      {!compact ? <Text style={styles.heading}>Province or territory</Text> : null}
       <Text style={styles.body}>Which province or territory do you live in?</Text>
-      <Text style={styles.note}>Your answer is saved on this device.</Text>
+      {!compact ? <Text style={styles.note}>Your answer is saved on this device.</Text> : null}
       <ResidencyDropdown region="province" options={CANADIAN_PROVINCES_AND_TERRITORIES} expanded={expandedRegion === 'province'}
         answered={savedQuebec !== null} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'province' ? null : 'province')}
         onSelect={code => void action(async () => { await saveQuebecResidency(code === 'QC' ? 'resident' : 'not-resident'); if (current()) setExpandedRegion(null); })} />
       {savedQuebec === null && quebecClarificationStatus() !== 'Not answered' ? <Text style={styles.status}>{quebecClarificationStatus()}</Text> : null}
     </View> : null}
     {hasConnecticutClarificationControl() ? <View style={styles.group}>
-      <Text style={styles.heading}>State or territory</Text>
+      {!compact ? <Text style={styles.heading}>State or territory</Text> : null}
       <Text style={styles.body}>Which state or territory do you live in?</Text>
-      <Text style={styles.note}>Your answer is saved on this device.</Text>
+      {!compact ? <Text style={styles.note}>Your answer is saved on this device.</Text> : null}
       <ResidencyDropdown region="state" options={US_STATES_AND_TERRITORIES} expanded={expandedRegion === 'state'}
         answered={savedConnecticut !== null} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'state' ? null : 'state')}
         onSelect={code => void action(async () => { await saveConnecticutResidency(code === 'CT' ? 'resident' : 'not-resident'); if (current()) setExpandedRegion(null); })} />
@@ -131,18 +138,18 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       {button('Retry loading regional status', restoreNewYorkClarification)}
     </View> : null}
     {hasNewYorkClarificationControl() ? <View style={styles.group}>
-      <Text style={styles.heading}>Current location</Text>
+      {!compact ? <Text style={styles.heading}>Current location</Text> : null}
       <Text style={styles.status}>{newYorkClarificationStatus()}</Text>
       {!hasSavedNewYorkAnswer() || editingNewYork ? <>
         <Text style={styles.body}>Are you in New York right now?</Text>
-        <Text style={styles.note}>Your answer is saved on this device so we do not ask again. You can update it here if your situation changes.</Text>
+        {!compact ? <Text style={styles.note}>Your answer is saved on this device so we do not ask again. You can update it here if your situation changes.</Text> : null}
         <View accessibilityRole="radiogroup" accessibilityLabel="Are you in New York right now?" style={styles.buttons}>
           {answerButton('Yes', savedNewYork === 'present', async () => { await saveNewYorkPresence('present'); setEditingNewYork(false); })}
           {answerButton('No', savedNewYork === 'not-present', async () => { await saveNewYorkPresence('not-present'); setEditingNewYork(false); })}
         </View>
       </> : button('Update New York answer', async () => { setEditingNewYork(true); })}
     </View> : null}
-    <View style={styles.group}>
+    {showDetails ? <View style={styles.group}>
       <Text style={styles.heading}>Google advertising</Text>
       <Text style={styles.body}>Non-personalized ads support Flap Fit.</Text>
       {advertisingStatus ? <Text style={styles.status}>{advertisingStatus}</Text> : null}
@@ -151,8 +158,8 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       {retryAdvertising ? button('Retry saving privacy choice', () => refuseProcessingPurpose('ads')) : null}
       {!retryAdvertising && !advertisingPending && !advertisingAllowPending && canRestoreAdvertising
         ? button('Allow advertising', () => allowProcessingPurpose('ads')) : null}
-    </View>
-    <View style={styles.group}>
+    </View> : null}
+    {showDetails || expressReporting ? <View style={styles.group}>
       <Text style={styles.heading}>Ad performance reporting</Text>
       <Text style={styles.body}>RevenueCat reporting is separate from advertising. You can manage your reporting preference here.</Text>
       {reportingStatus ? <Text style={styles.status}>{reportingStatus}</Text> : null}
@@ -164,7 +171,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
           ? button('Allow reporting', () => allowProcessingPurpose('analytics')) : null}
       </View>
       <Text style={styles.note}>Stopping future reporting does not delete information already received by RevenueCat. Contact support for data requests.</Text>
-    </View>
+    </View> : null}
     {includeCompetition ? <View style={styles.group}>
       <Text style={styles.heading}>Online competition</Text>
       <Text style={styles.body}>Stop online participation without deleting your profile or changing advertising and reporting choices. To participate again, review and accept the rules in Compete.</Text>
@@ -177,14 +184,16 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       })}
       <Text style={styles.note}>For information already saved online, use Delete online profile or Contact us in Info.</Text>
     </View> : null}
-    <View style={styles.group}><Text style={styles.heading}>Your camera stays on your device</Text><Text style={styles.body}>Camera access is required for all gameplay, including normal Play and Record & Play. Flap Fit does not receive your camera footage or audio. Record & Play makes a temporary video on your device so you can choose whether and where to share it.</Text></View>
-    <TouchableOpacity accessibilityRole="link" onPress={() => void Linking.openURL(RELEASE_LINKS.privacyUrl).catch(() => Alert.alert('Unable to open privacy policy', 'Please try again when online.'))} style={styles.link}><Text style={styles.linkText}>Full privacy policy</Text></TouchableOpacity>
-    {button('Save & continue', async () => { await acknowledgeProcessingNotice(); if (current()) onDone?.(); })}
-    <Text style={styles.note}>Your age and location answers are saved on this device. Online competition is managed separately in Compete.</Text>
+    {showDetails ? <View style={styles.group}><Text style={styles.heading}>Your camera stays on your device</Text><Text style={styles.body}>Camera access is required for all gameplay, including normal Play and Record & Play. Flap Fit does not receive your camera footage or audio. Record & Play makes a temporary video on your device so you can choose whether and where to share it.</Text></View> : null}
+    {compact ? <Text style={[styles.note, styles.agreement]}>
+      By tapping Agree &amp; Play, you agree to our <Text accessibilityRole="link" onPress={() => openPolicy(RELEASE_LINKS.termsUrl, 'terms of service')} style={styles.inlineLink}>Terms of Service</Text> and acknowledge our <Text accessibilityRole="link" onPress={() => openPolicy(RELEASE_LINKS.privacyUrl, 'privacy policy')} style={styles.inlineLink}>Privacy Policy</Text>. Ads support Flap Fit. {AD_PROCESSING_SUMMARY}
+    </Text> : <TouchableOpacity accessibilityRole="link" onPress={() => openPolicy(RELEASE_LINKS.privacyUrl, 'privacy policy')} style={styles.link}><Text style={styles.linkText}>Full privacy policy</Text></TouchableOpacity>}
+    {button(compact ? 'Agree & Play' : 'Save & continue', async () => { await acknowledgeProcessingNotice(); if (current()) onDone?.(); })}
+    {!compact ? <Text style={styles.note}>Your age and location answers are saved on this device. Online competition is managed separately in Compete.</Text> : null}
   </View>;
 }
 
-export function PrivacyChoicesSheet({ onClose, closeRequested = false }: { onClose: () => void; closeRequested?: boolean }) {
+export function PrivacyChoicesSheet({ onClose, closeRequested = false, showDetails = false }: { onClose: () => void; closeRequested?: boolean; showDetails?: boolean }) {
   const insets = useSafeAreaInsets();
   const [visible, setVisible] = useState(true);
   const lifetime = useRef({ active: true, shown: false, closing: false, completed: false });
@@ -220,12 +229,12 @@ export function PrivacyChoicesSheet({ onClose, closeRequested = false }: { onClo
     }}>
     <View style={[styles.sheet, { paddingTop: Math.max(insets.top, 16) }]}>
       <View style={styles.header}><Text style={styles.title}>Privacy & choices</Text><TouchableOpacity accessibilityRole="button" accessibilityLabel="Close privacy choices" onPress={requestClose} style={styles.close}><Text style={styles.closeText}>Close</Text></TouchableOpacity></View>
-      <ScrollView contentContainerStyle={[styles.sheetBody, { paddingBottom: insets.bottom + 24 }]}><PrivacyChoices onDone={requestClose} canInteract={() => lifetime.current.active && !lifetime.current.closing} /></ScrollView>
+      <ScrollView contentContainerStyle={[styles.sheetBody, { paddingBottom: insets.bottom + 24 }]}><PrivacyChoices compact={!showDetails} onDone={requestClose} canInteract={() => lifetime.current.active && !lifetime.current.closing} /></ScrollView>
     </View>
   </Modal>;
 }
 
-type SheetRequest = { id: number; completion: Promise<void>; resolve: () => void; closeRequested?: boolean };
+type SheetRequest = { id: number; completion: Promise<void>; resolve: () => void; closeRequested?: boolean; showDetails: boolean };
 
 /** Cancellation releases the invalidated result waiter, while retaining the
  * native host through dismissal. A replacement request waits behind that host. */
@@ -249,12 +258,12 @@ export function usePrivacyChoicesSheet() {
       displayed.current?.resolve(); displayed.current = null;
     };
   }, []);
-  const openChoices = useCallback((): Promise<void> => {
+  const openChoices = useCallback((showDetails = false): Promise<void> => {
     if (!mounted.current) return Promise.resolve();
     if (pending.current) return pending.current.completion;
     let resolve!: () => void;
     const completion = new Promise<void>(done => { resolve = done; });
-    const next = { id: ++nextRequestId.current, completion, resolve };
+    const next = { id: ++nextRequestId.current, completion, resolve, showDetails };
     pending.current = next;
     if (!displayed.current) { displayed.current = next; setRequest(next); }
     return completion;
@@ -268,7 +277,7 @@ export function usePrivacyChoicesSheet() {
     closed.resolve();
   };
   return { openChoices, cancelChoices,
-    privacyChoicesSheet: request ? <PrivacyChoicesSheet key={request.id} closeRequested={request.closeRequested} onClose={() => dismiss(request)} /> : null };
+    privacyChoicesSheet: request ? <PrivacyChoicesSheet key={request.id} showDetails={request.showDetails} closeRequested={request.closeRequested} onClose={() => dismiss(request)} /> : null };
 }
 
 const styles = StyleSheet.create({
@@ -276,6 +285,7 @@ const styles = StyleSheet.create({
   root: { gap: 8 }, heading: { color: '#0F172A', fontSize: 15, fontWeight: '800' },
   body: { color: '#475569', fontSize: 14, lineHeight: 21 }, group: { marginTop: 14, gap: 7 },
   note: { color: '#64748B', fontSize: 12, lineHeight: 18 }, status: { color: '#334155', fontSize: 13, fontWeight: '700' },
+  agreement: { marginTop: 12 }, inlineLink: { color: '#0369A1', fontWeight: '700', textDecorationLine: 'underline' },
   buttons: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   button: { minHeight: 44, paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, backgroundColor: '#EFF6FF', justifyContent: 'center' },
   ageAnswer: { flexGrow: 1, flexBasis: '40%', minWidth: 112 },

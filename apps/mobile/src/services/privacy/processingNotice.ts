@@ -21,6 +21,9 @@ export function isProcessingAllowPending(purpose: 'ads' | 'analytics'): boolean 
 }
 
 export const AD_PROCESSING_DISCLOSURE = 'Google AdMob uses app and device information, IP address and approximate location, diagnostics, and ad interactions to deliver non-personalized ads. RevenueCat measures ad loads, views, clicks, and revenue using a separate random app ID and app/device information. Neither receives your camera footage, recordings, exercises, scores, or training history.';
+// Full provider details remain in the linked policy and Info. This summary is
+// notice wording, not express permission for additional processing purposes.
+export const AD_PROCESSING_SUMMARY = 'We use app and device information to deliver ads and measure ad performance.';
 
 export async function restoreProcessingNotice(): Promise<void> {
   // Notice caching must not suppress a retry of unreadable purpose choices.
