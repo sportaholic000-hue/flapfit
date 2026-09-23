@@ -73,8 +73,14 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
     return { completion };
   };
   const buttons = () => tree.root.findAllByType('TouchableOpacity' as never);
-  const button = (title: string) => buttons().find(node => node.findAllByType('Text' as never).some(text => text.children.join('') === title));
+  const button = (title: string) => buttons().find(node => node.props.accessibilityLabel === title || node.findAllByType('Text' as never).some(text => text.children.join('') === title));
   const press = async (title: string) => { expect(button(title)).toBeDefined(); await act(async () => { button(title)!.props.onPress(); }); };
+  const selectRegion = async (region: 'province' | 'state', name: string) => {
+    const trigger = button(`Select ${region} or territory`) ?? button(`Change ${region} or territory`);
+    expect(trigger).toBeDefined();
+    if (!trigger!.props.accessibilityState.expanded) await act(async () => { trigger!.props.onPress(); });
+    await press(name);
+  };
   const text = () => tree.root.findAllByType('Text' as never).map(node => node.children.join('')).join('\n');
   const modal = () => tree.root.findByType('Modal' as never);
   const unmount = async () => { await act(async () => { tree.unmount(); }); };
@@ -89,13 +95,13 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
     expect(group).toBeDefined();
     return group!.findAllByType('TouchableOpacity' as never).filter(node => node.props.accessibilityState?.checked).map(node => node.props.accessibilityLabel);
   };
-  return { selectedAnswers, json, groupText, access, storage, memory, buttons, recover: () => { failChoicesRead = false; }, native, alert, act, mount, mountController, open, replaceRequest, cancel: () => controller.cancelChoices(), button, press, text, modal, unmount };
+  return { selectRegion, selectedAnswers, json, groupText, access, storage, memory, buttons, recover: () => { failChoicesRead = false; }, native, alert, act, mount, mountController, open, replaceRequest, cancel: () => controller.cancelChoices(), button, press, text, modal, unmount };
 }
 
 test.each(['Yes', 'No'])('New York %s is asked once, stays saved after remount and can be updated explicitly', async answer => {
   const f = await fixture('ios', false, false, 'unknown', true, 15);
   await f.mount();
-  await f.press('No'); // Connecticut residence.
+  await f.selectRegion('state', 'Maine'); // Connecticut residence answer remains No.
   expect(f.text()).toContain('Are you in New York right now?');
   const nyButtons = f.buttons().filter(node => node.findAllByType('Text' as never).some(text => text.children.join('') === answer));
   await f.act(async () => { nyButtons[nyButtons.length - 1].props.onPress(); });
@@ -308,13 +314,13 @@ test('Info renders only the needed teen residency clarification and preserves in
   f.access.verifyLaunchAgeEvidence({source:'apple',status:'shared',lowerBound:13,upperBound:15},'US',f.access.getAgeVerificationRevision());
   await f.access.setProcessingChoice('analytics','denied');
   await f.mount();
-  expect(f.text()).toContain('Do you live in Connecticut?');
-  await f.press('No');
-  expect(f.text()).toContain('Saved answer: No');
+  expect(f.text()).toContain('Which state or territory do you live in?');
+  await f.selectRegion('state', 'Maine');
+  expect(f.access.getProcessingInputs().launch?.options.connecticutResidency).toBe('not-resident');
   expect(f.access.getProcessingAccess().revenueCat.allowed).toBe(false);
-  await f.press('Yes');
+  await f.selectRegion('state', 'Connecticut');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
-  expect(f.text()).toContain('Saved answer: Yes');
+  expect(f.access.getProcessingInputs().launch?.options.connecticutResidency).toBe('resident');
   await f.unmount();
 });
 test('Info residency save failure keeps every answer reachable for retry and makes no permission claim', async () => {
@@ -322,17 +328,17 @@ test('Info residency save failure keeps every answer reachable for retry and mak
   f.access.setLaunchProcessingCountry('US',true);
   f.access.verifyLaunchAgeEvidence({source:'apple',status:'shared',lowerBound:13,upperBound:15},'US',f.access.getAgeVerificationRevision());
   await f.mount(); f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
-  await f.press('No');
+  await f.selectRegion('state', 'Maine');
   expect(f.text()).toContain('Answer save not confirmed');
-  expect(f.button('No')).toBeDefined(); expect(f.button('Yes')).toBeDefined();
+  expect(f.button('Maine')).toBeDefined(); expect(f.button('Connecticut')).toBeDefined();
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
-  await f.press('No');
-  expect(f.text()).toContain('Saved answer: No');
+  await f.selectRegion('state', 'Maine');
+  expect(f.access.getProcessingInputs().launch?.options.connecticutResidency).toBe('not-resident');
   await f.unmount();
 });
 test('adult Info has no unnecessary state question', async () => {
   const f=await fixture(); await f.mount();
-  expect(f.text()).not.toContain('Do you live in Connecticut?'); await f.unmount();
+  expect(f.text()).not.toContain('Which state or territory do you live in?'); await f.unmount();
 });
 
 
@@ -424,15 +430,15 @@ test('audit continuation: collapse/remount then Stop invalidates an older render
 test('Canadian region controls permit eligible ads without an ads-off control independently of reporting', async () => {
   const f=await fixture('ios',false,true,'unknown',true);await f.mount();
   expect(f.access.getProcessingInputs().choices.ads.decision).toBe('unset');
-  expect(f.text()).toContain('Do you live in Quebec?');
+  expect(f.text()).toContain('Which province or territory do you live in?');
   expect(f.button('Allow advertising')).toBeUndefined();
   expect(f.button('Withdraw advertising data consent')).toBeUndefined();
   await f.press('Stop reporting');
-  await f.press('No');
+  await f.selectRegion('province', 'New Brunswick');
   expect(f.button('Allow advertising')).toBeUndefined();
   expect(f.button('Withdraw advertising data consent')).toBeUndefined();
   expect(f.access.getProcessingAccess()).toMatchObject({ads:{allowed:true},revenueCat:{allowed:false,reason:'refused'}});
-  await f.press('Yes');
+  await f.selectRegion('province', 'Quebec');
   expect(f.text()).toContain('Your answer is saved on this device.');
   expect(f.button('Allow advertising')).toBeUndefined();
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
@@ -441,11 +447,11 @@ test('Canadian region controls permit eligible ads without an ads-off control in
 test('regional correction: rendered failed province save has an actionable retry', async () => {
   const f=await fixture('ios',false,true,'unknown');await f.mount();
   f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
-  await f.press('No');
+  await f.selectRegion('province', 'New Brunswick');
   expect(f.text()).toContain('not confirmed');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
-  expect(f.button('No')).toBeDefined();
-  await f.press('No');
+  expect(f.button('New Brunswick')).toBeDefined();
+  await f.selectRegion('province', 'New Brunswick');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
   await f.unmount();
 });
@@ -491,7 +497,7 @@ test('a saved adult advertising refusal is honored until explicitly restored, wi
 
 test('non-Quebec Canadian teen retains notice-based ads without an ads-off control',async()=>{
   const f=await fixture('ios',false,true,'unknown',true,14);await f.mount();
-  await f.press('No');
+  await f.selectRegion('province', 'New Brunswick');
   expect(f.access.getProcessingInputs().launch?.resolution?.reasons.ads).toBe('notice-route');
   expect(f.button('Not now')).toBeUndefined();expect(f.button('Allow advertising')).toBeUndefined();
   expect(f.button('Withdraw advertising data consent')).toBeUndefined();
@@ -557,14 +563,27 @@ test.each(['unsupported','unknown'] as const)('Info renders accurate %s age avai
   await f.unmount();
 });
 
-test.each([true,false])('regional binary answers: Quebec=%s renders only clear Yes/No and no Not sure',async quebec=>{
-  const f=await fixture('ios',false,quebec,'unknown',true,quebec?18:14);await f.mount();
-  expect(f.text()).toContain(quebec?'Do you live in Quebec?':'Do you live in Connecticut?');
-  expect(f.button('Yes')).toBeDefined();expect(f.button('No')).toBeDefined();
+test.each([true, false])('residency dropdowns: Canada=%s has no preselected answer and cancellation saves nothing', async canada => {
+  const f = await fixture('ios', false, canada, 'unknown', true, canada ? 18 : 14);
+  await f.mount();
+  const region = canada ? 'province' : 'state';
+  const key = canada ? '@flapfit/quebec-residency-v1' : '@flapfit/connecticut-residency-v1';
+  expect(f.text()).toContain('Let’s get you started');
+  expect(f.text()).toContain('A couple of quick questions to set up Flap Fit.');
+  expect(f.button('Yes')).toBeUndefined(); expect(f.button('No')).toBeUndefined();
   expect(f.button('Not sure')).toBeUndefined();
+  await f.press(`Select ${region} or territory`);
+  expect(f.button(`Select ${region} or territory`)!.props.accessibilityState.expanded).toBe(true);
+  expect(f.memory.has(key)).toBe(false);
+  await f.press(`Cancel ${region} selection`);
+  expect(f.button(`Select ${region} or territory`)!.props.accessibilityState.expanded).toBe(false);
+  expect(f.memory.has(key)).toBe(false);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.unmount(); await f.mount();
+  expect(f.button(`Select ${region} or territory`)).toBeDefined();
+  expect(f.memory.has(key)).toBe(false);
   await f.unmount();
 });
-
 
 test('expired age evidence does not create a saved advertising refusal or expose an ads-off control', async () => {
   const f = await fixture('ios', false, true, 'not-resident', true); await f.mount();
@@ -581,6 +600,42 @@ test('expired age evidence does not create a saved advertising refusal or expose
   });
   expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
   expect(f.button('Withdraw advertising data consent')).toBeUndefined();
+  await f.unmount();
+});
+
+test.each(['CA', 'US'] as const)('%s dropdown saves only the original binary flag for every option and preserves advertising decisions', async country => {
+  const canada = country === 'CA';
+  const f = await fixture('ios', false, canada, 'unknown', true, 15, country);
+  await f.mount();
+  const region = canada ? 'province' : 'state';
+  const key = canada ? '@flapfit/quebec-residency-v1' : '@flapfit/connecticut-residency-v1';
+  const { CANADIAN_PROVINCES_AND_TERRITORIES, US_STATES_AND_TERRITORIES }: typeof import('../residency-dropdown') = require('../residency-dropdown');
+  const options = canada ? CANADIAN_PROVINCES_AND_TERRITORIES : US_STATES_AND_TERRITORIES;
+  expect(options).toHaveLength(canada ? 13 : 56);
+  expect(new Set(options.map(([code]) => code)).size).toBe(options.length);
+  if (!canada) {
+    await f.selectRegion('state', 'New York');
+    // Residence must never be substituted for the separate current-location answer.
+    expect(f.text()).toContain('Are you in New York right now?');
+    expect(f.memory.has('@flapfit/new-york-eligibility-v1')).toBe(false);
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+    await f.press('No');
+  }
+  for (const [code, name] of options) {
+    await f.selectRegion(region, name);
+    const resident = code === (canada ? 'QC' : 'CT');
+    expect(JSON.parse(f.memory.get(key)!)).toEqual({ version: 1, answer: resident ? 'resident' : 'not-resident' });
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(!resident);
+    expect(f.button(`Change ${region} or territory`)!.props.accessibilityState.expanded).toBe(false);
+    expect(f.text()).toContain('Answer saved · Change');
+  }
+  await f.selectRegion(region, canada ? 'I live outside Canada' : 'I live outside the United States');
+  expect(JSON.parse(f.memory.get(key)!)).toEqual({ version: 1, answer: 'not-resident' });
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  await f.unmount(); await f.mount();
+  expect(f.button(`Change ${region} or territory`)).toBeDefined();
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  if (!canada) expect(f.text()).not.toContain('Are you in New York right now?');
   await f.unmount();
 });
 
@@ -609,18 +664,22 @@ test.each([13, 14, 17, 18])('Canada age %s keeps identical advertising copy befo
   const f = await fixture('ios', false, true, 'unknown', true, age, 'CA');
   await f.mount(true);
   capturePrivacy(f, 'Canada', `${age === 18 ? '18+' : age}`, 'Province unanswered');
-  expect(f.selectedAnswers('Do you live in Quebec?')).toEqual([]);
-  await f.press('No');
+  expect(f.button('Select province or territory')).toBeDefined();
+  await f.press('Select province or territory');
+  capturePrivacy(f, 'Canada', `${age}`, 'Province dropdown open');
+  await f.selectRegion('province', 'New Brunswick');
   capturePrivacy(f, 'Canada', `${age === 18 ? '18+' : age}`, 'Quebec: No');
-  expect(f.selectedAnswers('Do you live in Quebec?')).toEqual(['No']);
+  expect(f.access.getProcessingInputs().launch?.options.quebecResidency).toBe('not-resident');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
-  await f.press('Yes');
+  await f.selectRegion('province', 'Quebec');
   capturePrivacy(f, 'Canada', `${age === 18 ? '18+' : age}`, 'Quebec: Yes');
-  expect(f.selectedAnswers('Do you live in Quebec?')).toEqual(['Yes']);
+  expect(f.button('Change province or territory')).toBeDefined();
+  expect(f.access.getProcessingInputs().launch?.options.quebecResidency).toBe('resident');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
   await f.unmount(); await f.mount(true);
   capturePrivacy(f, 'Canada', `${age === 18 ? '18+' : age}`, 'Saved Quebec Yes after reopening');
-  expect(f.selectedAnswers('Do you live in Quebec?')).toEqual(['Yes']);
+  expect(f.button('Change province or territory')).toBeDefined();
+  expect(f.access.getProcessingInputs().launch?.options.quebecResidency).toBe('resident');
   await f.unmount();
 });
 
@@ -628,14 +687,16 @@ test.each([13, 17])('US age %s has neutral CT/NY answers and retains New York hi
   const f = await fixture('ios', false, false, 'unknown', true, age, 'US');
   await f.mount(true);
   capturePrivacy(f, 'United States', `${age}`, 'Connecticut unanswered');
-  expect(f.selectedAnswers('Do you live in Connecticut?')).toEqual([]);
-  await f.press('Yes');
+  expect(f.button('Select state or territory')).toBeDefined();
+  await f.press('Select state or territory');
+  capturePrivacy(f, 'United States', `${age}`, 'State dropdown open');
+  await f.selectRegion('state', 'Connecticut');
   capturePrivacy(f, 'United States', `${age}`, 'Connecticut: Yes');
-  expect(f.selectedAnswers('Do you live in Connecticut?')).toEqual(['Yes']);
+  expect(f.access.getProcessingInputs().launch?.options.connecticutResidency).toBe('resident');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
-  await f.press('No');
+  await f.selectRegion('state', 'Maine');
   capturePrivacy(f, 'United States', `${age}`, 'Connecticut: No; New York unanswered');
-  expect(f.selectedAnswers('Do you live in Connecticut?')).toEqual(['No']); expect(f.selectedAnswers('Are you in New York right now?')).toEqual([]);
+  expect(f.access.getProcessingInputs().launch?.options.connecticutResidency).toBe('not-resident'); expect(f.selectedAnswers('Are you in New York right now?')).toEqual([]);
   const answerNewYork = async (answer: string) => {
     const choices = f.buttons().filter(node => node.findAllByType('Text' as never).some(text => text.children.join('') === answer));
     await f.act(async () => { choices[choices.length - 1].props.onPress(); });
@@ -716,12 +777,12 @@ test.each([
 test.each([['CA', 'Canada'], ['US', 'United States']] as const)('%s regional save errors never advertise the consequence of an unanswered question', async (country, name) => {
   const f = await fixture('ios', false, country === 'CA', 'unknown', true, 15, country);
   await f.mount(true);
-  f.storage.setItem.mockRejectedValueOnce(new Error('disk full')); await f.press('Yes');
+  f.storage.setItem.mockRejectedValueOnce(new Error('disk full')); await f.selectRegion(country === 'CA' ? 'province' : 'state', country === 'CA' ? 'Quebec' : 'Connecticut');
   capturePrivacy(f, name, '15', 'Province/state answer could not be saved');
-  expect(f.selectedAnswers(country === 'CA' ? 'Do you live in Quebec?' : 'Do you live in Connecticut?')).toEqual([]);
+  expect(f.button(`Select ${country === 'CA' ? 'province' : 'state'} or territory`)).toBeDefined();
   expect(JSON.stringify(f.alert.mock.calls)).not.toMatch(/advertis|reporting|processing/i);
   if (country === 'US') {
-    await f.press('No');
+    await f.selectRegion('state', 'Maine');
     f.storage.setItem.mockRejectedValueOnce(new Error('disk full'));
     const choices = f.buttons().filter(node => node.findAllByType('Text' as never).some(text => text.children.join('') === 'Yes'));
     await f.act(async () => { choices[choices.length - 1].props.onPress(); });
@@ -736,21 +797,28 @@ test.each(['Quebec', 'Connecticut', 'New York', 'age'] as const)('%s never highl
   const f = await fixture('ios', false, kind === 'Quebec', 'unknown', true, 15, kind === 'Quebec' ? 'CA' : 'US');
   if (kind === 'age') { f.access.clearAgeVerification(); f.access.setAppleAgeRequirement('unsupported'); }
   await f.mount();
-  if (kind === 'New York') await f.press('No');
+  if (kind === 'New York') await f.selectRegion('state', 'Maine');
+  const region = kind === 'Quebec' ? 'province' : kind === 'Connecticut' ? 'state' : null;
+  if (region) await f.press(`Select ${region} or territory`);
   const group = kind === 'age' ? 'Age range' : kind === 'New York' ? 'Are you in New York right now?' : 'Do you live in ' + kind + '?';
   let rejectSave!: (error: Error) => void;
   f.storage.setItem.mockImplementationOnce(() => new Promise<void>((_resolve, reject) => { rejectSave = reject; }));
-  const target = kind === 'age' ? '18 or older' : 'Yes';
+  const target = kind === 'age' ? '18 or older' : region ? kind : 'Yes';
   const choices = f.buttons().filter(button => button.props.accessibilityLabel === target);
   await f.act(async () => { choices[choices.length - 1].props.onPress(); });
-  expect(f.selectedAnswers(group)).toEqual([]);
+  if (region) expect(f.button(`Select ${region} or territory`)).toBeDefined();
+  else expect(f.selectedAnswers(group)).toEqual([]);
   await f.act(async () => { rejectSave(new Error('disk full')); });
-  expect(f.selectedAnswers(group)).toEqual([]);
+  if (region) expect(f.button(`Select ${region} or territory`)).toBeDefined();
+  else expect(f.selectedAnswers(group)).toEqual([]);
   await f.unmount(); await f.mount();
-  expect(f.selectedAnswers(group)).toEqual([]);
+  if (region) expect(f.button(`Select ${region} or territory`)).toBeDefined();
+  else expect(f.selectedAnswers(group)).toEqual([]);
+  if (region) await f.press(`Select ${region} or territory`);
   const retry = f.buttons().filter(button => button.props.accessibilityLabel === target);
   await f.act(async () => { retry[retry.length - 1].props.onPress(); });
   if (kind === 'New York') await f.press('Update New York answer');
-  expect(f.selectedAnswers(group)).toEqual([target]);
+  if (region) expect(f.button(`Change ${region} or territory`)).toBeDefined();
+  else expect(f.selectedAnswers(group)).toEqual([target]);
   await f.unmount();
 });

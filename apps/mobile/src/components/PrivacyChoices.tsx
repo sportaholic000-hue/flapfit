@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from '
 import { Alert, Linking, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RELEASE_LINKS } from '@/config/release';
+import { CANADIAN_PROVINCES_AND_TERRITORIES, ResidencyDropdown, US_STATES_AND_TERRITORIES } from './residency-dropdown';
 import {
   connecticutClarificationStatus, hasConnecticutClarificationControl, getSavedConnecticutResidency, getSavedQuebecResidency,
   restoreRegionalClarification, saveConnecticutResidency,
@@ -28,6 +29,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const competitionStop = useSyncExternalStore(subscribeCompetitionStop, getCompetitionStopState, getCompetitionStopState);
   const [busy, setBusy] = useState(false);
   const [editingNewYork, setEditingNewYork] = useState(false);
+  const [expandedRegion, setExpandedRegion] = useState<'province' | 'state' | null>(null);
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const [, refresh] = useState(0);
@@ -74,6 +76,10 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
     input.choices.ads.decision === 'denied' && canChooseProcessingPurpose('ads');
   const expressReporting = !regionalAdvertisingDisabled && input.launch?.plan?.separateExpressChoiceRequired.analytics === true;
   return <View style={styles.root}>
+    <View style={styles.intro}>
+      <Text accessibilityRole="header" style={styles.introHeading}>Let’s get you started</Text>
+      <Text style={styles.body}>A couple of quick questions to set up Flap Fit.</Text>
+    </View>
     <Text style={styles.heading}>Advertising & reporting</Text>
     <Text style={styles.body}>{AD_PROCESSING_DISCLOSURE}</Text>
     {input.launch ? <Text style={styles.status}>{resolveReleaseEligibility(input).status === 'available'
@@ -103,24 +109,22 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
         </View>)}</View>}
     </View> : null}
     {hasQuebecClarificationControl() ? <View style={styles.group}>
-      <Text style={styles.heading}>Province</Text>
-      <Text style={styles.body}>Do you live in Quebec?</Text>
+      <Text style={styles.heading}>Province or territory</Text>
+      <Text style={styles.body}>Which province or territory do you live in?</Text>
       <Text style={styles.note}>Your answer is saved on this device.</Text>
-      <View accessibilityRole="radiogroup" accessibilityLabel="Do you live in Quebec?" style={styles.buttons}>
-        {answerButton('Yes', savedQuebec === 'resident', () => saveQuebecResidency('resident'))}
-        {answerButton('No', savedQuebec === 'not-resident', () => saveQuebecResidency('not-resident'))}
-      </View>
-      <Text style={styles.status}>{savedQuebec === null ? quebecClarificationStatus() : 'Saved answer: ' + (savedQuebec === 'resident' ? 'Yes' : 'No')}</Text>
+      <ResidencyDropdown region="province" options={CANADIAN_PROVINCES_AND_TERRITORIES} expanded={expandedRegion === 'province'}
+        answered={savedQuebec !== null} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'province' ? null : 'province')}
+        onSelect={code => void action(async () => { await saveQuebecResidency(code === 'QC' ? 'resident' : 'not-resident'); if (current()) setExpandedRegion(null); })} />
+      {savedQuebec === null && quebecClarificationStatus() !== 'Not answered' ? <Text style={styles.status}>{quebecClarificationStatus()}</Text> : null}
     </View> : null}
     {hasConnecticutClarificationControl() ? <View style={styles.group}>
-      <Text style={styles.heading}>State</Text>
-      <Text style={styles.body}>Do you live in Connecticut?</Text>
+      <Text style={styles.heading}>State or territory</Text>
+      <Text style={styles.body}>Which state or territory do you live in?</Text>
       <Text style={styles.note}>Your answer is saved on this device.</Text>
-      <View accessibilityRole="radiogroup" accessibilityLabel="Do you live in Connecticut?" style={styles.buttons}>
-        {answerButton('Yes', savedConnecticut === 'resident', () => saveConnecticutResidency('resident'))}
-        {answerButton('No', savedConnecticut === 'not-resident', () => saveConnecticutResidency('not-resident'))}
-      </View>
-      <Text style={styles.status}>{savedConnecticut === null ? connecticutClarificationStatus() : 'Saved answer: ' + (savedConnecticut === 'resident' ? 'Yes' : 'No')}</Text>
+      <ResidencyDropdown region="state" options={US_STATES_AND_TERRITORIES} expanded={expandedRegion === 'state'}
+        answered={savedConnecticut !== null} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'state' ? null : 'state')}
+        onSelect={code => void action(async () => { await saveConnecticutResidency(code === 'CT' ? 'resident' : 'not-resident'); if (current()) setExpandedRegion(null); })} />
+      {savedConnecticut === null && connecticutClarificationStatus() !== 'Not answered' ? <Text style={styles.status}>{connecticutClarificationStatus()}</Text> : null}
     </View> : null}
     {hasNewYorkReadError() && input.launch?.plan && input.launch.plan.treatment !== 'unspecified' ? <View style={styles.group}>
       <Text style={styles.status}>Saved regional status could not be confirmed.</Text>
@@ -268,6 +272,7 @@ export function usePrivacyChoicesSheet() {
 }
 
 const styles = StyleSheet.create({
+  intro: { gap: 8, marginBottom: 14 }, introHeading: { color: '#0F172A', fontSize: 25, lineHeight: 31, fontWeight: '800' },
   root: { gap: 8 }, heading: { color: '#0F172A', fontSize: 15, fontWeight: '800' },
   body: { color: '#475569', fontSize: 14, lineHeight: 21 }, group: { marginTop: 14, gap: 7 },
   note: { color: '#64748B', fontSize: 12, lineHeight: 18 }, status: { color: '#334155', fontSize: 13, fontWeight: '700' },
