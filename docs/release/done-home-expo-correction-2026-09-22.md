@@ -20,3 +20,12 @@ Verified before the replacement build:
 - Regression test fixture correction: after a completed run, Home can select the next unlocked level. The test now follows the actual current level. Earlier failed test output is superseded by the full successful run above.
 
 See the adjacent verification JSON for machine-readable results. The replacement uses the existing ios-device-check profile and the same two registered devices. It is an internal test-ad build; no App Store review submission is part of this change. Signed build/source-package verification and physical-device acceptance are separate from these source checks. The signed artifact will be recorded when it finishes.
+
+
+## Replacement build completed
+
+[Internal iOS build 97780645-f145-46ed-a5d5-39a8f1e22edf](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/97780645-f145-46ed-a5d5-39a8f1e22edf) finished successfully from source commit 16236e365406bf5a83b1264c01a5c360c40b559a. Version 1.0.0 (4), existing ios-device-check profile, with the two registered test devices. This documentation record is a follow-up to the built source commit; it changes no app code.
+
+The standard cloud Expo Doctor independently passed 21/21 without the local network retry helper. Xcode archive/export succeeded. The downloaded IPA passed archive-integrity inspection, signed entitlement/provisioning checks, app privacy-manifest/source comparison, native advertising/reporting controls, the new ExpoCrypto module check and all six exact camera-asset byte comparisons. Its SHA-256 is 567bf62057fe8f2feef30b4f89f15c2bdbb313cc00af7d6bcebf139341334a0c. See done-home-signed-build-2026-09-22.json for the artifact evidence.
+
+The bundle includes the newer Legend-bird setup presentation, selection highlights and signed privacy-support response flow as well as the Done correction. Physical iPad/iPhone testing remains necessary. Check Done after closing unfinished setup, blocked re-entry/Retry/Next, completed setup, camera gameplay, normal eligible test-ad exits and Info privacy requests. An actual signed privacy-response device test requires the request from that device. No Apple review submission was performed.

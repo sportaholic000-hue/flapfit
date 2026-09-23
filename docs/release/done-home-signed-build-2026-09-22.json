@@ -1,0 +1,153 @@
+{
+  "checkedAt": "2026-09-23T01:22:53.594449+00:00",
+  "status": "PASS",
+  "buildId": "97780645-f145-46ed-a5d5-39a8f1e22edf",
+  "sourceCommit": "16236e365406bf5a83b1264c01a5c360c40b559a",
+  "profile": "ios-device-check",
+  "identity": {
+    "sha256": "567bf62057fe8f2feef30b4f89f15c2bdbb313cc00af7d6bcebf139341334a0c",
+    "bundleIdentifier": "com.flapfit.game",
+    "version": "1.0.0",
+    "buildNumber": "4",
+    "distributionExpected": "ad-hoc",
+    "usesNonExemptEncryption": false,
+    "deviceFamilies": [
+      1,
+      2
+    ],
+    "minimumOS": "16.4",
+    "cameraDescription": "Flap Fit uses the front camera to track exercise movement and control your bird. Camera images are processed live on your device. If you choose Record & Play, the app creates a temporary local recording for you to share; Flap Fit does not upload it.",
+    "microphoneDescription": "Flap Fit uses the microphone only when you choose Record & Play, so your voice and workout sounds can be included in the temporary video you control.",
+    "hasTrackingUsageDescription": false,
+    "delaysGoogleMeasurement": true,
+    "appManifestTracking": false,
+    "privacyManifestCount": 15,
+    "declaredAgeRangeInSignedBinary": true,
+    "declaredAgeRangeInProfile": true,
+    "provisionedDeviceCount": 2,
+    "profileExpires": "2027-09-19T12:27:37Z",
+    "revenueCatProcessingBridgePresent": true,
+    "deviceAcceptance": "not established by artifact inspection"
+  },
+  "zipIntegrityPassed": true,
+  "appManifestMatchesSource": true,
+  "sourceRequiredReasonsIncluded": true,
+  "cameraAndMicrophoneDescriptionsMatch": true,
+  "testAdConfigurationPresent": true,
+  "javaScriptMarkers": {
+    "2026-09-18.9-foot-return": true,
+    "requestNonPersonalizedAdsOnly": true,
+    "ca-app-pub-3940256099942544/4411468910": true,
+    "Finish setup": true,
+    "Almost ready to fly": true,
+    "Support response code": true,
+    "Contact privacy support": true
+  },
+  "nativeBinaryMarkers": {
+    "flapFitSetProcessingAllowed": true,
+    "flapFitStoredGdprApplies": true,
+    "flapFitStoredPurpose": true,
+    "setPublisherFirstPartyIDEnabled:": true,
+    "ExpoCrypto": true
+  },
+  "trackingAssetsVerified": {
+    "pose_landmarker_lite.task.mpasset": {
+      "sha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+      "sourceSha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+      "byteMatched": true,
+      "actualBytes": 5777746,
+      "runtimeExpectedBytes": 5777746
+    },
+    "vision_bundle.mjs.mpasset": {
+      "sha256": "e77f281f9619150d937023c355bae170e9120e3b9e43f1e23a2a7bee07197669",
+      "sourceSha256": "e77f281f9619150d937023c355bae170e9120e3b9e43f1e23a2a7bee07197669",
+      "byteMatched": true,
+      "actualBytes": 136870,
+      "runtimeExpectedBytes": 136870
+    },
+    "vision_wasm_internal.js.mpasset": {
+      "sha256": "9440cf0cc0cea21800e31581ec32aeedcc5fbf9df4509796bbc7d3f99e52ab9c",
+      "sourceSha256": "9440cf0cc0cea21800e31581ec32aeedcc5fbf9df4509796bbc7d3f99e52ab9c",
+      "byteMatched": true,
+      "actualBytes": 209826,
+      "runtimeExpectedBytes": 209826
+    },
+    "vision_wasm_internal.wasm.mpasset": {
+      "sha256": "f82a8e6c05e08a44cc9f9e7ec5f845935bcbb1b1500ebe8c2f4812fb4e2917dc",
+      "sourceSha256": "f82a8e6c05e08a44cc9f9e7ec5f845935bcbb1b1500ebe8c2f4812fb4e2917dc",
+      "byteMatched": true,
+      "actualBytes": 9423986,
+      "runtimeExpectedBytes": 9423986
+    },
+    "vision_wasm_nosimd_internal.js.mpasset": {
+      "sha256": "abe9b6fbeaf86fcb53a5edce3926c82ccb0619e18fed4d9d9ce561ee7f55e054",
+      "sourceSha256": "abe9b6fbeaf86fcb53a5edce3926c82ccb0619e18fed4d9d9ce561ee7f55e054",
+      "byteMatched": true,
+      "actualBytes": 209735,
+      "runtimeExpectedBytes": 209735
+    },
+    "vision_wasm_nosimd_internal.wasm.mpasset": {
+      "sha256": "38b61feab2fd7934e05cbe9f68baa308978a5e3b7f85c1913bb8ae89b8ef8b97",
+      "sourceSha256": "38b61feab2fd7934e05cbe9f68baa308978a5e3b7f85c1913bb8ae89b8ef8b97",
+      "byteMatched": true,
+      "actualBytes": 9294247,
+      "runtimeExpectedBytes": 9294247
+    }
+  },
+  "trackingAssetReference": "All six exact Git blobs AND literal runtime expected byte counts; no newline normalization",
+  "appOwnedPrivacyDataTypes": 9,
+  "physicalDeviceAcceptance": "Pending owner testing",
+  "appleReviewSubmitted": false,
+  "cloudExpoDoctor": {
+    "passed": 21,
+    "total": 21,
+    "standardCloudCommand": true
+  },
+  "xcodeArchiveSucceeded": true,
+  "easSourcePackaging": {
+    "checkedAt": "2026-09-23T01:07:14.858Z",
+    "sourceCommit": "16236e365406bf5a83b1264c01a5c360c40b559a",
+    "easCli": "24.7.0",
+    "method": "Actual EAS GitClient.makeShallowCopyAsync with Windows core.autocrlf=true; exact Git blob comparison with no newline normalization",
+    "assets": [
+      {
+        "name": "pose_landmarker_lite.task.mpasset",
+        "bytes": 5777746,
+        "sha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+        "exactGitBlobMatch": true
+      },
+      {
+        "name": "vision_bundle.mjs.mpasset",
+        "bytes": 136870,
+        "sha256": "e77f281f9619150d937023c355bae170e9120e3b9e43f1e23a2a7bee07197669",
+        "exactGitBlobMatch": true
+      },
+      {
+        "name": "vision_wasm_internal.js.mpasset",
+        "bytes": 209826,
+        "sha256": "9440cf0cc0cea21800e31581ec32aeedcc5fbf9df4509796bbc7d3f99e52ab9c",
+        "exactGitBlobMatch": true
+      },
+      {
+        "name": "vision_wasm_internal.wasm.mpasset",
+        "bytes": 9423986,
+        "sha256": "f82a8e6c05e08a44cc9f9e7ec5f845935bcbb1b1500ebe8c2f4812fb4e2917dc",
+        "exactGitBlobMatch": true
+      },
+      {
+        "name": "vision_wasm_nosimd_internal.js.mpasset",
+        "bytes": 209735,
+        "sha256": "abe9b6fbeaf86fcb53a5edce3926c82ccb0619e18fed4d9d9ce561ee7f55e054",
+        "exactGitBlobMatch": true
+      },
+      {
+        "name": "vision_wasm_nosimd_internal.wasm.mpasset",
+        "bytes": 9294247,
+        "sha256": "38b61feab2fd7934e05cbe9f68baa308978a5e3b7f85c1913bb8ae89b8ef8b97",
+        "exactGitBlobMatch": true
+      }
+    ],
+    "buildHookExit": 0,
+    "buildHookOutput": "All six bundled tracker assets match the exact on-device byte requirements.\nSkipping production release validation for this EAS build profile."
+  }
+}
