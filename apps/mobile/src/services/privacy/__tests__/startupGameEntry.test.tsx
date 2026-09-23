@@ -211,7 +211,7 @@ test('Done still uses the existing eligible result-ad opportunity before returni
     jest.spyOn(privacy, 'preparePostGamePrivacy').mockResolvedValue(true);
     let closeAd!: () => void;
     const ad = { isReady: () => true, show: jest.fn(async (callbacks: { opened: () => void; closed: () => void }) => { callbacks.opened(); closeAd = callbacks.closed; }), dispose: jest.fn() };
-    jest.spyOn(monetization, 'prepareResultInterstitial').mockReturnValue(ad);
+    jest.spyOn(monetization, 'prepareResultAdOpportunity').mockReturnValue(ad);
     // Preserve the real scheduler and move past its first completed exit.
     monetization.resultAdGate.createResult(null, monetization.adEnvironment).exit(false, jest.fn());
     await f.completeGame(); await f.pressResult('Done');

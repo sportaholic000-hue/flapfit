@@ -907,3 +907,52 @@ test.each([true, false])('a privacy row becoming NOT_REQUIRED preserves current 
   expect(f.getAccess().ads.allowed).toBe(true);
   expect(f.purchasesLoad).not.toHaveBeenCalled();
 });
+
+
+
+test('an existing result picks up SDK readiness restored after it first appeared', async () => {
+  const f = loadAdapter({ adsAllowed: false });
+  const ad = f.adapter.prepareResultAdOpportunity();
+  expect(ad.isReady()).toBe(false);
+  f.changeAccess({ ads: { ...f.getAccess().ads, allowed: true } });
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.nativeAd.load).toHaveBeenCalledTimes(1);
+  expect(f.nativeAd.show).not.toHaveBeenCalled();
+  f.events.get('loaded')!(); expect(ad.isReady()).toBe(true);
+  ad.dispose();
+});
+
+test.each(['error', 'withdrawal', 'unmount'] as const)('a refreshed result rejects a late load after %s', async outcome => {
+  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
+  const ad = f.adapter.prepareResultAdOpportunity();
+  if (outcome === 'error') f.events.get('error')!();
+  if (outcome === 'withdrawal') f.changeAccess({ ads: { ...f.getAccess().ads, allowed: false } });
+  if (outcome === 'unmount') ad.dispose();
+  f.events.get('loaded')!(); expect(ad.isReady()).toBe(false);
+  expect(f.nativeAd.show).not.toHaveBeenCalled(); ad.dispose();
+});
+
+test('an unloaded refreshed opportunity never delays a result action or shows after navigation', async () => {
+  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
+  f.adapter.resultAdGate.createResult(null, f.adapter.adEnvironment).exit(false, jest.fn());
+  const ad = f.adapter.prepareResultAdOpportunity();
+  const result = f.adapter.resultAdGate.createResult(ad, f.adapter.adEnvironment);
+  const action = jest.fn(); result.exit(false, action);
+  expect(action).toHaveBeenCalledTimes(1);
+  f.events.get('loaded')!(); expect(f.nativeAd.show).not.toHaveBeenCalled();
+});
+
+
+test.each([false, true])('regional preparation respects foreground and a newer restriction (restricted=%s)', async restricted => {
+  const f = loadAdapter({ adsAllowed: false });
+  f.changeState('background');
+  Object.assign(f.privacyInput, { launch: { country: 'CA', options: { quebecResidency: 'not-resident' } } });
+  f.changeAccess({ ads: { ...f.getAccess().ads, allowed: true } });
+  for (let i = 0; i < 20; i++) await Promise.resolve();
+  expect(f.sdk.AdsConsent.requestInfoUpdate).not.toHaveBeenCalled();
+  if (restricted) f.changeAccess({ ads: { ...f.getAccess().ads, allowed: false } });
+  f.changeState('active');
+  for (let i = 0; i < 60; i++) await Promise.resolve();
+  expect(f.mobileAds.initialize).toHaveBeenCalledTimes(restricted ? 0 : 1);
+  expect(f.sdk.AdsConsent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
+});

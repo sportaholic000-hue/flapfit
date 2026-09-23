@@ -630,15 +630,15 @@ test.each(['CA', 'US'] as const)('%s dropdown saves only the original binary fla
   for (const [code, name] of options) {
     await f.selectRegion(region, name);
     const resident = code === (canada ? 'QC' : 'CT');
-    expect(JSON.parse(f.memory.get(key)!)).toEqual({ version: 1, answer: resident ? 'resident' : 'not-resident' });
+    expect(JSON.parse(f.memory.get(key)!)).toEqual({ version: 1, answer: resident ? 'resident' : 'not-resident', code });
     expect(f.access.getProcessingAccess().ads.allowed).toBe(!resident);
     expect(f.button(`Change ${region} or territory`)!.props.accessibilityState.expanded).toBe(false);
-    const savedAnswer = canada ? (resident ? 'Quebec resident' : 'Outside Quebec') : (resident ? 'Connecticut resident' : 'Outside Connecticut');
+    const savedAnswer = name;
     expect(f.text()).toContain(`${savedAnswer} · Change`);
     expect(f.button(`Change ${region} or territory`)!.props.accessibilityValue.text).toBe(savedAnswer);
   }
   await f.selectRegion(region, canada ? 'I live outside Canada' : 'I live outside the United States');
-  expect(JSON.parse(f.memory.get(key)!)).toEqual({ version: 1, answer: 'not-resident' });
+  expect(JSON.parse(f.memory.get(key)!)).toEqual({ version: 1, answer: 'not-resident', code: 'outside' });
   expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
   await f.unmount(); await f.mount();
   expect(f.button(`Change ${region} or territory`)).toBeDefined();
@@ -912,7 +912,7 @@ test.each(['Quebec', 'Connecticut', 'New York', 'age'] as const)('%s never highl
 test.each(['resident', 'not-resident'] as const)('saved Canadian %s status survives remount without changing advertising eligibility', async residency => {
   const f = await fixture('ios', false, true, residency, true);
   await f.mount();
-  const label = residency === 'resident' ? 'Quebec resident' : 'Outside Quebec';
+  const label = residency === 'resident' ? 'Quebec' : 'Saved answer';
   expect(f.text()).toContain(`${label} · Change`);
   expect(f.text()).not.toContain('Answer saved · Change');
   expect(f.access.getProcessingAccess().ads.allowed).toBe(residency === 'not-resident');

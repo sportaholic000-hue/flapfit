@@ -206,3 +206,41 @@ test.each(['CA','US'] as const)('regional binary answers: %s service rejects unk
   await expect(saving('unknown' as never)).rejects.toThrow('Yes or No');
   expect(f.storage.setItem).not.toHaveBeenCalled();
 });
+
+
+test.each(['CA', 'US'] as const)('%s saves exact selections locally and restores names after restart', async country => {
+  let f = await fixture(new Map(), country);
+  const save = country === 'CA' ? f.regional.saveProvinceSelection : f.regional.saveStateSelection;
+  const name = country === 'CA' ? f.regional.getSavedProvinceName : f.regional.getSavedStateName;
+  await save(country === 'CA' ? 'QC' : 'CT');
+  expect(name()).toBe(country === 'CA' ? 'Quebec' : 'Connecticut');
+  await save(country === 'CA' ? 'NB' : 'ME');
+  expect(name()).toBe(country === 'CA' ? 'New Brunswick' : 'Maine');
+  f = await fixture(f.memory, country);
+  expect(country === 'CA' ? f.regional.getSavedProvinceName() : f.regional.getSavedStateName()).toBe(country === 'CA' ? 'New Brunswick' : 'Maine');
+});
+
+test.each(['CA', 'US'] as const)('%s does not confirm a pending or failed new selection', async country => {
+  const f = await fixture(new Map(), country);
+  const save = country === 'CA' ? f.regional.saveProvinceSelection : f.regional.saveStateSelection;
+  const name = country === 'CA' ? f.regional.getSavedProvinceName : f.regional.getSavedStateName;
+  await save(country === 'CA' ? 'QC' : 'CT');
+  let reject!: (error: Error) => void;
+  f.storage.setItem.mockImplementationOnce(() => new Promise<void>((_resolve, fail) => { reject = fail; }));
+  const saving = save(country === 'CA' ? 'NB' : 'ME');
+  const outcome = expect(saving).rejects.toThrow('could not be saved');
+  await settle(); expect(name()).toBeNull();
+  reject(new Error('disk full')); await outcome;
+  expect(name()).toBeNull();
+  await save(country === 'CA' ? 'NB' : 'ME');
+  expect(name()).toBe(country === 'CA' ? 'New Brunswick' : 'Maine');
+});
+
+test('legacy and malformed display codes cannot invent a selected province', async () => {
+  const key = '@flapfit/quebec-residency-v1';
+  for (const code of [undefined, 'invalid', 'QC']) {
+    const f = await fixture(new Map([[key, JSON.stringify({ version: 1, answer: 'not-resident', code })]]), 'CA');
+    expect(f.regional.getSavedProvinceName()).toBe('Saved answer');
+    expect(f.regional.getSavedQuebecResidency()).toBe('not-resident');
+  }
+});

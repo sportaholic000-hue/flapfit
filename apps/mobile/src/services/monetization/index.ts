@@ -21,6 +21,20 @@ const revenueCatKey = Platform.OS === 'ios'
 let ads: AdsSdk | null = null;
 let tracker: PurchasesAdTracker | null = null;
 let adsReady = false;
+let automaticallyPreparedEpoch: number | null = null;
+const adReadinessListeners = new Set<() => void>();
+function setAdsReady(value: boolean) {
+  adsReady = value;
+  if (!value) automaticallyPreparedEpoch = null;
+  adReadinessListeners.forEach(listener => listener());
+}
+let initAutomatic = false;
+let stopRegionalPreparation: (() => void) | null = null;
+function residencyKey() {
+  const launch = getProcessingInputs().launch;
+  return [launch?.country, launch?.options.quebecResidency, launch?.options.connecticutResidency].join(':');
+}
+let savedResidencyKey = residencyKey();
 let privacyRequired = false;
 let privacyStatusRevision = 0;
 let privacyOptionsRequest: Promise<void> | null = null;
@@ -74,6 +88,9 @@ function disposeResultAds() {
 // already loaded requests unusable immediately, without waiting for lobby focus.
 subscribeProcessingAccess(() => {
   const next = getProcessingAccess();
+  const nextResidencyKey = residencyKey();
+  const residencyChanged = nextResidencyKey !== savedResidencyKey;
+  savedResidencyKey = nextResidencyKey;
   const sameAdTreatment = next.ads.allowed === processingAccess.ads.allowed
     && next.ads.treatment === processingAccess.ads.treatment
     && next.ads.underAgeOfConsent === processingAccess.ads.underAgeOfConsent;
@@ -82,8 +99,11 @@ subscribeProcessingAccess(() => {
   if (!sameAdTreatment) {
     if (!next.ads.allowed) ++presentationIntentEpoch;
     ++consentEpoch;
-    adsReady = false;
+    setAdsReady(false);
     disposeResultAds();
+    stopRegionalPreparation?.();
+    stopRegionalPreparation = null;
+    if (next.ads.allowed && residencyChanged) scheduleRegionalAdPreparation();
   }
   if (!sameAnalytics) {
     ++revenueCatEpoch;
@@ -111,6 +131,30 @@ export const adEnvironment = {
     return () => subscription.remove();
   },
 };
+
+// A saved region correction must not wait for another result action to restore
+// SDK readiness. Reuse current Google permission without presenting native UI.
+// Required consent forms remain owned by the existing explicit setup flow.
+function scheduleRegionalAdPreparation() {
+  const epoch = consentEpoch;
+  const current = () => currentAdPermission(epoch) && adEnvironment.isActive();
+  let stop: (() => void) | null = null;
+  const cancel = () => {
+    stop?.(); stop = null;
+    if (stopRegionalPreparation === cancel) stopRegionalPreparation = null;
+  };
+  const start = () => {
+    if (!currentAdPermission(epoch)) { cancel(); return; }
+    if (!adEnvironment.isActive()) {
+      stop ??= adEnvironment.onActive(start);
+      stopRegionalPreparation = cancel;
+      return;
+    }
+    cancel();
+    void preparePermittedMonetization(current, true);
+  };
+  void Promise.resolve().then(start);
+}
 
 function notifyPrivacy() { privacyListeners.forEach((listener) => listener()); }
 export function subscribeAdPrivacy(listener: () => void) {
@@ -275,6 +319,9 @@ function presentPrivacy<T>(operation: () => Promise<T>): Promise<T> {
 }
 
 export async function settlePrivacyBeforeGameplay(): Promise<void> {
+  const resumeRegionalPreparation = (init !== null && initAutomatic) || stopRegionalPreparation !== null;
+  stopRegionalPreparation?.();
+  stopRegionalPreparation = null;
   ++presentationIntentEpoch;
   ++consentEpoch; // A pending info request may finish, but must never start a new form.
   disposeResultAds();
@@ -283,6 +330,9 @@ export async function settlePrivacyBeforeGameplay(): Promise<void> {
   if (presentation) {
     try { await presentation; } catch { /* Consent failure does not prevent playing. */ }
   }
+  // Gameplay cancels native-form ownership, but a saved region correction can
+  // still finish passive SDK preparation without opening anything over a run.
+  if (resumeRegionalPreparation && getProcessingAccess().ads.allowed && !adsReady) scheduleRegionalAdPreparation();
 }
 
 // Explicit result/rights/competition callers share native presentation ownership.
@@ -384,34 +434,35 @@ function prepareExistingMonetization(canPresent: () => boolean, requiredOnly = f
 /** A new effective policy may arrive while an older setup/form is finishing.
  * Resume once under the latest policy, but never retry an unchanged failure or
  * reopen privacy after a later game-entry/withdrawal invalidates this waiter. */
-function resumeAfterPreparation(pending: Promise<unknown>, ownedEpoch: number | null, canPresent: () => boolean): Promise<void> {
+function resumeAfterPreparation(pending: Promise<unknown>, ownedEpoch: number | null, canPresent: () => boolean, automatic = false, resumeExplicitly = false): Promise<void> {
   const waitingEpoch = consentEpoch;
   return pending.catch(() => undefined).then(() => {
-    if (ownedEpoch !== null && ownedEpoch !== waitingEpoch && waitingEpoch === consentEpoch &&
+    if ((resumeExplicitly || (ownedEpoch !== null && ownedEpoch !== waitingEpoch)) && waitingEpoch === consentEpoch &&
       canPresent() && adEnvironment.isActive() && getProcessingAccess().ads.allowed && !adsReady) {
-      return preparePermittedMonetization(canPresent);
+      return preparePermittedMonetization(canPresent, automatic);
     }
   });
 }
 
-function preparePermittedMonetization(canPresent: () => boolean): Promise<void> {
+function preparePermittedMonetization(canPresent: () => boolean, automatic = false): Promise<void> {
   // Analytics permission is independent of ad eligibility and UMP. This also
   // covers loading this module after a permitted decision was already restored.
   // Its own native fence/generation checks apply without delaying gameplay.
   void initializeRevenueCat();
   // A lobby focus change must not launch a second UMP form while the existing
   // settings request owns native presentation (or is checking its status).
-  if (privacyOptionsRequest) return resumeAfterPreparation(privacyOptionsRequest, privacyOptionsEpoch, canPresent);
-  if (init) return resumeAfterPreparation(init, initEpoch, canPresent);
-  if (privacyPresentation) return resumeAfterPreparation(privacyPresentation, privacyPresentationEpoch, canPresent);
+  if (privacyOptionsRequest) return resumeAfterPreparation(privacyOptionsRequest, privacyOptionsEpoch, canPresent, automatic);
+  if (init) return resumeAfterPreparation(init, initEpoch, canPresent, automatic, !automatic && initAutomatic);
+  if (privacyPresentation) return resumeAfterPreparation(privacyPresentation, privacyPresentationEpoch, canPresent, automatic);
   const access = getProcessingAccess();
-  if (!access.ads.allowed) return Promise.resolve();
+  if (!access.ads.allowed || (adsReady && (automatic || automaticallyPreparedEpoch === consentEpoch))) return Promise.resolve();
   const sdk = loadAdsSdk();
   if (!sdk) return Promise.resolve();
-  adsReady = false; // Revalidate prior permission before any new request.
+  setAdsReady(false); // Revalidate prior permission before any new request.
   disposeResultAds();
   const epoch = consentEpoch;
   initEpoch = epoch;
+  initAutomatic = automatic;
   init = (async () => {
     try {
       const info = await bounded(sdk.AdsConsent.requestInfoUpdate({ tagForUnderAgeOfConsent: access.ads.underAgeOfConsent }));
@@ -419,10 +470,10 @@ function preparePermittedMonetization(canPresent: () => boolean): Promise<void> 
       publishPrivacyRequirement(info.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED);
       await settleResultPresentations();
       if (!currentAdPermission(epoch) || !canPresent() || !adEnvironment.isActive()) return;
-      const consent = await presentPrivacy(() => sdk.AdsConsent.loadAndShowConsentFormIfRequired());
+      const consent = automatic ? info : await presentPrivacy(() => sdk.AdsConsent.loadAndShowConsentFormIfRequired());
       if (!currentAdPermission(epoch)) return;
       publishPrivacyRequirement(consent.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED);
-      if (!consent.canRequestAds) { adsReady = false; return; }
+      if (!consent.canRequestAds) { setAdsReady(false); return; }
       // UMP does not forward TFUA to the ad SDK. Google maps under-consent-age
       // treatment to CHILD; TEEN alone does not provide those protections.
       // No IDFA collection, personalized requests, health or competition attributes.
@@ -430,9 +481,12 @@ function preparePermittedMonetization(canPresent: () => boolean): Promise<void> 
       if (!currentAdPermission(epoch)) return;
       void initializeRevenueCat();
       await bounded(sdk.default().initialize());
-      if (currentAdPermission(epoch)) adsReady = true;
+      if (currentAdPermission(epoch)) {
+        automaticallyPreparedEpoch = automatic ? epoch : null;
+        setAdsReady(true);
+      }
     } catch {
-      if (epoch === consentEpoch) adsReady = false;
+      if (epoch === consentEpoch) setAdsReady(false);
     } finally {
       init = null;
       initEpoch = null;
@@ -457,7 +511,7 @@ async function openAdPrivacyOptions(canPresent: () => boolean): Promise<void> {
   ++presentationIntentEpoch;
   if (!adEnvironment.isActive() || !canPresent()) return;
   if (privacyPresentation) { await privacyPresentation; return; }
-  adsReady = false;
+  setAdsReady(false);
   const epoch = ++consentEpoch; // Invalidate old ads and in-flight initialization.
   disposeResultAds();
   try {
@@ -496,7 +550,7 @@ async function openAdPrivacyOptions(canPresent: () => boolean): Promise<void> {
       if (!currentAdPermission(epoch)) return;
       void initializeRevenueCat();
       await bounded(sdk.default().initialize());
-      if (currentAdPermission(epoch)) adsReady = true;
+      if (currentAdPermission(epoch)) setAdsReady(true);
     }
   } catch {
     throw new Error('Ad privacy settings could not open. Please try again when online.');
@@ -526,6 +580,30 @@ function track(kind: RevenueCatTestDiagnosticKind, impressionId: string, send: (
     revenueCatTestDiagnostics.record({ kind, generation: epoch, appUserID: revenueCatDiagnosticIdentity, impressionId });
     return sent;
   }).catch(() => undefined);
+}
+
+/** Keep this result's reference current if setup changes eligibility after it
+ * appears. Loading/presentation timing and the result scheduler are unchanged. */
+export function prepareResultAdOpportunity(): ReadyInterstitial {
+  let disposed = false;
+  let ad: ReadyInterstitial | null = null;
+  const refresh = () => {
+    if (disposed) return;
+    if (!adsReady) { ad?.dispose(); ad = null; }
+    else if (!ad) ad = prepareResultInterstitial();
+  };
+  adReadinessListeners.add(refresh);
+  refresh();
+  return {
+    isReady: () => ad?.isReady() === true,
+    show: callbacks => ad ? ad.show(callbacks) : Promise.resolve(callbacks.failed()),
+    dispose: () => {
+      disposed = true;
+      adReadinessListeners.delete(refresh);
+      ad?.dispose();
+      ad = null;
+    },
+  };
 }
 
 export function prepareResultInterstitial(): ReadyInterstitial | null {

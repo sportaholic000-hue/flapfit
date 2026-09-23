@@ -4,6 +4,8 @@
 
 Remove the manual privacy email/response-code workflow, replace the confusing Google advertising copy with one native UMP action in Info, and show the saved residency status clearly. No iOS/EAS build, upload, website deployment, account configuration change or additional paid service is authorized by this change.
 
+The saved-residency display described below was subsequently replaced by actual province/state names. See [the location correction](location-selection-ad-readiness-2026-09-23.md) for the current implementation and the ad-readiness fix.
+
 ## Result
 
 - Info shows **Manage Privacy Choices** only when Google's `privacyOptionsRequirementStatus` requires its entry point. The existing native consent bridge calls Google's privacy-options form directly. There is no email, support ticket, response code or new server endpoint in this path.

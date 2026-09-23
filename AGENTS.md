@@ -14,3 +14,6 @@
 - Done must allow leaving a completed result even when setup is dismissed or fails. Retry, Next level and later game entry remain subject to unfinished setup. Preserve the existing eligible result-ad opportunity for Done; do not turn the exit fix into an advertising bypass.
 
 - Google advertising privacy controls use the single **Manage Privacy Choices** row in Info and Google UMP’s native privacy-options form, with visibility based on the SDK requirement state. Do not reintroduce the rejected privacy-support email/request-ID/response-code/signing workflow. Preserve existing regional ad eligibility and keep saved residency labels factual, without advertising outcomes.
+
+- Display the actual locally saved province/state name after a picker selection. Do not replace it with Quebec/non-Quebec or Connecticut/non-Connecticut categories. Legacy binary answers cannot reveal a previously discarded exact selection; retain their eligibility without inventing a province/state.
+- Results appear before interstitial ads. A saved location correction must restart permitted SDK preparation and refresh an existing result ad reference. Preserve the existing ad frequency and immediate result-action behavior; do not add loading waits or change scheduling to repair location state.

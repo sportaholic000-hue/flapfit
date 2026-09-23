@@ -1,25 +1,6 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export const CANADIAN_PROVINCES_AND_TERRITORIES = [
-  ['AB', 'Alberta'], ['BC', 'British Columbia'], ['MB', 'Manitoba'], ['NB', 'New Brunswick'],
-  ['NL', 'Newfoundland and Labrador'], ['NT', 'Northwest Territories'], ['NS', 'Nova Scotia'],
-  ['NU', 'Nunavut'], ['ON', 'Ontario'], ['PE', 'Prince Edward Island'], ['QC', 'Quebec'],
-  ['SK', 'Saskatchewan'], ['YT', 'Yukon'],
-] as const;
-
-export const US_STATES_AND_TERRITORIES = [
-  ['AL', 'Alabama'], ['AK', 'Alaska'], ['AS', 'American Samoa'], ['AZ', 'Arizona'], ['AR', 'Arkansas'],
-  ['CA', 'California'], ['CO', 'Colorado'], ['CT', 'Connecticut'], ['DE', 'Delaware'], ['DC', 'District of Columbia'],
-  ['FL', 'Florida'], ['GA', 'Georgia'], ['GU', 'Guam'], ['HI', 'Hawaii'], ['ID', 'Idaho'], ['IL', 'Illinois'],
-  ['IN', 'Indiana'], ['IA', 'Iowa'], ['KS', 'Kansas'], ['KY', 'Kentucky'], ['LA', 'Louisiana'], ['ME', 'Maine'],
-  ['MD', 'Maryland'], ['MA', 'Massachusetts'], ['MI', 'Michigan'], ['MN', 'Minnesota'], ['MS', 'Mississippi'],
-  ['MO', 'Missouri'], ['MT', 'Montana'], ['NE', 'Nebraska'], ['NV', 'Nevada'], ['NH', 'New Hampshire'],
-  ['NJ', 'New Jersey'], ['NM', 'New Mexico'], ['NY', 'New York'], ['NC', 'North Carolina'], ['ND', 'North Dakota'],
-  ['MP', 'Northern Mariana Islands'], ['OH', 'Ohio'], ['OK', 'Oklahoma'], ['OR', 'Oregon'], ['PA', 'Pennsylvania'],
-  ['PR', 'Puerto Rico'], ['RI', 'Rhode Island'], ['SC', 'South Carolina'], ['SD', 'South Dakota'], ['TN', 'Tennessee'],
-  ['TX', 'Texas'], ['VI', 'U.S. Virgin Islands'], ['UT', 'Utah'], ['VT', 'Vermont'], ['VA', 'Virginia'],
-  ['WA', 'Washington'], ['WV', 'West Virginia'], ['WI', 'Wisconsin'], ['WY', 'Wyoming'],
-] as const;
+export { CANADIAN_PROVINCES_AND_TERRITORIES, US_STATES_AND_TERRITORIES } from '@/config/residency';
 
 type Props = {
   region: 'province' | 'state';
@@ -31,7 +12,7 @@ type Props = {
   onSelect: (code: string) => void;
 };
 
-/** The exact selection is never retained here. The caller saves only the existing residency flag. */
+/** The caller persists the selection locally and supplies its display name. */
 export function ResidencyDropdown({ region, options, expanded, savedAnswer, disabled, onToggle, onSelect }: Props) {
   const answered = savedAnswer !== null;
   const label = `${answered ? 'Change' : 'Select'} ${region} or territory`;

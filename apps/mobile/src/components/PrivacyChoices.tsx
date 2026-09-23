@@ -5,8 +5,8 @@ import { RELEASE_LINKS } from '@/config/release';
 import { CANADIAN_PROVINCES_AND_TERRITORIES, ResidencyDropdown, US_STATES_AND_TERRITORIES } from './residency-dropdown';
 import {
   connecticutClarificationStatus, hasConnecticutClarificationControl, getSavedConnecticutResidency, getSavedQuebecResidency,
-  restoreRegionalClarification, saveConnecticutResidency,
-  hasQuebecClarificationControl, quebecClarificationStatus, saveQuebecResidency,
+  restoreRegionalClarification, getSavedProvinceName, getSavedStateName, saveStateSelection,
+  hasQuebecClarificationControl, quebecClarificationStatus, saveProvinceSelection,
 } from '@/services/privacy/regionalClarification';
 import { getAdvertisingWithdrawalState, subscribeAdvertisingWithdrawal, getCompetitionStopState, subscribeCompetitionStop, stopOnlineCompetition, getReportingWithdrawalState, subscribeReportingWithdrawal } from '@/services/privacy/privacyRights';
 import { getProcessingAccess, getProcessingInputs, hasProcessingChoicesReadError, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
@@ -120,8 +120,8 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       <Text style={styles.body}>Which province or territory do you live in?</Text>
       {!compact ? <Text style={styles.note}>Your answer is saved on this device.</Text> : null}
       <ResidencyDropdown region="province" options={CANADIAN_PROVINCES_AND_TERRITORIES} expanded={expandedRegion === 'province'}
-        savedAnswer={savedQuebec === 'resident' ? 'Quebec resident' : savedQuebec === 'not-resident' ? 'Outside Quebec' : null} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'province' ? null : 'province')}
-        onSelect={code => void action(async () => { await saveQuebecResidency(code === 'QC' ? 'resident' : 'not-resident'); if (current()) setExpandedRegion(null); })} />
+        savedAnswer={getSavedProvinceName()} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'province' ? null : 'province')}
+        onSelect={code => void action(async () => { await saveProvinceSelection(code); if (current()) setExpandedRegion(null); })} />
       {savedQuebec === null && quebecClarificationStatus() !== 'Not answered' ? <Text style={styles.status}>{quebecClarificationStatus()}</Text> : null}
     </View> : null}
     {hasConnecticutClarificationControl() ? <View style={styles.group}>
@@ -129,8 +129,8 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
       <Text style={styles.body}>Which state or territory do you live in?</Text>
       {!compact ? <Text style={styles.note}>Your answer is saved on this device.</Text> : null}
       <ResidencyDropdown region="state" options={US_STATES_AND_TERRITORIES} expanded={expandedRegion === 'state'}
-        savedAnswer={savedConnecticut === 'resident' ? 'Connecticut resident' : savedConnecticut === 'not-resident' ? 'Outside Connecticut' : null} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'state' ? null : 'state')}
-        onSelect={code => void action(async () => { await saveConnecticutResidency(code === 'CT' ? 'resident' : 'not-resident'); if (current()) setExpandedRegion(null); })} />
+        savedAnswer={getSavedStateName()} disabled={busy} onToggle={() => setExpandedRegion(value => value === 'state' ? null : 'state')}
+        onSelect={code => void action(async () => { await saveStateSelection(code); if (current()) setExpandedRegion(null); })} />
       {savedConnecticut === null && connecticutClarificationStatus() !== 'Not answered' ? <Text style={styles.status}>{connecticutClarificationStatus()}</Text> : null}
     </View> : null}
     {hasNewYorkReadError() && input.launch?.plan && input.launch.plan.treatment !== 'unspecified' ? <View style={styles.group}>
