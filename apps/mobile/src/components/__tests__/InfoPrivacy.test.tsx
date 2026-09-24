@@ -12,6 +12,9 @@ async function fixture(requiredInitially = true) {
   const refresh = jest.fn().mockResolvedValue(undefined);
   const openURL = jest.fn();
   const alert = jest.fn();
+  const requestCheck = jest.fn(() => true);
+  const appState = { currentState: 'active' };
+  jest.doMock('@/services/launchUpdates', () => ({ launchUpdates: { requestCheck } }));
   jest.doMock('@/services/monetization', () => ({
     isAdPrivacyRequired: () => required,
     subscribeAdPrivacy: (listener: () => void) => { listeners.add(listener); return () => listeners.delete(listener); },
@@ -21,7 +24,7 @@ async function fixture(requiredInitially = true) {
   jest.doMock('react-native', () => ({
     View: 'View', Text: 'Text', ScrollView: 'ScrollView', TouchableOpacity: 'TouchableOpacity', Modal: 'Modal',
     StyleSheet: { create: (value: unknown) => value }, Platform: { OS: 'ios', Version: '26' },
-    Alert: { alert }, Linking: { openURL }, Share: { share: jest.fn() },
+    AppState: appState, Alert: { alert }, Linking: { openURL }, Share: { share: jest.fn() },
   }));
   jest.doMock('expo-router', () => ({
     useRouter: () => ({ push: jest.fn() }),
@@ -50,7 +53,8 @@ async function fixture(requiredInitially = true) {
   const rows = () => tree.root.findAllByType('TouchableOpacity' as never);
   const privacyRows = () => rows().filter(node => node.props.accessibilityLabel?.startsWith('Manage Privacy Choices'));
   const text = () => tree.root.findAllByType('Text' as never).map(node => node.children.join('')).join('\n');
-  return { show, refresh, openURL, alert, privacyRows, text,
+  return { show, refresh, openURL, alert, privacyRows, text, requestCheck, appState,
+    pressUpdate: async () => { await React.act(async () => { rows().find(node => node.props.accessibilityLabel?.startsWith('Check for updates'))!.props.onPress(); }); },
     press: async () => { await React.act(async () => { privacyRows()[0].props.onPress(); }); },
     setRequired: async (value: boolean) => { await React.act(async () => { required = value; listeners.forEach(fn => fn()); }); },
     act: React.act,
@@ -100,5 +104,21 @@ test('a Google form failure leaves an actionable retry without composing an emai
   expect(f.privacyRows()[0].props.disabled).toBe(false);
   expect(f.openURL).not.toHaveBeenCalled();
   await f.press(); expect(f.show).toHaveBeenCalledTimes(2);
+  await f.unmount();
+});
+
+test('Info checks for updates only on an explicit foreground tap', async () => {
+  const f = await fixture();
+  expect(f.requestCheck).not.toHaveBeenCalled();
+  await f.pressUpdate(); expect(f.requestCheck).toHaveBeenCalledTimes(1);
+  f.appState.currentState = 'background';
+  await f.pressUpdate(); expect(f.requestCheck).toHaveBeenCalledTimes(1);
+  await f.unmount();
+});
+
+test('an active workout refuses the Info update request', async () => {
+  const f = await fixture(); f.requestCheck.mockReturnValue(false);
+  await f.pressUpdate();
+  expect(f.alert).toHaveBeenCalledWith('Finish your workout first', expect.any(String));
   await f.unmount();
 });

@@ -1,13 +1,13 @@
-# Proposed OTA privacy-policy supplement
+# OTA privacy-policy supplement
 
-Prepared for owner review; not published to flapfitapp.com or App Store Connect.
+Final wording for the approved Info-only update flow. Publication and Apple save status are recorded in the correction report.
 
 ## App updates
 
-Flap Fit uses Expo’s EAS Update service to check for and deliver compatible app updates. At launch, the app sends Expo technical information such as a randomly generated identifier for this app installation, the operating-system platform, and the installed update/runtime version. As with other internet services, Expo receives the request’s IP address. This supports update delivery, compatibility and service operation. This integration does not send your camera images, recordings, exercise results, leaderboard name or advertising identifier to Expo, and does not connect the update identifier to your leaderboard or advertising profile. Available updates are offered before gameplay; you may choose Update now or Later.
+In versions that support in-app updates, Flap Fit uses Expo’s EAS Update service to check for and deliver compatible updates. A check starts when you select Check for updates in Info; normal app entry does not automatically check for updates. The app sends Expo technical information such as a randomly generated identifier for this app installation, the operating-system platform, and the installed update/runtime version. As with other internet services, Expo receives the request’s IP address. This supports update delivery, compatibility and service operation. This integration does not send your camera images, recordings, exercise results, leaderboard name or advertising identifier to Expo, and does not connect the update identifier to your leaderboard or advertising profile. If an update is available, you can choose Update now or Later. Requested checks, downloads and reloads take place in the update screen before returning to gameplay.
 
-Expo explains its handling of operating-system information, randomized update tokens and service logs in its [privacy policy](https://expo.dev/privacy).
+Expo explains its handling of operating-system information, randomized update tokens and service logs in its [privacy policy](https://expo.dev/privacy). Expo may process information outside Canada under that policy and its applicable service terms. Expo’s retention practices are separate from competition retention periods.
 
 ## Apple label reconciliation
 
-Add App Functionality to the existing Device ID category. Its existing combined linked Yes and tracking No answers remain applicable; Google’s existing purposes stay selected. Existing technical diagnostic categories still require reconciliation with the final artifact. No new permission, advertising choice, manual privacy workflow or workout-data collection is introduced.
+Add App Functionality to the existing Device ID category. Preserve the existing combined linked Yes / tracking No answers and Google’s existing purposes. The native Device ID / App Functionality declaration is already present. This adds no workout collection, permission prompt, advertising choice or manual support workflow. Final native-artifact reconciliation remains part of release acceptance.

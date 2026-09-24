@@ -24,6 +24,7 @@ import { useCallback, useRef, useState, useSyncExternalStore } from 'react';
 import { isAdPrivacyRequired, refreshAdPrivacyRequirement, showAdPrivacyOptions, subscribeAdPrivacy } from '@/services/monetization';
 import {
   Alert,
+  AppState,
   Linking,
   Modal,
   Platform,
@@ -37,6 +38,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BirdAvatar from '@/components/BirdAvatar';
 import { PrivacyChoices } from '@/components/PrivacyChoices';
+import { launchUpdates } from '@/services/launchUpdates';
 import { RELEASE_LINKS } from '@/config/release';
 import {
   competitionIsConfigured,
@@ -689,6 +691,17 @@ export default function InfoScreen() {
         </Section>
 
         <Section title="Support & sharing" icon={<Smartphone size={23} color={AMBER} />}>
+          <ActionRow
+            icon={<Smartphone size={21} color="#0284C7" />}
+            title="Check for updates"
+            subtitle="Check before downloading an app update"
+            onPress={() => {
+              if (AppState.currentState !== 'active') return;
+              if (!launchUpdates.requestCheck()) {
+                Alert.alert('Finish your workout first', 'Check for updates from Info after your workout.');
+              }
+            }}
+          />
           <ActionRow
             icon={<Mail size={21} color="#2563EB" />}
             title="Contact us"

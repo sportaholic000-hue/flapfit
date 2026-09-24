@@ -1,4 +1,5 @@
 import { createLaunchUpdates } from '../launchUpdates';
+import { holdGameplayActivity } from '../gameplayActivity';
 
 const deferred = <T,>() => {
   let resolve!: (value: T) => void;
@@ -15,19 +16,30 @@ function fixture() {
     fetchUpdateAsync: jest.fn(() => fetch.promise),
     reloadAsync: jest.fn().mockResolvedValue(undefined),
   };
-  const updates = createLaunchUpdates(() => client);
-  return { updates, client, check, fetch };
+  const getClient = jest.fn(() => client);
+  const updates = createLaunchUpdates(getClient);
+  const start = () => { updates.requestCheck(); return updates.start(); };
+  return { updates, client, getClient, check, fetch, start };
 }
 
-test('one check per launch, no downloads or reloads for Later, no late checks after entering the app', async () => {
+test('normal entry and unrequested start never load the SDK or start network work', async () => {
   const f = fixture();
-  const checking = f.updates.start();
-  await f.updates.start();
-  expect(f.updates.getSnapshot()).toBe('checking');
+  expect(f.updates.getSnapshot()).toBe('ready');
+  await f.updates.start(); await f.updates.download(); await f.updates.apply();
+  expect(f.getClient).not.toHaveBeenCalled();
+  expect(f.updates.getSnapshot()).toBe('ready');
+});
+
+test('Info request reserves the update screen before networking; Later never downloads or reloads', async () => {
+  const f = fixture();
+  expect(f.updates.requestCheck()).toBe(true);
+  expect(f.updates.getSnapshot()).toBe('requested');
+  expect(f.getClient).not.toHaveBeenCalled();
+  expect(f.updates.requestCheck()).toBe(false);
+  const checking = f.updates.start(); await f.updates.start();
   expect(f.client.checkForUpdateAsync).toHaveBeenCalledTimes(1);
   f.check.resolve({ isAvailable: true }); await checking;
   expect(f.updates.getSnapshot()).toBe('available');
-  expect(f.client.fetchUpdateAsync).not.toHaveBeenCalled();
   f.updates.later();
   await f.updates.start(); await f.updates.download(); await f.updates.apply();
   expect(f.updates.getSnapshot()).toBe('ready');
@@ -36,8 +48,8 @@ test('one check per launch, no downloads or reloads for Later, no late checks af
   expect(f.client.reloadAsync).not.toHaveBeenCalled();
 });
 
-test('cannot enter the router with an unresolved check or download; duplicate taps do not duplicate work', async () => {
-  const f = fixture(); const checking = f.updates.start();
+test('an unresolved explicit check/download cannot leak into gameplay; duplicate taps do not duplicate work', async () => {
+  const f = fixture(); const checking = f.start();
   f.updates.later(); expect(f.updates.getSnapshot()).toBe('checking');
   f.check.resolve({ isAvailable: true }); await checking;
   const downloading = f.updates.download(); await f.updates.download();
@@ -51,17 +63,20 @@ test('cannot enter the router with an unresolved check or download; duplicate ta
   expect(f.updates.getSnapshot()).toBe('applying');
 });
 
-test('offline check failure and no available update both leave the installed app usable', async () => {
-  const offline = fixture(); const failed = offline.updates.start();
-  offline.check.reject(new Error('offline')); await failed;
-  expect(offline.updates.getSnapshot()).toBe('ready');
-  const current = fixture(); const checking = current.updates.start();
-  current.check.resolve({ isAvailable: false }); await checking;
-  expect(current.updates.getSnapshot()).toBe('ready');
+test('offline check reports failure, then Continue allows an explicit retry', async () => {
+  const f = fixture(); const checking = f.start();
+  f.check.reject(new Error('offline')); await checking;
+  expect(f.updates.getSnapshot()).toBe('failed');
+  f.updates.later(); expect(f.updates.getSnapshot()).toBe('ready');
+  f.client.checkForUpdateAsync.mockResolvedValueOnce({ isAvailable: false });
+  await f.start();
+  expect(f.updates.getSnapshot()).toBe('current');
+  expect(f.client.checkForUpdateAsync).toHaveBeenCalledTimes(2);
+  f.updates.later(); expect(f.updates.getSnapshot()).toBe('ready');
 });
 
 test.each(['download', 'reload'])('%s failure permits Continue only after the operation settles', async step => {
-  const f = fixture(); const checking = f.updates.start();
+  const f = fixture(); const checking = f.start();
   f.check.resolve({ isAvailable: true }); await checking;
   const downloading = f.updates.download();
   if (step === 'download') f.fetch.reject(new Error('download failed'));
@@ -72,8 +87,8 @@ test.each(['download', 'reload'])('%s failure permits Continue only after the op
   f.updates.later(); expect(f.updates.getSnapshot()).toBe('ready');
 });
 
-test('rollback to the embedded version is offered and applied through the same launch gate', async () => {
-  const f = fixture(); const checking = f.updates.start();
+test('rollback is offered and applied only through the requested update screen', async () => {
+  const f = fixture(); const checking = f.start();
   f.check.resolve({ isAvailable: false, isRollBackToEmbedded: true }); await checking;
   expect(f.updates.getSnapshot()).toBe('available');
   const downloading = f.updates.download();
@@ -81,18 +96,40 @@ test('rollback to the embedded version is offered and applied through the same l
   await f.updates.apply(); expect(f.client.reloadAsync).toHaveBeenCalledTimes(1);
 });
 
-test('withdrawn update opens the installed version without a pointless reload', async () => {
-  const f = fixture(); const checking = f.updates.start();
+test('withdrawn update reports the installed version is current without reloading', async () => {
+  const f = fixture(); const checking = f.start();
   f.check.resolve({ isAvailable: true }); await checking;
   const downloading = f.updates.download(); f.fetch.resolve({ isNew: false }); await downloading;
-  expect(f.updates.getSnapshot()).toBe('ready');
+  expect(f.updates.getSnapshot()).toBe('current');
   expect(f.client.reloadAsync).not.toHaveBeenCalled();
 });
 
-test('disabled updater/dev client needs no network; unavailable native module does not break launch', async () => {
-  const client = { isEnabled: false, checkForUpdateAsync: jest.fn(), fetchUpdateAsync: jest.fn(), reloadAsync: jest.fn() };
-  const disabled = createLaunchUpdates(() => client); await disabled.start();
-  expect(disabled.getSnapshot()).toBe('ready'); expect(client.checkForUpdateAsync).not.toHaveBeenCalled();
-  const absent = createLaunchUpdates(() => { throw new Error('no native module'); }); await absent.start();
+test('disabled updater and unavailable native module cannot break ordinary entry', async () => {
+  const f = fixture(); f.client.isEnabled = false;
+  await f.start();
+  expect(f.updates.getSnapshot()).toBe('unavailable');
+  expect(f.client.checkForUpdateAsync).not.toHaveBeenCalled();
+  f.updates.later(); expect(f.updates.getSnapshot()).toBe('ready');
+  const absent = createLaunchUpdates(() => { throw new Error('no native module'); });
   expect(absent.getSnapshot()).toBe('ready');
+  absent.requestCheck(); await absent.start();
+  expect(absent.getSnapshot()).toBe('failed');
+  absent.later(); expect(absent.getSnapshot()).toBe('ready');
+});
+
+test('camera ownership rejects an update request without touching the workout or SDK', () => {
+  const f = fixture(); const release = holdGameplayActivity();
+  try {
+    expect(f.updates.requestCheck()).toBe(false);
+    expect(f.updates.getSnapshot()).toBe('ready');
+    expect(f.getClient).not.toHaveBeenCalled();
+  } finally { release(); }
+  expect(f.updates.requestCheck()).toBe(true);
+});
+
+test('camera ownership is rechecked before starting native work', async () => {
+  const f = fixture(); f.updates.requestCheck(); const release = holdGameplayActivity();
+  try { await f.updates.start(); } finally { release(); }
+  expect(f.getClient).not.toHaveBeenCalled();
+  expect(f.updates.getSnapshot()).toBe('ready');
 });

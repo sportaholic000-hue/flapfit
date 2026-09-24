@@ -23,6 +23,7 @@
     "test-exclude@npm:^6.0.0": "npm:8.0.0",
     "jsdom@npm:^20.0.0": "npm:27.4.0",
     "jest-environment-jsdom@npm:^29.2.1": "patch:jest-environment-jsdom@npm%3A29.7.0#~/.yarn/patches/jest-environment-jsdom-npm-29.7.0-flapfit.patch",
-    "@jest/reporters@npm:^29.7.0": "patch:@jest/reporters@npm%3A29.7.0#~/.yarn/patches/@jest-reporters-npm-29.7.0-flapfit.patch"
+    "@jest/reporters@npm:^29.7.0": "patch:@jest/reporters@npm%3A29.7.0#~/.yarn/patches/@jest-reporters-npm-29.7.0-flapfit.patch",
+    "@expo/fingerprint@npm:^0.20.13": "patch:@expo/fingerprint@npm%3A0.20.13#~/.yarn/patches/@expo-fingerprint-npm-0.20.13-flapfit.patch"
   }
 }

@@ -2,7 +2,7 @@ import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react
 import { ActivityIndicator, AppState, Text, TouchableOpacity, View } from 'react-native';
 import { launchUpdates } from '@/services/launchUpdates';
 
-/** The router (and therefore every camera/recording route) mounts only after OTA settles. */
+/** Normal entry mounts immediately; only an explicit Info update request owns this screen. */
 export function LaunchUpdateGate({ children }: { children: ReactNode }) {
   const phase = useSyncExternalStore(launchUpdates.subscribe, launchUpdates.getSnapshot, launchUpdates.getSnapshot);
   const [active, setActive] = useState(AppState.currentState === 'active');
@@ -15,8 +15,8 @@ export function LaunchUpdateGate({ children }: { children: ReactNode }) {
   }, [phase]);
 
   useEffect(() => {
-    if (!active) return;
-    if (phase === 'idle') void launchUpdates.start();
+    if (!active || AppState.currentState !== 'active') return;
+    if (phase === 'requested') void launchUpdates.start();
     if (phase === 'downloaded') void launchUpdates.apply();
   }, [active, phase]);
 
@@ -24,7 +24,12 @@ export function LaunchUpdateGate({ children }: { children: ReactNode }) {
 
   const offered = phase === 'available';
   const failed = phase === 'failed';
+  const current = phase === 'current';
+  const unavailable = phase === 'unavailable';
+  const canContinue = failed || current || unavailable;
   const heading = offered ? 'An update is available'
+    : current ? 'You’re up to date'
+    : unavailable ? 'Updates unavailable'
     : failed ? 'Couldn’t finish the update'
     : phase === 'downloading' ? 'Downloading update…'
     : phase === 'downloaded' || phase === 'applying' ? 'Opening Flap Fit…'
@@ -32,17 +37,18 @@ export function LaunchUpdateGate({ children }: { children: ReactNode }) {
   return (
     <View style={styles.screen}>
       <Text accessibilityRole="header" style={styles.title}>{heading}</Text>
-      {offered || failed ? (
+      {offered || canContinue ? (
         <>
           <Text style={styles.body}>{offered
             ? 'Update before you play, or keep playing this version for now.'
-            : 'You can keep playing this version and try again next time you open Flap Fit.'}</Text>
+            : current ? 'You’re using the latest compatible version.'
+            : 'You can keep playing this version and check again from Info later.'}</Text>
           {offered && <TouchableOpacity accessibilityRole="button" style={styles.primary}
             onPress={() => { if (AppState.currentState === 'active') void launchUpdates.download(); }}>
             <Text style={styles.primaryText}>Update now</Text>
           </TouchableOpacity>}
           <TouchableOpacity accessibilityRole="button" style={styles.secondary} onPress={() => launchUpdates.later()}>
-            <Text style={styles.secondaryText}>{failed ? 'Continue' : 'Later'}</Text>
+            <Text style={styles.secondaryText}>{canContinue ? 'Continue' : 'Later'}</Text>
           </TouchableOpacity>
         </>
       ) : <ActivityIndicator color="#38BDF8" size="large" style={styles.spinner} />}

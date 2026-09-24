@@ -1,6 +1,8 @@
+import { isGameplayActive } from './gameplayActivity';
+
 export type LaunchUpdatePhase =
-  | 'idle' | 'checking' | 'available' | 'downloading' | 'downloaded'
-  | 'applying' | 'failed' | 'ready';
+  | 'ready' | 'requested' | 'checking' | 'available' | 'current' | 'unavailable'
+  | 'downloading' | 'downloaded' | 'applying' | 'failed';
 
 type UpdateClient = {
   isEnabled: boolean;
@@ -9,9 +11,9 @@ type UpdateClient = {
   reloadAsync(): Promise<void>;
 };
 
-/** One launch owns OTA. No timers, foreground polling, or gameplay subscriptions. */
-export function createLaunchUpdates(getClient: () => UpdateClient) {
-  let phase: LaunchUpdatePhase = 'idle';
+/** OTA starts only through the Info action. No launch work, timers or gameplay subscriptions. */
+export function createLaunchUpdates(getClient: () => UpdateClient, canUseUpdates = () => !isGameplayActive()) {
+  let phase: LaunchUpdatePhase = 'ready';
   let client: UpdateClient;
   const listeners = new Set<() => void>();
   const setPhase = (next: LaunchUpdatePhase) => {
@@ -24,40 +26,47 @@ export function createLaunchUpdates(getClient: () => UpdateClient) {
       listeners.add(listener);
       return () => { listeners.delete(listener); };
     },
+    requestCheck() {
+      if (phase !== 'ready' || !canUseUpdates()) return false;
+      // The gate removes the router before its effect starts native networking.
+      setPhase('requested');
+      return true;
+    },
     async start() {
-      if (phase !== 'idle') return;
+      if (phase !== 'requested') return;
+      if (!canUseUpdates()) { setPhase('ready'); return; }
       setPhase('checking');
       try {
         client = getClient();
-        if (!client.isEnabled) { setPhase('ready'); return; }
+        if (!client.isEnabled) { setPhase('unavailable'); return; }
         const result = await client.checkForUpdateAsync();
-        setPhase(result.isAvailable || result.isRollBackToEmbedded ? 'available' : 'ready');
+        setPhase(result.isAvailable || result.isRollBackToEmbedded ? 'available' : 'current');
       } catch {
-        // Offline/check errors keep the installed app usable. Await the native
-        // request: racing a JS timeout would leave its network work running.
-        setPhase('ready');
+        // A JS timeout cannot cancel this native request. Only the explicitly
+        // requested update screen waits; normal app entry never starts a check.
+        setPhase('failed');
       }
     },
     later() {
-      if (phase === 'available' || phase === 'failed') setPhase('ready');
+      if (['available', 'failed', 'current', 'unavailable'].includes(phase)) setPhase('ready');
     },
     async download() {
-      if (phase !== 'available') return;
+      if (phase !== 'available' || !canUseUpdates()) return;
       setPhase('downloading');
       try {
         const result = await client.fetchUpdateAsync();
-        setPhase(result.isNew || result.isRollBackToEmbedded ? 'downloaded' : 'ready');
+        setPhase(result.isNew || result.isRollBackToEmbedded ? 'downloaded' : 'current');
       } catch {
         setPhase('failed');
       }
     },
     async apply() {
-      if (phase !== 'downloaded') return;
+      if (phase !== 'downloaded' || !canUseUpdates()) return;
       setPhase('applying');
       try {
         await client.reloadAsync();
-        // Keep the router unmounted until the native reload replaces this JS
-        // process. A resolved reload promise does not mean reload has finished.
+        // A resolved reload promise does not mean the native reload has finished.
+        // Keep the router unmounted until the new JS process replaces this one.
       } catch {
         setPhase('failed');
       }
@@ -65,8 +74,6 @@ export function createLaunchUpdates(getClient: () => UpdateClient) {
   };
 }
 
-// Shared across RootLayout remounts/Strict Mode. The gate runs once per cold
-// launch; returning from sharing or a workout never starts another OTA request.
 export const launchUpdates = createLaunchUpdates(() => {
   if (__DEV__) return { isEnabled: false } as UpdateClient;
   return require('expo-updates') as UpdateClient;
