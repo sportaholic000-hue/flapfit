@@ -1,0 +1,37 @@
+{
+  "originalCandidate": "ff0b29da837935624726e0e9e134430e7abc6a4a",
+  "commit": "bf7d2e0e21ae3588dbe2c25219b47dc94c8bc6b8",
+  "changedFiles": [
+    "apps/mobile/scripts/validate-privacy-manifest.test.js"
+  ],
+  "checks": [
+    {
+      "name": "privacy-test-followup",
+      "command": [
+        "node",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest\\bin\\jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "scripts/validate-privacy-manifest.test.js",
+        "--json",
+        "--outputFile=C:\\Users\\money\\Documents\\Codex\\2026-09-23\\critical-architectural-context-repair-directive-read\\outputs\\ota-setup-2026-09-24\\privacy-test-followup.json"
+      ],
+      "startedAt": "2026-09-24T07:16:36.620Z",
+      "finishedAt": "2026-09-24T07:17:21.432Z",
+      "exitCode": 0
+    },
+    {
+      "name": "privacy-test-lint",
+      "command": [
+        "node",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\oxlint\\bin\\oxlint",
+        "--no-ignore",
+        "--deny-warnings",
+        "apps/mobile/scripts/validate-privacy-manifest.test.js"
+      ],
+      "startedAt": "2026-09-24T07:17:21.436Z",
+      "finishedAt": "2026-09-24T07:17:23.726Z",
+      "exitCode": 0
+    }
+  ]
+}

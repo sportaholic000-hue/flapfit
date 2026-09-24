@@ -1,0 +1,22 @@
+{
+  "runtimeCandidate": "ff0b29da837935624726e0e9e134430e7abc6a4a",
+  "finalSourceCommit": "bf7d2e0e21ae3588dbe2c25219b47dc94c8bc6b8",
+  "fullRun": {
+    "checks": 15,
+    "passedChecks": 14,
+    "testsPassed": 1588,
+    "testsTotal": 1589,
+    "onlyFailure": "Stale legacy privacy-manifest test expected six missing declarations instead of seven after the OTA DeviceID addition."
+  },
+  "resolution": {
+    "changedFiles": [
+      "apps/mobile/scripts/validate-privacy-manifest.test.js"
+    ],
+    "focusedTestsPassed": 13,
+    "focusedTestsTotal": 13,
+    "focusedLintPassed": true,
+    "onlyTestCodeChanged": true
+  },
+  "status": "All identified local failures resolved; full 72-suite run retained plus passing 13-test followup. No full-suite rerun after test-only correction.",
+  "deviceAndNativeCompilation": "Not run; awaiting owner approval for EAS build and iPhone TestFlight acceptance."
+}

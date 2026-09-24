@@ -1,0 +1,20 @@
+{
+  "sourceFile": "privacy-test-followup.json",
+  "sourceSha256": "14d82cbd974747b2378f4a422f162d1542d8d1bc5f1a9690474cb4d20dd6848b",
+  "success": true,
+  "numTotalTests": 13,
+  "numPassedTests": 13,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTotalTestSuites": 1,
+  "numPassedTestSuites": 1,
+  "numFailedTestSuites": 0,
+  "testResults": [
+    {
+      "name": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+      "status": "passed",
+      "assertions": 13,
+      "failedAssertions": []
+    }
+  ]
+}

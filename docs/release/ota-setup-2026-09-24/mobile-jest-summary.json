@@ -1,0 +1,454 @@
+{
+  "sourceFile": "mobile-jest.json",
+  "sourceSha256": "2218b42db5ac2352b513662a3804fc403120107eecb4795af91e268f4779c780",
+  "success": false,
+  "numTotalTests": 1589,
+  "numPassedTests": 1588,
+  "numFailedTests": 1,
+  "numPendingTests": 0,
+  "numTotalTestSuites": 72,
+  "numPassedTestSuites": 71,
+  "numFailedTestSuites": 1,
+  "testResults": [
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/startupGameEntry.test.tsx",
+      "status": "passed",
+      "assertions": 22,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/__tests__/competitionApi-outbox.test.ts",
+      "status": "passed",
+      "assertions": 25,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+      "status": "passed",
+      "assertions": 90,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+      "status": "passed",
+      "assertions": 114,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/__tests__/launchUpdates.test.ts",
+      "status": "passed",
+      "assertions": 8,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/europeanProviderProcessing.test.ts",
+      "status": "passed",
+      "assertions": 23,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/scripts/launch-competition.test.js",
+      "status": "passed",
+      "assertions": 31,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/appleAgeControl.test.ts",
+      "status": "passed",
+      "assertions": 25,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/__tests__/competition-processing-access.test.ts",
+      "status": "passed",
+      "assertions": 48,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+      "status": "passed",
+      "assertions": 20,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/pullup-gameplay-flow.test.js",
+      "status": "passed",
+      "assertions": 26,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/__tests__/monetization.test.ts",
+      "status": "passed",
+      "assertions": 109,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/components/__tests__/LaunchUpdateGate.test.tsx",
+      "status": "passed",
+      "assertions": 2,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/regionalClarification.test.ts",
+      "status": "passed",
+      "assertions": 31,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx",
+      "status": "passed",
+      "assertions": 4,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/gameEntry.test.ts",
+      "status": "passed",
+      "assertions": 17,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/scripts/share-return.test.js",
+      "status": "passed",
+      "assertions": 1,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/__tests__/competitionApi.test.ts",
+      "status": "passed",
+      "assertions": 3,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/components/__tests__/GameEligibilityGate.test.tsx",
+      "status": "passed",
+      "assertions": 15,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/birdWebAsset.test.ts",
+      "status": "passed",
+      "assertions": 2,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/processingAccess.test.ts",
+      "status": "passed",
+      "assertions": 33,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/form-tracking.test.ts",
+      "status": "passed",
+      "assertions": 67,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/localAgeAnswer.test.ts",
+      "status": "passed",
+      "assertions": 19,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/components/__tests__/InfoPrivacy.test.tsx",
+      "status": "passed",
+      "assertions": 4,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/scripts/ad-sdk-lifecycle.test.js",
+      "status": "passed",
+      "assertions": 4,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/pullup-elbow-clearance.test.js",
+      "status": "passed",
+      "assertions": 59,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/newYorkClarification.test.ts",
+      "status": "passed",
+      "assertions": 11,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/pullup-grab-entry.test.js",
+      "status": "passed",
+      "assertions": 6,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/umpStoredSignals.test.ts",
+      "status": "passed",
+      "assertions": 25,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/privacyCountry.test.ts",
+      "status": "passed",
+      "assertions": 40,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/scripts/validate-tracker-assets.test.js",
+      "status": "passed",
+      "assertions": 5,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/__tests__/competition-terms-action.test.ts",
+      "status": "passed",
+      "assertions": 8,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/privacyRights.test.ts",
+      "status": "passed",
+      "assertions": 19,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/umpPrivacyControls.test.ts",
+      "status": "passed",
+      "assertions": 12,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/privacyStartup.test.ts",
+      "status": "passed",
+      "assertions": 11,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/bird-stage-assets.test.ts",
+      "status": "passed",
+      "assertions": 2,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/pullup-standing-reach.test.js",
+      "status": "passed",
+      "assertions": 8,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/umpProcessingControls.test.ts",
+      "status": "passed",
+      "assertions": 8,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/modules/flap-fit-age-range/__tests__/app-transaction.test.ts",
+      "status": "passed",
+      "assertions": 33,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/pullup-support-reference.test.ts",
+      "status": "passed",
+      "assertions": 52,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/pullup-top-first.test.js",
+      "status": "passed",
+      "assertions": 4,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/modules/flap-fit-age-range/__tests__/bridge.test.ts",
+      "status": "passed",
+      "assertions": 51,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/__tests__/recordingCache.test.ts",
+      "status": "passed",
+      "assertions": 7,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/components/__tests__/RecordingCleanupRoot.test.tsx",
+      "status": "passed",
+      "assertions": 1,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/game-web-navigation.test.ts",
+      "status": "passed",
+      "assertions": 3,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/launchProcessingPolicy.test.ts",
+      "status": "passed",
+      "assertions": 129,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/recording-mp4.test.ts",
+      "status": "passed",
+      "assertions": 8,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/camera-preview.test.ts",
+      "status": "passed",
+      "assertions": 3,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/stats-history.test.ts",
+      "status": "passed",
+      "assertions": 3,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/pullup-top-entry.test.ts",
+      "status": "passed",
+      "assertions": 9,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/regionalPolicy.test.ts",
+      "status": "passed",
+      "assertions": 103,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/game-modes.test.ts",
+      "status": "passed",
+      "assertions": 4,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/__tests__/videoSharing.test.ts",
+      "status": "passed",
+      "assertions": 6,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/__tests__/revenueCatTestDiagnostics.test.ts",
+      "status": "passed",
+      "assertions": 10,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/scripts/retain-ios-archive.test.js",
+      "status": "passed",
+      "assertions": 1,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/appleRescission.test.ts",
+      "status": "passed",
+      "assertions": 36,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/birdVisual.test.ts",
+      "status": "passed",
+      "assertions": 4,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/processingPolicy.test.ts",
+      "status": "passed",
+      "assertions": 46,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/pullup-top-reference.test.ts",
+      "status": "passed",
+      "assertions": 20,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/store-hydration.test.ts",
+      "status": "passed",
+      "assertions": 5,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/mediapipe-recovery.test.ts",
+      "status": "passed",
+      "assertions": 5,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/scripts/validate-privacy-manifest.test.js",
+      "status": "failed",
+      "assertions": 11,
+      "failedAssertions": [
+        {
+          "title": "rejects the prior four-category manifest and omitted reporting purpose",
+          "status": "failed",
+          "failureMessages": [
+            "Error: expect(received).toHaveLength(expected)\n\nExpected length: 6\nReceived length: 7\nReceived array:  [\"app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeDeviceID\", \"app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeUserID\", \"app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeOtherDataTypes\", \"app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeOtherDiagnosticData\", \"app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeCoarseLocation\", \"app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeAdvertisingData\", \"app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeProductInteraction\"]\n    at Object.toHaveLength (C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\scripts\\validate-privacy-manifest.test.js:32:20)\n    at Promise.then.completed (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\utils.js:231:10)\n    at _callCircusTest (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:316:40)\n    at _runTest (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:252:3)\n    at _runTestsForDescribeBlock (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:126:9)\n    at run (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\run.js:71:3)\n    at runAndTransformResultsToJestFormat (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\legacy-code-todo-rewrite\\jestAdapterInit.js:122:21)\n    at jestAdapter (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\legacy-code-todo-rewrite\\jestAdapter.js:79:19)\n    at runTestInternal (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-runner\\build\\runTest.js:367:16)\n    at runTest (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-runner\\build\\runTest.js:444:34)"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/evolution-core.test.ts",
+      "status": "passed",
+      "assertions": 5,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/privacy/__tests__/releaseEligibility.test.ts",
+      "status": "passed",
+      "assertions": 22,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/__tests__/resultAdGate.test.ts",
+      "status": "passed",
+      "assertions": 8,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/recording-boundaries.test.ts",
+      "status": "passed",
+      "assertions": 2,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/competition-profile-reset.test.ts",
+      "status": "passed",
+      "assertions": 1,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/scripts/validate-monetization-config.test.js",
+      "status": "passed",
+      "assertions": 10,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/services/__tests__/settingsPermissionRecovery.test.ts",
+      "status": "passed",
+      "assertions": 5,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/level-rules.test.ts",
+      "status": "passed",
+      "assertions": 11,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/src/utils/game/__tests__/continuous-gameplay.test.ts",
+      "status": "passed",
+      "assertions": 10,
+      "failedAssertions": []
+    },
+    {
+      "name": "apps/mobile/scripts/validate-tracker-release.test.js",
+      "status": "passed",
+      "assertions": 4,
+      "failedAssertions": []
+    }
+  ]
+}

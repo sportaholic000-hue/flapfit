@@ -1,0 +1,83 @@
+{
+  "verifiedAt": "2026-09-24T07:01:37.382Z",
+  "projectId": "bbbfea4f-3047-46f6-a5ba-6286356e4718",
+  "channels": [
+    {
+      "id": "01a0d227-8f21-7eba-b354-fb170e7131ea",
+      "isPaused": false,
+      "name": "development",
+      "updatedAt": "2026-09-24T06:43:23.041Z",
+      "createdAt": "2026-09-24T06:43:23.041Z",
+      "branchMapping": "{\"data\":[{\"branchId\":\"01a0d227-8dfe-7c56-83d5-55e8fd81d040\",\"branchMappingLogic\":\"true\"}],\"version\":0}",
+      "updateBranches": [
+        {
+          "id": "01a0d227-8dfe-7c56-83d5-55e8fd81d040",
+          "name": "development",
+          "updateGroups": []
+        }
+      ]
+    },
+    {
+      "id": "01a0d227-3abf-7132-a19c-d2a8fcc92085",
+      "isPaused": false,
+      "name": "preview",
+      "updatedAt": "2026-09-24T06:43:01.439Z",
+      "createdAt": "2026-09-24T06:43:01.439Z",
+      "branchMapping": "{\"data\":[{\"branchId\":\"01a0d227-393e-77bc-a5cf-0d908511573e\",\"branchMappingLogic\":\"true\"}],\"version\":0}",
+      "updateBranches": [
+        {
+          "id": "01a0d227-393e-77bc-a5cf-0d908511573e",
+          "name": "preview",
+          "updateGroups": []
+        }
+      ]
+    },
+    {
+      "id": "01a0d220-9db9-79fa-b3cd-b821597a3d6a",
+      "isPaused": false,
+      "name": "production",
+      "updatedAt": "2026-09-24T06:35:48.025Z",
+      "createdAt": "2026-09-24T06:35:48.025Z",
+      "branchMapping": "{\"data\":[{\"branchId\":\"01a0d220-9cb1-7107-8353-bb524ffff275\",\"branchMappingLogic\":\"true\"}],\"version\":0}",
+      "updateBranches": [
+        {
+          "id": "01a0d220-9cb1-7107-8353-bb524ffff275",
+          "name": "production",
+          "updateGroups": []
+        }
+      ]
+    }
+  ],
+  "environments": {
+    "production": {
+      "variables": 16,
+      "matchedBuildProfile": true
+    },
+    "preview": {
+      "variables": 15,
+      "matchedBuildProfile": true
+    },
+    "development": {
+      "variables": 15,
+      "matchedBuildProfile": true
+    }
+  },
+  "account": {
+    "plan": "Free",
+    "monthlyCost": 0,
+    "iosBuildsUsed": 13,
+    "otaMonthlyActiveInstallations": 0,
+    "otaBandwidthBytes": 0,
+    "otaIncludedMAUs": 1000,
+    "otaIncludedBandwidthGiB": 100
+  },
+  "publishes": 0,
+  "buildsStarted": 0,
+  "githubPushAutomation": "No push workflow; only workflow_dispatch Apple device registration; GitHub labels can trigger builds but no labels/PRs created.",
+  "cli": {
+    "version": "18.9.1",
+    "separateWorkspaceTool": true,
+    "upstreamPunycodeWarningRetained": true,
+    "currentVersionAdvertised": "24.7.0"
+  }
+}

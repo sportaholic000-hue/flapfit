@@ -1,0 +1,21 @@
+{
+  "runtimeVersion": "4bbc54ab0f505811dae5c08164789d138442b889",
+  "sourceCount": 321,
+  "workflow": "managed",
+  "iOSNativeConfig": {
+    "EXUpdatesEnabled": true,
+    "EXUpdatesCheckOnLaunch": "NEVER",
+    "EXUpdatesLaunchWaitMs": 0,
+    "EXUpdatesURL": "https://u.expo.dev/bbbfea4f-3047-46f6-a5ba-6286356e4718",
+    "EXUpdatesEnableBsdiffPatchSupport": true,
+    "EXUpdatesRuntimeVersion": "file:fingerprint"
+  },
+  "checkedNativeInputs": [
+    "RevenueCat bridge/Swift patch script",
+    "AdMob patch script",
+    "Expo native plugins",
+    "local age/transaction module",
+    "Yarn native patches"
+  ],
+  "actualMacCompilation": "not run; requires the next owner-approved EAS build"
+}

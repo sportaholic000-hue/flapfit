@@ -1,0 +1,2581 @@
+{
+  "hash": "4bbc54ab0f505811dae5c08164789d138442b889",
+  "sources": [
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/android/BuildProperties.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "4c8f334d334c6e26208f4f638112b00b5f551e80"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/android/codeMod.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "04eadaa3b175dbbb7b32f4038e15ecfce7d15bb8"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/android/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "de790cc13474dae2d144a3a0acdedfb8d09d844d"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/android/Permissions.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "4126f0b707e72b825673cde28b3a75ca52baf405"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "cfb8b658f4a9a95eab1d60f23ab86c3ebda81720"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/ios/BuildProperties.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f8d2dc1dced6f2dadddf78e8ed7fd1cdffee3f5c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/ios/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "4b1cc67535a435a7e8fb7d24b73f29bf09db3142"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/ios/Permissions.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "33cf8daf6ca5afcf5fa487cd1cc3b499f56b314a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/Plugin.types.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "774f9efa8ae55e18de054e585f8e7082ca2943c9"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/android-plugins.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "50dd08e8fe656231469f5c1fb40f01157edc8b94"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/createBaseMod.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "37b34773c7add9d983a37fd230e7c51732f8a4b4"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/ios-plugins.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "890b7a2c129470585f417a87ec656e385edae598"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/mod-compiler.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "d9151fdeb6e3912d8e9a5a7f963fb8aee662dace"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/withAndroidBaseMods.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "3548851b13b85f63eaed8d74bef73be3270b599c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/withDangerousMod.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "37373320468d1fe3d56da799d0e16ad976b6d77f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/withFinalizedMod.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "fade1338f5bd83a41ead0dedaf61f76d20959cb8"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/withIosBaseMods.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "ae8b74745688a9dca2393d3d58d885bc982db060"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/withMod.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "37acf8c985ceb9fc11a3e683d87962db78cc0d3a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/withPlugins.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "366b66c6a956117f72bc90cb63a5d87223b9ca26"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/withRunOnce.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "82bc7a862e08fdd19a2002fe5f31ccfa0e5fb94c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/plugins/withStaticPlugin.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "2a03769963960c3f1aa656ddfe4d00f70083ecd6"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/utils/errors.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "0557ba67f69010260fe211d6bcb80931146624db"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/utils/generateCode.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "85d00ca45c6daae3fdee5733086248366b64164c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/utils/history.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b69b6ee277a281bfedc10f64e5e5d0c66a700d4c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/utils/plugin-resolver.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "76bade5c47ab86934fb2ddceff6a41e2a0d05047"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config-plugins/build/utils/validations.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f85d3e92c19516516d9df66d4ee3a6de3cab99dc"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/buildCacheProvider.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "55e5d7a05955e00a6dd313a0a8f6642a495cf282"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/Config.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "c00c58226e741fff795853bd45d80c50a930e1da"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/Config.types.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "0c25aa7bd09bedaf468160dfc402da13557ace91"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/environment.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "1349a7afa9b372da89dcf91e50426e9422fb2c88"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/Errors.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "197102cdb7b5825baf4bb90f4bce0b3aeaf6c566"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/evalConfig.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b9cbfa98aa521e4f77fedcf4ee0a66b5aa38934f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/getConfig.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "5d7e033ee030cecbf480ccd308f84536304224a9"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/getExpoSDKVersion.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "765d4737159a9131e4859a79a5b43084236fbed1"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "34a56bca96614808fbe217e058539da4f8845a49"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/plugins/withConfigPlugins.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "72a222c97d762bcaa43ec1329983d62b8fd6b102"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/plugins/withInternal.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "7e1944a6b2d84fbbd7da725357d7b6479ddeb620"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/resolvePackageJson.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "76c81ecb73d3d2e66ee67961ad61bcae9941a096"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/config/build/Serialize.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "4346f7e9052a4a686322a995305f36dfb2d1258f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/image-utils/build/Cache.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "6e4486f8bc634dba0da340c595c9dfe1afabd184"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/image-utils/build/Download.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "e5033460819b567c014c4ff799bf264df6c0e4dd"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/image-utils/build/env.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "9ca75fde021dcc793c86c8b903fb9366336e9213"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/image-utils/build/Ico.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "35ba0971ae24ce6368b27ce68dc529a1d692e763"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/image-utils/build/Image.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "84c0ede30785e89baa7ab3719d484b4ffab73e76"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/image-utils/build/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "2dacf8a6939d7c66b1cf9000bb4743c4ac9666bf"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/image-utils/build/jimp.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "97258e0c78f495e09fe4ad0380fa70d24d44d5ab"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/image-utils/build/sharp.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "99445ee00796ff9641ca6dc12d41bebbb0e4629c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/json-file/build/JsonFile.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "02f9fb2702447007edf23ec41cff5eb807a1ada5"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/json-file/build/JsonFileError.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "642cf9543ab0690e88e81b59b5c7f1506c0ce90b"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/json-file/build/writeAtomic.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b3727d350e45c40d0b64b4123e005ab5f09ad2af"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/require-utils/build/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "30dc5832754477cca6415c11e6ac1457d16eb29d"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/require-utils/build/load.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b4a83821745e8fedbd84c1d1ee0eb15ba6ff7aeb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/require-utils/build/resolve.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "286694b2e9cf3d96e4b16151c0977508f4bd5765"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/require-utils/build/resolveGlobal.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f1f9e132925a28d3db7b3f97a7ccfefd2ac2f633"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/schema-utils/build/deref.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "969a13f4fe606f788af627fe3317f3839eabebf3"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/schema-utils/build/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "ed1217a2dcd7d01d5ea69bd8dbe8edb40e933c63"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/@expo/schema-utils/build/validate.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "c6ebc2a294ebe3d4e12b3190ddbc28490515daa3"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/ansi-styles/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "5f96df8b074e4854c03db87ef309eb6c741f4618"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/base64-js/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "8de581e64d323f2130cbfb1a154d62acf894ff5e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/big-integer/BigInteger.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b5d41993a6f586c72c911462474871f6a7d419c4"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/bplist-creator/bplistCreator.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "ab96841abbb4b140c564440760b908fe2d368da9"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/bplist-parser/bplistParser.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "8dd6044d0f1f93c53d0caf2a6a1196447c6cd14e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/chalk/source/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "8c580aa7500d9969056a236df949fefc3db41905"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/chalk/source/util.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "4cb1e8afae9bc10f49a678034e835399ab9c0bcd"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/app.plugin.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "313335233da02c3e328386cea03147364ddf8b9a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/package.json",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "84a26458088a6acc749006bd1c540bfdffa250fe"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/AssetContents.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "df91c085d9b4f33d1d2209a11790abe9d7137932"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/utils.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "fd6d06e35a66443d8be510d238412c46763de957"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/withAssets.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "ebf01b3030cd7f503d56508a257bc5253455f991"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/withAssetsAndroid.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f34f16c947921346ca976b4ca706fd7fea7c250f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/withAssetsIos.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "83f4b3c97e91c072b7b62c31c25482e23ca0cb45"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/app.plugin.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "1a5d7672b16206ac757b118553974288c4bb3e13"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/android.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "37bf0574c11a22625bf648160f2ff90ccc2c3a66"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/androidPCHTemplates.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "99e750f6035b1641367387009ef70a44dc4d05cd"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/androidQueryUtils.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "c26bb466fb10a7a1f0d942f37dd00dc7ad9f4dfb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/fileContentsUtils.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b260a8fc9f25a782de3de950382fe95bb65a7e5c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/ios.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "8d7fad14761e085ddea590072f75d5c3b0b42150"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/iosSceneSupport.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "03b83c469124ef0291ee938c588789133490b11c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/pluginConfig.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "3bc8fa1638c6a09b614677d385c642df57ca828a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/withBuildProperties.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "596f8763b66614ed807c4de51b5e61cc59185ed6"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-camera/app.plugin.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "97829cec51735c51890c05a80acd06fdae8d6d19"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-camera/package.json",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f7d5e4237240020d72083d5c39015f403f34fdd2"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-camera/plugin/build/withCamera.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "ddf6c3285f977ba5318100b73690a9757533f025"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-image/app.plugin.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "877b5d26e325699de339200ffaa336311d1cda29"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-image/package.json",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f7583e2ac9fd5e286a3bf02575ce15b2696f1a34"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-image/plugin/build/withExpoImage.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "8dde7024f9ad52d4f0c68b3a7b60306e67f334ca"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-router/app.plugin.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "94d2a78cd11a7d7e3a2f62ddac4062e7f620c476"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-router/plugin/build/withRouter.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "be4dd04f11885d27e2d2297587b7de68bd3b428e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-router/plugin/options.json",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "140d48a5f5bfd20c423ff22679407e85fa91139d"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/app.plugin.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "a1ee5d63c270f7ea390eebdf723274d81e921353"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/package.json",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "95b5c7e829d533cada934c5996305102a885f7dd"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/getAndroidSplashConfig.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b792b053b075a67a02a8babfdaa4586d730cafdf"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/getIosSplashConfig.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "53b499c7282d4cb1af5de9b4999664aaabd45db6"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/InterfaceBuilder.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "fca3de39f55cf3b55b77321aedcbbcfb962ab91e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashDrawables.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "df56688bede02033dfbf5c6168b057f84ef54f4b"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashImages.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "576605c31519fa9684cbaf683cd77869452217c0"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashMainActivity.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "886a7a34b57f747cee430a6aeae799df9e5b6d30"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashScreen.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "33a4f27e1e094dc71ee25eb65e5d31e14ad6e1da"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashStrings.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "2eedd53a73f663e0be991844a799fe4071f117cb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashStyles.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "29204aa086a120532217058d983d0934d4b4d26c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashAssets.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "c4d6dab378daff931874430ca3b0fa4f623d7dc5"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashColors.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "e72c45ca432f4e3981f16d7f7a4e0c998546df9b"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashInfoPlist.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "93014a3e849ed679114e8ec762150fb91904a61f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashScreen.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b6edbaca48a48f2443d2a1e5887320b483c1a1ef"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashScreenStoryboard.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "c953ed41705bb503420d49d7b09869ffb57ec6fb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashScreenStoryboardImage.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "42e7e241dd5f9104062ea9460c03cea520c2639e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashXcodeProject.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "1607dc9bbccda4228d19f73ddda036dd064dc885"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withSplashScreen.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "2cb462984089719de1adaad8d7c35f522b190640"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-status-bar/app.plugin.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "d7e2ecbbe698cf058707181d620209ff98729957"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-status-bar/package.json",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "0ae946b459675a901367361a310fecc52a46d6fb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-status-bar/plugin/build/withStatusBar.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "1bc62dcbcc73683ac5c33f60634ad6f9d25e41c1"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/jimp-compact/dist/jimp.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "86e4211f72d6541f8b6f0d22665475623c8c8d45"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/json5/lib/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "42a90a2f47121a25578cb1cfecfd51899cf2a65b"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/json5/lib/parse.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "dc7db617ff95008f7cef920c25537b5049217b64"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/json5/lib/stringify.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "7e6860a405147e2dc619f6a25462b00dda7d2b59"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/json5/lib/unicode.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "c4feb185891a963e9051414ca502707a4f85aa43"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/json5/lib/util.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "2bc7b6ed831e0506ef0aab9d714c00070952cc14"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/parse-png/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "2f1c3acbbfd093176bb46cd920f3d56ce7243a97"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/plist/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "cf30baf23f56c53cd2ae8d534b75ddaeb2fd130a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/plist/lib/build.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "c331850ffd97b62c653b69d2e53341aec8318443"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/plist/lib/parse.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "ac32a1f7d10acd5d550e675e837bf78230740482"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/plist/node_modules/@xmldom/xmldom/lib/conventions.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/plist/node_modules/@xmldom/xmldom/lib/dom-parser.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/plist/node_modules/@xmldom/xmldom/lib/dom.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/plist/node_modules/@xmldom/xmldom/lib/entities.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/plist/node_modules/@xmldom/xmldom/lib/errors.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/plist/node_modules/@xmldom/xmldom/lib/grammar.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/plist/node_modules/@xmldom/xmldom/lib/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/plist/node_modules/@xmldom/xmldom/lib/sax.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/bitmapper.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "291aaaaa3e3c04cb236a75492db902423e754a0d"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/bitpacker.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "7ed851c84a326fd119b82ae63aad3bd83bc4e5c4"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/chunkstream.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "a244fd0cc3cd6b81d39f829d2c6b8fea2188a4c8"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/constants.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "03736523a30bf4decf4170448aa01f9e274be32f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/crc.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "0c0c88ba1e409be717d05548ffa85309067c4be5"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/filter-pack.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "5cd5d74e78e1c0c7de1a5eee58d1d7473b45a6ab"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/filter-parse-async.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "d15dc803a655baac0a8af93794a3767486d743c8"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/filter-parse-sync.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "fe65ba6a3316aa2dbad87ed4ff45a480795ad9bc"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/filter-parse.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "1f6653a095a6476d32c9c1394abc191b65575bb0"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/format-normaliser.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "12253773689300111964ee8a5c2c57d7c917e76f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/interlace.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "a4856511361e700acea4bd0287264462b229eba9"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/packer-async.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "3fe266198f090a4130f4ef8cf371cb2fc96d2a06"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/packer-sync.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b004dd84415f72f396a64550538c9d2c17b509b6"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/packer.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "22133015f4bd4bc7986070d831ae00674a4288cb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/paeth-predictor.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "e0e641a3cbc6981726c3e19ecfd8fb871664df53"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/parser-async.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "974ef21f752be4f722e0d9e2bfd691ad9c960aa3"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/parser-sync.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "e39c585a727f7a9754e27e848771602b7825b907"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/parser.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "ec2a91693f489b0223d0215e6472f9dff3a980f5"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/png-sync.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "7ab25083cc73086821888f0dd64e4eec2555cbc1"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/png.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "64bfe21afba42a3d774655cea6ac8df9a6d87ce6"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/sync-inflate.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "9734df69b3fdfc43cb297654a01ce7ebbcd1b59c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/pngjs/lib/sync-reader.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "c707120b37f53d149555abe065b12240322f167d"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/react-native-google-mobile-ads/plugin/build/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "075559bc06f9aeb51b49093841443e8685d00ede"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/sax/lib/sax.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "29d2efb3d8147dd8bdddc47c49bd564023c94628"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/simple-plist/dist/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "ba712084f24cb9911e54e63efe074e2101d6615c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/simple-plist/dist/parse.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "23a1844f6c5a8d6eb3b9361354e54fc19efdc731"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/simple-plist/dist/readFile.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "84a64bc527c09e9d4a520ffeb4c8189660c932bd"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/simple-plist/dist/readFileSync.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "14c3cb4d603ca4e43d52e55b0f46fe27801fcaed"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/simple-plist/dist/stringify.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "8d62895838e459e83378fd34f7f15587ea0b36e0"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/simple-plist/dist/writeBinaryFile.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "d7b66b6d2386e666fe93b1d4f83004bc5633e23c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/simple-plist/dist/writeBinaryFileSync.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "c6a435da1c4b1bc0d1d7b3ade90bea92419dd5f1"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/simple-plist/dist/writeFile.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "d3d21514c72c63061bdfaa6dc623b769cdc80222"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/simple-plist/dist/writeFileSync.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "ba79dd22cbd07f093ae96454122082f08b7fdf3a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/stream-buffers/lib/constants.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f7180c238ed58b2204eaf339be373ec2cdb1631f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/stream-buffers/lib/readable_streambuffer.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "16e3154f73fc980d75c50d4fbfed36820ff7e469"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/stream-buffers/lib/streambuffer.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "3f9a6452d436951566026311717ad04178618ed1"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/stream-buffers/lib/writable_streambuffer.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "6617e69f6d10c1c45698f75fce3381dfbd57f525"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "d74d88ed9ebc52b24db723e9b9837da4b84a59cd"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/max.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "d1c4adb1d8c6adc8623344fc95b0c669059153d8"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/md5.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "994139127c3ad04475e83dfc8e5402922a4b7a50"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/native.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "761925a621590cc37a3be62ec4ec5dfd28c0c397"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/nil.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "fa81ca18e455d876c6024f0c40db9378be463cbb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/parse.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "76f55b7d7b02d98e072ab4c9cd5649e2a645e040"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/regex.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "fb17c6fe30a1f8e9bf6574cb9c3fa3aeb9d94a3e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/rng.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f5dceeada21d5402e9f5ac89a0dd3b74612e6538"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/sha1.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "0f067a4204a42681b1f3c3b016f0332f77505480"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/stringify.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "94d6f3ec5866e2f4670b4db73f384a80803ea379"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/v1.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "2d1e8591220a46307f3d3824c3b1cce31cd688ff"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/v1ToV6.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "6ed1686d894c775e19994c28b8f16622aef1674a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/v3.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "172737c53e7dce16a1c78331c3bf6306b753e4b1"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/v35.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "fecde05e068f31710bdefc4eca78b48ac1d93eaf"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/v4.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f8d926390a0d976157b864efa56b05209f5f5692"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/v5.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "54f4d7a0007f70fc679fa9d47ec51d039697646b"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/v6.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b1bc4453589d4bf2f6521544c29c539135bd2bd3"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/v6ToV1.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "c58e32246817f5f6654d6ea2dc0bd530e4f28fa7"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/v7.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "37c0523814192ea9a7fba3eb0b8b09cb80d03944"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/validate.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "ab3dfbf5b58211b9a7740d0872c27772a94a8b94"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/uuid/dist/cjs/version.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "9949b98735491bfb01a04006ff963d83e3023104"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xcode/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "3e2caad482d688c858997ee50709526b39771c0a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xcode/lib/parser/pbxproj.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "17eff10e1f2057d71f49c68a405e8b6b1bd8e7ea"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xcode/lib/pbxFile.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f5d30f1f9451d6fc71dd2f28c767d39cc91b9ff3"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xcode/lib/pbxProject.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "72d358ba6b08a2b32910ac4f69940e88587a0c6d"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xcode/lib/pbxWriter.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "43a4c74267660b77fd6e39fc69569482d43fa237"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/lib/bom.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f1d66839f4f9f57b752c749b189ab73e3a985e0f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/lib/builder.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "0080c06b95811d585809b7a7f4ec1ad7bf1e804b"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/lib/defaults.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "55a0dbd0b63ef04dc7f17273a06bbdad3db0ce63"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/lib/parser.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "221ce913323fd0b8526b19fdb3e9f868172cc0d2"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/lib/processors.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "9c3c0a27f7cb7bef94934cfd83a996716ed2f6be"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/lib/xml2js.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "a1e960a4dc76a9cf7376c010d05d89672f7a4e48"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/NodeType.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/Utility.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/WriterState.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLAttribute.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLCData.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLCharacterData.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLComment.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDeclaration.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocType.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocument.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocumentCB.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMConfiguration.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMErrorHandler.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMImplementation.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMStringList.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDAttList.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDElement.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDEntity.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDNotation.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDummy.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLElement.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLNamedNodeMap.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLNode.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLProcessingInstruction.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLRaw.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStreamWriter.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStringifier.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStringWriter.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLText.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xml2js/node_modules/xmlbuilder/lib/XMLWriterBase.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": null
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/index.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b860e0a7ad97653636457b74bf997fcd570019de"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/NodeType.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "2be663eb130cf1115581a17d812400d3898f20ad"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/Utility.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "07a0c462f8fd146f8bd677ad6835f8443f20b5dc"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/WriterState.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "1cf66a1c1f8df83fe6ad3ada7e3b193b3128c114"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLAttribute.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "65b3fa48f19a6b09616abbc7e9b0fb0e636ddf8c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLCData.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "21056f44e59b1c5afeacd87ec875c804888e61a2"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLCharacterData.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "d25f350a7b135617a40d9c9b368425284c292d11"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLComment.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "fdee60e9890cd9609ba0771f1bea1d170baf7682"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDeclaration.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "a0c9473f9e25d44446c901b09131ee6d239c959f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDocType.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "660b6528f108cc92973df609438ee92f481bb6e1"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDocument.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "c13f13111b370a91f38f7ea254ed62286d42fb40"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDocumentCB.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "5027d136c7b46cc003e34bc46d9cfae3b3fadf61"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDOMConfiguration.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "0f451f0acb30cf10e3db8d213e6abff5c15a2cab"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDOMErrorHandler.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f30d4ddca5deb68cf0b4b4af3179f4e4314542fd"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDOMImplementation.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "a2c7c42128a3a5a97b2d33ee612cfd59e29d8b81"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDOMStringList.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "cb09e5f95dde9274156582e78b840c104a841b42"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDTDAttList.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "586adcb02a49823b2fd379f435d3805ccdc02c3a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDTDElement.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "0f27f12d90116cc1dc10110f77f28fdd6f7378d0"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDTDEntity.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "ed9d2a7d020503a3e9a32f2c36939920a58b1217"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDTDNotation.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "1f519e195d561d5c16e228d6368e6eb886d664f3"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLDummy.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "fe6b95ecb121f7b1eb8718115537812cd8ff77be"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLElement.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "dd25e6011a2efb52cf2fc1c354caccf70a5d4f12"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLNamedNodeMap.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "23bfb67dc9662e2c8b50624cc21afbe8bd8ac26e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLNode.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "b08e18ad9d3f9f5f3e632ddc1eaa41c87cb1577b"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLProcessingInstruction.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "d4f504cbfa59e955fcb9261e096290ecef0b926d"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLRaw.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "89809731efffc7d71bc8746aa628b0abcaa278a4"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLStreamWriter.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "2ac7fac00c168125c41fafe06f47e51bb8702e96"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLStringifier.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "2b1c20c70e3378d46ba9aaf83727aa55decb39c1"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLStringWriter.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "50390975a4a3e2e20269378030aa945daf41a223"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLText.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "dc4646c962c2fb39e1ed47cef541248d71363950"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/xmlbuilder/lib/XMLWriterBase.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "1768939664d69aa012260f8c8987b96ec44ddc8d"
+    },
+    {
+      "type": "file",
+      "filePath": ".easignore",
+      "reasons": [
+        "easBuild"
+      ],
+      "hash": "4fb57afde09cefb71de8f919d6dee66bdf83f76f"
+    },
+    {
+      "type": "file",
+      "filePath": "config/admob-skadnetwork-ids.json",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "506aab89b357f2af5b842b629fd2787c4327f0c0"
+    },
+    {
+      "type": "file",
+      "filePath": "eas.json",
+      "reasons": [
+        "easBuild"
+      ],
+      "hash": "2f583cf9c13c85299613e973343e8ab5762540ff"
+    },
+    {
+      "type": "file",
+      "filePath": "assets/images/icon.png",
+      "reasons": [
+        "expoConfigExternalFile"
+      ],
+      "hash": "ad366ae7f67627be4a4c7f300995aa20f75bb2e4"
+    },
+    {
+      "type": "file",
+      "filePath": "assets/images/flapfit-splash-logo.png",
+      "reasons": [
+        "expoConfigExternalFile"
+      ],
+      "hash": "6f917d0103856b5fc6addf9f305d958ae7ce83b1"
+    },
+    {
+      "type": "file",
+      "filePath": "fingerprint.config.js",
+      "reasons": [
+        "flapfit-fingerprint-config"
+      ],
+      "hash": "b31a78f00d859bfc452d83148e43aba6c0508b5f"
+    },
+    {
+      "type": "file",
+      "filePath": "modules/flap-fit-age-range/app.plugin.js",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "69beeff5113d7c8822f3c8ee1c773a31fcac09c5"
+    },
+    {
+      "type": "file",
+      "filePath": "plugins/withAdMobPrivacy.cjs",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "582d10fcf54b5d1f998cb7ee5e6a8c12c8e02169"
+    },
+    {
+      "type": "file",
+      "filePath": "plugins/withRevenueCatProcessing.cjs",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "f2fe14b3d3cdd53004f0d9360c47b623009fc78f"
+    },
+    {
+      "type": "file",
+      "filePath": "scripts/patch-admob-privacy.cjs",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "6d845daf684aa56aa2bbfacab07b088eda3d5d8d"
+    },
+    {
+      "type": "file",
+      "filePath": "scripts/patch-revenuecat-processing.cjs",
+      "reasons": [
+        "expoConfigPlugins"
+      ],
+      "hash": "10a59892f7fa4c4da35234fc545c5b9ca4602c92"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../.yarn/patches",
+      "reasons": [
+        "flapfit-dependency-patches"
+      ],
+      "hash": "3cc557f06d6b4744e499143386adcf1932334ad8"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@expo/dom-webview/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "4d48dc124ae5cc01f46b188d0e2a6838d81c5634"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@expo/log-box",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "55668dd6b8492dcaa9b53415f3156e494805da47"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@expo/ui/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "f177503253abec563364dfeedc4587959caf5313"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@react-native-async-storage/async-storage",
+      "reasons": [
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "445e4d4162b8e7d46bf8d1a8f9b012336388b0be"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@react-native-masked-view/masked-view",
+      "reasons": [
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "b7bc27de23ba01de8e9c8a4e566902fd2ba7716e"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo",
+      "reasons": [
+        "expoAutolinkingIos",
+        "expoConfigPlugins",
+        "expoConfigPlugins",
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "69cf9fec48686e47a740874d8f8ca8be9abacf91"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-asset/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "a02ec7095620de37d92fb687b67093c27271e968"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-camera/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "1553d359a177b1a973e7682da16b0012844cfc97"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-constants/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "9f78b13740c18516871f6f7107b39062ebf34155"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-crypto/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "310061c863088330f22e0625d86eef10ea946f2f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-eas-client/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "e5c55d29481bad2b1bf52444d02023b65e042ecb"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-file-system/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "d001896c548c35f3a37f1c631a6eec90108df7d6"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-font/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "b3112b944547ec30ce41a9a238895fcc8fcc5cbe"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-glass-effect/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "315a415f8324294379a9a3a65cbd1af3a7a4bf1c"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-haptics/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "05cfd7b73c33be4c5901cde3b1daaa954eb7bd2a"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-image/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "cef4da801905c63cd71f26040b9144efd89b9edb"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-json-utils/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "1dca292e9d17d995b96380c51d1b4f9649ea90cc"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-keep-awake/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "308756f24d69fb0946e33d9fc2875a30b5080f1f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-linear-gradient/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "1aba8dc2bd80c8e2b29900f6c466a6da2d411083"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-linking/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "9e2301064a2fb9d206404f3343c1e4f345a9e00b"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-mail-composer/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "16df09d5be32a4870e99231b081eac4ec51bca7f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-manifests/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "d8babe08891f9cd6e38f88ae0b16cb307d4a033d"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-modules-core",
+      "reasons": [
+        "expoAutolinkingIos",
+        "expoAutolinkingIos"
+      ],
+      "hash": "084b8e7671bf664b8d1bde1d01f7df217ecc6efe"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-modules-jsi/apple",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "26415733e6adc70b75dd14ca653ff72be2d59ebe"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-router/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "2155412a7ec6652c6775641b6f5d5670dcfc4149"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-sharing/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "95db490026d6b5934f43a65560a5dfff01d10ac5"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-sms/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "cd30ac3b833679153248d7de30c3bcbfd1ca3dd9"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-splash-screen/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "b2164201222a0d23a9514b89277040af3f76b3f9"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-structured-headers/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "22b986ba2277ea598a052895f0d6b0363e507f10"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-symbols/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "ecf6f8945784095fac7fbfc90349dc4a96799c4f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-updates-interface/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "8cfa1f4c5f1e2f4baccd9581eae09e7014e905f4"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-updates/ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "572a3c7dc1f1f7046ded27cef9660cf22db8c08a"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-gesture-handler",
+      "reasons": [
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "9aa09bb052b4c61018c0af748cb420639f45371a"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-google-mobile-ads",
+      "reasons": [
+        "rncoreAutolinkingIos",
+        "expoConfigPlugins"
+      ],
+      "hash": "3479c89ac1d4205e95c5c67c17e30982e746ffd2"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-purchases",
+      "reasons": [
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "c14454d900ebfad69a3656af11d044140bbda775"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-reanimated",
+      "reasons": [
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "110a71342a0a91418e3c1deea83cf75b9672ab27"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-safe-area-context",
+      "reasons": [
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "db25f0bb768646def313880906af81fc7adf6ec2"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-screens",
+      "reasons": [
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "117f5692c0309dd0f2c85218ab665bfea78f46ed"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-svg",
+      "reasons": [
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "1bd6b27d12b32ff685e145555bc891fafc702178"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-webview",
+      "reasons": [
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "be97e61bce6acaf61102f4be5c67fd4890fb5e93"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-worklets",
+      "reasons": [
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "922e9a096d3f699ea749328ca6ab257dd7185d12"
+    },
+    {
+      "type": "dir",
+      "filePath": "modules",
+      "reasons": [
+        "flapfit-native-modules",
+        "expoAutolinkingIos"
+      ],
+      "hash": "785c3c21bc1cc4a7026665bbe1678e48ed57714c"
+    },
+    {
+      "type": "dir",
+      "filePath": "patches",
+      "reasons": [
+        "patchPackage"
+      ],
+      "hash": null
+    },
+    {
+      "type": "dir",
+      "filePath": "plugins",
+      "reasons": [
+        "flapfit-native-plugins",
+        "expoConfigPlugins"
+      ],
+      "hash": "bb056385bfd47e40e867580c0ce64fbfe7cbd87c"
+    },
+    {
+      "type": "contents",
+      "id": "expoAutolinkingConfig:ios",
+      "reasons": [
+        "expoAutolinkingIos"
+      ],
+      "hash": "7db08789cc63529f6de2e3c7b27091c28de9ab1b"
+    },
+    {
+      "type": "contents",
+      "id": "expoConfig",
+      "reasons": [
+        "expoConfig"
+      ],
+      "hash": "7c4b1f6885e83ee8a0380b10d6eef71ad82d2f59"
+    },
+    {
+      "type": "contents",
+      "id": "package:react-native",
+      "reasons": [
+        "package:react-native"
+      ],
+      "hash": "5daa7488a908db259123c42bef9940b1257840d2"
+    },
+    {
+      "type": "contents",
+      "id": "packageJson:scripts",
+      "reasons": [
+        "packageJson:scripts"
+      ],
+      "hash": "9c365318cae1f7ab1f590fb3cbb9140ca8ea2fab"
+    },
+    {
+      "type": "contents",
+      "id": "rncoreAutolinkingConfig:ios",
+      "reasons": [
+        "rncoreAutolinkingIos"
+      ],
+      "hash": "673164d9c18997c478827594bc97a236687f0661"
+    }
+  ],
+  "fullLocalFileSha256": "9fe68432cc2b94ec774470672465c398794eb71ac9d7875855789b54ba86e9f2"
+}

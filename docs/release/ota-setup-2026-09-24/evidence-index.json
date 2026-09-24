@@ -1,0 +1,148 @@
+{
+  "createdAt": "2026-09-24T07:19:10.760Z",
+  "runtimeCandidate": "ff0b29da837935624726e0e9e134430e7abc6a4a",
+  "finalSourceCommit": "bf7d2e0e21ae3588dbe2c25219b47dc94c8bc6b8",
+  "files": [
+    {
+      "path": "ota-setup.md",
+      "bytes": 11276,
+      "sha256": "5b3a23fe36a5e5a994bbbce60e0011f876e42e2f69eba4c6471fef9de80ac545"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 5017,
+      "sha256": "9e8187ec27946bb9d9dc2bc20edc33a72804cf46a25aac16fe6e46c9214ac282"
+    },
+    {
+      "path": "followup-verification.json",
+      "bytes": 1249,
+      "sha256": "6d2f435a46f714c83d783a5432947f31337342f63c88b1678272867949fc751f"
+    },
+    {
+      "path": "mobile-jest-summary.json",
+      "bytes": 15157,
+      "sha256": "3260f2ae47c130f0d5a037d94959e12e5679dafa7b716697a7fd5218783d4368"
+    },
+    {
+      "path": "privacy-test-followup-summary.json",
+      "bytes": 517,
+      "sha256": "b3d5ac25c8bd1e5cbb00c64967a876fcc368895fd0bb6972558385504b0eb865"
+    },
+    {
+      "path": "final-verification-summary.json",
+      "bytes": 900,
+      "sha256": "bc37c73c62be8318a705a13ebd5624217da3a64a49612a4d382f2bd3bfda6bd0"
+    },
+    {
+      "path": "fingerprint-source-summary.json",
+      "bytes": 69714,
+      "sha256": "ddf0e468acd73e9c60a3a99ce0a1117ae335e9045769d5f49a4ccd14803cb6aa"
+    },
+    {
+      "path": "scope-check.json",
+      "bytes": 2581,
+      "sha256": "2d3283204351f3762bb1e9c90f87eba2b02b618f518ece727d8e806083f274ee"
+    },
+    {
+      "path": "remote-configuration.json",
+      "bytes": 2542,
+      "sha256": "9fb10096d9f1fc499b4600bb4da4771b45806657bbca5fcd35527497f9e49a5f"
+    },
+    {
+      "path": "native-configuration-summary.json",
+      "bytes": 691,
+      "sha256": "d712446e1d107cfe0f6b329ac540e731967670f9532a8da3509a799fb98f7ad1"
+    },
+    {
+      "path": "logs/admob-patch.log",
+      "bytes": 285,
+      "sha256": "3c04a7d47e4f7156d5700f2437d6d267b1400e0d5743f96925e179717b653b2d"
+    },
+    {
+      "path": "logs/apple-verifier.log",
+      "bytes": 577,
+      "sha256": "2627d19f84871484295e1e706762cc30b5fc41ca890c95e0f5ab7a6106be0243"
+    },
+    {
+      "path": "logs/dependency-audit.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/dependency-tooling.log",
+      "bytes": 454,
+      "sha256": "eeaa976a468541f3a8d462fd38c71994aabb98d186b52a187e0141657888a9ee"
+    },
+    {
+      "path": "logs/immutable-install.log",
+      "bytes": 253,
+      "sha256": "3f453acc6ae29a802dcf052ba486edf71d791a17af4283eef9bf7d10fdb373c6"
+    },
+    {
+      "path": "logs/ios-js-export.log",
+      "bytes": 6647,
+      "sha256": "f2ed8e73adfc4e2b7f1b4c4b7fa7976c878b8fbaff2bea84aa47aee9c35ada1a"
+    },
+    {
+      "path": "logs/jest-tooling.log",
+      "bytes": 305,
+      "sha256": "5c7437f341e424df7bbdf78e4266b5579e011e56ab12c1de71873be948c601a4"
+    },
+    {
+      "path": "logs/lint.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/mobile-jest.log",
+      "bytes": 38556,
+      "sha256": "7144506bde5409ef3e3c4b4c5c05ce4047642ca1205b3ddb2bfbbcfd734922eb"
+    },
+    {
+      "path": "logs/native-config-introspection.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/ota-config-tests.log",
+      "bytes": 234,
+      "sha256": "df6f9c36359032ea3dc8205b624659fcd85397cc57bbc096f27ad03117fa0ad3"
+    },
+    {
+      "path": "logs/privacy-test-followup.log",
+      "bytes": 1451,
+      "sha256": "028c042a1b8deb327ccfe4570eb8de64da28e38f7ac093c8bbc7975c2a7ee2a2"
+    },
+    {
+      "path": "logs/privacy-test-lint.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/production-config.log",
+      "bytes": 44,
+      "sha256": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4"
+    },
+    {
+      "path": "logs/revenuecat-bridge.log",
+      "bytes": 178,
+      "sha256": "e14a99b37372b5fd5ec7710092b1c077b5649ee45da16ac7817187fd56da447b"
+    },
+    {
+      "path": "logs/revenuecat-patch.log",
+      "bytes": 480,
+      "sha256": "25c83dc73f3a2c5ec1cd8ad967ed0fbe784335e1d5c9c48e748c7fa539a8f150"
+    },
+    {
+      "path": "logs/tracker-bytes.log",
+      "bytes": 76,
+      "sha256": "f8a78549c8692ef2094d683a3a65b3bf5f8d2eb1a130ccb2cb23c054ee665d48"
+    },
+    {
+      "path": "logs/typecheck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "hashFormat": "SHA-256 of LF-normalized text snapshots stored in Git; original raw verification outputs retained locally."
+}

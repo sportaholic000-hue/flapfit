@@ -1,0 +1,21 @@
+PASS scripts/validate-privacy-manifest.test.js (21.904 s)
+  √ current declarations cover backend, advertising and update delivery data (16 ms)
+  √ rejects a missing existing DeviceID collection declaration (4 ms)
+  √ rejects a missing existing OtherDataTypes collection declaration (2 ms)
+  √ rejects a missing existing OtherDiagnosticData collection declaration (1 ms)
+  √ rejects a missing existing CoarseLocation collection declaration (2 ms)
+  √ rejects a missing existing AdvertisingData collection declaration (2 ms)
+  √ rejects a missing existing ProductInteraction collection declaration (2 ms)
+  √ rejects the prior four-category manifest and omitted reporting purpose (8 ms)
+  √ rejects missing UserID purpose Analytics (2 ms)
+  √ rejects missing DeviceID purpose AppFunctionality (2 ms)
+  √ rejects missing OtherDataTypes purpose AppFunctionality (1 ms)
+  √ rejects an incorrect authorization-record NSPrivacyCollectedDataTypeLinked declaration (1 ms)
+  √ rejects an incorrect authorization-record NSPrivacyCollectedDataTypeTracking declaration (4 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       13 passed, 13 total
+Snapshots:   0 total
+Time:        30.409 s
+Ran all test suites within paths "scripts/validate-privacy-manifest.test.js".
+Test results written to: ..\..\..\..\..\Documents\Codex\2026-09-23\critical-architectural-context-repair-directive-read\outputs\ota-setup-2026-09-24\privacy-test-followup.json

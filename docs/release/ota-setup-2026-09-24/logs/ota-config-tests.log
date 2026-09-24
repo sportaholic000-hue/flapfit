@@ -1,0 +1,1 @@
+OTA checks passed: all 16 environment omissions rejected, live/test mismatch rejected; Windows/LF and overlapping streams stable; binary bytes untouched; fresh/patched RevenueCat + both AdMob bridges identical; native drift rejected.

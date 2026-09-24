@@ -1,0 +1,5 @@
+PASS Jest configuration and reporter file matching
+PASS synchronous/asynchronous coverage discovery and exclusions
+PASS replacement DOM, base64 and byte-encoding helpers
+PASS actual Jest DOM suite with both timer modes and Babel coverage
+PASS uncovered-file discovery and enforced glob coverage threshold
