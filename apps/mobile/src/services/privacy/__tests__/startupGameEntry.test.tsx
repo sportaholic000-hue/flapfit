@@ -211,7 +211,7 @@ test('Done still uses the existing eligible result-ad opportunity before returni
     jest.spyOn(privacy, 'preparePostGamePrivacy').mockResolvedValue(true);
     let closeAd!: () => void;
     const ad = { isReady: () => true, show: jest.fn(async (callbacks: { opened: () => void; closed: () => void }) => { callbacks.opened(); closeAd = callbacks.closed; }), dispose: jest.fn() };
-    jest.spyOn(monetization, 'prepareResultAdOpportunity').mockReturnValue(ad);
+    jest.spyOn(monetization, 'prepareResultInterstitial').mockReturnValue(ad);
     // Preserve the real scheduler and move past its first completed exit.
     monetization.resultAdGate.createResult(null, monetization.adEnvironment).exit(false, jest.fn());
     await f.completeGame(); await f.pressResult('Done');
@@ -219,6 +219,22 @@ test('Done still uses the existing eligible result-ad opportunity before returni
     expect(f.router.back).not.toHaveBeenCalled();
     const { act } = require('react');
     await act(async () => { closeAd(); await settle(); });
+    expect(f.router.back).toHaveBeenCalledTimes(1);
+  } finally { await f.finish(); }
+});
+
+test('first result and its Done action never allocate an interstitial', async () => {
+  const f = await mountApp(null, { playable: true });
+  try {
+    await f.play();
+    const monetization: typeof import('../../monetization') = require('../../monetization');
+    const privacy: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    jest.spyOn(privacy, 'preparePostGamePrivacy').mockResolvedValue(true);
+    const prepare = jest.spyOn(monetization, 'prepareResultInterstitial');
+    await f.completeGame();
+    expect(prepare).not.toHaveBeenCalled();
+    await f.pressResult('Done');
+    expect(prepare).not.toHaveBeenCalled();
     expect(f.router.back).toHaveBeenCalledTimes(1);
   } finally { await f.finish(); }
 });

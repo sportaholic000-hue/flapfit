@@ -1,0 +1,1858 @@
+{
+  "base": "9391f404d90093483b2a5a3ccb57f1403524341f",
+  "testsPassed": 354,
+  "suitesPassed": 7,
+  "provenance": "Latest completed run for each suite, not one combined green invocation. Earlier runs had startup/module-loading timeouts; isolated reruns passed without application changes. A command used an incorrect InfoPrivacy path; the correct suite was rerun and passed.",
+  "additionalChecks": [
+    "TypeScript --noEmit: exit 0",
+    "oxlint --no-ignore --deny-warnings: exit 0",
+    "production release config using committed eas.json env: passed",
+    "git diff --check: passed",
+    "Offline production iOS Expo export with Hermes: exit 0; 3,759 modules, 106 assets"
+  ],
+  "limits": "Jest uses native SDK mocks. No iOS build, device installation, FPS benchmark or live ad-fill verification was performed.",
+  "suites": [
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/regionalClarification.test.ts",
+      "evidence": "ads-final-tests.json",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "US teen clarification resolves only Connecticut uncertainty, never NY purpose consent",
+          "status": "passed",
+          "durationMs": 2274
+        },
+        {
+          "name": "resident cannot override Connecticut necessity with express grants",
+          "status": "passed",
+          "durationMs": 73
+        },
+        {
+          "name": "unknown cannot override Connecticut necessity with express grants",
+          "status": "passed",
+          "durationMs": 106
+        },
+        {
+          "name": "CA does not receive an unnecessary Connecticut question or accept that answer",
+          "status": "passed",
+          "durationMs": 102
+        },
+        {
+          "name": "AU does not receive an unnecessary Connecticut question or accept that answer",
+          "status": "passed",
+          "durationMs": 66
+        },
+        {
+          "name": "MX does not receive an unnecessary Connecticut question or accept that answer",
+          "status": "passed",
+          "durationMs": 66
+        },
+        {
+          "name": "adults do not receive the teen clarification",
+          "status": "passed",
+          "durationMs": 63
+        },
+        {
+          "name": "failed permissive save grants nothing and offers an honest retry",
+          "status": "passed",
+          "durationMs": 69
+        },
+        {
+          "name": "a failed restrictive answer stays restricted when other preparation rereads saved evidence",
+          "status": "passed",
+          "durationMs": 81
+        },
+        {
+          "name": "restart restores the residency fact but preserves reporting refusal independently",
+          "status": "passed",
+          "durationMs": 139
+        },
+        {
+          "name": "an unrelated regional write failure does not erase the saved reporting refusal",
+          "status": "passed",
+          "durationMs": 151
+        },
+        {
+          "name": "a stale save cannot apply a US permission to changed country or new age evidence",
+          "status": "passed",
+          "durationMs": 92
+        },
+        {
+          "name": "independent refusals do not erase the regional availability question",
+          "status": "passed",
+          "durationMs": 57
+        },
+        {
+          "name": "regional correction: outside Quebec enables adult ads without consent grant and preserves reporting refusal after restart",
+          "status": "passed",
+          "durationMs": 124
+        },
+        {
+          "name": "regional correction: Quebec answer cannot be replaced by a generic grant or country",
+          "status": "passed",
+          "durationMs": 56
+        },
+        {
+          "name": "regional correction: US does not get a Quebec question",
+          "status": "passed",
+          "durationMs": 60
+        },
+        {
+          "name": "regional correction: AU does not get a Quebec question",
+          "status": "passed",
+          "durationMs": 63
+        },
+        {
+          "name": "regional correction: MX does not get a Quebec question",
+          "status": "passed",
+          "durationMs": 58
+        },
+        {
+          "name": "regional correction: failed provincial save remains retryable without erasing a saved reporting refusal",
+          "status": "passed",
+          "durationMs": 129
+        },
+        {
+          "name": "regional correction: unreadable province remains unknown; retry restores independent ads and refuses reporting",
+          "status": "passed",
+          "durationMs": 131
+        },
+        {
+          "name": "regional correction: stale outside-Quebec save cannot override a newer Quebec answer",
+          "status": "passed",
+          "durationMs": 65
+        },
+        {
+          "name": "regional correction: delayed province save cannot apply to another country",
+          "status": "passed",
+          "durationMs": 63
+        },
+        {
+          "name": "regional binary answers: legacy unknown for CA stays unanswered through restart, without changing refusals",
+          "status": "passed",
+          "durationMs": 322
+        },
+        {
+          "name": "regional binary answers: legacy unknown for US stays unanswered through restart, without changing refusals",
+          "status": "passed",
+          "durationMs": 247
+        },
+        {
+          "name": "regional binary answers: CA service rejects unknown rather than persisting it as an answer",
+          "status": "passed",
+          "durationMs": 98
+        },
+        {
+          "name": "regional binary answers: US service rejects unknown rather than persisting it as an answer",
+          "status": "passed",
+          "durationMs": 121
+        },
+        {
+          "name": "CA saves exact selections locally and restores names after restart",
+          "status": "passed",
+          "durationMs": 266
+        },
+        {
+          "name": "US saves exact selections locally and restores names after restart",
+          "status": "passed",
+          "durationMs": 285
+        },
+        {
+          "name": "CA does not confirm a pending or failed new selection",
+          "status": "passed",
+          "durationMs": 97
+        },
+        {
+          "name": "US does not confirm a pending or failed new selection",
+          "status": "passed",
+          "durationMs": 77
+        },
+        {
+          "name": "legacy and malformed display codes cannot invent a selected province",
+          "status": "passed",
+          "durationMs": 224
+        }
+      ]
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/monetization.test.ts",
+      "evidence": "ads-final-tests.json",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "does not evaluate either native SDK in unsupported runtime {\"expoGo\":true}",
+          "status": "passed",
+          "durationMs": 1960
+        },
+        {
+          "name": "does not evaluate either native SDK in unsupported runtime {\"platform\":\"web\"}",
+          "status": "passed",
+          "durationMs": 104
+        },
+        {
+          "name": "leaving the lobby during the consent request cannot present a form",
+          "status": "passed",
+          "durationMs": 68
+        },
+        {
+          "name": "a consent service failure disables ads without blocking independently permitted RevenueCat",
+          "status": "passed",
+          "durationMs": 41
+        },
+        {
+          "name": "RevenueCat failure does not disable the separately functioning ad SDK",
+          "status": "passed",
+          "durationMs": 50
+        },
+        {
+          "name": "reports one ad identity with SDK-correct micros and no gameplay attributes",
+          "status": "passed",
+          "durationMs": 51
+        },
+        {
+          "name": "rejects invalid paid events rather than reporting misleading revenue",
+          "status": "passed",
+          "durationMs": 32
+        },
+        {
+          "name": "changing privacy choices invalidates an already loaded ad",
+          "status": "passed",
+          "durationMs": 33
+        },
+        {
+          "name": "late startup initialization cannot undo newer denied privacy choices",
+          "status": "passed",
+          "durationMs": 38
+        },
+        {
+          "name": "entering a game cancels a slow info request without waiting for the network",
+          "status": "passed",
+          "durationMs": 35
+        },
+        {
+          "name": "game entry waits for an already loading native form (failure=false)",
+          "status": "passed",
+          "durationMs": 33
+        },
+        {
+          "name": "game entry waits for an already loading native form (failure=true)",
+          "status": "passed",
+          "durationMs": 36
+        },
+        {
+          "name": "a new consent check cannot reuse old ad permission when gameplay wins the race",
+          "status": "passed",
+          "durationMs": 48
+        },
+        {
+          "name": "privacy options cannot launch a second native form over one already loading",
+          "status": "passed",
+          "durationMs": 51
+        },
+        {
+          "name": "granting privacy choices later applies the PG cap before the first SDK initialization",
+          "status": "passed",
+          "durationMs": 35
+        },
+        {
+          "name": "discarding an unused result destroys its native request exactly once",
+          "status": "passed",
+          "durationMs": 29
+        },
+        {
+          "name": "load startup exceptions still dispose the created SDK instance",
+          "status": "passed",
+          "durationMs": 29
+        },
+        {
+          "name": "consent invalidation destroys unfinished ads and ignores their late revenue/load events",
+          "status": "passed",
+          "durationMs": 34
+        },
+        {
+          "name": "a forwarded Android presentation failure completes the selected result action once",
+          "status": "passed",
+          "durationMs": 32
+        },
+        {
+          "name": "unresolved processing never loads either SDK",
+          "status": "passed",
+          "durationMs": 74
+        },
+        {
+          "name": "restricted teen ads run without RevenueCat consent",
+          "status": "passed",
+          "durationMs": 34
+        },
+        {
+          "name": "restricted child ads run without RevenueCat consent",
+          "status": "passed",
+          "durationMs": 42
+        },
+        {
+          "name": "processing permission alone cannot override UMP denial",
+          "status": "passed",
+          "durationMs": 34
+        },
+        {
+          "name": "a build missing the native RevenueCat stop fence still serves eligible ads",
+          "status": "passed",
+          "durationMs": 34
+        },
+        {
+          "name": "analytics refusal preserves loaded ads and drops queued and subsequent reporting",
+          "status": "passed",
+          "durationMs": 41
+        },
+        {
+          "name": "ad-specific changes invalidate preloads and late native initialization",
+          "status": "passed",
+          "durationMs": 35
+        },
+        {
+          "name": "analytics refusal during native grant never configures RevenueCat",
+          "status": "passed",
+          "durationMs": 38
+        },
+        {
+          "name": "analytics can be granted later while an existing eligible ad remains ready",
+          "status": "passed",
+          "durationMs": 32
+        },
+        {
+          "name": "withdrawal followed by a later grant does not replay old queued events",
+          "status": "passed",
+          "durationMs": 31
+        },
+        {
+          "name": "withdrawal waits for native close before completing an active result exit once",
+          "status": "passed",
+          "durationMs": 27
+        },
+        {
+          "name": "native withdrawal reject remains observable after RevenueCat starts",
+          "status": "passed",
+          "durationMs": 33
+        },
+        {
+          "name": "native withdrawal missing remains observable after RevenueCat starts",
+          "status": "passed",
+          "durationMs": 27
+        },
+        {
+          "name": "native withdrawal false remains observable after RevenueCat starts",
+          "status": "passed",
+          "durationMs": 41
+        },
+        {
+          "name": "missing native bridge is safe to acknowledge when RevenueCat never started",
+          "status": "passed",
+          "durationMs": 32
+        },
+        {
+          "name": "a failed native withdrawal can be retried without enabling reporting or disabling ads",
+          "status": "passed",
+          "durationMs": 42
+        },
+        {
+          "name": "withdrawal during a configured SDK re-grant requires a native stop acknowledgement",
+          "status": "passed",
+          "durationMs": 35
+        },
+        {
+          "name": "an uncertain native re-grant is closed again before reporting can resume",
+          "status": "passed",
+          "durationMs": 34
+        },
+        {
+          "name": "a restored RevenueCat grant initializes independently when ads are denied before module load",
+          "status": "passed",
+          "durationMs": 41
+        },
+        {
+          "name": "withdrawal during pending ios presentation retains terminal ownership",
+          "status": "passed",
+          "durationMs": 39
+        },
+        {
+          "name": "withdrawal during pending android presentation retains terminal ownership",
+          "status": "passed",
+          "durationMs": 39
+        },
+        {
+          "name": "withdrawal while displayed/pending releases only after native close and foreground",
+          "status": "passed",
+          "durationMs": 36
+        },
+        {
+          "name": "withdrawal while displayed/pending releases only after native error and foreground",
+          "status": "passed",
+          "durationMs": 34
+        },
+        {
+          "name": "withdrawal while displayed/pending releases only after native reject and foreground",
+          "status": "passed",
+          "durationMs": 31
+        },
+        {
+          "name": "withdrawal before show destroys the preload and continues without native presentation",
+          "status": "passed",
+          "durationMs": 31
+        },
+        {
+          "name": "unmount retains the native closed barrier but never replays the old result action",
+          "status": "passed",
+          "durationMs": 33
+        },
+        {
+          "name": "unmount retains the native error barrier but never replays the old result action",
+          "status": "passed",
+          "durationMs": 31
+        },
+        {
+          "name": "unmount retains the native reject barrier but never replays the old result action",
+          "status": "passed",
+          "durationMs": 35
+        },
+        {
+          "name": "privacy form cannot cover an unsettled native result ad",
+          "status": "passed",
+          "durationMs": 32
+        },
+        {
+          "name": "a cold restricted session recovers the required Google entry without starting either SDK",
+          "status": "passed",
+          "durationMs": 33
+        },
+        {
+          "name": "required-entry recovery keeps known requirements on unknown/error, and clears an explicit not-required result",
+          "status": "passed",
+          "durationMs": 61
+        },
+        {
+          "name": "a stale read cannot erase the privacy result from a newer form",
+          "status": "passed",
+          "durationMs": 33
+        },
+        {
+          "name": "a late native rights query cannot open a form after game",
+          "status": "passed",
+          "durationMs": 26
+        },
+        {
+          "name": "a late native rights query cannot open a form after background",
+          "status": "passed",
+          "durationMs": 40
+        },
+        {
+          "name": "a late native rights query cannot open a form after blur",
+          "status": "passed",
+          "durationMs": 39
+        },
+        {
+          "name": "repeated rights requests share one native form and game entry waits for its completion",
+          "status": "passed",
+          "durationMs": 46
+        },
+        {
+          "name": "native Google choices can restore independently permitted restricted ads without RevenueCat",
+          "status": "passed",
+          "durationMs": 42
+        },
+        {
+          "name": "native Google refusal does not erase independent RevenueCat permission or initialize ads",
+          "status": "passed",
+          "durationMs": 38
+        },
+        {
+          "name": "unavailable Google rights UNKNOWN surface a retryable failure",
+          "status": "passed",
+          "durationMs": 31
+        },
+        {
+          "name": "unavailable Google rights error surface a retryable failure",
+          "status": "passed",
+          "durationMs": 27
+        },
+        {
+          "name": "lobby re-entry cannot start a second native form while privacy options are presented",
+          "status": "passed",
+          "durationMs": 29
+        },
+        {
+          "name": "lobby re-entry during an unresolved rights query cannot bypass its later refusal",
+          "status": "passed",
+          "durationMs": 29
+        },
+        {
+          "name": "positive Apple duty invokes the system check with no location question or invented processing grant",
+          "status": "passed",
+          "durationMs": 35
+        },
+        {
+          "name": "Apple duty pending never automatically presents the age sheet",
+          "status": "passed",
+          "durationMs": 27
+        },
+        {
+          "name": "Apple duty error never automatically presents the age sheet",
+          "status": "passed",
+          "durationMs": 23
+        },
+        {
+          "name": "Apple duty not-required never automatically presents the age sheet",
+          "status": "passed",
+          "durationMs": 28
+        },
+        {
+          "name": "Apple duty unsupported never automatically presents the age sheet",
+          "status": "passed",
+          "durationMs": 36
+        },
+        {
+          "name": "an already satisfied Apple check is reused and no repeated system sheet is requested",
+          "status": "passed",
+          "durationMs": 28
+        },
+        {
+          "name": "Apple refusal is not automatically re-requested on ordinary lobby return",
+          "status": "passed",
+          "durationMs": 30
+        },
+        {
+          "name": "game entry waits for an Apple system sheet already dispatched, without allowing ads",
+          "status": "passed",
+          "durationMs": 40
+        },
+        {
+          "name": "leaving the lobby before native dispatch cannot show an Apple sheet over the next screen",
+          "status": "passed",
+          "durationMs": 30
+        },
+        {
+          "name": "an invalidated Apple response cannot consume the fresh account check attempt",
+          "status": "passed",
+          "durationMs": 31
+        },
+        {
+          "name": "the lobby key changes when required Apple information is satisfied, without exposing any range",
+          "status": "passed",
+          "durationMs": 29
+        },
+        {
+          "name": "required Apple sheet waits for an already pending Google rights lookup and form",
+          "status": "passed",
+          "durationMs": 28
+        },
+        {
+          "name": "lobby readiness changes when permitted ads become available while analytics remains refused",
+          "status": "passed",
+          "durationMs": 31
+        },
+        {
+          "name": "the lobby key ignores unrelated competition revisions but reacts to each effective SDK decision",
+          "status": "passed",
+          "durationMs": 44
+        },
+        {
+          "name": "a newer eligible ad policy resumes after an old info request without waiting for another lobby visit",
+          "status": "passed",
+          "durationMs": 39
+        },
+        {
+          "name": "a queued policy refresh cannot resume after game",
+          "status": "passed",
+          "durationMs": 43
+        },
+        {
+          "name": "a queued policy refresh cannot resume after blur",
+          "status": "passed",
+          "durationMs": 34
+        },
+        {
+          "name": "a queued policy refresh cannot resume after background",
+          "status": "passed",
+          "durationMs": 49
+        },
+        {
+          "name": "unchanged failed setup does not become an automatic retry loop for concurrent callers",
+          "status": "passed",
+          "durationMs": 39
+        },
+        {
+          "name": "a newer independent policy waits for the Google rights form before preparing eligible ads",
+          "status": "passed",
+          "durationMs": 45
+        },
+        {
+          "name": "an eligible teen above the consent threshold retains teen ads through startup",
+          "status": "passed",
+          "durationMs": 36
+        },
+        {
+          "name": "an eligible teen above the consent threshold retains teen ads through privacy-options",
+          "status": "passed",
+          "durationMs": 41
+        },
+        {
+          "name": "a consent-threshold change replaces the ad treatment without granting analytics",
+          "status": "passed",
+          "durationMs": 40
+        },
+        {
+          "name": "test diagnostics follow genuine dispatched callbacks with redacted identity and shared impression correlation",
+          "status": "passed",
+          "durationMs": 63
+        },
+        {
+          "name": "diagnostics neither read identity nor log without permitted test mode {\"adsMode\":\"live\"}",
+          "status": "passed",
+          "durationMs": 32
+        },
+        {
+          "name": "diagnostics neither read identity nor log without permitted test mode {\"rcAllowed\":false}",
+          "status": "passed",
+          "durationMs": 27
+        },
+        {
+          "name": "optional identity lookup reject cannot disable reporting or eligible ads",
+          "status": "passed",
+          "durationMs": 26
+        },
+        {
+          "name": "optional identity lookup throw cannot disable reporting or eligible ads",
+          "status": "passed",
+          "durationMs": 31
+        },
+        {
+          "name": "optional identity lookup missing cannot disable reporting or eligible ads",
+          "status": "passed",
+          "durationMs": 33
+        },
+        {
+          "name": "optional identity lookup pending cannot disable reporting or eligible ads",
+          "status": "passed",
+          "durationMs": 38
+        },
+        {
+          "name": "withdrawal rejects queued diagnostic dispatch and a stale identity result after regrant",
+          "status": "passed",
+          "durationMs": 29
+        },
+        {
+          "name": "Android launch context preserves the existing independently permitted SDK route without requesting Apple",
+          "status": "passed",
+          "durationMs": 35
+        },
+        {
+          "name": "Android launch context does not turn unknown processing into permission",
+          "status": "passed",
+          "durationMs": 27
+        },
+        {
+          "name": "a privacy row becoming NOT_REQUIRED preserves current Google permission true without a form",
+          "status": "passed",
+          "durationMs": 30
+        },
+        {
+          "name": "a privacy row becoming NOT_REQUIRED preserves current Google permission false without a form",
+          "status": "passed",
+          "durationMs": 31
+        },
+        {
+          "name": "policy changes alone never start Google or RevenueCat, including on foreground",
+          "status": "passed",
+          "durationMs": 30
+        },
+        {
+          "name": "menu preparation cannot initialize SDKs after blur",
+          "status": "passed",
+          "durationMs": 29
+        },
+        {
+          "name": "menu preparation cannot initialize SDKs after background",
+          "status": "passed",
+          "durationMs": 28
+        },
+        {
+          "name": "menu preparation cannot initialize SDKs after game",
+          "status": "passed",
+          "durationMs": 27
+        },
+        {
+          "name": "camera entry drains an already-dispatched native setRequestConfiguration without restarting setup",
+          "status": "passed",
+          "durationMs": 80
+        },
+        {
+          "name": "camera entry drains an already-dispatched native initialize without restarting setup",
+          "status": "passed",
+          "durationMs": 37
+        },
+        {
+          "name": "game entry cancels a pending RevenueCat grant before configure",
+          "status": "passed",
+          "durationMs": 44
+        },
+        {
+          "name": "a menu refresh respects Google denial and can retry after a failed request",
+          "status": "passed",
+          "durationMs": 26
+        }
+      ]
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/resultAdGate.test.ts",
+      "evidence": "ads-final-tests.json",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "deliberate result action ads never shows on result creation, and the first completed exit is free",
+          "status": "passed",
+          "durationMs": 12
+        },
+        {
+          "name": "deliberate result action ads sharing or a backgrounded app cannot consume an exit or show an ad",
+          "status": "passed",
+          "durationMs": 4
+        },
+        {
+          "name": "deliberate result action ads second exit waits for close and executes the selected action once",
+          "status": "passed",
+          "durationMs": 7
+        },
+        {
+          "name": "deliberate result action ads enforces both the two-exit and ninety-second cap",
+          "status": "passed",
+          "durationMs": 4
+        },
+        {
+          "name": "deliberate result action ads no ready ad or show failure continues without a retry ad",
+          "status": "passed",
+          "durationMs": 5
+        },
+        {
+          "name": "deliberate result action ads a delayed native presentation cannot appear over a new game after a JS timeout",
+          "status": "passed",
+          "durationMs": 9
+        },
+        {
+          "name": "deliberate result action ads close while outside the app waits for foreground without showing another ad",
+          "status": "passed",
+          "durationMs": 4
+        },
+        {
+          "name": "deliberate result action ads unmount cancels pending navigation and ignores late load/show/close callbacks",
+          "status": "passed",
+          "durationMs": 3
+        }
+      ]
+    },
+    {
+      "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+      "evidence": "menu-entry-final-tests.json",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "New York Yes is asked once, stays saved after remount and can be updated explicitly",
+          "status": "passed",
+          "durationMs": 6026
+        },
+        {
+          "name": "New York No is asked once, stays saved after remount and can be updated explicitly",
+          "status": "passed",
+          "durationMs": 381
+        },
+        {
+          "name": "the picker restores eligibility before requesting preparation from the open menu",
+          "status": "passed",
+          "durationMs": 345
+        },
+        {
+          "name": "older-system adult age choice permits ads without an ads-off control and keeps reporting refused",
+          "status": "passed",
+          "durationMs": 675
+        },
+        {
+          "name": "failed local age save has a working rendered retry after close/reopen",
+          "status": "passed",
+          "durationMs": 330
+        },
+        {
+          "name": "available or required Apple service never shows the local-age substitute",
+          "status": "passed",
+          "durationMs": 289
+        },
+        {
+          "name": "a failed reporting save retains a rendered retry across remount without enabling reporting or stopping ads",
+          "status": "passed",
+          "durationMs": 388
+        },
+        {
+          "name": "a failed reporting native retains a rendered retry across remount without enabling reporting or stopping ads",
+          "status": "passed",
+          "durationMs": 395
+        },
+        {
+          "name": "Close waits for iOS native dismissal and completes only once",
+          "status": "passed",
+          "durationMs": 216
+        },
+        {
+          "name": "Agree & Play waits for iOS native dismissal and completes only once",
+          "status": "passed",
+          "durationMs": 200
+        },
+        {
+          "name": "unmount invalidates a late native dismissal callback",
+          "status": "passed",
+          "durationMs": 279
+        },
+        {
+          "name": "an early Close waits for presentation then native dismissal, without a timeout",
+          "status": "passed",
+          "durationMs": 360
+        },
+        {
+          "name": "the result waiter remains pending through delayed native dismissal and completes exactly once",
+          "status": "passed",
+          "durationMs": 306
+        },
+        {
+          "name": "result cancellation and unmount release their waiter without a stale dismissal completing a successor",
+          "status": "passed",
+          "durationMs": 188
+        },
+        {
+          "name": "Android Close completes after the unanimated hidden commit without waiting for an iOS-only event",
+          "status": "passed",
+          "durationMs": 164
+        },
+        {
+          "name": "closing during a pending save cannot present a late alert or complete before dismissal",
+          "status": "passed",
+          "durationMs": 168
+        },
+        {
+          "name": "a replacement in the same React batch waits for the old native sheet to dismiss",
+          "status": "passed",
+          "durationMs": 279
+        },
+        {
+          "name": "an unsuccessful later reporting grant cannot reuse an earlier confirmed native stop",
+          "status": "passed",
+          "durationMs": 334
+        },
+        {
+          "name": "Info renders only the needed teen residency clarification and preserves independent reporting refusal",
+          "status": "passed",
+          "durationMs": 330
+        },
+        {
+          "name": "Info residency save failure keeps every answer reachable for retry and makes no permission claim",
+          "status": "passed",
+          "durationMs": 550
+        },
+        {
+          "name": "adult Info has no unnecessary state question",
+          "status": "passed",
+          "durationMs": 268
+        },
+        {
+          "name": "AU restricted age shows its actual state without a misleading Allow control",
+          "status": "passed",
+          "durationMs": 254
+        },
+        {
+          "name": "MX restricted age shows its actual state without a misleading Allow control",
+          "status": "passed",
+          "durationMs": 201
+        },
+        {
+          "name": "CA restricted age shows its actual state without a misleading Allow control",
+          "status": "passed",
+          "durationMs": 243
+        },
+        {
+          "name": "Info stops competition independently and a failed save remains retryable after remount",
+          "status": "passed",
+          "durationMs": 259
+        },
+        {
+          "name": "competition withdrawal remains reachable without age eligibility or initialized providers",
+          "status": "passed",
+          "durationMs": 272
+        },
+        {
+          "name": "the post-result choices panel does not add an unrelated competition control",
+          "status": "passed",
+          "durationMs": 166
+        },
+        {
+          "name": "unreadable choices retain an actionable load retry across failure and restore refusal without stopping permitted ads",
+          "status": "passed",
+          "durationMs": 191
+        },
+        {
+          "name": "audit continuation: collapse/remount then Stop invalidates an older rendered Allow waiting for notice restoration",
+          "status": "passed",
+          "durationMs": 301
+        },
+        {
+          "name": "Canadian region controls permit eligible ads without an ads-off control independently of reporting",
+          "status": "passed",
+          "durationMs": 551
+        },
+        {
+          "name": "regional correction: rendered failed province save has an actionable retry",
+          "status": "passed",
+          "durationMs": 298
+        },
+        {
+          "name": "eligible CA adult has no ads-off control with fresh choices=true, including after remount",
+          "status": "passed",
+          "durationMs": 348
+        },
+        {
+          "name": "eligible CA adult has no ads-off control with fresh choices=false, including after remount",
+          "status": "passed",
+          "durationMs": 448
+        },
+        {
+          "name": "eligible US adult has no ads-off control with fresh choices=true, including after remount",
+          "status": "passed",
+          "durationMs": 302
+        },
+        {
+          "name": "eligible US adult has no ads-off control with fresh choices=false, including after remount",
+          "status": "passed",
+          "durationMs": 340
+        },
+        {
+          "name": "eligible AU adult has no ads-off control with fresh choices=true, including after remount",
+          "status": "passed",
+          "durationMs": 267
+        },
+        {
+          "name": "eligible AU adult has no ads-off control with fresh choices=false, including after remount",
+          "status": "passed",
+          "durationMs": 232
+        },
+        {
+          "name": "eligible MX adult has no ads-off control with fresh choices=true, including after remount",
+          "status": "passed",
+          "durationMs": 217
+        },
+        {
+          "name": "eligible MX adult has no ads-off control with fresh choices=false, including after remount",
+          "status": "passed",
+          "durationMs": 231
+        },
+        {
+          "name": "a saved adult advertising refusal is honored until explicitly restored, without exposing another ads-off control",
+          "status": "passed",
+          "durationMs": 411
+        },
+        {
+          "name": "non-Quebec Canadian teen retains notice-based ads without an ads-off control",
+          "status": "passed",
+          "durationMs": 334
+        },
+        {
+          "name": "existing Quebec advertising refusal remains honored with country eligibility unavailable",
+          "status": "passed",
+          "durationMs": 257
+        },
+        {
+          "name": "existing Quebec advertising refusal remains honored with age eligibility unavailable",
+          "status": "passed",
+          "durationMs": 264
+        },
+        {
+          "name": "existing Quebec advertising refusal remains honored with apple eligibility unavailable",
+          "status": "passed",
+          "durationMs": 220
+        },
+        {
+          "name": "failed advertising withdrawal retains honest retry after region loss and panel remount",
+          "status": "passed",
+          "durationMs": 248
+        },
+        {
+          "name": "Info renders accurate unsupported age availability without presenting an adult ad opt-out",
+          "status": "passed",
+          "durationMs": 235
+        },
+        {
+          "name": "Info renders accurate unknown age availability without presenting an adult ad opt-out",
+          "status": "passed",
+          "durationMs": 447
+        },
+        {
+          "name": "residency dropdowns: Canada=true has no preselected answer and cancellation saves nothing",
+          "status": "passed",
+          "durationMs": 453
+        },
+        {
+          "name": "residency dropdowns: Canada=false has no preselected answer and cancellation saves nothing",
+          "status": "passed",
+          "durationMs": 428
+        },
+        {
+          "name": "expired age evidence does not create a saved advertising refusal or expose an ads-off control",
+          "status": "passed",
+          "durationMs": 364
+        },
+        {
+          "name": "CA dropdown saves only the original binary flag for every option and preserves advertising decisions",
+          "status": "passed",
+          "durationMs": 1941
+        },
+        {
+          "name": "US dropdown saves only the original binary flag for every option and preserves advertising decisions",
+          "status": "passed",
+          "durationMs": 9942
+        },
+        {
+          "name": "CA compact setup uses policy links without extra detail controls and preserves purpose decisions",
+          "status": "passed",
+          "durationMs": 304
+        },
+        {
+          "name": "US compact setup uses policy links without extra detail controls and preserves purpose decisions",
+          "status": "passed",
+          "durationMs": 298
+        },
+        {
+          "name": "AU compact setup uses policy links without extra detail controls and preserves purpose decisions",
+          "status": "passed",
+          "durationMs": 376
+        },
+        {
+          "name": "MX compact setup uses policy links without extra detail controls and preserves purpose decisions",
+          "status": "passed",
+          "durationMs": 343
+        },
+        {
+          "name": "existing reporting refusal in Info persists through Agree & Play without changing eligible ads",
+          "status": "passed",
+          "durationMs": 473
+        },
+        {
+          "name": "explicit Privacy & choices request opens full details immediately without granting a choice",
+          "status": "passed",
+          "durationMs": 276
+        },
+        {
+          "name": "compact setup never acknowledges a failed save and allows retry",
+          "status": "passed",
+          "durationMs": 268
+        },
+        {
+          "name": "Canada age 13 keeps identical advertising copy before/after either province answer and remount",
+          "status": "passed",
+          "durationMs": 762
+        },
+        {
+          "name": "Canada age 14 keeps identical advertising copy before/after either province answer and remount",
+          "status": "passed",
+          "durationMs": 623
+        },
+        {
+          "name": "Canada age 17 keeps identical advertising copy before/after either province answer and remount",
+          "status": "passed",
+          "durationMs": 525
+        },
+        {
+          "name": "Canada age 18 keeps identical advertising copy before/after either province answer and remount",
+          "status": "passed",
+          "durationMs": 560
+        },
+        {
+          "name": "US age 13 has neutral CT/NY answers and retains New York history without describing its ad outcome",
+          "status": "passed",
+          "durationMs": 797
+        },
+        {
+          "name": "US age 17 has neutral CT/NY answers and retains New York history without describing its ad outcome",
+          "status": "passed",
+          "durationMs": 1286
+        },
+        {
+          "name": "United States age 18 never describes the age-based advertising outcome",
+          "status": "passed",
+          "durationMs": 484
+        },
+        {
+          "name": "Australia age 13 never describes the age-based advertising outcome",
+          "status": "passed",
+          "durationMs": 522
+        },
+        {
+          "name": "Australia age 14 never describes the age-based advertising outcome",
+          "status": "passed",
+          "durationMs": 363
+        },
+        {
+          "name": "Australia age 15 never describes the age-based advertising outcome",
+          "status": "passed",
+          "durationMs": 496
+        },
+        {
+          "name": "Australia age 17 never describes the age-based advertising outcome",
+          "status": "passed",
+          "durationMs": 429
+        },
+        {
+          "name": "Australia age 18 never describes the age-based advertising outcome",
+          "status": "passed",
+          "durationMs": 317
+        },
+        {
+          "name": "Mexico age 13 never describes the age-based advertising outcome",
+          "status": "passed",
+          "durationMs": 357
+        },
+        {
+          "name": "Mexico age 17 never describes the age-based advertising outcome",
+          "status": "passed",
+          "durationMs": 350
+        },
+        {
+          "name": "Mexico age 18 never describes the age-based advertising outcome",
+          "status": "passed",
+          "durationMs": 383
+        },
+        {
+          "name": "CA local age form has no ad outcome before or after every offered age answer",
+          "status": "passed",
+          "durationMs": 806
+        },
+        {
+          "name": "US local age form has no ad outcome before or after every offered age answer",
+          "status": "passed",
+          "durationMs": 572
+        },
+        {
+          "name": "AU local age form has no ad outcome before or after every offered age answer",
+          "status": "passed",
+          "durationMs": 1305
+        },
+        {
+          "name": "MX local age form has no ad outcome before or after every offered age answer",
+          "status": "passed",
+          "durationMs": 574
+        },
+        {
+          "name": "CA local age save errors show recovery without an advertising consequence",
+          "status": "passed",
+          "durationMs": 2297
+        },
+        {
+          "name": "US local age save errors show recovery without an advertising consequence",
+          "status": "passed",
+          "durationMs": 1654
+        },
+        {
+          "name": "AU local age save errors show recovery without an advertising consequence",
+          "status": "passed",
+          "durationMs": 815
+        },
+        {
+          "name": "MX local age save errors show recovery without an advertising consequence",
+          "status": "passed",
+          "durationMs": 304
+        },
+        {
+          "name": "CA regional save errors never advertise the consequence of an unanswered question",
+          "status": "passed",
+          "durationMs": 530
+        },
+        {
+          "name": "US regional save errors never advertise the consequence of an unanswered question",
+          "status": "passed",
+          "durationMs": 1009
+        },
+        {
+          "name": "Quebec never highlights a pending or failed save as confirmed",
+          "status": "passed",
+          "durationMs": 561
+        },
+        {
+          "name": "Connecticut never highlights a pending or failed save as confirmed",
+          "status": "passed",
+          "durationMs": 575
+        },
+        {
+          "name": "New York never highlights a pending or failed save as confirmed",
+          "status": "passed",
+          "durationMs": 769
+        },
+        {
+          "name": "age never highlights a pending or failed save as confirmed",
+          "status": "passed",
+          "durationMs": 635
+        },
+        {
+          "name": "saved Canadian resident status survives remount without changing advertising eligibility",
+          "status": "passed",
+          "durationMs": 413
+        },
+        {
+          "name": "saved Canadian not-resident status survives remount without changing advertising eligibility",
+          "status": "passed",
+          "durationMs": 319
+        }
+      ]
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/startupGameEntry.test.tsx",
+      "evidence": "startup-final-tests.json",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "saved under-13 is restored before Home Play reaches camera setup (offline=false)",
+          "status": "passed",
+          "durationMs": 17491
+        },
+        {
+          "name": "saved under-13 is restored before Home Play reaches camera setup (offline=true)",
+          "status": "passed",
+          "durationMs": 1841
+        },
+        {
+          "name": "a delayed saved-age read finishes before the camera/game child can mount",
+          "status": "passed",
+          "durationMs": 2282
+        },
+        {
+          "name": "optional unanswered/eligible/unreadable record null permits Home Play without ad setup",
+          "status": "passed",
+          "durationMs": 2099
+        },
+        {
+          "name": "optional unanswered/eligible/unreadable record {\"version\":1,\"answer\":\"13-17\"} permits Home Play without ad setup",
+          "status": "passed",
+          "durationMs": 1921
+        },
+        {
+          "name": "optional unanswered/eligible/unreadable record {\"version\":1,\"answer\":\"18-plus\"} permits Home Play without ad setup",
+          "status": "passed",
+          "durationMs": 1629
+        },
+        {
+          "name": "optional unanswered/eligible/unreadable record invalid permits Home Play without ad setup",
+          "status": "passed",
+          "durationMs": 2831
+        },
+        {
+          "name": "failed local-age read does not turn a storage failure into a new gameplay ban",
+          "status": "passed",
+          "durationMs": 3520
+        },
+        {
+          "name": "backgrounding during saved-age restoration cannot mount a late game child",
+          "status": "passed",
+          "durationMs": 2067
+        },
+        {
+          "name": "leaving the route during restoration cancels the game continuation",
+          "status": "passed",
+          "durationMs": 1890
+        },
+        {
+          "name": "actual Home -> game route uses completed-run history to prevent a fresh-route setup bypass",
+          "status": "passed",
+          "durationMs": 1631
+        },
+        {
+          "name": "actual result Try again -> unanswered choices -> Close keeps the saved result and cancels navigation",
+          "status": "passed",
+          "durationMs": 2405
+        },
+        {
+          "name": "actual result Next level -> unanswered choices -> Close keeps the saved result and cancels navigation",
+          "status": "passed",
+          "durationMs": 2258
+        },
+        {
+          "name": "Done leaves the result when setup is dismissed, but Home cannot start another run",
+          "status": "passed",
+          "durationMs": 1799
+        },
+        {
+          "name": "Done leaves the result when setup is failed, but Home cannot start another run",
+          "status": "passed",
+          "durationMs": 1945
+        },
+        {
+          "name": "Done still uses the existing eligible result-ad opportunity before returning Home",
+          "status": "passed",
+          "durationMs": 1875
+        },
+        {
+          "name": "first result and its Done action never allocate an interstitial",
+          "status": "passed",
+          "durationMs": 2331
+        }
+      ]
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+      "evidence": "menu-entry-final-tests.json",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "AU age 13 can keep playing without starting advertising providers",
+          "status": "passed",
+          "durationMs": 2593
+        },
+        {
+          "name": "MX age 17 can keep playing without starting advertising providers",
+          "status": "passed",
+          "durationMs": 129
+        },
+        {
+          "name": "Quebec keeps gameplay with legacy grants, providers stay off and withdrawal survives restart",
+          "status": "passed",
+          "durationMs": 285
+        },
+        {
+          "name": "CT minor can play while the result coordinator never initializes native ad or reporting SDKs",
+          "status": "passed",
+          "durationMs": 132
+        },
+        {
+          "name": "NY minor can play while the result coordinator never initializes native ad or reporting SDKs",
+          "status": "passed",
+          "durationMs": 176
+        },
+        {
+          "name": "a newly established New York context disposes a ready teen ad and stops reporting before any result ad can show",
+          "status": "passed",
+          "durationMs": 139
+        },
+        {
+          "name": "failed reporting Allow at @flapfit/processing-notice-v1 preserves the previous refusal through actual configuration and restart",
+          "status": "passed",
+          "durationMs": 309
+        },
+        {
+          "name": "failed reporting Allow at @flapfit/processing-choices-v1 preserves the previous refusal through actual configuration and restart",
+          "status": "passed",
+          "durationMs": 288
+        },
+        {
+          "name": "real cold startup connects trusted country and native Apple before eligibility; only actual disclosure callback unlocks adult notice route",
+          "status": "passed",
+          "durationMs": 228
+        },
+        {
+          "name": "analytics refusal leaves separately permitted restricted advertising functioning",
+          "status": "passed",
+          "durationMs": 216
+        },
+        {
+          "name": "unknown country or age {\"offline\":true} cannot initialize SDKs",
+          "status": "passed",
+          "durationMs": 99
+        },
+        {
+          "name": "unknown country or age {\"age\":{\"status\":\"declined\"}} cannot initialize SDKs",
+          "status": "passed",
+          "durationMs": 154
+        },
+        {
+          "name": "same-country foreground reuses verified plan while background immediately stops processing and preserves withdrawal",
+          "status": "passed",
+          "durationMs": 198
+        },
+        {
+          "name": "game entry cancels queued native privacy presentation without changing gameplay",
+          "status": "passed",
+          "durationMs": 218
+        },
+        {
+          "name": "a refused required country-specific Apple request never falls back to a second system sheet",
+          "status": "passed",
+          "durationMs": 135
+        },
+        {
+          "name": "a stale background age response does not consume the fresh same-country attempt",
+          "status": "passed",
+          "durationMs": 144
+        },
+        {
+          "name": "a fresh lobby caller joining an old native sheet recovers after foreground returns before the old response",
+          "status": "passed",
+          "durationMs": 171
+        },
+        {
+          "name": "first-play preparation requests no optional age, advertising, or reporting permission",
+          "status": "passed",
+          "durationMs": 117
+        },
+        {
+          "name": "a genuine required Apple check remains before play without starting optional SDKs",
+          "status": "passed",
+          "durationMs": 103
+        },
+        {
+          "name": "US adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed",
+          "durationMs": 124
+        },
+        {
+          "name": "AU adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed",
+          "durationMs": 133
+        },
+        {
+          "name": "MX adult post-game acknowledgement permits ads and reporting without repeated notices",
+          "status": "passed",
+          "durationMs": 138
+        },
+        {
+          "name": "reporting refusal through Info survives relaunch while permitted Google ads initialize",
+          "status": "passed",
+          "durationMs": 372
+        },
+        {
+          "name": "Canadian regional clarification permits independent ads with reporting refused",
+          "status": "passed",
+          "durationMs": 152
+        },
+        {
+          "name": "post-game unknown evidence {\"offline\":true} grants nothing and shows no misleading consent request",
+          "status": "passed",
+          "durationMs": 196
+        },
+        {
+          "name": "post-game unknown evidence {\"age\":{\"status\":\"declined\"}} grants nothing and shows no misleading consent request",
+          "status": "passed",
+          "durationMs": 151
+        },
+        {
+          "name": "a stale post-game alert response cannot acknowledge the notice or initialize providers",
+          "status": "passed",
+          "durationMs": 108
+        },
+        {
+          "name": "saved reporting refusal survives an unrelated failed competition save and restart",
+          "status": "passed",
+          "durationMs": 222
+        },
+        {
+          "name": "Google presentation waits for privacy dismissal; backgrounded=false",
+          "status": "passed",
+          "durationMs": 117
+        },
+        {
+          "name": "Google presentation waits for privacy dismissal; backgrounded=true",
+          "status": "passed",
+          "durationMs": 109
+        },
+        {
+          "name": "US teen result flow resolves residency and current location separately from consent in one sheet before Google presentation",
+          "status": "passed",
+          "durationMs": 117
+        },
+        {
+          "name": "closing the US teen clarification does not complete the unanswered question or initialize SDKs",
+          "status": "passed",
+          "durationMs": 219
+        },
+        {
+          "name": "AU eligible teen: independent choices, withdrawal and restart use the production coordinator",
+          "status": "passed",
+          "durationMs": 332
+        },
+        {
+          "name": "CA eligible teen: independent choices, withdrawal and restart use the production coordinator",
+          "status": "passed",
+          "durationMs": 233
+        },
+        {
+          "name": "AU 13-14 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "durationMs": 100
+        },
+        {
+          "name": "MX 13-15 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "durationMs": 98
+        },
+        {
+          "name": "MX 16-17 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "durationMs": 178
+        },
+        {
+          "name": "CA 0-13 cannot turn a personal grant into verified authority",
+          "status": "passed",
+          "durationMs": 225
+        },
+        {
+          "name": "US adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "durationMs": 351
+        },
+        {
+          "name": "CA adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "durationMs": 229
+        },
+        {
+          "name": "AU adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "durationMs": 242
+        },
+        {
+          "name": "MX adult reporting refusal and competition permission persist independently across restart",
+          "status": "passed",
+          "durationMs": 299
+        },
+        {
+          "name": "US Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "durationMs": 118
+        },
+        {
+          "name": "CA Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "durationMs": 147
+        },
+        {
+          "name": "AU Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "durationMs": 142
+        },
+        {
+          "name": "MX Compete can establish independent eligibility before any result or ad notice",
+          "status": "passed",
+          "durationMs": 127
+        },
+        {
+          "name": "Compete eligibility does not request Apple evidence for unset competition choice",
+          "status": "passed",
+          "durationMs": 103
+        },
+        {
+          "name": "Compete eligibility does not request Apple evidence for denied competition choice",
+          "status": "passed",
+          "durationMs": 161
+        },
+        {
+          "name": "leaving Compete for gameplay cancels a queued eligibility presentation",
+          "status": "passed",
+          "durationMs": 99
+        },
+        {
+          "name": "AU regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed",
+          "durationMs": 108
+        },
+        {
+          "name": "MX regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed",
+          "durationMs": 102
+        },
+        {
+          "name": "CA regional under-consent threshold reaches the actual adapter without invented guardian permission",
+          "status": "passed",
+          "durationMs": 102
+        },
+        {
+          "name": "visiting Compete preserves an already verified plan and independently prepared ads",
+          "status": "passed",
+          "durationMs": 117
+        },
+        {
+          "name": "audit continuation: delayed notice allow-only respects action order through the real Canadian coordinator and RC configuration",
+          "status": "passed",
+          "durationMs": 133
+        },
+        {
+          "name": "audit continuation: delayed notice stop-only respects action order through the real Canadian coordinator and RC configuration",
+          "status": "passed",
+          "durationMs": 117
+        },
+        {
+          "name": "audit continuation: delayed notice allow-then-stop respects action order through the real Canadian coordinator and RC configuration",
+          "status": "passed",
+          "durationMs": 105
+        },
+        {
+          "name": "audit continuation: newer Stop wins while older Allow waits at choice-write",
+          "status": "passed",
+          "durationMs": 128
+        },
+        {
+          "name": "audit continuation: newer Stop wins while older Allow waits at notice-write",
+          "status": "passed",
+          "durationMs": 159
+        },
+        {
+          "name": "regional correction: real Canadian result path chooses outside Quebec and configures ads while reporting remains refused across restart",
+          "status": "passed",
+          "durationMs": 226
+        },
+        {
+          "name": "regional correction: closing unanswered Canada clarification records nothing and never marks the question complete",
+          "status": "passed",
+          "durationMs": 108
+        },
+        {
+          "name": "non-Quebec adult with no ad grant receives a restricted result-exit ad while reporting stays refused",
+          "status": "passed",
+          "durationMs": 126
+        },
+        {
+          "name": "competition Stop/accept/Stop survives restart and blocks actual Auth/request boundary; Apple required=false",
+          "status": "passed",
+          "durationMs": 434
+        },
+        {
+          "name": "competition Stop/accept/Stop survives restart and blocks actual Auth/request boundary; Apple required=true",
+          "status": "passed",
+          "durationMs": 239
+        },
+        {
+          "name": "existing Canadian consent withdrawal survives lost eligibility, recovery and restart; failed first save=false",
+          "status": "passed",
+          "durationMs": 234
+        },
+        {
+          "name": "existing Canadian consent withdrawal survives lost eligibility, recovery and restart; failed first save=true",
+          "status": "passed",
+          "durationMs": 228
+        },
+        {
+          "name": "supported older iOS never fakes age or starts provider SDKs; it reports the actual compatibility limit",
+          "status": "passed",
+          "durationMs": 170
+        },
+        {
+          "name": "older iOS US adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "durationMs": 264
+        },
+        {
+          "name": "older iOS CA adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "durationMs": 265
+        },
+        {
+          "name": "older iOS AU adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "durationMs": 282
+        },
+        {
+          "name": "older iOS MX adult reaches actual ads configuration after a local answer and notice, while reporting refusal survives restart",
+          "status": "passed",
+          "durationMs": 254
+        },
+        {
+          "name": "older iOS opens the existing post-game panel for missing age, and dismissal records no answer",
+          "status": "passed",
+          "durationMs": 124
+        },
+        {
+          "name": "older-system adult uses real permitted RevenueCat configuration and restricted result-ad requests",
+          "status": "passed",
+          "durationMs": 115
+        },
+        {
+          "name": "local minor answer {\"country\":\"US\",\"answer\":\"under-13\"} cannot be treated as adulthood or parental permission",
+          "status": "passed",
+          "durationMs": 119
+        },
+        {
+          "name": "local minor answer {\"country\":\"AU\",\"answer\":\"13-14\"} cannot be treated as adulthood or parental permission",
+          "status": "passed",
+          "durationMs": 107
+        },
+        {
+          "name": "local minor answer {\"country\":\"MX\",\"answer\":\"13-17\"} cannot be treated as adulthood or parental permission",
+          "status": "passed",
+          "durationMs": 100
+        },
+        {
+          "name": "advertising withdrawal changes only its purpose and an unrelated failed save cannot erase the saved refusal",
+          "status": "passed",
+          "durationMs": 193
+        },
+        {
+          "name": "regional binary answers: dismissing CA clarification writes no regional fact, consent or refusal and remains unanswered after restart",
+          "status": "passed",
+          "durationMs": 210
+        },
+        {
+          "name": "regional binary answers: dismissing US clarification writes no regional fact, consent or refusal and remains unanswered after restart",
+          "status": "passed",
+          "durationMs": 233
+        },
+        {
+          "name": "CA captures the actual shared post-game notice without describing age/location ad outcomes",
+          "status": "passed",
+          "durationMs": 107
+        },
+        {
+          "name": "US captures the actual shared post-game notice without describing age/location ad outcomes",
+          "status": "passed",
+          "durationMs": 112
+        },
+        {
+          "name": "AU captures the actual shared post-game notice without describing age/location ad outcomes",
+          "status": "passed",
+          "durationMs": 105
+        },
+        {
+          "name": "MX captures the actual shared post-game notice without describing age/location ad outcomes",
+          "status": "passed",
+          "durationMs": 102
+        },
+        {
+          "name": "CA notice -> Privacy & choices -> Close cannot authorize the result action or a repeat run",
+          "status": "passed",
+          "durationMs": 314
+        },
+        {
+          "name": "US notice -> Privacy & choices -> Close cannot authorize the result action or a repeat run",
+          "status": "passed",
+          "durationMs": 427
+        },
+        {
+          "name": "AU notice -> Privacy & choices -> Close cannot authorize the result action or a repeat run",
+          "status": "passed",
+          "durationMs": 270
+        },
+        {
+          "name": "MX notice -> Privacy & choices -> Close cannot authorize the result action or a repeat run",
+          "status": "passed",
+          "durationMs": 439
+        },
+        {
+          "name": "CA unanswered regional sheet cannot authorize repeat gameplay",
+          "status": "passed",
+          "durationMs": 218
+        },
+        {
+          "name": "US unanswered regional sheet cannot authorize repeat gameplay",
+          "status": "passed",
+          "durationMs": 164
+        },
+        {
+          "name": "established protected audience CA/18/quebec retains repeat gameplay without accepting ads",
+          "status": "passed",
+          "durationMs": 151
+        },
+        {
+          "name": "established protected audience US/15/connecticut retains repeat gameplay without accepting ads",
+          "status": "passed",
+          "durationMs": 146
+        },
+        {
+          "name": "established protected audience US/15/new-york retains repeat gameplay without accepting ads",
+          "status": "passed",
+          "durationMs": 145
+        },
+        {
+          "name": "established protected audience AU/13/ retains repeat gameplay without accepting ads",
+          "status": "passed",
+          "durationMs": 118
+        },
+        {
+          "name": "established protected audience MX/17/ retains repeat gameplay without accepting ads",
+          "status": "passed",
+          "durationMs": 138
+        },
+        {
+          "name": "Google refusing ad requests after completed setup does not gate gameplay",
+          "status": "passed",
+          "durationMs": 110
+        },
+        {
+          "name": "Canada age 13 must answer the province question before being classified; No retains permitted ads",
+          "status": "passed",
+          "durationMs": 123
+        },
+        {
+          "name": "CA menu correction restores eligible advertising before the next result",
+          "status": "passed",
+          "durationMs": 144
+        },
+        {
+          "name": "US menu correction restores eligible advertising before the next result",
+          "status": "passed",
+          "durationMs": 108
+        },
+        {
+          "name": "entering gameplay cancels pending menu preparation without restarting it",
+          "status": "passed",
+          "durationMs": 109
+        },
+        {
+          "name": "CA every province/state selection restores the existing permitted ad policy from the menu",
+          "status": "passed",
+          "durationMs": 151
+        },
+        {
+          "name": "US every province/state selection restores the existing permitted ad policy from the menu",
+          "status": "passed",
+          "durationMs": 378
+        }
+      ]
+    },
+    {
+      "file": "apps/mobile/src/components/__tests__/InfoPrivacy.test.tsx",
+      "evidence": "info-final-tests.json",
+      "status": "passed",
+      "tests": [
+        {
+          "name": "Info has one direct Google privacy action and no email/code workflow",
+          "status": "passed",
+          "durationMs": 2433
+        },
+        {
+          "name": "Google requirement state automatically shows and hides the Info action",
+          "status": "passed",
+          "durationMs": 303
+        },
+        {
+          "name": "a pending native privacy form disables repeated taps and re-enables on dismissal",
+          "status": "passed",
+          "durationMs": 261
+        },
+        {
+          "name": "a Google form failure leaves an actionable retry without composing an email",
+          "status": "passed",
+          "durationMs": 137
+        }
+      ]
+    }
+  ],
+  "appliedToOriginal": {
+    "path": "C:/Users/money/Projects/flapfit/anything",
+    "head": "9391f404d90093483b2a5a3ccb57f1403524341f",
+    "changedFiles": 9,
+    "missingFiles": 0,
+    "allHashesMatch": true,
+    "patchMatches": true,
+    "committed": false,
+    "pushed": false,
+    "buildsStarted": 0,
+    "observedBeforeBackupCommit": true
+  },
+  "localIosExport": {
+    "status": "passed",
+    "exitCode": 0,
+    "platform": "ios",
+    "moduleCount": 3759,
+    "assetCount": 106,
+    "nativeBuild": false,
+    "easBuildQuotaConsumed": 0,
+    "bundle": "_expo/static/js/ios/index-48e1e2e8f5fa9c00281e29b4551140a5.hbc",
+    "metadataSha256": "74b9b24188acc030a251a18a992df4cdbb48f4abc306dc9aa7b3fdbaa7ae6246"
+  }
+}

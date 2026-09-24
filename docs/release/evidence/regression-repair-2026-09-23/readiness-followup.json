@@ -1,0 +1,30 @@
+{
+  "site": {
+    "projectId": "appgprj_6aa368d995348191b4206fa03f951b3a",
+    "version": 39,
+    "versionId": "appgprj_6aa368d995348191b4206fa03f951b3a~appgver_becd711d138c81918cf321f468277bf5",
+    "commit": "1d6aad9ec1ab7f97ce219138c6b024de6891bdb1",
+    "deploymentId": "appgdep_6ab470afa4288191839ea00075890e86",
+    "status": "succeeded",
+    "url": "https://flap-fit.sportaholic000.chatgpt.site",
+    "updatedAt": "2026-09-24T00:37:09.694126+00:00",
+    "archiveHash": "sha256:b52cf25334b73d848e999f6a5d852b394b3008dd6d7efced6e37b1c43376a592",
+    "privacyHtmlSha256": "8869c76f0517264743393375bf74bb71574924d4f61cf540569211cc3e911655",
+    "validation": "Existing five-route validator passed; staged privacy bytes match source. Packaged using the existing Node preparation helper and Windows tar after the Bash wrapper failed."
+  },
+  "apple": {
+    "contactInformation": "Visually confirmed complete; prior text-only blank-field finding corrected. Contact values excluded from this artifact.",
+    "reviewNotes": "Menu-label corrections saved; exact persistence confirmed after reload.",
+    "submissionStarted": false
+  },
+  "mobile": {
+    "sourceRepairUnchanged": true,
+    "easBuildsStarted": 0,
+    "localIosExport": "passed; local JS/Hermes packaging only, no EAS/native build"
+  },
+  "shipaton": {
+    "deadline": "2026-09-30 23:45 PDT",
+    "mainCategoryRequiresPublishedStoreListing": true,
+    "officialRules": "https://revenuecat-shipaton-2026.devpost.com/rules"
+  }
+}

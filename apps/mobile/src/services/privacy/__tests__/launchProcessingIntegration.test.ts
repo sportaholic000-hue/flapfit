@@ -1053,7 +1053,7 @@ test('Canada age 13 must answer the province question before being classified; N
 
 
 
-test.each(['CA', 'US'] as const)('%s location correction refreshes the same result', async country => {
+test.each(['CA', 'US'] as const)('%s menu correction restores eligible advertising before the next result', async country => {
   const f = await load({ country, age: { status: 'shared', lowerBound: country === 'CA' ? 18 : 15, upperBound: country === 'CA' ? null : 17 } });
   try {
     const regional: typeof import('../regionalClarification') = require('../regionalClarification');
@@ -1071,9 +1071,12 @@ test.each(['CA', 'US'] as const)('%s location correction refreshes the same resu
     expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
     const gate = f.adapter.resultAdGate;
     gate.createResult(null, f.adapter.adEnvironment).exit(false, jest.fn());
-    const ad = f.adapter.prepareResultAdOpportunity();
-    const opportunity = gate.createResult(ad, f.adapter.adEnvironment);
     await save(country === 'CA' ? 'NB' : 'ME'); await settle();
+    expect(f.adapter.isMonetizationPrepared()).toBe(false);
+    await f.adapter.refreshMonetizationFromChoices(() => true);
+    expect(f.nativeAd.load).not.toHaveBeenCalled();
+    const ad = f.adapter.prepareResultInterstitial()!;
+    const opportunity = gate.createResult(ad, f.adapter.adEnvironment);
     expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
     expect(f.adapter.isMonetizationPrepared()).toBe(true);
     expect(f.consent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
@@ -1089,7 +1092,7 @@ test.each(['CA', 'US'] as const)('%s location correction refreshes the same resu
 });
 
 
-test('entering gameplay during a region correction retains passive preparation without a native popup', async () => {
+test('entering gameplay cancels pending menu preparation without restarting it', async () => {
   const f = await load({ country: 'CA', quebecResidency: 'resident' });
   try {
     const regional: typeof import('../regionalClarification') = require('../regionalClarification');
@@ -1098,12 +1101,49 @@ test('entering gameplay during a region correction retains passive preparation w
     await notice.acknowledgeProcessingNotice();
     let release!: (value: { canRequestAds: boolean; privacyOptionsRequirementStatus: string }) => void;
     f.consent.requestInfoUpdate.mockImplementationOnce(() => new Promise(resolve => { release = resolve; }));
-    await regional.saveProvinceSelection('NB'); await settle();
+    await regional.saveProvinceSelection('NB');
+    const pending = f.adapter.refreshMonetizationFromChoices(() => true); await settle();
     expect(f.consent.requestInfoUpdate).toHaveBeenCalledTimes(1);
     await f.adapter.settlePrivacyBeforeGameplay();
-    release({ canRequestAds: true, privacyOptionsRequirementStatus: 'NOT_REQUIRED' }); await settle(); await settle();
+    release({ canRequestAds: true, privacyOptionsRequirementStatus: 'NOT_REQUIRED' }); await pending; await settle();
     expect(f.consent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
-    expect(f.adapter.isMonetizationPrepared()).toBe(true);
+    expect(f.adapter.isMonetizationPrepared()).toBe(false);
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+    expect(f.consent.requestInfoUpdate).toHaveBeenCalledTimes(1);
+    expect(f.nativeAd.show).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+test.each(['CA', 'US'] as const)('%s every province/state selection restores the existing permitted ad policy from the menu', async country => {
+  const f = await load({ country, age: { status: 'shared', lowerBound: country === 'CA' ? 18 : 15, upperBound: country === 'CA' ? null : 17 } });
+  try {
+    const regional: typeof import('../regionalClarification') = require('../regionalClarification');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const options: typeof import('@/config/residency') = require('@/config/residency');
+    await f.adapter.prepareMonetization(() => true, { eligibilityOnly: true });
+    const save = country === 'CA' ? regional.saveProvinceSelection : regional.saveStateSelection;
+    const savedName = country === 'CA' ? regional.getSavedProvinceName : regional.getSavedStateName;
+    if (country === 'US') {
+      await save('ME');
+      const ny: typeof import('../newYorkClarification') = require('../newYorkClarification');
+      await ny.restoreNewYorkClarification(); await ny.saveNewYorkPresence('not-present');
+    }
+    await notice.acknowledgeProcessingNotice();
+    const restricted = country === 'CA' ? 'QC' : 'CT';
+    const selections = country === 'CA' ? options.CANADIAN_PROVINCES_AND_TERRITORIES : options.US_STATES_AND_TERRITORIES;
+    for (const [code, name] of selections) {
+      await save(restricted);
+      expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+      const initializations = f.nativeAds.initialize.mock.calls.length;
+      await save(code);
+      expect(savedName()).toBe(name);
+      expect(f.access.getProcessingAccess().ads.allowed).toBe(code !== restricted);
+      expect(f.nativeAds.initialize).toHaveBeenCalledTimes(initializations);
+      await f.adapter.refreshMonetizationFromChoices(() => true);
+      expect(f.adapter.isMonetizationPrepared()).toBe(code !== restricted);
+      expect(f.nativeAds.initialize).toHaveBeenCalledTimes(initializations + (code === restricted ? 0 : 1));
+    }
+    expect(f.nativeAd.load).not.toHaveBeenCalled();
     expect(f.nativeAd.show).not.toHaveBeenCalled();
   } finally { f.finish(); }
 });

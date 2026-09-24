@@ -6,7 +6,7 @@ import * as Haptics from 'expo-haptics';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { getVideoShareAvailability, shareGameplayVideo, type VideoShareDestination } from '@/services/videoSharing';
 import { StatusBar } from 'expo-status-bar';
-import { adEnvironment, prepareResultAdOpportunity, resultAdGate, settlePrivacyBeforeGameplay } from '@/services/monetization';
+import { adEnvironment, prepareResultInterstitial, resultAdGate, settlePrivacyBeforeGameplay } from '@/services/monetization';
 import {
   ArrowRight,
   Camera,
@@ -314,7 +314,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     if (!result || resultActionClaimed.current) return;
     resultLifetime.opportunity?.dispose();
     resultLifetime.opportunity = resultAdGate.createResult(
-      recordingIsFinalizing ? null : prepareResultAdOpportunity(), adEnvironment,
+      recordingIsFinalizing || !resultAdGate.canPrepareAd() ? null : prepareResultInterstitial(), adEnvironment,
     );
   }, [result, runKey, recordingIsFinalizing, resultLifetime]);
   const performResultAction = (action: () => void, startsNewRun = true) => {
@@ -334,9 +334,8 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       if (opportunity) opportunity.exit(false, action);
       else action();
     };
-    // Only a claimed result action can begin optional setup. The opportunity
-    // follows SDK readiness changes; the existing gate never waits for loading
-    // and retains its session/cooldown placement rules.
+    // Only a claimed result action can begin optional setup. It never waits for
+    // an ad to load or replaces the existing session/cooldown placement gate.
     void preparePostGamePrivacy(current, openPrivacyChoices).catch(() => false).then(complete => {
       if (generation !== resultLifetime.generation) return;
       if (complete || !startsNewRun) continueExit();

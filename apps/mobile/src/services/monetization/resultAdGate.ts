@@ -16,6 +16,10 @@ export class ResultAdGate {
   private lastShownAt = -Infinity;
   constructor(private readonly now = () => Date.now()) {}
 
+  // Check cadence before allocating an ad. The actual exit still checks the
+  // ninety-second cooldown at the time the user taps a result action.
+  canPrepareAd(): boolean { return (this.exits + 1) % 2 === 0; }
+
   createResult(ad: ReadyInterstitial | null, environment: ResultEnvironment) {
     let claimed = false;
     let disposed = false;

@@ -1,0 +1,41 @@
+{
+  "base": "9391f404d90093483b2a5a3ccb57f1403524341f",
+  "files": [
+    {
+      "file": "AGENTS.md",
+      "sha256": "05c9e7a83b202987a495f6f635b9ddaae6d8e08bd6d98286f9be3b0bf387b582"
+    },
+    {
+      "file": "apps/mobile/src/app/game.tsx",
+      "sha256": "573db5522ce6f9a95e2f183ff8612e222e943f19408a09acd613d8845622c18e"
+    },
+    {
+      "file": "apps/mobile/src/components/PrivacyChoices.tsx",
+      "sha256": "ea5b485dd58f2aa6c816349a5ce3eaeaf07d95e51be8cfe80368f6f4fec31320"
+    },
+    {
+      "file": "apps/mobile/src/components/__tests__/PrivacyChoices.test.tsx",
+      "sha256": "f9f89a18c1eca18a6b2f5001c76d10c7a0c135e3d45ff014601219704b4f4084"
+    },
+    {
+      "file": "apps/mobile/src/services/__tests__/monetization.test.ts",
+      "sha256": "e55422970420a4a7eed53651ee437599c39bf9a1f9063b4bda2dab32bbb6c182"
+    },
+    {
+      "file": "apps/mobile/src/services/monetization/index.ts",
+      "sha256": "ff3d5c47e848bf89187e584c6475140f547b9fdf50aa6f7e63a130dfa207b047"
+    },
+    {
+      "file": "apps/mobile/src/services/monetization/resultAdGate.ts",
+      "sha256": "7cc3e6e986d964bdf3d614fe3cd7a6cc50fb070452abb4998b2cfb717cb8235e"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+      "sha256": "1e3bd2bc3716a5460862c184aaf18c69c83d7e06354f9d4768d873df3b885cbd"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/startupGameEntry.test.tsx",
+      "sha256": "0466c6e4fae95b8159a659128f56ca23139af1dabfbc502dcc80b3b2e369dcb0"
+    }
+  ]
+}

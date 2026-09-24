@@ -28,6 +28,7 @@ async function fixture(platform = 'ios', failChoicesRead = false, canadianUnsetR
   jest.doMock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) }));
   jest.doMock('@/config/release', () => ({ RELEASE_LINKS: { privacyUrl: 'https://flapfitapp.com/privacy/', termsUrl: 'https://flapfitapp.com/terms/' } }));
   const native = {
+    refreshMonetizationFromChoices: jest.fn().mockResolvedValue(undefined),
     getRevenueCatWithdrawalStatus: jest.fn(() => ({ state: 'pending', error: null })),
     settleRevenueCatWithdrawal: jest.fn().mockResolvedValue({ state: 'stopped', error: null }),
     retryRevenueCatWithdrawal: jest.fn().mockResolvedValue({ state: 'stopped', error: null }),
@@ -119,6 +120,25 @@ test.each(['Yes', 'No'])('New York %s is asked once, stays saved after remount a
   await f.press('Update New York answer');
   expect(f.text()).toContain('Are you in New York right now?');
   expect(JSON.parse(f.memory.get('@flapfit/new-york-eligibility-v1')!).answer).toBe(answer === 'Yes' ? 'present' : 'not-present');
+  await f.unmount();
+});
+
+test('the picker restores eligibility before requesting preparation from the open menu', async () => {
+  const f = await fixture('ios', false, true, 'resident', true);
+  await f.mount();
+  const observed: boolean[] = [];
+  f.native.refreshMonetizationFromChoices.mockImplementation(async () => {
+    observed.push(f.access.getProcessingAccess().ads.allowed);
+  });
+  await f.selectRegion('province', 'Ontario');
+  expect(f.text()).toContain('Ontario');
+  expect(observed).toEqual([true]);
+  await f.selectRegion('province', 'Quebec');
+  expect(f.text()).toContain('Quebec');
+  expect(observed).toEqual([true, false]);
+  await f.selectRegion('province', 'Alberta');
+  expect(f.text()).toContain('Alberta');
+  expect(observed).toEqual([true, false, true]);
   await f.unmount();
 });
 

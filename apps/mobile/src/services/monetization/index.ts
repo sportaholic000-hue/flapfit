@@ -21,20 +21,12 @@ const revenueCatKey = Platform.OS === 'ios'
 let ads: AdsSdk | null = null;
 let tracker: PurchasesAdTracker | null = null;
 let adsReady = false;
-let automaticallyPreparedEpoch: number | null = null;
-const adReadinessListeners = new Set<() => void>();
+let menuPreparedEpoch: number | null = null;
 function setAdsReady(value: boolean) {
   adsReady = value;
-  if (!value) automaticallyPreparedEpoch = null;
-  adReadinessListeners.forEach(listener => listener());
+  if (!value) menuPreparedEpoch = null;
 }
-let initAutomatic = false;
-let stopRegionalPreparation: (() => void) | null = null;
-function residencyKey() {
-  const launch = getProcessingInputs().launch;
-  return [launch?.country, launch?.options.quebecResidency, launch?.options.connecticutResidency].join(':');
-}
-let savedResidencyKey = residencyKey();
+let initFromMenu = false;
 let privacyRequired = false;
 let privacyStatusRevision = 0;
 let privacyOptionsRequest: Promise<void> | null = null;
@@ -88,9 +80,6 @@ function disposeResultAds() {
 // already loaded requests unusable immediately, without waiting for lobby focus.
 subscribeProcessingAccess(() => {
   const next = getProcessingAccess();
-  const nextResidencyKey = residencyKey();
-  const residencyChanged = nextResidencyKey !== savedResidencyKey;
-  savedResidencyKey = nextResidencyKey;
   const sameAdTreatment = next.ads.allowed === processingAccess.ads.allowed
     && next.ads.treatment === processingAccess.ads.treatment
     && next.ads.underAgeOfConsent === processingAccess.ads.underAgeOfConsent;
@@ -101,9 +90,6 @@ subscribeProcessingAccess(() => {
     ++consentEpoch;
     setAdsReady(false);
     disposeResultAds();
-    stopRegionalPreparation?.();
-    stopRegionalPreparation = null;
-    if (next.ads.allowed && residencyChanged) scheduleRegionalAdPreparation();
   }
   if (!sameAnalytics) {
     ++revenueCatEpoch;
@@ -113,8 +99,6 @@ subscribeProcessingAccess(() => {
       // Native transport cancellation and persistent-event purge are required;
       // clearing the JavaScript tracker alone cannot stop an initialized SDK.
       void requestRevenueCatWithdrawal();
-    } else {
-      void initializeRevenueCat();
     }
   }
 });
@@ -132,28 +116,11 @@ export const adEnvironment = {
   },
 };
 
-// A saved region correction must not wait for another result action to restore
-// SDK readiness. Reuse current Google permission without presenting native UI.
-// Required consent forms remain owned by the existing explicit setup flow.
-function scheduleRegionalAdPreparation() {
-  const epoch = consentEpoch;
-  const current = () => currentAdPermission(epoch) && adEnvironment.isActive();
-  let stop: (() => void) | null = null;
-  const cancel = () => {
-    stop?.(); stop = null;
-    if (stopRegionalPreparation === cancel) stopRegionalPreparation = null;
-  };
-  const start = () => {
-    if (!currentAdPermission(epoch)) { cancel(); return; }
-    if (!adEnvironment.isActive()) {
-      stop ??= adEnvironment.onActive(start);
-      stopRegionalPreparation = cancel;
-      return;
-    }
-    cancel();
-    void preparePermittedMonetization(current, true);
-  };
-  void Promise.resolve().then(start);
+/** Called by a saved choice while its menu is still open. No foreground or
+ * gameplay listener restarts preparation, and required forms keep their existing
+ * explicit setup owner. This refresh never requests an interstitial. */
+export function refreshMonetizationFromChoices(canPresent: () => boolean): Promise<void> {
+  return preparePermittedMonetization(canPresent, true);
 }
 
 function notifyPrivacy() { privacyListeners.forEach((listener) => listener()); }
@@ -251,8 +218,8 @@ function prepareRevenueCatTestIdentity(sdk: PurchasesSdk, epoch: number): void {
   } catch { recordConfigured(); }
 }
 
-function initializeRevenueCat(): Promise<void> {
-  if (!supported || !revenueCatKey || tracker || !getProcessingAccess().revenueCat.allowed) return Promise.resolve();
+function initializeRevenueCat(canPrepare: () => boolean): Promise<void> {
+  if (!canPrepare() || !supported || !revenueCatKey || tracker || !getProcessingAccess().revenueCat.allowed) return Promise.resolve();
   if (revenueCatInit) return revenueCatInit;
   const epoch = revenueCatEpoch;
   revenueCatInit = (async () => {
@@ -260,7 +227,7 @@ function initializeRevenueCat(): Promise<void> {
       let withdrawal = await revenueCatWithdrawal;
       if (withdrawal.state === 'failed') withdrawal = await requestRevenueCatWithdrawal();
       if (withdrawal.state === 'failed') return;
-      if (epoch !== revenueCatEpoch || !getProcessingAccess().revenueCat.allowed) return;
+      if (!canPrepare() || epoch !== revenueCatEpoch || !getProcessingAccess().revenueCat.allowed) return;
       // A configured native SDK remains allocated during withdrawal. Reopening
       // its fence can resume native work before this bridge promise resolves.
       // Track that possibility before awaiting the acknowledgement.
@@ -269,7 +236,7 @@ function initializeRevenueCat(): Promise<void> {
         if (nativeRevenueCatMayBeActive) await requestRevenueCatWithdrawal();
         return;
       }
-      if (epoch !== revenueCatEpoch || !getProcessingAccess().revenueCat.allowed) {
+      if (!canPrepare() || epoch !== revenueCatEpoch || !getProcessingAccess().revenueCat.allowed) {
         await requestRevenueCatWithdrawal();
         return;
       }
@@ -294,10 +261,16 @@ function initializeRevenueCat(): Promise<void> {
       await requestRevenueCatWithdrawal();
     } finally {
       revenueCatInit = null;
-      if (epoch !== revenueCatEpoch && getProcessingAccess().revenueCat.allowed) void initializeRevenueCat();
     }
   })();
   return revenueCatInit;
+}
+
+const nativeSdkSetup = new Set<Promise<unknown>>();
+function trackNativeSdkSetup<T>(operation: Promise<T>): Promise<T> {
+  nativeSdkSetup.add(operation);
+  void operation.then(() => nativeSdkSetup.delete(operation), () => nativeSdkSetup.delete(operation));
+  return operation;
 }
 
 function bounded<T>(operation: Promise<T>, milliseconds = 10_000): Promise<T> {
@@ -319,9 +292,6 @@ function presentPrivacy<T>(operation: () => Promise<T>): Promise<T> {
 }
 
 export async function settlePrivacyBeforeGameplay(): Promise<void> {
-  const resumeRegionalPreparation = (init !== null && initAutomatic) || stopRegionalPreparation !== null;
-  stopRegionalPreparation?.();
-  stopRegionalPreparation = null;
   ++presentationIntentEpoch;
   ++consentEpoch; // A pending info request may finish, but must never start a new form.
   disposeResultAds();
@@ -330,9 +300,9 @@ export async function settlePrivacyBeforeGameplay(): Promise<void> {
   if (presentation) {
     try { await presentation; } catch { /* Consent failure does not prevent playing. */ }
   }
-  // Gameplay cancels native-form ownership, but a saved region correction can
-  // still finish passive SDK preparation without opening anything over a run.
-  if (resumeRegionalPreparation && getProcessingAccess().ads.allowed && !adsReady) scheduleRegionalAdPreparation();
+  // An already-dispatched native initialization must settle before the camera
+  // mounts. Invalidated info requests cannot dispatch any further SDK work.
+  await Promise.allSettled([...nativeSdkSetup, ...(revenueCatInit ? [revenueCatInit] : [])]);
 }
 
 // Explicit result/rights/competition callers share native presentation ownership.
@@ -434,55 +404,57 @@ function prepareExistingMonetization(canPresent: () => boolean, requiredOnly = f
 /** A new effective policy may arrive while an older setup/form is finishing.
  * Resume once under the latest policy, but never retry an unchanged failure or
  * reopen privacy after a later game-entry/withdrawal invalidates this waiter. */
-function resumeAfterPreparation(pending: Promise<unknown>, ownedEpoch: number | null, canPresent: () => boolean, automatic = false, resumeExplicitly = false): Promise<void> {
+function resumeAfterPreparation(pending: Promise<unknown>, ownedEpoch: number | null, canPresent: () => boolean, fromMenu = false, resumeExplicitly = false): Promise<void> {
   const waitingEpoch = consentEpoch;
   return pending.catch(() => undefined).then(() => {
     if ((resumeExplicitly || (ownedEpoch !== null && ownedEpoch !== waitingEpoch)) && waitingEpoch === consentEpoch &&
       canPresent() && adEnvironment.isActive() && getProcessingAccess().ads.allowed && !adsReady) {
-      return preparePermittedMonetization(canPresent, automatic);
+      return preparePermittedMonetization(canPresent, fromMenu);
     }
   });
 }
 
-function preparePermittedMonetization(canPresent: () => boolean, automatic = false): Promise<void> {
-  // Analytics permission is independent of ad eligibility and UMP. This also
-  // covers loading this module after a permitted decision was already restored.
-  // Its own native fence/generation checks apply without delaying gameplay.
-  void initializeRevenueCat();
+function preparePermittedMonetization(canPresent: () => boolean, fromMenu = false): Promise<void> {
+  const intent = presentationIntentEpoch;
+  const current = () => intent === presentationIntentEpoch && canPresent() && adEnvironment.isActive();
+  if (!current()) return Promise.resolve();
+  // Only an explicit menu/setup caller starts providers. Permission listeners
+  // may stop revoked processing, but cannot start work during a camera run.
+  void initializeRevenueCat(current);
   // A lobby focus change must not launch a second UMP form while the existing
   // settings request owns native presentation (or is checking its status).
-  if (privacyOptionsRequest) return resumeAfterPreparation(privacyOptionsRequest, privacyOptionsEpoch, canPresent, automatic);
-  if (init) return resumeAfterPreparation(init, initEpoch, canPresent, automatic, !automatic && initAutomatic);
-  if (privacyPresentation) return resumeAfterPreparation(privacyPresentation, privacyPresentationEpoch, canPresent, automatic);
+  if (privacyOptionsRequest) return resumeAfterPreparation(privacyOptionsRequest, privacyOptionsEpoch, canPresent, fromMenu);
+  if (init) return resumeAfterPreparation(init, initEpoch, canPresent, fromMenu, !fromMenu && initFromMenu);
+  if (privacyPresentation) return resumeAfterPreparation(privacyPresentation, privacyPresentationEpoch, canPresent, fromMenu);
   const access = getProcessingAccess();
-  if (!access.ads.allowed || (adsReady && (automatic || automaticallyPreparedEpoch === consentEpoch))) return Promise.resolve();
+  if (!access.ads.allowed || (adsReady && (fromMenu || menuPreparedEpoch === consentEpoch))) return Promise.resolve();
   const sdk = loadAdsSdk();
   if (!sdk) return Promise.resolve();
   setAdsReady(false); // Revalidate prior permission before any new request.
   disposeResultAds();
   const epoch = consentEpoch;
   initEpoch = epoch;
-  initAutomatic = automatic;
+  initFromMenu = fromMenu;
   init = (async () => {
     try {
       const info = await bounded(sdk.AdsConsent.requestInfoUpdate({ tagForUnderAgeOfConsent: access.ads.underAgeOfConsent }));
-      if (!currentAdPermission(epoch)) return;
+      if (!currentAdPermission(epoch) || !current()) return;
       publishPrivacyRequirement(info.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED);
       await settleResultPresentations();
-      if (!currentAdPermission(epoch) || !canPresent() || !adEnvironment.isActive()) return;
-      const consent = automatic ? info : await presentPrivacy(() => sdk.AdsConsent.loadAndShowConsentFormIfRequired());
-      if (!currentAdPermission(epoch)) return;
+      if (!currentAdPermission(epoch) || !current()) return;
+      const consent = fromMenu ? info : await presentPrivacy(() => sdk.AdsConsent.loadAndShowConsentFormIfRequired());
+      if (!currentAdPermission(epoch) || !current()) return;
       publishPrivacyRequirement(consent.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED);
       if (!consent.canRequestAds) { setAdsReady(false); return; }
       // UMP does not forward TFUA to the ad SDK. Google maps under-consent-age
       // treatment to CHILD; TEEN alone does not provide those protections.
       // No IDFA collection, personalized requests, health or competition attributes.
-      await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: (access.ads.underAgeOfConsent ? 'child' : access.ads.treatment) as AgeRestrictedTreatment }));
-      if (!currentAdPermission(epoch)) return;
-      void initializeRevenueCat();
-      await bounded(sdk.default().initialize());
-      if (currentAdPermission(epoch)) {
-        automaticallyPreparedEpoch = automatic ? epoch : null;
+      await bounded(trackNativeSdkSetup(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: (access.ads.underAgeOfConsent ? 'child' : access.ads.treatment) as AgeRestrictedTreatment })));
+      if (!currentAdPermission(epoch) || !current()) return;
+      void initializeRevenueCat(current);
+      await bounded(trackNativeSdkSetup(sdk.default().initialize()));
+      if (currentAdPermission(epoch) && current()) {
+        menuPreparedEpoch = fromMenu ? epoch : null;
         setAdsReady(true);
       }
     } catch {
@@ -508,7 +480,8 @@ export function showAdPrivacyOptions(canPresent: () => boolean = () => true): Pr
 }
 
 async function openAdPrivacyOptions(canPresent: () => boolean): Promise<void> {
-  ++presentationIntentEpoch;
+  const intent = ++presentationIntentEpoch;
+  const current = () => intent === presentationIntentEpoch && canPresent() && adEnvironment.isActive();
   if (!adEnvironment.isActive() || !canPresent()) return;
   if (privacyPresentation) { await privacyPresentation; return; }
   setAdsReady(false);
@@ -541,16 +514,16 @@ async function openAdPrivacyOptions(canPresent: () => boolean): Promise<void> {
     }
     if (epoch !== consentEpoch) return;
     publishPrivacyRequirement(consent.required);
-    if (consent.canRequestAds && currentAdPermission(epoch)) {
+    if (consent.canRequestAds && currentAdPermission(epoch) && current()) {
       const sdk = loadAdsSdk();
       if (!sdk) return;
       const access = getProcessingAccess();
       // Reapply the independent age/processing policy before any initialization.
-      await bounded(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: (access.ads.underAgeOfConsent ? 'child' : access.ads.treatment) as AgeRestrictedTreatment }));
-      if (!currentAdPermission(epoch)) return;
-      void initializeRevenueCat();
-      await bounded(sdk.default().initialize());
-      if (currentAdPermission(epoch)) setAdsReady(true);
+      await bounded(trackNativeSdkSetup(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: (access.ads.underAgeOfConsent ? 'child' : access.ads.treatment) as AgeRestrictedTreatment })));
+      if (!currentAdPermission(epoch) || !current()) return;
+      void initializeRevenueCat(current);
+      await bounded(trackNativeSdkSetup(sdk.default().initialize()));
+      if (currentAdPermission(epoch) && current()) setAdsReady(true);
     }
   } catch {
     throw new Error('Ad privacy settings could not open. Please try again when online.');
@@ -580,30 +553,6 @@ function track(kind: RevenueCatTestDiagnosticKind, impressionId: string, send: (
     revenueCatTestDiagnostics.record({ kind, generation: epoch, appUserID: revenueCatDiagnosticIdentity, impressionId });
     return sent;
   }).catch(() => undefined);
-}
-
-/** Keep this result's reference current if setup changes eligibility after it
- * appears. Loading/presentation timing and the result scheduler are unchanged. */
-export function prepareResultAdOpportunity(): ReadyInterstitial {
-  let disposed = false;
-  let ad: ReadyInterstitial | null = null;
-  const refresh = () => {
-    if (disposed) return;
-    if (!adsReady) { ad?.dispose(); ad = null; }
-    else if (!ad) ad = prepareResultInterstitial();
-  };
-  adReadinessListeners.add(refresh);
-  refresh();
-  return {
-    isReady: () => ad?.isReady() === true,
-    show: callbacks => ad ? ad.show(callbacks) : Promise.resolve(callbacks.failed()),
-    dispose: () => {
-      disposed = true;
-      adReadinessListeners.delete(refresh);
-      ad?.dispose();
-      ad = null;
-    },
-  };
 }
 
 export function prepareResultInterstitial(): ReadyInterstitial | null {

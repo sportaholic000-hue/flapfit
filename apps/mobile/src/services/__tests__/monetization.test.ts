@@ -314,6 +314,7 @@ test('analytics can be granted later while an existing eligible ad remains ready
   const f = loadAdapter({ rcAllowed: false }); await f.adapter.prepareMonetization(() => true);
   const ad = f.adapter.prepareResultInterstitial()!; f.events.get('loaded')!();
   f.changeAccess({ revenueCat: { allowed: true } });
+  await f.adapter.refreshMonetizationFromChoices(() => true);
   for (let i = 0; i < 16; i++) await Promise.resolve();
   expect(ad.isReady()).toBe(true); expect(f.purchases.configure).toHaveBeenCalledTimes(1);
   f.events.get('paid')!({ value: 0.5, currency: 'CAD', precision: 3 }); await Promise.resolve();
@@ -326,6 +327,7 @@ test('withdrawal followed by a later grant does not replay old queued events', a
   f.adapter.prepareResultInterstitial(); f.events.get('loaded')!();
   f.changeAccess({ revenueCat: { allowed: false } }); await f.adapter.settleRevenueCatWithdrawal();
   f.changeAccess({ revenueCat: { allowed: true } });
+  await f.adapter.refreshMonetizationFromChoices(() => true);
   for (let i = 0; i < 16; i++) await Promise.resolve();
   expect(f.tracker.trackAdLoaded).not.toHaveBeenCalled(); expect(f.nativeFence).toHaveBeenLastCalledWith(true);
   f.events.get('paid')!({ value: 0.1, currency: 'USD', precision: 3 }); await Promise.resolve();
@@ -397,6 +399,7 @@ test('withdrawal during a configured SDK re-grant requires a native stop acknowl
     ? new Promise<boolean>((done) => { grant = done; })
     : Promise.resolve(false));
   f.changeAccess({ revenueCat: { allowed: true } });
+  await f.adapter.refreshMonetizationFromChoices(() => true);
   for (let i = 0; i < 8; i++) await Promise.resolve();
   expect(grant).toBeDefined();
   f.changeAccess({ revenueCat: { allowed: false } });
@@ -417,6 +420,7 @@ test('an uncertain native re-grant is closed again before reporting can resume',
     ? Promise.reject(new Error('enable acknowledgement lost'))
     : Promise.resolve(false));
   f.changeAccess({ revenueCat: { allowed: true } });
+  await f.adapter.refreshMonetizationFromChoices(() => true);
   for (let i = 0; i < 16; i++) await Promise.resolve();
   expect(f.nativeFence).toHaveBeenLastCalledWith(false);
   expect((await f.adapter.settleRevenueCatWithdrawal()).state).toBe('failed');
@@ -872,6 +876,7 @@ test('withdrawal rejects queued diagnostic dispatch and a stale identity result 
   expect(ad.isReady()).toBe(true); expect(diagnosticConsole).not.toHaveBeenCalled();
   f.cachedIdentity.mockResolvedValue('$RCAnonymousID:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
   f.changeAccess({ revenueCat: { allowed: true } });
+  await f.adapter.refreshMonetizationFromChoices(() => true);
   for (let i = 0; i < 12; ++i) await Promise.resolve();
   resolveIdentity('$RCAnonymousID:0123456789abcdef0123456789abcdef');
   for (let i = 0; i < 6; ++i) await Promise.resolve();
@@ -910,49 +915,74 @@ test.each([true, false])('a privacy row becoming NOT_REQUIRED preserves current 
 
 
 
-test('an existing result picks up SDK readiness restored after it first appeared', async () => {
-  const f = loadAdapter({ adsAllowed: false });
-  const ad = f.adapter.prepareResultAdOpportunity();
-  expect(ad.isReady()).toBe(false);
-  f.changeAccess({ ads: { ...f.getAccess().ads, allowed: true } });
-  await f.adapter.prepareMonetization(() => true);
-  expect(f.nativeAd.load).toHaveBeenCalledTimes(1);
-  expect(f.nativeAd.show).not.toHaveBeenCalled();
-  f.events.get('loaded')!(); expect(ad.isReady()).toBe(true);
-  ad.dispose();
-});
-
-test.each(['error', 'withdrawal', 'unmount'] as const)('a refreshed result rejects a late load after %s', async outcome => {
-  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
-  const ad = f.adapter.prepareResultAdOpportunity();
-  if (outcome === 'error') f.events.get('error')!();
-  if (outcome === 'withdrawal') f.changeAccess({ ads: { ...f.getAccess().ads, allowed: false } });
-  if (outcome === 'unmount') ad.dispose();
-  f.events.get('loaded')!(); expect(ad.isReady()).toBe(false);
-  expect(f.nativeAd.show).not.toHaveBeenCalled(); ad.dispose();
-});
-
-test('an unloaded refreshed opportunity never delays a result action or shows after navigation', async () => {
-  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
-  f.adapter.resultAdGate.createResult(null, f.adapter.adEnvironment).exit(false, jest.fn());
-  const ad = f.adapter.prepareResultAdOpportunity();
-  const result = f.adapter.resultAdGate.createResult(ad, f.adapter.adEnvironment);
-  const action = jest.fn(); result.exit(false, action);
-  expect(action).toHaveBeenCalledTimes(1);
-  f.events.get('loaded')!(); expect(f.nativeAd.show).not.toHaveBeenCalled();
-});
-
-
-test.each([false, true])('regional preparation respects foreground and a newer restriction (restricted=%s)', async restricted => {
-  const f = loadAdapter({ adsAllowed: false });
-  f.changeState('background');
-  Object.assign(f.privacyInput, { launch: { country: 'CA', options: { quebecResidency: 'not-resident' } } });
-  f.changeAccess({ ads: { ...f.getAccess().ads, allowed: true } });
-  for (let i = 0; i < 20; i++) await Promise.resolve();
-  expect(f.sdk.AdsConsent.requestInfoUpdate).not.toHaveBeenCalled();
-  if (restricted) f.changeAccess({ ads: { ...f.getAccess().ads, allowed: false } });
-  f.changeState('active');
-  for (let i = 0; i < 60; i++) await Promise.resolve();
-  expect(f.mobileAds.initialize).toHaveBeenCalledTimes(restricted ? 0 : 1);
+test('policy changes alone never start Google or RevenueCat, including on foreground', async () => {
+  const f = loadAdapter({ adsAllowed: false, rcAllowed: false });
+  f.changeAccess({ ads: { ...f.getAccess().ads, allowed: true }, revenueCat: { allowed: true } });
+  f.changeState('background'); f.changeState('active');
+  for (let i = 0; i < 30; i++) await Promise.resolve();
+  expect(f.nativeLoad).not.toHaveBeenCalled(); expect(f.purchasesLoad).not.toHaveBeenCalled();
+  await f.adapter.refreshMonetizationFromChoices(() => true);
+  expect(f.mobileAds.initialize).toHaveBeenCalledTimes(1);
+  expect(f.purchases.configure).toHaveBeenCalledTimes(1);
   expect(f.sdk.AdsConsent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
+  expect(f.nativeAd.load).not.toHaveBeenCalled();
+});
+
+test.each(['blur', 'background', 'game'] as const)('menu preparation cannot initialize SDKs after %s', async reason => {
+  const f = loadAdapter({ rcAllowed: false }); let focused = true;
+  let release!: (value: typeof f.consent) => void;
+  f.sdk.AdsConsent.requestInfoUpdate.mockReturnValueOnce(new Promise(resolve => { release = resolve; }));
+  const pending = f.adapter.refreshMonetizationFromChoices(() => focused);
+  if (reason === 'blur') focused = false;
+  if (reason === 'background') f.changeState('background');
+  if (reason === 'game') await f.adapter.settlePrivacyBeforeGameplay();
+  release(f.consent); await pending;
+  f.changeState('active');
+  for (let i = 0; i < 30; i++) await Promise.resolve();
+  expect(f.sdk.AdsConsent.requestInfoUpdate).toHaveBeenCalledTimes(1);
+  expect(f.sdk.AdsConsent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
+  expect(f.mobileAds.initialize).not.toHaveBeenCalled(); expect(f.purchasesLoad).not.toHaveBeenCalled();
+  expect(f.nativeAd.load).not.toHaveBeenCalled();
+});
+
+test.each(['setRequestConfiguration', 'initialize'] as const)('camera entry drains an already-dispatched native %s without restarting setup', async method => {
+  const f = loadAdapter({ rcAllowed: false });
+  let release!: () => void;
+  f.mobileAds[method].mockReturnValueOnce(new Promise<void>(resolve => { release = resolve; }));
+  const pending = f.adapter.refreshMonetizationFromChoices(() => true);
+  for (let i = 0; i < 30; i++) await Promise.resolve();
+  expect(f.mobileAds[method]).toHaveBeenCalledTimes(1);
+  const camera = jest.fn(); const entry = f.adapter.settlePrivacyBeforeGameplay().then(camera);
+  for (let i = 0; i < 30; i++) await Promise.resolve();
+  expect(camera).not.toHaveBeenCalled();
+  release(); await Promise.all([pending, entry]);
+  expect(camera).toHaveBeenCalledTimes(1);
+  expect(f.mobileAds.initialize).toHaveBeenCalledTimes(method === 'initialize' ? 1 : 0);
+  expect(f.adapter.isMonetizationPrepared()).toBe(false);
+});
+
+test('game entry cancels a pending RevenueCat grant before configure', async () => {
+  const f = loadAdapter({ adsAllowed: false });
+  let grant!: (value: boolean) => void;
+  f.nativeFence.mockImplementation(allowed => allowed ? new Promise<boolean>(resolve => { grant = resolve; }) : Promise.resolve(true));
+  await f.adapter.refreshMonetizationFromChoices(() => true);
+  for (let i = 0; i < 10; i++) await Promise.resolve();
+  const camera = jest.fn(); const entry = f.adapter.settlePrivacyBeforeGameplay().then(camera);
+  grant(true); await entry;
+  expect(camera).toHaveBeenCalledTimes(1); expect(f.purchases.configure).not.toHaveBeenCalled();
+  expect(f.nativeFence).toHaveBeenLastCalledWith(false);
+});
+
+test('a menu refresh respects Google denial and can retry after a failed request', async () => {
+  const f = loadAdapter({ rcAllowed: false });
+  f.consent.canRequestAds = false;
+  await f.adapter.refreshMonetizationFromChoices(() => true);
+  expect(f.mobileAds.initialize).not.toHaveBeenCalled();
+  f.sdk.AdsConsent.requestInfoUpdate.mockRejectedValueOnce(new Error('offline'));
+  await f.adapter.refreshMonetizationFromChoices(() => true);
+  expect(f.adapter.isMonetizationPrepared()).toBe(false);
+  f.consent.canRequestAds = true;
+  await f.adapter.refreshMonetizationFromChoices(() => true);
+  expect(f.adapter.isMonetizationPrepared()).toBe(true);
+  expect(f.nativeAd.load).not.toHaveBeenCalled();
 });

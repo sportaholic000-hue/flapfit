@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from '
 import { Alert, Linking, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RELEASE_LINKS } from '@/config/release';
+import { refreshMonetizationFromChoices } from '@/services/monetization';
 import { CANADIAN_PROVINCES_AND_TERRITORIES, ResidencyDropdown, US_STATES_AND_TERRITORIES } from './residency-dropdown';
 import {
   connecticutClarificationStatus, hasConnecticutClarificationControl, getSavedConnecticutResidency, getSavedQuebecResidency,
@@ -52,7 +53,11 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
   const action = async (operation: () => Promise<void>) => {
     if (busy || !current()) return;
     setBusy(true);
-    try { await operation(); if (mounted.current) refresh(n => n + 1); }
+    try {
+      await operation();
+      if (mounted.current) refresh(n => n + 1);
+      if (current()) await refreshMonetizationFromChoices(current);
+    }
     catch (error) { if (current()) Alert.alert('Privacy choice not confirmed', error instanceof Error ? error.message : 'Please try again.'); }
     finally { if (mounted.current) setBusy(false); }
   };
