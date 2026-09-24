@@ -11,7 +11,8 @@ const appJson = require('../app.config.js')({ config: baseAppJson });
 const easJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'eas.json'), 'utf8'));
 const mobilePackage = JSON.parse(fs.readFileSync(path.join(appRoot, 'package.json'), 'utf8'));
 const easIgnore = fs.readFileSync(path.join(repoRoot, '.easignore'), 'utf8');
-const failures = [];
+const { validateUpdateConfig } = require('./validate-update-config.cjs');
+const failures = validateUpdateConfig(appRoot, 'production');
 
 function isPrivateOrReservedHostname(hostname) {
   const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');

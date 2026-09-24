@@ -3,6 +3,8 @@
 // for the application's country lookup and patched RevenueCat ad integration.
 // It declares existing collection, not new permissions or transport.
 const purposesByType = new Map([
+  // EAS Update sends an app-installation identifier for update delivery.
+  ['DeviceID', ['AppFunctionality']],
   ['UserID', ['AppFunctionality', 'Analytics']],
   ['GameplayContent', ['AppFunctionality']],
   ['Fitness', ['AppFunctionality']],

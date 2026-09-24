@@ -5,6 +5,15 @@
     "owner": "flapfitapp",
     "scheme": "flapfit",
     "version": "1.0.0",
+    "runtimeVersion": { "policy": "fingerprint" },
+    "updates": {
+      "enabled": true,
+      "url": "https://u.expo.dev/bbbfea4f-3047-46f6-a5ba-6286356e4718",
+      "checkAutomatically": "NEVER",
+      "fallbackToCacheTimeout": 0,
+      "useEmbeddedUpdate": true,
+      "disableAntiBrickingMeasures": false
+    },
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "ios": {
@@ -40,6 +49,12 @@
           }
         ],
         "NSPrivacyCollectedDataTypes": [
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeDeviceID",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+          },
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeUserID",
             "NSPrivacyCollectedDataTypeLinked": true,

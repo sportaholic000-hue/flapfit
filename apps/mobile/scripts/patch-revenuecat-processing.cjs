@@ -181,11 +181,8 @@ function patchPods(podsRoot,resolvedVersions){
  return changes.length;
 }
 
-function patchBridge(projectRoot){
- const packageFile=require.resolve('react-native-purchases/package.json',{paths:[projectRoot]});
- if(JSON.parse(fs.readFileSync(packageFile,'utf8')).version!=='10.9.1')throw Error('Consent bridge requires react-native-purchases 10.9.1');
- const file=path.join(path.dirname(packageFile),'ios/RNPurchases.m');let source=fs.readFileSync(file,'utf8');
- if(source.includes('flapFitSetNetworkPaused')){if(hash(source)!=='c303c99f7055c179aa1285ab70b20ac5263033743efbd63a21566566bee5b2f1')throw Error('Modified RN consent bridge');return;}
+function patchBridgeSource(source){
+ if(source.includes('flapFitSetNetworkPaused')){if(hash(source)!=='c303c99f7055c179aa1285ab70b20ac5263033743efbd63a21566566bee5b2f1')throw Error('Modified RN consent bridge');return source;}
  const upgrading = hash(source)==='b5ddd8cee3a5d9961387410fe7b0db5c6b81efd8fb04165224b3248b40b66870';
  if(!upgrading && hash(source)!=='0580cbe71082f44919b0c8eb79504cde48157f2194e34c5ad6bdf7ae1bc1710a')throw Error('RN Purchases consent bridge source drift');
  if(!upgrading) source=one(source,'RCT_EXPORT_MODULE();',`RCT_EXPORT_MODULE();
@@ -206,10 +203,18 @@ RCT_EXPORT_METHOD(flapFitSetProcessingAllowed:(BOOL)allowed
 `);
  source=one(source,'RCT_EXPORT_MODULE();','RCT_EXPORT_MODULE();\n'+"\n// Exercise pause is separate from withdrawal: it never deletes stored events.\nRCT_EXPORT_METHOD(flapFitSetNetworkPaused:(BOOL)paused\n                  resolver:(RCTPromiseResolveBlock)resolve\n                  rejecter:(RCTPromiseRejectBlock)reject) {\n    Class gate = NSClassFromString(@\"FFRevenueCatProcessingGate\");\n    SEL selector = NSSelectorFromString(@\"setNetworkPaused:\");\n    if (!gate || ![gate respondsToSelector:selector]) {\n        reject(@\"flap_fit_network_pause_missing\", @\"RevenueCat network pause missing\", nil);\n        return;\n    }\n    BOOL (*apply)(id, SEL, BOOL) = (BOOL (*)(id, SEL, BOOL))[gate methodForSelector:selector];\n    resolve(@(apply(gate, selector, paused)));\n}\n");
  if(hash(source)!=='c303c99f7055c179aa1285ab70b20ac5263033743efbd63a21566566bee5b2f1')throw Error('Unexpected RN consent bridge output');
- fs.writeFileSync(file,source);
+ return source;
 }
 
-module.exports={patchPods,patchBridge,transform,gate,sourceFiles:Object.keys(hashes)};
+function patchBridge(projectRoot){
+ const packageFile=require.resolve('react-native-purchases/package.json',{paths:[projectRoot]});
+ if(JSON.parse(fs.readFileSync(packageFile,'utf8')).version!=='10.9.1')throw Error('Consent bridge requires react-native-purchases 10.9.1');
+ const file=path.join(path.dirname(packageFile),'ios/RNPurchases.m');let source=fs.readFileSync(file,'utf8');
+ const result=patchBridgeSource(source);
+ if(result!==source)fs.writeFileSync(file,result);
+}
+
+module.exports={patchPods,patchBridge,patchBridgeSource,transform,gate,sourceFiles:Object.keys(hashes)};
 if(require.main===module){
  let versions;
  try{versions=JSON.parse(process.argv[3]??'null');}catch{throw Error('RevenueCat consent fence requires CocoaPods resolved-version JSON');}

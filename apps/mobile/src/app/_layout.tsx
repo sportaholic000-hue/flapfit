@@ -4,6 +4,7 @@ import { startCompetitionForegroundRetry } from '@/services/competitionApi';
 import { startRecordingCacheCleanup } from '@/services/recordingCache';
 import { startPrivacyStartup } from '@/services/privacy/privacyStartup';
 import { AppErrorBoundary } from '@/components/AppErrorBoundary';
+import { LaunchUpdateGate } from '@/components/LaunchUpdateGate';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { Stack } from 'expo-router';
@@ -58,7 +59,9 @@ export default function RootLayout() {
     <AppErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <GestureHandlerRootView style={styles.root}>
-          <Stack screenOptions={{ headerShown: false }} />
+          <LaunchUpdateGate>
+            <Stack screenOptions={{ headerShown: false }} />
+          </LaunchUpdateGate>
         </GestureHandlerRootView>
       </QueryClientProvider>
     </AppErrorBoundary>

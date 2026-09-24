@@ -21,7 +21,7 @@ Current implementation worksheet, September 19–20, 2026. Scope: Canada, United
 | Other User Content | AF | Yes | No | Online moderation reports, reasons and blocking records; associated account/result identifiers. |
 | Other Data Types | AF | Yes | No | Required Apple consent/revocation status, notification ID and timestamp linked to the hashed app-transaction identity; existing online account linkage where applicable. This is authorization administration, not advertising. |
 | Coarse Location | AF, TA, AN | Yes | N* | Country determination/consent administration and Google's IP-derived general location when eligible Google processing runs. Current network-country lookup uses the existing Cloudflare-hosted domain; trace IP/text is discarded in the app. No GPS permission or precise position. |
-| Device ID | TA, AN | Yes | N* | Google's documented app/developer-bound device identifiers. Do not remove this category merely because IDFA and publisher first-party ID are disabled. RevenueCat's IDFV header is separately removed. |
+| Device ID | AF, TA, AN | Yes | N* | Google's documented app/developer-bound device identifiers. Do not remove this category merely because IDFA and publisher first-party ID are disabled. RevenueCat's IDFV header is separately removed. EAS Update adds an app-installation identifier for update delivery (AF), without account, ad or workout identity mapping. |
 | Advertising Data | TA, AN | Yes | N* | Google ad delivery/measurement; independently permitted RevenueCat ad load, impression, click, failure and actual paid-impression reporting. |
 | Product Interaction | AF, TA, AN | Yes | N* | Google/UMP interactions and consent-function operation; permitted RevenueCat ad interaction events. No workout telemetry is attached. |
 | Crash Data | AF, TA, AN | No | No | Google's non-user-related SDK crash information. RevenueCat diagnostic collection is disabled. |
@@ -60,3 +60,10 @@ Store 103c8936, source c05f497, was inspected on September 20. All 15 manifest s
 ## Native declaration correction checkpoint
 
 The twelve-category saved draft is unchanged. Source f168286d supplements the app-owned native manifest for existing authorization records, backend diagnostics, country lookup and permitted ads-only reporting. No camera/video/audio upload or new runtime collection was added. Build 4 lacks this correction; prior manifest equality did not prove completeness. See evidence/privacy-manifest-reconciliation-2026-09-20.md. Final native/report reconciliation and publication remain open.
+
+
+## September 24 OTA setup supplement (not yet shipped)
+
+The next candidate adds Expo EAS Update. Its native updater sends an installation-scoped random EAS-Client-ID, OS/platform and update/runtime information to Expo during the launch-only check and approved download. Ordinary network requests also expose IP addresses to the service. No camera, recording, fitness, leaderboard handle or advertising identifier is attached by this integration. Existing Device ID disclosure needs **App Functionality** added; keep the existing combined linked Yes / tracking No answers. App-level native Device ID / App Functionality declaration is included in the candidate. No App Store Connect privacy answer or public website has been changed during this source review. Publish the reviewed policy supplement and reconcile the final binary before App Store submission.
+
+Provider evidence: https://expo.dev/privacy and the installed expo-updates FileDownloader.swift EAS-Client-ID header. Proposed policy copy: ota-privacy-supplement-2026-09-24.md.
