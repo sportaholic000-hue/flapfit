@@ -26,7 +26,8 @@ caches/
 
 Dockerfile
 docker-compose.test.yml
-README.md
+# Keep nested native-module documentation identical to local fingerprint inputs.
+/README.md
 .dockerignore
 .eslintignore
 .gitignore

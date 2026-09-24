@@ -1,0 +1,26 @@
+[
+  {
+    "name": "ota-config",
+    "startedAt": "2026-09-24T15:32:46.281Z",
+    "finishedAt": "2026-09-24T15:32:46.857Z",
+    "exitCode": 0
+  },
+  {
+    "name": "fingerprint-discovery",
+    "startedAt": "2026-09-24T15:32:46.873Z",
+    "finishedAt": "2026-09-24T15:32:47.708Z",
+    "exitCode": 0
+  },
+  {
+    "name": "production-config",
+    "startedAt": "2026-09-24T15:32:47.711Z",
+    "finishedAt": "2026-09-24T15:32:48.359Z",
+    "exitCode": 0
+  },
+  {
+    "name": "full-mobile-suite",
+    "startedAt": "2026-09-24T15:32:48.362Z",
+    "finishedAt": "2026-09-24T15:40:23.575Z",
+    "exitCode": 0
+  }
+]

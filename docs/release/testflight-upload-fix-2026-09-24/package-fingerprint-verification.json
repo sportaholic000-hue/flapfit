@@ -1,0 +1,20 @@
+{
+  "verifiedAt": "2026-09-24T15:31:55.909Z",
+  "baselineCommit": "0685f0cbd60376b4cbfe347919452e5b05aa9aaa",
+  "failedBuild": "c245cd98-21d8-470d-ade8-41d23acc2c18",
+  "omittedBefore": [
+    "apps/mobile/modules/flap-fit-age-range/README.md"
+  ],
+  "omittedAfter": [],
+  "actualAppOwnedSourcesRehashed": 14,
+  "sourceFileLeavesChecked": 34,
+  "originalModuleHash": "785c3c21bc1cc4a7026665bbe1678e48ed57714c",
+  "cloudModuleHash": "3358308e143615f2511a4291496fdb3a62aaf5e4",
+  "fixedModuleHash": "785c3c21bc1cc4a7026665bbe1678e48ed57714c",
+  "localRuntime": "469f66ace28d0ea7661bb8681b0239739f8b3955",
+  "reproducedCloudRuntime": "62074572e44990f682a88586f9ff6c395e271800",
+  "fixedRuntime": "469f66ace28d0ea7661bb8681b0239739f8b3955",
+  "nullHashDirectoriesAffectRuntime": false,
+  "actualEasMatcherPassed": true,
+  "nativeCompatibilityInputsUnchanged": true
+}
