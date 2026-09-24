@@ -1,0 +1,8 @@
+➤ YN0000: · Yarn 4.12.0
+➤ YN0000: ┌ Resolution step
+➤ YN0000: └ Completed in 1s 784ms
+➤ YN0000: ┌ Fetch step
+➤ YN0000: └ Completed in 12s 977ms
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed in 3s 333ms
+➤ YN0000: · Done in 19s 198ms

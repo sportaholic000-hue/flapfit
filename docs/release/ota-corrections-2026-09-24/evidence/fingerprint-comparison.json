@@ -1,0 +1,1120 @@
+{
+  "codeCommit": "ef158656019c8f371055a6fea47813464e160a0f",
+  "windows": {
+    "node": "v24.13.1",
+    "runtimeVersion": "469f66ace28d0ea7661bb8681b0239739f8b3955",
+    "sourceCount": 110
+  },
+  "linux": {
+    "node": "v22.22.1",
+    "runtimeVersion": "469f66ace28d0ea7661bb8681b0239739f8b3955",
+    "sourceCount": 110
+  },
+  "runtimeVersionsEqual": true,
+  "sourceSetsEqual": true,
+  "scope": "Actual Windows and Linux (Ubuntu WSL) Node processes on the same checkout and installed dependency tree. macOS path semantics tested with installed-loader fixture; no macOS native build.",
+  "windowsSources": [
+    {
+      "type": "contents",
+      "id": "expoAutolinkingConfig:ios",
+      "hash": "7db08789cc63529f6de2e3c7b27091c28de9ab1b"
+    },
+    {
+      "type": "contents",
+      "id": "expoConfig",
+      "hash": "7c4b1f6885e83ee8a0380b10d6eef71ad82d2f59"
+    },
+    {
+      "type": "contents",
+      "id": "package:react-native",
+      "hash": "5daa7488a908db259123c42bef9940b1257840d2"
+    },
+    {
+      "type": "contents",
+      "id": "packageJson:scripts",
+      "hash": "9c365318cae1f7ab1f590fb3cbb9140ca8ea2fab"
+    },
+    {
+      "type": "contents",
+      "id": "rncoreAutolinkingConfig:ios",
+      "hash": "673164d9c18997c478827594bc97a236687f0661"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../.yarn/patches",
+      "hash": "8cfba54b9aced9c6f15cdd4c66367c64040b67c2"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@expo/dom-webview/ios",
+      "hash": "4d48dc124ae5cc01f46b188d0e2a6838d81c5634"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@expo/log-box",
+      "hash": "55668dd6b8492dcaa9b53415f3156e494805da47"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@expo/ui/ios",
+      "hash": "f177503253abec563364dfeedc4587959caf5313"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@react-native-async-storage/async-storage",
+      "hash": "445e4d4162b8e7d46bf8d1a8f9b012336388b0be"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@react-native-masked-view/masked-view",
+      "hash": "b7bc27de23ba01de8e9c8a4e566902fd2ba7716e"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-asset/ios",
+      "hash": "a02ec7095620de37d92fb687b67093c27271e968"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-camera/ios",
+      "hash": "1553d359a177b1a973e7682da16b0012844cfc97"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-constants/ios",
+      "hash": "9f78b13740c18516871f6f7107b39062ebf34155"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-crypto/ios",
+      "hash": "310061c863088330f22e0625d86eef10ea946f2f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-eas-client/ios",
+      "hash": "e5c55d29481bad2b1bf52444d02023b65e042ecb"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-file-system/ios",
+      "hash": "d001896c548c35f3a37f1c631a6eec90108df7d6"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-font/ios",
+      "hash": "b3112b944547ec30ce41a9a238895fcc8fcc5cbe"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-glass-effect/ios",
+      "hash": "315a415f8324294379a9a3a65cbd1af3a7a4bf1c"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-haptics/ios",
+      "hash": "05cfd7b73c33be4c5901cde3b1daaa954eb7bd2a"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-image/ios",
+      "hash": "cef4da801905c63cd71f26040b9144efd89b9edb"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-json-utils/ios",
+      "hash": "1dca292e9d17d995b96380c51d1b4f9649ea90cc"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-keep-awake/ios",
+      "hash": "308756f24d69fb0946e33d9fc2875a30b5080f1f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-linear-gradient/ios",
+      "hash": "1aba8dc2bd80c8e2b29900f6c466a6da2d411083"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-linking/ios",
+      "hash": "9e2301064a2fb9d206404f3343c1e4f345a9e00b"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-mail-composer/ios",
+      "hash": "16df09d5be32a4870e99231b081eac4ec51bca7f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-manifests/ios",
+      "hash": "d8babe08891f9cd6e38f88ae0b16cb307d4a033d"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-modules-core",
+      "hash": "084b8e7671bf664b8d1bde1d01f7df217ecc6efe"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-modules-jsi/apple",
+      "hash": "26415733e6adc70b75dd14ca653ff72be2d59ebe"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-router/ios",
+      "hash": "2155412a7ec6652c6775641b6f5d5670dcfc4149"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-sharing/ios",
+      "hash": "95db490026d6b5934f43a65560a5dfff01d10ac5"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-sms/ios",
+      "hash": "cd30ac3b833679153248d7de30c3bcbfd1ca3dd9"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-splash-screen/ios",
+      "hash": "b2164201222a0d23a9514b89277040af3f76b3f9"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-structured-headers/ios",
+      "hash": "22b986ba2277ea598a052895f0d6b0363e507f10"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-symbols/ios",
+      "hash": "ecf6f8945784095fac7fbfc90349dc4a96799c4f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-updates-interface/ios",
+      "hash": "8cfa1f4c5f1e2f4baccd9581eae09e7014e905f4"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-updates/ios",
+      "hash": "572a3c7dc1f1f7046ded27cef9660cf22db8c08a"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo",
+      "hash": "69cf9fec48686e47a740874d8f8ca8be9abacf91"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-gesture-handler",
+      "hash": "9aa09bb052b4c61018c0af748cb420639f45371a"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-google-mobile-ads",
+      "hash": "3479c89ac1d4205e95c5c67c17e30982e746ffd2"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-purchases",
+      "hash": "c14454d900ebfad69a3656af11d044140bbda775"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-reanimated",
+      "hash": "110a71342a0a91418e3c1deea83cf75b9672ab27"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-safe-area-context",
+      "hash": "db25f0bb768646def313880906af81fc7adf6ec2"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-screens",
+      "hash": "117f5692c0309dd0f2c85218ab665bfea78f46ed"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-svg",
+      "hash": "1bd6b27d12b32ff685e145555bc891fafc702178"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-webview",
+      "hash": "be97e61bce6acaf61102f4be5c67fd4890fb5e93"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-worklets",
+      "hash": "922e9a096d3f699ea749328ca6ab257dd7185d12"
+    },
+    {
+      "type": "dir",
+      "filePath": "modules",
+      "hash": "785c3c21bc1cc4a7026665bbe1678e48ed57714c"
+    },
+    {
+      "type": "dir",
+      "filePath": "patches",
+      "hash": null
+    },
+    {
+      "type": "dir",
+      "filePath": "plugins",
+      "hash": "bb056385bfd47e40e867580c0ce64fbfe7cbd87c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/bplist-parser/bplistParser.js",
+      "hash": "8dd6044d0f1f93c53d0caf2a6a1196447c6cd14e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/app.plugin.js",
+      "hash": "313335233da02c3e328386cea03147364ddf8b9a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/package.json",
+      "hash": "84a26458088a6acc749006bd1c540bfdffa250fe"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/AssetContents.js",
+      "hash": "df91c085d9b4f33d1d2209a11790abe9d7137932"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/utils.js",
+      "hash": "fd6d06e35a66443d8be510d238412c46763de957"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/withAssets.js",
+      "hash": "ebf01b3030cd7f503d56508a257bc5253455f991"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/withAssetsAndroid.js",
+      "hash": "f34f16c947921346ca976b4ca706fd7fea7c250f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/withAssetsIos.js",
+      "hash": "83f4b3c97e91c072b7b62c31c25482e23ca0cb45"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/app.plugin.js",
+      "hash": "1a5d7672b16206ac757b118553974288c4bb3e13"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/android.js",
+      "hash": "37bf0574c11a22625bf648160f2ff90ccc2c3a66"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/androidPCHTemplates.js",
+      "hash": "99e750f6035b1641367387009ef70a44dc4d05cd"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/androidQueryUtils.js",
+      "hash": "c26bb466fb10a7a1f0d942f37dd00dc7ad9f4dfb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/fileContentsUtils.js",
+      "hash": "b260a8fc9f25a782de3de950382fe95bb65a7e5c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/ios.js",
+      "hash": "8d7fad14761e085ddea590072f75d5c3b0b42150"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/iosSceneSupport.js",
+      "hash": "03b83c469124ef0291ee938c588789133490b11c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/pluginConfig.js",
+      "hash": "3bc8fa1638c6a09b614677d385c642df57ca828a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/withBuildProperties.js",
+      "hash": "596f8763b66614ed807c4de51b5e61cc59185ed6"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-camera/app.plugin.js",
+      "hash": "97829cec51735c51890c05a80acd06fdae8d6d19"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-camera/package.json",
+      "hash": "f7d5e4237240020d72083d5c39015f403f34fdd2"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-camera/plugin/build/withCamera.js",
+      "hash": "ddf6c3285f977ba5318100b73690a9757533f025"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-image/app.plugin.js",
+      "hash": "877b5d26e325699de339200ffaa336311d1cda29"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-image/package.json",
+      "hash": "f7583e2ac9fd5e286a3bf02575ce15b2696f1a34"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-image/plugin/build/withExpoImage.js",
+      "hash": "8dde7024f9ad52d4f0c68b3a7b60306e67f334ca"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-router/app.plugin.js",
+      "hash": "94d2a78cd11a7d7e3a2f62ddac4062e7f620c476"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-router/plugin/build/withRouter.js",
+      "hash": "be4dd04f11885d27e2d2297587b7de68bd3b428e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-router/plugin/options.json",
+      "hash": "140d48a5f5bfd20c423ff22679407e85fa91139d"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/app.plugin.js",
+      "hash": "a1ee5d63c270f7ea390eebdf723274d81e921353"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/package.json",
+      "hash": "95b5c7e829d533cada934c5996305102a885f7dd"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/getAndroidSplashConfig.js",
+      "hash": "b792b053b075a67a02a8babfdaa4586d730cafdf"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/getIosSplashConfig.js",
+      "hash": "53b499c7282d4cb1af5de9b4999664aaabd45db6"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/InterfaceBuilder.js",
+      "hash": "fca3de39f55cf3b55b77321aedcbbcfb962ab91e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashDrawables.js",
+      "hash": "df56688bede02033dfbf5c6168b057f84ef54f4b"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashImages.js",
+      "hash": "576605c31519fa9684cbaf683cd77869452217c0"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashMainActivity.js",
+      "hash": "886a7a34b57f747cee430a6aeae799df9e5b6d30"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashScreen.js",
+      "hash": "33a4f27e1e094dc71ee25eb65e5d31e14ad6e1da"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashStrings.js",
+      "hash": "2eedd53a73f663e0be991844a799fe4071f117cb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashStyles.js",
+      "hash": "29204aa086a120532217058d983d0934d4b4d26c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashAssets.js",
+      "hash": "c4d6dab378daff931874430ca3b0fa4f623d7dc5"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashColors.js",
+      "hash": "e72c45ca432f4e3981f16d7f7a4e0c998546df9b"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashInfoPlist.js",
+      "hash": "93014a3e849ed679114e8ec762150fb91904a61f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashScreen.js",
+      "hash": "b6edbaca48a48f2443d2a1e5887320b483c1a1ef"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashScreenStoryboard.js",
+      "hash": "c953ed41705bb503420d49d7b09869ffb57ec6fb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashScreenStoryboardImage.js",
+      "hash": "42e7e241dd5f9104062ea9460c03cea520c2639e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashXcodeProject.js",
+      "hash": "1607dc9bbccda4228d19f73ddda036dd064dc885"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withSplashScreen.js",
+      "hash": "2cb462984089719de1adaad8d7c35f522b190640"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-status-bar/app.plugin.js",
+      "hash": "d7e2ecbbe698cf058707181d620209ff98729957"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-status-bar/package.json",
+      "hash": "0ae946b459675a901367361a310fecc52a46d6fb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-status-bar/plugin/build/withStatusBar.js",
+      "hash": "1bc62dcbcc73683ac5c33f60634ad6f9d25e41c1"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/react-native-google-mobile-ads/plugin/build/index.js",
+      "hash": "075559bc06f9aeb51b49093841443e8685d00ede"
+    },
+    {
+      "type": "file",
+      "filePath": ".easignore",
+      "hash": "4fb57afde09cefb71de8f919d6dee66bdf83f76f"
+    },
+    {
+      "type": "file",
+      "filePath": "assets/images/flapfit-splash-logo.png",
+      "hash": "6f917d0103856b5fc6addf9f305d958ae7ce83b1"
+    },
+    {
+      "type": "file",
+      "filePath": "assets/images/icon.png",
+      "hash": "ad366ae7f67627be4a4c7f300995aa20f75bb2e4"
+    },
+    {
+      "type": "file",
+      "filePath": "config/admob-skadnetwork-ids.json",
+      "hash": "506aab89b357f2af5b842b629fd2787c4327f0c0"
+    },
+    {
+      "type": "file",
+      "filePath": "eas.json",
+      "hash": "2f583cf9c13c85299613e973343e8ab5762540ff"
+    },
+    {
+      "type": "file",
+      "filePath": "fingerprint.config.js",
+      "hash": "b31a78f00d859bfc452d83148e43aba6c0508b5f"
+    },
+    {
+      "type": "file",
+      "filePath": "modules/flap-fit-age-range/app.plugin.js",
+      "hash": "69beeff5113d7c8822f3c8ee1c773a31fcac09c5"
+    },
+    {
+      "type": "file",
+      "filePath": "plugins/withAdMobPrivacy.cjs",
+      "hash": "582d10fcf54b5d1f998cb7ee5e6a8c12c8e02169"
+    },
+    {
+      "type": "file",
+      "filePath": "plugins/withRevenueCatProcessing.cjs",
+      "hash": "f2fe14b3d3cdd53004f0d9360c47b623009fc78f"
+    },
+    {
+      "type": "file",
+      "filePath": "scripts/patch-admob-privacy.cjs",
+      "hash": "6d845daf684aa56aa2bbfacab07b088eda3d5d8d"
+    },
+    {
+      "type": "file",
+      "filePath": "scripts/patch-revenuecat-processing.cjs",
+      "hash": "10a59892f7fa4c4da35234fc545c5b9ca4602c92"
+    }
+  ],
+  "linuxSources": [
+    {
+      "type": "contents",
+      "id": "expoAutolinkingConfig:ios",
+      "hash": "7db08789cc63529f6de2e3c7b27091c28de9ab1b"
+    },
+    {
+      "type": "contents",
+      "id": "expoConfig",
+      "hash": "7c4b1f6885e83ee8a0380b10d6eef71ad82d2f59"
+    },
+    {
+      "type": "contents",
+      "id": "package:react-native",
+      "hash": "5daa7488a908db259123c42bef9940b1257840d2"
+    },
+    {
+      "type": "contents",
+      "id": "packageJson:scripts",
+      "hash": "9c365318cae1f7ab1f590fb3cbb9140ca8ea2fab"
+    },
+    {
+      "type": "contents",
+      "id": "rncoreAutolinkingConfig:ios",
+      "hash": "673164d9c18997c478827594bc97a236687f0661"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../.yarn/patches",
+      "hash": "8cfba54b9aced9c6f15cdd4c66367c64040b67c2"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@expo/dom-webview/ios",
+      "hash": "4d48dc124ae5cc01f46b188d0e2a6838d81c5634"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@expo/log-box",
+      "hash": "55668dd6b8492dcaa9b53415f3156e494805da47"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@expo/ui/ios",
+      "hash": "f177503253abec563364dfeedc4587959caf5313"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@react-native-async-storage/async-storage",
+      "hash": "445e4d4162b8e7d46bf8d1a8f9b012336388b0be"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/@react-native-masked-view/masked-view",
+      "hash": "b7bc27de23ba01de8e9c8a4e566902fd2ba7716e"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-asset/ios",
+      "hash": "a02ec7095620de37d92fb687b67093c27271e968"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-camera/ios",
+      "hash": "1553d359a177b1a973e7682da16b0012844cfc97"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-constants/ios",
+      "hash": "9f78b13740c18516871f6f7107b39062ebf34155"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-crypto/ios",
+      "hash": "310061c863088330f22e0625d86eef10ea946f2f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-eas-client/ios",
+      "hash": "e5c55d29481bad2b1bf52444d02023b65e042ecb"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-file-system/ios",
+      "hash": "d001896c548c35f3a37f1c631a6eec90108df7d6"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-font/ios",
+      "hash": "b3112b944547ec30ce41a9a238895fcc8fcc5cbe"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-glass-effect/ios",
+      "hash": "315a415f8324294379a9a3a65cbd1af3a7a4bf1c"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-haptics/ios",
+      "hash": "05cfd7b73c33be4c5901cde3b1daaa954eb7bd2a"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-image/ios",
+      "hash": "cef4da801905c63cd71f26040b9144efd89b9edb"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-json-utils/ios",
+      "hash": "1dca292e9d17d995b96380c51d1b4f9649ea90cc"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-keep-awake/ios",
+      "hash": "308756f24d69fb0946e33d9fc2875a30b5080f1f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-linear-gradient/ios",
+      "hash": "1aba8dc2bd80c8e2b29900f6c466a6da2d411083"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-linking/ios",
+      "hash": "9e2301064a2fb9d206404f3343c1e4f345a9e00b"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-mail-composer/ios",
+      "hash": "16df09d5be32a4870e99231b081eac4ec51bca7f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-manifests/ios",
+      "hash": "d8babe08891f9cd6e38f88ae0b16cb307d4a033d"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-modules-core",
+      "hash": "084b8e7671bf664b8d1bde1d01f7df217ecc6efe"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-modules-jsi/apple",
+      "hash": "26415733e6adc70b75dd14ca653ff72be2d59ebe"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-router/ios",
+      "hash": "2155412a7ec6652c6775641b6f5d5670dcfc4149"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-sharing/ios",
+      "hash": "95db490026d6b5934f43a65560a5dfff01d10ac5"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-sms/ios",
+      "hash": "cd30ac3b833679153248d7de30c3bcbfd1ca3dd9"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-splash-screen/ios",
+      "hash": "b2164201222a0d23a9514b89277040af3f76b3f9"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-structured-headers/ios",
+      "hash": "22b986ba2277ea598a052895f0d6b0363e507f10"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-symbols/ios",
+      "hash": "ecf6f8945784095fac7fbfc90349dc4a96799c4f"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-updates-interface/ios",
+      "hash": "8cfa1f4c5f1e2f4baccd9581eae09e7014e905f4"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo-updates/ios",
+      "hash": "572a3c7dc1f1f7046ded27cef9660cf22db8c08a"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/expo",
+      "hash": "69cf9fec48686e47a740874d8f8ca8be9abacf91"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-gesture-handler",
+      "hash": "9aa09bb052b4c61018c0af748cb420639f45371a"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-google-mobile-ads",
+      "hash": "3479c89ac1d4205e95c5c67c17e30982e746ffd2"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-purchases",
+      "hash": "c14454d900ebfad69a3656af11d044140bbda775"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-reanimated",
+      "hash": "110a71342a0a91418e3c1deea83cf75b9672ab27"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-safe-area-context",
+      "hash": "db25f0bb768646def313880906af81fc7adf6ec2"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-screens",
+      "hash": "117f5692c0309dd0f2c85218ab665bfea78f46ed"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-svg",
+      "hash": "1bd6b27d12b32ff685e145555bc891fafc702178"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-webview",
+      "hash": "be97e61bce6acaf61102f4be5c67fd4890fb5e93"
+    },
+    {
+      "type": "dir",
+      "filePath": "../../node_modules/react-native-worklets",
+      "hash": "922e9a096d3f699ea749328ca6ab257dd7185d12"
+    },
+    {
+      "type": "dir",
+      "filePath": "modules",
+      "hash": "785c3c21bc1cc4a7026665bbe1678e48ed57714c"
+    },
+    {
+      "type": "dir",
+      "filePath": "patches",
+      "hash": null
+    },
+    {
+      "type": "dir",
+      "filePath": "plugins",
+      "hash": "bb056385bfd47e40e867580c0ce64fbfe7cbd87c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/bplist-parser/bplistParser.js",
+      "hash": "8dd6044d0f1f93c53d0caf2a6a1196447c6cd14e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/app.plugin.js",
+      "hash": "313335233da02c3e328386cea03147364ddf8b9a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/package.json",
+      "hash": "84a26458088a6acc749006bd1c540bfdffa250fe"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/AssetContents.js",
+      "hash": "df91c085d9b4f33d1d2209a11790abe9d7137932"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/utils.js",
+      "hash": "fd6d06e35a66443d8be510d238412c46763de957"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/withAssets.js",
+      "hash": "ebf01b3030cd7f503d56508a257bc5253455f991"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/withAssetsAndroid.js",
+      "hash": "f34f16c947921346ca976b4ca706fd7fea7c250f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-asset/plugin/build/withAssetsIos.js",
+      "hash": "83f4b3c97e91c072b7b62c31c25482e23ca0cb45"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/app.plugin.js",
+      "hash": "1a5d7672b16206ac757b118553974288c4bb3e13"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/android.js",
+      "hash": "37bf0574c11a22625bf648160f2ff90ccc2c3a66"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/androidPCHTemplates.js",
+      "hash": "99e750f6035b1641367387009ef70a44dc4d05cd"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/androidQueryUtils.js",
+      "hash": "c26bb466fb10a7a1f0d942f37dd00dc7ad9f4dfb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/fileContentsUtils.js",
+      "hash": "b260a8fc9f25a782de3de950382fe95bb65a7e5c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/ios.js",
+      "hash": "8d7fad14761e085ddea590072f75d5c3b0b42150"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/iosSceneSupport.js",
+      "hash": "03b83c469124ef0291ee938c588789133490b11c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/pluginConfig.js",
+      "hash": "3bc8fa1638c6a09b614677d385c642df57ca828a"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-build-properties/build/withBuildProperties.js",
+      "hash": "596f8763b66614ed807c4de51b5e61cc59185ed6"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-camera/app.plugin.js",
+      "hash": "97829cec51735c51890c05a80acd06fdae8d6d19"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-camera/package.json",
+      "hash": "f7d5e4237240020d72083d5c39015f403f34fdd2"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-camera/plugin/build/withCamera.js",
+      "hash": "ddf6c3285f977ba5318100b73690a9757533f025"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-image/app.plugin.js",
+      "hash": "877b5d26e325699de339200ffaa336311d1cda29"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-image/package.json",
+      "hash": "f7583e2ac9fd5e286a3bf02575ce15b2696f1a34"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-image/plugin/build/withExpoImage.js",
+      "hash": "8dde7024f9ad52d4f0c68b3a7b60306e67f334ca"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-router/app.plugin.js",
+      "hash": "94d2a78cd11a7d7e3a2f62ddac4062e7f620c476"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-router/plugin/build/withRouter.js",
+      "hash": "be4dd04f11885d27e2d2297587b7de68bd3b428e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-router/plugin/options.json",
+      "hash": "140d48a5f5bfd20c423ff22679407e85fa91139d"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/app.plugin.js",
+      "hash": "a1ee5d63c270f7ea390eebdf723274d81e921353"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/package.json",
+      "hash": "95b5c7e829d533cada934c5996305102a885f7dd"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/getAndroidSplashConfig.js",
+      "hash": "b792b053b075a67a02a8babfdaa4586d730cafdf"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/getIosSplashConfig.js",
+      "hash": "53b499c7282d4cb1af5de9b4999664aaabd45db6"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/InterfaceBuilder.js",
+      "hash": "fca3de39f55cf3b55b77321aedcbbcfb962ab91e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashDrawables.js",
+      "hash": "df56688bede02033dfbf5c6168b057f84ef54f4b"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashImages.js",
+      "hash": "576605c31519fa9684cbaf683cd77869452217c0"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashMainActivity.js",
+      "hash": "886a7a34b57f747cee430a6aeae799df9e5b6d30"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashScreen.js",
+      "hash": "33a4f27e1e094dc71ee25eb65e5d31e14ad6e1da"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashStrings.js",
+      "hash": "2eedd53a73f663e0be991844a799fe4071f117cb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withAndroidSplashStyles.js",
+      "hash": "29204aa086a120532217058d983d0934d4b4d26c"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashAssets.js",
+      "hash": "c4d6dab378daff931874430ca3b0fa4f623d7dc5"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashColors.js",
+      "hash": "e72c45ca432f4e3981f16d7f7a4e0c998546df9b"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashInfoPlist.js",
+      "hash": "93014a3e849ed679114e8ec762150fb91904a61f"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashScreen.js",
+      "hash": "b6edbaca48a48f2443d2a1e5887320b483c1a1ef"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashScreenStoryboard.js",
+      "hash": "c953ed41705bb503420d49d7b09869ffb57ec6fb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashScreenStoryboardImage.js",
+      "hash": "42e7e241dd5f9104062ea9460c03cea520c2639e"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withIosSplashXcodeProject.js",
+      "hash": "1607dc9bbccda4228d19f73ddda036dd064dc885"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-splash-screen/plugin/build/withSplashScreen.js",
+      "hash": "2cb462984089719de1adaad8d7c35f522b190640"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-status-bar/app.plugin.js",
+      "hash": "d7e2ecbbe698cf058707181d620209ff98729957"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-status-bar/package.json",
+      "hash": "0ae946b459675a901367361a310fecc52a46d6fb"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/expo-status-bar/plugin/build/withStatusBar.js",
+      "hash": "1bc62dcbcc73683ac5c33f60634ad6f9d25e41c1"
+    },
+    {
+      "type": "file",
+      "filePath": "../../node_modules/react-native-google-mobile-ads/plugin/build/index.js",
+      "hash": "075559bc06f9aeb51b49093841443e8685d00ede"
+    },
+    {
+      "type": "file",
+      "filePath": ".easignore",
+      "hash": "4fb57afde09cefb71de8f919d6dee66bdf83f76f"
+    },
+    {
+      "type": "file",
+      "filePath": "assets/images/flapfit-splash-logo.png",
+      "hash": "6f917d0103856b5fc6addf9f305d958ae7ce83b1"
+    },
+    {
+      "type": "file",
+      "filePath": "assets/images/icon.png",
+      "hash": "ad366ae7f67627be4a4c7f300995aa20f75bb2e4"
+    },
+    {
+      "type": "file",
+      "filePath": "config/admob-skadnetwork-ids.json",
+      "hash": "506aab89b357f2af5b842b629fd2787c4327f0c0"
+    },
+    {
+      "type": "file",
+      "filePath": "eas.json",
+      "hash": "2f583cf9c13c85299613e973343e8ab5762540ff"
+    },
+    {
+      "type": "file",
+      "filePath": "fingerprint.config.js",
+      "hash": "b31a78f00d859bfc452d83148e43aba6c0508b5f"
+    },
+    {
+      "type": "file",
+      "filePath": "modules/flap-fit-age-range/app.plugin.js",
+      "hash": "69beeff5113d7c8822f3c8ee1c773a31fcac09c5"
+    },
+    {
+      "type": "file",
+      "filePath": "plugins/withAdMobPrivacy.cjs",
+      "hash": "582d10fcf54b5d1f998cb7ee5e6a8c12c8e02169"
+    },
+    {
+      "type": "file",
+      "filePath": "plugins/withRevenueCatProcessing.cjs",
+      "hash": "f2fe14b3d3cdd53004f0d9360c47b623009fc78f"
+    },
+    {
+      "type": "file",
+      "filePath": "scripts/patch-admob-privacy.cjs",
+      "hash": "6d845daf684aa56aa2bbfacab07b088eda3d5d8d"
+    },
+    {
+      "type": "file",
+      "filePath": "scripts/patch-revenuecat-processing.cjs",
+      "hash": "10a59892f7fa4c4da35234fc545c5b9ca4602c92"
+    }
+  ]
+}

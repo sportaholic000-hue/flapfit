@@ -1,0 +1,41 @@
+{
+  "projectId": "appgprj_6aa368d995348191b4206fa03f951b3a",
+  "sourceCommit": "77c20622441f6fb7987597e34979b356cdb9c341",
+  "version": {
+    "id": "appgprj_6aa368d995348191b4206fa03f951b3a~appgver_d2ed1efcea808191aabbb8a586fb5f89",
+    "project_id": "appgprj_6aa368d995348191b4206fa03f951b3a",
+    "version_number": 40,
+    "source": {
+      "commit_sha": "77c20622441f6fb7987597e34979b356cdb9c341"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_000000004ab481f480f2d0e91fb462a9",
+      "content_hash": "sha256:007e27f63b79ba88784e2360efed027e52bbf73f648d8918c9093e8e08853732",
+      "size_bytes": 9758720,
+      "file_count": 41
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "deployment": {
+    "id": "appgdep_6ab4e0a32914819192a42621bb01af31",
+    "project_id": "appgprj_6aa368d995348191b4206fa03f951b3a",
+    "title": "Flap Fit",
+    "version_id": "appgprj_6aa368d995348191b4206fa03f951b3a~appgver_d2ed1efcea808191aabbb8a586fb5f89",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://flap-fit.sportaholic000.chatgpt.site",
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6aa368d995348191b4206fa03f951b3a",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-09-24T08:34:50.322483+00:00"
+  },
+  "scope": [
+    "OTA privacy-policy section",
+    "Privacy effective date",
+    "Existing date validation"
+  ],
+  "appleStatus": "Pending owner sign-in; session expired before any App Store disclosure mutation."
+}

@@ -1,0 +1,1 @@
+PASS: actual Expo loader discovers identical Windows/Linux/macOS fixture sources; prior code reproduces mismatch; native plugins and patch sources remain protected.

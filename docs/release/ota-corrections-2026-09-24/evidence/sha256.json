@@ -1,0 +1,117 @@
+{
+  "sourceCommit": "ef158656019c8f371055a6fea47813464e160a0f",
+  "files": [
+    {
+      "file": "README.md",
+      "sha256": "b608393bb6f6ef37dec071e0d1e90874b0ca908a31e6386d09e1b15a9494c26c"
+    },
+    {
+      "file": "evidence/verification.json",
+      "sha256": "f09d338e2970c2efc1a16a9baa17c0d98444c0e9e0de393f002e5aa17f0990e8"
+    },
+    {
+      "file": "evidence/followup-verification.json",
+      "sha256": "5643745c41d39f33a3a1c793fce6a1b87ad4b625bf4de5b3daeb59a63afe20de"
+    },
+    {
+      "file": "evidence/mobile-jest-initial-summary.json",
+      "sha256": "848fbe3789bbbecd0a5db794feebe2a05d9045a697aa61e46380acfb30dd6ba3"
+    },
+    {
+      "file": "evidence/mobile-jest-final-summary.json",
+      "sha256": "42356711cc85339e665f9675ec6841da17420210b5cb67c577d939164226d46f"
+    },
+    {
+      "file": "evidence/fingerprint-comparison.json",
+      "sha256": "20a7632e646dc1bdb01dc056f5345dc5a8988918d3680fd6ee7b9dd4b404f3a1"
+    },
+    {
+      "file": "evidence/scope-proof.json",
+      "sha256": "71f3f9291f0c35d4b6aac096bb159627ca8391c34ff24c05b83a2d13225a1fb4"
+    },
+    {
+      "file": "evidence/privacy-publication.json",
+      "sha256": "cbc17c72c4d33a043842a8e5046215159c6d3c6998bf9b0fcf4ff9419b9c6a97"
+    },
+    {
+      "file": "evidence/admob-patch.txt",
+      "sha256": "3c04a7d47e4f7156d5700f2437d6d267b1400e0d5743f96925e179717b653b2d"
+    },
+    {
+      "file": "evidence/apple-verifier.txt",
+      "sha256": "bc346b6befa25a1c63c0c62d0fe3ad462a4bc1665edbf3ad603ddce18bc9f2e9"
+    },
+    {
+      "file": "evidence/dependency-audit.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "evidence/dependency-tooling.txt",
+      "sha256": "eeaa976a468541f3a8d462fd38c71994aabb98d186b52a187e0141657888a9ee"
+    },
+    {
+      "file": "evidence/fingerprint-discovery.txt",
+      "sha256": "faa6b2037962192882df773d3d90e68e277a3045107653acb0435f7b084c7c06"
+    },
+    {
+      "file": "evidence/immutable-install.txt",
+      "sha256": "305ffac74516dcade4d5c632be818ec327df11cb94813270afa4e53b3e670d4f"
+    },
+    {
+      "file": "evidence/ios-js-export.txt",
+      "sha256": "6bd2d443faa27f08ad07b8ba8f12131aecfb54f38b13929d88219b03f491cb28"
+    },
+    {
+      "file": "evidence/jest-tooling.txt",
+      "sha256": "5c7437f341e424df7bbdf78e4266b5579e011e56ab12c1de71873be948c601a4"
+    },
+    {
+      "file": "evidence/lint.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "evidence/linux-fingerprint.txt",
+      "sha256": "085773c8b1336cb3cdd47d2763f875e458e7ebfaffd522702284b7e55bbbb933"
+    },
+    {
+      "file": "evidence/mobile-jest-rerun.txt",
+      "sha256": "b3a53132b924d255a41cc9d874027f7840d50dfdbfe7428ccfa74fc21023c2d3"
+    },
+    {
+      "file": "evidence/mobile-jest.txt",
+      "sha256": "4905b8a0c4cfb189c7a9e0d5d91591481bc8a22ef470424472a7f2619785a168"
+    },
+    {
+      "file": "evidence/ota-config-tests.txt",
+      "sha256": "df6f9c36359032ea3dc8205b624659fcd85397cc57bbc096f27ad03117fa0ad3"
+    },
+    {
+      "file": "evidence/production-config.txt",
+      "sha256": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4"
+    },
+    {
+      "file": "evidence/revenuecat-bridge.txt",
+      "sha256": "e14a99b37372b5fd5ec7710092b1c077b5649ee45da16ac7817187fd56da447b"
+    },
+    {
+      "file": "evidence/revenuecat-patch.txt",
+      "sha256": "25c83dc73f3a2c5ec1cd8ad967ed0fbe784335e1d5c9c48e748c7fa539a8f150"
+    },
+    {
+      "file": "evidence/tracker-bytes.txt",
+      "sha256": "f8a78549c8692ef2094d683a3a65b3bf5f8d2eb1a130ccb2cb23c054ee665d48"
+    },
+    {
+      "file": "evidence/typecheck.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "evidence/windows-fingerprint.txt",
+      "sha256": "fb0eec07f5fd475dcc8f5cb1ec195f175c24ce2f3f87d54373128a47db86c57c"
+    },
+    {
+      "file": "verify-runtime.cjs",
+      "sha256": "a3205b0e50ccf0c3e90a4e3fd2a945b4c5fc6dc29278591b9e7ff9d12c72060e"
+    }
+  ]
+}

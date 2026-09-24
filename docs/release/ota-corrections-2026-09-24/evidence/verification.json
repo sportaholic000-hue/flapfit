@@ -1,0 +1,203 @@
+{
+  "commit": "ef158656019c8f371055a6fea47813464e160a0f",
+  "node": "v24.13.1",
+  "platform": "win32",
+  "checks": [
+    {
+      "name": "immutable-install",
+      "command": [
+        "node",
+        "C:/Users/money/AppData/Local/node/corepack/v1/yarn/4.12.0/yarn.js",
+        "install",
+        "--immutable"
+      ],
+      "startedAt": "2026-09-24T08:12:54.757Z",
+      "finishedAt": "2026-09-24T08:13:17.104Z",
+      "exitCode": 0
+    },
+    {
+      "name": "ota-config-tests",
+      "command": [
+        "node",
+        "apps/mobile/scripts/test-update-config.cjs"
+      ],
+      "startedAt": "2026-09-24T08:13:17.120Z",
+      "finishedAt": "2026-09-24T08:13:18.109Z",
+      "exitCode": 0
+    },
+    {
+      "name": "fingerprint-discovery",
+      "command": [
+        "node",
+        "apps/mobile/scripts/test-fingerprint-discovery.cjs"
+      ],
+      "startedAt": "2026-09-24T08:13:18.116Z",
+      "finishedAt": "2026-09-24T08:13:19.048Z",
+      "exitCode": 0
+    },
+    {
+      "name": "windows-fingerprint",
+      "command": [
+        "node",
+        "C:\\Users\\money\\Documents\\Codex\\2026-09-23\\critical-architectural-context-repair-directive-read\\work\\verify-runtime-cross-platform.cjs",
+        "C:/Users/money/Projects/flapfit/anything",
+        "C:\\Users\\money\\Documents\\Codex\\2026-09-23\\critical-architectural-context-repair-directive-read\\outputs\\ota-corrections-2026-09-24"
+      ],
+      "startedAt": "2026-09-24T08:13:19.054Z",
+      "finishedAt": "2026-09-24T08:17:32.691Z",
+      "exitCode": 0
+    },
+    {
+      "name": "dependency-tooling",
+      "command": [
+        "node",
+        "apps/mobile/scripts/test-dependency-tooling.cjs"
+      ],
+      "startedAt": "2026-09-24T08:17:32.695Z",
+      "finishedAt": "2026-09-24T08:19:55.666Z",
+      "exitCode": 0
+    },
+    {
+      "name": "jest-tooling",
+      "command": [
+        "node",
+        "apps/mobile/scripts/test-jest-tooling.cjs"
+      ],
+      "startedAt": "2026-09-24T08:19:55.674Z",
+      "finishedAt": "2026-09-24T08:25:20.560Z",
+      "exitCode": 0
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "node",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\typescript\\bin\\tsc",
+        "--noEmit",
+        "--project",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\tsconfig.json"
+      ],
+      "startedAt": "2026-09-24T08:25:20.567Z",
+      "finishedAt": "2026-09-24T08:27:20.550Z",
+      "exitCode": 0
+    },
+    {
+      "name": "lint",
+      "command": [
+        "node",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\oxlint\\bin\\oxlint",
+        "--no-ignore",
+        "--deny-warnings",
+        "apps/mobile/src",
+        "apps/mobile/scripts"
+      ],
+      "startedAt": "2026-09-24T08:27:20.559Z",
+      "finishedAt": "2026-09-24T08:27:32.978Z",
+      "exitCode": 0
+    },
+    {
+      "name": "mobile-jest",
+      "command": [
+        "node",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest\\bin\\jest.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=C:\\Users\\money\\Documents\\Codex\\2026-09-23\\critical-architectural-context-repair-directive-read\\outputs\\ota-corrections-2026-09-24\\mobile-jest.json"
+      ],
+      "startedAt": "2026-09-24T08:27:32.981Z",
+      "finishedAt": "2026-09-24T08:39:43.080Z",
+      "exitCode": 1
+    },
+    {
+      "name": "apple-verifier",
+      "command": [
+        "node",
+        "--test",
+        "server.test.cjs"
+      ],
+      "startedAt": "2026-09-24T08:39:43.092Z",
+      "finishedAt": "2026-09-24T08:39:46.548Z",
+      "exitCode": 0
+    },
+    {
+      "name": "dependency-audit",
+      "command": [
+        "node",
+        "C:/Users/money/AppData/Local/node/corepack/v1/yarn/4.12.0/yarn.js",
+        "npm",
+        "audit",
+        "--all",
+        "--recursive",
+        "--json"
+      ],
+      "startedAt": "2026-09-24T08:39:46.557Z",
+      "finishedAt": "2026-09-24T08:40:16.814Z",
+      "exitCode": 0
+    },
+    {
+      "name": "production-config",
+      "command": [
+        "node",
+        "scripts/validate-release-config.cjs"
+      ],
+      "startedAt": "2026-09-24T08:40:16.823Z",
+      "finishedAt": "2026-09-24T08:40:18.230Z",
+      "exitCode": 0
+    },
+    {
+      "name": "tracker-bytes",
+      "command": [
+        "node",
+        "scripts/validate-tracker-assets.cjs"
+      ],
+      "startedAt": "2026-09-24T08:40:18.240Z",
+      "finishedAt": "2026-09-24T08:40:18.650Z",
+      "exitCode": 0
+    },
+    {
+      "name": "admob-patch",
+      "command": [
+        "node",
+        "scripts/test-admob-privacy-patch.cjs"
+      ],
+      "startedAt": "2026-09-24T08:40:18.673Z",
+      "finishedAt": "2026-09-24T08:40:19.385Z",
+      "exitCode": 0
+    },
+    {
+      "name": "revenuecat-patch",
+      "command": [
+        "node",
+        "scripts/test-revenuecat-processing-patch.cjs",
+        "C:/Users/money/Documents/Codex/2026-09-16/g/work/rc-consent-review"
+      ],
+      "startedAt": "2026-09-24T08:40:19.391Z",
+      "finishedAt": "2026-09-24T08:40:23.704Z",
+      "exitCode": 0
+    },
+    {
+      "name": "revenuecat-bridge",
+      "command": [
+        "node",
+        "scripts/test-revenuecat-processing-bridge.cjs"
+      ],
+      "startedAt": "2026-09-24T08:40:23.708Z",
+      "finishedAt": "2026-09-24T08:40:24.510Z",
+      "exitCode": 0
+    },
+    {
+      "name": "ios-js-export",
+      "command": [
+        "node",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\expo\\bin\\cli",
+        "export",
+        "--platform",
+        "ios",
+        "--output-dir",
+        "C:\\Users\\money\\Documents\\Codex\\2026-09-23\\critical-architectural-context-repair-directive-read\\work\\ota-corrected-ios-export"
+      ],
+      "startedAt": "2026-09-24T08:40:24.522Z",
+      "finishedAt": "2026-09-24T08:51:45.886Z",
+      "exitCode": 0
+    }
+  ]
+}

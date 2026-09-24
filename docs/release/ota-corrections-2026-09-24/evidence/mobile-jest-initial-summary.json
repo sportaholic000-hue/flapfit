@@ -1,0 +1,452 @@
+{
+  "success": false,
+  "numTotalTestSuites": 72,
+  "numPassedTestSuites": 71,
+  "numFailedTestSuites": 1,
+  "numTotalTests": 1598,
+  "numPassedTests": 1597,
+  "numFailedTests": 1,
+  "startTime": 1790238485287,
+  "suites": [
+    {
+      "name": "src/services/__tests__/competitionApi-outbox.test.ts",
+      "status": "passed",
+      "durationMs": 142123,
+      "failures": []
+    },
+    {
+      "name": "src/components/__tests__/PrivacyChoices.test.tsx",
+      "status": "passed",
+      "durationMs": 98560,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/startupGameEntry.test.tsx",
+      "status": "failed",
+      "durationMs": 117345,
+      "failures": [
+        {
+          "name": "optional work stays paused from WebView admission until completion or unmount (unmount=false)",
+          "status": "failed",
+          "messages": [
+            "Error: thrown: \"Exceeded timeout of 30000 ms for a test.\nAdd a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout.\"\n    at C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-each\\build\\bind.js:47:15\n    at Array.forEach (<anonymous>)\n    at eachBind (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-each\\build\\bind.js:39:22)\n    at Object.<anonymous> (C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\src\\services\\privacy\\__tests__\\startupGameEntry.test.tsx:117:25)\n    at Runtime._execModule (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-runtime\\build\\index.js:1439:24)\n    at Runtime._loadModule (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-runtime\\build\\index.js:1022:12)\n    at Runtime.requireModule (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-runtime\\build\\index.js:882:12)\n    at jestAdapter (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-circus\\build\\legacy-code-todo-rewrite\\jestAdapter.js:77:13)\n    at runTestInternal (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-runner\\build\\runTest.js:367:16)\n    at runTest (C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest-runner\\build\\runTest.js:444:34)"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "src/services/privacy/__tests__/launchProcessingIntegration.test.ts",
+      "status": "passed",
+      "durationMs": 53591,
+      "failures": []
+    },
+    {
+      "name": "src/components/__tests__/InfoPrivacy.test.tsx",
+      "status": "passed",
+      "durationMs": 3778,
+      "failures": []
+    },
+    {
+      "name": "scripts/validate-privacy-manifest.test.js",
+      "status": "passed",
+      "durationMs": 1614,
+      "failures": []
+    },
+    {
+      "name": "scripts/launch-competition.test.js",
+      "status": "passed",
+      "durationMs": 13635,
+      "failures": []
+    },
+    {
+      "name": "src/services/__tests__/monetization.test.ts",
+      "status": "passed",
+      "durationMs": 10668,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/europeanProviderProcessing.test.ts",
+      "status": "passed",
+      "durationMs": 14511,
+      "failures": []
+    },
+    {
+      "name": "scripts/share-return.test.js",
+      "status": "passed",
+      "durationMs": 6788,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/appleAgeControl.test.ts",
+      "status": "passed",
+      "durationMs": 14656,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/birdWebAsset.test.ts",
+      "status": "passed",
+      "durationMs": 4976,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/pullup-gameplay-flow.test.js",
+      "status": "passed",
+      "durationMs": 7838,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/gameEntry.test.ts",
+      "status": "passed",
+      "durationMs": 5921,
+      "failures": []
+    },
+    {
+      "name": "src/services/__tests__/competition-processing-access.test.ts",
+      "status": "passed",
+      "durationMs": 8281,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/processingHydrationIntegration.test.ts",
+      "status": "passed",
+      "durationMs": 11326,
+      "failures": []
+    },
+    {
+      "name": "src/components/__tests__/CompeteScreenPrivacy.test.tsx",
+      "status": "passed",
+      "durationMs": 3777,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/regionalClarification.test.ts",
+      "status": "passed",
+      "durationMs": 6830,
+      "failures": []
+    },
+    {
+      "name": "src/services/__tests__/competitionApi.test.ts",
+      "status": "passed",
+      "durationMs": 13460,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/form-tracking.test.ts",
+      "status": "passed",
+      "durationMs": 3752,
+      "failures": []
+    },
+    {
+      "name": "src/components/__tests__/GameEligibilityGate.test.tsx",
+      "status": "passed",
+      "durationMs": 3715,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/processingAccess.test.ts",
+      "status": "passed",
+      "durationMs": 7738,
+      "failures": []
+    },
+    {
+      "name": "src/components/__tests__/LaunchUpdateGate.test.tsx",
+      "status": "passed",
+      "durationMs": 2961,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/localAgeAnswer.test.ts",
+      "status": "passed",
+      "durationMs": 5336,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/bird-stage-assets.test.ts",
+      "status": "passed",
+      "durationMs": 1829,
+      "failures": []
+    },
+    {
+      "name": "scripts/validate-tracker-assets.test.js",
+      "status": "passed",
+      "durationMs": 2161,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/pullup-elbow-clearance.test.js",
+      "status": "passed",
+      "durationMs": 2202,
+      "failures": []
+    },
+    {
+      "name": "scripts/ad-sdk-lifecycle.test.js",
+      "status": "passed",
+      "durationMs": 3480,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/newYorkClarification.test.ts",
+      "status": "passed",
+      "durationMs": 3240,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/privacyCountry.test.ts",
+      "status": "passed",
+      "durationMs": 2718,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/umpPrivacyControls.test.ts",
+      "status": "passed",
+      "durationMs": 2176,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/pullup-grab-entry.test.js",
+      "status": "passed",
+      "durationMs": 2234,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/privacyRights.test.ts",
+      "status": "passed",
+      "durationMs": 2772,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/pullup-support-reference.test.ts",
+      "status": "passed",
+      "durationMs": 2379,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/privacyStartup.test.ts",
+      "status": "passed",
+      "durationMs": 2155,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/recording-mp4.test.ts",
+      "status": "passed",
+      "durationMs": 1901,
+      "failures": []
+    },
+    {
+      "name": "src/services/__tests__/competition-terms-action.test.ts",
+      "status": "passed",
+      "durationMs": 2404,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/pullup-standing-reach.test.js",
+      "status": "passed",
+      "durationMs": 2748,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/umpProcessingControls.test.ts",
+      "status": "passed",
+      "durationMs": 2194,
+      "failures": []
+    },
+    {
+      "name": "src/services/__tests__/recordingCache.test.ts",
+      "status": "passed",
+      "durationMs": 2586,
+      "failures": []
+    },
+    {
+      "name": "src/services/__tests__/launchUpdates.test.ts",
+      "status": "passed",
+      "durationMs": 1756,
+      "failures": []
+    },
+    {
+      "name": "modules/flap-fit-age-range/__tests__/bridge.test.ts",
+      "status": "passed",
+      "durationMs": 3655,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/umpStoredSignals.test.ts",
+      "status": "passed",
+      "durationMs": 3481,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/launchProcessingPolicy.test.ts",
+      "status": "passed",
+      "durationMs": 1722,
+      "failures": []
+    },
+    {
+      "name": "src/components/__tests__/RecordingCleanupRoot.test.tsx",
+      "status": "passed",
+      "durationMs": 1898,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/store-hydration.test.ts",
+      "status": "passed",
+      "durationMs": 1357,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/pullup-top-first.test.js",
+      "status": "passed",
+      "durationMs": 1900,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/mediapipe-recovery.test.ts",
+      "status": "passed",
+      "durationMs": 1414,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/regionalPolicy.test.ts",
+      "status": "passed",
+      "durationMs": 1656,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/game-modes.test.ts",
+      "status": "passed",
+      "durationMs": 1567,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/appleRescission.test.ts",
+      "status": "passed",
+      "durationMs": 1514,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/recording-boundaries.test.ts",
+      "status": "passed",
+      "durationMs": 1206,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/pullup-top-reference.test.ts",
+      "status": "passed",
+      "durationMs": 1380,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/birdVisual.test.ts",
+      "status": "passed",
+      "durationMs": 1077,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/pullup-top-entry.test.ts",
+      "status": "passed",
+      "durationMs": 1471,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/continuous-gameplay.test.ts",
+      "status": "passed",
+      "durationMs": 1078,
+      "failures": []
+    },
+    {
+      "name": "src/services/__tests__/videoSharing.test.ts",
+      "status": "passed",
+      "durationMs": 1346,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/processingPolicy.test.ts",
+      "status": "passed",
+      "durationMs": 1348,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/evolution-core.test.ts",
+      "status": "passed",
+      "durationMs": 1403,
+      "failures": []
+    },
+    {
+      "name": "src/services/__tests__/resultAdGate.test.ts",
+      "status": "passed",
+      "durationMs": 1402,
+      "failures": []
+    },
+    {
+      "name": "modules/flap-fit-age-range/__tests__/app-transaction.test.ts",
+      "status": "passed",
+      "durationMs": 1566,
+      "failures": []
+    },
+    {
+      "name": "src/services/privacy/__tests__/releaseEligibility.test.ts",
+      "status": "passed",
+      "durationMs": 1334,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/level-rules.test.ts",
+      "status": "passed",
+      "durationMs": 1139,
+      "failures": []
+    },
+    {
+      "name": "src/services/__tests__/revenueCatTestDiagnostics.test.ts",
+      "status": "passed",
+      "durationMs": 970,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/competition-profile-reset.test.ts",
+      "status": "passed",
+      "durationMs": 1047,
+      "failures": []
+    },
+    {
+      "name": "scripts/validate-monetization-config.test.js",
+      "status": "passed",
+      "durationMs": 1103,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/stats-history.test.ts",
+      "status": "passed",
+      "durationMs": 1008,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/game-web-navigation.test.ts",
+      "status": "passed",
+      "durationMs": 1106,
+      "failures": []
+    },
+    {
+      "name": "scripts/retain-ios-archive.test.js",
+      "status": "passed",
+      "durationMs": 1324,
+      "failures": []
+    },
+    {
+      "name": "scripts/validate-tracker-release.test.js",
+      "status": "passed",
+      "durationMs": 1276,
+      "failures": []
+    },
+    {
+      "name": "src/services/__tests__/settingsPermissionRecovery.test.ts",
+      "status": "passed",
+      "durationMs": 1155,
+      "failures": []
+    },
+    {
+      "name": "src/utils/game/__tests__/camera-preview.test.ts",
+      "status": "passed",
+      "durationMs": 1365,
+      "failures": []
+    }
+  ]
+}

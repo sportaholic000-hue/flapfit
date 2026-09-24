@@ -1,0 +1,879 @@
+PASS src/services/__tests__/competitionApi-outbox.test.ts (142.123 s)
+PASS src/components/__tests__/PrivacyChoices.test.tsx (98.56 s)
+FAIL src/services/privacy/__tests__/startupGameEntry.test.tsx (117.345 s)
+  ● Console
+
+    console.error
+      Error: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+      1. You might have mismatching versions of React and the renderer (such as React DOM)
+      2. You might be breaking the Rules of Hooks
+      3. You might have more than one copy of React in the same app
+      See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+          at Object.throwInvalidHookError (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:4798:13)
+          at Object.<anonymous>.process.env.NODE_ENV.exports.useCallback (C:\Users\money\Projects\flapfit\anything\node_modules\react\cjs\react.development.js:1204:34)
+          at GameScreen (C:\Users\money\Projects\flapfit\anything\apps\mobile\src\app\game.tsx:174:38)
+          at Object.react_stack_bottom_frame (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:15670:20)
+          at renderWithHooks (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:4863:22)
+          at updateFunctionComponent (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:7018:19)
+          at beginWork (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:8499:18)
+          at runWithFiberInDEV (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:2315:13)
+          at performUnitOfWork (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:13224:22)
+          at workLoopSync (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:13068:41)
+          at renderRootSync (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:13049:11)
+          at performWorkOnRoot (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:12253:39)
+          at performWorkOnRootViaSchedulerTask (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:2908:7)
+          at flushActQueue (C:\Users\money\Projects\flapfit\anything\node_modules\react\cjs\react.development.js:590:34)
+          at C:\Users\money\Projects\flapfit\anything\node_modules\react\cjs\react.development.js:847:21
+          at runNextTicks (node:internal/process/task_queues:64:5)
+          at processImmediate (node:internal/timers:472:9) {
+        [stack]: [Getter/Setter],
+        [message]: 'Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:\n' +
+          '1. You might have mismatching versions of React and the renderer (such as React DOM)\n' +
+          '2. You might be breaking the Rules of Hooks\n' +
+          '3. You might have more than one copy of React in the same app\n' +
+          'See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.'
+      }
+
+      The above error occurred in the <GameScreen> component.
+
+      React will try to recreate this component tree from scratch using the error boundary you provided, AppErrorBoundary.
+
+      at defaultOnCaughtError (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6439:17)
+      at logCaughtError (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6475:9)
+      at runWithFiberInDEV (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2315:13)
+      at AppErrorBoundary.inst.componentDidCatch.update.callback (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6522:11)
+      at callCallback (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:4625:16)
+      at commitCallbacks (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:4645:11)
+      at runWithFiberInDEV (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2315:13)
+      at commitClassCallbacks (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:9658:11)
+      at commitLayoutEffectOnFiber (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:10082:25)
+      at recursivelyTraverseLayoutEffects (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:10892:11)
+      at commitLayoutEffectOnFiber (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:10005:11)
+      at recursivelyTraverseLayoutEffects (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:10892:11)
+      at commitLayoutEffectOnFiber (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:10087:11)
+      at flushLayoutEffects (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:13774:15)
+      at commitRoot (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:13697:9)
+      at performWorkOnRoot (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:12336:15)
+      at performWorkOnRootViaSchedulerTask (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2908:7)
+      at flushActQueue (../../node_modules/react/cjs/react.development.js:590:34)
+      at ../../node_modules/react/cjs/react.development.js:847:21
+
+    console.error
+      Unhandled Flap Fit error Error: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+      1. You might have mismatching versions of React and the renderer (such as React DOM)
+      2. You might be breaking the Rules of Hooks
+      3. You might have more than one copy of React in the same app
+      See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+          at Object.throwInvalidHookError (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:4798:13)
+          at Object.<anonymous>.process.env.NODE_ENV.exports.useCallback (C:\Users\money\Projects\flapfit\anything\node_modules\react\cjs\react.development.js:1204:34)
+          at GameScreen (C:\Users\money\Projects\flapfit\anything\apps\mobile\src\app\game.tsx:174:38)
+          at Object.react_stack_bottom_frame (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:15670:20)
+          at renderWithHooks (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:4863:22)
+          at updateFunctionComponent (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:7018:19)
+          at beginWork (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:8499:18)
+          at runWithFiberInDEV (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:2315:13)
+          at performUnitOfWork (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:13224:22)
+          at workLoopSync (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:13068:41)
+          at renderRootSync (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:13049:11)
+          at performWorkOnRoot (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:12253:39)
+          at performWorkOnRootViaSchedulerTask (C:\Users\money\Projects\flapfit\anything\node_modules\react-test-renderer\cjs\react-test-renderer.development.js:2908:7)
+          at flushActQueue (C:\Users\money\Projects\flapfit\anything\node_modules\react\cjs\react.development.js:590:34)
+          at C:\Users\money\Projects\flapfit\anything\node_modules\react\cjs\react.development.js:847:21
+          at runNextTicks (node:internal/process/task_queues:64:5)
+          at processImmediate (node:internal/timers:472:9)
+          at GameScreen (C:\Users\money\Projects\flapfit\anything\apps\mobile\src\app\game.tsx:174:38)
+          at useState (C:\Users\money\Projects\flapfit\anything\apps\mobile\src\services\privacy\__tests__\startupGameEntry.test.tsx:81:39)
+          at children (C:\Users\money\Projects\flapfit\anything\apps\mobile\src\components\LaunchUpdateGate.tsx:6:36)
+          at View (<anonymous>)
+          at QueryClientProvider (C:\Users\money\Projects\flapfit\anything\node_modules\@tanstack\react-query\src\QueryClientProvider.tsx:30:3)
+          at AppErrorBoundary (C:\Users\money\Projects\flapfit\anything\apps\mobile\src\components\AppErrorBoundary.tsx:12:30)
+          at RootLayout (C:\Users\money\Projects\flapfit\anything\apps\mobile\src\app\_layout.tsx:32:53)
+
+      18 |
+      19 |   componentDidCatch(error: Error, info: ErrorInfo) {
+    > 20 |     console.error('Unhandled Flap Fit error', error, info.componentStack);
+         |             ^
+      21 |   }
+      22 |
+      23 |   render() {
+
+      at AppErrorBoundary.error [as componentDidCatch] (src/components/AppErrorBoundary.tsx:20:13)
+      at Object.react_stack_bottom_frame (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15725:20)
+      at AppErrorBoundary.inst.componentDidCatch.update.callback (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:6533:11)
+      at callCallback (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:4625:16)
+      at commitCallbacks (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:4645:11)
+      at runWithFiberInDEV (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2315:13)
+      at commitClassCallbacks (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:9658:11)
+      at commitLayoutEffectOnFiber (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:10082:25)
+      at recursivelyTraverseLayoutEffects (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:10892:11)
+      at commitLayoutEffectOnFiber (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:10005:11)
+      at recursivelyTraverseLayoutEffects (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:10892:11)
+      at commitLayoutEffectOnFiber (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:10087:11)
+      at flushLayoutEffects (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:13774:15)
+      at commitRoot (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:13697:9)
+      at performWorkOnRoot (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:12336:15)
+      at performWorkOnRootViaSchedulerTask (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2908:7)
+      at flushActQueue (../../node_modules/react/cjs/react.development.js:590:34)
+      at ../../node_modules/react/cjs/react.development.js:847:21
+
+  ● optional work stays paused from WebView admission until completion or unmount (unmount=false)
+
+    thrown: "Exceeded timeout of 30000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      115 | afterEach(() => { process.env = { ...originalEnv }; jest.useRealTimers(); });
+      116 |
+    > 117 | test.each([false, true])('optional work stays paused from WebView admission until completion or unmount (unmount=%s)', async unmount => {
+          |                         ^
+      118 |   const f = await mountApp(JSON.stringify({ version: 1, answer: '18-plus' }), { playable: true });
+      119 |   const activity: typeof import('../../gameplayActivity') = require('../../gameplayActivity');
+      120 |   try {
+
+      at ../../node_modules/jest-each/build/bind.js:47:15
+          at Array.forEach (<anonymous>)
+      at Object.<anonymous> (src/services/privacy/__tests__/startupGameEntry.test.tsx:117:25)
+
+PASS src/services/privacy/__tests__/launchProcessingIntegration.test.ts (53.591 s)
+  ● Console
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:23.951Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:26.964Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:29.231Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:33.698Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:34.385Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:34.887Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:40.723Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:41.488Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:48.889Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:49.337Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:56.739Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:57.898Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:59.526Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:34:59.817Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:00.060Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:00.625Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:01.445Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:02.045Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:02.652Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:03.178Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:05.316Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:05.820Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.137Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.429Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.652Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.869Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.877Z","generation":3,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.886Z","generation":5,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.891Z","generation":7,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.900Z","generation":9,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.904Z","generation":11,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.910Z","generation":13,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.918Z","generation":15,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.922Z","generation":17,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.929Z","generation":19,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.936Z","generation":21,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:06.940Z","generation":23,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.175Z","generation":3,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.186Z","generation":5,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.191Z","generation":7,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.203Z","generation":9,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.214Z","generation":11,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.220Z","generation":13,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.223Z","generation":15,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.232Z","generation":17,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.236Z","generation":19,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.239Z","generation":21,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.248Z","generation":23,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.255Z","generation":25,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.269Z","generation":27,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.279Z","generation":29,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.287Z","generation":31,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.296Z","generation":33,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.303Z","generation":35,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.308Z","generation":37,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.316Z","generation":39,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.321Z","generation":41,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.328Z","generation":43,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.334Z","generation":45,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.338Z","generation":47,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.346Z","generation":49,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.353Z","generation":51,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.358Z","generation":53,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.370Z","generation":55,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.375Z","generation":57,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.383Z","generation":59,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.387Z","generation":61,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.392Z","generation":63,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.401Z","generation":65,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.405Z","generation":67,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.411Z","generation":69,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.417Z","generation":71,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.421Z","generation":73,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.425Z","generation":75,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.433Z","generation":77,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.438Z","generation":79,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.443Z","generation":81,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.449Z","generation":83,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.453Z","generation":85,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.457Z","generation":87,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.464Z","generation":89,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.469Z","generation":91,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.473Z","generation":93,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.481Z","generation":95,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.486Z","generation":97,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.490Z","generation":99,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.505Z","generation":101,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.517Z","generation":103,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.527Z","generation":105,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.537Z","generation":107,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.551Z","generation":109,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.560Z","generation":111,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:07.756Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:08.022Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:08.386Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:08.660Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:08.879Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:09.130Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:09.425Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:09.694Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T08:35:09.968Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+PASS src/components/__tests__/InfoPrivacy.test.tsx
+PASS scripts/validate-privacy-manifest.test.js
+PASS scripts/launch-competition.test.js (13.635 s)
+  ● Console
+
+    console.error
+      ApiError: Name already taken. Choose a different player name.
+          at databaseApiError (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:34:16)
+          at savePlayerName (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:210:23)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:215:40) {
+        status: 409,
+        code: 'PLAYER_NAME_TAKEN'
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Name already taken. Choose a different player name.
+          at databaseApiError (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:34:16)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:295:23) {
+        status: 409,
+        code: 'PLAYER_NAME_TAKEN'
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Name already taken. Choose a different player name.
+          at databaseApiError (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:34:16)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:271:23) {
+        status: 409,
+        code: 'PLAYER_NAME_TAKEN'
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Accept the current online competition terms before publishing results.
+          at requireCurrentTerms (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:152:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:199:89) {
+        status: 428,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      {
+        code: '23505',
+        message: 'duplicate key value violates unique constraint "profiles_pkey"'
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body is too large.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:75:23)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:26) {
+        status: 413,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body is too large.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:75:23)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:26) {
+        status: 413,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body is too large.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:55:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:32) {
+        status: 413,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body must be an object.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:100:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:26) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body must be an object.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:100:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:26) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body must be valid JSON.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:97:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:26) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Score must be between 0 and 100000.
+          at integer (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:138:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:287:27) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Score must be between 0 and 100000.
+          at integer (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:138:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:287:27) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Score must be between 0 and 100000.
+          at integer (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:138:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:287:27) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+PASS src/services/__tests__/monetization.test.ts (10.668 s)
+PASS src/services/privacy/__tests__/europeanProviderProcessing.test.ts (14.511 s)
+PASS scripts/share-return.test.js (6.788 s)
+PASS src/services/privacy/__tests__/appleAgeControl.test.ts (14.656 s)
+PASS src/utils/game/birdWebAsset.test.ts
+PASS src/utils/game/__tests__/pullup-gameplay-flow.test.js (7.838 s)
+PASS src/services/privacy/__tests__/gameEntry.test.ts (5.921 s)
+PASS src/services/__tests__/competition-processing-access.test.ts (8.281 s)
+PASS src/services/privacy/__tests__/processingHydrationIntegration.test.ts (11.326 s)
+PASS src/components/__tests__/CompeteScreenPrivacy.test.tsx
+PASS src/services/privacy/__tests__/regionalClarification.test.ts (6.83 s)
+PASS src/services/__tests__/competitionApi.test.ts (13.46 s)
+PASS src/utils/game/__tests__/form-tracking.test.ts
+PASS src/components/__tests__/GameEligibilityGate.test.tsx
+PASS src/services/privacy/__tests__/processingAccess.test.ts (7.738 s)
+PASS src/components/__tests__/LaunchUpdateGate.test.tsx
+PASS src/services/privacy/__tests__/localAgeAnswer.test.ts (5.336 s)
+PASS src/utils/game/__tests__/bird-stage-assets.test.ts
+PASS scripts/validate-tracker-assets.test.js
+PASS src/utils/game/__tests__/pullup-elbow-clearance.test.js
+PASS scripts/ad-sdk-lifecycle.test.js
+PASS src/services/privacy/__tests__/newYorkClarification.test.ts
+PASS src/services/privacy/__tests__/privacyCountry.test.ts
+PASS src/services/privacy/__tests__/umpPrivacyControls.test.ts
+PASS src/utils/game/__tests__/pullup-grab-entry.test.js
+PASS src/services/privacy/__tests__/privacyRights.test.ts
+PASS src/utils/game/__tests__/pullup-support-reference.test.ts
+PASS src/services/privacy/__tests__/privacyStartup.test.ts
+PASS src/utils/game/__tests__/recording-mp4.test.ts
+PASS src/services/__tests__/competition-terms-action.test.ts
+PASS src/utils/game/__tests__/pullup-standing-reach.test.js
+PASS src/services/privacy/__tests__/umpProcessingControls.test.ts
+PASS src/services/__tests__/recordingCache.test.ts
+PASS src/services/__tests__/launchUpdates.test.ts
+PASS modules/flap-fit-age-range/__tests__/bridge.test.ts
+PASS src/services/privacy/__tests__/umpStoredSignals.test.ts
+PASS src/services/privacy/__tests__/launchProcessingPolicy.test.ts
+PASS src/components/__tests__/RecordingCleanupRoot.test.tsx
+PASS src/utils/game/__tests__/store-hydration.test.ts
+PASS src/utils/game/__tests__/pullup-top-first.test.js
+PASS src/utils/game/__tests__/mediapipe-recovery.test.ts
+PASS src/services/privacy/__tests__/regionalPolicy.test.ts
+PASS src/utils/game/__tests__/game-modes.test.ts
+PASS src/services/privacy/__tests__/appleRescission.test.ts
+PASS src/utils/game/__tests__/recording-boundaries.test.ts
+PASS src/utils/game/__tests__/pullup-top-reference.test.ts
+PASS src/utils/game/birdVisual.test.ts
+PASS src/utils/game/__tests__/pullup-top-entry.test.ts
+PASS src/utils/game/__tests__/continuous-gameplay.test.ts
+PASS src/services/__tests__/videoSharing.test.ts
+PASS src/services/privacy/__tests__/processingPolicy.test.ts
+PASS src/utils/game/__tests__/evolution-core.test.ts
+PASS src/services/__tests__/resultAdGate.test.ts
+PASS modules/flap-fit-age-range/__tests__/app-transaction.test.ts
+PASS src/services/privacy/__tests__/releaseEligibility.test.ts
+PASS src/utils/game/__tests__/level-rules.test.ts
+PASS src/services/__tests__/revenueCatTestDiagnostics.test.ts
+PASS src/utils/game/__tests__/competition-profile-reset.test.ts
+PASS scripts/validate-monetization-config.test.js
+PASS src/utils/game/__tests__/stats-history.test.ts
+PASS src/utils/game/game-web-navigation.test.ts
+PASS scripts/retain-ios-archive.test.js
+PASS scripts/validate-tracker-release.test.js
+PASS src/services/__tests__/settingsPermissionRecovery.test.ts
+PASS src/utils/game/__tests__/camera-preview.test.ts
+
+Summary of all failing tests
+FAIL src/services/privacy/__tests__/startupGameEntry.test.tsx (117.345 s)
+  ● optional work stays paused from WebView admission until completion or unmount (unmount=false)
+
+    thrown: "Exceeded timeout of 30000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      115 | afterEach(() => { process.env = { ...originalEnv }; jest.useRealTimers(); });
+      116 |
+    > 117 | test.each([false, true])('optional work stays paused from WebView admission until completion or unmount (unmount=%s)', async unmount => {
+          |                         ^
+      118 |   const f = await mountApp(JSON.stringify({ version: 1, answer: '18-plus' }), { playable: true });
+      119 |   const activity: typeof import('../../gameplayActivity') = require('../../gameplayActivity');
+      120 |   try {
+
+      at ../../node_modules/jest-each/build/bind.js:47:15
+          at Array.forEach (<anonymous>)
+      at Object.<anonymous> (src/services/privacy/__tests__/startupGameEntry.test.tsx:117:25)
+
+
+Test Suites: 1 failed, 71 passed, 72 total
+Tests:       1 failed, 1597 passed, 1598 total
+Snapshots:   0 total
+Time:        697.255 s
+Ran all test suites.
+Test results written to: ..\..\..\..\..\Documents\Codex\2026-09-23\critical-architectural-context-repair-directive-read\outputs\ota-corrections-2026-09-24\mobile-jest.json

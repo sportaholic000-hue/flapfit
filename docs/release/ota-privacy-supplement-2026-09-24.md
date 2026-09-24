@@ -1,6 +1,6 @@
 # OTA privacy-policy supplement
 
-Final wording for the approved Info-only update flow. Publication and Apple save status are recorded in the correction report.
+Final wording for the approved Info-only update flow, published in website version 40. Apple’s Device ID → App Functionality save remains pending sign-in. See [the correction report](ota-corrections-2026-09-24/README.md).
 
 ## App updates
 

@@ -1,0 +1,36 @@
+{
+  "commit": "ef158656019c8f371055a6fea47813464e160a0f",
+  "checks": [
+    {
+      "name": "mobile-jest-rerun",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest\\bin\\jest.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=C:\\Users\\money\\Documents\\Codex\\2026-09-23\\critical-architectural-context-repair-directive-read\\outputs\\ota-corrections-2026-09-24\\mobile-jest-rerun.json"
+      ],
+      "startedAt": "2026-09-24T08:52:50.218Z",
+      "finishedAt": "2026-09-24T09:00:38.367Z",
+      "exitCode": 0
+    },
+    {
+      "name": "linux-fingerprint",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu",
+        "--user",
+        "money",
+        "--exec",
+        "node",
+        "/mnt/c/Users/money/Documents/Codex/2026-09-23/critical-architectural-context-repair-directive-read/work/verify-runtime-cross-platform.cjs",
+        "/mnt/c/Users/money/Projects/flapfit/anything",
+        "/mnt/c/Users/money/Documents/Codex/2026-09-23/critical-architectural-context-repair-directive-read/outputs/ota-corrections-2026-09-24"
+      ],
+      "startedAt": "2026-09-24T09:00:38.385Z",
+      "finishedAt": "2026-09-24T09:15:33.101Z",
+      "exitCode": 0
+    }
+  ]
+}

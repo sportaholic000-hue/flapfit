@@ -1,0 +1,23 @@
+{
+  "baseline": "046c1aa9f4d3024fe75a7aca034910e263f084c4",
+  "candidate": "ef158656019c8f371055a6fea47813464e160a0f",
+  "unchangedProtectedPaths": [
+    "AGENTS.md",
+    "apps/mobile/app.json",
+    "apps/mobile/app.config.js",
+    "apps/mobile/eas.json",
+    "apps/mobile/src/app/_layout.tsx",
+    "apps/mobile/src/app/game.tsx",
+    "apps/mobile/src/utils/game",
+    "apps/mobile/src/services/monetization",
+    "apps/mobile/src/services/privacy",
+    "apps/mobile/src/services/gameplayActivity.ts",
+    "apps/mobile/src/services/competitionApi.ts",
+    "apps/mobile/modules",
+    "apps/mobile/plugins",
+    "apps/mobile/assets",
+    "apps/mobile/scripts/patch-admob-privacy.cjs",
+    "apps/mobile/scripts/patch-revenuecat-processing.cjs"
+  ],
+  "infoException": "Only the owner-approved Check for updates row and its import were added to Info."
+}
