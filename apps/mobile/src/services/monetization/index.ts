@@ -7,11 +7,15 @@ import { ResultAdGate, type InterstitialCallbacks, type ReadyInterstitial } from
 import { getAgeVerificationRevision, getProcessingAccess, getProcessingInputs, subscribeProcessingAccess } from '../privacy/processingAccess';
 import { getUmpPrivacyControls } from '../privacy/umpPrivacyControls';
 import { createRevenueCatTestDiagnostics, type RevenueCatTestDiagnosticKind } from './revenueCatTestDiagnostics';
+import { createAdDeliveryDiagnostics } from './adDeliveryDiagnostics';
 
 type AdsSdk = typeof import('react-native-google-mobile-ads');
 type PurchasesSdk = typeof import('react-native-purchases');
 const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 const supported = !isExpoGo && (Platform.OS === 'ios' || Platform.OS === 'android');
+export const adDeliveryDiagnosticsEnabled = Platform.OS === 'ios' &&
+  String(Constants.platform?.ios?.buildNumber ?? Constants.expoConfig?.ios?.buildNumber) === '7';
+const adDeliveryDiagnostics = createAdDeliveryDiagnostics(adDeliveryDiagnosticsEnabled);
 const mode = process.env.EXPO_PUBLIC_ADS_MODE?.trim() ?? 'test';
 const liveUnit = Platform.OS === 'ios'
   ? process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID?.trim()
@@ -109,6 +113,15 @@ function currentAdPermission(epoch: number) {
 }
 export const resultAdGate = new ResultAdGate();
 export const isMonetizationPrepared = () => adsReady;
+export function getAdDeliveryDiagnosticReport(): string {
+  const access = getProcessingAccess();
+  return adDeliveryDiagnostics.report({
+    'Ad mode': mode, 'Native runtime supported': supported, 'Ad unit configured': Boolean(liveUnit),
+    'App permits ads': access.ads.allowed, 'Ad SDK loaded': Boolean(ads), 'Ad SDK ready': adsReady,
+    'RevenueCat permitted': access.revenueCat.allowed, 'RevenueCat tracker ready': Boolean(tracker),
+    'Workout active': isGameplayActive(), 'Result ads retained': String(activeResultAds.size),
+  });
+}
 export const adEnvironment = {
   isActive: () => AppState.currentState === 'active',
   onActive: (callback: () => void) => {
@@ -158,7 +171,8 @@ export async function refreshAdPrivacyRequirement(): Promise<void> {
 function loadAdsSdk(): AdsSdk | null {
   if (!supported || mode === 'off') return null;
   // Runtime require is deliberate. Expo Go must never evaluate this native SDK.
-  try { ads ??= require('react-native-google-mobile-ads') as AdsSdk; } catch { return null; }
+  try { ads ??= require('react-native-google-mobile-ads') as AdsSdk; }
+  catch (error) { adDeliveryDiagnostics.error('Load ad SDK', error); return null; }
   return ads;
 }
 
@@ -266,7 +280,8 @@ function initializeRevenueCat(canPrepare: () => boolean): Promise<void> {
       }
       tracker = sdk.default.adTracker;
       prepareRevenueCatTestIdentity(sdk, epoch);
-    } catch {
+    } catch (error) {
+      adDeliveryDiagnostics.error('RevenueCat setup', error);
       await requestRevenueCatWithdrawal();
     } finally {
       revenueCatInit = null;
@@ -474,28 +489,40 @@ function preparePermittedMonetization(canPresent: () => boolean, fromMenu = fals
   initEpoch = epoch;
   initFromMenu = fromMenu;
   init = (async () => {
+    let stage = 'Google consent update';
     try {
+      adDeliveryDiagnostics.stage(stage);
       const info = await bounded(sdk.AdsConsent.requestInfoUpdate({ tagForUnderAgeOfConsent: access.ads.underAgeOfConsent }));
+      adDeliveryDiagnostics.consent(info.canRequestAds);
       if (!currentAdPermission(epoch) || !current()) return;
       publishPrivacyRequirement(info.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED);
       await settleResultPresentations();
       if (!currentAdPermission(epoch) || !current()) return;
+      stage = fromMenu ? 'Google consent status' : 'Google consent form';
+      adDeliveryDiagnostics.stage(stage);
       const consent = fromMenu ? info : await presentPrivacy(() => sdk.AdsConsent.loadAndShowConsentFormIfRequired());
+      adDeliveryDiagnostics.consent(consent.canRequestAds);
       if (!currentAdPermission(epoch) || !current()) return;
       publishPrivacyRequirement(consent.privacyOptionsRequirementStatus === sdk.AdsConsentPrivacyOptionsRequirementStatus.REQUIRED);
       if (!consent.canRequestAds) { setAdsReady(false); return; }
       // UMP does not forward TFUA to the ad SDK. Google maps under-consent-age
       // treatment to CHILD; TEEN alone does not provide those protections.
       // No IDFA collection, personalized requests, health or competition attributes.
+      stage = 'Google request configuration';
+      adDeliveryDiagnostics.stage(stage);
       await bounded(trackNativeSdkSetup(sdk.default().setRequestConfiguration({ maxAdContentRating: sdk.MaxAdContentRating.PG, ageRestrictedTreatment: (access.ads.underAgeOfConsent ? 'child' : access.ads.treatment) as AgeRestrictedTreatment })));
       if (!currentAdPermission(epoch) || !current()) return;
       void initializeRevenueCat(current);
+      stage = 'Google SDK initialization';
+      adDeliveryDiagnostics.stage(stage);
       await bounded(trackNativeSdkSetup(sdk.default().initialize()));
       if (currentAdPermission(epoch) && current()) {
         menuPreparedEpoch = fromMenu ? epoch : null;
         setAdsReady(true);
+        adDeliveryDiagnostics.stage('Ready');
       }
-    } catch {
+    } catch (error) {
+      adDeliveryDiagnostics.error(stage, error);
       if (epoch === consentEpoch) setAdsReady(false);
     } finally {
       init = null;
@@ -645,11 +672,13 @@ export function prepareResultInterstitial(): ReadyInterstitial | null {
     ad.addAdEventListener(sdk.AdEventType.LOADED, () => {
       if (invalidated || released || shown) return;
       loaded = true;
+      adDeliveryDiagnostics.count('loaded');
       track('ad_loaded', impressionId, (value) => value.trackAdLoaded(base));
     });
     ad.addAdEventListener(sdk.AdEventType.OPENED, () => {
       if (released || !shown || opened) return;
       opened = true;
+      adDeliveryDiagnostics.count('opened');
       if (!invalidated) track('ad_displayed', impressionId, (value) => value.trackAdDisplayed(base));
       // Lifecycle accounting must survive withdrawal; this sends no analytics.
       callbacks?.opened();
@@ -662,14 +691,17 @@ export function prepareResultInterstitial(): ReadyInterstitial | null {
       const revenue = toRevenueData(base, payload as unknown as PaidEvent);
       if (revenue) track('ad_revenue', impressionId, (value) => value.trackAdRevenue(revenue));
     });
-    ad.addAdEventListener(sdk.AdEventType.ERROR, () => {
+    ad.addAdEventListener(sdk.AdEventType.ERROR, (error) => {
       if (released) return;
+      adDeliveryDiagnostics.count('failed');
+      adDeliveryDiagnostics.error(shown ? 'Ad display' : 'Ad load', error);
       if (!shown && !invalidated) track('ad_failed_to_load', impressionId, (value) => value.trackAdFailedToLoad({ mediatorName: base.mediatorName, adFormat: base.adFormat, placement: base.placement, adUnitId }));
       // On this one-shot request, an error after show is the native full-screen
       // presentation failure callback. Disposal never synthesizes this event.
       finish('failed');
     });
     ad.addAdEventListener(sdk.AdEventType.CLOSED, () => { if (shown) finish('closed'); });
+    adDeliveryDiagnostics.count('requested');
     ad.load();
     return {
       isReady: () => loaded && !invalidated && !released && !shown && adsReady && currentAdPermission(epoch) && resultPresentations.size === 0,
@@ -686,7 +718,9 @@ export function prepareResultInterstitial(): ReadyInterstitial | null {
           await ad.show();
           // This promise resolves as soon as native present() is invoked.
           // Only CLOSED/ERROR may settle a successfully handed-off presentation.
-        } catch {
+        } catch (error) {
+          adDeliveryDiagnostics.count('failed');
+          adDeliveryDiagnostics.error('Ad display', error);
           // The locked SDK rejects before present() (not-ready/no controller),
           // or JS validation throws before dispatch. Neither can present later.
           finish('failed');
@@ -694,7 +728,9 @@ export function prepareResultInterstitial(): ReadyInterstitial | null {
       },
       dispose,
     };
-  } catch {
+  } catch (error) {
+    adDeliveryDiagnostics.count('failed');
+    adDeliveryDiagnostics.error('Create ad request', error);
     try { release?.(); } catch { /* A failed request still returns the no-ad path. */ }
     return null;
   }

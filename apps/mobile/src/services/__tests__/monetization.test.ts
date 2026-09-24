@@ -1,5 +1,5 @@
 const originalEnv = { ...process.env };
-function loadAdapter(options: { adsMode?: string; rcIdMethod?: boolean; platform?: string; expoGo?: boolean; rcFails?: boolean; adsAllowed?: boolean; rcAllowed?: boolean; treatment?: string; underAgeOfConsent?: boolean; nativeFence?: boolean; umpBridge?: boolean; appleRequired?: boolean } = {}) {
+function loadAdapter(options: { buildNumber?: string; adsMode?: string; rcIdMethod?: boolean; platform?: string; expoGo?: boolean; rcFails?: boolean; adsAllowed?: boolean; rcAllowed?: boolean; treatment?: string; underAgeOfConsent?: boolean; nativeFence?: boolean; umpBridge?: boolean; appleRequired?: boolean } = {}) {
   jest.resetModules();
   process.env.EXPO_PUBLIC_ADS_MODE = options.adsMode ?? 'test';
   process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = 'appl_unit_test_only';
@@ -38,7 +38,7 @@ function loadAdapter(options: { adsMode?: string; rcIdMethod?: boolean; platform
   const changeState = (next: string) => { state.currentState = next; [...stateListeners].forEach((listener) => listener(next)); };
   const nativeLoad = jest.fn(() => sdk);
   const purchasesLoad = jest.fn(() => ({ default: purchases }));
-  jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: options.expoGo ? 'storeClient' : 'standalone', platform: { ios: { buildNumber: '13' } }, expoConfig: { version: '1.0.0', ios: { buildNumber: '1' } } }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
+  jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: options.expoGo ? 'storeClient' : 'standalone', platform: { ios: { buildNumber: options.buildNumber ?? '13' } }, expoConfig: { version: '1.0.0', ios: { buildNumber: '1' } } }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
   const nativeModules: { RNPurchases?: { flapFitSetProcessingAllowed?: typeof nativeFence; flapFitSetNetworkPaused?: typeof nativePause } } = options.nativeFence === false ? {} : { RNPurchases: { flapFitSetProcessingAllowed: nativeFence, flapFitSetNetworkPaused: nativePause } };
   const umpInfo = { canRequestAds: true, privacyOptionsRequirementStatus: 'REQUIRED' };
   const ump = { getConsentInfo: jest.fn().mockResolvedValue(umpInfo), showPrivacyOptionsForm: jest.fn().mockResolvedValue(umpInfo) };
@@ -56,6 +56,40 @@ afterEach(() => { process.env = { ...originalEnv }; jest.useRealTimers(); diagno
 function diagnosticRecords() {
   return diagnosticConsole.mock.calls.map(([line]) => JSON.parse(line as string) as Record<string, unknown>);
 }
+
+test('build 7 captures Google consent errors and reading the report performs no SDK work', async () => {
+  const f = loadAdapter({ buildNumber: '7', rcAllowed: false });
+  f.sdk.AdsConsent.requestInfoUpdate.mockRejectedValue(new Error('Consent service unavailable'));
+  await f.adapter.prepareMonetization(() => true);
+  f.sdk.AdsConsent.requestInfoUpdate.mockClear();
+  const report = f.adapter.getAdDeliveryDiagnosticReport();
+  expect(report).toContain('Google consent update:  Consent service unavailable');
+  expect(report).toContain('Ad SDK ready: false');
+  expect(f.sdk.AdsConsent.requestInfoUpdate).not.toHaveBeenCalled();
+  expect(f.mobileAds.initialize).not.toHaveBeenCalled();
+  expect(f.nativeAd.load).not.toHaveBeenCalled();
+  expect(f.purchases.configure).not.toHaveBeenCalled();
+});
+
+test('build 7 captures a live ad load rejection without changing request or exit behavior', async () => {
+  process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID = 'live-unit';
+  const f = loadAdapter({ buildNumber: '7', adsMode: 'live' });
+  await f.adapter.prepareMonetization(() => true);
+  const ad = f.adapter.prepareResultInterstitial()!;
+  f.events.get('error')!({ code: 'googleMobileAds/no-fill', message: 'No ad returned' });
+  expect(f.adapter.getAdDeliveryDiagnosticReport()).toContain('googleMobileAds/no-fill');
+  expect(f.adapter.getAdDeliveryDiagnosticReport()).toContain('Requests / loaded / opened / failed: 1 / 0 / 0 / 1');
+  expect(ad.isReady()).toBe(false);
+  expect(f.nativeAd.load).toHaveBeenCalledTimes(1);
+  expect(f.nativeAd.show).not.toHaveBeenCalled();
+  expect(f.sdk.InterstitialAd.createForAdRequest).toHaveBeenCalledWith('live-unit', { requestNonPersonalizedAdsOnly: true, networkExtras: { rdp: '1' } });
+});
+
+test.each([{ buildNumber: '8' }, { buildNumber: '7', platform: 'android' }])('temporary ad report is absent outside iOS build 7: %j', options => {
+  const f = loadAdapter(options);
+  expect(f.adapter.adDeliveryDiagnosticsEnabled).toBe(false);
+  expect(f.adapter.getAdDeliveryDiagnosticReport()).toBe('');
+});
 
 test('camera admission pauses reporting without withdrawal and blocks optional provider work', async () => {
   const f = loadAdapter();
