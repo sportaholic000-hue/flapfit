@@ -5,11 +5,11 @@ const entry = (manifest, name) => manifest.NSPrivacyCollectedDataTypes.find(
   (value) => value.NSPrivacyCollectedDataType === `NSPrivacyCollectedDataType${name}`
 );
 
-test('current declarations cover the existing backend and ads-only reporting data', () => {
+test('current declarations cover backend, advertising and update delivery data', () => {
   expect(validateCollectedDataDeclarations(configured)).toEqual([]);
 });
 
-test.each(['OtherDataTypes', 'OtherDiagnosticData', 'CoarseLocation', 'AdvertisingData', 'ProductInteraction'])(
+test.each(['DeviceID', 'OtherDataTypes', 'OtherDiagnosticData', 'CoarseLocation', 'AdvertisingData', 'ProductInteraction'])(
   'rejects a missing existing %s collection declaration', (name) => {
     const manifest = copy();
     manifest.NSPrivacyCollectedDataTypes = manifest.NSPrivacyCollectedDataTypes.filter(
@@ -29,12 +29,14 @@ test('rejects the prior four-category manifest and omitted reporting purpose', (
   );
   entry(manifest, 'UserID').NSPrivacyCollectedDataTypePurposes = ['NSPrivacyCollectedDataTypePurposeAppFunctionality'];
   const failures = validateCollectedDataDeclarations(manifest);
-  expect(failures).toHaveLength(6);
+  expect(failures).toHaveLength(7);
+  expect(failures).toContain('app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeDeviceID');
   expect(failures).toContain('app.json: iOS privacy manifest is incomplete for NSPrivacyCollectedDataTypeOtherDataTypes');
 });
 
 test.each([
   ['UserID', 'Analytics'],
+  ['DeviceID', 'AppFunctionality'],
   ['OtherDataTypes', 'AppFunctionality'],
 ])('rejects missing %s purpose %s', (name, purpose) => {
   const manifest = copy();
