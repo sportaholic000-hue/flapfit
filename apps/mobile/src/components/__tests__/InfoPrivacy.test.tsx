@@ -2,7 +2,7 @@ import type { ReactTestRenderer } from 'react-test-renderer';
 
 jest.setTimeout(20_000);
 
-async function fixture(requiredInitially = true) {
+async function fixture(requiredInitially = true, diagnostics = false) {
   jest.resetModules();
   const React: typeof import('react') = require('react');
   const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
@@ -13,9 +13,12 @@ async function fixture(requiredInitially = true) {
   const openURL = jest.fn();
   const alert = jest.fn();
   const requestCheck = jest.fn(() => true);
+  const diagnosticReport = jest.fn(() => 'Local diagnostic');
   const appState = { currentState: 'active' };
   jest.doMock('@/services/launchUpdates', () => ({ launchUpdates: { requestCheck } }));
   jest.doMock('@/services/monetization', () => ({
+    adDeliveryDiagnosticsEnabled: diagnostics,
+    getAdDeliveryDiagnosticReport: diagnosticReport,
     isAdPrivacyRequired: () => required,
     subscribeAdPrivacy: (listener: () => void) => { listeners.add(listener); return () => listeners.delete(listener); },
     refreshAdPrivacyRequirement: refresh,
@@ -53,7 +56,8 @@ async function fixture(requiredInitially = true) {
   const rows = () => tree.root.findAllByType('TouchableOpacity' as never);
   const privacyRows = () => rows().filter(node => node.props.accessibilityLabel?.startsWith('Manage Privacy Choices'));
   const text = () => tree.root.findAllByType('Text' as never).map(node => node.children.join('')).join('\n');
-  return { show, refresh, openURL, alert, privacyRows, text, requestCheck, appState,
+  const versionText = () => tree.root.findAllByType('Text' as never).find(node => node.children.join('').startsWith('Version '))!;
+  return { show, refresh, openURL, alert, privacyRows, text, requestCheck, appState, diagnosticReport, versionText,
     pressUpdate: async () => { await React.act(async () => { rows().find(node => node.props.accessibilityLabel?.startsWith('Check for updates'))!.props.onPress(); }); },
     press: async () => { await React.act(async () => { privacyRows()[0].props.onPress(); }); },
     setRequired: async (value: boolean) => { await React.act(async () => { required = value; listeners.forEach(fn => fn()); }); },
@@ -61,6 +65,25 @@ async function fixture(requiredInitially = true) {
     unmount: async () => { await React.act(async () => tree.unmount()); },
   };
 }
+
+test('temporary diagnostics require a foreground long press and do not initiate updates or privacy requests', async () => {
+  const f = await fixture(false, true);
+  expect(f.diagnosticReport).not.toHaveBeenCalled();
+  f.appState.currentState = 'background';
+  await f.act(async () => f.versionText().props.onLongPress());
+  expect(f.diagnosticReport).not.toHaveBeenCalled();
+  f.appState.currentState = 'active';
+  await f.act(async () => f.versionText().props.onLongPress());
+  expect(f.alert).toHaveBeenCalledWith('Ad diagnostics', 'Local diagnostic');
+  expect(f.requestCheck).not.toHaveBeenCalled(); expect(f.show).not.toHaveBeenCalled();
+  await f.unmount();
+});
+
+test('ordinary release Info has no diagnostic gesture', async () => {
+  const f = await fixture(false);
+  expect(f.versionText().props.onLongPress).toBeUndefined();
+  await f.unmount();
+});
 
 test('Info has one direct Google privacy action and no email/code workflow', async () => {
   const f = await fixture();

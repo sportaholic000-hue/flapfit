@@ -21,7 +21,7 @@ import {
 } from 'lucide-react-native';
 import type { ReactNode } from 'react';
 import { useCallback, useRef, useState, useSyncExternalStore } from 'react';
-import { isAdPrivacyRequired, refreshAdPrivacyRequirement, showAdPrivacyOptions, subscribeAdPrivacy } from '@/services/monetization';
+import { adDeliveryDiagnosticsEnabled, getAdDeliveryDiagnosticReport, isAdPrivacyRequired, refreshAdPrivacyRequirement, showAdPrivacyOptions, subscribeAdPrivacy } from '@/services/monetization';
 import {
   Alert,
   AppState,
@@ -744,7 +744,9 @@ export default function InfoScreen() {
 
         <View style={styles.versionCard}>
           <Text style={styles.versionName}>Flap Fit</Text>
-          <Text style={styles.versionText}>Version {version}</Text>
+          <Text style={styles.versionText} onLongPress={adDeliveryDiagnosticsEnabled ? () => {
+            if (AppState.currentState === 'active') Alert.alert('Ad diagnostics', getAdDeliveryDiagnosticReport());
+          } : undefined}>Version {version}</Text>
         </View>
       </ScrollView>
 
