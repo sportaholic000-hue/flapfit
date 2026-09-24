@@ -8,6 +8,7 @@ from pathlib import Path
 
 ipa, repository, output = map(Path, sys.argv[1:4])
 app = json.loads((repository / 'apps/mobile/app.json').read_text())['expo']
+production = json.loads((repository / 'apps/mobile/eas.json').read_text())['build']['production']['env']
 expected_runtime = '469f66ace28d0ea7661bb8681b0239739f8b3955'
 with zipfile.ZipFile(ipa) as archive:
     names = archive.namelist()
@@ -28,6 +29,7 @@ with zipfile.ZipFile(ipa) as archive:
         runtime = archive.read(resource).decode().strip()
     assert runtime == expected_runtime, runtime
     assert info['GADDelayAppMeasurementInit'] is True
+    assert info['GADApplicationIdentifier'] == production['EXPO_PUBLIC_ADMOB_IOS_APP_ID']
     assert 'NSUserTrackingUsageDescription' not in info
     assert info['ITSAppUsesNonExemptEncryption'] is False
     privacy = plistlib.loads(archive.read(root + 'PrivacyInfo.xcprivacy'))
@@ -45,6 +47,7 @@ with zipfile.ZipFile(ipa) as archive:
         'updatesEnabled': True, 'automaticCheck': 'NEVER', 'launchWaitMs': 0,
         'embeddedUpdateEnabled': True, 'antiBrickingProtectionEnabled': True,
         'delayedGoogleMeasurement': True, 'trackingPermissionRequested': False,
+        'productionAdMobAppIdMatches': True,
         'appOwnedPrivacyDeclarationsMatched': len(required_types),
         'deviceIdAppFunctionalityDeclared': True,
         'physicalDeviceBehaviorVerified': False,

@@ -37,3 +37,8 @@ The exact inspected build has been scheduled for standard TestFlight upload. No 
 The owner will test first. The existing internal group is **Flap Fit Testing**. A separate **Family Testing** external group has a public link limited to one tester, with no testers or builds added and no email invitation sent. Hold external build distribution until the owner has tested. First external availability still requires Apple's beta approval.
 
 On the installed candidate, prioritize normal/offline launch; Info > Check for updates and return; exact saved region names and repeated region switches; first free completed run and later eligible ads only after leaving results; camera tracking, recording, sharing and returning from the background. Screenshots and final App Store submission follow the owner's acceptance.
+
+
+## Submission checkpoint
+
+Standard TestFlight submission **eb147687-ec99-43c5-977f-5515dcc3e2d1** is queued in Expo's Free Tier Queue. It is the only pending submission; yesterday's submission succeeded. [Submission status](https://expo.dev/accounts/flapfitapp/projects/flapfit/submissions/eb147687-ec99-43c5-977f-5515dcc3e2d1). Do not start another upload or native build merely because this job is queued. After Apple processes build 7, add it to the existing internal Flap Fit Testing group and save the prepared testing notes. The owner explicitly wants to test first; keep the external Family Testing group without builds until that acceptance. The compiled production AdMob application ID was also verified against the production profile.

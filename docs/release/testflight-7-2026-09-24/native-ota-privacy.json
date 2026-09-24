@@ -10,6 +10,7 @@
   "antiBrickingProtectionEnabled": true,
   "delayedGoogleMeasurement": true,
   "trackingPermissionRequested": false,
+  "productionAdMobAppIdMatches": true,
   "appOwnedPrivacyDeclarationsMatched": 10,
   "deviceIdAppFunctionalityDeclared": true,
   "physicalDeviceBehaviorVerified": false
