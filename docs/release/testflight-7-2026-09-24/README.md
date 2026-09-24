@@ -32,7 +32,7 @@ Expo Doctor passed 20 of 21 checks. Its remaining finding is five September 24 p
 
 ## Distribution and acceptance
 
-The exact inspected build has been scheduled for standard TestFlight upload. No Enterprise changelog option, paid upgrade, additional native build, public App Store review submission or OTA publication was used.
+The exact inspected build has been uploaded to Apple and processed successfully. No Enterprise changelog option, paid upgrade, additional native build, public App Store review submission or OTA publication was used.
 
 The owner will test first. The existing internal group is **Flap Fit Testing**. A separate **Family Testing** external group has a public link limited to one tester, with no testers or builds added and no email invitation sent. Hold external build distribution until the owner has tested. First external availability still requires Apple's beta approval.
 
@@ -41,4 +41,6 @@ On the installed candidate, prioritize normal/offline launch; Info > Check for u
 
 ## Submission checkpoint
 
-Standard TestFlight submission **eb147687-ec99-43c5-977f-5515dcc3e2d1** is queued in Expo's Free Tier Queue. It is the only pending submission; yesterday's submission succeeded. [Submission status](https://expo.dev/accounts/flapfitapp/projects/flapfit/submissions/eb147687-ec99-43c5-977f-5515dcc3e2d1). Do not start another upload or native build merely because this job is queued. After Apple processes build 7, add it to the existing internal Flap Fit Testing group and save the prepared testing notes. The owner explicitly wants to test first; keep the external Family Testing group without builds until that acceptance. The compiled production AdMob application ID was also verified against the production profile.
+Standard TestFlight submission **eb147687-ec99-43c5-977f-5515dcc3e2d1** completed successfully at **2026-09-24 17:01:29 UTC**. [Submission status](https://expo.dev/accounts/flapfitapp/projects/flapfit/submissions/eb147687-ec99-43c5-977f-5515dcc3e2d1). Apple lists version **1.0.0 (7)**, build ID **cd134ff1-5916-44df-999c-bb84ad5005dc**, with upload status **Complete**. The build is assigned only to the existing internal **Flap Fit Testing** group (one tester). Prepared What to Test notes were saved successfully. App Store Connect now reports **Installed 1.0.0 (7)** for the internal tester; this verifies installation availability, not gameplay acceptance.
+
+The owner explicitly wants to test first. The external Family Testing group remains without builds, and no external invitation or beta review was submitted. The compiled production AdMob application ID was also verified against the production profile. No new build or OTA publication is required for this completed upload. Physical-device acceptance, screenshots, final privacy-publication confirmation and public App Store submission remain outstanding.

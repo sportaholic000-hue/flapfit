@@ -1,0 +1,19 @@
+{
+  "observedDate": "2026-09-24",
+  "sourceCommit": "52fa8e96444aadbca49c403a9d32df6a9a84f2c6",
+  "expoBuildId": "a67cc3d3-4400-4898-b949-242a6c8ec04b",
+  "submissionId": "eb147687-ec99-43c5-977f-5515dcc3e2d1",
+  "submissionFinishedAt": "2026-09-24T17:01:29.264Z",
+  "submissionExitCode": 0,
+  "appleBuildId": "cd134ff1-5916-44df-999c-bb84ad5005dc",
+  "version": "1.0.0",
+  "buildNumber": "7",
+  "appleUploadStatus": "Complete",
+  "assignedGroups": [{ "name": "Flap Fit Testing", "type": "Internal", "testers": 1 }],
+  "whatToTestSaved": true,
+  "appleReportedTesterStatus": "Installed 1.0.0 (7)",
+  "physicalGameplayAcceptance": "Pending owner testing",
+  "externalDistribution": "Held until owner acceptance; no external build assignment or invitation",
+  "publicAppStoreSubmission": false,
+  "otaPublished": false
+}
