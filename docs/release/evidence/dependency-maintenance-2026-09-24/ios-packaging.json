@@ -1,0 +1,40 @@
+{
+  "baselineBundleSha256": "fad789fb65e6bf7a9c5471bcea1a9f2501bbdd83837731092af38976e9f7bc8a",
+  "candidateBundleSha256": "28705468880dc16f922fbaa8cfa434be7ecd56b31e98838b171fb3e6746e6136",
+  "byteIdentical": false,
+  "nativeBuild": false,
+  "easBuildsUsed": 0,
+  "comparison": {
+    "details": [
+      {
+        "bytecodeVersion": 98,
+        "sourceSha1": "83fd23b89c70049f1faa3d58f7cc7ea3e78e1cdf",
+        "fileLength": 9146476,
+        "filenameOffset": 7829116,
+        "filenameLength": 89,
+        "normalizedLengthFieldOffsets": [
+          32,
+          7829096,
+          7829112
+        ],
+        "sha1FooterValid": true
+      },
+      {
+        "bytecodeVersion": 98,
+        "sourceSha1": "83fd23b89c70049f1faa3d58f7cc7ea3e78e1cdf",
+        "fileLength": 9146474,
+        "filenameOffset": 7829116,
+        "filenameLength": 87,
+        "normalizedLengthFieldOffsets": [
+          32,
+          7829096,
+          7829112
+        ],
+        "sha1FooterValid": true
+      }
+    ],
+    "identicalAfterTemporaryFilenameNormalization": true,
+    "normalizedSha256": "7af0b347c596f0da045fac8be33fef74871ed74f41fcb9abe14fec5d14249adf",
+    "explanation": "All binary differences are the randomized Expo temporary source filename, its two length fields, the overall file length and the derived SHA1 footer. No other byte differs after these fields are normalized."
+  }
+}

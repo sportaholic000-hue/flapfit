@@ -1,0 +1,17 @@
+{
+  "baseline": "10cda46a789c35ebf581ecb65bbd8175fd591e77",
+  "candidate": "6502189b3bf3f281dbc32d83cefbdb6b813f9758",
+  "protectedPaths": [
+    "AGENTS.md",
+    "apps/mobile/src",
+    "apps/mobile/modules",
+    "apps/mobile/plugins",
+    "apps/mobile/assets",
+    "apps/mobile/package.json",
+    "apps/mobile/app.config.js",
+    "apps/mobile/eas.json"
+  ],
+  "productionDependencyCount": 662,
+  "productionDependencyGraphSha256": "bce07d2db849b6fb700f9bb539c94acbad77dd34ea4289288131a96d1114f03d",
+  "productionGraphUnchanged": true
+}

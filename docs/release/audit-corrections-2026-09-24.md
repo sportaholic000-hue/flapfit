@@ -1,5 +1,7 @@
 # FlapFit — September 24 audit corrections
 
+Subsequent tooling maintenance: the six npm deprecation notices recorded in this audit are now resolved. See the [verified dependency follow-up](dependency-maintenance-2026-09-24.md); application source and production dependencies are unchanged.
+
 Application candidate: `d8971fe1f69a6dac44dee25f224f86098fccbf60`, based on audited `272b560913ce4e9f8b2efbed40b42e89191bf234`. The preceding implementation commit is `6926fa897633425922dda1f9b08272e6e5989566`; its native transport retention was tightened in the candidate. No EAS build, TestFlight upload, OTA, backend deployment or App Store submission was started. No subagents were used.
 
 ## Disposition of the independent audit

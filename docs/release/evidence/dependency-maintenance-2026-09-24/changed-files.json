@@ -1,0 +1,30 @@
+[
+  {
+    "file": ".eslintignore",
+    "sha256": null
+  },
+  {
+    "file": ".yarn/patches/@jest-reporters-npm-29.7.0-flapfit.patch",
+    "sha256": "bd259961d36f1550aff6d18b8f4151717af57b8efb29c72a61b4598ee35f62cb"
+  },
+  {
+    "file": ".yarn/patches/jest-environment-jsdom-npm-29.7.0-flapfit.patch",
+    "sha256": "d55cce0eb02b59ed1966b47e18974b728d738827caecfee61f240e652349b3d3"
+  },
+  {
+    "file": "apps/mobile/scripts/test-dependency-tooling.cjs",
+    "sha256": "0b54f08181988f3bd9b9e4b1b012029f2565522404cfa1d21565fccb03adf813"
+  },
+  {
+    "file": "apps/mobile/scripts/test-jest-tooling.cjs",
+    "sha256": "3610db46f3c2ea2efae1c1fa5e986ed816332cff83579a00f88c60fde2bd803d"
+  },
+  {
+    "file": "package.json",
+    "sha256": "b677f0cdc607e72d47e30ebfa1d10c55aeabd659e0b5328f73dd7300c865cd3f"
+  },
+  {
+    "file": "yarn.lock",
+    "sha256": "40d081660c978c360d59db36d0ebdd114b23c8630c0ea20497c6d741a0398ebc"
+  }
+]
