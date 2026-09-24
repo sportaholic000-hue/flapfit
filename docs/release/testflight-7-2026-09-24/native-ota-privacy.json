@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "buildNumber": "7",
+  "runtimeVersion": "469f66ace28d0ea7661bb8681b0239739f8b3955",
+  "channel": "production",
+  "updatesEnabled": true,
+  "automaticCheck": "NEVER",
+  "launchWaitMs": 0,
+  "embeddedUpdateEnabled": true,
+  "antiBrickingProtectionEnabled": true,
+  "delayedGoogleMeasurement": true,
+  "trackingPermissionRequested": false,
+  "appOwnedPrivacyDeclarationsMatched": 10,
+  "deviceIdAppFunctionalityDeclared": true,
+  "physicalDeviceBehaviorVerified": false
+}

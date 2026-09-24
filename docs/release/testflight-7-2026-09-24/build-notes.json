@@ -1,0 +1,34 @@
+{
+  "buildId": "a67cc3d3-4400-4898-b949-242a6c8ec04b",
+  "sourceCommit": "52fa8e96444aadbca49c403a9d32df6a9a84f2c6",
+  "version": "1.0.0",
+  "buildNumber": "7",
+  "cloudRuntimeComparisonPassed": true,
+  "runtimeVersion": "469f66ace28d0ea7661bb8681b0239739f8b3955",
+  "productionValidationPassed": true,
+  "allSixTrackerAssetByteChecksPassed": true,
+  "umpNativeConsentChecksPassed": true,
+  "revenueCatNativePrivacyChecksPassed": true,
+  "revenueCatNativeFilesPatched": 10,
+  "expoDoctor": {
+    "passed": 20,
+    "total": 21,
+    "finding": "Five September 24 patch releases are newer than the audited lockfile. Official changelogs describe each as having no user-facing changes. The tested dependency versions were retained; this check was not suppressed.",
+    "versions": [
+      {"package":"expo","installed":"57.0.24","newPatch":"57.0.25"},
+      {"package":"expo-build-properties","installed":"57.0.21","newPatch":"57.0.22"},
+      {"package":"expo-linking","installed":"57.0.10","newPatch":"57.0.11"},
+      {"package":"expo-router","installed":"57.0.22","newPatch":"57.0.23"},
+      {"package":"expo-sharing","installed":"57.0.21","newPatch":"57.0.22"}
+    ],
+    "changelogBase": "https://github.com/expo/expo/tree/sdk-57/packages"
+  },
+  "cliWarnings": [
+    "EAS CLI 24.7.0 still uses deprecated Node punycode and url.parse APIs. These messages originate from build tooling; the application's Jest punycode warning remains corrected.",
+    "The local app-config buildNumber is ignored by the existing remote version source; the actual candidate is build 7.",
+    "The existing production app is compiled natively, despite EAS warning that expo-dev-client is not installed for development."
+  ],
+  "privacyPublication": "Owner confirmation still pending; no final Publish action taken.",
+  "appStoreReviewSubmitted": false,
+  "otaPublished": false
+}
