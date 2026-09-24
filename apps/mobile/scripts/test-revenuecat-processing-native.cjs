@@ -132,16 +132,20 @@ func fileIsEmpty(_ url: URL) -> Bool { (try? Data(contentsOf: url))?.isEmpty == 
     precondition(FFRevenueCatProcessingGate.currentGeneration == fresh)
     precondition(FFRevenueCatProcessingGate.accepts(fresh), "exercise pause preserves consent")
     let retained = try Data(contentsOf: file)
-    let held = session.dataTask(with: URL(string: "https://consent-test.invalid/held")!) { _, _, _ in completed.signal() }
-    FFRevenueCatProcessingGate.resume(held, generation: fresh)
+    weak var held: URLSessionTask?
+    do {
+      let task = session.dataTask(with: URL(string: "https://consent-test.invalid/held")!) { _, _, _ in completed.signal() }
+      held = task
+      FFRevenueCatProcessingGate.resume(task, generation: fresh)
+    }
     precondition(SinkProtocol.counters.didStart.wait(timeout: .now() + 0.2) == .timedOut)
-    precondition(held.state == .suspended, "new transport waits during exercise")
+    precondition(held?.state == .suspended, "new transport is retained and waits during exercise")
     let stillRetained = try Data(contentsOf: file)
     precondition(stillRetained == retained, "pause retains pending events")
     precondition(FFRevenueCatProcessingGate.setNetworkPaused(false))
     precondition(SinkProtocol.counters.didStart.wait(timeout: .now() + 5) == .success)
     precondition(FFRevenueCatProcessingGate.setNetworkPaused(true))
-    precondition(held.state == .suspended, "active transport can be paused")
+    precondition(held?.state == .suspended, "active transport can be paused")
     precondition(FFRevenueCatProcessingGate.setProcessingAllowed(false))
     precondition(completed.wait(timeout: .now() + 5) == .success)
     precondition(fileIsEmpty(file), "withdrawal still purges while exercise is paused")

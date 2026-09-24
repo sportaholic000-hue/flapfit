@@ -25,10 +25,18 @@ assert.match(pause,/!paused && state\.allowed && task\.state == \.suspended/);
 assert.ok(!pause.includes('generation &+='));
 assert.ok(!pause.includes('truncate'));
 assert.ok(!pause.includes('task.cancel()'));
-assert.match(http,/if !state\.networkPaused \{ task.resume\(\) \}/);
+assert.match(http,/if state\.networkPaused \{ state.pendingTasks.insert\(task\) \}/);
+assert.match(pause,/if !paused \{ state.pendingTasks.removeAll\(\) \}/);
 const previousHttp=http.replace('        var networkPaused = false\n','')
- .replace('            if !state.networkPaused { task.resume() }','            task.resume()')
- .replace(/    \/\/ Exercise pauses transport only\.[\s\S]*?(?=    @objc\(setProcessingAllowed:\))/,'');
+ .replace('        // Tasks not yet resumed need an owner while transport is paused.\n        var pendingTasks = Set<URLSessionTask>()\n','')
+ .replace('            if state.networkPaused { state.pendingTasks.insert(task) }\n            else { task.resume() }','            task.resume()')
+ .replace(/    \/\/ Exercise pauses transport only\.[\s\S]*?(?=    @objc\(setProcessingAllowed:\))/,'')
+ .replace(`        for task in state.tasks.allObjects {
+            task.cancel()
+            // A never-started task still needs its cancelled completion delivered.
+            if state.pendingTasks.contains(task) { task.resume() }
+        }
+        state.pendingTasks.removeAll()`, '        for task in state.tasks.allObjects { task.cancel() }');
 assert.equal(require('node:crypto').createHash('sha256').update(previousHttp).digest('hex'),'7d08f4dba8b22ec9b67cf1460239f03d938796c47a919fc5b4d2f488436d96e8');
 fs.writeFileSync(path.join(pods,'RevenueCat',sourceFiles[0]),previousHttp);
 assert.equal(patchPods(pods,versions),1);
