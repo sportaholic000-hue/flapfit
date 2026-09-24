@@ -22,7 +22,7 @@ async function main() {
       assert.equal(parser.parseFromString('<root><child>ok</child></root>', 'text/xml').documentElement.nodeName, 'root');
     });
   }
-  for (const [consumer, version, method] of [['@istanbuljs/load-nyc-config', '3.15.2', 'safeLoad'], ['@eslint/eslintrc', '4.3.2', 'load']]) {
+  for (const [consumer, version, method] of [['@istanbuljs/load-nyc-config', '3.15.2', 'safeLoad']]) {
     await check(consumer + ' YAML configuration', () => {
       const local = createRequire(req.resolve(consumer));
       const yaml = local('js-yaml');

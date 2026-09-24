@@ -6,10 +6,8 @@
     "apps/mobile"
   ],
   "devDependencies": {
-    "eslint": "^9.27.0",
     "oxfmt": "^0.61.0",
-    "oxlint": "^1.50.0",
-    "typescript-eslint": "^8.33.0"
+    "oxlint": "^1.50.0"
   },
   "packageManager": "yarn@4.12.0",
   "resolutions": {
@@ -20,6 +18,11 @@
     "js-yaml@npm:^4.1.0": "npm:4.3.2",
     "js-yaml@npm:^4.3.0": "npm:4.3.2",
     "uuid@npm:^3.3.2": "npm:11.1.1",
-    "uuid@npm:^7.0.3": "npm:11.1.1"
+    "uuid@npm:^7.0.3": "npm:11.1.1",
+    "glob@npm:^7.1.3": "npm:13.0.6",
+    "test-exclude@npm:^6.0.0": "npm:8.0.0",
+    "jsdom@npm:^20.0.0": "npm:27.4.0",
+    "jest-environment-jsdom@npm:^29.2.1": "patch:jest-environment-jsdom@npm%3A29.7.0#~/.yarn/patches/jest-environment-jsdom-npm-29.7.0-flapfit.patch",
+    "@jest/reporters@npm:^29.7.0": "patch:@jest/reporters@npm%3A29.7.0#~/.yarn/patches/@jest-reporters-npm-29.7.0-flapfit.patch"
   }
 }

@@ -1,0 +1,14 @@
+diff --git a/build/CoverageReporter.js b/build/CoverageReporter.js
+--- a/build/CoverageReporter.js
++++ b/build/CoverageReporter.js
+@@ -28,3 +28,3 @@
+ function _glob() {
+-  const data = _interopRequireDefault(require('glob'));
++  const data = require('glob');
+   _glob = function () {
+@@ -373,4 +373,4 @@
+               if (filesByGlob[absoluteThresholdGroup] === undefined) {
+                 filesByGlob[absoluteThresholdGroup] = _glob()
+-                  .default.sync(absoluteThresholdGroup)
++                  .globSync(absoluteThresholdGroup.split(path().sep).join('/'))
+                   .map(filePath => path().resolve(filePath));

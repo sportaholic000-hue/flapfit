@@ -1,0 +1,13 @@
+diff --git a/build/index.js b/build/index.js
+--- a/build/index.js
++++ b/build/index.js
+@@ -60,7 +60,7 @@ class JSDOMEnvironment {
+     const {projectConfig} = config;
+     const virtualConsole = new (_jsdom().VirtualConsole)();
+-    virtualConsole.sendTo(context.console, {
+-      omitJSDOMErrors: true
++    virtualConsole.forwardTo(context.console, {
++      jsdomErrors: 'none'
+     });
+     virtualConsole.on('jsdomError', error => {
+       context.console.error(error);
