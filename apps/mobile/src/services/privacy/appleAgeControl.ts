@@ -25,16 +25,22 @@ let requestGatesKey: string | null = null;
 
 /** This checks API availability and duties, never permission to use personal data. */
 export function interpretAppleRequirements(
-  value: AppleAgeRequirements, platform: string, majorVersion: number,
+  value: AppleAgeRequirements, platform: string, osVersion: string | number,
 ): AppleRequirement {
   if (platform !== 'ios') return 'unsupported';
+  const majorVersion = Number.parseInt(String(osVersion), 10);
   if (value.status === 'unsupported' && majorVersion < 26) return 'unsupported';
   if (value.status !== 'available' || !value.ageRangeSupported ||
       !value.compiledCapabilities.ageRange || value.regulatoryFeatures.includes('unknown')) return 'error';
   if (value.regulatoryFeatures.includes('declaredAgeRangeRequired') || value.eligibility === true) return 'required';
   if ((value.regulatoryFeaturesSupported && value.compiledCapabilities.regulatoryFeatures) ||
       (value.compiledCapabilities.regionalEligibility && value.eligibility === false)) return 'not-required';
-  // A basic age API without a usable regional duty check does not prove exemption.
+  // These OS versions expose DAR but cannot execute the bridge's iOS 26.2
+  // regional query. Still request Apple's basic age response during setup;
+  // missing capability is neither a transient failure nor proof of exemption.
+  if (/^26\.[01](?:\.\d+)*$/.test(String(osVersion)) && value.eligibility === null &&
+      !value.regulatoryFeaturesSupported && value.regulatoryFeatures.length === 0) return 'basic-only';
+  // A missing query on a newer/unknown OS stays fail-closed.
   return 'error';
 }
 export function prepareAppleAgeControl(): Promise<AppleRequirement> {
@@ -51,7 +57,7 @@ export function prepareAppleAgeControl(): Promise<AppleRequirement> {
       if (token === generation && verificationToken === getAgeVerificationRevision()) setAppleAgeRequirement('error');
       return getProcessingInputs().appleRequirement;
     }
-    const requirement = interpretAppleRequirements(value, Platform.OS, Number.parseInt(String(Platform.Version), 10));
+    const requirement = interpretAppleRequirements(value, Platform.OS, Platform.Version);
     if (token === generation && verificationToken === getAgeVerificationRevision()) {
       setAppleAgeRequirement(requirement);
       return requirement;

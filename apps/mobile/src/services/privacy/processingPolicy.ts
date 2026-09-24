@@ -13,7 +13,7 @@ export type AgeEvidence = {
   upperBound: number | null;
 };
 export type PurposeRequirement = 'unresolved' | 'express-consent' | 'notice-and-opt-out' | 'requested-service';
-export type AppleRequirement = 'pending' | 'required' | 'not-required' | 'unsupported' | 'error';
+export type AppleRequirement = 'pending' | 'required' | 'not-required' | 'basic-only' | 'unsupported' | 'error';
 export type ProcessingChoice = {
   decision: 'unset' | 'granted' | 'denied';
   noticeVersion: number;
@@ -88,7 +88,7 @@ function eligibility(input: ProcessingInputs): ProcessingReason {
   if (!input.hydrated) return 'loading';
   if (input.appleAccessRestricted) return 'apple-access-restricted';
   if (input.appleRequirement === 'pending' || input.appleRequirement === 'error') return 'apple-check-pending';
-  if (input.appleRequirement === 'required' &&
+  if ((input.appleRequirement === 'required' || input.appleRequirement === 'basic-only') &&
       (!input.appleAgeCheckSatisfied || input.age.source !== 'apple' || !validAge(input.age))) {
     return 'apple-check-required';
   }
@@ -145,7 +145,7 @@ function runtimeEligibility(input: ProcessingRuntimeInputs): ProcessingReason {
   if (!input.hydrated) return 'loading';
   if (input.appleAccessRestricted) return 'apple-access-restricted';
   if (input.appleRequirement === 'pending' || input.appleRequirement === 'error') return 'apple-check-pending';
-  if (input.appleRequirement === 'required' && !input.verification?.mandatoryCheckSatisfied) return 'apple-check-required';
+  if ((input.appleRequirement === 'required' || input.appleRequirement === 'basic-only') && !input.verification?.mandatoryCheckSatisfied) return 'apple-check-required';
   if (input.appleRequirement === 'required' && input.appleRescissionPending) return 'apple-access-check-pending';
   if (input.launch) {
     if (!input.launch.current || !input.launch.country) return 'region-unconfirmed';

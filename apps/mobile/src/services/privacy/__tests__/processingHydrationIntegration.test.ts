@@ -33,7 +33,7 @@ function load(country: LaunchCountry, initialFault: Fault = 'none', memory = new
   jest.doMock('@react-native-async-storage/async-storage', () => storage);
   jest.doMock('react-native', () => ({ Platform: { OS: 'ios', Version: '26.5' },
     AppState: { currentState: 'active', addEventListener: () => ({ remove() {} }) },
-    NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: jest.fn().mockResolvedValue(true) } },
+    NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: jest.fn().mockResolvedValue(true), flapFitSetNetworkPaused: jest.fn().mockResolvedValue(true) } },
     TurboModuleRegistry: { get: () => null },
   }));
   jest.doMock('expo', () => ({ requireOptionalNativeModule: () => null }));

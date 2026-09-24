@@ -1,6 +1,6 @@
 # Apple age-rating worksheet
 
-Last source review: 2026-09-17
+Last source review: 2026-09-24
 
 Use this with the exact questions shown in App Store Connect. Apple calculates the public rating
 from the submitted answers; do not select a lower rating merely because Flap Fit's own Terms require
@@ -26,8 +26,9 @@ Official references:
 - Social media capabilities under Apple's July 2026 definition: **No.** Flap Fit has no social feed,
   following, reactions, reposting, content redistribution, or content amplification. Leaderboards
   display structured game results only.
-- Contests, sweepstakes, or prizes: **No.** Scores and Daily Challenge do not award money,
-  merchandise, randomized prizes, or anything of real-world value.
+- Contests: **Yes — Frequent.** Persistent leaderboards and Daily Challenge let players compete
+  for rankings and fitness goals. Apple's definition does not require prizes. This describes
+  the recurring competition features; it does not imply gambling, sweepstakes or cash prizes.
 - Gambling, simulated gambling, or loot boxes: **No.**
 - Unrestricted web access: **No.** Legal/support links open fixed public Flap Fit URLs; players cannot
   browse arbitrary websites inside the app.
@@ -35,8 +36,9 @@ Official references:
   diagnosis or treatment information.
 - Violence, sexual content, profanity, drugs, alcohol, tobacco, horror, or mature themes: **None in
   developer-provided content.** Objectionable player names are prohibited and filtered.
-- Age assurance: **Do not claim it.** The Terms require age 13 or older, but the current app does not
-  verify identity or birth date.
+- Age assurance: **Yes.** The native app uses Apple's Declared Age Range API on supported systems
+  and a local age answer on older supported systems. Apple's definition explicitly includes
+  Declared Age Range; this is not a claim of identity or birth-date verification.
 - Advertising: **Yes in the implemented native candidate.** Result-action interstitials use a PG
   content-rating cap. Expo Go skips the native ad SDK and cannot verify the final ad experience;
   confirm the exact signed binary and served ad content before completing the questionnaire.
@@ -60,6 +62,9 @@ Flap Fit is a fitness game and has no medical purpose, clearance, registration, 
 
 ## Final verification
 
+- App Store Connect's displayed questionnaire was inspected September 24, 2026:
+  **Age Assurance: Yes** and **Contests: Frequent** were already saved. Neither answer
+  needed a console change; this worksheet corrects the contradictory repository guidance.
 - Complete the questionnaire only after the final ads/RevenueCat code is in the candidate.
 - Confirm the calculated rating and every content descriptor before submission.
 - If App Store Connect's wording differs from this worksheet, answer the displayed question using

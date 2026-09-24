@@ -19,6 +19,20 @@ const endpointGate=http.indexOf('guard request.path is HTTPRequest.AdPath else')
 assert.ok(endpointGate>0 && endpointGate<http.indexOf('self.perform(request: .init(httpRequest: request,'));
 assert.ok(!http.includes('headers["X-Apple-Device-Identifier"]'));
 assert.match(http,/static let allowsNonAdProcessing = false/);
+const pause=http.slice(http.indexOf('    @objc(setNetworkPaused:)'),http.indexOf('    @objc(setProcessingAllowed:)'));
+assert.match(pause,/task\.suspend\(\)/);
+assert.match(pause,/!paused && state\.allowed && task\.state == \.suspended/);
+assert.ok(!pause.includes('generation &+='));
+assert.ok(!pause.includes('truncate'));
+assert.ok(!pause.includes('task.cancel()'));
+assert.match(http,/if !state\.networkPaused \{ task.resume\(\) \}/);
+const previousHttp=http.replace('        var networkPaused = false\n','')
+ .replace('            if !state.networkPaused { task.resume() }','            task.resume()')
+ .replace(/    \/\/ Exercise pauses transport only\.[\s\S]*?(?=    @objc\(setProcessingAllowed:\))/,'');
+assert.equal(require('node:crypto').createHash('sha256').update(previousHttp).digest('hex'),'7d08f4dba8b22ec9b67cf1460239f03d938796c47a919fc5b4d2f488436d96e8');
+fs.writeFileSync(path.join(pods,'RevenueCat',sourceFiles[0]),previousHttp);
+assert.equal(patchPods(pods,versions),1);
+assert.equal(read(sourceFiles[0]),http);
 assert.match(http,/guard FFRevenueCatProcessingGate.allowsNonAdProcessing else \{ completion\(\.failure\(URLError\(\.cancelled\)\)\); return \}/);
 assert.match(read('Sources/Networking/RemoteConfigBlobDownloader.swift'),/guard FFRevenueCatProcessingGate.allowsNonAdProcessing else \{ throw URLError\(\.cancelled\) \}/);
 const purchases=read('Sources/Purchasing/Purchases/Purchases.swift');

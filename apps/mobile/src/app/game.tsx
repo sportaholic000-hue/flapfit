@@ -3,10 +3,11 @@ import { useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
 import type { File, FileHandle } from 'expo-file-system';
 import { createGameplayRecordingFile, discardGameplayRecordingFile } from '@/services/recordingCache';
 import * as Haptics from 'expo-haptics';
-import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
+import { Redirect, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { getVideoShareAvailability, shareGameplayVideo, type VideoShareDestination } from '@/services/videoSharing';
 import { StatusBar } from 'expo-status-bar';
-import { adEnvironment, prepareResultInterstitial, resultAdGate, settlePrivacyBeforeGameplay } from '@/services/monetization';
+import { adEnvironment, isMonetizationPrepared, pauseOptionalWorkForGameplay, prepareResultInterstitial, refreshMonetizationForResult, resultAdGate, settlePrivacyBeforeGameplay } from '@/services/monetization';
+import { getProcessingAccess, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import {
   ArrowRight,
   Camera,
@@ -43,7 +44,6 @@ import {
   prepareCompetitionRun,
   competitionIsConfigured,
   competitionPlayerNameError,
-  flushPendingCompetitionResults,
   submitPreparedCompetitionRunResult,
   type CompetitionRunDisposition,
   type CompetitionSubmissionOutcome,
@@ -297,6 +297,11 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     stopContinuation: null as (() => void) | null,
   }), []);
   const resultActionClaimed = useRef(false);
+  const resultFocused = useRef(false);
+  useFocusEffect(useCallback(() => {
+    resultFocused.current = true;
+    return () => { resultFocused.current = false; };
+  }, []));
   const [resultActionBusy, setResultActionBusy] = useState(false);
   const { openChoices: openPrivacyChoices, cancelChoices, privacyChoicesSheet } = usePrivacyChoicesSheet();
   const recordingIsFinalizing = recordingPhase === 'recording' || recordingPhase === 'preparing';
@@ -316,6 +321,34 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     resultLifetime.opportunity = resultAdGate.createResult(
       recordingIsFinalizing || !resultAdGate.canPrepareAd() ? null : prepareResultInterstitial(), adEnvironment,
     );
+    if (recordingIsFinalizing || !resultAdGate.canPrepareAd()) return;
+    let mounted = true;
+    let needsRecovery = false;
+    let recovering = false;
+    const current = () => mounted && resultFocused.current && !resultActionClaimed.current && adEnvironment.isActive();
+    const recover = () => {
+      if (!needsRecovery || recovering || !current() || !getProcessingAccess().ads.allowed) return;
+      needsRecovery = false;
+      recovering = true;
+      void refreshMonetizationForResult(current).then(() => {
+        if (!current() || !getProcessingAccess().ads.allowed || !isMonetizationPrepared()) return;
+        resultLifetime.opportunity?.dispose();
+        resultLifetime.opportunity = resultAdGate.createResult(prepareResultInterstitial(), adEnvironment);
+      }).catch(() => undefined).finally(() => {
+        recovering = false;
+        // A new policy invalidation may have occurred during this attempt.
+        if (needsRecovery) recover();
+      });
+    };
+    const stopAccess = subscribeProcessingAccess(() => {
+      if (!getProcessingAccess().ads.allowed) needsRecovery = true;
+      else recover();
+    });
+    const lifecycle = AppState.addEventListener('change', state => {
+      if (state === 'background') needsRecovery = true;
+      if (state === 'active') recover();
+    });
+    return () => { mounted = false; stopAccess(); lifecycle.remove(); };
   }, [result, runKey, recordingIsFinalizing, resultLifetime]);
   const performResultAction = (action: () => void, startsNewRun = true) => {
     if (!result || shareBusyRef.current || resultActionClaimed.current || !adEnvironment.isActive()) return;
@@ -452,9 +485,6 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       return;
     }
 
-    void flushPendingCompetitionResults().catch((error) => {
-      console.warn('Pending competition results will retry later', error);
-    });
     competitionRunPromiseRef.current = prepareCompetitionRun({
       kind: 'leaderboard',
       exercise: exerciseMode,
@@ -577,6 +607,12 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     return { html, baseUrl: GAME_WEB_BASE_URL };
   }, [html, trackerAssets]);
   const entryReadyRef = useRef(false);
+  const releaseGameplayWork = useRef<(() => void) | null>(null);
+  const endGameplayWork = useCallback(() => {
+    releaseGameplayWork.current?.();
+    releaseGameplayWork.current = null;
+  }, []);
+  useEffect(() => endGameplayWork, [endGameplayWork]);
   const [entryReady, setEntryReady] = useState(false);
   const [entryError, setEntryError] = useState<string | null>(null);
   const [entryAttempt, setEntryAttempt] = useState(0);
@@ -584,8 +620,12 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     if (entryReadyRef.current || !webSource || trackerLoadError || !permission?.granted ||
       (recordRun && !recordWithoutAudio && !microphonePermission?.granted)) return;
     let active = true;
-    void prepareEntry().then(() => {
-      if (active) { entryReadyRef.current = true; setEntryReady(true); }
+    void prepareEntry().then(async () => {
+      if (!active) return;
+      const release = await pauseOptionalWorkForGameplay();
+      if (!active) { release(); return; }
+      releaseGameplayWork.current = release;
+      entryReadyRef.current = true; setEntryReady(true);
     }).catch(() => {
       if (active) setEntryError('Game access could not be checked. Retry before starting.');
     });
@@ -971,6 +1011,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       } else if (msg.type === 'gameover') {
         if (gameOverHandled.current) return;
         gameOverHandled.current = true;
+        endGameplayWork();
         if (recordRun && recordingPhaseRef.current === 'recording') {
           updateRecordingPhase('preparing');
         } else if (recordRun && recordingPhaseRef.current === 'idle') {
@@ -1032,6 +1073,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       failRecording,
       updateRecordingPhase,
       sendBundledTrackerAssets,
+      endGameplayWork,
     ]
   );
 

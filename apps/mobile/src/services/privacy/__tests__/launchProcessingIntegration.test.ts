@@ -1,6 +1,6 @@
 const settle = async () => { for (let i = 0; i < 40; i++) await Promise.resolve(); };
 const originalEnv = { ...process.env };
-async function load(options: { offline?: boolean; unsupported?: boolean; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string>; quebecResidency?: 'resident' | 'not-resident' } = {}) {
+async function load(options: { offline?: boolean; unsupported?: boolean; osVersion?: string; requirements?: unknown; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string>; quebecResidency?: 'resident' | 'not-resident' } = {}) {
   jest.resetModules();
   process.env.EXPO_PUBLIC_ADS_MODE = 'test'; process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = 'appl_test_only';
   const memory = options.memory ?? new Map<string, string>();
@@ -10,11 +10,11 @@ async function load(options: { offline?: boolean; unsupported?: boolean; age?: u
   const listeners = new Set<(value: string) => void>(); const fence = jest.fn().mockResolvedValue(true);
   const appState = { currentState: 'active', addEventListener: jest.fn((_event, listener) => { listeners.add(listener); return { remove: () => listeners.delete(listener) }; }) };
   const alert = jest.fn((_title, _body, buttons) => buttons.find((button: { text: string }) => button.text === 'Continue')?.onPress());
-  jest.doMock('react-native', () => ({ Alert: { alert }, AppState: appState, Platform: { OS: 'ios', Version: options.unsupported ? '16.4' : '26.6' }, TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: fence } } }));
+  jest.doMock('react-native', () => ({ Alert: { alert }, AppState: appState, Platform: { OS: 'ios', Version: options.osVersion ?? (options.unsupported ? '16.4' : '26.6') }, TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: fence, flapFitSetNetworkPaused: jest.fn().mockResolvedValue(true) } } }));
   jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: 'standalone', expoConfig: {} }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
   const requestAge = jest.fn().mockResolvedValue(options.age ?? { status: 'shared', lowerBound: 18, upperBound: null });
   jest.doMock('../../../../modules/flap-fit-age-range', () => ({ ...jest.requireActual('../../../../modules/flap-fit-age-range/src/gates'),
-    getAppleAgeRequirements: jest.fn().mockResolvedValue({ status: options.unsupported ? 'unsupported' : 'available', ageRangeSupported: !options.unsupported, eligibility: options.required ?? false,
+    getAppleAgeRequirements: jest.fn().mockResolvedValue(options.requirements ?? { status: options.unsupported ? 'unsupported' : 'available', ageRangeSupported: !options.unsupported, eligibility: options.required ?? false,
       regulatoryFeaturesSupported: true, regulatoryFeatures: [], compiledCapabilities: { ageRange: true, regionalEligibility: true, regulatoryFeatures: true, confirmedAssurance: true } }), requestAppleAgeRange: requestAge }));
   const nativeAds = { setRequestConfiguration: jest.fn().mockResolvedValue(undefined), initialize: jest.fn().mockResolvedValue(undefined) };
   const events = new Map<string, (value?: unknown) => void>();
@@ -1145,5 +1145,68 @@ test.each(['CA', 'US'] as const)('%s every province/state selection restores the
     }
     expect(f.nativeAd.load).not.toHaveBeenCalled();
     expect(f.nativeAd.show).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+
+const basicAgeRequirements = {
+  status: 'available', ageRangeSupported: true, eligibility: null,
+  regulatoryFeaturesSupported: false, regulatoryFeatures: [],
+  compiledCapabilities: { ageRange: true, regionalEligibility: true, regulatoryFeatures: true, confirmedAssurance: true },
+};
+test.each(['16.4', '18.6', '26.0', '26.1', '26.1.2', '26.2', '26.3', '26.4', '26.6'])(
+  'audit A1: iOS %s completes setup and admits second and third workouts', async osVersion => {
+    const older = Number.parseInt(osVersion, 10) < 26;
+    const basic = /^26\.[01](?:\.|$)/.test(osVersion);
+    const requirements = older ? undefined : {
+      ...basicAgeRequirements,
+      eligibility: basic ? null : false,
+      regulatoryFeaturesSupported: Number.parseFloat(osVersion) >= 26.4,
+    };
+    const f = await load({ osVersion, unsupported: older, requirements, country: 'CA', quebecResidency: 'not-resident' });
+    try {
+      const entry: typeof import('../gameEntry') = require('../gameEntry');
+      const local: typeof import('../localAgeAnswer') = require('../localAgeAnswer');
+      const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+      const notice: typeof import('../processingNotice') = require('../processingNotice');
+      expect(await entry.authorizeGameEntry(false)).toEqual({ status: 'available' });
+      expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+      expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+      const complete = await flow.preparePostGamePrivacy(() => true, async () => {
+        if (older) await local.saveLocalAgeAnswer('18-plus');
+        await notice.acknowledgeProcessingNotice();
+      });
+      expect(complete).toBe(true);
+      expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+      expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+      expect(f.requestAge).toHaveBeenCalledTimes(older ? 0 : 1);
+      expect(local.hasLocalAgeControl()).toBe(older);
+      expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+    } finally { f.finish(); }
+  },
+);
+test.each(['declined', 'unavailable', 'error', 'unknown'])(
+  'audit A1: basic-only Apple %s cannot become local age, consent or repeat-play permission', async status => {
+    const f = await load({ osVersion: '26.1', requirements: basicAgeRequirements, country: 'CA', quebecResidency: 'not-resident',
+      age: { status, lowerBound: null, upperBound: null } });
+    try {
+      const entry: typeof import('../gameEntry') = require('../gameEntry');
+      const local: typeof import('../localAgeAnswer') = require('../localAgeAnswer');
+      const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+      expect(await flow.preparePostGamePrivacy(() => true, jest.fn())).toBe(false);
+      expect(f.requestAge).toHaveBeenCalledTimes(1);
+      expect(local.hasLocalAgeControl()).toBe(false);
+      expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+      expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: false }, revenueCat: { allowed: false } });
+    } finally { f.finish(); }
+  },
+);
+test('audit A1: a newer OS duty-query failure remains an error, not the older capability path', async () => {
+  const f = await load({ osVersion: '26.4', requirements: { ...basicAgeRequirements, status: 'error' } });
+  try {
+    await f.adapter.prepareMonetization(() => true);
+    expect(f.access.getProcessingInputs().appleRequirement).toBe('error');
+    expect(f.requestAge).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
   } finally { f.finish(); }
 });

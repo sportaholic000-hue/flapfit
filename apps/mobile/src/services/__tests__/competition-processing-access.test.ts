@@ -159,6 +159,44 @@ test('Supabase transport is gated independently of periodic refresh', async () =
   expect(global.fetch).not.toHaveBeenCalled();
 });
 
+test('camera ownership stops auth refresh and retains queued scores across foreground until results', async () => {
+  setAccess(true);
+  await api.competitionRequest('/leaderboard');
+  const options = createClient.mock.calls[0][2];
+  const { holdGameplayActivity } = require('../gameplayActivity');
+  const release = holdGameplayActivity();
+  expect(auth.stopAutoRefresh).toHaveBeenCalled();
+  auth.startAutoRefresh.mockClear(); (global.fetch as jest.Mock).mockClear();
+  const run = { runId: 'paused-run', expiresAt: new Date(Date.now() + 60_000).toISOString(), playerName: 'Bird', score: 5, durationMs: 10000 };
+  await api.submitCompetitionRunResult(run);
+  const saved = await storage.getItem('@flapfit/competition-result-outbox-v1');
+  expect(saved).toContain('paused-run');
+  const submitted = deferred<void>();
+  const stop = api.startCompetitionForegroundRetry(() => submitted.resolve());
+  appListeners.forEach(listener => listener('active'));
+  await expect(options.global.fetch('https://test.supabase.co/auth/v1/token', { method: 'POST' }))
+    .rejects.toBeInstanceOf(api.CompetitionUnavailableError);
+  await expect(api.flushPendingCompetitionResults()).resolves.toMatchObject({ submitted: 0, pending: 1 });
+  expect(await storage.getItem('@flapfit/competition-result-outbox-v1')).toBe(saved);
+  expect(auth.startAutoRefresh).not.toHaveBeenCalled(); expect(global.fetch).not.toHaveBeenCalled();
+  release(); await submitted.promise;
+  expect(auth.startAutoRefresh).toHaveBeenCalled(); expect(global.fetch).toHaveBeenCalledTimes(1);
+  expect(await storage.getItem('@flapfit/competition-result-outbox-v1')).toBeNull();
+  stop();
+});
+
+test('camera admission aborts an optional in-flight request and ignores late completion', async () => {
+  setAccess(true);
+  const started = deferred<AbortSignal>(), pending = deferred<Response>();
+  (global.fetch as jest.Mock).mockImplementation((_url, init: RequestInit) => { started.resolve(init.signal as AbortSignal); return pending.promise; });
+  const request = api.competitionRequest('/leaderboard');
+  const expected = expect(request).rejects.toBeInstanceOf(api.CompetitionUnavailableError);
+  const signal = await started.promise;
+  const release = require('../gameplayActivity').holdGameplayActivity();
+  expect(signal.aborted).toBe(true);
+  release(); pending.resolve(response({ scores: ['stale'] })); await expected;
+});
+
 test('withdrawal preserves queued local scores and foreground retry sends nothing until reauthorized', async () => {
   const input = { runId: 'existing-run', expiresAt: new Date(Date.now() + 60_000).toISOString(), playerName: 'Bird', score: 5, durationMs: 10000 };
   const result = await api.submitCompetitionRunResult(input);

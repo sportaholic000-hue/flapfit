@@ -13,6 +13,7 @@ function loadAdapter(options: { adsMode?: string; rcIdMethod?: boolean; platform
   const invalidateAge = () => { ++ageRevision; privacyInput.verification = null; };
   jest.doMock('../privacy/processingAccess', () => ({ getProcessingInputs: () => privacyInput, getAgeVerificationRevision: () => ageRevision, getProcessingAccess: () => access, subscribeProcessingAccess: (listener: () => void) => { accessListeners.add(listener); return () => accessListeners.delete(listener); } }));
   const nativeFence = jest.fn().mockResolvedValue(true);
+  const nativePause = jest.fn().mockResolvedValue(true);
   const events = new Map<string, (value?: unknown) => void>();
   const consent = { canRequestAds: true, privacyOptionsRequirementStatus: 'required' };
   const tracker = Object.fromEntries(['trackAdLoaded', 'trackAdDisplayed', 'trackAdOpened', 'trackAdRevenue', 'trackAdFailedToLoad'].map((name) => [name, jest.fn().mockResolvedValue(undefined)]));
@@ -38,7 +39,7 @@ function loadAdapter(options: { adsMode?: string; rcIdMethod?: boolean; platform
   const nativeLoad = jest.fn(() => sdk);
   const purchasesLoad = jest.fn(() => ({ default: purchases }));
   jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: options.expoGo ? 'storeClient' : 'standalone', platform: { ios: { buildNumber: '13' } }, expoConfig: { version: '1.0.0', ios: { buildNumber: '1' } } }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
-  const nativeModules: { RNPurchases?: { flapFitSetProcessingAllowed?: typeof nativeFence } } = options.nativeFence === false ? {} : { RNPurchases: { flapFitSetProcessingAllowed: nativeFence } };
+  const nativeModules: { RNPurchases?: { flapFitSetProcessingAllowed?: typeof nativeFence; flapFitSetNetworkPaused?: typeof nativePause } } = options.nativeFence === false ? {} : { RNPurchases: { flapFitSetProcessingAllowed: nativeFence, flapFitSetNetworkPaused: nativePause } };
   const umpInfo = { canRequestAds: true, privacyOptionsRequirementStatus: 'REQUIRED' };
   const ump = { getConsentInfo: jest.fn().mockResolvedValue(umpInfo), showPrivacyOptionsForm: jest.fn().mockResolvedValue(umpInfo) };
   const turbo = { get: jest.fn(() => options.umpBridge ? ump : null) };
@@ -46,7 +47,7 @@ function loadAdapter(options: { adsMode?: string; rcIdMethod?: boolean; platform
   jest.doMock('react-native-google-mobile-ads', () => nativeLoad());
   jest.doMock('react-native-purchases', () => purchasesLoad());
   const adapter = require('../monetization') as typeof import('../monetization');
-  return { adapter, sdk, purchases, cachedIdentity, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativeModules, changeState, ump, umpInfo, ageRequest, privacyInput, invalidateAge };
+  return { adapter, sdk, purchases, cachedIdentity, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativePause, nativeModules, changeState, ump, umpInfo, ageRequest, privacyInput, invalidateAge };
 }
 
 let diagnosticConsole: jest.SpyInstance;
@@ -55,6 +56,51 @@ afterEach(() => { process.env = { ...originalEnv }; jest.useRealTimers(); diagno
 function diagnosticRecords() {
   return diagnosticConsole.mock.calls.map(([line]) => JSON.parse(line as string) as Record<string, unknown>);
 }
+
+test('camera admission pauses reporting without withdrawal and blocks optional provider work', async () => {
+  const f = loadAdapter();
+  await f.adapter.prepareMonetization(() => true);
+  const access = f.getAccess();
+  f.nativeFence.mockClear(); f.nativePause.mockClear();
+  const release = await f.adapter.pauseOptionalWorkForGameplay();
+  expect(f.nativePause).toHaveBeenLastCalledWith(true);
+  expect(f.nativeFence).not.toHaveBeenCalled();
+  expect(f.getAccess()).toBe(access);
+  f.sdk.AdsConsent.requestInfoUpdate.mockClear();
+  f.mobileAds.initialize.mockClear(); f.purchases.configure.mockClear();
+  await f.adapter.refreshMonetizationForResult(() => true);
+  expect(f.adapter.prepareResultInterstitial()).toBeNull();
+  expect(f.sdk.AdsConsent.requestInfoUpdate).not.toHaveBeenCalled();
+  expect(f.mobileAds.initialize).not.toHaveBeenCalled();
+  expect(f.purchases.configure).not.toHaveBeenCalled();
+  release(); release();
+  for (let i = 0; i < 12; i++) await Promise.resolve();
+  expect(f.nativePause.mock.calls).toEqual([[true], [false]]);
+  expect(f.nativeFence).not.toHaveBeenCalled();
+});
+
+test('an unconfirmed native pause rejects camera admission and releases optional-work ownership', async () => {
+  const f = loadAdapter(); await f.adapter.prepareMonetization(() => true);
+  f.nativePause.mockResolvedValue(false);
+  await expect(f.adapter.pauseOptionalWorkForGameplay()).rejects.toThrow('Reporting pause');
+  expect(require('../gameplayActivity').isGameplayActive()).toBe(false);
+});
+
+test('missing native pause capability leaves optional RevenueCat unconfigured', async () => {
+  const f = loadAdapter(); delete f.nativeModules.RNPurchases!.flapFitSetNetworkPaused;
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.purchases.configure).not.toHaveBeenCalled();
+  expect(f.mobileAds.initialize).toHaveBeenCalled();
+});
+
+test.each([false, true])('visible-result recovery checks current UMP permission without presenting a form (permitted=%s)', async permitted => {
+  const f = loadAdapter({ umpBridge: true });
+  f.sdk.AdsConsent.requestInfoUpdate.mockResolvedValue({ ...f.consent, canRequestAds: permitted });
+  await f.adapter.refreshMonetizationForResult(() => true);
+  expect(f.sdk.AdsConsent.requestInfoUpdate).toHaveBeenCalled();
+  expect(f.sdk.AdsConsent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
+  expect(f.mobileAds.initialize).toHaveBeenCalledTimes(permitted ? 1 : 0);
+});
 
 test.each([{ expoGo: true }, { platform: 'web' }])('does not evaluate either native SDK in unsupported runtime %j', async (options) => {
   const f = loadAdapter(options);

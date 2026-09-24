@@ -2,6 +2,7 @@ import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { AppState, NativeModules, Platform } from 'react-native';
 import type { AgeRestrictedTreatment, PaidEvent } from 'react-native-google-mobile-ads';
 import type { AdRevenueData, PurchasesAdTracker } from 'react-native-purchases';
+import { holdGameplayActivity, isGameplayActive } from '../gameplayActivity';
 import { ResultAdGate, type InterstitialCallbacks, type ReadyInterstitial } from './resultAdGate';
 import { getAgeVerificationRevision, getProcessingAccess, getProcessingInputs, subscribeProcessingAccess } from '../privacy/processingAccess';
 import { getUmpPrivacyControls } from '../privacy/umpPrivacyControls';
@@ -123,6 +124,12 @@ export function refreshMonetizationFromChoices(canPresent: () => boolean): Promi
   return preparePermittedMonetization(canPresent, true);
 }
 
+/** Recovery belongs only to a still-visible, unclaimed result. Read current UMP
+ * permission without presenting a form; never wait for inventory on an exit. */
+export function refreshMonetizationForResult(isCurrentResult: () => boolean): Promise<void> {
+  return preparePermittedMonetization(isCurrentResult, true);
+}
+
 function notifyPrivacy() { privacyListeners.forEach((listener) => listener()); }
 export function subscribeAdPrivacy(listener: () => void) {
   privacyListeners.add(listener);
@@ -219,7 +226,9 @@ function prepareRevenueCatTestIdentity(sdk: PurchasesSdk, epoch: number): void {
 }
 
 function initializeRevenueCat(canPrepare: () => boolean): Promise<void> {
-  if (!canPrepare() || !supported || !revenueCatKey || tracker || !getProcessingAccess().revenueCat.allowed) return Promise.resolve();
+  if (isGameplayActive() || !canPrepare() || !supported || !revenueCatKey || tracker || !getProcessingAccess().revenueCat.allowed) return Promise.resolve();
+  // A candidate without the native pause bridge cannot start optional reporting.
+  if (typeof NativeModules.RNPurchases?.flapFitSetNetworkPaused !== 'function') return Promise.resolve();
   if (revenueCatInit) return revenueCatInit;
   const epoch = revenueCatEpoch;
   revenueCatInit = (async () => {
@@ -303,6 +312,35 @@ export async function settlePrivacyBeforeGameplay(): Promise<void> {
   // An already-dispatched native initialization must settle before the camera
   // mounts. Invalidated info requests cannot dispatch any further SDK work.
   await Promise.allSettled([...nativeSdkSetup, ...(revenueCatInit ? [revenueCatInit] : [])]);
+}
+
+let gameplayTransition: Promise<void> = Promise.resolve();
+function syncRevenueCatGameplayPause(): Promise<void> {
+  const operation = gameplayTransition.catch(() => undefined).then(async () => {
+    if (!nativeRevenueCatMayBeActive) return;
+    const apply = NativeModules.RNPurchases?.flapFitSetNetworkPaused;
+    if (typeof apply !== 'function' || (await apply(isGameplayActive())) !== true) {
+      throw new Error('Reporting pause could not be confirmed.');
+    }
+  });
+  gameplayTransition = operation;
+  return operation;
+}
+/** Called before camera admission, never from the pose loop. A pause preserves
+ * consent and pending ad events; only real withdrawal may purge those events. */
+export async function pauseOptionalWorkForGameplay(): Promise<() => void> {
+  await settlePrivacyBeforeGameplay();
+  const release = holdGameplayActivity();
+  try { await syncRevenueCatGameplayPause(); }
+  catch (error) { release(); throw error; }
+  let ended = false;
+  return () => {
+    if (ended) return;
+    ended = true;
+    release();
+    // A failed resume leaves reporting paused; it must not block result actions.
+    void syncRevenueCatGameplayPause().catch(() => undefined);
+  };
 }
 
 // Explicit result/rights/competition callers share native presentation ownership.
@@ -416,9 +454,9 @@ function resumeAfterPreparation(pending: Promise<unknown>, ownedEpoch: number | 
 
 function preparePermittedMonetization(canPresent: () => boolean, fromMenu = false): Promise<void> {
   const intent = presentationIntentEpoch;
-  const current = () => intent === presentationIntentEpoch && canPresent() && adEnvironment.isActive();
+  const current = () => !isGameplayActive() && intent === presentationIntentEpoch && canPresent() && adEnvironment.isActive();
   if (!current()) return Promise.resolve();
-  // Only an explicit menu/setup caller starts providers. Permission listeners
+  // Only a menu/setup or visible-result owner starts providers. Global listeners
   // may stop revoked processing, but cannot start work during a camera run.
   void initializeRevenueCat(current);
   // A lobby focus change must not launch a second UMP form while the existing
@@ -556,6 +594,7 @@ function track(kind: RevenueCatTestDiagnosticKind, impressionId: string, send: (
 }
 
 export function prepareResultInterstitial(): ReadyInterstitial | null {
+  if (isGameplayActive()) return null;
   const sdk = ads;
   const access = getProcessingAccess();
   if (!supported || !sdk || !adsReady || mode === 'off' || !access.ads.allowed || resultPresentations.size > 0) return null;

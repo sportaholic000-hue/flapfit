@@ -38,7 +38,7 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
     Alert: { alert: jest.fn() }, Linking: { openSettings: jest.fn() }, Share: {}, StyleSheet: { create: (styles: unknown) => styles },
     Animated: { Value: class { interpolate = jest.fn(); setValue = jest.fn(); }, View: 'View', timing: animation, loop: animation, sequence: animation },
     Easing: { linear: jest.fn(), out: jest.fn(), quad: jest.fn() }, useWindowDimensions: () => ({ width: 390, height: 844 }),
-    TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: jest.fn().mockResolvedValue(true) } },
+    TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: jest.fn().mockResolvedValue(true), flapFitSetNetworkPaused: jest.fn().mockResolvedValue(true) } },
   }));
   jest.doMock('lucide-react-native', () => new Proxy({}, { get: (_target, key) => key === '__esModule' ? true : String(key) }));
   jest.doMock('react-native-svg', () => new Proxy({}, { get: (_target, key) => key === '__esModule' ? true : String(key) }));
@@ -113,6 +113,18 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
   };
 }
 afterEach(() => { process.env = { ...originalEnv }; jest.useRealTimers(); });
+
+test.each([false, true])('optional work stays paused from WebView admission until completion or unmount (unmount=%s)', async unmount => {
+  const f = await mountApp(JSON.stringify({ version: 1, answer: '18-plus' }), { playable: true });
+  const activity: typeof import('../../gameplayActivity') = require('../../gameplayActivity');
+  try {
+    await f.play();
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
+    expect(activity.isGameplayActive()).toBe(true);
+    if (!unmount) { await f.completeGame(); expect(activity.isGameplayActive()).toBe(false); }
+  } finally { await f.finish(); }
+  expect(activity.isGameplayActive()).toBe(false);
+});
 
 test.each([false, true])('saved under-13 is restored before Home Play reaches camera setup (offline=%s)', async offline => {
   const f = await mountApp(JSON.stringify({ version: 1, answer: 'under-13' }), { offline });
@@ -236,5 +248,62 @@ test('first result and its Done action never allocate an interstitial', async ()
     await f.pressResult('Done');
     expect(prepare).not.toHaveBeenCalled();
     expect(f.router.back).toHaveBeenCalledTimes(1);
+  } finally { await f.finish(); }
+});
+
+test.each([false, true])('audit A2: visible result replaces a background-invalidated ad only after fresh permission (leaveEarly=%s)', async leaveEarly => {
+  const f = await mountApp(null, { playable: true });
+  try {
+    await f.play();
+    const { act } = require('react');
+    const local: typeof import('../localAgeAnswer') = require('../localAgeAnswer');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const access: typeof import('../processingAccess') = require('../processingAccess');
+    await act(async () => { await local.saveLocalAgeAnswer('18-plus'); await notice.acknowledgeProcessingNotice(); await settle(); });
+    expect(access.getProcessingAccess().ads.allowed).toBe(true);
+    const monetization: typeof import('../../monetization') = require('../../monetization');
+    const privacy: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    jest.spyOn(privacy, 'preparePostGamePrivacy').mockResolvedValue(true);
+    let ready = true;
+    const oldAd = { isReady: () => ready, show: jest.fn(), dispose: jest.fn() };
+    const newAd = { isReady: () => true, show: jest.fn(async callbacks => { callbacks.opened(); callbacks.closed(); }), dispose: jest.fn() };
+    const allocate = jest.spyOn(monetization, 'prepareResultInterstitial').mockReturnValueOnce(oldAd).mockReturnValue(newAd);
+    jest.spyOn(monetization, 'isMonetizationPrepared').mockReturnValue(true);
+    let finishRefresh!: () => void;
+    const refresh = jest.spyOn(monetization, 'refreshMonetizationForResult').mockImplementation(() => new Promise<void>(done => { finishRefresh = done; }));
+    monetization.resultAdGate.createResult(null, monetization.adEnvironment).exit(false, jest.fn());
+    await f.completeGame();
+    expect(allocate).toHaveBeenCalledTimes(1);
+    ready = false; // Native consent invalidation makes the old ad unusable.
+    await f.change('background');
+    expect(refresh).not.toHaveBeenCalled();
+    await f.change('active');
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(oldAd.show).not.toHaveBeenCalled(); expect(newAd.show).not.toHaveBeenCalled();
+    if (leaveEarly) await f.pressResult('Done');
+    await act(async () => { finishRefresh(); await settle(); });
+    if (leaveEarly) {
+      expect(allocate).toHaveBeenCalledTimes(1);
+      expect(newAd.show).not.toHaveBeenCalled();
+      expect(f.router.back).toHaveBeenCalledTimes(1);
+    } else {
+      expect(allocate).toHaveBeenCalledTimes(2);
+      expect(newAd.show).not.toHaveBeenCalled(); // Returning from Share never shows an ad.
+      await f.pressResult('Done');
+      expect(newAd.show).toHaveBeenCalledTimes(1);
+      expect(f.router.back).toHaveBeenCalledTimes(1);
+    }
+  } finally { await f.finish(); }
+});
+
+test('audit A2: first free result does not refresh or allocate after background/share return', async () => {
+  const f = await mountApp(null, { playable: true });
+  try {
+    await f.play();
+    const monetization: typeof import('../../monetization') = require('../../monetization');
+    const refresh = jest.spyOn(monetization, 'refreshMonetizationForResult');
+    const allocate = jest.spyOn(monetization, 'prepareResultInterstitial');
+    await f.completeGame(); await f.change('background'); await f.change('active');
+    expect(refresh).not.toHaveBeenCalled(); expect(allocate).not.toHaveBeenCalled();
   } finally { await f.finish(); }
 });

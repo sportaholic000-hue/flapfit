@@ -46,8 +46,10 @@ Compete is optional and uses an anonymous Supabase account. Before publishing a 
 competition rows have a clearly labeled Report / Block control. The in-app deletion path is
 Info > Delete online profile. No reviewer credentials are required.
 
-The app has no HealthKit, location, or contact access. Microphone access is optional and used only
-for Record & Play. Fitness and score estimates are not medical measurements. The fitness safety
+The app has no HealthKit or contact access. It does not request Core Location/GPS permission or
+collect precise location. Country/approximate-location processing is disclosed in the Privacy
+Policy and App Privacy responses. Microphone access is optional and used only for Record & Play.
+Fitness and score estimates are not medical measurements. The fitness safety
 notice is available at Info > Fitness safety.
 
 The native build contains Google AdMob interstitials and RevenueCat ad-event reporting. The first
@@ -55,14 +57,15 @@ completed-run exit in a session is ad-free; eligibility is limited to one ad per
 least 90 seconds between displayed ads. Ads are requested only after applicable consent handling,
 and appear only after Done, Try Again, or Next Level. Sharing, returning from another app, and
 arriving at results never trigger an ad by themselves. Google UMP supplies regional consent and
-Info > Ad privacy settings when required. Requests are non-personalized; the app does not
+Info > Manage Privacy Choices when required. Requests are non-personalized; the app does not
 request ATT or Android advertising-ID permission. RevenueCat receives anonymous ad events and
 revenue, with no exercise, score, player name, camera, or training-history attributes.
 Flap Fit 1.0 has no purchase, subscription, paywall, or remove-ads product.
 
 Support: **Troy Reardon, support@flapfitapp.com**
 
-Before submission, enter the owner's review-contact phone privately in App Store Connect. It is not a public repository field.
+Review-contact details were visually confirmed complete in App Store Connect on September 23.
+Recheck them before submission; the private phone number is not a public repository field.
 
 Privacy policy: **https://flapfitapp.com/privacy/**
 

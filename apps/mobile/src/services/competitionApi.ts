@@ -7,6 +7,7 @@ import { getProcessingAccess, getProcessingInputs, subscribeProcessingAccess } f
 import { ensureCurrentAppleRescissionStatus, getAppleRescissionStatus, isAppleRescissionStatusFresh,
   linkAppleRescissionToExistingAccount, startAppleRescissionMonitoring } from './privacy/appleRescission';
 import { COMPETITION_TERMS_VERSION, useGameStore } from '@/utils/game/store';
+import { isGameplayActive, subscribeGameplayActivity } from './gameplayActivity';
 
 const FUNCTION_NAME = 'flapfit-game';
 
@@ -50,7 +51,7 @@ function competitionAccessAllowed() {
 // purpose's access, including a brief withdrawal followed by a new grant.
 let accessGeneration = 0;
 let observedAccess = competitionAccessAllowed();
-const activeRequests = new Set<() => void>();
+const activeRequests = new Set<(reason?: Error) => void>();
 function processingAccessChanged() {
   const allowed = competitionAccessAllowed();
   if (allowed !== observedAccess) {
@@ -61,6 +62,13 @@ function processingAccessChanged() {
   }
 }
 subscribeProcessingAccess(processingAccessChanged);
+subscribeGameplayActivity(() => {
+  if (isGameplayActive()) {
+    ++accessGeneration;
+    for (const invalidate of [...activeRequests]) invalidate(new CompetitionUnavailableError('Online work will resume after this run.'));
+  }
+  updateAutoRefresh(AppState.currentState);
+});
 useGameStore.subscribe((state, previous) => {
   if (state.competitionTermsVersion !== previous.competitionTermsVersion) processingAccessChanged();
 });
@@ -83,17 +91,19 @@ function requiresAppleRescission() {
 
 type CompetitionAccess = { assert: () => void; signal: AbortSignal };
 async function withCompetitionAccess<T>(operation: (access: CompetitionAccess) => Promise<T>): Promise<T> {
+  if (isGameplayActive()) throw new CompetitionUnavailableError('Online work will resume after this run.');
   if (!competitionAccessAllowed()) throw new CompetitionAccessRequiredError();
   const generation = accessGeneration;
   const controller = new AbortController();
   const assert = () => {
+    if (isGameplayActive()) throw new CompetitionUnavailableError('Online work will resume after this run.');
     if (generation !== accessGeneration || !competitionAccessAllowed()) throw new CompetitionAccessRequiredError();
   };
-  let invalidate: () => void = () => undefined;
+  let invalidate: (reason?: Error) => void = () => undefined;
   const revoked = new Promise<never>((_, reject) => {
-    invalidate = () => {
+    invalidate = reason => {
       controller.abort();
-      reject(new CompetitionAccessRequiredError());
+      reject(reason ?? new CompetitionAccessRequiredError());
     };
   });
   activeRequests.add(invalidate);
@@ -154,7 +164,7 @@ const competitionFetch: typeof fetch = (input, init) => withCompetitionAccess(as
 
 function updateAutoRefresh(state: AppStateStatus) {
   if (!client) return;
-  if (state === 'active' && competitionAccessAllowed()) client.auth.startAutoRefresh();
+  if (state === 'active' && !isGameplayActive() && competitionAccessAllowed()) client.auth.startAutoRefresh();
   else client.auth.stopAutoRefresh();
 }
 
@@ -734,7 +744,7 @@ async function flushCompetitionOutbox(): Promise<CompetitionFlushResult> {
     const pending = await readCompetitionOutbox();
     if (pending.length === 0) return emptyCompetitionFlushResult();
 
-    if (!competitionAccessAllowed()) {
+    if (isGameplayActive() || !competitionAccessAllowed()) {
       return { ...emptyCompetitionFlushResult(), pending: pending.length, pendingRunIds: pending.map((entry) => entry.runId) };
     }
     const generation = accessGeneration;
@@ -743,7 +753,7 @@ async function flushCompetitionOutbox(): Promise<CompetitionFlushResult> {
     const rejected: CompetitionSubmissionNotice[] = [];
     let retryLater = false;
     for (const entry of pending) {
-      if (!competitionAccessAllowed() || generation !== accessGeneration) { remaining.push(entry); continue; }
+      if (isGameplayActive() || !competitionAccessAllowed() || generation !== accessGeneration) { remaining.push(entry); continue; }
       if (Date.parse(entry.expiresAt) <= Date.now()) {
         rejected.push({
           runId: entry.runId,
@@ -824,23 +834,26 @@ export function startCompetitionForegroundRetry(onSubmitted: () => void): () => 
   };
   const unsubscribeAppleRequirement = subscribeProcessingAccess(syncAppleMonitor);
   syncAppleMonitor();
-  const subscription = AppState.addEventListener('change', (state) => {
-    if (state !== 'active' || inFlight || !useGameStore.getState().hydrated) return;
+  const retry = (state: AppStateStatus) => {
+    if (state !== 'active' || isGameplayActive() || inFlight || !useGameStore.getState().hydrated) return;
     inFlight = true;
     void (async () => {
       if (requiresAppleRescission()) {
         const checked = await ensureCurrentAppleRescissionStatus();
         if (checked.status !== 'no-revocation-recorded' || !isAppleRescissionStatusFresh()) return;
       }
-      if (!active || !competitionAccessAllowed()) return;
+      if (!active || isGameplayActive() || !competitionAccessAllowed()) return;
       const generation = accessGeneration;
       const result = await flushPendingCompetitionResults();
       if (active && competitionAccessAllowed() && generation === accessGeneration && result.submitted > 0) onSubmitted();
     })().catch(() => undefined).finally(() => { inFlight = false; });
-  });
+  };
+  const subscription = AppState.addEventListener('change', retry);
+  const stopGameplay = subscribeGameplayActivity(() => { if (!isGameplayActive()) retry(AppState.currentState); });
   return () => {
     active = false;
     subscription.remove();
+    stopGameplay();
     unsubscribeAppleRequirement();
     stopApple?.();
   };
