@@ -3,7 +3,7 @@ window.FLAP_FIT_CONFIG = Object.freeze({
   developerName: "Flap Fit",
   supportEmail: "support@flapfitapp.com",
   privacyEmail: "support@flapfitapp.com",
-  privacyEffectiveDate: "September 22, 2026",
+  privacyEffectiveDate: "September 23, 2026",
   releaseStatus: "development",
   appStoreUrl: "",
   googlePlayUrl: ""

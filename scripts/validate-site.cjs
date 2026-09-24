@@ -66,16 +66,16 @@ const config = read('dist/site-config.js');
 check(config.includes('developerName: "Flap Fit"'), 'app identity is not configured');
 check(config.includes('supportEmail: "support@flapfitapp.com"'), 'support email is not configured');
 check(config.includes('privacyEmail: "support@flapfitapp.com"'), 'privacy email is not configured');
-check(config.includes('privacyEffectiveDate: "September 22, 2026"'), 'privacy effective date is not configured');
+check(config.includes('privacyEffectiveDate: "September 23, 2026"'), 'privacy effective date is not configured');
 check(config.includes('releaseStatus: "development"'), 'release status must remain development until store URLs exist');
 
 const homepage = read('dist/index.html');
 check(!homepage.includes('\u2014'), 'homepage contains an em dash');
 const privacy = read('dist/privacy/index.html');
-for (const phrase of ['bundled with the app', 'Supabase', 'Delete online profile', 'aged 13 and older', 'Google AdMob', 'RevenueCat', 'not proof of ownership', 'Ad privacy settings']) {
+for (const phrase of ['bundled with the app', 'Supabase', 'Delete online profile', 'aged 13 and older', 'Google AdMob', 'RevenueCat', 'not proof of ownership', 'Manage Privacy Choices']) {
   check(privacy.includes(phrase), `privacy policy is missing: ${phrase}`);
 }
-for (const phrase of ['Regional advertising restrictions do not exclude you from gameplay', 'Answers are saved so the questions are not asked again', 'Camera access is required for all Flap Fit gameplay', 'refusals remain respected']) {
+for (const phrase of ['Regional advertising restrictions do not exclude you from gameplay', 'saved only on this device so they can be displayed again', 'Camera access is required for all Flap Fit gameplay', 'refusals remain respected']) {
   check(privacy.includes(phrase), `privacy disclosure is missing: ${phrase}`);
 }
 for (const stale of ['Quebec is not supported', 'New York No lasts only', 'does not prevent another game', 'without creating a one-game limit', 'advertising notice are not requirements', 'You may decline camera permission,']) {
@@ -86,7 +86,7 @@ check(terms.includes('Camera access is required for all gameplay'), 'terms must 
 check(!terms.includes('Quebec is not supported'), 'terms must not exclude Quebec gameplay');
 check(!terms.includes('do not impose a one-game limit'), 'terms contain outdated setup behavior');
 check(terms.includes('before starting another run') && privacy.includes('before starting another run'), 'setup requirements must agree');
-check(privacy.includes('Privacy requests') && privacy.includes('close and reopen'), 'privacy request instructions must explain completion');
+check(!privacy.includes('Privacy requests') && !privacy.includes('device-specific request ID') && !privacy.includes('apply a response from support'), 'removed support-response workflow must not be described');
 for (const phrase of ['at least 13', 'report', 'block', 'Record &amp; Play']) {
   check(terms.includes(phrase), `terms are missing: ${phrase}`);
 }
