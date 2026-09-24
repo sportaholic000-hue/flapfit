@@ -1,0 +1,18 @@
+{
+  "admob-native.log": "17cf805137ff7682fa8b3e183b80eb1b993cbbb62d6013284817a30da01eeb35",
+  "admob-patch.log": "3c04a7d47e4f7156d5700f2437d6d267b1400e0d5743f96925e179717b653b2d",
+  "apple-verifier.log": "f06465b90f67c9fd441146aa4791f73309cd8d6380f41fbf2cc61b71293ae230",
+  "dependency-audit.log": "b55e58f2fe40274831bbf5cec762539990a04089bd2e4496216379cd074e7f13",
+  "immutable-install.log": "41b39d3fd8a2ce0d5b30ef5707e91f8d7493ea17535c85767dc1652f0e63c0f8",
+  "ios-js-export.log": "e44905a8f1c20702114c9fd3e2a482beac4e377615fa822adf88b986615fb13b",
+  "lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "mobile-jest.log": "c68d56bbbdff4ec0facfc25757c71d1764e009c34598449df1f511de83e24030",
+  "production-config.log": "2254c2f40e5436856aa3259e544d4c056d42c8efeca5182c06b351cfc8c42aa4",
+  "public-links.log": "23d826458b08dd5842e013b8a6466c1118afa3f75e63f09ca24a3f81498c2f1b",
+  "revenuecat-bridge.log": "e14a99b37372b5fd5ec7710092b1c077b5649ee45da16ac7817187fd56da447b",
+  "revenuecat-native.log": "f50e5877e15024bc4701533d135adb2e76efbe04901b776f6cdb22bd51c1ff52",
+  "revenuecat-patch.log": "25c83dc73f3a2c5ec1cd8ad967ed0fbe784335e1d5c9c48e748c7fa539a8f150",
+  "security-advisories.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "tracker-bytes.log": "f8a78549c8692ef2094d683a3a65b3bf5f8d2eb1a130ccb2cb23c054ee665d48",
+  "typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

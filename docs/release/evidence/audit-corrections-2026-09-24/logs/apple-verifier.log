@@ -1,0 +1,14 @@
+✔ requires strong configured authentication (15.1069ms)
+✔ refuses missing or wrong authentication before invoking Apple (584.4337ms)
+✔ fixed paths bind both environment and kind and only return required fields (217.4334ms)
+✔ rejects malformed and excessive input without verifier work (96.5207ms)
+✔ invalid signatures fail closed and never retry another environment (35.5576ms)
+✔ network and internal errors remain retryable and redacted (63.985ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1937.6226

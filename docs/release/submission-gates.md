@@ -1,5 +1,11 @@
 # Flap Fit dual-store submission gates
 
+## Current audit correction — September 24
+
+[The audit follow-up](audit-corrections-2026-09-24.md) records source `d8971fe`, 70 passing mobile suites / 1,579 tests, six passing Apple-verifier tests, successful local iOS export and the full verification evidence. Six dependency deprecation notices remain; the security-advisory scan reports none. The app source, lockfile and build configuration are frozen for independent review.
+
+The owner still requires explicit approval before any new build. No build, OTA, backend deployment or submission was started. Apple native compilation/checks run on Expo's existing hosted servers during the next authorized iOS build; the owner does not need a Mac or a separate test build. Physical-device acceptance and proof of SDK traffic behavior remain pending.
+
 ## Current device setup-dismissal correction — September 22
 
 [The setup-dismissal correction](privacy-dismissal-fix-2026-09-22.md) closes the reported Privacy & choices → Back/Close → repeat-run bypass in source. It preserves the approved regional exceptions, permission choices and ad-placement rules. The updated 84-state review includes its neutral recovery screen. The [replacement signed build](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/f0cf64c3-04c1-43fe-97d9-44f409e2f809) is complete from 69b0696 and passes artifact inspection. See [build evidence](privacy-replacement-build-2026-09-22.md). Device verification remains pending.

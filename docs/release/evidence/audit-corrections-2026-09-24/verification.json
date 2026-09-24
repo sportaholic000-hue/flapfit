@@ -1,0 +1,282 @@
+{
+  "commit": "d8971fe1f69a6dac44dee25f224f86098fccbf60",
+  "node": "v24.13.1",
+  "platform": "win32",
+  "checks": [
+    {
+      "name": "immutable-install",
+      "command": [
+        "node",
+        "C:/Users/money/AppData/Local/node/corepack/v1/yarn/4.12.0/yarn.js",
+        "install",
+        "--immutable"
+      ],
+      "cwd": "C:/Users/money/Projects/flapfit/anything",
+      "startedAt": "2026-09-24T03:27:46.922Z",
+      "finishedAt": "2026-09-24T03:28:38.869Z",
+      "exitCode": 0
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "node",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\typescript\\bin\\tsc",
+        "--noEmit",
+        "--project",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile\\tsconfig.json"
+      ],
+      "cwd": "C:/Users/money/Projects/flapfit/anything",
+      "startedAt": "2026-09-24T03:28:38.885Z",
+      "finishedAt": "2026-09-24T03:30:03.299Z",
+      "exitCode": 0
+    },
+    {
+      "name": "lint",
+      "command": [
+        "node",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\oxlint\\bin\\oxlint",
+        "--no-ignore",
+        "--deny-warnings",
+        "apps/mobile/src",
+        "apps/mobile/scripts"
+      ],
+      "cwd": "C:/Users/money/Projects/flapfit/anything",
+      "startedAt": "2026-09-24T03:30:03.303Z",
+      "finishedAt": "2026-09-24T03:30:07.675Z",
+      "exitCode": 0
+    },
+    {
+      "name": "mobile-jest",
+      "command": [
+        "node",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\jest\\bin\\jest.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=C:\\Users\\money\\Documents\\Codex\\2026-09-23\\critical-architectural-context-repair-directive-read\\work\\audit-verification\\mobile-jest.json"
+      ],
+      "cwd": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile",
+      "startedAt": "2026-09-24T03:30:07.689Z",
+      "finishedAt": "2026-09-24T03:36:40.521Z",
+      "exitCode": 0
+    },
+    {
+      "name": "apple-verifier",
+      "command": [
+        "node",
+        "--test",
+        "server.test.cjs"
+      ],
+      "cwd": "C:\\Users\\money\\Projects\\flapfit\\anything\\services\\apple-verifier",
+      "startedAt": "2026-09-24T03:36:40.524Z",
+      "finishedAt": "2026-09-24T03:36:42.904Z",
+      "exitCode": 0
+    },
+    {
+      "name": "dependency-audit",
+      "command": [
+        "node",
+        "C:/Users/money/AppData/Local/node/corepack/v1/yarn/4.12.0/yarn.js",
+        "npm",
+        "audit",
+        "--all",
+        "--recursive",
+        "--json"
+      ],
+      "cwd": "C:/Users/money/Projects/flapfit/anything",
+      "startedAt": "2026-09-24T03:36:42.907Z",
+      "finishedAt": "2026-09-24T03:37:37.725Z",
+      "exitCode": 1,
+      "status": "NOTICES: six deprecated tooling packages; retained raw exit code 1, separately checked all security advisories without exclusions"
+    },
+    {
+      "name": "production-config",
+      "command": [
+        "node",
+        "scripts/validate-release-config.cjs"
+      ],
+      "cwd": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile",
+      "startedAt": "2026-09-24T03:37:37.728Z",
+      "finishedAt": "2026-09-24T03:37:38.396Z",
+      "exitCode": 0
+    },
+    {
+      "name": "tracker-bytes",
+      "command": [
+        "node",
+        "scripts/validate-tracker-assets.cjs"
+      ],
+      "cwd": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile",
+      "startedAt": "2026-09-24T03:37:38.399Z",
+      "finishedAt": "2026-09-24T03:37:39.164Z",
+      "exitCode": 0
+    },
+    {
+      "name": "public-links",
+      "command": [
+        "node",
+        "scripts/check-release-links.cjs"
+      ],
+      "cwd": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile",
+      "startedAt": "2026-09-24T03:37:39.168Z",
+      "finishedAt": "2026-09-24T03:37:41.363Z",
+      "exitCode": 0
+    },
+    {
+      "name": "admob-patch",
+      "command": [
+        "node",
+        "scripts/test-admob-privacy-patch.cjs"
+      ],
+      "cwd": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile",
+      "startedAt": "2026-09-24T03:37:41.373Z",
+      "finishedAt": "2026-09-24T03:37:42.344Z",
+      "exitCode": 0
+    },
+    {
+      "name": "revenuecat-patch",
+      "command": [
+        "node",
+        "scripts/test-revenuecat-processing-patch.cjs",
+        "C:/Users/money/Documents/Codex/2026-09-16/g/work/rc-consent-review"
+      ],
+      "cwd": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile",
+      "startedAt": "2026-09-24T03:37:42.347Z",
+      "finishedAt": "2026-09-24T03:37:45.737Z",
+      "exitCode": 0
+    },
+    {
+      "name": "revenuecat-bridge",
+      "command": [
+        "node",
+        "scripts/test-revenuecat-processing-bridge.cjs"
+      ],
+      "cwd": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile",
+      "startedAt": "2026-09-24T03:37:45.740Z",
+      "finishedAt": "2026-09-24T03:37:46.379Z",
+      "exitCode": 0
+    },
+    {
+      "name": "admob-native",
+      "command": [
+        "node",
+        "scripts/test-admob-privacy-native.cjs"
+      ],
+      "cwd": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile",
+      "startedAt": "2026-09-24T03:37:46.382Z",
+      "finishedAt": "2026-09-24T03:37:46.946Z",
+      "exitCode": 0,
+      "status": "SKIPPED: macOS required"
+    },
+    {
+      "name": "revenuecat-native",
+      "command": [
+        "node",
+        "scripts/test-revenuecat-processing-native.cjs"
+      ],
+      "cwd": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile",
+      "startedAt": "2026-09-24T03:37:46.949Z",
+      "finishedAt": "2026-09-24T03:37:47.366Z",
+      "exitCode": 0,
+      "status": "SKIPPED: macOS required"
+    },
+    {
+      "name": "ios-js-export",
+      "command": [
+        "node",
+        "C:\\Users\\money\\Projects\\flapfit\\anything\\node_modules\\expo\\bin\\cli",
+        "export",
+        "--platform",
+        "ios",
+        "--output-dir",
+        "C:\\Users\\money\\Documents\\Codex\\2026-09-23\\critical-architectural-context-repair-directive-read\\work\\audit-verification\\ios-export"
+      ],
+      "cwd": "C:\\Users\\money\\Projects\\flapfit\\anything\\apps\\mobile",
+      "startedAt": "2026-09-24T03:37:47.375Z",
+      "finishedAt": "2026-09-24T03:46:58.183Z",
+      "exitCode": 0
+    },
+    {
+      "commit": "d8971fe1f69a6dac44dee25f224f86098fccbf60",
+      "name": "security-advisories",
+      "command": [
+        "node",
+        "C:/Users/money/AppData/Local/node/corepack/v1/yarn/4.12.0/yarn.js",
+        "npm",
+        "audit",
+        "--all",
+        "--recursive",
+        "--no-deprecations",
+        "--json"
+      ],
+      "cwd": "C:/Users/money/Projects/flapfit/anything",
+      "startedAt": "2026-09-24T03:41:57.514Z",
+      "finishedAt": "2026-09-24T03:42:02.859Z",
+      "exitCode": 0
+    }
+  ],
+  "applicationTree": "a34b6bfebb91a368dca1e483c49f0313aba6924c",
+  "dependencyDeprecations": [
+    {
+      "package": "abab",
+      "version": [
+        "2.0.6"
+      ],
+      "notice": "Use your platform's native atob() and btoa() methods instead"
+    },
+    {
+      "package": "domexception",
+      "version": [
+        "4.0.0"
+      ],
+      "notice": "Use your platform's native DOMException instead"
+    },
+    {
+      "package": "eslint",
+      "version": [
+        "9.39.5"
+      ],
+      "notice": "This version is no longer supported. Please see https://eslint.org/version-support for other options."
+    },
+    {
+      "package": "glob",
+      "version": [
+        "7.2.3"
+      ],
+      "notice": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me"
+    },
+    {
+      "package": "inflight",
+      "version": [
+        "1.0.6"
+      ],
+      "notice": "This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful."
+    },
+    {
+      "package": "whatwg-encoding",
+      "version": [
+        "2.0.0"
+      ],
+      "notice": "Use @exodus/bytes instead for a more spec-conformant and faster implementation"
+    }
+  ],
+  "tests": {
+    "suites": 70,
+    "passed": 1579,
+    "failed": 0,
+    "pending": 0
+  },
+  "nativeValidation": "Not executed locally on Windows. The existing Expo build integration runs these checks on its hosted Apple toolchain when the owner authorizes the next build. No owner Mac or separate test build is required; local platform-guard exits are not native passes.",
+  "fullPrebuildAndSignedArchive": "Pending the owner-authorized Expo candidate build and archive inspection.",
+  "deviceAndProviderReceipt": "Not verified by mocked tests or local JavaScript export.",
+  "appleMetadata": {
+    "ageAssurance": "Yes, already saved",
+    "contests": "Frequent, already saved",
+    "reviewNotes": "Approximate-country clarification saved and read back after navigation.",
+    "reviewContacts": "Previously visually confirmed complete; values excluded.",
+    "buildAttached": false,
+    "screenshots": "Pending new candidate"
+  },
+  "buildsStarted": 0,
+  "backendDeployments": 0,
+  "subagentsUsed": 0
+}

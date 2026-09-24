@@ -1,0 +1,727 @@
+PASS src/components/__tests__/InfoPrivacy.test.tsx (11.442 s)
+PASS scripts/validate-tracker-assets.test.js
+PASS src/components/__tests__/PrivacyChoices.test.tsx (37.197 s)
+PASS src/services/privacy/__tests__/startupGameEntry.test.tsx (48.214 s)
+PASS src/services/privacy/__tests__/launchProcessingIntegration.test.ts (26.141 s)
+  ● Console
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:06.562Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:07.702Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:08.279Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:09.139Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:09.273Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:09.425Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:11.346Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:11.609Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:15.312Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:15.486Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:19.898Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:20.430Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:21.379Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:21.620Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:21.968Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:22.214Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:22.720Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:23.433Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:23.801Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:24.284Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:25.641Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:25.781Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:25.905Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.100Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.221Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.431Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.436Z","generation":3,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.443Z","generation":5,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.451Z","generation":7,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.455Z","generation":9,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.465Z","generation":11,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.469Z","generation":13,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.476Z","generation":15,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.483Z","generation":17,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.487Z","generation":19,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.499Z","generation":21,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.502Z","generation":23,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.617Z","generation":3,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.622Z","generation":5,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.631Z","generation":7,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.635Z","generation":9,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.640Z","generation":11,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.647Z","generation":13,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.651Z","generation":15,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.661Z","generation":17,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.666Z","generation":19,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.671Z","generation":21,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.678Z","generation":23,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.683Z","generation":25,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.687Z","generation":27,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.698Z","generation":29,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.702Z","generation":31,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.707Z","generation":33,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.715Z","generation":35,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.719Z","generation":37,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.725Z","generation":39,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.733Z","generation":41,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.739Z","generation":43,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.788Z","generation":45,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.798Z","generation":47,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.802Z","generation":49,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.806Z","generation":51,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.814Z","generation":53,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.819Z","generation":55,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.822Z","generation":57,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.832Z","generation":59,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.837Z","generation":61,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.845Z","generation":63,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.850Z","generation":65,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.854Z","generation":67,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.862Z","generation":69,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.866Z","generation":71,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.870Z","generation":73,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.878Z","generation":75,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.884Z","generation":77,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.888Z","generation":79,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.899Z","generation":81,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.902Z","generation":83,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.907Z","generation":85,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.917Z","generation":87,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.923Z","generation":89,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.932Z","generation":91,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.937Z","generation":93,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.945Z","generation":95,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.950Z","generation":97,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.953Z","generation":99,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.957Z","generation":101,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.968Z","generation":103,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.972Z","generation":105,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.982Z","generation":107,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.987Z","generation":109,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:26.997Z","generation":111,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:27.136Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:27.304Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:27.471Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:27.594Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:27.720Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:27.865Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:28.023Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:28.233Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+    console.info
+      {"scope":"flapfit.rc.test.local","receipt":"unverified","timestamp":"2026-09-24T03:32:28.432Z","generation":1,"kind":"configured"}
+
+      at info (src/services/monetization/revenueCatTestDiagnostics.ts:35:57)
+
+(node:79992) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS src/services/__tests__/competitionApi-outbox.test.ts (31.303 s)
+PASS src/services/privacy/__tests__/regionalClarification.test.ts (7.338 s)
+PASS src/utils/game/birdWebAsset.test.ts (5.398 s)
+PASS src/services/privacy/__tests__/europeanProviderProcessing.test.ts (11.275 s)
+PASS src/services/privacy/__tests__/appleAgeControl.test.ts (10.188 s)
+PASS src/services/__tests__/monetization.test.ts (19.706 s)
+PASS scripts/launch-competition.test.js (15.185 s)
+  ● Console
+
+    console.error
+      ApiError: Name already taken. Choose a different player name.
+          at databaseApiError (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:34:16)
+          at savePlayerName (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:210:23)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:215:40) {
+        status: 409,
+        code: 'PLAYER_NAME_TAKEN'
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Name already taken. Choose a different player name.
+          at databaseApiError (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:34:16)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:295:23) {
+        status: 409,
+        code: 'PLAYER_NAME_TAKEN'
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Name already taken. Choose a different player name.
+          at databaseApiError (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:34:16)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:271:23) {
+        status: 409,
+        code: 'PLAYER_NAME_TAKEN'
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Accept the current online competition terms before publishing results.
+          at requireCurrentTerms (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:152:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:199:89) {
+        status: 428,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      {
+        code: '23505',
+        message: 'duplicate key value violates unique constraint "profiles_pkey"'
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body is too large.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:75:23)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:26) {
+        status: 413,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body is too large.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:75:23)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:26) {
+        status: 413,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body is too large.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:55:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:32) {
+        status: 413,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body must be an object.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:100:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:26) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body must be an object.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:100:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:26) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Request body must be valid JSON.
+          at bodyJson (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:97:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:282:26) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Score must be between 0 and 100000.
+          at integer (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:138:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:287:27) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Score must be between 0 and 100000.
+          at integer (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:138:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:287:27) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+    console.error
+      ApiError: Score must be between 0 and 100000.
+          at integer (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:138:15)
+          at eval (eval at createHandler (C:\Users\money\Projects\flapfit\anything\apps\mobile\scripts\launch-competition.test.js:20:3), <anonymous>:287:27) {
+        status: 400,
+        code: undefined
+      }
+
+      at eval (eval at createHandler (scripts/launch-competition.test.js:20:3), <anonymous>:358:17)
+
+PASS src/utils/game/__tests__/pullup-gameplay-flow.test.js (7.725 s)
+PASS src/services/privacy/__tests__/gameEntry.test.ts
+PASS src/services/__tests__/competition-processing-access.test.ts (8.273 s)
+PASS src/services/privacy/__tests__/processingHydrationIntegration.test.ts (7.802 s)
+PASS src/services/privacy/__tests__/localAgeAnswer.test.ts
+PASS scripts/share-return.test.js (6.455 s)
+PASS src/components/__tests__/CompeteScreenPrivacy.test.tsx
+PASS src/components/__tests__/GameEligibilityGate.test.tsx (5.275 s)
+PASS src/utils/game/__tests__/bird-stage-assets.test.ts
+PASS src/services/__tests__/competitionApi.test.ts
+PASS src/services/privacy/__tests__/umpPrivacyControls.test.ts
+PASS scripts/ad-sdk-lifecycle.test.js
+PASS src/services/privacy/__tests__/processingAccess.test.ts
+PASS src/utils/game/__tests__/mediapipe-recovery.test.ts
+PASS src/services/privacy/__tests__/newYorkClarification.test.ts
+PASS src/services/__tests__/resultAdGate.test.ts
+PASS src/services/privacy/__tests__/privacyCountry.test.ts
+PASS src/utils/game/__tests__/form-tracking.test.ts
+PASS src/services/__tests__/recordingCache.test.ts
+PASS src/services/privacy/__tests__/privacyRights.test.ts
+PASS src/utils/game/__tests__/pullup-grab-entry.test.js
+PASS src/services/privacy/__tests__/processingPolicy.test.ts
+PASS src/utils/game/__tests__/pullup-standing-reach.test.js
+PASS src/services/privacy/__tests__/privacyStartup.test.ts
+PASS src/services/privacy/__tests__/umpStoredSignals.test.ts
+PASS src/utils/game/__tests__/pullup-top-first.test.js
+PASS src/utils/game/__tests__/pullup-elbow-clearance.test.js
+PASS src/services/__tests__/competition-terms-action.test.ts
+PASS src/utils/game/__tests__/recording-mp4.test.ts
+PASS src/services/privacy/__tests__/umpProcessingControls.test.ts
+PASS src/services/__tests__/videoSharing.test.ts
+PASS src/utils/game/__tests__/pullup-support-reference.test.ts
+PASS scripts/retain-ios-archive.test.js
+PASS scripts/validate-tracker-release.test.js
+PASS modules/flap-fit-age-range/__tests__/bridge.test.ts
+PASS src/services/privacy/__tests__/regionalPolicy.test.ts
+PASS src/utils/game/game-web-navigation.test.ts
+PASS src/services/privacy/__tests__/launchProcessingPolicy.test.ts
+PASS src/services/privacy/__tests__/releaseEligibility.test.ts
+PASS scripts/validate-monetization-config.test.js
+PASS src/components/__tests__/RecordingCleanupRoot.test.tsx
+PASS src/utils/game/birdVisual.test.ts
+PASS src/utils/game/__tests__/evolution-core.test.ts
+PASS src/services/privacy/__tests__/appleRescission.test.ts
+PASS src/utils/game/__tests__/recording-boundaries.test.ts
+PASS src/utils/game/__tests__/competition-profile-reset.test.ts
+PASS src/utils/game/__tests__/pullup-top-entry.test.ts
+PASS src/utils/game/__tests__/pullup-top-reference.test.ts
+PASS src/utils/game/__tests__/game-modes.test.ts
+PASS src/services/__tests__/settingsPermissionRecovery.test.ts
+PASS scripts/validate-privacy-manifest.test.js
+PASS src/utils/game/__tests__/camera-preview.test.ts
+PASS src/utils/game/__tests__/level-rules.test.ts
+PASS src/services/__tests__/revenueCatTestDiagnostics.test.ts
+PASS src/utils/game/__tests__/stats-history.test.ts
+PASS src/utils/game/__tests__/continuous-gameplay.test.ts
+PASS modules/flap-fit-age-range/__tests__/app-transaction.test.ts
+PASS src/utils/game/__tests__/store-hydration.test.ts
+
+Test Suites: 70 passed, 70 total
+Tests:       1579 passed, 1579 total
+Snapshots:   0 total
+Time:        379.341 s, estimated 571 s
+Ran all test suites.
+Test results written to: ..\..\..\..\..\Documents\Codex\2026-09-23\critical-architectural-context-repair-directive-read\work\audit-verification\mobile-jest.json

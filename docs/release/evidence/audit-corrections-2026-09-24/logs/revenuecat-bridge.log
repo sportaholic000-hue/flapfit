@@ -1,0 +1,1 @@
+RevenueCat bridge: exact upstream source, installed bridge migration, output hash, idempotence and tamper rejection passed. Objective-C execution still requires Apple toolchain.
