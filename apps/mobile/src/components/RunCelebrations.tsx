@@ -20,7 +20,7 @@ const COLORS = ['#F59E0B', '#FDE047', '#4ADE80', '#38BDF8', '#A78BFA', '#FB7185'
 const GOLD = ['#FDE68A', '#FBBF24', '#FFF7D6', '#D97706'];
 const PIECES = Array.from({ length: 34 }, (_, index) => ({
   id: index,
-  left: (4 + ((index * 37) % 92)) / 100,
+  left: `${4 + ((index * 37) % 92)}%` as `${number}%`,
   size: 6 + (index % 3) * 2,
   travel: 360 + (index % 5) * 34,
   drift: (index % 2 === 0 ? 1 : -1) * (12 + (index % 4) * 7),
@@ -47,7 +47,7 @@ function CelebrationFrame({
   children: ReactNode;
 }) {
   const insets = useSafeAreaInsets();
-  const { height, width } = useWindowDimensions();
+  const { height } = useWindowDimensions();
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.55)).current;
   const confetti = useRef(new Animated.Value(0)).current;
@@ -104,7 +104,7 @@ function CelebrationFrame({
             style={{
               position: 'absolute',
               top: -20,
-              left: width * piece.left,
+              left: piece.left,
               width: piece.size,
               height: piece.size * 1.7,
               borderRadius: 2,
