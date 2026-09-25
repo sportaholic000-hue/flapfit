@@ -2,7 +2,11 @@ import { Image, type ImageSource } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
 import { ChevronDown, ChevronUp, Flame, Target, Timer, Trophy, Zap } from 'lucide-react-native';
 import type { ReactNode } from 'react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { AchievementCard } from '@/components/AchievementCard';
+import { ChampionBadge } from '@/components/ChampionBadge';
+import { ChampionshipCeremony } from '@/components/RunCelebrations';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BirdAvatar from '@/components/BirdAvatar';
@@ -85,6 +89,16 @@ function StatCard({ icon, label, value }: { icon: ReactNode; label: string; valu
 export default function StatsScreen() {
   const insets = useSafeAreaInsets();
 
+  const router = useRouter();
+  const hydrated = useGameStore((s) => s.hydrated);
+  const championUnlocked = useGameStore((s) => s.championUnlocked);
+  const championshipSeen = useGameStore((s) => s.championshipCelebrationSeen);
+  const standardLevelBestScores = useGameStore((s) => s.standardLevelBestScores);
+  const [showChampionship, setShowChampionship] = useState(false);
+  useFocusEffect(useCallback(() => {
+    if (hydrated && championUnlocked && !championshipSeen) setShowChampionship(true);
+  }, [hydrated, championUnlocked, championshipSeen]));
+
   const sessions = useGameStore((s) => s.sessions);
   const totalPipes = useGameStore((s) => s.totalPipes);
   const bestSingle = useGameStore((s) => s.bestSingleScore);
@@ -161,7 +175,8 @@ export default function StatsScreen() {
     sessionsCount: sessions.length,
     dailiesCompleted: dailyCompleted.length,
     totalTutSeconds: totalTut,
-    birdEvolutionStage: evoStage,
+    standardLevelBestScores,
+    championUnlocked,
     exerciseTutSeconds: exerciseTut,
   };
 
@@ -190,6 +205,8 @@ export default function StatsScreen() {
         <Text style={{ color: '#64748B', marginTop: 2, marginBottom: 14 }}>
           Your fitness journey
         </Text>
+
+        {championUnlocked ? <ChampionBadge /> : null}
 
         {/* ── Bird evolution banner ─────────────────────────────────────────── */}
         <View
@@ -569,52 +586,7 @@ export default function StatsScreen() {
           </View>
         ) : (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-            {visibleAchievements.map((a) => {
-              const prog = Math.min(a.goal, a.progress(snapshot));
-              const done = prog >= a.goal;
-              const pct = prog / a.goal;
-              return (
-                <View
-                  key={a.id}
-                  style={{
-                    width: '48%',
-                    backgroundColor: done ? '#FFFBEB' : '#FFFFFF',
-                    borderRadius: 16,
-                    padding: 12,
-                    borderWidth: 1.5,
-                    borderColor: done ? '#FCD34D' : '#F1F5F9',
-                    opacity: done ? 1 : 0.85,
-                  }}
-                >
-                  <Text style={{ fontSize: 22 }}>{a.emoji}</Text>
-                  <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 13, marginTop: 4 }}>
-                    {a.title}
-                  </Text>
-                  <Text style={{ color: '#64748B', fontSize: 11, marginTop: 2 }}>{a.desc}</Text>
-                  <View
-                    style={{
-                      height: 6,
-                      borderRadius: 3,
-                      backgroundColor: '#E2E8F0',
-                      marginTop: 8,
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <View
-                      style={{
-                        width: `${Math.round(pct * 100)}%`,
-                        height: 6,
-                        borderRadius: 3,
-                        backgroundColor: done ? '#F59E0B' : '#94A3B8',
-                      }}
-                    />
-                  </View>
-                  <Text style={{ color: '#94A3B8', fontSize: 10, marginTop: 4, fontWeight: '700' }}>
-                    {prog}/{a.goal}
-                  </Text>
-                </View>
-              );
-            })}
+            {visibleAchievements.map(a => <AchievementCard key={a.id} achievement={a} snapshot={snapshot} />)}
           </View>
         )}
 
@@ -685,7 +657,17 @@ export default function StatsScreen() {
             );
           })
         )}
+        {__DEV__ ? (
+          <TouchableOpacity accessibilityRole="button" onPress={() => router.push("../championship-preview")}
+            style={{ padding: 16, alignItems: "center" }}>
+            <Text style={{ color: "#1D4ED8", fontWeight: "800" }}>Preview championship & achievements</Text>
+          </TouchableOpacity>
+        ) : null}
       </ScrollView>
+      {showChampionship ? <ChampionshipCeremony continueLabel="Continue to Stats" onContinue={() => {
+        useGameStore.getState().markChampionshipCelebrationSeen();
+        setShowChampionship(false);
+      }} /> : null}
     </View>
   );
 }

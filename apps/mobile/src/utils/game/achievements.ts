@@ -1,3 +1,6 @@
+import { ENDLESS_UNLOCK_LEVEL, LEVELS } from './levels';
+import { bestStandardLevelScore, completedLevelCount, LEVEL_MASTERY_SCORE, masteredLevelCount } from './levelAchievements';
+
 export type ExerciseKey =
   | 'pushups'
   | 'squats'
@@ -15,7 +18,8 @@ export type StatsSnapshot = {
   sessionsCount: number;
   dailiesCompleted: number;
   totalTutSeconds: number;
-  birdEvolutionStage: number;
+  standardLevelBestScores: Record<string, number>;
+  championUnlocked: boolean;
   exerciseTutSeconds: Record<string, number>;
 };
 
@@ -24,6 +28,7 @@ export type AchievementDef = {
   title: string;
   desc: string;
   emoji: string;
+  icon?: 'endless' | 'max-level' | 'ultimate' | 'impossible';
   goal: number;
   category: AchievementCategory;
   progress: (s: StatsSnapshot) => number;
@@ -146,33 +151,36 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     category: 'global',
     progress: (s) => s.tutStreak,
   },
-  // Bird evolution
+  // Standard-level mastery (bird evolution has its own rewards).
   {
-    id: 'evo-1',
-    title: 'Fledgling',
-    desc: 'Evolve to Stage 2',
-    emoji: '🐤',
-    goal: 1,
+    id: 'level-score-60',
+    title: 'Max Out a Level',
+    desc: 'Score 60 in a standard level run',
+    emoji: '🏁',
+    icon: 'max-level',
+    goal: LEVEL_MASTERY_SCORE,
     category: 'global',
-    progress: (s) => s.birdEvolutionStage,
+    progress: (s) => bestStandardLevelScore(s.standardLevelBestScores),
   },
   {
-    id: 'evo-3',
-    title: 'Athlete Bird',
-    desc: 'Evolve to Stage 4',
-    emoji: '💪',
-    goal: 3,
-    category: 'global',
-    progress: (s) => s.birdEvolutionStage,
-  },
-  {
-    id: 'evo-5',
-    title: 'Legendary Bird',
-    desc: 'Evolve to Stage 6',
-    emoji: '🏆',
+    id: 'level-mastery-5',
+    title: 'Ultimate Legend',
+    desc: 'Score 60 on 5 different standard levels',
+    emoji: '🏅',
+    icon: 'ultimate',
     goal: 5,
     category: 'global',
-    progress: (s) => s.birdEvolutionStage,
+    progress: (s) => masteredLevelCount(s.standardLevelBestScores),
+  },
+  {
+    id: 'level-mastery-all',
+    title: 'The Impossible',
+    desc: 'Score 60 on all 15 standard levels',
+    emoji: '💎',
+    icon: 'impossible',
+    goal: LEVELS.length,
+    category: 'global',
+    progress: (s) => masteredLevelCount(s.standardLevelBestScores),
   },
   // Score
   {
@@ -204,31 +212,32 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   },
   // Levels
   {
-    id: 'levels-5',
-    title: 'Climbing',
-    desc: 'Unlock level 5',
-    emoji: '🪜',
-    goal: 5,
+    id: 'endless-unlock',
+    title: 'Endless Unlocked',
+    desc: 'Clear level 5 to unlock Endless mode',
+    emoji: '♾️',
+    icon: 'endless',
+    goal: ENDLESS_UNLOCK_LEVEL,
     category: 'global',
-    progress: (s) => s.unlockedLevel,
+    progress: (s) => completedLevelCount(s.unlockedLevel, s.championUnlocked),
   },
   {
     id: 'levels-10',
     title: 'High Flyer',
     desc: 'Unlock level 10',
     emoji: '🦅',
-    goal: 10,
+    goal: 9,
     category: 'global',
-    progress: (s) => s.unlockedLevel,
+    progress: (s) => completedLevelCount(s.unlockedLevel, s.championUnlocked),
   },
   {
     id: 'levels-15',
     title: 'Summit',
     desc: 'Unlock level 15',
     emoji: '🏔️',
-    goal: 15,
+    goal: 14,
     category: 'global',
-    progress: (s) => s.unlockedLevel,
+    progress: (s) => completedLevelCount(s.unlockedLevel, s.championUnlocked),
   },
   // Daily Challenge
   {
@@ -239,6 +248,16 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     goal: 5,
     category: 'global',
     progress: (s) => s.dailiesCompleted,
+  },
+
+  {
+    id: 'flap-fit-champion',
+    title: 'Flap Fit Champion',
+    desc: 'Clear all 15 standard levels',
+    emoji: '🏆',
+    goal: LEVELS.length,
+    category: 'global',
+    progress: (s) => completedLevelCount(s.unlockedLevel, s.championUnlocked),
   },
 
   // ─── Push-ups ────────────────────────────────────────────────────────────

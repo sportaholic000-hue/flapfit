@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { ENDLESS_UNLOCK_LEVEL, LEVELS } from './levels';
+import { FINAL_LEVEL, isChampionshipRun, recoverStandardLevelBestScores } from './levelAchievements';
 
 const STORE_NAME = 'flap-fit-store';
 const LEGACY_STORE_NAME = ['flappy', 'push', 'store'].join('-');
@@ -240,6 +241,9 @@ type GameStore = {
   deviceId: string;
   unlockedLevel: number;
   bestScores: Record<string, number>;
+  standardLevelBestScores: Record<string, number>;
+  championUnlocked: boolean;
+  championshipCelebrationSeen: boolean;
   endlessBest: number;
   bestSingleScore: number;
   totalPushups: number;
@@ -265,6 +269,7 @@ type GameStore = {
   recordSession: (input: RecordSessionInput) => void;
   recordTut: (seconds: number, exercise: ExerciseMode) => void;
   completeDaily: (day: string) => void;
+  markChampionshipCelebrationSeen: () => void;
 };
 
 export const useGameStore = create<GameStore>()(
@@ -281,6 +286,9 @@ export const useGameStore = create<GameStore>()(
       deviceId: makeDeviceId(),
       unlockedLevel: 1,
       bestScores: {},
+      standardLevelBestScores: {},
+      championUnlocked: false,
+      championshipCelebrationSeen: false,
       endlessBest: 0,
       bestSingleScore: 0,
       totalPushups: 0,
@@ -301,6 +309,9 @@ export const useGameStore = create<GameStore>()(
       setPlayerName: (name) => set({ playerName: name.slice(0, 20) }),
       acceptCompetitionTerms: () => set({ competitionTermsVersion: COMPETITION_TERMS_VERSION }),
       resetCompetitionProfile: () => set({ playerName: '', competitionTermsVersion: null }),
+      markChampionshipCelebrationSeen: () => {
+        if (get().championUnlocked) set({ championshipCelebrationSeen: true });
+      },
 
       recordTut: (seconds, exercise) => {
         const safeSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
@@ -363,6 +374,13 @@ export const useGameStore = create<GameStore>()(
           bestSingleScore: Math.max(state.bestSingleScore, score),
           lastActivityDate: now.toISOString(),
         };
+        if (mode === 'level' && LEVELS.some(level => level.id === levelId)) {
+          const key = String(levelId);
+          if (Number.isFinite(score) && score > (state.standardLevelBestScores[key] ?? 0)) {
+            updates.standardLevelBestScores = { ...state.standardLevelBestScores, [key]: score };
+          }
+          if (isChampionshipRun(mode, levelId, score)) updates.championUnlocked = true;
+        }
         if ((mode === 'level' || mode === 'daily') && levelId) {
           const key = String(levelId);
           const prevBest = state.bestScores[key] ?? 0;
@@ -400,9 +418,19 @@ export const useGameStore = create<GameStore>()(
       merge: (persistedState, currentState) => {
         const persisted = (persistedState ?? {}) as Partial<GameStore>;
         const sessions = persisted.sessions ?? currentState.sessions;
+        const standardLevelBestScores = recoverStandardLevelBestScores(
+          persisted.standardLevelBestScores,
+          persisted.bestScores ?? {},
+          sessions
+        );
         return {
           ...currentState,
           ...persisted,
+          standardLevelBestScores,
+          championUnlocked: persisted.championUnlocked === true || isChampionshipRun(
+            'level', FINAL_LEVEL.id, standardLevelBestScores[String(FINAL_LEVEL.id)] ?? 0
+          ),
+          championshipCelebrationSeen: persisted.championshipCelebrationSeen === true,
           // Recover missing day buckets from completed sessions. Stored values
           // win so hydration never double-counts current installs; older
           // sessions without an exercise stay only in the Total chart.

@@ -14,7 +14,6 @@ import {
   Home,
   RotateCcw,
   Share2,
-  Sparkles,
   Trophy,
   X,
 } from 'lucide-react-native';
@@ -23,20 +22,19 @@ import {
   ActivityIndicator,
   Alert,
   AppState,
-  Animated,
-  Easing,
   Linking,
   Platform,
   Share,
   ScrollView,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
-import BirdAvatar from '@/components/BirdAvatar';
+import { RunCelebrations } from '@/components/RunCelebrations';
+import { ChampionshipResultHeading } from '@/components/ChampionBadge';
+import { isChampionshipRun } from '@/utils/game/levelAchievements';
 import { GameEligibilityGate } from '@/components/GameEligibilityGate';
 import { usePrivacyChoicesSheet } from '@/components/PrivacyChoices';
 import { preparePostGamePrivacy } from '@/services/privacy/postGamePrivacy';
@@ -98,7 +96,6 @@ type RecordedVideo = {
   extension: string;
 };
 
-const CONFETTI_COLORS = ['#F59E0B', '#FDE047', '#4ADE80', '#38BDF8', '#A78BFA', '#FB7185'];
 // Expo Go camera capture is reliable from an HTTPS-base inline page, while a
 // file:// game page can make getUserMedia unavailable even with permission.
 // Store builds continue to use the tracker files bundled inside the app.
@@ -106,15 +103,6 @@ const USE_REMOTE_TRACKER = __DEV__;
 const TRACKER_TRANSFER_CHUNK_SIZE = 96_000;
 // Accepted form tracking is the single method for every exercise and game mode.
 const PRODUCTION_TRACKING_MODE = 'form-test' as const;
-const CONFETTI_PIECES = Array.from({ length: 22 }, (_, index) => ({
-  id: index,
-  left: `${4 + ((index * 37) % 92)}%` as `${number}%`,
-  color: CONFETTI_COLORS[index % CONFETTI_COLORS.length],
-  size: 6 + (index % 3) * 2,
-  travel: 360 + (index % 5) * 34,
-  drift: (index % 2 === 0 ? 1 : -1) * (12 + (index % 4) * 7),
-  rotation: index % 2 === 0 ? '540deg' : '-540deg',
-}));
 
 function formatTrackedTime(seconds: number) {
   const rounded = Math.max(0, Math.round(seconds));
@@ -205,7 +193,6 @@ export default function GameScreen() {
 
 function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepareEntry: () => Promise<void> }) {
   const insets = useSafeAreaInsets();
-  const { height: viewportHeight } = useWindowDimensions();
   const router = useRouter();
   const queryClient = useQueryClient();
   const params = useLocalSearchParams<{
@@ -280,7 +267,8 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   const [competitionResultState, setCompetitionResultState] =
     useState<CompetitionResultState | null>(null);
   const [evolvedTo, setEvolvedTo] = useState<number | null>(null);
-  const [showEvolutionCeremony, setShowEvolutionCeremony] = useState(false);
+  const [showRunCelebrations, setShowRunCelebrations] = useState(false);
+  const [championshipPending, setChampionshipPending] = useState(false);
   const [loadedBirdImage, setLoadedBirdImage] = useState<LoadedBirdImage | null>(null);
   const [birdImageErrorKey, setBirdImageErrorKey] = useState<string | null>(null);
   const [trackerAssets, setTrackerAssets] = useState<PreparedMediaPipeAssets | null>(null);
@@ -403,9 +391,6 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   const competitionRunPromiseRef = useRef<Promise<CompetitionRunDisposition>>(
     Promise.resolve({ kind: 'local' })
   );
-  const ceremonyOpacity = useRef(new Animated.Value(0)).current;
-  const ceremonyScale = useRef(new Animated.Value(0.55)).current;
-  const confettiProgress = useRef(new Animated.Value(0)).current;
 
   const skin = getBird(birdId);
 
@@ -684,45 +669,6 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     },
     [trackerAssets]
   );
-
-  const ceremonyBirdEvo = useMemo(
-    () => ({
-      stage: evolvedTo ?? currentEvoStage,
-      ...computeBirdMorphology(exerciseTut),
-    }),
-    [currentEvoStage, evolvedTo, exerciseTut]
-  );
-  const ceremonyBirdSize = Math.max(150, Math.min(210, Math.round(viewportHeight * 0.24)));
-
-  useEffect(() => {
-    if (!showEvolutionCeremony) return;
-
-    ceremonyOpacity.setValue(0);
-    ceremonyScale.setValue(0.55);
-    confettiProgress.setValue(0);
-    const animation = Animated.parallel([
-      Animated.timing(ceremonyOpacity, {
-        toValue: 1,
-        duration: 360,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.spring(ceremonyScale, {
-        toValue: 1,
-        friction: 6,
-        tension: 74,
-        useNativeDriver: true,
-      }),
-      Animated.timing(confettiProgress, {
-        toValue: 1,
-        duration: 2200,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }),
-    ]);
-    animation.start();
-    return () => animation.stop();
-  }, [ceremonyOpacity, ceremonyScale, confettiProgress, showEvolutionCeremony]);
 
   const submitScores = useCallback(
     async (score: number, durationMs: number) => {
@@ -1019,8 +965,11 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
             'Recording did not start on this device. Your game result was still saved normally.'
           );
         }
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
         const score = msg.score ?? 0;
+        const championshipRun = isChampionshipRun(mode, level.id, score);
+        Haptics.notificationAsync(championshipRun
+          ? Haptics.NotificationFeedbackType.Success
+          : Haptics.NotificationFeedbackType.Error).catch(() => {});
         const pushups = msg.pushups ?? 0;
         const tutSecs = Math.max(0, msg.tutSeconds ?? 0);
         const unreportedTutSecs = Math.min(
@@ -1045,9 +994,13 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
           useGameStore.getState().totalTutSeconds,
           useGameStore.getState().lastActivityDate
         );
+        const championship = championshipRun &&
+          !useGameStore.getState().championshipCelebrationSeen;
+        setChampionshipPending(championship);
+        if (championship) setShowRunCelebrations(true);
         if (newStage > prevStage) {
           setEvolvedTo(newStage);
-          setShowEvolutionCeremony(true);
+          setShowRunCelebrations(true);
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         }
         const endReason =
@@ -1088,7 +1041,8 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     setResult(null);
     setCompetitionResultState(null);
     setEvolvedTo(null);
-    setShowEvolutionCeremony(false);
+    setShowRunCelebrations(false);
+    setChampionshipPending(false);
     setRunKey((k) => k + 1);
     onNewRun();
   };
@@ -1116,7 +1070,8 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     setResult(null);
     setCompetitionResultState(null);
     setEvolvedTo(null);
-    setShowEvolutionCeremony(false);
+    setShowRunCelebrations(false);
+    setChampionshipPending(false);
     setRunKey((k) => k + 1);
     onNewRun();
     router.replace({
@@ -1272,6 +1227,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   }
 
   const cleared = result != null && !isEndless && result.score >= target;
+  const championshipClear = result !== null && isChampionshipRun(mode, level.id, result.score);
   const nextUnlocked =
     cleared && mode === 'level' && level.id === unlockedBefore.current && level.id < LEVELS.length;
   const canGoNextLevel =
@@ -1397,193 +1353,23 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
         </View>
       ) : null}
 
-      {result && showEvolutionCeremony && evolvedTo !== null ? (
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            overflow: 'hidden',
-            backgroundColor: '#0F172A',
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingTop: insets.top + 20,
-            paddingBottom: insets.bottom + 20,
-            paddingHorizontal: 24,
+      {result && showRunCelebrations ? (
+        <RunCelebrations
+          evolvedTo={evolvedTo}
+          championship={championshipPending}
+          skin={skin}
+          birdEvo={birdEvo}
+          totalTutSeconds={totalTutSeconds}
+          runTutSeconds={result.tutSeconds}
+          onShareEvolution={shareEvolution}
+          onComplete={() => {
+            if (championshipPending) useGameStore.getState().markChampionshipCelebrationSeen();
+            setShowRunCelebrations(false);
+            setChampionshipPending(false);
           }}
-        >
-          <View
-            pointerEvents="none"
-            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-          >
-            {CONFETTI_PIECES.map((piece) => (
-              <Animated.View
-                key={piece.id}
-                style={{
-                  position: 'absolute',
-                  top: -20,
-                  left: piece.left,
-                  width: piece.size,
-                  height: piece.size * 1.7,
-                  borderRadius: 2,
-                  backgroundColor: piece.color,
-                  opacity: confettiProgress.interpolate({
-                    inputRange: [0, 0.08, 0.82, 1],
-                    outputRange: [0, 1, 1, 0],
-                  }),
-                  transform: [
-                    {
-                      translateY: confettiProgress.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [-20, piece.travel],
-                      }),
-                    },
-                    {
-                      translateX: confettiProgress.interpolate({
-                        inputRange: [0, 0.5, 1],
-                        outputRange: [0, piece.drift, -piece.drift * 0.4],
-                      }),
-                    },
-                    {
-                      rotate: confettiProgress.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['0deg', piece.rotation],
-                      }),
-                    },
-                  ],
-                }}
-              />
-            ))}
-          </View>
-
-          <ScrollView
-            style={{ width: '100%', maxWidth: 390, flexGrow: 0 }}
-            contentContainerStyle={{ alignItems: 'center', paddingVertical: 8 }}
-            showsVerticalScrollIndicator={false}
-          >
-          <Animated.View
-            style={{
-              width: '100%',
-              maxWidth: 390,
-              alignItems: 'center',
-              opacity: ceremonyOpacity,
-              transform: [{ scale: ceremonyScale }],
-            }}
-          >
-            <Sparkles size={34} color="#FDE047" />
-            <Text
-              style={{
-                color: '#FDE047',
-                fontSize: 30,
-                fontWeight: '900',
-                letterSpacing: 1.5,
-                marginTop: 8,
-                textAlign: 'center',
-              }}
-            >
-              EVOLUTION!
-            </Text>
-            <View
-              style={{
-                backgroundColor: '#F59E0B',
-                borderRadius: 999,
-                paddingHorizontal: 16,
-                paddingVertical: 7,
-                marginTop: 10,
-              }}
-            >
-              <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 14 }}>
-                STAGE {evolvedTo + 1}/{EVO_NAMES.length}
-              </Text>
-            </View>
-
-            <View style={{ marginTop: 12 }}>
-              <BirdAvatar skin={skin} size={ceremonyBirdSize} evo={ceremonyBirdEvo} />
-            </View>
-            <Text
-              style={{
-                color: '#FFFFFF',
-                fontWeight: '900',
-                fontSize: 24,
-                marginTop: 8,
-                textAlign: 'center',
-              }}
-            >
-              {EVO_NAMES[evolvedTo]}
-            </Text>
-            <Text style={{ color: '#CBD5E1', fontSize: 14, marginTop: 3, textAlign: 'center' }}>
-              {skin.name} grew stronger from your training.
-            </Text>
-
-            <View
-              style={{
-                width: '100%',
-                backgroundColor: 'rgba(255,255,255,0.1)',
-                borderRadius: 18,
-                borderWidth: 1,
-                borderColor: 'rgba(255,255,255,0.18)',
-                padding: 14,
-                alignItems: 'center',
-                marginTop: 16,
-              }}
-            >
-              <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 24 }}>
-                {formatTrackedTime(totalTutSeconds)}
-              </Text>
-              <Text
-                style={{
-                  color: '#93C5FD',
-                  fontWeight: '800',
-                  fontSize: 11,
-                  letterSpacing: 0.8,
-                  marginTop: 2,
-                }}
-              >
-                LIFETIME TRACKED TRAINING
-              </Text>
-              <Text style={{ color: '#CBD5E1', fontSize: 11, marginTop: 4 }}>
-                +{formatTrackedTime(result.tutSeconds)} this run
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel="Share my Flap Fit evolution"
-              onPress={shareEvolution}
-              style={{
-                width: '100%',
-                backgroundColor: '#F59E0B',
-                borderRadius: 16,
-                paddingVertical: 14,
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'row',
-                gap: 8,
-                marginTop: 16,
-              }}
-            >
-              <Share2 size={19} color="#FFFFFF" />
-              <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 15 }}>
-                Share my evolution
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              accessibilityRole="button"
-              onPress={() => setShowEvolutionCeremony(false)}
-              style={{ paddingVertical: 13, paddingHorizontal: 24, marginTop: 4 }}
-            >
-              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>
-                Continue to results
-              </Text>
-            </TouchableOpacity>
-          </Animated.View>
-          </ScrollView>
-        </View>
+        />
       ) : null}
-
-      {result && (!showEvolutionCeremony || evolvedTo === null) ? (
+      {result && !showRunCelebrations ? (
         <View
           style={{
             position: 'absolute',
@@ -1614,6 +1400,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
               alignItems: 'center',
             }}
           >
+            {championshipClear ? <ChampionshipResultHeading /> : <>
             <Trophy size={36} color={cleared ? '#F59E0B' : '#94A3B8'} />
             <Text style={{ fontSize: 24, fontWeight: '900', color: '#0F172A', marginTop: 8 }}>
               {cleared
@@ -1622,6 +1409,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   : 'Level cleared!'
                 : 'Run over'}
             </Text>
+            </>}
             {result.endReason ? (
               <Text
                 style={{
