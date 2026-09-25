@@ -1,6 +1,10 @@
 import type { ReactTestRenderer } from 'react-test-renderer';
 import { getBird } from '@/utils/game/birds';
 
+// Fresh React Native/Expo module loading can exceed Jest's default 5 seconds on
+// Windows. Match the existing screen-integration tests; assertions are unchanged.
+jest.setTimeout(30_000);
+
 async function mount(evolvedTo: number | null, championship: boolean) {
   jest.resetModules();
   const React: typeof import('react') = require('react');
