@@ -227,3 +227,26 @@ test.each([
   expect((await handler(request('/leaderboard',{playerName:'Player',...body}))).status).toBe(400);
   expect(admin.rpc).not.toHaveBeenCalledWith('submit_leaderboard_score',expect.anything());
 });
+
+
+const nameCases = require('./fixtures/player-name-cases.cjs');
+test.each(nameCases.rejected)('all publication routes reject inappropriate name %s before writing', async playerName => {
+  const admin = profileAdmin();
+  const { handler } = createHandler(admin);
+  for (const route of ['/profile', '/leaderboard', '/runs/finalize']) {
+    const response = await handler(request(route, {playerName, exercise:'pushups', score:1, durationMs:2000, runId:'10000000-0000-4000-8000-000000000011'}));
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({error:'Choose a different player name.'});
+  }
+  expect(admin.from).not.toHaveBeenCalled();
+  expect(admin.rpc.mock.calls.every(([name]) => name === 'apple_consent_user_is_revoked')).toBe(true);
+});
+test.each(nameCases.accepted)('server preserves legitimate display name %s', async playerName => {
+  const admin = profileAdmin(); const upsert = jest.fn(async () => ({error:null}));
+  admin.from.mockReturnValue({upsert});
+  const {handler} = createHandler(admin);
+  const response = await handler(request('/profile', {playerName}));
+  expect(response.status).toBe(200);
+  expect(await response.json()).toEqual({player_name:playerName});
+  expect(upsert).toHaveBeenCalledWith(expect.objectContaining({user_id:'owner',player_name:playerName}),{onConflict:'user_id'});
+});

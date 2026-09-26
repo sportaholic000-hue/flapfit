@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "checkedAt": "2026-09-25T22:38:37.980Z",
+  "scoreOrProfileWrites": 0,
+  "checks": [
+    {
+      "label": "Function responds",
+      "status": 204
+    },
+    {
+      "label": "Authentication still required",
+      "status": 401
+    },
+    {
+      "label": "Terms still required",
+      "status": 428
+    },
+    {
+      "label": "Reject asshole",
+      "status": 400
+    },
+    {
+      "label": "Reject a.s.s.h.o.l.e",
+      "status": 400
+    },
+    {
+      "label": "Reject a55h0le",
+      "status": 400
+    },
+    {
+      "label": "Reject fυck",
+      "status": 400
+    },
+    {
+      "label": "Reject fυсk",
+      "status": 400
+    },
+    {
+      "label": "Reject ѕhіt",
+      "status": 400
+    },
+    {
+      "label": "Reject nаzi",
+      "status": 400
+    },
+    {
+      "label": "Accept name without saving José",
+      "status": 400
+    },
+    {
+      "label": "Accept name without saving Νίκος",
+      "status": 400
+    },
+    {
+      "label": "Accept name without saving 王小明",
+      "status": 400
+    },
+    {
+      "label": "Delete only temporary test identity",
+      "status": 200
+    }
+  ]
+}

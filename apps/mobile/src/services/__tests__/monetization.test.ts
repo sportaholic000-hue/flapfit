@@ -1,8 +1,6 @@
 const originalEnv = { ...process.env };
-function loadAdapter(options: { buildNumber?: string | null; configBuildNumber?: string; build7TestAds?: boolean; adsMode?: string; rcIdMethod?: boolean; platform?: string; expoGo?: boolean; rcFails?: boolean; adsAllowed?: boolean; rcAllowed?: boolean; treatment?: string; underAgeOfConsent?: boolean; nativeFence?: boolean; umpBridge?: boolean; appleRequired?: boolean } = {}) {
+function loadAdapter(options: { buildNumber?: string | null; configBuildNumber?: string; adsMode?: string; rcIdMethod?: boolean; platform?: string; expoGo?: boolean; rcFails?: boolean; adsAllowed?: boolean; rcAllowed?: boolean; treatment?: string; underAgeOfConsent?: boolean; nativeFence?: boolean; umpBridge?: boolean; appleRequired?: boolean } = {}) {
   jest.resetModules();
-  const testConfig = jest.requireActual('../monetization/build7AdTest') as typeof import('../monetization/build7AdTest');
-  jest.doMock('../monetization/build7AdTest', () => ({ BUILD_7_TEST_INTERSTITIAL: options.build7TestAds ?? testConfig.BUILD_7_TEST_INTERSTITIAL }));
   process.env.EXPO_PUBLIC_ADS_MODE = options.adsMode ?? 'test';
   process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = 'appl_unit_test_only';
   let access = { ads: { allowed: options.adsAllowed ?? true, treatment: options.treatment ?? 'unspecified', underAgeOfConsent: options.underAgeOfConsent ?? false }, revenueCat: { allowed: options.rcAllowed ?? true }, competition: { allowed: true }, revision: 1 };
@@ -75,7 +73,7 @@ test('build 7 captures Google consent errors and reading the report performs no 
 
 test('build 7 captures a live ad load rejection without changing request or exit behavior', async () => {
   process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID = 'live-unit';
-  const f = loadAdapter({ buildNumber: '7', adsMode: 'live', build7TestAds: false });
+  const f = loadAdapter({ buildNumber: '7', adsMode: 'live' });
   await f.adapter.prepareMonetization(() => true);
   const ad = f.adapter.prepareResultInterstitial()!;
   f.events.get('error')!({ code: 'googleMobileAds/no-fill', message: 'No ad returned' });
@@ -89,26 +87,24 @@ test('build 7 captures a live ad load rejection without changing request or exit
 });
 
 test.each([
-  { buildNumber: '7', platform: 'ios', expected: 'test-interstitial' },
+  { buildNumber: '7', platform: 'ios', expected: 'live-unit' },
   { buildNumber: '8', platform: 'ios', expected: 'live-unit' },
   { buildNumber: '5', platform: 'ios', expected: 'live-unit' },
   { buildNumber: '7', platform: 'android', expected: 'live-unit' },
   { buildNumber: null, configBuildNumber: '7', platform: 'ios', expected: 'live-unit' },
-])('temporary test selection uses the native build, preserving other production installations: %j', async options => {
+])('live mode uses the configured ad unit on every native build: %j', async options => {
   process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID = 'live-unit';
   process.env.EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL_ID = 'live-unit';
-  const f = loadAdapter({ ...options, adsMode: 'live', build7TestAds: true });
+  const f = loadAdapter({ ...options, adsMode: 'live' });
   await f.adapter.prepareMonetization(() => true);
   expect(f.nativeAd.load).not.toHaveBeenCalled(); // No preload added by this switch.
   f.adapter.prepareResultInterstitial();
   expect(f.sdk.InterstitialAd.createForAdRequest).toHaveBeenCalledWith(options.expected, { requestNonPersonalizedAdsOnly: true, networkExtras: { rdp: '1' } });
-  if (options.expected === 'test-interstitial') {
-    expect(f.adapter.getAdDeliveryDiagnosticReport()).toContain('Ad unit selection: Google demo (temporary build 7 test)');
-  }
 });
 
-test.each(['off', 'regional-denial', 'google-denial', 'gameplay', 'expo-go'] as const)('build 7 demo selection cannot bypass %s', async blockedBy => {
-  const f = loadAdapter({ buildNumber: '7', build7TestAds: true, adsMode: blockedBy === 'off' ? 'off' : 'live',
+test.each(['off', 'regional-denial', 'google-denial', 'gameplay', 'expo-go'] as const)('live selection cannot bypass %s', async blockedBy => {
+  process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID = 'live-unit';
+  const f = loadAdapter({ buildNumber: '7', adsMode: blockedBy === 'off' ? 'off' : 'live',
     adsAllowed: blockedBy !== 'regional-denial', rcAllowed: false, expoGo: blockedBy === 'expo-go' });
   if (blockedBy === 'google-denial') f.sdk.AdsConsent.loadAndShowConsentFormIfRequired.mockResolvedValue({ ...f.consent, canRequestAds: false });
   await f.adapter.prepareMonetization(() => true);
@@ -117,8 +113,9 @@ test.each(['off', 'regional-denial', 'google-denial', 'gameplay', 'expo-go'] as 
   finally { release(); }
 });
 
-test('build 7 demo ads preserve immediate no-ad continuation and reject late native delivery', async () => {
-  const f = loadAdapter({ buildNumber: '7', adsMode: 'live', build7TestAds: true });
+test('live ads preserve immediate no-ad continuation and reject late native delivery', async () => {
+  process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID = 'live-unit';
+  const f = loadAdapter({ buildNumber: '7', adsMode: 'live' });
   await f.adapter.prepareMonetization(() => true);
   const first = jest.fn();
   f.adapter.resultAdGate.createResult(null, f.adapter.adEnvironment).exit(false, first);
@@ -1116,4 +1113,15 @@ test('a menu refresh respects Google denial and can retry after a failed request
   await f.adapter.refreshMonetizationFromChoices(() => true);
   expect(f.adapter.isMonetizationPrepared()).toBe(true);
   expect(f.nativeAd.load).not.toHaveBeenCalled();
+});
+
+
+test.each([{buildNumber:'7'}, {buildNumber:'8'}, {buildNumber:'7',platform:'android'}])('explicit preview test mode still uses Google test ads: %j', async options => {
+  process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID = 'live-unit';
+  process.env.EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL_ID = 'live-unit';
+  const f = loadAdapter({...options, adsMode:'test'});
+  await f.adapter.prepareMonetization(() => true);
+  expect(f.nativeAd.load).not.toHaveBeenCalled();
+  f.adapter.prepareResultInterstitial();
+  expect(f.sdk.InterstitialAd.createForAdRequest).toHaveBeenCalledWith('test-interstitial',expect.any(Object));
 });

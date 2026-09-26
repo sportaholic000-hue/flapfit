@@ -8,7 +8,6 @@ import { getAgeVerificationRevision, getProcessingAccess, getProcessingInputs, s
 import { getUmpPrivacyControls } from '../privacy/umpPrivacyControls';
 import { createRevenueCatTestDiagnostics, type RevenueCatTestDiagnosticKind } from './revenueCatTestDiagnostics';
 import { createAdDeliveryDiagnostics } from './adDeliveryDiagnostics';
-import { BUILD_7_TEST_INTERSTITIAL } from './build7AdTest';
 
 type AdsSdk = typeof import('react-native-google-mobile-ads');
 type PurchasesSdk = typeof import('react-native-purchases');
@@ -18,7 +17,6 @@ export const adDeliveryDiagnosticsEnabled = supported && Platform.OS === 'ios' &
   Constants.platform?.ios?.buildNumber === '7';
 const adDeliveryDiagnostics = createAdDeliveryDiagnostics(adDeliveryDiagnosticsEnabled);
 const mode = process.env.EXPO_PUBLIC_ADS_MODE?.trim() ?? 'test';
-const build7TestInterstitial = BUILD_7_TEST_INTERSTITIAL && adDeliveryDiagnosticsEnabled;
 const liveUnit = Platform.OS === 'ios'
   ? process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID?.trim()
   : process.env.EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL_ID?.trim();
@@ -119,7 +117,7 @@ export function getAdDeliveryDiagnosticReport(): string {
   const access = getProcessingAccess();
   return adDeliveryDiagnostics.report({
     'Ad mode': mode, 'Native runtime supported': supported, 'Ad unit configured': Boolean(liveUnit),
-    'Ad unit selection': mode === 'off' ? 'Off' : build7TestInterstitial ? 'Google demo (temporary build 7 test)' : mode === 'live' ? 'Live' : 'Google demo',
+    'Ad unit selection': mode === 'off' ? 'Off' : mode === 'live' ? 'Live' : 'Google demo',
     'App permits ads': access.ads.allowed, 'Ad SDK loaded': Boolean(ads), 'Ad SDK ready': adsReady,
     'RevenueCat permitted': access.revenueCat.allowed, 'RevenueCat tracker ready': Boolean(tracker),
     'Workout active': isGameplayActive(), 'Result ads retained': String(activeResultAds.size),
@@ -628,7 +626,7 @@ export function prepareResultInterstitial(): ReadyInterstitial | null {
   const sdk = ads;
   const access = getProcessingAccess();
   if (!supported || !sdk || !adsReady || mode === 'off' || !access.ads.allowed || resultPresentations.size > 0) return null;
-  const adUnitId = mode === 'live' && !build7TestInterstitial ? liveUnit : sdk.TestIds.INTERSTITIAL;
+  const adUnitId = mode === 'live' ? liveUnit : sdk.TestIds.INTERSTITIAL;
   if (!adUnitId) return null;
   const epoch = consentEpoch;
   const impressionId = `ff-${Date.now().toString(36)}-${(++impressionSequence).toString(36)}-${Math.random().toString(36).slice(2, 12)}`;

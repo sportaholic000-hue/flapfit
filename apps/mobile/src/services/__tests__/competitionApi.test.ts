@@ -15,3 +15,13 @@ describe('competition player names', () => {
     expect(competitionPlayerNameError('Jay🙂')).not.toBeNull();
   });
 });
+
+
+const nameCases = require('../../../scripts/fixtures/player-name-cases.cjs') as { rejected: string[]; accepted: string[] };
+test.each(nameCases.rejected)('rejects basic and visually disguised inappropriate names: %s', name => {
+  expect(competitionPlayerNameError(name)).toBe('Choose a different player name.');
+});
+test.each(nameCases.accepted)('preserves legitimate display names: %s', name => {
+  expect(competitionPlayerNameError(name)).toBeNull();
+  expect(normalizeCompetitionPlayerName(name)).toBe(name);
+});

@@ -1,0 +1,22 @@
+{
+  "project": "yhrleungvipsqlmayrfg",
+  "name": "flapfit-game",
+  "version": 12,
+  "status": "ACTIVE",
+  "verify_jwt": true,
+  "ezbr_sha256": "59fcfd79279bdeb30bcb97823c21ce08cc6d22b6dee66243767488554652cb92",
+  "readback": [
+    {
+      "name": "functions/flapfit-game/index.ts",
+      "exactSourceMatch": true
+    },
+    {
+      "name": "functions/_shared/apple-consent-competition.ts",
+      "exactSourceMatch": true
+    },
+    {
+      "name": "functions/flapfit-game/deno.json",
+      "exactSourceMatch": true
+    }
+  ]
+}

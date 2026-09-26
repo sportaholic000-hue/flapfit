@@ -1,0 +1,32 @@
+[
+  {
+    "name": "typecheck",
+    "status": 0,
+    "seconds": 88.007
+  },
+  {
+    "name": "lint",
+    "status": 0,
+    "seconds": 2.403
+  },
+  {
+    "name": "release-config",
+    "status": 0,
+    "seconds": 0.454
+  },
+  {
+    "name": "test-admob-privacy-patch",
+    "status": 0,
+    "seconds": 0.424
+  },
+  {
+    "name": "test-admob-privacy-native",
+    "status": 0,
+    "seconds": 0.282
+  },
+  {
+    "name": "test-revenuecat-processing-patch",
+    "status": 1,
+    "seconds": 1.105
+  }
+]

@@ -393,6 +393,26 @@ function isBlockedCompetitionPlayerName(name: string): boolean {
     .normalize('NFKD')
     .replace(/\p{M}/gu, '')
     .toLowerCase()
+    // Fold common visual substitutions only for moderation; keep the saved name intact.
+    .replace(/[αа]/g, 'a')
+    .replace(/[ϲс]/g, 'c')
+    .replace(/[ԁ]/g, 'd')
+    .replace(/[εе]/g, 'e')
+    .replace(/[ғ]/g, 'f')
+    .replace(/[ɡ]/g, 'g')
+    .replace(/[һ]/g, 'h')
+    .replace(/[ιіӏ]/g, 'i')
+    .replace(/[ј]/g, 'j')
+    .replace(/[κк]/g, 'k')
+    .replace(/[οо]/g, 'o')
+    .replace(/[ρр]/g, 'p')
+    .replace(/[ѕ]/g, 's')
+    .replace(/[τт]/g, 't')
+    .replace(/[υս]/g, 'u')
+    .replace(/[ѵ]/g, 'v')
+    .replace(/[ԝ]/g, 'w')
+    .replace(/[χх]/g, 'x')
+    .replace(/[у]/g, 'y')
     .replace(/[0@]/g, 'o')
     .replace(/[1!|]/g, 'i')
     .replace(/[3]/g, 'e')
@@ -400,7 +420,7 @@ function isBlockedCompetitionPlayerName(name: string): boolean {
     .replace(/[5$]/g, 's')
     .replace(/[7+]/g, 't')
     .replace(/[^a-z0-9]/g, '');
-  return /(?:fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i.test(
+  return /(?:asshole|arsehole|fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i.test(
     moderationName
   );
 }

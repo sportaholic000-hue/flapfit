@@ -20,7 +20,7 @@ const ALLOWED_EXERCISES = new Set(['pushups', 'squats', 'pullups']);
 const ALLOWED_REPORT_REASONS = new Set(['inappropriate_name', 'cheating', 'harassment_or_other']);
 const ALLOWED_CONTEXT_TYPES = new Set(['leaderboard', 'challenge', 'challenge_attempt']);
 const BLOCKED_NAME_PATTERN =
-  /(?:fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i;
+  /(?:asshole|arsehole|fuck|shit|bitch|cunt|nigg|fagg|kike|chink|rape|nazi|whore|slut|dick|cock)/i;
 const CURRENT_TERMS_VERSION = '2026-09-14';
 const CURRENT_RUN_RULES_VERSION = '2026-09-16.1';
 
@@ -114,6 +114,26 @@ function cleanPlayerName(value: unknown): string {
     .normalize('NFKD')
     .replace(/\p{M}/gu, '')
     .toLowerCase()
+    // Fold common visual substitutions only for moderation; keep the saved name intact.
+    .replace(/[αа]/g, 'a')
+    .replace(/[ϲс]/g, 'c')
+    .replace(/[ԁ]/g, 'd')
+    .replace(/[εе]/g, 'e')
+    .replace(/[ғ]/g, 'f')
+    .replace(/[ɡ]/g, 'g')
+    .replace(/[һ]/g, 'h')
+    .replace(/[ιіӏ]/g, 'i')
+    .replace(/[ј]/g, 'j')
+    .replace(/[κк]/g, 'k')
+    .replace(/[οо]/g, 'o')
+    .replace(/[ρр]/g, 'p')
+    .replace(/[ѕ]/g, 's')
+    .replace(/[τт]/g, 't')
+    .replace(/[υս]/g, 'u')
+    .replace(/[ѵ]/g, 'v')
+    .replace(/[ԝ]/g, 'w')
+    .replace(/[χх]/g, 'x')
+    .replace(/[у]/g, 'y')
     .replace(/[0@]/g, 'o')
     .replace(/[1!|]/g, 'i')
     .replace(/[3]/g, 'e')
