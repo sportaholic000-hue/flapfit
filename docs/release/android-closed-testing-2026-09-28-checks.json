@@ -1,0 +1,50 @@
+{
+  "checkedOn": "2026-09-28",
+  "baselineCommit": "0041d2680bd2db652dd26813c96e5489b5bc1dac",
+  "iosTag": "release/ios-1.0.0-build-8-submitted",
+  "tagObject": "ad5d08d0f3aadf0497f3452f0a12e241e352fbfe",
+  "remoteTagPeeledCommitVerified": true,
+  "androidBranch": "codex/android-closed-testing",
+  "checks": {
+    "immutableInstall": "passed",
+    "fullTests": {
+      "suites": 77,
+      "tests": 1729,
+      "status": "passed"
+    },
+    "typecheck": "passed",
+    "lint": "passed",
+    "androidReleaseConfiguration": "passed",
+    "nativeConfigIntrospection": "passed; not a compiled manifest",
+    "originalProfilesAndGameSourceComparison": "passed",
+    "fingerprintPlatformDiscovery": "passed",
+    "androidAdMobPatchAndFingerprintTests": "passed",
+    "nativeJavaStoredSignals": {
+      "cases": 16,
+      "status": "passed; helper harness only"
+    },
+    "iosAdMobPatch": "passed against pinned source",
+    "iosRevenueCatPatch": "passed against pinned cached 5.88.0 source; no iOS checkout changes",
+    "androidJavaScriptExport": "running"
+  },
+  "ownerDecision": {
+    "androidRevenueCat": "Leave reporting off; AdMob independent"
+  },
+  "notPerformed": [
+    "native app build",
+    "OTA publication",
+    "artifact upload",
+    "store submission",
+    "production service/settings changes",
+    "real Android device acceptance"
+  ],
+  "remainingAccountChecks": [
+    "Current Apple assignment not reread because browser/session unavailable; EAS build and saved Apple evidence match build 8",
+    "Google Play app/closed-testing/account metadata",
+    "Android AdMob app status and applicable UMP message coverage"
+  ],
+  "limits": [
+    "The source tag preserves source, not mutable remote OTA channel mapping",
+    "16 KB native-library alignment and merged manifest require a future approved compiled Android artifact"
+  ]
+}

@@ -30,7 +30,7 @@ let saveUnconfirmed = false;
 
 export function hasLocalAgeControl(): boolean {
   const input = getProcessingInputs();
-  return Platform.OS === 'ios' && input.hydrated && input.appleRequirement === 'unsupported' && !input.appleAccessRestricted &&
+  return (Platform.OS === 'ios' || Platform.OS === 'android') && input.hydrated && input.appleRequirement === 'unsupported' && !input.appleAccessRestricted &&
     !!input.launch?.current && !!input.launch.country;
 }
 export function needsLocalAgeAnswer(): boolean {

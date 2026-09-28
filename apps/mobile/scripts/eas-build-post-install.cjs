@@ -8,7 +8,7 @@ if (trackerFailures.length) {
 }
 console.log('All six bundled tracker assets match the exact on-device byte requirements.');
 
-if (process.env.EAS_BUILD_PROFILE !== 'production') {
+if (!['production', 'android-closed-testing'].includes(process.env.EAS_BUILD_PROFILE)) {
   console.log('Skipping production release validation for this EAS build profile.');
   process.exit(0);
 }

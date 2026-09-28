@@ -39,8 +39,21 @@ test('an unrecognized runtime manifest fails closed', () => {
   ]);
 });
 
-test('every EAS profile validates assets before the production-only checks', () => {
+test.each(['production', 'android-closed-testing', 'preview', 'development'])('%s validates tracker assets before any release check', profile => {
   const hook = fs.readFileSync(path.join(__dirname, 'eas-build-post-install.cjs'), 'utf8');
-  expect(hook.indexOf('validateTrackerAssets(')).toBeGreaterThan(-1);
-  expect(hook.indexOf('validateTrackerAssets(')).toBeLessThan(hook.indexOf("process.env.EAS_BUILD_PROFILE !== 'production'"));
+  const calls = [];
+  const exit = {};
+  try {
+    require('node:vm').runInNewContext(hook, {
+      __dirname,
+      console: { log() {}, error() {} },
+      process: { env: { EAS_BUILD_PROFILE: profile }, execPath: process.execPath, exit: () => { throw exit; } },
+      require: name => {
+        if (name === './validate-tracker-assets.cjs') return { validateTrackerAssets: () => { calls.push('assets'); return []; } };
+        if (name === 'node:child_process') return { spawnSync: () => { calls.push('release'); return { status: 0 }; } };
+        throw Error('Unexpected dependency: ' + name);
+      },
+    });
+  } catch (error) { if (error !== exit) throw error; }
+  expect(calls).toEqual(['production', 'android-closed-testing'].includes(profile) ? ['assets', 'release'] : ['assets']);
 });

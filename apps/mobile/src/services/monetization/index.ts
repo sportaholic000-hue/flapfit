@@ -373,7 +373,7 @@ export function getLobbyPrivacyKey(): string {
 
 export function prepareMonetization(canPresent: () => boolean, options: { requiredOnly?: boolean; eligibilityOnly?: boolean } = {}): Promise<void> {
   if (options.requiredOnly) return prepareExistingMonetization(canPresent, true);
-  if (!getProcessingInputs().launch || !supported || Platform.OS !== 'ios') {
+  if (!getProcessingInputs().launch || !supported) {
     return options.eligibilityOnly ? Promise.resolve() : prepareExistingMonetization(canPresent);
   }
   const intent = presentationIntentEpoch;

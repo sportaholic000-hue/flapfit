@@ -10,6 +10,8 @@ function loadAdapter(options: { buildNumber?: string | null; configBuildNumber?:
   const privacyInput = { appleRequirement: options.appleRequired ? 'required' : 'not-required', verification: null as { mandatoryCheckSatisfied: boolean } | null };
   const ageRequest = jest.fn(async () => { ++ageRevision; return { status: 'processed', access, regional: null }; });
   jest.doMock('../privacy/appleAgeControl', () => ({ requestAppleAgeEvidence: ageRequest }));
+  const launchPrepare = jest.fn().mockResolvedValue(undefined);
+  jest.doMock('../privacy/launchProcessingControl', () => ({ prepareLaunchProcessing: launchPrepare }));
   const invalidateAge = () => { ++ageRevision; privacyInput.verification = null; };
   jest.doMock('../privacy/processingAccess', () => ({ getProcessingInputs: () => privacyInput, getAgeVerificationRevision: () => ageRevision, getProcessingAccess: () => access, subscribeProcessingAccess: (listener: () => void) => { accessListeners.add(listener); return () => accessListeners.delete(listener); } }));
   const nativeFence = jest.fn().mockResolvedValue(true);
@@ -47,7 +49,7 @@ function loadAdapter(options: { buildNumber?: string | null; configBuildNumber?:
   jest.doMock('react-native-google-mobile-ads', () => nativeLoad());
   jest.doMock('react-native-purchases', () => purchasesLoad());
   const adapter = require('../monetization') as typeof import('../monetization');
-  return { adapter, sdk, purchases, cachedIdentity, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativePause, nativeModules, changeState, ump, umpInfo, ageRequest, privacyInput, invalidateAge };
+  return { adapter, sdk, purchases, cachedIdentity, mobileAds, state, nativeLoad, purchasesLoad, nativeAd, tracker, events, consent, changeAccess, getAccess: () => access, nativeFence, nativePause, nativeModules, changeState, ump, umpInfo, ageRequest, privacyInput, invalidateAge, launchPrepare };
 }
 
 let diagnosticConsole: jest.SpyInstance;
@@ -1013,10 +1015,11 @@ test('withdrawal rejects queued diagnostic dispatch and a stale identity result 
   expect(diagnosticRecords()[1]).toMatchObject({ kind: 'ad_revenue', rcIdSuffix: 'aaaaaaaaaaaa' });
 });
 
-test('Android launch context preserves the existing independently permitted SDK route without requesting Apple', async () => {
+test('Android launch restores setup before its independently permitted ad route without requesting Apple', async () => {
   const f = loadAdapter({ platform: 'android', rcAllowed: false });
   Object.assign(f.privacyInput, { launch: { country: 'US', current: true } });
   await f.adapter.prepareMonetization(() => true);
+  expect(f.launchPrepare).toHaveBeenCalled();
   expect(f.mobileAds.initialize).toHaveBeenCalledTimes(1); expect(f.ageRequest).not.toHaveBeenCalled();
 });
 test('Android launch context does not turn unknown processing into permission', async () => {

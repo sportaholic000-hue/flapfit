@@ -1,8 +1,9 @@
 const settle = async () => { for (let i = 0; i < 40; i++) await Promise.resolve(); };
 const originalEnv = { ...process.env };
-async function load(options: { offline?: boolean; unsupported?: boolean; osVersion?: string; requirements?: unknown; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string>; quebecResidency?: 'resident' | 'not-resident' } = {}) {
+async function load(options: { platform?: 'ios' | 'android'; offline?: boolean; unsupported?: boolean; osVersion?: string; requirements?: unknown; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string>; quebecResidency?: 'resident' | 'not-resident' } = {}) {
   jest.resetModules();
   process.env.EXPO_PUBLIC_ADS_MODE = 'test'; process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = 'appl_test_only';
+  if (options.platform === 'android') process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY = 'goog_test_only';
   const memory = options.memory ?? new Map<string, string>();
   if (options.quebecResidency) memory.set('@flapfit/quebec-residency-v1',JSON.stringify({version:1,answer:options.quebecResidency}));
   const storage = { getItem: jest.fn(async (key: string) => memory.get(key) ?? null), setItem: jest.fn(async (key: string, value: string) => { memory.set(key, value); }), removeItem: jest.fn(async (key: string) => { memory.delete(key); }) };
@@ -10,7 +11,7 @@ async function load(options: { offline?: boolean; unsupported?: boolean; osVersi
   const listeners = new Set<(value: string) => void>(); const fence = jest.fn().mockResolvedValue(true);
   const appState = { currentState: 'active', addEventListener: jest.fn((_event, listener) => { listeners.add(listener); return { remove: () => listeners.delete(listener) }; }) };
   const alert = jest.fn((_title, _body, buttons) => buttons.find((button: { text: string }) => button.text === 'Continue')?.onPress());
-  jest.doMock('react-native', () => ({ Alert: { alert }, AppState: appState, Platform: { OS: 'ios', Version: options.osVersion ?? (options.unsupported ? '16.4' : '26.6') }, TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: fence, flapFitSetNetworkPaused: jest.fn().mockResolvedValue(true) } } }));
+  jest.doMock('react-native', () => ({ Alert: { alert }, AppState: appState, Platform: { OS: options.platform ?? 'ios', Version: options.osVersion ?? (options.unsupported ? '16.4' : '26.6') }, TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: fence, flapFitSetNetworkPaused: jest.fn().mockResolvedValue(true) } } }));
   jest.doMock('expo-constants', () => ({ __esModule: true, default: { executionEnvironment: 'standalone', expoConfig: {} }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));
   const requestAge = jest.fn().mockResolvedValue(options.age ?? { status: 'shared', lowerBound: 18, upperBound: null });
   jest.doMock('../../../../modules/flap-fit-age-range', () => ({ ...jest.requireActual('../../../../modules/flap-fit-age-range/src/gates'),
@@ -1208,5 +1209,84 @@ test('audit A1: a newer OS duty-query failure remains an error, not the older ca
     expect(f.access.getProcessingInputs().appleRequirement).toBe('error');
     expect(f.requestAge).not.toHaveBeenCalled();
     expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  } finally { f.finish(); }
+});
+
+
+test.each(['US', 'CA', 'AU', 'MX'])('Android %s restores age setup, eligible ads and reporting refusal without Apple calls', async country => {
+  let f = await load({ platform: 'android', unsupported: true, country, quebecResidency: country === 'CA' ? 'not-resident' : undefined });
+  const memory = f.memory;
+  try {
+    const local: typeof import('../localAgeAnswer') = require('../localAgeAnswer');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    await f.access.setProcessingChoice('analytics', 'denied');
+    await f.adapter.prepareMonetization(() => true);
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+    await local.saveLocalAgeAnswer('18-plus');
+    await notice.acknowledgeProcessingNotice();
+    await f.adapter.prepareMonetization(() => true); await settle();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.requestAge).not.toHaveBeenCalled();
+    expect(f.access.getProcessingInputs().verification).toMatchObject({ localCheckSatisfied: true, mandatoryCheckSatisfied: false });
+    expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+  f = await load({ platform: 'android', unsupported: true, country, memory });
+  try {
+    const { preparePostGamePrivacy }: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const open = jest.fn().mockResolvedValue(undefined);
+    await preparePostGamePrivacy(() => true, open); await settle();
+    expect(open).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.requestAge).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess().revenueCat.reason).toBe('refused');
+  } finally { f.finish(); }
+});
+
+
+test('Android province corrections preserve exact names and refresh permitted ads from the menu', async () => {
+  const f = await load({ platform: 'android', unsupported: true, country: 'CA' });
+  try {
+    const local: typeof import('../localAgeAnswer') = require('../localAgeAnswer');
+    const region: typeof import('../regionalClarification') = require('../regionalClarification');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    await f.access.setProcessingChoice('analytics', 'denied');
+    await local.saveLocalAgeAnswer('18-plus');
+    await region.saveProvinceSelection('NB');
+    await notice.acknowledgeProcessingNotice();
+    await f.adapter.prepareMonetization(() => true); await settle();
+    expect(region.getSavedProvinceName()).toBe('New Brunswick');
+    expect(f.adapter.isMonetizationPrepared()).toBe(true);
+    await region.saveProvinceSelection('QC');
+    expect(region.getSavedProvinceName()).toBe('Quebec');
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+    expect(f.adapter.isMonetizationPrepared()).toBe(false);
+    await region.saveProvinceSelection('ON');
+    await f.adapter.refreshMonetizationFromChoices(() => true); await settle();
+    expect(region.getSavedProvinceName()).toBe('Ontario');
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+    expect(f.adapter.isMonetizationPrepared()).toBe(true);
+    expect(f.requestAge).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+test('Android permitted test ads remain independent of disabled RevenueCat, even with an existing reporting grant', async () => {
+  const f = await load({ platform: 'android', unsupported: true, country: 'US' });
+  try {
+    const local: typeof import('../localAgeAnswer') = require('../localAgeAnswer');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    await local.saveLocalAgeAnswer('18-plus');
+    await notice.acknowledgeProcessingNotice();
+    await f.adapter.prepareMonetization(() => true); await settle();
+    expect(f.access.getProcessingAccess().revenueCat.allowed).toBe(true);
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.adapter.isMonetizationPrepared()).toBe(true);
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.fence).not.toHaveBeenCalled();
+    const ad = f.adapter.prepareResultInterstitial();
+    expect(f.interstitial.createForAdRequest).toHaveBeenCalledWith('test-interstitial', expect.objectContaining({ requestNonPersonalizedAdsOnly: true }));
+    f.events.get('loaded')!();
+    expect(ad?.isReady()).toBe(true);
+    ad?.dispose();
   } finally { f.finish(); }
 });

@@ -10,6 +10,7 @@ const unsupportedPackages = [
 function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile }) {
   const failures = [];
   const platform = env.EAS_BUILD_PLATFORM;
+  const storeBuild = buildProfile === 'production' || buildProfile === 'android-closed-testing';
   const platforms = platform === 'ios' || platform === 'android' ? [platform] : ['ios', 'android'];
   if (buildProfile === 'production' && env.EXPO_PUBLIC_ADS_MODE !== 'live') {
     failures.push('EXPO_PUBLIC_ADS_MODE: production requires live ads; test/off modes are preview only');
@@ -40,7 +41,7 @@ function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile 
     failures.push('app.json: AdMob config plugin is present without the AdMob package');
   }
 
-  if (buildProfile === 'production' && (!hasAdMob || !hasRevenueCat)) {
+  if (storeBuild && (!hasAdMob || !hasRevenueCat)) {
     failures.push(
       'production launch requires the approved AdMob and RevenueCat integration; keep Expo/preview testing ad-free until it is approved'
     );
@@ -80,7 +81,7 @@ function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile 
       failures.push('app.json: monetized builds require valid iOS and Android AdMob app IDs');
     }
     if (
-      buildProfile === 'production' &&
+      storeBuild &&
       appIds.some((id) => String(id).startsWith('ca-app-pub-3940256099942544'))
     ) {
       failures.push('app.json: Google sample AdMob app IDs cannot be used in a production build');
@@ -116,10 +117,10 @@ function validateMonetizationConfig({ appJson, mobilePackage, env, buildProfile 
   for (const [key, pattern, label] of monetizationValues) {
     if (platform === 'ios' && key.includes('_ANDROID_')) continue;
     if (platform === 'android' && key.includes('_IOS_')) continue;
-    if (buildProfile !== 'production' && env.EXPO_PUBLIC_ADS_MODE === 'test') continue;
+    if (!storeBuild && env.EXPO_PUBLIC_ADS_MODE === 'test') continue;
     const value = String(env[key] ?? '').trim();
     if (!pattern.test(value)) failures.push(`${key}: missing or invalid ${label}`);
-    if (buildProfile === 'production' && value.startsWith('ca-app-pub-3940256099942544')) {
+    if (storeBuild && value.startsWith('ca-app-pub-3940256099942544')) {
       failures.push(`${key}: Google sample ad-unit ID cannot be used in a production build`);
     }
   }

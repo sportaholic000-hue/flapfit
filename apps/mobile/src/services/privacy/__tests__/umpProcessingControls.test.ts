@@ -13,8 +13,8 @@ function load(options: { platform?: string; expoGo?: boolean; missingMethod?: bo
   return { native, get, sdk, controls };
 }
 afterEach(() => jest.useRealTimers());
-test('silent update passes actual under-consent-age flag without importing either processing SDK', async () => {
-  const f = load(); const result = await f.controls!.update(true); await f.controls!.update(false);
+test.each(['ios', 'android'])('%s silent update passes actual under-consent-age flag without importing either processing SDK', async platform => {
+  const f = load({ platform }); const result = await f.controls!.update(true); await f.controls!.update(false);
   expect(f.native.requestInfoUpdate.mock.calls).toEqual([[{ tagForUnderAgeOfConsent: true }], [{ tagForUnderAgeOfConsent: false }]]);
   expect(result).toMatchObject({ supported: true, gdprApplies: true, purposeOneConsent: false, publisherPurposeOneConsent: true, publisherPurposeSevenConsent: false });
   expect(f.sdk).not.toHaveBeenCalled();
@@ -23,7 +23,7 @@ test('form and read methods preserve nullable provider signals through the same 
   const f = load(); await expect(f.controls!.loadAndShowIfRequired()).resolves.toMatchObject({ canRequestAds: true });
   await expect(f.controls!.getProviderInfo()).resolves.toMatchObject({ publisherPurposeSevenConsent: false }); expect(f.sdk).not.toHaveBeenCalled();
 });
-test.each([{ platform: 'android' }, { platform: 'web' }, { expoGo: true }, { missingMethod: true }])('unsupported processing runtime %j stays unavailable', (options) => {
+test.each([{ platform: 'web' }, { expoGo: true }, { missingMethod: true }])('unsupported processing runtime %j stays unavailable', (options) => {
   expect(load(options).controls).toBeNull();
 });
 test('hung silent updates time out and cannot later return a grant', async () => {

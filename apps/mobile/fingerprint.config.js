@@ -1,5 +1,6 @@
 const { transform, transformConsent } = require('./scripts/patch-admob-privacy.cjs');
 const { patchBridgeSource } = require('./scripts/patch-revenuecat-processing.cjs');
+const { entries: androidAdMobEntries, transform: transformAndroidAdMob } = require('./scripts/patch-admob-privacy-android.cjs');
 const textChunks = new WeakMap();
 
 /** Native inputs outside the standard Expo module discovery paths. */
@@ -9,6 +10,7 @@ module.exports = {
   sourceSkips: ['PackageJsonAndroidAndIosScriptsIfNotContainRun', 'ExpoConfigVersions', 'GitIgnore'],
   extraSources: [
     { type: 'dir', filePath: 'plugins', reasons: ['flapfit-native-plugins'] },
+    { type: 'file', filePath: 'scripts/patch-admob-privacy-android.cjs', reasons: ['flapfit-android-native-privacy'] },
     { type: 'dir', filePath: 'modules', reasons: ['flapfit-native-modules'] },
     { type: 'dir', filePath: '../../.yarn/patches', reasons: ['flapfit-dependency-patches'] },
     { type: 'file', filePath: 'fingerprint.config.js', reasons: ['flapfit-fingerprint-config'] },
@@ -26,6 +28,8 @@ module.exports = {
     if (source.filePath.endsWith('/react-native-purchases/ios/RNPurchases.m')) return patchBridgeSource(text);
     if (source.filePath.endsWith('/RNGoogleMobileAds/RNGoogleMobileAdsModule.mm')) return transform(text);
     if (source.filePath.endsWith('/RNGoogleMobileAds/RNGoogleMobileAdsConsentModule.mm')) return transformConsent(text);
+    const androidEntry = androidAdMobEntries.find(entry => source.filePath.replace(/\\/g, '/').endsWith('/react-native-google-mobile-ads/android/src/main/java/io/invertase/googlemobileads/' + entry.file));
+    if (androidEntry) return transformAndroidAdMob(androidEntry, text);
     return text;
   },
 };

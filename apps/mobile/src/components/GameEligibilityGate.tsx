@@ -36,7 +36,7 @@ export function GameEligibilityGate({ children, hasCompletedRun = noCompletedRun
     const task = (async () => {
       await settlePrivacyBeforeGameplay();
       if (!current()) return;
-      if (Platform.OS !== 'ios') { admitted.current = true; setDecision({ status: 'available' }); return; }
+      if (Platform.OS !== 'ios' && Platform.OS !== 'android') { admitted.current = true; setDecision({ status: 'available' }); return; }
       if (retry && current()) await retryGameEligibility(current);
       if (!current()) return;
       let next = await authorizeGameEntry(hasCompletedRun());
@@ -75,7 +75,7 @@ export function GameEligibilityGate({ children, hasCompletedRun = noCompletedRun
     setDecision(null); setError(null); setEntry(value => value + 1);
   };
   const prepareEntry = useCallback(async () => {
-    if (Platform.OS !== 'ios') return;
+    if (Platform.OS !== 'ios' && Platform.OS !== 'android') return;
     const token = generation.current;
     const next = await authorizeGameEntry(hasCompletedRun());
     if (!mounted.current || generation.current !== token) throw new Error('Game entry changed.');

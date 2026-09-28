@@ -1,14 +1,14 @@
 import type { ReactTestRenderer } from 'react-test-renderer';
 jest.setTimeout(20_000);
 
-async function fixture(first: { status: string; reason?: string } = { status: 'unanswered', reason: 'age' }) {
+async function fixture(first: { status: string; reason?: string } = { status: 'unanswered', reason: 'age' }, platform: 'ios' | 'android' = 'ios') {
   jest.resetModules();
   const React: typeof import('react') = require('react');
   const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
   const { act } = React;
   const listeners = new Set<(state: string) => void>();
   const appState = { currentState: 'active', addEventListener: jest.fn((_event, listener) => { listeners.add(listener); return { remove: () => listeners.delete(listener) }; }) };
-  jest.doMock('react-native', () => ({ View: 'View', ScrollView: 'ScrollView', Text: 'Text', ActivityIndicator: 'ActivityIndicator', TouchableOpacity: 'TouchableOpacity', Platform: { OS: 'ios' }, AppState: appState }));
+  jest.doMock('react-native', () => ({ View: 'View', ScrollView: 'ScrollView', Text: 'Text', ActivityIndicator: 'ActivityIndicator', TouchableOpacity: 'TouchableOpacity', Platform: { OS: platform }, AppState: appState }));
   jest.doMock('expo-image', () => ({ Image: 'Image' }));
   jest.doMock('expo-linear-gradient', () => ({ LinearGradient: 'LinearGradient' }));
   jest.doMock('react-native-svg', () => ({ __esModule: true, default: 'Svg', Path: 'Path' }));
@@ -76,8 +76,8 @@ test('the prepared-game boundary still honors an Apple access restriction before
   expect(f.text()).not.toContain('Game running');
   await f.unmount();
 });
-test('foreground refresh does not interrupt an admitted game or its recording', async () => {
-  const f = await fixture({ status: 'available' }); await f.mount();
+test.each(['ios', 'android'] as const)('%s: foreground refresh does not interrupt an admitted game or its recording', async platform => {
+  const f = await fixture({ status: 'available' }, platform); await f.mount();
   f.authorize.mockResolvedValue({ status: 'unanswered', reason: 'country' });
   await f.change('background'); await f.change('active');
   expect(f.authorize).toHaveBeenCalledTimes(1); expect(f.text()).toContain('Game running');
@@ -136,8 +136,8 @@ test('captures the common availability error screen', async () => {
   await f.unmount();
 });
 
-test('repeat-run setup dismissal cannot mount gameplay; a later completed setup can', async () => {
-  const f = await fixture({ status: 'available' }); await f.mount();
+test.each(['ios', 'android'] as const)('%s: repeat-run setup dismissal cannot mount gameplay; a later completed setup can', async platform => {
+  const f = await fixture({ status: 'available' }, platform); await f.mount();
   f.completeRun(); f.authorize.mockResolvedValue({ status: 'setup-required' });
   await f.act(async () => { f.next(); });
   expect(f.authorize).toHaveBeenLastCalledWith(true);
@@ -163,5 +163,19 @@ test('captures incomplete setup without advertising-outcome wording', async () =
   const f = await fixture({ status: 'setup-required' }); await f.mount();
   expect(f.text()).not.toMatch(/advertis|\bads\b|Quebec|Connecticut|New York/i);
   previewGates.push({ label: 'Unfinished setup after initial run', text: f.text(), tree: f.json() });
+  await f.unmount();
+});
+
+test('Android prepared-run entry respects incomplete setup and saved age restriction without Apple instructions', async () => {
+  const f = await fixture({ status: 'available' }, 'android'); await f.mount();
+  expect(f.text()).toContain('Game running');
+  f.completeRun(); f.authorize.mockResolvedValue({ status: 'setup-required' });
+  await f.act(async () => { await expect(f.prepare()).rejects.toThrow('Review availability'); });
+  expect(f.authorize).toHaveBeenLastCalledWith(true);
+  expect(f.text()).toContain('Almost ready to fly');
+  f.authorize.mockResolvedValue({ status: 'unavailable', reason: 'age' });
+  await f.press('Finish setup');
+  expect(f.text()).toContain('Flap Fit is for ages 13 and older.');
+  expect(f.text()).not.toMatch(/Game running|Apple/);
   await f.unmount();
 });

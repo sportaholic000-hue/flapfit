@@ -13,7 +13,7 @@ interface ConsentModule extends TurboModule { getConsentInfo(): Promise<unknown>
  * strings, identifiers and purpose choices are neither collected nor persisted.
  */
 export async function readStoredUmpSignals(): Promise<StoredUmpSignals> {
-  if (Platform.OS !== 'ios' || Constants.executionEnvironment === ExecutionEnvironment.StoreClient) {
+  if ((Platform.OS !== 'ios' && Platform.OS !== 'android') || Constants.executionEnvironment === ExecutionEnvironment.StoreClient) {
     return { status: 'unavailable', gdprApplies: null };
   }
   try {

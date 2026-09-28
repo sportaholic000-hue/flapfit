@@ -59,9 +59,9 @@ test('Apple access restriction and lost country close a previously allowed local
   expect(f.local.hasLocalAgeControl()).toBe(false);
 });
 
-test('this iOS fallback does not introduce an Android age or monetization change', async () => {
+test('web cannot supply a native local age answer', async () => {
   const f = await fixture();
-  const { Platform } = require('react-native'); Platform.OS = 'android';
+  const { Platform } = require('react-native'); Platform.OS = 'web';
   expect(f.local.hasLocalAgeControl()).toBe(false);
   await expect(f.local.saveLocalAgeAnswer('18-plus')).rejects.toThrow();
   expect(f.storage.setItem).not.toHaveBeenCalled();
@@ -153,4 +153,20 @@ test('a failed correction cannot erase the saved under-13 answer discovered by a
   await reading; await failedSave;
   expect(await f.local.hasSavedUnder13Answer()).toBe(true);
   expect(JSON.parse(f.memory.get(KEY)!).answer).toBe('under-13');
+});
+
+
+test('Android uses the local age route without claiming Apple verification', async () => {
+  const f = await fixture();
+  const { Platform } = require('react-native'); Platform.OS = 'android';
+  expect(f.local.needsLocalAgeAnswer()).toBe(true);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.local.saveLocalAgeAnswer('18-plus');
+  expect(f.access.getProcessingInputs().verification).toMatchObject({ localCheckSatisfied: true, mandatoryCheckSatisfied: false });
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  f.access.markProcessingNoticePresented(1);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+  await f.local.saveLocalAgeAnswer('under-13');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  expect(await f.local.hasSavedUnder13Answer()).toBe(true);
 });

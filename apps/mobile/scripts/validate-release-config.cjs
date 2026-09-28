@@ -12,7 +12,7 @@ const easJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'eas.json'), 'utf8
 const mobilePackage = JSON.parse(fs.readFileSync(path.join(appRoot, 'package.json'), 'utf8'));
 const easIgnore = fs.readFileSync(path.join(repoRoot, '.easignore'), 'utf8');
 const { validateUpdateConfig } = require('./validate-update-config.cjs');
-const failures = validateUpdateConfig(appRoot, 'production');
+const failures = validateUpdateConfig(appRoot, process.env.EAS_BUILD_PROFILE ?? 'production');
 
 function isPrivateOrReservedHostname(hostname) {
   const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');
@@ -307,6 +307,10 @@ failures.push(
     buildProfile: process.env.EAS_BUILD_PROFILE,
   })
 );
+
+if (process.env.EAS_BUILD_PROFILE === 'android-closed-testing') {
+  failures.push(...require('./validate-android-testing-config.cjs').validateAndroidTestingConfig(easJson, process.env));
+}
 
 const storeSource = fs.readFileSync(path.join(appRoot, 'src', 'utils', 'game', 'store.ts'), 'utf8');
 const functionSource = fs.readFileSync(

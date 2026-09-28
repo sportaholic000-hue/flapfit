@@ -52,7 +52,7 @@ async function boundedSignal<T>(operation: Promise<T>): Promise<T> {
 /** UMP collection is independent of advertising eligibility and SDK startup.
  * Native presentation remains owned by the caller's shared presentation barrier. */
 export function getUmpProcessingControls() {
-  if (Platform.OS !== 'ios' || Constants.executionEnvironment === ExecutionEnvironment.StoreClient) return null;
+  if ((Platform.OS !== 'ios' && Platform.OS !== 'android') || Constants.executionEnvironment === ExecutionEnvironment.StoreClient) return null;
   try {
     const native = TurboModuleRegistry.get<ProcessingConsentModule>('RNGoogleMobileAdsConsentModule');
     if (typeof native?.getConsentInfo !== 'function' || typeof native.requestInfoUpdate !== 'function' ||

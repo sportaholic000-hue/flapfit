@@ -4,7 +4,7 @@ function validateTrackerReleaseConfig({
   gameScreenSource,
   formTrackingSource,
 }) {
-  if (buildProfile !== 'production') return [];
+  if (buildProfile !== 'production' && buildProfile !== 'android-closed-testing') return [];
 
   const failures = [];
   const rulesVersion = formTrackingSource.match(

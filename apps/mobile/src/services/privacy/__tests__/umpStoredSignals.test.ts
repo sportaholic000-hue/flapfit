@@ -21,7 +21,7 @@ test.each([undefined, '0', '1', 0, 1, {}])('invalid or absent flag %j remains un
   await expect(load({ value: { flapFitPrivacySignalsVersion: 1, flapFitGdprApplies: flag } }).read()).resolves.toEqual({ status: 'available', gdprApplies: null });
 });
 
-test.each([{ platform: 'android' }, { platform: 'web' }, { expoGo: true }])('unsupported runtime does not query native module %j', async (options) => {
+test.each([{ platform: 'web' }, { expoGo: true }])('unsupported runtime does not query native module %j', async (options) => {
   const f = load(options);
   await expect(f.read()).resolves.toEqual({ status: 'unavailable', gdprApplies: null });
   expect(f.get).not.toHaveBeenCalled();
@@ -38,8 +38,8 @@ test('native failure remains unknown without rejecting', async () => {
 const providerInfo = { flapFitPrivacySignalsVersion: 2, flapFitGdprApplies: true,
   canRequestAds: true, status: 'OBTAINED', flapFitPurposeOneConsent: false,
   flapFitPublisherPurposeOneConsent: true, flapFitPublisherPurposeSevenConsent: false };
-test('native v2 presence flags remain available to the existing applicability reader', async () => {
-  await expect(load({ value: providerInfo }).read()).resolves.toEqual({ status: 'available', gdprApplies: true });
+test.each(['ios', 'android'])('%s native v2 presence flags remain available to the existing applicability reader', async platform => {
+  await expect(load({ value: providerInfo, platform }).read()).resolves.toEqual({ status: 'available', gdprApplies: true });
 });
 test('normalizer retains only explicit booleans and does not expose raw consent strings', () => {
   load(); const { normalizeUmpProviderInfo } = require('../umpStoredSignals');
