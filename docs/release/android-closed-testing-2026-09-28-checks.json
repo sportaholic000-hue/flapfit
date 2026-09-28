@@ -25,7 +25,12 @@
     },
     "iosAdMobPatch": "passed against pinned source",
     "iosRevenueCatPatch": "passed against pinned cached 5.88.0 source; no iOS checkout changes",
-    "androidJavaScriptExport": "running"
+    "androidJavaScriptExport": {
+      "status": "passed",
+      "platform": "android",
+      "hermesBundle": "index-421971354fa67d9f51a5d79d10a24df3.hbc",
+      "nativeAppBuilt": false
+    }
   },
   "ownerDecision": {
     "androidRevenueCat": "Leave reporting off; AdMob independent"
@@ -46,5 +51,6 @@
   "limits": [
     "The source tag preserves source, not mutable remote OTA channel mapping",
     "16 KB native-library alignment and merged manifest require a future approved compiled Android artifact"
-  ]
+  ],
+  "sourceImplementationCommit": "728b713529a86a9f3468cdf372a679e6f2dae8b8"
 }
