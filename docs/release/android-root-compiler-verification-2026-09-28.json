@@ -1,0 +1,37 @@
+{
+  "checkedOn": "2026-09-28",
+  "failedReplacement": {
+    "buildId": "ac210475-c0c1-405c-b3eb-c1caa3c4ab37",
+    "sourceCommit": "7b2d43ef5067a3cf2ba95b7c687c95ff13ccf1ca",
+    "versionCode": 3,
+    "error": "Google Ads Kotlin metadata 2.3.0 read by compiler expecting 2.1.0; Expo property did not pin root compiler classpath",
+    "aabProduced": false
+  },
+  "repairImplementationCommit": "4b360c365c8bf6380a750b519942f0bbb9515517",
+  "checks": {
+    "actualExpoNativeGeneration": "passed: root compiler classpath and android.kotlinVersion both 2.3.21; Android only",
+    "gradleCompilerFixture": {
+      "gradle": "9.3.1",
+      "java": 17,
+      "reactNativeGradlePlugin": "0.86.3",
+      "googleAds": "25.4.0",
+      "actualCompiler": "2.3.21",
+      "compileKotlinExitCode": 0,
+      "metadataMismatch": false
+    },
+    "focusedTests": {
+      "suites": 3,
+      "tests": 18,
+      "passed": true
+    },
+    "strictReleaseValidation": "passed",
+    "changedFileLint": "passed"
+  },
+  "limits": [
+    "Local Gradle fixture uses installed React Native build plugin and real Google Ads jars; this is not a full Android application build.",
+    "AAB, merged manifest, 16 KB native libraries and device behavior remain unverified because both cloud attempts failed."
+  ],
+  "noThirdCloudBuildStarted": true,
+  "iosSourceUnchanged": "0041d2680bd2db652dd26813c96e5489b5bc1dac",
+  "androidFreeBuildsRemainingAtReadback": 13
+}
