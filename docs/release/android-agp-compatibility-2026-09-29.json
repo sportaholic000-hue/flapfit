@@ -1,0 +1,100 @@
+{
+  "date": "2026-09-29T04:18:49.920Z",
+  "baselineCommit": "8788f109f22ca30856da2f06f7568ae7069807a9",
+  "branch": "codex/android-closed-testing",
+  "generatedFrom": "Actual apps/mobile source with android-closed-testing profile; not the previous compiler fixture",
+  "baseline": [
+    {
+      "group": "com.android.tools.build",
+      "name": "gradle",
+      "version": "8.12.0"
+    },
+    {
+      "group": "org.jetbrains.kotlin",
+      "name": "kotlin-gradle-plugin",
+      "version": "2.3.20"
+    }
+  ],
+  "fixed": [
+    {
+      "group": "com.android.tools.build",
+      "name": "gradle",
+      "version": "8.13.2"
+    },
+    {
+      "group": "org.jetbrains.kotlin",
+      "name": "kotlin-gradle-plugin",
+      "version": "2.3.20"
+    },
+    {
+      "group": "com.android.tools.build",
+      "name": "builder",
+      "version": "8.13.2"
+    }
+  ],
+  "r8Checks": [
+    {
+      "label": "baseline",
+      "compiler": "D8",
+      "bundledIn": "com.android.tools.build:builder:8.12.0",
+      "evidence": "Builder JAR matching resolved AGP version and its declared dependency",
+      "versionOutput": "D8 8.12.14 (build 4aa08788a4dd8698c9a5ab142f6367ee769069b1 from go/r8bot (luci-r8-custom-ci-jammy-5-4a6y))",
+      "jarSha256": "2763db5ef7236c7109412b125610bc9120ac1a59e2ea4c04746f0299284ed663"
+    },
+    {
+      "label": "baseline",
+      "compiler": "R8",
+      "bundledIn": "com.android.tools.build:builder:8.12.0",
+      "evidence": "Builder JAR matching resolved AGP version and its declared dependency",
+      "versionOutput": "R8 8.12.14 (build 4aa08788a4dd8698c9a5ab142f6367ee769069b1 from go/r8bot (luci-r8-custom-ci-jammy-5-4a6y))",
+      "jarSha256": "2763db5ef7236c7109412b125610bc9120ac1a59e2ea4c04746f0299284ed663"
+    },
+    {
+      "label": "fixed",
+      "compiler": "D8",
+      "bundledIn": "com.android.tools.build:builder:8.13.2",
+      "evidence": "Builder JAR from the actual generated root buildscript classpath",
+      "versionOutput": "D8 8.13.19 (build 4ab5d6fdeb2fdaa29021e03d0ee02219e53e39fd from go/r8bot (luci-r8-custom-ci-jammy-17-1oyh))",
+      "jarSha256": "7d393f8553120c7d7a869cb33c4279aad9485986773f63af97af08ea2e1ff37a"
+    },
+    {
+      "label": "fixed",
+      "compiler": "R8",
+      "bundledIn": "com.android.tools.build:builder:8.13.2",
+      "evidence": "Builder JAR from the actual generated root buildscript classpath",
+      "versionOutput": "R8 8.13.19 (build 4ab5d6fdeb2fdaa29021e03d0ee02219e53e39fd from go/r8bot (luci-r8-custom-ci-jammy-17-1oyh))",
+      "jarSha256": "7d393f8553120c7d7a869cb33c4279aad9485986773f63af97af08ea2e1ff37a"
+    }
+  ],
+  "gradle": "9.3.1 (Expo-generated wrapper unchanged)",
+  "java": "17.0.18",
+  "initialConfigurationAttempt": {
+    "task": "buildEnvironment",
+    "exitCode": 1,
+    "blocker": "Verification JVM initially tried to use C:\\.android; corrected only the local Android user-home and JVM memory settings for the release attempt"
+  },
+  "localRelease": {
+    "task": ":app:bundleRelease",
+    "exitCode": 1,
+    "blocker": "Android SDK location not found; no configured SDK/NDK available",
+    "sdkAutomaticDownload": false,
+    "completed": false,
+    "appDexingVerified": false,
+    "appPackagingVerified": false
+  },
+  "checks": {
+    "actualNativeGeneration": true,
+    "strictReleaseValidation": true,
+    "focusedTests": 24,
+    "suites": 3
+  },
+  "preservedIOSCommit": "0041d2680bd2db652dd26813c96e5489b5bc1dac",
+  "cloudBuildStarted": false,
+  "otaPublished": false,
+  "playUploadStarted": false,
+  "sources": [
+    "https://developer.android.com/build/releases/agp-8-13-0-release-notes",
+    "https://developer.android.com/build/kotlin-support",
+    "https://kotlinlang.org/docs/gradle-configure-project.html"
+  ]
+}
