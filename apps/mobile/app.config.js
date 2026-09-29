@@ -4,6 +4,7 @@ module.exports = ({ config }) => ({
   ...config,
   plugins: [
     ...(config.plugins ?? []),
+    './plugins/withAndroidKotlinCompiler.cjs',
     './modules/flap-fit-age-range/app.plugin.js',
     './plugins/withRevenueCatProcessing.cjs',
     './plugins/withAdMobPrivacy.cjs',
