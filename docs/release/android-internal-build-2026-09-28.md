@@ -52,3 +52,7 @@ Obtain approval for one replacement Android build before retrying. After success
 - Expo billing after this attempt shows 2/15 Android builds used, 13 remaining, estimated bill $0. No third cloud build is authorized or started.
 - Evidence is saved under C:/Users/money/Documents/Codex/2026-09-23/critical-architectural-context-repair-directive-read/outputs/android-internal-replacement-2026-09-28/. Local diagnostic runners and generated Android fixture are in the sibling work directory.
 - No dependency versions, lockfile, ad rules, gameplay, iOS source/release/OTA, main branch or shared service settings were changed by this additional correction.
+
+## Latest outcome
+
+Build 4 (the third cloud attempt) failed because Expo Pika 0.3.2 does not publish a compiler for Kotlin 2.3.21. The one-line 2.3.20 correction and broader passing local checks are documented in [the build-4 repair report](android-build-4-compiler-compatibility-2026-09-28.md). The earlier sections describe historical attempt states. No further cloud build is authorized.

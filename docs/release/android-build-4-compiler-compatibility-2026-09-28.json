@@ -1,0 +1,69 @@
+{
+  "checkedAt": "2026-09-29T02:21:29.857Z",
+  "failedBuild": {
+    "buildId": "b91fc89c-0177-46e8-a739-99dec5f8af15",
+    "commit": "d06b63e5b38ac6236dbc5249a7a1249e3cb43c93",
+    "profile": "android-closed-testing",
+    "versionCode": 4,
+    "status": "ERRORED",
+    "missingDependency": "io.github.lukmccall.pika:pika-compiler:0.3.2-2.3.21",
+    "aabProduced": false,
+    "uploadedToPlay": false,
+    "androidBuildsUsed": 3,
+    "androidBuildsRemaining": 12,
+    "estimatedBillUSD": 0,
+    "iosSource": "0041d2680bd2db652dd26813c96e5489b5bc1dac",
+    "additionalCloudBuildStarted": false
+  },
+  "repair": {
+    "file": "apps/mobile/app.json",
+    "from": "2.3.21",
+    "to": "2.3.20",
+    "rootCompilerPinRetained": true,
+    "dependencyAndLockfileChanges": false
+  },
+  "checks": {
+    "strictReleaseValidation": true,
+    "focusedSuites": 3,
+    "focusedTests": 18,
+    "nativeGeneration": "passed; root compiler classpath and android.kotlinVersion both 2.3.20; generated candidate app.json exactly matches source",
+    "gradle": {
+      "version": "9.3.1",
+      "kotlin": "2.3.20",
+      "pika": "0.3.2",
+      "ksp": "2.3.7",
+      "googleAds": "25.4.0",
+      "java": 17,
+      "exitCode": 0,
+      "generatedIntrospectionPassed": true,
+      "resolvedArtifacts": [
+        "org.jetbrains.kotlin:kotlin-build-tools-compat:2.3.20",
+        "org.jetbrains.kotlin:kotlin-build-tools-impl:2.3.20",
+        "org.jetbrains.kotlin:kotlin-tooling-core:2.3.20",
+        "org.jetbrains.kotlin:kotlin-build-tools-cri-impl:2.3.20",
+        "org.jetbrains.kotlin:kotlin-build-tools-api:2.3.20",
+        "org.jetbrains.kotlin:kotlin-compiler-runner:2.3.20",
+        "org.jetbrains.kotlin:kotlin-compiler-embeddable:2.3.20",
+        "org.jetbrains.kotlin:kotlin-daemon-client:2.3.20",
+        "org.jetbrains.kotlin:kotlin-stdlib:2.3.20",
+        "org.jetbrains:annotations:13.0",
+        "org.jetbrains.kotlin:kotlin-script-runtime:2.3.20",
+        "org.jetbrains.kotlin:kotlin-reflect:1.6.10",
+        "org.jetbrains.kotlin:kotlin-daemon-embeddable:2.3.20",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0",
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:2.3.20",
+        "io.github.lukmccall.pika:pika-compiler:0.3.2-2.3.20",
+        "org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:2.3.20",
+        "com.google.devtools.ksp:symbol-processing-api:2.3.7",
+        "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:2.3.20",
+        "org.jetbrains.kotlin:kotlin-scripting-jvm:2.3.20",
+        "org.jetbrains.kotlin:kotlin-scripting-common:2.3.20"
+      ],
+      "kspLimitation": "Plugin and dependencies resolved; no KSP processors in this small fixture, so kspKotlin was skipped"
+    }
+  },
+  "limits": [
+    "Not a complete Android application build. AAB, merged manifest, 16 KB libraries, installation and device behavior remain unverified.",
+    "Full app JavaScript suite was not rerun for this single compiler-version setting; the previous full source check was 77 suites / 1729 tests."
+  ]
+}
