@@ -331,6 +331,23 @@ function copyComposedRecordingFrame(now, isPlayableFrame, force) {
     recordingCanvas.width,
     recordingCanvas.height
   );
+  if (CONFIG.recordingBranding) {
+    // Draw only on the hidden recording surface. Keep the live game untouched.
+    recordingCtx.save();
+    recordingCtx.scale(recordingCanvas.width / W, recordingCanvas.height / H);
+    recordingCtx.textAlign = 'center';
+    recordingCtx.textBaseline = 'alphabetic';
+    recordingCtx.font = '800 16px -apple-system, sans-serif';
+    recordingCtx.lineWidth = 3;
+    recordingCtx.lineJoin = 'round';
+    recordingCtx.strokeStyle = 'rgba(0,0,0,0.65)';
+    recordingCtx.fillStyle = '#FFFFFF';
+    // Target text uses y=98; leave a separate line below it when present.
+    var brandingY = CONFIG.target > 0 ? 122 : 100;
+    recordingCtx.strokeText('Flap Fit', W / 2, brandingY, W - 32);
+    recordingCtx.fillText('Flap Fit', W / 2, brandingY, W - 32);
+    recordingCtx.restore();
+  }
 }
 
 function stopRunRecording() {

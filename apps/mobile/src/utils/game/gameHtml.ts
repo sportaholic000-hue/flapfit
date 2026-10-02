@@ -18,6 +18,7 @@ export type GameHtmlConfig = {
   backgroundMode: 'sky' | 'camera';
   recordRun: boolean;
   recordAudio: boolean;
+  recordingBranding?: boolean;
   endless: boolean;
   brandFirstPipe?: boolean;
   speed: number;
