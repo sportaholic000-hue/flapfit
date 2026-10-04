@@ -13,11 +13,28 @@ const head = '<circle cx="120" cy="24" r="14" />';
 const front = (body: string) => head + '<path d="' + body + '" />';
 const ground = '<path d="M40 270 H204" fill="none" stroke-opacity="0.45" stroke-width="2" />';
 const bar = '<path d="M35 24 H205" fill="none" stroke-width="5" />';
-const squatStand = '<circle cx="125" cy="25" r="14" /><path d="M116 43 L130 42 Q139 45 139 60 L135 125 L140 155 L137 246 L154 251 Q162 254 158 263 L120 263 Q112 262 113 251 L115 163 L103 139 Q98 131 101 113 L103 66 L98 133 Q97 143 89 141 Q81 139 82 130 L92 60 Q94 48 108 46 Z" />';
-const curlSide = '<circle cx="125" cy="25" r="14" /><path d="M116 43 L130 42 Q140 44 144 59 L158 107 L175 66 Q179 57 187 61 Q194 65 190 74 L170 125 Q165 138 154 132 L136 101 L135 125 L140 155 L137 246 L154 251 Q162 254 158 263 L120 263 Q112 262 113 251 L115 163 L103 139 Q98 131 101 113 L103 66 Q102 50 108 46 Z" />';
-const squatLow = '<circle cx="133" cy="112" r="14" /><path d="M123 131 L137 132 L145 143 L192 143 Q202 143 202 151 Q202 159 193 159 L140 158 L125 179 L157 183 Q169 186 165 200 L145 246 L161 251 Q169 255 164 264 L130 264 Q121 263 123 253 L142 204 L98 203 Q80 202 85 185 L105 147 Q111 134 123 131 Z" />';
-const pushupTop = '<circle cx="194" cy="150" r="14" /><path d="M178 166 Q184 172 179 184 L177 236 L191 242 Q197 248 190 254 L163 253 Q157 251 159 241 L160 191 L121 207 L50 238 L37 253 L20 253 Q15 249 20 243 L32 226 L110 190 L161 168 Q169 161 178 166 Z" />';
-const pushupBottom = '<circle cx="200" cy="203" r="14" /><path d="M184 214 Q190 220 181 229 L158 238 L181 241 Q188 245 183 253 L148 252 Q135 251 136 241 L148 231 L113 236 L45 241 L34 253 L19 253 Q14 249 19 244 L31 231 L110 215 L168 214 Q178 209 184 214 Z" />';
+
+// All demonstrations face the camera. Side profiles can imply a required turn.
+const curlFront = 'M110 43 L130 43 L134 54 Q148 55 152 70 L160 99 L154 69 Q153 60 161 60 Q169 60 170 69 L180 116 Q182 130 169 134 Q157 138 151 126 L140 96 ' + frontLegs + ' L100 96 L89 126 Q83 138 71 134 Q58 130 60 116 L70 69 Q71 60 79 60 Q87 60 86 69 L80 99 L88 70 Q92 55 106 54 Z';
+const squatStand = front(loweredArms.replace('L151 253 Q153 263 143 265 Q133 267 131 256 L120 174 L109 256 Q107 267 97 265 Q87 263 89 253', 'L163 251 L174 254 Q181 257 176 265 L149 265 Q142 264 141 255 L120 174 L99 255 Q98 264 91 265 L64 265 Q59 257 66 254 L77 251'));
+const squatLow = '<circle cx="120" cy="96" r="14" /><path d="M110 115 L130 115 L134 126 Q148 126 155 141 L171 164 Q178 175 170 181 Q163 187 155 178 L140 157 L141 181 L169 200 Q178 205 172 218 L164 251 L174 254 Q181 257 176 265 L149 265 Q141 264 143 253 L148 220 L120 203 L92 220 L97 253 Q99 264 91 265 L64 265 Q59 257 66 254 L76 251 L68 218 Q62 205 71 200 L99 181 L100 157 L85 178 Q77 187 70 181 Q62 175 69 164 L85 141 Q92 126 106 126 Z" />';
+// A foreshortened front view: the body recedes behind the head; hands stay planted.
+// Cut out the head space so translucent body and head fills never double up.
+const pushupFront = (position: 'top' | 'bottom') => {
+  const top = position === 'top';
+  const headY = top ? 135 : 203;
+  const back = top
+    ? 'M94 153 L103 117 Q104 112 111 112 L129 112 Q136 112 137 117 L146 153 Z'
+    : 'M84 214 L103 177 Q105 173 111 173 L129 173 Q135 173 137 177 L156 214 Z';
+  const arms = top
+    ? 'M100 148 Q87 148 81 162 L64 239 L57 244 Q51 252 60 256 L80 256 Q86 254 85 247 L97 182 Q106 193 120 193 Q134 193 143 182 L155 247 Q154 254 160 256 L180 256 Q189 252 183 244 L176 239 L159 162 Q153 148 140 148 Z'
+    : 'M99 212 Q86 206 74 212 L43 226 Q36 230 41 237 L64 248 L57 248 Q50 252 59 256 L80 256 Q88 255 87 248 L62 230 L88 232 Q103 240 120 240 Q137 240 152 232 L178 230 L153 248 Q152 255 160 256 L181 256 Q190 252 183 248 L176 248 L199 237 Q204 230 197 226 L166 212 Q154 206 141 212 Z';
+  const maskId = 'pushup-' + position + '-head-space';
+  return '<defs><mask id="' + maskId + '"><rect width="240" height="280" fill="white" stroke="none" fill-opacity="1"/><circle cx="120" cy="' + headY + '" r="20" fill="black" fill-opacity="1" stroke="none"/></mask></defs>' +
+    '<g mask="url(#' + maskId + ')"><path d="' + back + '"/><path d="' + arms + '"/></g><circle cx="120" cy="' + headY + '" r="16"/>';
+};
+const pushupTop = pushupFront('top');
+const pushupBottom = pushupFront('bottom');
 // Reach first: heels raised and no bar, so it cannot suggest grabbing early.
 const reach = '<g transform="translate(24 40) scale(.8)">' + front(pressUp.replace('L151 253 Q153 263 143 265 Q133 267 131 256', 'L151 253 L156 270 Q157 274 150 274 L136 261').replace('L109 256 Q107 267 97 265 Q87 263 89 253', 'L104 261 L90 274 Q83 274 84 270 L89 253')) + '</g><path d="M84 260 H103 M137 260 H156" fill="none" stroke-opacity="0.45" stroke-width="2" />';
 const pullupBentArms = 'M110 43 L130 43 L134 54 L167 75 L153 31 Q149 21 157 19 Q165 17 168 27 L183 77 Q186 88 177 92 Q172 94 166 89 L143 76 ' + frontLegs + ' L97 76 L74 89 Q68 94 63 92 Q54 88 57 77 L72 27 Q75 17 83 19 Q91 21 87 31 L73 75 L106 54 Z';
@@ -27,7 +44,7 @@ const pullupHang = bar + '<g transform="translate(24 39) scale(.8)">' + front(pr
 type GuidePoses = { top: string; bottom: string; reach?: string; viewBox?: string };
 const exercisePoses: Record<string, GuidePoses> = {
   lateralraise: { top: front(raisedArms), bottom: front(loweredArms) },
-  biceps: { top: curlSide + ground, bottom: squatStand + ground },
+  biceps: { top: front(curlFront), bottom: front(loweredArms) },
   shoulderpress: { top: front(pressUp), bottom: front(pressDown), viewBox: '0 -24 240 304' },
   squats: { top: squatStand + ground, bottom: squatLow + ground },
   pushups: { top: pushupTop + ground, bottom: pushupBottom + ground },
