@@ -566,6 +566,8 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
         recordRun,
         recordAudio: recordRun && !recordWithoutAudio && microphonePermission?.granted === true,
         recordingBranding: recordRun && Platform.OS === 'android',
+        // Branch-only visual experiment; also gated by exercise and background.
+        experimentalCalibrationGuidePlatform: Platform.OS,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

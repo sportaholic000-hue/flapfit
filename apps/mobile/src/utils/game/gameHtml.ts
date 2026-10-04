@@ -1,4 +1,5 @@
 import type { BirdSkin } from './birds';
+import { CALIBRATION_GUIDE_STYLE, CALIBRATION_GUIDE_MARKUP, CALIBRATION_GUIDE_SCRIPT, showExperimentalCalibrationGuide } from './experimentalCalibrationGuide';
 import { SCRIPT_CORE } from './html/scriptCore';
 import { SCRIPT_FORM_TRACKING } from './html/scriptFormTracking';
 import { SCRIPT_GAME } from './html/scriptGame';
@@ -19,6 +20,7 @@ export type GameHtmlConfig = {
   recordRun: boolean;
   recordAudio: boolean;
   recordingBranding?: boolean;
+  experimentalCalibrationGuidePlatform?: string;
   endless: boolean;
   brandFirstPipe?: boolean;
   speed: number;
@@ -37,7 +39,9 @@ export type GameHtmlConfig = {
 };
 
 export function buildGameHtml(config: GameHtmlConfig): string {
-  const configJson = JSON.stringify(config);
+  const { experimentalCalibrationGuidePlatform, ...gameConfig } = config;
+  const showGuide = showExperimentalCalibrationGuide(experimentalCalibrationGuidePlatform, config.exercise, config.backgroundMode);
+  const configJson = JSON.stringify(gameConfig);
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -56,19 +60,19 @@ body { margin: 0; padding: 0; background: ${config.sky1}; overflow: hidden; heig
 #card small { font-weight: 600; font-size: 17px; color: rgba(255,255,255,0.78); }
 #bar { display: none; height: 12px; border-radius: 6px; background: rgba(255,255,255,0.25); margin-top: 18px; overflow: hidden; }
 #fill { height: 100%; width: 0%; background: #F59E0B; border-radius: 6px; transition: width 0.1s linear; }
-</style>
+${showGuide ? CALIBRATION_GUIDE_STYLE : ''}</style>
 </head>
 <body>
 <canvas id="game"></canvas>
 <div id="preview"><video id="video" playsinline muted autoplay></video><div id="dot"></div></div>
 <button id="camBtn">📷</button>
-<div id="overlay"><div id="card"><div id="msg">Loading…</div><div id="bar"><div id="fill"></div></div></div></div>
+<div id="overlay"><div id="card">${showGuide ? CALIBRATION_GUIDE_MARKUP : ''}<div id="msg">Loading…</div><div id="bar"><div id="fill"></div></div></div></div>
 <script>
 "use strict";
 var CONFIG = ${configJson};
   ${SCRIPT_CORE}
   ${SCRIPT_FORM_TRACKING}
-  ${SCRIPT_GAME}
+  ${SCRIPT_GAME}${showGuide ? CALIBRATION_GUIDE_SCRIPT : ''}
 </script>
 </body>
 </html>`;
