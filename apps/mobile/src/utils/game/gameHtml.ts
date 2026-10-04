@@ -1,5 +1,5 @@
 import type { BirdSkin } from './birds';
-import { CALIBRATION_GUIDE_STYLE, CALIBRATION_GUIDE_MARKUP, CALIBRATION_GUIDE_SCRIPT, showExperimentalCalibrationGuide } from './experimentalCalibrationGuide';
+import { CALIBRATION_GUIDE_STYLE, buildCalibrationGuideMarkup, CALIBRATION_GUIDE_SCRIPT, showExperimentalCalibrationGuide } from './experimentalCalibrationGuide';
 import { SCRIPT_CORE } from './html/scriptCore';
 import { SCRIPT_FORM_TRACKING } from './html/scriptFormTracking';
 import { SCRIPT_GAME } from './html/scriptGame';
@@ -66,7 +66,7 @@ ${showGuide ? CALIBRATION_GUIDE_STYLE : ''}</style>
 <canvas id="game"></canvas>
 <div id="preview"><video id="video" playsinline muted autoplay></video><div id="dot"></div></div>
 <button id="camBtn">📷</button>
-${showGuide ? CALIBRATION_GUIDE_MARKUP : ''}<div id="overlay"><div id="card"><div id="msg">Loading…</div><div id="bar"><div id="fill"></div></div></div></div>
+${showGuide ? buildCalibrationGuideMarkup(config.exercise) : ''}<div id="overlay"><div id="card"><div id="msg">Loading…</div><div id="bar"><div id="fill"></div></div></div></div>
 <script>
 "use strict";
 var CONFIG = ${configJson};
