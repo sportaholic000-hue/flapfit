@@ -10,7 +10,7 @@ const child = spawn(
   [expoCli, 'start', connectionFlag, '--go', ...forwardedArgs],
   {
     cwd: __dirname + '/..',
-    env: process.env,
+    env: { ...process.env, FLAPFIT_ANDROID_EXPO_GO: '1' },
     stdio: 'inherit',
   }
 );

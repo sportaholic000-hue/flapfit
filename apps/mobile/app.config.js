@@ -19,6 +19,11 @@ module.exports = ({ config }) => ({
   ],
   android: {
     ...config.android,
+    // Expo Go already supplies the native SDK. Avoid hashing native build inputs
+    // for every Android development-manifest request on Windows.
+    ...(process.env.FLAPFIT_ANDROID_EXPO_GO === '1' && process.env.EAS_BUILD !== 'true'
+      ? { runtimeVersion: { policy: 'sdkVersion' } }
+      : {}),
     blockedPermissions: [...new Set([
       ...(config.android?.blockedPermissions ?? []),
       'com.google.android.gms.permission.AD_ID',
