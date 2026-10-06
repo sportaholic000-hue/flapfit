@@ -122,6 +122,14 @@ export const CALIBRATION_GUIDE_SCRIPT = `
     } else { hideGuide(); }
   }
 
+  // The lowered instruction card exposes the bird that it used to cover.
+  // Keep this Android camera-guide change visual only; flight state is untouched.
+  var originalDrawBird = drawBird;
+  drawBird = function (now) {
+    if (state === 'loading' || state === 'waitTop' || state === 'waitBottom') { return; }
+    originalDrawBird(now);
+  };
+
   // Presentation only: reveal the existing countdown after the success fade.
   // Its deadline, gameplay start, and calibration logic stay untouched.
   var originalDrawCountdown = drawCountdownNumber;
@@ -139,6 +147,7 @@ export const CALIBRATION_GUIDE_SCRIPT = `
     if (sizeObserver) { sizeObserver.disconnect(); }
     cancelFade();
     hideGuide();
+    drawBird = originalDrawBird;
     drawCountdownNumber = originalDrawCountdown;
   }, { once: true });
 })();
