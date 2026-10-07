@@ -7,7 +7,12 @@ const settle = async () => { for (let i = 0; i < 80; i++) await Promise.resolve(
 const originalEnv = { ...process.env };
 jest.setTimeout(30_000);
 
-async function mountApp(saved: string | null, options: { delayed?: boolean; failRead?: boolean; offline?: boolean; completedRun?: boolean; playable?: boolean } = {}) {
+type CameraTestStatus = 'undetermined' | 'granted' | 'denied';
+async function mountApp(saved: string | null, options: {
+  delayed?: boolean; failRead?: boolean; offline?: boolean; completedRun?: boolean; playable?: boolean;
+  cameraStatus?: CameraTestStatus; cameraCanAskAgain?: boolean; cameraResponse?: CameraTestStatus;
+  cameraSettingsStatus?: CameraTestStatus; platform?: 'ios' | 'android';
+} = {}) {
   jest.resetModules(); jest.useFakeTimers();
   const React: typeof import('react') = require('react');
   const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
@@ -32,10 +37,12 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
   const listeners = new Set<(state: string) => void>();
   const appState = { currentState: 'active', addEventListener: jest.fn((_event, listener) => { listeners.add(listener); return { remove: () => listeners.delete(listener) }; }) };
   const animation = () => ({ start: jest.fn(), stop: jest.fn() });
+  const openSettings = jest.fn().mockResolvedValue(undefined);
+  const platform = options.platform ?? 'ios';
   jest.doMock('react-native', () => ({
     View: 'View', Text: 'Text', ScrollView: 'ScrollView', TouchableOpacity: 'TouchableOpacity', ActivityIndicator: 'ActivityIndicator',
-    Platform: { OS: 'ios', Version: '18.6', select: (values: Record<string, unknown>) => values.ios ?? values.default }, AppState: appState,
-    Alert: { alert: jest.fn() }, Linking: { openSettings: jest.fn() }, Share: {}, StyleSheet: { create: (styles: unknown) => styles },
+    Platform: { OS: platform, Version: '18.6', select: (values: Record<string, unknown>) => values[platform] ?? values.default }, AppState: appState,
+    Alert: { alert: jest.fn() }, Linking: { openSettings }, Share: {}, StyleSheet: { create: (styles: unknown) => styles },
     Animated: { Value: class { interpolate = jest.fn(); setValue = jest.fn(); }, View: 'View', timing: animation, loop: animation, sequence: animation },
     Easing: { linear: jest.fn(), out: jest.fn(), quad: jest.fn() }, useWindowDimensions: () => ({ width: 390, height: 844 }),
     TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: jest.fn().mockResolvedValue(true), flapFitSetNetworkPaused: jest.fn().mockResolvedValue(true) } },
@@ -63,7 +70,22 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
   jest.doMock('@/services/videoSharing', () => ({ getVideoShareAvailability: jest.fn().mockResolvedValue({}) }));
   jest.doMock('@/utils/game/mediapipeAssets', () => ({ prepareMediaPipeAssets: () => options.playable ? Promise.resolve({}) : new Promise(() => {}) }));
   jest.doMock('@/utils/game/birdWebAsset', () => ({ loadBirdAssetDataUri: () => options.playable ? Promise.resolve('data:image/png;base64,test') : new Promise(() => {}) }));
-  const camera = jest.fn(() => [{ granted: options.playable === true, canAskAgain: true, status: 'undetermined' }, jest.fn(), jest.fn()]);
+  const cameraSnapshot = (status: CameraTestStatus) => ({ status, granted: status === 'granted',
+    canAskAgain: status === 'denied' ? options.cameraCanAskAgain ?? false : true });
+  let nativeCamera = cameraSnapshot(options.cameraStatus ?? (options.playable ? 'granted' : 'undetermined'));
+  let updateCamera: ((value: typeof nativeCamera) => void) | undefined;
+  const requestCameraPermission = jest.fn(async () => {
+    nativeCamera = cameraSnapshot(options.cameraResponse ?? 'denied');
+    updateCamera?.(nativeCamera); return nativeCamera;
+  });
+  const getCameraPermission = jest.fn(async () => {
+    if (options.cameraSettingsStatus) nativeCamera = cameraSnapshot(options.cameraSettingsStatus);
+    updateCamera?.(nativeCamera); return nativeCamera;
+  });
+  const camera = jest.fn(() => {
+    const [permission, setPermission] = React.useState(nativeCamera); updateCamera = setPermission;
+    return [permission, requestCameraPermission, getCameraPermission];
+  });
   jest.doMock('expo-camera', () => ({ useCameraPermissions: camera, useMicrophonePermissions: () => [null, jest.fn(), jest.fn()] }));
   jest.doMock('expo-haptics', () => ({ impactAsync: jest.fn().mockResolvedValue(undefined), ImpactFeedbackStyle: {}, notificationAsync: jest.fn().mockResolvedValue(undefined), NotificationFeedbackType: { Success: 'success', Error: 'error' } }));
   const fetchDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'fetch');
@@ -97,7 +119,7 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
     expect(button).toBeDefined(); button.props.onPress(); await settle();
   }); expect(router.push).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
     expect(JSON.stringify(tree.toJSON())).not.toContain('Flap Fit hit a snag'); };
-  return { camera, storage, adLoad, rcLoad, play, tree, sheet, router,
+  return { camera, requestCameraPermission, getCameraPermission, openSettings, storage, adLoad, rcLoad, play, tree, sheet, router,
     completeGame: async () => { await act(async () => {
       tree.root.findByType('WebView' as never).props.onMessage({ nativeEvent: { data: JSON.stringify({ type: 'gameover', score: 5, pushups: 0, tutSeconds: 0, runDurationMs: 1000 }) } });
       await settle();
@@ -305,5 +327,88 @@ test('audit A2: first free result does not refresh or allocate after background/
     const allocate = jest.spyOn(monetization, 'prepareResultInterstitial');
     await f.completeGame(); await f.change('background'); await f.change('active');
     expect(refresh).not.toHaveBeenCalled(); expect(allocate).not.toHaveBeenCalled();
+  } finally { await f.finish(); }
+});
+
+
+// Apple's build-8 rejection: exercise the actual rendered camera gate and native
+// permission boundary, including updates after denial and a Settings return.
+test('iOS first camera explanation has only Continue, which requests native permission once', async () => {
+  const f = await mountApp(null, { offline: true });
+  try {
+    await f.play();
+    const buttons = f.tree.root.findAllByType('TouchableOpacity' as never);
+    expect(buttons).toHaveLength(1);
+    expect(buttons[0].props.accessibilityLabel).toBe('Continue');
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Allow camera');
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Go back');
+    expect(f.requestCameraPermission).not.toHaveBeenCalled();
+    await f.pressResult('Continue');
+    expect(f.requestCameraPermission).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Open settings');
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Go back');
+    await f.pressResult('Go back'); await f.play();
+    await f.change('background'); await f.change('active');
+    expect(f.requestCameraPermission).toHaveBeenCalledTimes(1);
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(0);
+  } finally { await f.finish(); }
+});
+
+test('granting the first iOS camera request proceeds into gameplay', async () => {
+  const f = await mountApp(null, { offline: true, playable: true, cameraStatus: 'undetermined', cameraResponse: 'granted' });
+  try {
+    await f.play(); await f.pressResult('Continue');
+    expect(f.requestCameraPermission).toHaveBeenCalledTimes(1);
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Camera access needed');
+  } finally { await f.finish(); }
+});
+
+test('already granted iOS camera access bypasses the explanation and request', async () => {
+  const f = await mountApp(null, { offline: true, playable: true });
+  try {
+    await f.play();
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Camera access needed');
+    expect(f.requestCameraPermission).not.toHaveBeenCalled();
+  } finally { await f.finish(); }
+});
+
+test.each([false, true])('previous iOS denial routes to Settings instead of another request (canAskAgain=%s)', async canAskAgain => {
+  const f = await mountApp(null, { offline: true, cameraStatus: 'denied', cameraCanAskAgain: canAskAgain });
+  try {
+    await f.play();
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Gameplay needs the camera');
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Go back');
+    await f.pressResult('Open settings');
+    expect(f.openSettings).toHaveBeenCalledTimes(1);
+    await f.change('background'); await f.change('active');
+    expect(f.getCameraPermission).toHaveBeenCalledTimes(1);
+    expect(f.requestCameraPermission).not.toHaveBeenCalled();
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(0);
+    await f.pressResult('Go back');
+    expect(f.router.back).toHaveBeenCalledTimes(1);
+  } finally { await f.finish(); }
+});
+
+test('granting camera access in Settings resumes iOS gameplay without requesting again', async () => {
+  const f = await mountApp(null, { offline: true, playable: true, cameraStatus: 'denied', cameraSettingsStatus: 'granted' });
+  try {
+    await f.play(); await f.pressResult('Open settings');
+    await f.change('background'); await f.change('active');
+    expect(f.getCameraPermission).toHaveBeenCalledTimes(1);
+    expect(f.requestCameraPermission).not.toHaveBeenCalled();
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
+  } finally { await f.finish(); }
+});
+
+test('this iOS correction preserves Android camera explanation actions', async () => {
+  const f = await mountApp(null, { offline: true, platform: 'android' });
+  try {
+    await f.play();
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Allow camera');
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Go back');
+    await f.pressResult('Allow camera');
+    expect(f.requestCameraPermission).toHaveBeenCalledTimes(1);
   } finally { await f.finish(); }
 });

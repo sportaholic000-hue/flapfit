@@ -1110,6 +1110,11 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   }
 
   if (needsCameraPermission) {
+    // iOS explains the first system request with one neutral action. A denied
+    // permission is recovered in Settings, never by repeatedly requesting it.
+    const canRequestCamera = permission.canAskAgain &&
+      (Platform.OS !== 'ios' || permission.status === 'undetermined');
+    const cameraRequestLabel = Platform.OS === 'ios' ? 'Continue' : 'Allow camera';
     return (
       <View
         style={{
@@ -1132,15 +1137,17 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
           your device. Video is recorded only when you explicitly select Record &amp; Play. With
           your permission, that recording includes microphone sound. It is kept temporarily for
           sharing and is not uploaded by Flap Fit.
-          {!permission.canAskAgain
-            ? '\n\nCamera access is currently blocked. Open your phone settings to allow it.'
+          {!canRequestCamera
+            ? Platform.OS === 'ios'
+              ? '\n\nCamera access is currently blocked. Gameplay needs the camera to track your movement. You can change camera access in your device settings.'
+              : '\n\nCamera access is currently blocked. Open your phone settings to allow it.'
             : ''}
         </Text>
         <TouchableOpacity
           accessibilityRole="button"
-          accessibilityLabel={permission.canAskAgain ? 'Allow camera' : 'Open camera settings'}
+          accessibilityLabel={canRequestCamera ? cameraRequestLabel : 'Open camera settings'}
           onPress={() => {
-            if (permission.canAskAgain) void requestPermission();
+            if (canRequestCamera) void requestPermission();
             else openPermissionSettings('camera');
           }}
           style={{
@@ -1151,12 +1158,14 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
           }}
         >
           <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
-            {permission.canAskAgain ? 'Allow camera' : 'Open settings'}
+            {canRequestCamera ? cameraRequestLabel : 'Open settings'}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
-          <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>
-        </TouchableOpacity>
+        {(Platform.OS !== 'ios' || !canRequestCamera) && (
+          <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
+            <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   }
