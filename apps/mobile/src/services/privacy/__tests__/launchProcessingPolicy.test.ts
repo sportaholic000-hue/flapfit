@@ -229,7 +229,7 @@ test('plan stores no raw range, source, country or birthday', () => {
   const serialized = JSON.stringify(resolveLaunchProcessingPolicy(input()));
   for (const forbidden of ['lowerBound', 'upperBound', '"source"', '"country"', 'birthday']) expect(serialized).not.toContain(forbidden);
 });
-test.each([null, 'GB', 'DE'])('outside or unresolved launch country is not cleared: %s', country => {
+test.each([null, 'JP', 'BR'])('outside or unresolved launch country is not cleared: %s', country => {
   const result = resolveLaunchProcessingPolicy(input({ country }));
   expect(Object.values(result.decisions).every(decision => !decision.allowed)).toBe(true);
   expect(result.missingFacts.ads).toContain('country');
@@ -350,4 +350,29 @@ test.each(['CA','AU','MX','US'])('%s teen consent does not manufacture a NY cove
   expect(result.missingFacts.ads).toEqual(country === 'US' ? ['new-york-location'] : country === 'MX' ? ['parental-authority'] : []);
   expect(result.missingFacts.analytics).toEqual(result.missingFacts.ads);
   expect(result.separateExpressChoiceRequired).toEqual({ads:false,analytics:false});
+});
+
+// European consent boundaries apply to optional provider processing, not the 13+ game.
+test.each(Object.entries(require('../launchCountries').EUROPEAN_COUNTRIES) as [string, { consentAge: number }][])('%s honors its consent boundary and preserves that outcome during refinement', (country, { consentAge }) => {
+  for (const lowerBound of [13, consentAge, 18]) {
+    const options = input({country, subdivision: null, age: {...teen, lowerBound, upperBound: lowerBound === 18 ? null : 17}});
+    const result = resolveLaunchProcessingPolicy(options);
+    expect(result.ageEligibility).toBe('allowed');
+    expect(result.decisions.ads.allowed).toBe(lowerBound >= consentAge);
+    expect(result.decisions.analytics.allowed).toBe(false);
+    expect(result.decisions.competition.allowed).toBe(false);
+    const refined = refineLaunchProcessingPlan(result, options);
+    expect(refined.underAgeOfConsent).toBe(result.underAgeOfConsent);
+    expect(refined.decisions).toEqual(result.decisions);
+  }
+});
+test('European old generic reporting grant is not a new specific opt-in; Google choice is not a competition choice', () => {
+  const options = input({country:'DE', choices:{ads:unset(), analytics:grant(), competition:unset()}});
+  expect(resolveLaunchProcessingPolicy(options).decisions).toMatchObject({ads:{allowed:true},analytics:{allowed:false},competition:{allowed:false}});
+  expect(resolveLaunchProcessingPolicy({...options,europeanReportingActivated:true}).decisions.analytics.allowed).toBe(true);
+  expect(resolveLaunchProcessingPolicy({...options,europeanReportingActivated:true,choices:{...options.choices,analytics:deny()}}).decisions.analytics.reason).toBe('refused');
+});
+test.each(['DE','FR','AT','GB','CH','IS','LI','NO'])('%s keeps every Apple request within three distinct age gates', country => {
+  expect(validateAppleAgeGates(launchAppleAgeGates(country))).toBeTruthy();
+  expect(new Set(launchAppleAgeGates(country)).size).toBe(3);
 });

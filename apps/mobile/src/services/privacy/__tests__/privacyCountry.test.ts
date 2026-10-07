@@ -1,3 +1,4 @@
+import { LAUNCH_COUNTRIES } from '../launchCountries';
 const URL = 'https://flapfitapp.com/cdn-cgi/trace';
 const trace = (loc = 'CA') => 'fl=123\nh=flapfitapp.com\nip=192.0.2.9\nuag=Native Test\ncolo=IAD\nloc=' + loc + '\ntls=TLSv1.3\n';
 const deferred = <T,>() => { let resolve!: (value: T) => void; const promise = new Promise<T>((done) => { resolve = done; }); return { promise, resolve }; };
@@ -20,12 +21,12 @@ function load(options: { platform?: string; expoGo?: boolean; state?: string } =
   return { api, request, service, listeners, change: (state: string) => { appState.currentState = state; [...listeners].forEach((listener) => listener(state)); } };
 }
 afterEach(() => jest.useRealTimers());
-test.each(['CA', 'US', 'AU', 'MX'])('retains only selected %s country, source and status', (country) => {
+test.each(Object.keys(LAUNCH_COUNTRIES))('retains only selected %s country, source and status', (country) => {
   const f = load(); expect(f.api.parsePrivacyCountryTrace(trace(country))).toEqual({ status: 'resolved', country, source: 'cloudflare-trace' });
   expect(JSON.stringify(f.api.parsePrivacyCountryTrace(trace(country)))).not.toMatch(/192\.0\.2|uag|colo|fl=|tls/);
 });
 test('uses loc rather than colo and discards unsupported country details', () => {
-  const f = load(); expect(f.api.parsePrivacyCountryTrace(trace('FR'))).toEqual({ status: 'outside-launch', country: null, source: 'cloudflare-trace' });
+  const f = load(); expect(f.api.parsePrivacyCountryTrace(trace('JP'))).toEqual({ status: 'outside-launch', country: null, source: 'cloudflare-trace' });
   expect(f.api.parsePrivacyCountryTrace(trace().replace('loc=CA\n', '')).status).toBe('unavailable');
 });
 test.each([
@@ -33,7 +34,7 @@ test.each([
   'h=flapfitapp.com\nloc=CA\nuag=one\nuag=two', 'h=evil.example\nloc=CA', 'h=flapfitapp.com:443\nloc=CA',
   'h=flapfitapp.com\nloc=ca', 'h=flapfitapp.com\nloc=CA ', 'h=flapfitapp.com\nloc=CAN', 'h=flapfitapp.com\nloc=XX',
   'h=flapfitapp.com\nloc=ZZ', 'h=flapfitapp.com\nloc=T1', 'h=flapfitapp.com\nloc=CA\nmalformed',
-  'h=flapfitapp.com\nloc=CA\n\n', 'h=flapfitapp.com\nloc=CA\nuag=\u0000', 'h=flapfitapp.com\nloc=CA\nuag=é',
+  'h=flapfitapp.com\nloc=CA\n\n', 'h=flapfitapp.com\nloc=CA\nuag=\u0000', 'h=flapfitapp.com\nloc=CA\nuag=Ã©',
   'h=flapfitapp.com\nloc=CA\nuag=' + 'a'.repeat(4096),
 ])('rejects malformed, duplicate or oversized trace %#', (raw) => {
   expect(load().api.parsePrivacyCountryTrace(raw)).toEqual({ status: 'unavailable', country: null, source: null });

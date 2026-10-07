@@ -4,6 +4,7 @@ import {
   clearAgeVerification, getAgeVerificationRevision, getProcessingInputs, hydrateProcessingAccess,
   verifyLocalLaunchAgeEvidence,
 } from './processingAccess';
+import { europeanConsentAge } from './launchCountries';
 import type { AgeEvidence } from './processingPolicy';
 
 const KEY = '@flapfit/local-age-answer-v1';
@@ -11,6 +12,8 @@ const BANDS = {
   'under-13': { label: 'Under 13', lowerBound: 0, upperBound: 12 },
   '13': { label: '13', lowerBound: 13, upperBound: 13 },
   '13-14': { label: '13–14', lowerBound: 13, upperBound: 14 },
+  '13-15': { label: '13–15', lowerBound: 13, upperBound: 15 },
+  '16-17': { label: '16–17', lowerBound: 16, upperBound: 17 },
   '13-17': { label: '13–17', lowerBound: 13, upperBound: 17 },
   '14-17': { label: '14–17', lowerBound: 14, upperBound: 17 },
   '15-17': { label: '15–17', lowerBound: 15, upperBound: 17 },
@@ -38,9 +41,10 @@ export function needsLocalAgeAnswer(): boolean {
 }
 export function localAgeOptions(): { value: LocalAgeAnswer; label: string }[] {
   const country = getProcessingInputs().launch?.country;
-  const values: LocalAgeAnswer[] = country === 'CA'
+  const consentAge = europeanConsentAge(country);
+  const values: LocalAgeAnswer[] = consentAge === 16 ? ['under-13', '13-15', '16-17', '18-plus'] : country === 'CA' || consentAge === 14
     ? ['under-13', '13', '14-17', '18-plus']
-    : country === 'AU' ? ['under-13', '13-14', '15-17', '18-plus']
+    : country === 'AU' || consentAge === 15 ? ['under-13', '13-14', '15-17', '18-plus']
       : ['under-13', '13-17', '18-plus'];
   return values.map(value => ({ value, label: BANDS[value].label }));
 }

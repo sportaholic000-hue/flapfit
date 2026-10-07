@@ -1,6 +1,6 @@
 const KEY = '@flapfit/local-age-answer-v1';
 const flush = async () => { for (let i = 0; i < 30; i++) await Promise.resolve(); };
-async function fixture(memory = new Map<string, string>(), country: 'US' | 'CA' | 'AU' | 'MX' = 'US') {
+async function fixture(memory = new Map<string, string>(), country: import('../privacyCountry').LaunchCountry = 'US') {
   jest.resetModules();
   const storage = {
     getItem: jest.fn(async (key: string) => memory.get(key) ?? null),
@@ -153,4 +153,36 @@ test('a failed correction cannot erase the saved under-13 answer discovered by a
   await reading; await failedSave;
   expect(await f.local.hasSavedUnder13Answer()).toBe(true);
   expect(JSON.parse(f.memory.get(KEY)!).answer).toBe('under-13');
+});
+
+
+test.each([
+  ['DE', '13-15', false], ['DE', '16-17', true],
+  ['FR', '13-14', false], ['FR', '15-17', true],
+  ['AT', '13', false], ['AT', '14-17', true],
+  ['GB', '13-17', true], ['CH', '13-17', true],
+] as const)('%s saved band %s has the correct optional-processing boundary and survives restart', async (country, answer, allowed) => {
+  let f = await fixture(new Map(), country);
+  expect(f.local.localAgeOptions().some(option => option.value === answer)).toBe(true);
+  await f.local.saveLocalAgeAnswer(answer);
+  f.access.markProcessingNoticePresented(1);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(allowed);
+  expect(f.access.getProcessingInputs().launch?.plan?.ageEligibility).toBe('allowed');
+  f = await fixture(f.memory, country);
+  await f.local.restoreLocalAgeAnswer(); f.access.markProcessingNoticePresented(1);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(allowed);
+  expect(f.local.getSavedLocalAgeAnswer()).toBe(answer);
+});
+
+test('unreadable German saved age is recoverable without inventing adult evidence', async () => {
+  const f = await fixture(new Map([[KEY, JSON.stringify({ version: 1, answer: '13-15' })]]), 'DE');
+  f.storage.getItem.mockRejectedValueOnce(new Error('read failed'));
+  await f.local.restoreLocalAgeAnswer();
+  expect(f.local.hasLocalAgeReadError()).toBe(true);
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+  await f.local.restoreLocalAgeAnswer();
+  expect(f.local.hasLocalAgeReadError()).toBe(false);
+  expect(f.local.getSavedLocalAgeAnswer()).toBe('13-15');
+  expect(f.access.getProcessingInputs().launch?.plan?.ageEligibility).toBe('allowed');
+  expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
 });

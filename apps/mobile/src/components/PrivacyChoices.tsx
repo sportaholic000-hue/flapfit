@@ -164,7 +164,7 @@ export function PrivacyChoices({ onDone, canInteract, includeCompetition = false
     </View> : null}
     {showDetails || expressReporting ? <View style={styles.group}>
       <Text style={styles.heading}>Ad performance reporting</Text>
-      <Text style={styles.body}>RevenueCat reporting is separate from advertising. You can manage your reporting preference here.</Text>
+      <Text style={styles.body}>RevenueCat uses a separate random app ID, app/device information and ad loads, views, clicks and revenue to measure ad performance. It does not receive your camera footage, recordings, exercises, scores or training history. Reporting is separate from Google’s advertising choices.</Text>
       {reportingStatus ? <Text style={styles.status}>{reportingStatus}</Text> : null}
       {expressReporting ? <Text style={styles.note}>This use of your personal data is not strictly necessary to play. You can decline and keep playing, or stop it here later.</Text> : null}
       <View style={styles.buttons}>

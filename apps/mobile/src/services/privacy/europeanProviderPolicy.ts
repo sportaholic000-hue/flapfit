@@ -6,13 +6,16 @@
  * Publisher purposes require their own notice/configuration:
  * https://support.google.com/admob/answer/10305345 */
 export const EUROPEAN_PROVIDER_POLICY = Object.freeze({
-  // Current launch scope is Canada, US, Australia and Mexico. No European flow is mounted.
-  enabled: false,
-  revision: 'european-ios-google-routes-v1',
+  // The active launch coordinator enforces country/age and then native Google UMP.
+  // Evidence: docs/release/european-expansion-2026-10-07.md.
+  enabled: true,
+  revision: 'european-ios-launch-routes-v2',
   googleNonPersonalizedRouteReviewed: true,
   googleLimitedAdsRouteReviewed: true,
   // Account publisher P1/P7 are not configured; never infer them from Google vendor consent.
   revenueCatPublisherNoticeReviewed: false,
+  // Separate in-app opt-in with provider-specific disclosure and durable provenance.
+  revenueCatExplicitConsentReviewed: true,
   // Requested online competition requires its own assessed service/notice basis.
-  competitionRequestedServiceReviewed: false,
+  competitionRequestedServiceReviewed: true,
 });
