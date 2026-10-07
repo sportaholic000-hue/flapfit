@@ -1,7 +1,12 @@
 const KEY = '@flapfit/local-age-answer-v1';
 const flush = async () => { for (let i = 0; i < 30; i++) await Promise.resolve(); };
-async function fixture(memory = new Map<string, string>(), country: import('../privacyCountry').LaunchCountry = 'US') {
+async function fixture(memory = new Map<string, string>(), country: import('../privacyCountry').LaunchCountry = 'US', futureEurope = false) {
   jest.resetModules();
+  if (futureEurope) jest.doMock('../europeanProviderPolicy', () => {
+    const actual = jest.requireActual('../europeanProviderPolicy');
+    return { ...actual, EUROPEAN_PROVIDER_POLICY: { ...actual.EUROPEAN_PROVIDER_POLICY, enabled: true }, isEuropeanProcessingDeferred: () => false };
+  });
+  else jest.dontMock('../europeanProviderPolicy');
   const storage = {
     getItem: jest.fn(async (key: string) => memory.get(key) ?? null),
     setItem: jest.fn(async (key: string, value: string) => { memory.set(key, value); }),
@@ -162,13 +167,13 @@ test.each([
   ['AT', '13', false], ['AT', '14-17', true],
   ['GB', '13-17', true], ['CH', '13-17', true],
 ] as const)('%s saved band %s has the correct optional-processing boundary and survives restart', async (country, answer, allowed) => {
-  let f = await fixture(new Map(), country);
+  let f = await fixture(new Map(), country, true);
   expect(f.local.localAgeOptions().some(option => option.value === answer)).toBe(true);
   await f.local.saveLocalAgeAnswer(answer);
   f.access.markProcessingNoticePresented(1);
   expect(f.access.getProcessingAccess().ads.allowed).toBe(allowed);
   expect(f.access.getProcessingInputs().launch?.plan?.ageEligibility).toBe('allowed');
-  f = await fixture(f.memory, country);
+  f = await fixture(f.memory, country, true);
   await f.local.restoreLocalAgeAnswer(); f.access.markProcessingNoticePresented(1);
   expect(f.access.getProcessingAccess().ads.allowed).toBe(allowed);
   expect(f.local.getSavedLocalAgeAnswer()).toBe(answer);

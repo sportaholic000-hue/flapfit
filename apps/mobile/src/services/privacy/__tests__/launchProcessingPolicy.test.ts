@@ -1,3 +1,9 @@
+// Exercise the preserved FUTURE European route explicitly. Shipping-disabled
+// integration is covered without this mock in launchProcessingIntegration.test.ts.
+jest.mock('../europeanProviderPolicy', () => {
+  const actual = jest.requireActual('../europeanProviderPolicy');
+  return { ...actual, EUROPEAN_PROVIDER_POLICY: { ...actual.EUROPEAN_PROVIDER_POLICY, enabled: true } };
+});
 import { PROCESSING_NOTICE_VERSION, type ProcessingChoice } from '../processingPolicy';
 import { validateAppleAgeGates } from '../../../../modules/flap-fit-age-range/src/gates';
 import {

@@ -1,5 +1,7 @@
 # European iOS expansion candidate â€” October 7, 2026
 
+> **Superseded launch decision:** The owner deferred European public availability until after initial Apple approval. See [the four-country candidate handoff](four-country-ios-candidate-2026-10-07.md). European source remains prepared, but the shipping provider switch is OFF. The European readiness questions below are future launch tasks, not blockers for the initial four-country build. The 35-storefront screenshot below is historical and does not represent the current owner-restored selection.
+
 ## Status and scope
 
 Branch: `codex/ios-camera-permission-review`. Parent: `04e85bad978374c2cdfba329afeb00d63b0a7fe4`, containing camera correction `4d29c0401e62ef99c7c4fc27c0150fde922543dc` and the existing recording branding / six calibration guides. This is a prepared source candidate, **not a completed European public-launch readiness determination**. No EAS build, TestFlight upload, OTA publication, App Review submission or release was started in this expansion step.

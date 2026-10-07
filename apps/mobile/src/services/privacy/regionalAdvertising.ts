@@ -1,9 +1,13 @@
 import type { ProcessingRuntimeInputs } from './processingPolicy';
+import { isEuropeanProcessingDeferred } from './europeanProviderPolicy';
 
 /** Release advertising policy only. These audiences can play without advertising
  * or ad-performance reporting, even if a legacy purpose grant is still saved. */
 export function isRegionalAdvertisingDisabled(input: ProcessingRuntimeInputs): boolean {
   const launch = input.launch;
+  // This release defers European providers, but local workouts remain usable.
+  // Also prevents offering an advertising/reporting activation in Info there.
+  if (isEuropeanProcessingDeferred(launch?.country)) return true;
   const plan = launch?.plan;
   if (!launch || !plan) return false;
   if (plan.parentalAuthorityRequired.ads) return true;
