@@ -1,0 +1,46 @@
+const fs=require('node:fs');const path=require('node:path');const assert=require('node:assert/strict');const {execFileSync}=require('node:child_process');const Module=require('node:module');
+const repo=path.resolve(__dirname,"../../.."),root=process.env.FLAPFIT_CALIBRATION_QA_DIR || path.join(repo,"test-results/calibration-guides");fs.mkdirSync(root,{recursive:true});const req=Module.createRequire(repo+'/package.json');const ts=req('typescript');
+require.extensions['.ts']=(module,filename)=>module._compile(ts.transpileModule(fs.readFileSync(filename,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText,filename);
+const htmlPath=repo+'/apps/mobile/src/utils/game/gameHtml.ts';const {buildGameHtml}=require(htmlPath);const guide=require(repo+'/apps/mobile/src/utils/game/experimentalCalibrationGuide.ts');
+const oldSource=execFileSync('git',['-c','safe.directory='+repo,'show','3892565:apps/mobile/src/utils/game/gameHtml.ts'],{cwd:repo,encoding:'utf8',windowsHide:true});
+const baseline=new Module(htmlPath,module);baseline.filename=htmlPath;baseline.paths=Module._nodeModulePaths(path.dirname(htmlPath));baseline._compile(ts.transpileModule(oldSource,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText,htmlPath);
+const base={trackerAssetMode:'bundled',trackingMode:'form-test',exercise:'lateralraise',backgroundMode:'camera',recordRun:false,recordAudio:false,endless:false,speed:160,gapFrac:0.4,spawnMs:2300,movingPipes:false,moveAmp:0,target:10,maxScore:60,sky1:'#334155',sky2:'#475569',pipe:'#22C55E',bird:{id:'sunny',name:'Sunny',body:'#FFC93C',belly:'#FFE8A3',wing:'#FF9F1C',beak:'#FF6B35',eye:'#1F2937'},birdEvo:{stage:0,wings:0,legs:0,arms:0,shoulders:0},birdImageDataUri:''};
+
+const exercises=['pushups','squats','pullups','lateralraise','biceps','shoulderpress'];
+let excluded=0,enabled=0;for(const platform of [undefined,'ios','android','web'])for(const exercise of exercises)for(const backgroundMode of ['sky','camera']){const config={...base,exercise,backgroundMode};const actual=buildGameHtml({...config,experimentalCalibrationGuidePlatform:platform});if((platform==='android'||platform==='ios')&&backgroundMode==='camera'){assert(actual.includes('id="calibration-pose-guide"'));enabled++;}else{assert.equal(actual,baseline.exports.buildGameHtml(config));excluded++;}}
+assert.equal(guide.showExperimentalCalibrationGuide('android','unknown','camera'),false);
+const core=req(repo+'/apps/mobile/src/utils/game/html/scriptCore.ts').SCRIPT_CORE;
+const game=req(repo+'/apps/mobile/src/utils/game/html/scriptGame.ts').SCRIPT_GAME;
+const support=req(repo+'/apps/mobile/src/utils/game/html/scriptPullupSupport.ts').SCRIPT_PULLUP_SUPPORT;
+const showOverlay=core.slice(core.indexOf('function showOverlay('),core.indexOf('// ---------- Audio'));
+const topMessage=game.slice(game.indexOf('function topCalibrationMessage()'),game.indexOf('function loop('));
+const bottomMessage=game.slice(game.indexOf('        var botMsg;'),game.indexOf('        showOverlay(botMsg, true);'))+'return botMsg;';
+const supportSetup=support.slice(support.indexOf('function getPullupSupportSetup()'),support.indexOf('function pullupFloorHasContactEvidence('));
+const {JSDOM}=req('jsdom');
+(async()=>{
+for(const exercise of exercises){
+ const actualHtml=buildGameHtml({...base,exercise,experimentalCalibrationGuidePlatform:'ios'});
+ const uiScript='var CONFIG={exercise:'+JSON.stringify(exercise)+'},state="loading",topY=null,bottomY=null,countdownDraws=0,birdDraws=0,pullupFloorSetupMode="pending",pullupFloorSetupProgress=0;function usesExperimentalFormTracking(){return true;}function drawCountdownNumber(){countdownDraws++;}function drawBird(){birdDraws++;}var overlayEl=document.getElementById("overlay"),msgEl=document.getElementById("msg"),barEl=document.getElementById("bar"),fillEl=document.getElementById("fill");'+showOverlay+topMessage+supportSetup+'function bottomMessage(){'+bottomMessage+'}'+guide.CALIBRATION_GUIDE_SCRIPT+';window.previewStep=function(next){state=next;if(next==="waitBottom")topY=.2;if(next==="countdown")bottomY=.7;if(next==="waitTop"){showOverlay(CONFIG.exercise==="pullups"&&!getPullupSupportSetup().ready?getPullupSupportSetup().message:topCalibrationMessage(),true);}else if(next==="waitBottom"){showOverlay(bottomMessage(),true);}else{hideOverlay();}setProgress(.55);}; window.finishReach=function(mode){pullupFloorSetupMode=mode;previewStep("waitTop");};';
+ const previewHtml=actualHtml.replace(/<script>[\s\S]*?<\/script>/,'<script>'+uiScript+'</script>');
+ fs.writeFileSync(root+'/guide-'+exercise+'-ui.html',previewHtml);
+ const dom=new JSDOM(previewHtml,{runScripts:'dangerously'});const w=dom.window;const el=w.document.getElementById('calibration-pose-guide');
+ const flush=()=>new Promise(resolve=>w.setTimeout(resolve,0));const fade=()=>new Promise(resolve=>w.setTimeout(resolve,400));
+ for(const phase of ['loading','waitTop','waitBottom','countdown','play','over']){w.state=phase;const before=w.birdDraws;w.drawBird(123);assert.equal(w.birdDraws-before,['loading','waitTop','waitBottom'].includes(phase)?0:1,exercise+' bird visibility in '+phase);}w.state='loading';
+ assert(el.hidden);w.previewStep('waitTop');await flush();assert(!el.hidden);assert.equal(el.dataset.pose,exercise==='pullups'?'reach':'waitTop');await fade();assert.equal(el.dataset.phase,'holding','Time alone cannot accept '+exercise);
+ if(exercise==='pullups'){
+  w.pullupFloorSetupProgress=.9;w.previewStep('waitTop');await flush();await fade();assert.equal(el.dataset.pose,'reach');assert.equal(el.dataset.phase,'holding');
+  w.finishReach('floor');await flush();assert.equal(w.state,'waitTop');assert.equal(el.dataset.pose,'reach');assert.equal(el.dataset.phase,'accepted');await fade();assert.equal(el.dataset.pose,'waitTop');assert.equal(w.topY,null);
+ }
+ w.previewStep('waitBottom');await flush();assert.equal(el.dataset.phase,'accepted');assert.equal(el.dataset.pose,'waitTop');await fade();assert.equal(el.dataset.pose,'waitBottom');assert.equal(el.dataset.phase,'holding');
+ w.document.getElementById('msg').innerHTML='Range too small';await flush();await fade();assert.equal(el.dataset.phase,'holding');assert.equal(w.bottomY,null);
+ w.previewStep('countdown');await flush();assert.equal(el.dataset.phase,'accepted');w.drawCountdownNumber(w.performance.now());assert.equal(w.countdownDraws,0);await fade();assert(el.hidden);w.drawCountdownNumber(w.performance.now());assert.equal(w.countdownDraws,1);assert.equal(w.state,'countdown');assert.equal(w.topY,.2);assert.equal(w.bottomY,.7);
+ for(const state of ['play','over','loading']){w.previewStep(state);await flush();assert(el.hidden);}
+ w.previewStep('waitTop');await flush();w.previewStep('waitBottom');await flush();w.previewStep('over');await flush();await fade();assert(el.hidden);
+ if(exercise==='pullups'){
+  w.pullupFloorSetupMode='pending';w.previewStep('waitTop');await flush();assert.equal(el.dataset.pose,'reach');w.finishReach('unverified');await flush();assert.equal(el.dataset.phase,'accepted');await fade();assert.equal(el.dataset.pose,'waitTop');
+  w.pullupFloorSetupMode='pending';w.previewStep('waitTop');await flush();w.finishReach('floor');await flush();w.pullupFloorSetupMode='pending';w.previewStep('waitTop');await flush();await fade();assert.equal(el.dataset.pose,'reach');assert.equal(el.dataset.phase,'holding');
+ }
+ w.previewStep('waitTop');await flush();w.previewStep('waitBottom');await flush();w.dispatchEvent(new w.Event('pagehide'));await fade();assert(el.hidden);dom.window.close();
+}
+console.log(JSON.stringify({excludedConfigurationsIdentical:excluded,enabledConfigurations:enabled,allExerciseSuccessFades:'passed',pullupReachFloorAndUnverifiedPaths:'passed',rejectionsCancellationAndCountdown:'passed'}));
+})().catch(e=>{console.error(e);process.exitCode=1;});
