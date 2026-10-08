@@ -22,3 +22,17 @@ Only `pushupTop.webp`, `pushupBottom.webp`, their manifest provenance and corres
 - No dependency, native configuration, permission, ad, camera, microphone or Android branch changes.
 
 The source artwork and reproduction recipe are included so the correction is recoverable from GitHub. Owner still needs to inspect it on the iPad before another build. Do not confuse the published OTA `c2016486-88a3-43cf-a85d-ca208d28876c` with this unpublished revision.
+
+## Publication follow-up
+
+The owner confirmed this correction should be delivered to the iPad through the already-authorized OTA. Published successfully on October 8, 2026 at 04:08 Halifax time (07:08 UTC), from clean pushed source **64a32f6a2689a0874d49444b35b40bc79574838d**. EAS exited 0 and returned:
+
+- iOS update group: **794e8fd8-a5de-4cee-b222-bb19af129243**
+- iOS update ID: **01a11a57-3399-72ba-8089-c2030365da0b**
+- Runtime: **469f66ace28d0ea7661bb8681b0239739f8b3955**, matching TestFlight build 10; no compatibility override.
+- Branch/channel/environment: **production**; platform **iOS only**; existing live-ad configuration preserved.
+- [Expo publication](https://expo.dev/accounts/flapfitapp/projects/flapfit/updates/794e8fd8-a5de-4cee-b222-bb19af129243).
+
+Production environment validation passed before publication. Export produced the 10,104,864-byte Hermes bundle `index-a8258a477a860e5b1f02783f1a9fa51e.hbc` and 107 assets. The exported bytecode was checked for both exact replacement image data URIs and the new posture-check string (stored in UTF-16 by Hermes). Thus these changes are present in the exported update, not only in source files or preview images.
+
+Installation remains manual: **Info → Check for updates → Update now**. Owner device acceptance remains pending; the new tracking rules are not marked physically approved. No native build, Android update, App Review submission or public release was started. Main, the release tag and Android branches are unchanged. The source/reference artwork and calibration tests were already backed up; this follow-up records publication only.
