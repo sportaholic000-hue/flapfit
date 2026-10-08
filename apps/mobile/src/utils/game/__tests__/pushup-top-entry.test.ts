@@ -12,27 +12,28 @@ function calibrationGame(width = 720, height = 1280) {
   const loop = SCRIPT_GAME.slice(SCRIPT_GAME.indexOf('function computeNorm()'), SCRIPT_GAME.indexOf('// ---------- Kickoff'));
   return new Function([
     "var CONFIG={exercise:'pushups',trackingMode:'form-test'},state='waitTop';",
-    'var topY=null,bottomY=null,birdNorm=0.5,prevBirdNorm=0.5,clouds=[],lastFrame=0;',
-    'var calibrationReadyAt=2000,progress=0,maximumProgress=0,nowValue=0;',
+    'var topY=null,bottomY=null,birdNorm=0.5,prevBirdNorm=0.5,clouds=[],lastFrame=0,countdownEnd=0;',
+    'var calibrationReadyAt=2000,progress=0,maximumProgress=0,nowValue=0,overlayMessage=null,overlayBar=false;',
     'var performance={now:function(){return nowValue;}};',
     'var video={videoWidth:' + width + ',videoHeight:' + height + '};',
     SCRIPT_FORM_TRACKING, stability,
     'function getTrackY(){return getExperimentalTrackY();}',
     'function getTrackYSmooth(){return getExperimentalTrackYSmooth();}',
     'function trackingFresh(){return experimentalTrackingFresh();}',
-    'function drawBackground(){} function drawBird(){} function beep(){}',
-    'function showOverlay(){} function copyComposedRecordingFrame(){} function requestAnimationFrame(){}',
+    'function drawBackground(){} function drawBird(){} function beep(){} function postRN(){} function hideOverlay(){} function hideCameraPreview(){}',
+    'function showOverlay(message,withBar){overlayMessage=message;overlayBar=withBar;} function copyComposedRecordingFrame(){} function requestAnimationFrame(){}',
     'function setProgress(value){progress=value;maximumProgress=Math.max(maximumProgress,value);}',
     loop,
-    "function render(now){nowValue=now;if(state==='waitTop')loop(now);}",
+    "function render(now){nowValue=now;if(state==='waitTop'||state==='waitBottom')loop(now);}",
     'return {step:function(points,now){nowValue=now;updateExperimentalFormPose(points,now);render(now);},render:render,',
-    'state:function(){return state;},progress:function(){return progress;},maximumProgress:function(){return maximumProgress;}};',
+    'state:function(){return state;},progress:function(){return progress;},maximumProgress:function(){return maximumProgress;},overlay:function(){return {message:overlayMessage,bar:overlayBar};}};',
   ].join('\n'))() as {
     step: (points: Point[], now: number) => void;
     render: (now: number) => void;
     state: () => string;
     progress: () => number;
     maximumProgress: () => number;
+    overlay: () => { message: string; bar: boolean };
   };
 }
 
@@ -48,6 +49,7 @@ function frontPushup(leftAngle = 180, rightAngle = 180): Point[] {
     points[elbow] = { x, y: 0.50, visibility: 1 };
     points[wrist] = { x: x + sign * 0.15 * Math.sin(bend), y: 0.50 + 0.15 * Math.cos(bend), visibility: 1 };
     points[hip] = { x, y: 0.58, z: 0, visibility: 1 };
+    points[hip + 2] = { x, y: 0.73, z: 0.65, visibility: 1 };
   }
   return points;
 }
@@ -203,6 +205,7 @@ describe('pushup step one rejects upright entry before filling the hold bar', ()
         // Same physical depth in height units, re-normalized into MediaPipe's x scale.
         const depthHeightUnits = isProne ? 0.4 : 0.15;
         points[11].z = points[12].z = -depthHeightUnits * height / width;
+        points[25].z = points[26].z = 0.36 * height / width;
         hold(game, points, 2000, 3400);
         expect(game.state()).toBe(isProne ? 'waitBottom' : 'waitTop');
         if (!isProne) expect(game.maximumProgress()).toBe(0);
@@ -218,4 +221,98 @@ describe('pushup step one rejects upright entry before filling the hold bar', ()
     expect(game.state()).toBe(fixture.name === 'pushup-top' ? 'waitBottom' : 'waitTop');
     if (fixture.name !== 'pushup-top') expect(game.maximumProgress()).toBe(0);
   });
+});
+
+
+describe('pushup step one requires extended upper legs, not a standing hip hinge', () => {
+  test.each([0, 0.10, 0.25])('rejects bending over with upright thighs (knee depth %s)', depth => {
+    const game = calibrationGame();
+    const points = frontPushup();
+    // Strong prone-looking torso and perfectly straight arms: the previous check passed this.
+    points[25] = { x: 0.42, y: 0.9, z: depth, visibility: 1 };
+    points[26] = { x: 0.58, y: 0.9, z: depth, visibility: 1 };
+    hold(game, points, 100, 10000);
+    expect(game.state()).toBe('waitTop');
+    expect(game.maximumProgress()).toBe(0);
+  });
+  test.each(['hidden', 'missing-depth', 'off-image', 'nan'])('does not infer a valid position from %s knees', problem => {
+    const game = calibrationGame();
+    const points = frontPushup();
+    for (const index of [25, 26]) {
+      if (problem === 'hidden') points[index].visibility = 0.1;
+      if (problem === 'missing-depth') delete points[index].z;
+      if (problem === 'off-image') points[index].y = 1.1;
+      if (problem === 'nan') points[index].z = Number.NaN;
+    }
+    hold(game, points, 2000, 7000);
+    expect(game.maximumProgress()).toBe(0);
+  });
+  test.each([25, 26])('permits one occluded knee when the other observed leg is extended (%s)', index => {
+    const game = calibrationGame(); const points = frontPushup();
+    points[index].visibility = 0.1;
+    hold(game, points, 2000, 3300);
+    expect(game.state()).toBe('waitBottom');
+  });
+  test.each([25, 26])('does not average a visibly upright thigh away (%s)', index => {
+    const game = calibrationGame(); const points = frontPushup();
+    points[index].z = 0.02; points[index].y = 0.95;
+    hold(game, points, 2000, 7000);
+    expect(game.maximumProgress()).toBe(0);
+  });
+  it('rejects a pronounced hip hinge even when both thighs recede', () => {
+    const game = calibrationGame(); const points = frontPushup();
+    for (const index of [25, 26]) { points[index].y = 0.30; points[index].z = 0.65; }
+    hold(game, points, 2000, 7000);
+    expect(game.maximumProgress()).toBe(0);
+  });
+  it('clears an interrupted hold and requires a fresh full hold in position', () => {
+    const game = calibrationGame(); const bad = frontPushup();
+    bad[25].z = bad[26].z = 0.02;
+    hold(game, frontPushup(), 2000, 2800);
+    expect(game.progress()).toBeGreaterThan(0);
+    game.step(bad, 2900); expect(game.progress()).toBe(0);
+    hold(game, frontPushup(), 3000, 4200); expect(game.state()).toBe('waitTop');
+    game.step(frontPushup(), 4300); expect(game.state()).toBe('waitBottom');
+  });
+});
+
+
+it('keeps the original short pushup instruction and visible empty bar while the posture is invalid', () => {
+  const game = calibrationGame(); const points = frontPushup();
+  points[25].z = points[26].z = 0;
+  hold(game, points, 2000, 5000);
+  expect(game.overlay()).toEqual({
+    message: 'STEP 1 OF 2<br><br>Hold the <b>TOP</b> of a push-up<br>Arms fully extended<br><br>Hold still…',
+    bar: true,
+  });
+  expect(game.progress()).toBe(0);
+});
+
+
+it('continues displaying the original bottom instruction after step one, without accepting straight arms as step two', () => {
+  const game = calibrationGame();
+  hold(game, frontPushup(), 2000, 3400);
+  expect(game.state()).toBe('waitBottom');
+  expect(game.overlay()).toEqual({
+    message: 'STEP 2 OF 2<br><br>Lower to the <b>BOTTOM</b> of a push-up<br>Chest near the floor<br><br>Hold still…',
+    bar: true,
+  });
+  expect(game.progress()).toBe(0);
+});
+
+
+it('a proper two-stage synthetic pushup completes calibration and reaches the existing countdown', () => {
+  const game = calibrationGame();
+  hold(game, frontPushup(), 2000, 3300);
+  expect(game.state()).toBe('waitBottom');
+  const bottom = frontPushup();
+  for (const [shoulder, elbow, wrist, x, elbowX] of [[11,13,15,0.42,0.34], [12,14,16,0.58,0.66]]) {
+    bottom[shoulder].y = 0.47;
+    bottom[elbow] = { x: elbowX, y: 0.50, visibility: 1 };
+    bottom[wrist] = { x, y: 0.65, visibility: 1 };
+  }
+  hold(game, bottom, 3400, 4600);
+  expect(game.state()).toBe('waitBottom');
+  game.step(bottom, 4700);
+  expect(game.state()).toBe('countdown');
 });

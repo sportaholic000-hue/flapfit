@@ -1,0 +1,112 @@
+[
+  {
+    "pose": "pressTop",
+    "reference": "shoulder-press-dumbbells.png",
+    "crop": [
+      330,
+      158,
+      640,
+      968
+    ]
+  },
+  {
+    "pose": "pressBottom",
+    "reference": "shoulder-press-dumbbells.png",
+    "crop": [
+      888,
+      270,
+      1248,
+      970
+    ]
+  },
+  {
+    "pose": "lateralTop",
+    "reference": "lateral-raise-dumbbells.png",
+    "crop": [
+      125,
+      175,
+      860,
+      955
+    ]
+  },
+  {
+    "pose": "lateralBottom",
+    "reference": "lateral-raise-dumbbells.png",
+    "crop": [
+      960,
+      175,
+      1260,
+      955
+    ]
+  },
+  {
+    "pose": "curlTop",
+    "reference": "bicepcurl-dumbbells.png",
+    "crop": [
+      335,
+      160,
+      690,
+      970
+    ]
+  },
+  {
+    "pose": "curlBottom",
+    "reference": "bicepcurl-dumbbells.png",
+    "crop": [
+      862,
+      160,
+      1262,
+      970
+    ]
+  },
+  {
+    "pose": "squatTop",
+    "reference": "squat.png",
+    "crop": [
+      335,
+      178,
+      620,
+      948
+    ]
+  },
+  {
+    "pose": "squatBottom",
+    "reference": "squat.png",
+    "crop": [
+      920,
+      330,
+      1240,
+      950
+    ]
+  },
+  {
+    "pose": "pullupTop",
+    "reference": "pullup.png",
+    "crop": [
+      285,
+      148,
+      750,
+      886
+    ]
+  },
+  {
+    "pose": "pullupBottom",
+    "reference": "pullup.png",
+    "crop": [
+      830,
+      174,
+      1295,
+      979
+    ]
+  },
+  {
+    "pose": "pullupReach",
+    "reference": "shoulder-press.png",
+    "crop": [
+      330,
+      158,
+      640,
+      968
+    ]
+  }
+]

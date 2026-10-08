@@ -1,0 +1,127 @@
+{
+  "gameplayValidatorUnchanged": true,
+  "otherExerciseCalibrationUnchanged": true,
+  "approvedPushupHandsUnchanged": true,
+  "images": [
+    {
+      "pose": "curlBottom",
+      "changedPixels": 1003,
+      "changedBounds": [
+        185,
+        445,
+        213,
+        513
+      ]
+    },
+    {
+      "pose": "curlTop",
+      "changedPixels": 1011,
+      "changedBounds": [
+        164,
+        444,
+        192,
+        511
+      ]
+    },
+    {
+      "pose": "lateralBottom",
+      "changedPixels": 1031,
+      "changedBounds": [
+        133,
+        428,
+        161,
+        495
+      ]
+    },
+    {
+      "pose": "lateralTop",
+      "changedPixels": 1044,
+      "changedBounds": [
+        356,
+        427,
+        384,
+        495
+      ]
+    },
+    {
+      "pose": "pressBottom",
+      "changedPixels": 938,
+      "changedBounds": [
+        163,
+        380,
+        191,
+        448
+      ]
+    },
+    {
+      "pose": "pressTop",
+      "changedPixels": 947,
+      "changedBounds": [
+        136,
+        492,
+        164,
+        558
+      ]
+    },
+    {
+      "pose": "pullupBottom",
+      "changedPixels": 1064,
+      "changedBounds": [
+        212,
+        480,
+        240,
+        548
+      ]
+    },
+    {
+      "pose": "pullupReach",
+      "changedPixels": 9372,
+      "changedBounds": [
+        34,
+        2,
+        265,
+        557
+      ]
+    },
+    {
+      "pose": "pullupTop",
+      "changedPixels": 9812,
+      "changedBounds": [
+        53,
+        28,
+        414,
+        460
+      ]
+    },
+    {
+      "pose": "pushupBottom",
+      "changedPixels": 76498,
+      "changedBounds": [
+        221,
+        0,
+        549,
+        269
+      ]
+    },
+    {
+      "pose": "pushupTop",
+      "changedPixels": 0,
+      "changedBounds": []
+    },
+    {
+      "pose": "squatBottom",
+      "changedPixels": 0,
+      "changedBounds": []
+    },
+    {
+      "pose": "squatTop",
+      "changedPixels": 1028,
+      "changedBounds": [
+        128,
+        423,
+        156,
+        488
+      ]
+    }
+  ]
+}

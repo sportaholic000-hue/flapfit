@@ -1,0 +1,132 @@
+[
+  {
+    "pose": "pressTop",
+    "referenceApertureTop": [
+      150,
+      500
+    ],
+    "editedBounds": [
+      135,
+      488,
+      166,
+      560
+    ]
+  },
+  {
+    "pose": "pressBottom",
+    "referenceApertureTop": [
+      177,
+      390
+    ],
+    "editedBounds": [
+      162,
+      378,
+      193,
+      450
+    ]
+  },
+  {
+    "pose": "lateralTop",
+    "referenceApertureTop": [
+      370,
+      437
+    ],
+    "editedBounds": [
+      355,
+      425,
+      386,
+      497
+    ]
+  },
+  {
+    "pose": "lateralBottom",
+    "referenceApertureTop": [
+      147,
+      437
+    ],
+    "editedBounds": [
+      132,
+      425,
+      163,
+      497
+    ]
+  },
+  {
+    "pose": "curlTop",
+    "referenceApertureTop": [
+      178,
+      455
+    ],
+    "editedBounds": [
+      163,
+      443,
+      194,
+      515
+    ]
+  },
+  {
+    "pose": "curlBottom",
+    "referenceApertureTop": [
+      199,
+      456
+    ],
+    "editedBounds": [
+      184,
+      444,
+      215,
+      516
+    ]
+  },
+  {
+    "pose": "squatTop",
+    "referenceApertureTop": [
+      142,
+      432
+    ],
+    "editedBounds": [
+      127,
+      420,
+      158,
+      492
+    ]
+  },
+  {
+    "pose": "pullupTop",
+    "referenceApertureTop": [
+      232,
+      402
+    ],
+    "editedBounds": [
+      217,
+      390,
+      248,
+      462
+    ]
+  },
+  {
+    "pose": "pullupBottom",
+    "referenceApertureTop": [
+      226,
+      490
+    ],
+    "editedBounds": [
+      211,
+      478,
+      242,
+      550
+    ]
+  },
+  {
+    "pose": "pullupReach",
+    "referenceApertureTop": [
+      150,
+      499
+    ],
+    "editedBounds": [
+      135,
+      487,
+      166,
+      559
+    ]
+  }
+]

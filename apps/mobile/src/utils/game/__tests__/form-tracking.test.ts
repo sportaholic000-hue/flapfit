@@ -778,6 +778,8 @@ describe('experimental form tracking', () => {
     // Explicit front-facing prone torso depth; 2D alone also fits an upright person.
     frontFacingTop[11].z = frontFacingTop[12].z = -0.7;
     frontFacingTop[23].z = frontFacingTop[24].z = 0;
+    frontFacingTop[25] = { x: 0.43, y: 0.73, z: 0.65, visibility: 1 };
+    frontFacingTop[26] = { x: 0.57, y: 0.73, z: 0.65, visibility: 1 };
     harness.update(frontFacingTop, 2100);
 
     expect(harness.validateCalibration('top').valid).toBe(true);
@@ -1050,6 +1052,8 @@ function symmetricPose(shoulder: [number, number], elbow: [number, number], wris
 function withPronePushupTorso(points: Point[]) {
   points[11].z = points[12].z = -0.7;
   points[23].z = points[24].z = 0;
+  points[25] = { x: 0.43, y: 0.73, z: 0.65, visibility: 1 };
+  points[26] = { x: 0.57, y: 0.73, z: 0.65, visibility: 1 };
   return points;
 }
 

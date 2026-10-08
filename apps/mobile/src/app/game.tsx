@@ -1180,6 +1180,9 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     microphonePermission != null &&
     !microphonePermission.granted;
   if (needsMicrophonePermission) {
+    const canRequestMicrophone = microphonePermission.canAskAgain &&
+      (Platform.OS !== 'ios' || microphonePermission.status === 'undetermined');
+    const microphoneRequestLabel = Platform.OS === 'ios' ? 'Continue' : 'Allow microphone';
     return (
       <View
         style={{
@@ -1199,18 +1202,19 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
         </Text>
         <Text style={{ color: '#CBD5E1', fontSize: 15, lineHeight: 22 }}>
           Record &amp; Play can include your voice and workout sounds. Microphone audio stays inside
-          the temporary video on this device unless you choose to share it.
-          {!microphonePermission.canAskAgain
-            ? '\n\nMicrophone access is currently blocked. Open your phone settings to allow it.'
+          the temporary video on this device unless you choose to share it. You can still record
+          without sound if you decline microphone access.
+          {!canRequestMicrophone
+            ? '\n\nMicrophone access is off. You can record without sound or change microphone access in Settings.'
             : ''}
         </Text>
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel={
-            microphonePermission.canAskAgain ? 'Allow microphone' : 'Open microphone settings'
+            canRequestMicrophone ? microphoneRequestLabel : 'Open microphone settings'
           }
           onPress={() => {
-            if (microphonePermission.canAskAgain) void requestMicrophonePermission();
+            if (canRequestMicrophone) void requestMicrophonePermission();
             else openPermissionSettings('microphone');
           }}
           style={{
@@ -1221,20 +1225,24 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
           }}
         >
           <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
-            {microphonePermission.canAskAgain ? 'Allow microphone' : 'Open settings'}
+            {canRequestMicrophone ? microphoneRequestLabel : 'Open settings'}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel="Continue recording without sound"
-          onPress={() => setRecordWithoutAudio(true)}
-          style={{ alignItems: 'center', paddingVertical: 8 }}
-        >
-          <Text style={{ color: '#CBD5E1', fontWeight: '800' }}>Continue without sound</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
-          <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>
-        </TouchableOpacity>
+        {(Platform.OS !== 'ios' || !canRequestMicrophone) && (
+          <>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Continue recording without sound"
+              onPress={() => setRecordWithoutAudio(true)}
+              style={{ alignItems: 'center', paddingVertical: 8 }}
+            >
+              <Text style={{ color: '#CBD5E1', fontWeight: '800' }}>Continue without sound</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
+              <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     );
   }

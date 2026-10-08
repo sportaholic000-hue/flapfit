@@ -4,7 +4,7 @@ import { SCRIPT_PULLUP_SUPPORT } from './scriptPullupSupport';
 // so physical A/B testing can happen without replacing the launch baseline.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-08.2-pushup-entry-posture';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-08.3-pushup-body-entry';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -475,31 +475,40 @@ function formTorsoIsUpright(metrics) {
   return dy > dx * 0.3;
 }
 
-// A front-facing plank and standing with arms down can have the same 2D elbows.
-// Use the depth already supplied by MediaPipe; do not add another model or input.
-// Only the top calibration check calls this. Gameplay measurements stay unchanged.
-function pushupTopTorsoRecedesFromCamera() {
+// Calibration only: straight elbows and a receding torso also fit someone
+// bending over a device. Require an extended upper leg continuing behind the
+// torso, using the existing model's depth. No additional model or gameplay work.
+function pushupTopBodyExtendsBehindShoulders() {
   if (typeof video === 'undefined' || !Number.isFinite(video.videoWidth) ||
     !Number.isFinite(video.videoHeight) || video.videoWidth <= 0 || video.videoHeight <= 0) {
     return false;
   }
-  // Normalized landmark z uses roughly the x scale; compare in image-height units.
+  // MediaPipe normalized z uses roughly the x scale. Use image-height units.
   var aspect = video.videoWidth / video.videoHeight;
-  var pairs = [[11, 23], [12, 24]];
-  for (var i = 0; i < pairs.length; i++) {
-    var shoulder = formInFramePoint(pairs[i][0], 0.24);
-    var hip = formInFramePoint(pairs[i][1], 0.24);
+  var sides = [[11, 23, 25], [12, 24, 26]];
+  var extendedLegs = 0;
+  for (var i = 0; i < sides.length; i++) {
+    var shoulder = formInFramePoint(sides[i][0], 0.24);
+    var hip = formInFramePoint(sides[i][1], 0.24);
     if (!shoulder || !hip || !Number.isFinite(shoulder.z) || !Number.isFinite(hip.z)) {
       return false;
     }
-    var away = (hip.z - shoulder.z) * aspect;
-    var vertical = Math.abs(hip.y - shoulder.y);
-    // Both sides must extend away more than vertically (over 45 degrees from
-    // upright in the camera frame). Straight arms alone cannot start the hold.
-    // This is an entry-posture check, not proof of hands touching a physical floor.
-    if (away <= Math.max(vertical, 0.04)) { return false; }
+    var torso = [(hip.x - shoulder.x) * aspect, hip.y - shoulder.y, (hip.z - shoulder.z) * aspect];
+    if (torso[2] <= Math.max(Math.abs(torso[1]), 0.04)) { return false; }
+    // A front view can hide one knee behind the other. Require at least one
+    // observed knee; any other observed leg must agree, rather than averaging it away.
+    var knee = formInFramePoint(sides[i][2], 0.24);
+    if (!knee || !Number.isFinite(knee.z)) { continue; }
+    var thigh = [(knee.x - hip.x) * aspect, knee.y - hip.y, (knee.z - hip.z) * aspect];
+    var torsoLength = Math.hypot(torso[0], torso[1], torso[2]);
+    var thighLength = Math.hypot(thigh[0], thigh[1], thigh[2]);
+    if (thigh[2] <= Math.max(Math.abs(thigh[1]), 0.03) || thighLength < torsoLength * 0.2) { return false; }
+    var alignment = (torso[0] * thigh[0] + torso[1] * thigh[1] + torso[2] * thigh[2]) / (torsoLength * thighLength);
+    // Shoulder-hip-knee angle at least 145 degrees: reject a standing hip hinge.
+    if (alignment < Math.cos(35 * Math.PI / 180)) { return false; }
+    extendedLegs++;
   }
-  return true;
+  return extendedLegs > 0;
 }
 
 function validateExperimentalCalibration(position) {
@@ -532,8 +541,8 @@ function validateExperimentalCalibration(position) {
       if (leftPushupAngle < 125 || rightPushupAngle < 125) {
         return formInvalid('Form check<br><br>Straighten both arms for the top position.');
       }
-      if (!pushupTopTorsoRecedesFromCamera()) {
-        return formInvalid('Form check<br><br>Get into the top pushup position with your body extended behind you.<br>Keep both shoulders, hips, and hands in view.');
+      if (!pushupTopBodyExtendsBehindShoulders()) {
+        return formInvalid('Form check<br><br>Hold the top of a push-up with both arms straight.');
       }
     }
     if (position === 'bottom' && metrics.elbowAngle > 155) {

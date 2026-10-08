@@ -710,11 +710,14 @@ function loop(now) {
       setProgress(0);
       stabBuf = [];
     } else if (!calibrationFormCheck.valid) {
-      var calibrationIssue = calibrationFormCheck.message;
+      var calibrationIssue = CONFIG.exercise === 'pushups'
+        ? (state === 'waitTop' ? topCalibrationMessage()
+          : 'STEP 2 OF 2<br><br>Lower to the <b>BOTTOM</b> of a push-up<br>Chest near the floor<br><br>Hold still…')
+        : calibrationFormCheck.message;
       if (pullupSetup && calibrationIssue.indexOf('STEP ') !== 0) {
         calibrationIssue = (state === 'waitTop' ? 'STEP 1 OF 2' : 'STEP 2 OF 2') + '<br><br>' + calibrationIssue;
       }
-      showOverlay(calibrationIssue, false);
+      showOverlay(calibrationIssue, CONFIG.exercise === 'pushups');
       setProgress(0);
       stabBuf = [];
     } else if (getTrackY() !== null && trackingFresh()) {
