@@ -1,0 +1,14 @@
+[
+  {
+    "id": "01a11cda-e961-7c94-8425-56f8173df4e6",
+    "createdAt": "2026-10-08T18:51:11.073Z",
+    "group": "617283a4-b4bb-489c-af81-368bb4ab35f3",
+    "branch": "production",
+    "message": "iOS: honor declined microphone and restore original pullup bars; preserve approved pushup calibration",
+    "runtimeVersion": "469f66ace28d0ea7661bb8681b0239739f8b3955",
+    "platform": "ios",
+    "manifestPermalink": "https://u.expo.dev/update/01a11cda-e961-7c94-8425-56f8173df4e6",
+    "isRollBackToEmbedded": false,
+    "gitCommitHash": "212141964722dbac79f94905b48fe36585215ea2"
+  }
+]

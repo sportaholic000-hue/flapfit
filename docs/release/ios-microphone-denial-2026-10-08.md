@@ -18,4 +18,4 @@ The actual Root -> Home -> Game startup tests now require immediate silent entry
 
 Relevant files: `apps/mobile/src/app/game.tsx` and `apps/mobile/src/services/privacy/__tests__/startupGameEntry.test.tsx`. The source change is a derived permission decision used only by entry gates; the existing recordAudio expression, its memo dependency, and the capture/share implementation remain unchanged, not a new architecture. Later Android adoption must be deliberate; do not copy the iOS guard as though it already enables Android behavior. No Android branch was changed.
 
-This document describes a candidate correction. Publication receipt will be recorded separately if/when published. No new native build or App Review submission has been started for it.
+This correction is published for iOS build 10. [Publication receipt and exact export verification](ios-mic-pullup-ota-2026-10-08.md). No new native build or App Review submission has been started for it.
