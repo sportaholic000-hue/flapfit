@@ -1,0 +1,18 @@
+# iOS navy tab-bar candidate - October 8, 2026
+
+Owner requested trying the existing Flap Fit navy with white icons/text while keeping the current icons and avoiding redoing the App Store screenshots. This is a reversible style candidate, not a published OTA or a native build. Obtain the owner's decision on the preview before including it in the resubmission candidate.
+
+Only `apps/mobile/src/app/(tabs)/_layout.tsx` changes application behavior, limited to iOS colors:
+
+- Navy background `#0F172A`, matching the existing app NAVY constant.
+- White `#FFFFFF` icons and labels in both selected/unselected states.
+- Selected-tab background `#526782`, using the navigator's existing active-background option to preserve a visible current-tab distinction.
+- Subtle top separator `#334155`.
+
+Existing icons, labels, sizes, spacing, safe-area behavior, tab order, navigation actions, accessibility selection semantics and all game code are unchanged. Android/web use their existing options. No new components, dependencies, assets or native configuration are added to the app.
+
+Validation: targeted lint and diff checks passed. Executing the actual layout with its existing options confirms Android options are identical to the baseline. Contrast ratios are 17.85:1 white/navy, 5.80:1 white/selected highlight and 3.08:1 highlight/navy. Existing icon paths and the candidate's real color options were used to render a [desktop color preview](navy-tab-preview-2026-10-08/nav-preview.png). It is an illustration, not an iPhone/iPad screenshot or proof of native layout acceptance. No new behavior tests were added for this style-only change.
+
+Apple permits custom tab-bar backgrounds/tints: https://developer.apple.com/design/human-interface-guidelines/tab-bars and https://developer.apple.com/documentation/uikit/uitabbar . Its screenshot guidance separately says to update screenshots to match the current interface: https://developer.apple.com/help/app-review/guideline-reference/2-3-3-screenshots/ . No guarantee was made that a changed bar can be left different in existing submission screenshots. Screenshots without the bar are unaffected by this specific change; existing marketing text/layout could be reused if affected captures are refreshed. No App Store screenshots/settings were modified.
+
+All changes are confined to the iOS candidate branch. Android can adopt these styles later only if the owner chooses; its branch was not changed. No OTA, build or Apple submission was started for this preview.

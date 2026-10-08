@@ -29,6 +29,10 @@ Owner device feedback: Flap Fit recording branding appears correctly, and the sc
 
 The owner clarified their initial upright-calibration report came from a deleted/reinstalled build 10 before applying the manual OTA. Do not attribute that old embedded-build result to the latest correction; the owner subsequently tested the updated iPad version and explicitly approved locking it in. The owner then confirmed repeated custom microphone screens after declining optional sound. [The focused follow-up](ios-microphone-denial-2026-10-08.md) supersedes the three-choice iOS denial flow above; Android adaptation remains a separate owner-authorized task.
 
+## Unpublished navigation color candidate
+
+A later owner-requested [navy/white tab-bar preview](ios-navy-tab-preview-2026-10-08.md) is saved separately from the published onboarding OTA. It is iOS-only, preserves icons/layout and awaits the owner's decision before publication or resubmission inclusion. Do not treat it as already device-approved or copy its iOS guard into Android without adapting deliberately.
+
 ## Published iOS state and verification
 
 Latest publication: `229b6ae855b2e931889ac5925de2dc75a5390e7f`, group `1a07489a-fdcb-447b-94f4-462792b83945`, created `2026-10-08T21:26:59.226Z`. This adds only the onboarding introduction/order and Info settings copy to the previously tested OTA. It preserves the approved calibration, artwork, capture and permission behavior. [Receipt and verification](ios-onboarding-ota-2026-10-08.md).
