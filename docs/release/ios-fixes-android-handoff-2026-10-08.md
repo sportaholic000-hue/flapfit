@@ -16,7 +16,7 @@ The owner reported that the repaired pullup bars look much better and the extra 
 
 ## Calibration onboarding copy and device feedback
 
-The owner corrected the proposed silhouette wording because Sky mode has no silhouette, and the numbered steps already explain the progress bar. Only the introductory paragraph in `apps/mobile/src/app/onboarding.tsx` now reads: "Follow the on-screen instructions to get into position. In Camera mode, silhouettes also show you each pose." Preserve the numbered instructions and all calibration timing/logic. No silhouette is added to Sky mode or to the onboarding page. This is a saved, unpublished copy change; Android may adopt the relevant paragraph later without merging iOS configuration.
+The owner corrected the proposed silhouette wording because Sky mode has no silhouette, and the numbered steps already explain the progress bar. Only the introductory paragraph in `apps/mobile/src/app/onboarding.tsx` now reads: "Follow the on-screen instructions to get into position. In Camera mode, silhouettes also show you each pose." The owner also requested moving the unchanged pullup preparation paragraph below steps 1, 2 and 3, directly above the Normal Play privacy note. Preserve the numbered instructions and all calibration timing/logic. No silhouette is added to Sky mode or to the onboarding page. This is a saved, unpublished copy change; Android may adopt the relevant paragraph later without merging iOS configuration.
 
 Owner device feedback: Flap Fit recording branding appears correctly, and the screen stayed awake for an entire 60-pipe run. Pullup calibration is intentionally left as-is at the owner's request. [Full feedback and scope](ios-permission-discoverability-2026-10-08.md).
 

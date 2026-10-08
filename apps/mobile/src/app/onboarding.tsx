@@ -355,10 +355,6 @@ export default function OnboardingScreen() {
           also show you each pose.
         </Text>
         <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
-          Pull-ups: first stand on tiptoes and reach as high as you can without touching the bar.
-          Then grab the bar for Step 1.
-        </Text>
-        <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
           <Text style={{ color: '#0F172A', fontWeight: '900' }}>1.</Text> Hold the TOP position of
           your exercise until the bar fills.
         </Text>
@@ -369,6 +365,10 @@ export default function OnboardingScreen() {
         <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
           <Text style={{ color: '#0F172A', fontWeight: '900' }}>3.</Text> 3-2-1… GO! The bird
           follows your movement in real time.
+        </Text>
+        <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
+          Pull-ups: first stand on tiptoes and reach as high as you can without touching the bar.
+          Then grab the bar for Step 1.
         </Text>
         <Text
           style={{
