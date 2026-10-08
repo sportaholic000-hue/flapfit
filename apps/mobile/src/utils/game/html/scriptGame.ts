@@ -785,7 +785,7 @@ function loop(now) {
         }
       }
     } else {
-      if (usesExperimentalFormTracking() && CONFIG.exercise === 'pullups') {
+      if (usesExperimentalFormTracking() && (CONFIG.exercise === 'pullups' || CONFIG.exercise === 'pushups')) {
         stabBuf = [];
         setProgress(0);
       }

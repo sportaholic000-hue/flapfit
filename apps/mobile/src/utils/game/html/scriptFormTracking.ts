@@ -4,7 +4,7 @@ import { SCRIPT_PULLUP_SUPPORT } from './scriptPullupSupport';
 // so physical A/B testing can happen without replacing the launch baseline.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-09-18.9-foot-return';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-08.1-pushup-calibration';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -491,8 +491,20 @@ function validateExperimentalCalibration(position) {
     if (metrics.supportHand.y < metrics.shoulders.y + 0.08) {
       return formInvalid('Form check<br><br>Place your supporting hands on the floor in front of the camera.');
     }
-    if (position === 'top' && metrics.elbowAngle < 125) {
-      return formInvalid('Form check<br><br>Straighten your arms for the top position.');
+    if (position === 'top') {
+      // Each arm must qualify. An average or one visible arm can hide a bent arm.
+      var leftPushupAngle = formJointAngle(
+        formInFramePoint(11, 0.24), formInFramePoint(13, 0.24), formInFramePoint(15, 0.24)
+      );
+      var rightPushupAngle = formJointAngle(
+        formInFramePoint(12, 0.24), formInFramePoint(14, 0.24), formInFramePoint(16, 0.24)
+      );
+      if (leftPushupAngle === null || rightPushupAngle === null) {
+        return formInvalid('Form check<br><br>Keep both shoulders, elbows, and hands visible.');
+      }
+      if (leftPushupAngle < 125 || rightPushupAngle < 125) {
+        return formInvalid('Form check<br><br>Straighten both arms for the top position.');
+      }
     }
     if (position === 'bottom' && metrics.elbowAngle > 155) {
       return formInvalid('Form check<br><br>Bend your elbows and lower your chest.');
