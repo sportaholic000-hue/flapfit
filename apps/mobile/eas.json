@@ -83,7 +83,7 @@
         "EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL_ID": "ca-app-pub-5933597810180440/4539316666",
         "EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY": "goog_jbNYYZFXcnLaloZEWOvQrTQcmwS",
         "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_ceexQTnHXavsTnEfdRrQyiCtFuY",
-        "FLAPFIT_APPROVED_TRACKER_RULES_VERSION": "2026-09-18.9-foot-return"
+        "FLAPFIT_APPROVED_TRACKER_RULES_VERSION": "2026-10-08.3-pushup-body-entry"
       },
       "buildArtifactPaths": [
         "release-evidence/*"

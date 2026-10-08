@@ -18,3 +18,7 @@ Apple permits custom tab-bar backgrounds/tints: https://developer.apple.com/desi
 All changes are confined to the iOS candidate branch. Android can adopt these styles later only if the owner chooses; its branch was not changed. No OTA, build or Apple submission was started for this preview.
 
 Owner clarification: the bar appears in eight of ten screenshots and new iPhone/iPad captures are currently impractical. The owner proposed only navy background/white inactive controls while preserving orange selection, deferring illustrated icons until later. This revision follows that narrower scope. The screenshot difference was described as a relatively low-risk cosmetic difference as a judgment, not a guaranteed Apple acceptance or a measured rejection rate. Apple guideline 2.3 requires metadata to accurately reflect the core experience; its screenshot help separately recommends matching the current interface. No screenshots were changed. No OTA was authorized or published in this follow-up.
+
+## Owner decision: defer navigation redesign
+
+The owner chose to keep the existing white navigation bar, gray inactive controls and orange selection for the next native build. The four isolated styling changes from `c1336c9514b92f7335362f782b9f6bca1f6f02bb` are removed from the active candidate. The navy design and preview remain preserved in that pushed commit and these documents for possible future compatible OTA delivery. Do not include the navy colors or illustrated replacement icons in this release. No screenshots were edited.

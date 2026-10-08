@@ -81,3 +81,9 @@ Only the iOS candidate branch was modified. `main`, all local Android branches, 
 ### Android agent
 
 Inspect the two source commits independently; port only the requested fixes after checking your branch's newer work. Preserve its calibration experiments and do not blindly replace shared files. The wake component intentionally runs only on iOS, so Android needs an explicit adaptation and its own screen-timeout tests. Use the saved artwork only after owner acceptance. This handoff does not authorize an Android build or publication.
+
+## Owner decision: defer navigation redesign
+
+The owner chose to keep the existing white navigation bar, gray inactive controls and orange selection for the next native build. The four isolated styling changes from `c1336c9514b92f7335362f782b9f6bca1f6f02bb` are removed from the active candidate. The navy design and preview remain preserved in that pushed commit and these documents for possible future compatible OTA delivery. Do not include the navy colors or illustrated replacement icons in this release. No screenshots were edited.
+
+The owner-approved pushup rules are unchanged. The production profile approval marker is synchronized to `2026-10-08.3-pushup-body-entry` for the authorized native build following the owner's physical test and explicit instruction to lock it in. Android branches remain untouched.

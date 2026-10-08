@@ -5,7 +5,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const isAndroid = process.env.EXPO_OS === 'android';
-  const isIOS = process.env.EXPO_OS === 'ios';
   const androidBottomPadding = Math.max(insets.bottom, 8);
 
   return (
@@ -13,9 +12,9 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: isIOS ? '#0F172A' : '#FFFFFF',
+          backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
-          borderColor: isIOS ? '#334155' : '#E5E7EB',
+          borderColor: '#E5E7EB',
           paddingTop: isAndroid ? 6 : 4,
           ...(isAndroid
             ? {
@@ -25,7 +24,7 @@ export default function TabLayout() {
             : {}),
         },
         tabBarActiveTintColor: '#F59E0B',
-        tabBarInactiveTintColor: isIOS ? '#FFFFFF' : '#6B7280',
+        tabBarInactiveTintColor: '#6B7280',
         tabBarLabelStyle: {
           fontSize: 12,
           lineHeight: 16,
