@@ -1,8 +1,28 @@
-# iOS fixes and later Android handoff — October 8, 2026
+# iOS fixes and later Android handoff - October 8, 2026
 
-Branch: `codex/ios-camera-permission-review`.
+Branch: `codex/ios-camera-permission-review`. Android branches remain untouched. This is the current adoption index; the historical snapshot below records earlier work and does not describe the latest candidate.
 
-## Saved changes
+## Current changes to consider for Android
+
+1. **Home evolution label:** `1d998df9b6b425cee3e63931a51bb445683c65ab` removes only the decorative emoji beside the current stage name on Home and centers the existing stage/progress text. File: `apps/mobile/src/app/(tabs)/index.tsx`. Preserve the bird artwork, stage names, percentage calculation, progress bar and all evolution thresholds. The shared emoji array remains available to other existing screens. Targeted lint and diff checks passed. This change is committed for the next update/build; it was not included in the 09:23 UTC OTA and no further publication/build was started for it.
+2. **Latest pushup entry correction:** `e79814244cc8fb839986c87320faa13d2f933a3d` supersedes the arm-only and torso-only entry attempts. It retains both-arm visibility/straightness, preparation, stable hold and fresh-observation rules, and adds aligned shoulder/hip/knee geometry for at least one visible upper leg. No feet requirement. Any other observed leg must agree. Original short calibration instructions are restored; do not port the removed extra coaching text. Active gameplay and other exercise calibration were preserved. Rules marker: `2026-10-08.3-pushup-body-entry`. Physical camera acceptance remains pending; the approved native-release marker has not been falsely advanced.
+3. **Latest guide artwork:** the same `e798142` commit contains the corrected bottom-pushup ear/neck contours with approved hands preserved, source-restored first pullup hand details, and standing-guide leg-gap artifact repairs. Start from the latest committed active assets/manifest, not the old unpublished candidate folder or an intermediate cleanup. The earlier active transparent-guide baseline is `34ba0d52`; approved pushup hands are preserved from `00b70a38`. [Repair recipe, preserved pixels and screenshots](calibration-detail-repairs-2026-10-08/) and [complete current change/verification notes](ios-morning-corrections-2026-10-08.md). Android should preserve its own applicable image wiring instead of blindly importing the iOS-only embedded module.
+4. **Microphone flow:** `e798142` implements the owner's later revised instruction: iOS first request has one neutral Continue, then native permission. Already-denied access offers Settings / Continue without sound / Go back without repeated native requests; silent recording remains supported. Android prompt actions were intentionally retained. Inspect platform-specific behavior before adapting; do not assume an iOS permission branch directly implements Android semantics. Camera handling is preserved.
+5. **Screen awake:** `c17ed1a434e3b42ca807785d451e3654b339af38` remains the iOS focus/lifecycle fix. [Android adaptation notes](ios-screen-awake-2026-10-08.md). It intentionally runs only on iOS; Android needs its own adaptation and physical lock-timeout test, not an indiscriminate dependency/config merge.
+
+## Published iOS state and verification
+
+The latest published iOS source is `e79814244cc8fb839986c87320faa13d2f933a3d`, update group `3bccd61a-259a-43b8-a57e-90baf1da5639`, published October 8 at 09:23:55 UTC / 06:23:55 Halifax ADT. It matches TestFlight build 10 runtime `469f66ace28d0ea7661bb8681b0239739f8b3955`. Exact exported artwork, posture helper and microphone wording were verified. [Receipt and detailed test results](ios-morning-corrections-2026-10-08.md). The home-label change above is newer and is not yet on the iPad.
+
+The final affected run passed 138 tests; 37 startup/permission tests, TypeScript, lint and layout checks also passed. The full run passed 78 other suites before a new test-file quote typo was corrected and its affected tests rerun successfully; do not describe that as one wholly passing full-suite invocation. Native iPad/iPhone calibration and artwork acceptance are still required. Android behavior and compatibility are not verified by these iOS results.
+
+Port only owner-approved changes after comparing against the Android branch's newer work. Do not blindly replace shared files or merge iOS build configuration. This handoff authorizes no Android build or publication. Preserve unrelated gameplay, ads/results, privacy, recording branding and progress.
+
+## Historical snapshot from before the subsequent corrections
+
+The following is retained for traceability only. Statements about pending microphone/artwork work, arm-only checks, publication status and earlier test totals applied to that earlier checkpoint; use the current index above for adoption.
+
+### Saved changes
 
 1. **Calibration correction:** `670ab25878b02fc8ce9279740ac8e9f10c5d762b` — require both visible, individually straight arms for pushup step one; count distinct camera observations through the existing hold; reset stale tracking. [Detailed behavior, limits and Android port notes](ios-pushup-calibration-2026-10-08.md).
 2. **iOS automatic screen-sleep protection:** `c17ed1a434e3b42ca807785d451e3654b339af38` — scoped to focused calibration/gameplay, released for results/exit, with safe cleanup after quick navigation. Uses the already-resolved Expo module. [Details and Android adaptation notes](ios-screen-awake-2026-10-08.md).
@@ -10,7 +30,7 @@ Branch: `codex/ios-camera-permission-review`.
 
 Only the iOS candidate branch was modified. `main`, all local Android branches, and the submitted build-8 release tag retain their prior references. No Android agent was contacted and no subagents were used.
 
-## Automated verification
+### Automated verification
 
 - Final full Jest run: **78 suites / 1,874 tests passed**, 300.515 seconds.
 - TypeScript: passed.
@@ -20,7 +40,7 @@ Only the iOS candidate branch was modified. `main`, all local Android branches, 
 - Screen-awake lifecycle and actual game-entry integration tests: passed. A missing native-module mock in the first full test run was corrected in the test setup; the final full run passes.
 - Existing production release validation: all reported checks pass EXCEPT the pre-existing physically-approved tracker-version check. The changed rules have a new marker, `2026-10-08.1-pushup-calibration`; the production profile deliberately retains the older owner-tested marker. New rules have NOT been declared physically approved.
 
-## Remaining review/testing
+### Remaining review/testing
 
 - Owner must physically test bilateral-arm calibration, interruption/reset and normal front-facing pushup gameplay on iPad/iPhone.
 - The arm checks still do not prove floor contact. Standing with both estimated arms straight can still satisfy them. Do not claim all incorrect calibrations or all camera-estimation errors have been eliminated.
@@ -31,6 +51,6 @@ Only the iOS candidate branch was modified. `main`, all local Android branches, 
 
 **No build, OTA publication, TestFlight upload, App Review submission or public release was started in this work.** Current devices still have their existing installed code.
 
-## Android agent
+### Android agent
 
 Inspect the two source commits independently; port only the requested fixes after checking your branch's newer work. Preserve its calibration experiments and do not blindly replace shared files. The wake component intentionally runs only on iOS, so Android needs an explicit adaptation and its own screen-timeout tests. Use the saved artwork only after owner acceptance. This handoff does not authorize an Android build or publication.
