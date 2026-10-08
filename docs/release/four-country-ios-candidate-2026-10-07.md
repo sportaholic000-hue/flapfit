@@ -17,7 +17,7 @@ One production iOS EAS build and the resulting TestFlight binary upload are auth
 
 ## Verification record
 
-TypeScript, lint, production release validation and OTA configuration validation passed for the deferred candidate. Full tests are being completed before committing and building; record the final results and exact build source in the completion handoff. Separate tests exercise the prepared future enabled state without enabling Europe in the shipping configuration. Shipping integration tests cover every European code and travel from each of the four original countries to Germany and back.
+TypeScript, lint, production release validation and OTA configuration validation passed for source commit `8e9241b524729bee7f203317c76376e8dce67237`. The full run covered 76 suites and 1,851 tests: 1,850 passed and one startup test exceeded its 30-second limit. Its entire 29-test suite then passed unchanged in an isolated rerun. The earlier interrupted run is not counted as a completed check. Separate tests exercise the prepared future enabled state without enabling Europe in the shipping configuration. Shipping integration tests cover every European code and travel from each of the four original countries to Germany and back.
 
 No real-device camera, recording, European advertising or provider traffic has been verified by these automated checks. Live ad delivery remains subject to Google's app readiness and inventory.
 
@@ -42,4 +42,13 @@ No real-device camera, recording, European advertising or provider traffic has b
 
 ## Completion evidence
 
-Pending the final test results, pushed commit, one build's number/link and TestFlight upload status. App Review submission remains prohibited until the owner's testing and explicit approval.
+- Pushed source: `8e9241b524729bee7f203317c76376e8dce67237`, branch `codex/ios-camera-permission-review`.
+- One production CLOUD build was requested: version 1.0.0 (9), ID `19263f36-6286-4ece-a134-c06c9e76f975`, [Expo build record](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/19263f36-6286-4ece-a134-c06c9e76f975).
+- It failed at CONFIGURE_EXPO_UPDATES before producing an IPA. Local runtime was `28e9acc121c7bfb988d68fead3b6132369c7fae9`; EAS runtime was `469f66ace28d0ea7661bb8681b0239739f8b3955`. No TestFlight upload, OTA publication or App Review submission occurred.
+- Diagnosis: this checkout used a root node_modules junction to the main checkout's dependencies. Its external physical path appeared in 90 fingerprint sources and both native-autolinking configurations, while EAS installed dependencies at the normal project-relative path. Both autolinking configurations are otherwise equal after correcting that prefix. Directory hashes also include their child paths; they must be recomputed, not overridden. The additional EAS `ios` source has a null hash.
+- The junction was removed WITHOUT removing or changing its shared target. The same locked dependencies were successfully installed directly in this checkout with Yarn 4.12.0 `install --immutable`; the package manifest and lockfile were unchanged. Release/OTA validation now rejects such linked dependency roots before another request. Its filesystem test exercises a real external junction and a normal directory.
+- Cloud logs and extracted fingerprint differences are preserved under the task workspace's `outputs/european-expansion-2026-10-07/` directory. No compatibility check or native-content hashing has been disabled.
+- Corrected-install verification PASSED: the official expo-updates fingerprint generator produced `469f66ace28d0ea7661bb8681b0239739f8b3955`, exactly equal to the EAS server result, retaining 109 native sources. No runtime hash, source skip, fingerprint transform or compatibility rule was changed. The real external-junction regression test, existing Windows/Linux/macOS discovery test, native bridge drift checks, production validation and lint all passed. No application source changed after the full app-test run. Another cloud build still requires owner authorization, as required by the one-attempt instruction.
+- App Review submission remains prohibited until the owner's testing and explicit approval.
+
+The release-tooling correction changes only `validate-update-config.cjs`, its existing test script and this handoff. It rejects linked dependency roots during the existing release/OTA preflight, before any future upload is requested through the verified workflow. The missing release-evidence artifact in the failed cloud log followed the early stop; there was no completed native archive to retain.
