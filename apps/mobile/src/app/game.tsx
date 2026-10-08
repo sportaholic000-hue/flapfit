@@ -261,6 +261,9 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     });
   };
   const [recordWithoutAudio, setRecordWithoutAudio] = useState(false);
+  // A saved iOS denial is a complete choice: optional audio must not block play.
+  const recordSilently = recordWithoutAudio ||
+    (Platform.OS === 'ios' && microphonePermission?.status === 'denied');
   const [runKey, setRunKey] = useState(0);
   const resultSubmissionGeneration = useRef(0);
   useEffect(() => () => { resultSubmissionGeneration.current += 1; }, []);
@@ -607,7 +610,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   const [entryAttempt, setEntryAttempt] = useState(0);
   useEffect(() => {
     if (entryReadyRef.current || !webSource || trackerLoadError || !permission?.granted ||
-      (recordRun && !recordWithoutAudio && !microphonePermission?.granted)) return;
+      (recordRun && !recordSilently && !microphonePermission?.granted)) return;
     let active = true;
     void prepareEntry().then(async () => {
       if (!active) return;
@@ -619,7 +622,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       if (active) setEntryError('Game access could not be checked. Retry before starting.');
     });
     return () => { active = false; };
-  }, [webSource, trackerLoadError, permission?.granted, recordRun, recordWithoutAudio, microphonePermission?.granted, prepareEntry, entryAttempt]);
+  }, [webSource, trackerLoadError, permission?.granted, recordRun, recordSilently, microphonePermission?.granted, prepareEntry, entryAttempt]);
 
   useEffect(() => {
     trackerTransferTokenRef.current += 1;
@@ -1108,7 +1111,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   // Camera permission gate
   const needsCameraPermission = permission != null && !permission.granted;
   const microphonePermissionLoading =
-    recordRun && !recordWithoutAudio && microphonePermission == null;
+    recordRun && !recordSilently && microphonePermission == null;
   if (permission == null || microphonePermissionLoading) {
     return <View style={{ flex: 1, backgroundColor: '#0F172A' }} />;
   }
@@ -1176,7 +1179,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
 
   const needsMicrophonePermission =
     recordRun &&
-    !recordWithoutAudio &&
+    !recordSilently &&
     microphonePermission != null &&
     !microphonePermission.granted;
   if (needsMicrophonePermission) {

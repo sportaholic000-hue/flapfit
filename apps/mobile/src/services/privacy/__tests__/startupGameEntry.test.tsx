@@ -146,6 +146,8 @@ async function mountApp(saved: string | null, options: {
   }); expect(router.push).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
     expect(JSON.stringify(tree.toJSON())).not.toContain('Flap Fit hit a snag'); };
   return { camera, requestCameraPermission, getCameraPermission, requestMicrophonePermission, getMicrophonePermission, openSettings, storage, adLoad, rcLoad, play, tree, sheet, router, awakeStart, awakeStop,
+    goHome: async () => { await act(async () => { router.back(); await settle(); }); },
+    setNativeMicrophoneStatus: (status: CameraTestStatus) => { nativeMicrophone = microphoneSnapshot(status); },
     completeGame: async () => { await act(async () => {
       tree.root.findByType('WebView' as never).props.onMessage({ nativeEvent: { data: JSON.stringify({ type: 'gameover', score: 5, pushups: 0, tutSeconds: 0, runDurationMs: 1000 }) } });
       await settle();
@@ -447,7 +449,7 @@ test('this iOS correction preserves Android camera explanation actions', async (
 
 
 // Same neutral iOS pre-permission treatment as the reviewed camera correction.
-test('iOS first microphone explanation has only Continue and then native denial permits silent recording', async () => {
+test('iOS first microphone explanation has only Continue and native denial immediately starts silent recording', async () => {
   const f = await mountApp(null, { offline: true, playable: true, recordRun: true });
   try {
     await f.play();
@@ -457,11 +459,15 @@ test('iOS first microphone explanation has only Continue and then native denial 
     expect(f.requestMicrophonePermission).not.toHaveBeenCalled();
     await f.pressResult('Continue');
     expect(f.requestMicrophonePermission).toHaveBeenCalledTimes(1);
-    expect(JSON.stringify(f.tree.toJSON())).toContain('Continue without sound');
-    await f.pressResult('Continue without sound');
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Continue without sound');
     expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
     expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":false');
     await f.change('background'); await f.change('active');
+    expect(f.requestMicrophonePermission).toHaveBeenCalledTimes(1);
+    await f.goHome(); await f.play();
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":false');
     expect(f.requestMicrophonePermission).toHaveBeenCalledTimes(1);
     expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
   } finally { await f.finish(); }
@@ -477,19 +483,35 @@ test.each(['undetermined', 'granted'] as const)('iOS recording uses sound after 
   } finally { await f.finish(); }
 });
 
-test.each([false, true])('previous iOS microphone denial never repeats a native request (canAskAgain=%s)', async microphoneCanAskAgain => {
+test.each([false, true])('saved iOS microphone denial starts every recording silently without asking again (canAskAgain=%s)', async microphoneCanAskAgain => {
   const f = await mountApp(null, { offline: true, playable: true, recordRun: true, microphoneStatus: 'denied', microphoneCanAskAgain });
   try {
-    await f.play(); await f.pressResult('Go back'); await f.play();
-    expect(JSON.stringify(f.tree.toJSON())).toContain('Open settings');
-    await f.pressResult('Continue without sound');
-    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":false');
+    for (let run = 0; run < 3; run++) {
+      await f.play();
+      expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+      expect(JSON.stringify(f.tree.toJSON())).not.toContain('Continue without sound');
+      expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":false');
+      if (run < 2) await f.goHome();
+    }
     expect(f.requestMicrophonePermission).not.toHaveBeenCalled();
+    expect(f.openSettings).not.toHaveBeenCalled();
   } finally { await f.finish(); }
 });
 
-test('granting microphone access in Settings resumes recording with audio and no repeated request', async () => {
-  const f = await mountApp(null, { offline: true, playable: true, recordRun: true, microphoneStatus: 'denied', microphoneSettingsStatus: 'granted' });
+test('a new iOS recording uses permission granted in device Settings after an earlier silent run', async () => {
+  const f = await mountApp(null, { offline: true, playable: true, recordRun: true, microphoneStatus: 'denied' });
+  try {
+    await f.play();
+    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":false');
+    await f.goHome(); f.setNativeMicrophoneStatus('granted'); await f.play();
+    expect(f.requestMicrophonePermission).not.toHaveBeenCalled();
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":true');
+  } finally { await f.finish(); }
+});
+
+test('Android microphone Settings recovery remains available', async () => {
+  const f = await mountApp(null, { offline: true, playable: true, recordRun: true, platform: 'android', microphoneStatus: 'denied', microphoneSettingsStatus: 'granted' });
   try {
     await f.play(); await f.pressResult('Open settings');
     await f.change('background'); await f.change('active');
