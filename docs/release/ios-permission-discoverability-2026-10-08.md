@@ -19,3 +19,12 @@ All 40 permission/entry integration tests passed, including the two combined fir
 The existing Home Record & Play action passes `record: '1'` with the camera background. The recording entry gate waits when microphone status is null or undetermined; previously granted access enables sound and previously denied iOS access continues silently. Both camera and microphone use separate native Expo requesters backed by their corresponding AVFoundation media types. Camera approval does not intentionally grant microphone access, and the inspected code contains no first-run rule that skips microphone choice. The entry gate remains latched through ordinary app-state changes; no source evidence was found that explains this particular device observation.
 
 Do not label this a reproduced defect or assume a stale native status, lost route flag, or user button error as the cause. Preserve the approved calibration, artwork and audio implementation. No app code changed during this additional trace.
+
+
+## Fresh-install retest reported by owner
+
+The owner subsequently deleted and reinstalled the app and reported that the microphone prompt appeared on the first attempt this time. Record this as a successful owner-reported retry, not a reproduced cause or a new permission fix. The source/update installed during either first-attempt test was not identified, so the eventual replacement build still needs one fresh-install first-recording check before any manual OTA. No additional permission or capture code changes are justified by this report alone.
+
+Remaining focused physical checks, if not already completed: automatic screen lock stays disabled while calibration/play is active and resumes outside the run; complete pullup reach/top/bottom calibration and a short run; confirm current recorded/share output retains branding and the already-working granted/denied audio behavior. The owner has approved the updated pushup calibration and repaired pullup bar appearance. Reinstalling build 10 restores its embedded source until the manual update is installed again.
+
+The owner is considering a brief onboarding mention of the silhouettes. Current onboarding says "you have 2 seconds to read the screen and get into position". Source uses those two seconds as a minimum preparation delay, not a deadline to assume the pose. Proposed copy should explain following the silhouette and holding each position until its progress bar fills; no onboarding, timing or calibration edit has been made in this follow-up.
