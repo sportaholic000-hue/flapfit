@@ -31,7 +31,7 @@ The owner clarified their initial upright-calibration report came from a deleted
 
 ## Unpublished navigation color candidate
 
-A later owner-requested [navy/white tab-bar preview](ios-navy-tab-preview-2026-10-08.md) is saved separately from the published onboarding OTA. It is iOS-only, preserves icons/layout and awaits the owner's decision before publication or resubmission inclusion. Do not treat it as already device-approved or copy its iOS guard into Android without adapting deliberately.
+A later owner-requested [navy/white tab-bar preview](ios-navy-tab-preview-2026-10-08.md) is saved separately from the published onboarding OTA. The latest revision preserves the existing orange selected icon/label and removes the earlier square-highlight proposal; only the bar background and inactive control colors change. It is iOS-only, preserves icons/layout and awaits the owner's decision before publication or resubmission inclusion. Do not treat it as already device-approved or copy its iOS guard into Android without adapting deliberately.
 
 ## Published iOS state and verification
 

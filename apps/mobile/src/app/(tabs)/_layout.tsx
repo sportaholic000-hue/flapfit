@@ -24,9 +24,8 @@ export default function TabLayout() {
               }
             : {}),
         },
-        tabBarActiveTintColor: isIOS ? '#FFFFFF' : '#F59E0B',
+        tabBarActiveTintColor: '#F59E0B',
         tabBarInactiveTintColor: isIOS ? '#FFFFFF' : '#6B7280',
-        ...(isIOS ? { tabBarActiveBackgroundColor: '#526782' } : {}),
         tabBarLabelStyle: {
           fontSize: 12,
           lineHeight: 16,
