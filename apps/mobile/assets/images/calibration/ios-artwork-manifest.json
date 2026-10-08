@@ -93,7 +93,9 @@
     "x": 24.96,
     "y": 100.4,
     "width": 190.4,
-    "height": 169.92
+    "height": 169.92,
+    "handSourceSha256": "a2d5546a8ea002cbc78db307986c2bbf3d0297050838f6fcc7b6286a2e1473f0",
+    "handSourceDescription": "Owner-selected single-figure pushup image, 2026-10-08; original palms/fingers retained, short forearm joins only."
   },
   {
     "pose": "pushupBottom",
@@ -101,6 +103,8 @@
     "x": 17.6,
     "y": 161.2,
     "width": 207.04,
-    "height": 109.12
+    "height": 109.12,
+    "handSourceSha256": "a2d5546a8ea002cbc78db307986c2bbf3d0297050838f6fcc7b6286a2e1473f0",
+    "handSourceDescription": "Owner-selected single-figure pushup image, 2026-10-08; original palms/fingers retained, short forearm joins only."
   }
 ]
