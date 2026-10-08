@@ -448,6 +448,29 @@ test('this iOS correction preserves Android camera explanation actions', async (
 });
 
 
+// Exercise the first Record & Play entry with BOTH native permissions undecided.
+test.each(['granted', 'denied'] as const)('first iOS recording moves from camera approval to microphone choice without re-entry (microphone %s)', async microphoneResponse => {
+  const f = await mountApp(null, { offline: true, playable: true, recordRun: true,
+    cameraStatus: 'undetermined', cameraResponse: 'granted', microphoneStatus: 'undetermined', microphoneResponse });
+  try {
+    await f.play();
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Camera access needed');
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(0);
+    await f.pressResult('Continue');
+    expect(f.requestCameraPermission).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Camera access needed');
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Add sound to your video');
+    expect(f.requestMicrophonePermission).not.toHaveBeenCalled();
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(0);
+    expect(f.router.push).toHaveBeenCalledTimes(1);
+    await f.pressResult('Continue');
+    expect(f.requestMicrophonePermission).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":' + String(microphoneResponse === 'granted'));
+  } finally { await f.finish(); }
+});
+
 // Same neutral iOS pre-permission treatment as the reviewed camera correction.
 test('iOS first microphone explanation has only Continue and native denial immediately starts silent recording', async () => {
   const f = await mountApp(null, { offline: true, playable: true, recordRun: true });

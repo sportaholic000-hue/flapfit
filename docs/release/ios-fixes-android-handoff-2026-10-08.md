@@ -10,6 +10,10 @@ Branch: `codex/ios-camera-permission-review`. Android branches remain untouched.
 4. **Microphone flow:** `a008816` supersedes the earlier per-run three-choice denial screen. On iOS, native denial immediately proceeds silently, and subsequent recording entries skip that custom screen. First request still uses Continue followed by Apple's prompt. The recordAudio expression and actual capture/share logic are unchanged. All 38 permission/entry tests, typecheck and targeted lint pass. Android behavior is intentionally unchanged; adapt only with separate owner authorization. [Details](ios-microphone-denial-2026-10-08.md).
 5. **Screen awake:** `c17ed1a434e3b42ca807785d451e3654b339af38` remains the iOS focus/lifecycle fix. [Android adaptation notes](ios-screen-awake-2026-10-08.md). It intentionally runs only on iOS; Android needs its own adaptation and physical lock-timeout test, not an indiscriminate dependency/config merge.
 
+## Latest owner feedback and settings discoverability
+
+The owner reported that the repaired pullup bars look much better and the extra microphone prompts after denial are gone. Preserve those published changes and the already-approved pushup calibration. A first-recording prompt timing report remains under investigation; the owner has been asked what appeared after camera approval. The existing Info settings action is relabeled "Camera & microphone settings" with a clearer subtitle. That label is saved for the next update/build, not part of the previously published OTA. No capture or permission decision logic is changed for this follow-up. [Scope, feedback and test coverage](ios-permission-discoverability-2026-10-08.md).
+
 ## Latest permission and artwork follow-ups
 
 - `a008816`: iOS denied microphone permission now proceeds silently on this and later recording entries, without another custom prompt. The existing recording/audio/share options are unchanged. All 38 entry/permission tests, typecheck and targeted lint passed. This supersedes the earlier three-choice denial behavior described in the historical index.
