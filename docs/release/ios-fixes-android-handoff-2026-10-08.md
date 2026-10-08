@@ -12,7 +12,7 @@ Branch: `codex/ios-camera-permission-review`. Android branches remain untouched.
 
 ## Latest owner feedback and settings discoverability
 
-The owner reported that the repaired pullup bars look much better and the extra microphone prompts after denial are gone. Preserve those published changes and the already-approved pushup calibration. A first-recording prompt timing report remains under investigation; the owner has been asked what appeared after camera approval. The existing Info settings action is relabeled "Camera & microphone settings" with a clearer subtitle. That label is saved for the next update/build, not part of the previously published OTA. No capture or permission decision logic is changed for this follow-up. [Scope, feedback and test coverage](ios-permission-discoverability-2026-10-08.md).
+The owner reported that the repaired pullup bars look much better and the extra microphone prompts after denial are gone. Preserve those published changes and the already-approved pushup calibration. A first-recording prompt report remains under investigation: the owner confirmed the game opened after camera approval, without the microphone screen. The native permission state/recording flag from that attempt were not captured; which installed update was tested is being clarified. The existing Info settings action is relabeled "Camera & microphone settings" with a clearer subtitle. That label is saved for the next update/build, not part of the previously published OTA. No capture or permission decision logic is changed for this follow-up. [Scope, feedback and test coverage](ios-permission-discoverability-2026-10-08.md).
 
 ## Latest permission and artwork follow-ups
 
