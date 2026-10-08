@@ -84,8 +84,8 @@
     "y": 10.5,
     "width": 144.15,
     "height": 228.78,
-    "detailRepair": "2026-10-08 morning: restore source contours locally; see docs/release/ios-morning-corrections-2026-10-08.md",
-    "assetSha256": "d6b78924283b86f9b027287102e80112e59e50ccc4b9e1d30f7df145cbd9c752"
+    "detailRepair": "2026-10-08: original grey bar pixels and transparency restored locally; see docs/release/ios-pullup-bar-repair-2026-10-08.md",
+    "assetSha256": "3f8af3cf1e96dcfc9e594ad5ffc0aa86157b09469f135726ef8838fe9415dae1"
   },
   {
     "pose": "pullupBottom",
@@ -94,8 +94,8 @@
     "y": 18.560000000000002,
     "width": 144.15,
     "height": 249.55,
-    "detailRepair": "2026-10-08 morning: restore source contours locally; see docs/release/ios-morning-corrections-2026-10-08.md",
-    "assetSha256": "a5f8bb145e91ebe334b7b105c3d83eff015e7a19d2ba09fa76f1aef7149e6333"
+    "detailRepair": "2026-10-08: original grey bar pixels and transparency restored locally; see docs/release/ios-pullup-bar-repair-2026-10-08.md",
+    "assetSha256": "2e9e84be952e014a45e17a8c61bdfd49ac73f0c73dc2be59290701295e9c03dc"
   },
   {
     "pose": "pullupReach",

@@ -10,6 +10,11 @@ Branch: `codex/ios-camera-permission-review`. Android branches remain untouched.
 4. **Microphone flow:** `e798142` implements the owner's later revised instruction: iOS first request has one neutral Continue, then native permission. Already-denied access offers Settings / Continue without sound / Go back without repeated native requests; silent recording remains supported. Android prompt actions were intentionally retained. Inspect platform-specific behavior before adapting; do not assume an iOS permission branch directly implements Android semantics. Camera handling is preserved.
 5. **Screen awake:** `c17ed1a434e3b42ca807785d451e3654b339af38` remains the iOS focus/lifecycle fix. [Android adaptation notes](ios-screen-awake-2026-10-08.md). It intentionally runs only on iOS; Android needs its own adaptation and physical lock-timeout test, not an indiscriminate dependency/config merge.
 
+## Latest permission and artwork follow-ups
+
+- `a008816`: iOS denied microphone permission now proceeds silently on this and later recording entries, without another custom prompt. The existing recording/audio/share options are unchanged. All 38 entry/permission tests, typecheck and targeted lint passed. This supersedes the earlier three-choice denial behavior described in the historical index.
+- [Pullup bar repair](ios-pullup-bar-repair-2026-10-08.md) restores neutral gray bar pixels from the original reference in the two hold poses; outside the local strips all pixels are identical. No tracking changes. Use the final committed assets after owner acceptance when adapting Android later.
+
 ## Subsequent testing clarification and microphone follow-up
 
 The owner clarified their initial upright-calibration report came from a deleted/reinstalled build 10 before applying the manual OTA. Do not attribute that old embedded-build result to the latest correction; the owner subsequently tested the updated iPad version and explicitly approved locking it in. The owner then confirmed repeated custom microphone screens after declining optional sound. [The focused follow-up](ios-microphone-denial-2026-10-08.md) supersedes the three-choice iOS denial flow above; Android adaptation remains a separate owner-authorized task.
@@ -28,8 +33,8 @@ The following is retained for traceability only. Statements about pending microp
 
 ### Saved changes
 
-1. **Calibration correction:** `670ab25878b02fc8ce9279740ac8e9f10c5d762b` — require both visible, individually straight arms for pushup step one; count distinct camera observations through the existing hold; reset stale tracking. [Detailed behavior, limits and Android port notes](ios-pushup-calibration-2026-10-08.md).
-2. **iOS automatic screen-sleep protection:** `c17ed1a434e3b42ca807785d451e3654b339af38` — scoped to focused calibration/gameplay, released for results/exit, with safe cleanup after quick navigation. Uses the already-resolved Expo module. [Details and Android adaptation notes](ios-screen-awake-2026-10-08.md).
+1. **Calibration correction:** `670ab25878b02fc8ce9279740ac8e9f10c5d762b` â€” require both visible, individually straight arms for pushup step one; count distinct camera observations through the existing hold; reset stale tracking. [Detailed behavior, limits and Android port notes](ios-pushup-calibration-2026-10-08.md).
+2. **iOS automatic screen-sleep protection:** `c17ed1a434e3b42ca807785d451e3654b339af38` â€” scoped to focused calibration/gameplay, released for results/exit, with safe cleanup after quick navigation. Uses the already-resolved Expo module. [Details and Android adaptation notes](ios-screen-awake-2026-10-08.md).
 3. **Unpublished artwork backup:** [smooth pushup candidate assets and comparisons](pushup-artwork-candidate-2026-10-08/README.md). These are not active app assets and must not be shipped automatically.
 
 Only the iOS candidate branch was modified. `main`, all local Android branches, and the submitted build-8 release tag retain their prior references. No Android agent was contacted and no subagents were used.

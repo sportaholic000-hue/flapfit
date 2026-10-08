@@ -1,0 +1,40 @@
+[
+  {
+    "pose": "pullupTop",
+    "crop": [
+      285,
+      148,
+      750,
+      886
+    ],
+    "editedRows": [
+      34,
+      67
+    ],
+    "outsideRowsIdentical": true,
+    "size": [
+      465,
+      738
+    ],
+    "assetSha256": "3f8af3cf1e96dcfc9e594ad5ffc0aa86157b09469f135726ef8838fe9415dae1"
+  },
+  {
+    "pose": "pullupBottom",
+    "crop": [
+      830,
+      174,
+      1295,
+      979
+    ],
+    "editedRows": [
+      8,
+      41
+    ],
+    "outsideRowsIdentical": true,
+    "size": [
+      465,
+      805
+    ],
+    "assetSha256": "2e9e84be952e014a45e17a8c61bdfd49ac73f0c73dc2be59290701295e9c03dc"
+  }
+]
