@@ -66,7 +66,7 @@ ${showGuide ? CALIBRATION_GUIDE_STYLE : ''}</style>
 <canvas id="game"></canvas>
 <div id="preview"><video id="video" playsinline muted autoplay></video><div id="dot"></div></div>
 <button id="camBtn">📷</button>
-${showGuide ? buildCalibrationGuideMarkup(config.exercise) : ''}<div id="overlay"><div id="card"><div id="msg">Loading…</div><div id="bar"><div id="fill"></div></div></div></div>
+${showGuide ? buildCalibrationGuideMarkup(config.exercise, experimentalCalibrationGuidePlatform) : ''}<div id="overlay"><div id="card"><div id="msg">Loading…</div><div id="bar"><div id="fill"></div></div></div></div>
 <script>
 "use strict";
 var CONFIG = ${configJson};
