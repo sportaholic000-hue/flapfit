@@ -38,7 +38,15 @@ For iOS Record & Play with undetermined microphone permission, the custom explan
 - Layout checks: 52 calibration layouts and 8 recording layouts at compact/large iPhone and 11/13-inch iPad viewport sizes pass. Representative exact-app markup renders are saved beside the repair recipe. These are desktop layout checks, not physical iPad camera tests.
 - Pixel/source checks confirm the approved pushup hands, top pushup file, deep squat file, active gameplay validator and other-exercise calibration are unchanged.
 
-Official Expo fingerprint passed: `469f66ace28d0ea7661bb8681b0239739f8b3955`, matching TestFlight build 10 with no compatibility override. Remote production-environment validation also passed, including the existing live-ad configuration. Publication receipt will be added after the owner-authorized upload succeeds. Target runtime is the existing build-10 fingerprint `469f66ace28d0ea7661bb8681b0239739f8b3955`; publication must use the matching production environment, live ads and iOS only, without a runtime override. The existing manual Info update flow remains.
+Official Expo fingerprint passed: `469f66ace28d0ea7661bb8681b0239739f8b3955`, matching TestFlight build 10 with no compatibility override. Remote production-environment validation also passed, including the existing live-ad configuration. The owner-authorized iOS update was published successfully at **2026-10-08 09:23:55 UTC / 06:23:55 Halifax ADT** from source commit [`e79814244cc8fb839986c87320faa13d2f933a3d`](https://github.com/sportaholic000-hue/flapfit/commit/e79814244cc8fb839986c87320faa13d2f933a3d). It uses the production channel/environment and existing live-ad configuration. The existing manual Info update flow remains. No native build or App Review submission was started.
+
+- Update group: `3bccd61a-259a-43b8-a57e-90baf1da5639`
+- iOS update: `01a11ad3-915e-7988-b801-d63a2305bfea`
+- Native runtime: `469f66ace28d0ea7661bb8681b0239739f8b3955` (TestFlight build 10; no override).
+- [Expo update](https://expo.dev/accounts/flapfitapp/projects/flapfit/updates/3bccd61a-259a-43b8-a57e-90baf1da5639)
+- [Publication receipt](calibration-detail-repairs-2026-10-08/published-update.json)
+
+Post-publication verification confirms the receipt points to the exact source commit and iOS runtime. The exported 10,108,572-byte Hermes bundle contains the revised pushup entry check, corrected microphone copy and all 13 exact committed WebP image payloads. The removed long calibration instruction is absent. Physical iPad acceptance remains pending. This receipt-only documentation commit does not change the published app source.
 
 ## Owner acceptance before any native build
 
