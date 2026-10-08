@@ -351,8 +351,8 @@ export default function OnboardingScreen() {
       />
       <View style={{ width: '100%', gap: 12, paddingHorizontal: 22, zIndex: 1 }}>
         <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15, lineHeight: 21 }}>
-          First, you have 2 seconds to read the screen and get into position. Then the app guides
-          you through 2 calibration steps:
+          Follow the on-screen instructions to get into position. In Camera mode, silhouettes
+          also show you each pose.
         </Text>
         <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
           Pull-ups: first stand on tiptoes and reach as high as you can without touching the bar.
