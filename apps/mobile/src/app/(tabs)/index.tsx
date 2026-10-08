@@ -26,7 +26,6 @@ import {
   computeEvolutionStage,
   computeTutStreak,
   dayKey,
-  EVO_EMOJIS,
   EVO_NAMES,
   EVO_THRESHOLDS,
   isEndlessUnlocked,
@@ -400,15 +399,15 @@ export default function HomeScreen() {
               marginTop: 6,
               flexDirection: 'row',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: 6,
             }}
           >
-            <Text style={{ fontSize: 16 }}>{EVO_EMOJIS[evoStage]}</Text>
-            <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 13 }}>
+            <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 13, textAlign: 'center' }}>
               {EVO_NAMES[evoStage]}
             </Text>
             {evoStage < EVO_THRESHOLDS.length - 1 && (
-              <Text style={{ color: '#64748B', fontSize: 11 }}>
+              <Text style={{ color: '#64748B', fontSize: 11, textAlign: 'center' }}>
                 {Math.round(evoProgress * 100)}% to {EVO_NAMES[evoStage + 1]}
               </Text>
             )}
