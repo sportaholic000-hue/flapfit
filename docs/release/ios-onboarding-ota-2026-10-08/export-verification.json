@@ -1,0 +1,41 @@
+{
+  "onboardingAndInfoMatchCommittedSource": true,
+  "pullupParagraphAfterStepsBeforeNormalPlay": true,
+  "automaticSilentEntryOnIosDenial": true,
+  "originalRecordAudioExpressionPreserved": true,
+  "exportedGameMatchesCommittedSource": true,
+  "bundlePath": "dist\\_expo\\static\\js\\ios\\index-7c6fa61a20f91a332763b36bf02d9cca.hbc",
+  "bytes": 10110364,
+  "centeredHomeWithoutStageEmoji": true,
+  "exportedHomeMatchesCommittedSource": true,
+  "newPostureHelper": true,
+  "newMicrophoneCopy": true,
+  "removedLongCalibrationCopy": true,
+  "exactEmbeddedArtwork": {
+    "curlBottom": "5cf6f2e7910fc4150eac1875e9631d079e44ea0728b0d084f89d53f4db8ba89e",
+    "curlTop": "a5260f0f56102ae25a74f536362a87150a96c803e8d8c8276d67e56356fb815d",
+    "lateralBottom": "6a720be82925acbda6e6c3f7f6f5fb878ed38cfd2caf23fa17492e957a924a3e",
+    "lateralTop": "3f59a7783c9af45bb7a4a3f32063d298c679e3fd01754e1da00b4a76539611f4",
+    "pressBottom": "11f884f51157623c1efd17694afcb14926e82d6a753acb8c53249d3f5ffbf17b",
+    "pressTop": "12def58f97145d0771384926f458e0d4881a97d461c3248db3c5619b6d40c879",
+    "pullupBottom": "2e9e84be952e014a45e17a8c61bdfd49ac73f0c73dc2be59290701295e9c03dc",
+    "pullupReach": "985830debe1ab066f230acabdfc4e163fe2da4b69e0543dc635f268eae2a9708",
+    "pullupTop": "3f8af3cf1e96dcfc9e594ad5ffc0aa86157b09469f135726ef8838fe9415dae1",
+    "pushupBottom": "14a985cb73ba39acb9b3bebf33aa51802b6d289436f488dced5a5ac0fc097147",
+    "pushupTop": "e1db76dc9fedcd4917bd87addfdd32fc34883fba1ff6716f5ef882f0ddb14096",
+    "squatBottom": "66c48cfc6117514d9c9d951b776a00122297c3966145c966aea4ccd979d20d30",
+    "squatTop": "bcf0befacf5ae2a703321589ab47082bd54bd0a9816c89b19cf5f4cb600cef51"
+  },
+  "publication": {
+    "id": "01a11d69-8d9a-799b-9014-57706b998425",
+    "createdAt": "2026-10-08T21:26:59.226Z",
+    "group": "1a07489a-fdcb-447b-94f4-462792b83945",
+    "branch": "production",
+    "message": "iOS: reorder calibration introduction and clarify camera/microphone settings; preserve tested gameplay",
+    "runtimeVersion": "469f66ace28d0ea7661bb8681b0239739f8b3955",
+    "platform": "ios",
+    "manifestPermalink": "https://u.expo.dev/update/01a11d69-8d9a-799b-9014-57706b998425",
+    "isRollBackToEmbedded": false,
+    "gitCommitHash": "229b6ae855b2e931889ac5925de2dc75a5390e7f"
+  }
+}

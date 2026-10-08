@@ -1,0 +1,14 @@
+[
+  {
+    "id": "01a11d69-8d9a-799b-9014-57706b998425",
+    "createdAt": "2026-10-08T21:26:59.226Z",
+    "group": "1a07489a-fdcb-447b-94f4-462792b83945",
+    "branch": "production",
+    "message": "iOS: reorder calibration introduction and clarify camera/microphone settings; preserve tested gameplay",
+    "runtimeVersion": "469f66ace28d0ea7661bb8681b0239739f8b3955",
+    "platform": "ios",
+    "manifestPermalink": "https://u.expo.dev/update/01a11d69-8d9a-799b-9014-57706b998425",
+    "isRollBackToEmbedded": false,
+    "gitCommitHash": "229b6ae855b2e931889ac5925de2dc75a5390e7f"
+  }
+]

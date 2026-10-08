@@ -1,0 +1,19 @@
+{
+  "head": "229b6ae855b2e931889ac5925de2dc75a5390e7f",
+  "nativeRuntime": "469f66ace28d0ea7661bb8681b0239739f8b3955",
+  "sources": 109,
+  "remoteEnvironment": "production",
+  "liveAds": true,
+  "changedFiles": [
+    "apps/mobile/src/app/(tabs)/info.tsx",
+    "apps/mobile/src/app/onboarding.tsx",
+    "apps/mobile/src/services/privacy/__tests__/startupGameEntry.test.tsx",
+    "docs/release/ios-fixes-android-handoff-2026-10-08.md",
+    "docs/release/ios-mic-pullup-ota-2026-10-08.md",
+    "docs/release/ios-mic-pullup-ota-2026-10-08/export-verification.json",
+    "docs/release/ios-mic-pullup-ota-2026-10-08/preflight.json",
+    "docs/release/ios-mic-pullup-ota-2026-10-08/published-update.json",
+    "docs/release/ios-microphone-denial-2026-10-08.md",
+    "docs/release/ios-permission-discoverability-2026-10-08.md"
+  ]
+}
