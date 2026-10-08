@@ -1,0 +1,106 @@
+[
+  {
+    "pose": "pressTop",
+    "sourceSha256": "225d0ef547a499dfcd644d8f9a42f0c83a9498a3c838596702684bd08edebc20",
+    "x": 65.00745156482861,
+    "y": -22.193740685543958,
+    "width": 113.65126676602087,
+    "height": 296.9597615499255
+  },
+  {
+    "pose": "pressBottom",
+    "sourceSha256": "225d0ef547a499dfcd644d8f9a42f0c83a9498a3c838596702684bd08edebc20",
+    "x": 54.74217585692995,
+    "y": 18.867362146050652,
+    "width": 131.98211624441132,
+    "height": 256.63189269746647
+  },
+  {
+    "pose": "lateralTop",
+    "sourceSha256": "e89ed526683d9cac09ce632e75a2fca06924a0e783b310846610f7a3c4e1184d",
+    "x": -1.3599999999999994,
+    "y": 19.407999999999987,
+    "width": 241.08,
+    "height": 255.84
+  },
+  {
+    "pose": "lateralBottom",
+    "sourceSha256": "e89ed526683d9cac09ce632e75a2fca06924a0e783b310846610f7a3c4e1184d",
+    "x": 71.128,
+    "y": 19.407999999999987,
+    "width": 98.4,
+    "height": 255.84
+  },
+  {
+    "pose": "curlTop",
+    "sourceSha256": "dab176b8c36978ef33acdb5e0c7e4037975f6d8c868f7d296b1e0215fe3a5fd4",
+    "x": 63.40102827763496,
+    "y": 20.52185089974293,
+    "width": 112.24935732647816,
+    "height": 256.1182519280206
+  },
+  {
+    "pose": "curlBottom",
+    "sourceSha256": "dab176b8c36978ef33acdb5e0c7e4037975f6d8c868f7d296b1e0215fe3a5fd4",
+    "x": 56.760925449871465,
+    "y": 20.52185089974293,
+    "width": 126.47814910025707,
+    "height": 256.1182519280206
+  },
+  {
+    "pose": "squatTop",
+    "sourceSha256": "61473d4e38c3a229426f133495a0fdba00e61c66b07c63b4eedeeeae7c6aef3d",
+    "x": 73.17426273458446,
+    "y": 21.032171581769433,
+    "width": 93.98123324396782,
+    "height": 253.9142091152815
+  },
+  {
+    "pose": "squatBottom",
+    "sourceSha256": "61473d4e38c3a229426f133495a0fdba00e61c66b07c63b4eedeeeae7c6aef3d",
+    "x": 67.23860589812332,
+    "y": 71.15549597855227,
+    "width": 105.52278820375335,
+    "height": 204.4504021447721
+  },
+  {
+    "pose": "pullupTop",
+    "sourceSha256": "3b64f25db46f7e4c4f877039dec5fc15aba4ef14036cc2617d3c9b827efba185",
+    "x": 47.769999999999996,
+    "y": 10.5,
+    "width": 144.15,
+    "height": 228.78
+  },
+  {
+    "pose": "pullupBottom",
+    "sourceSha256": "3b64f25db46f7e4c4f877039dec5fc15aba4ef14036cc2617d3c9b827efba185",
+    "x": 49.94,
+    "y": 18.560000000000002,
+    "width": 144.15,
+    "height": 249.55
+  },
+  {
+    "pose": "pullupReach",
+    "sourceSha256": "80bb28fc70dad34558d12240ec0da362786906477a17cff5c68c6690238f91eb",
+    "x": 72.15648286140089,
+    "y": -26.193740685543958,
+    "width": 98.87660208643815,
+    "height": 300.9597615499255
+  },
+  {
+    "pose": "pushupTop",
+    "sourceSha256": "86a621c9bd1c01575884b2db11034d24431c20268611e1b0934d43b4bc5a0c7c",
+    "x": 24.96,
+    "y": 100.4,
+    "width": 190.4,
+    "height": 169.92
+  },
+  {
+    "pose": "pushupBottom",
+    "sourceSha256": "86a621c9bd1c01575884b2db11034d24431c20268611e1b0934d43b4bc5a0c7c",
+    "x": 17.6,
+    "y": 161.2,
+    "width": 207.04,
+    "height": 109.12
+  }
+]

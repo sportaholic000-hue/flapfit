@@ -1,5 +1,5 @@
 import { CALIBRATION_ARTWORK, CALIBRATION_DETAILS } from './calibrationGuideArtwork';
-import { PUSHUP_GUIDE_IMAGE_DATA } from './pushupGuideImageData';
+import { IOS_CALIBRATION_IMAGES } from './iosCalibrationImageData';
 
 // Native camera-mode visual guide. This module never supplies tracking input.
 export function showExperimentalCalibrationGuide(platform: string | undefined, exercise: string, backgroundMode: string) {
@@ -21,13 +21,23 @@ const exercisePoses: Record<string, GuidePoses> = {
   pushups: { top: artwork('pushupTop'), bottom: artwork('pushupBottom') },
   pullups: { top: artwork('pullupTop'), bottom: artwork('pullupBottom'), reach: artwork('pullupReach') },
 };
-// Static iOS artwork preview. Existing SVG coordinates and the guide lifecycle stay intact.
-const pushupImagePoses: GuidePoses = {
-  top: '<image href="' + PUSHUP_GUIDE_IMAGE_DATA.top + '" x="24.96" y="100.4" width="190.4" height="169.92" preserveAspectRatio="xMidYMax meet"/>',
-  bottom: '<image href="' + PUSHUP_GUIDE_IMAGE_DATA.bottom + '" x="17.6" y="161.2" width="207.04" height="109.12" preserveAspectRatio="xMidYMax meet"/>',
+// Static lossless iOS artwork. Existing coordinates and guide lifecycle stay intact.
+const imageArtwork = (pose: keyof typeof IOS_CALIBRATION_IMAGES) => {
+  const image = IOS_CALIBRATION_IMAGES[pose];
+  return '<image href="' + image.dataUri + '" x="' + image.x + '" y="' + image.y +
+    '" width="' + image.width + '" height="' + image.height +
+    '" preserveAspectRatio="' + (pose === 'pullupReach' ? 'none' : 'xMidYMax meet') + '"/>';
+};
+const iosImagePoses: Record<string, GuidePoses> = {
+  lateralraise: { top: imageArtwork('lateralTop'), bottom: imageArtwork('lateralBottom') },
+  biceps: { top: imageArtwork('curlTop'), bottom: imageArtwork('curlBottom') },
+  shoulderpress: { top: imageArtwork('pressTop'), bottom: imageArtwork('pressBottom') },
+  squats: { top: imageArtwork('squatTop'), bottom: imageArtwork('squatBottom') },
+  pushups: { top: imageArtwork('pushupTop'), bottom: imageArtwork('pushupBottom') },
+  pullups: { top: imageArtwork('pullupTop'), bottom: imageArtwork('pullupBottom'), reach: imageArtwork('pullupReach') },
 };
 export function buildCalibrationGuideMarkup(exercise: string, platform?: string) {
-  const poses = exercise === 'pushups' && platform === 'ios' ? pushupImagePoses : exercisePoses[exercise];
+  const poses = platform === 'ios' ? iosImagePoses[exercise] : exercisePoses[exercise];
   if (!poses) { return ''; }
   return '<div id="calibration-pose-guide" hidden aria-hidden="true">' +
     '<svg viewBox="' + (poses.viewBox || '0 -28 240 310') + '" xmlns="http://www.w3.org/2000/svg" focusable="false">' +
