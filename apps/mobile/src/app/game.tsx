@@ -33,6 +33,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import { RunCelebrations } from '@/components/RunCelebrations';
+import { GameScreenAwake } from '@/components/GameScreenAwake';
 import { ChampionshipResultHeading } from '@/components/ChampionBadge';
 import { isChampionshipRun } from '@/utils/game/levelAchievements';
 import { GameEligibilityGate } from '@/components/GameEligibilityGate';
@@ -1250,6 +1251,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   return (
     <View style={{ flex: 1, backgroundColor: level.sky1 }}>
       {privacyChoicesSheet}
+      {!result && webSource && !trackerLoadError && entryReady ? <GameScreenAwake /> : null}
       <StatusBar style="light" hidden={Platform.OS === 'ios'} />
       {webSource && !trackerLoadError && entryReady ? (
         <WebView

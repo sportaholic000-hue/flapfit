@@ -87,6 +87,9 @@ async function mountApp(saved: string | null, options: {
     return [permission, requestCameraPermission, getCameraPermission];
   });
   jest.doMock('expo-camera', () => ({ useCameraPermissions: camera, useMicrophonePermissions: () => [null, jest.fn(), jest.fn()] }));
+  const awakeStart = jest.fn().mockResolvedValue(undefined);
+  const awakeStop = jest.fn().mockResolvedValue(undefined);
+  jest.doMock('expo-keep-awake', () => ({ activateKeepAwakeAsync: awakeStart, deactivateKeepAwake: awakeStop }));
   jest.doMock('expo-haptics', () => ({ impactAsync: jest.fn().mockResolvedValue(undefined), ImpactFeedbackStyle: {}, notificationAsync: jest.fn().mockResolvedValue(undefined), NotificationFeedbackType: { Success: 'success', Error: 'error' } }));
   const fetchDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'fetch');
   const fetcher = options.offline ? jest.fn().mockRejectedValue(new Error('Offline')) : jest.fn().mockResolvedValue({ ok: true, status: 200, redirected: false,
@@ -119,7 +122,7 @@ async function mountApp(saved: string | null, options: {
     expect(button).toBeDefined(); button.props.onPress(); await settle();
   }); expect(router.push).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
     expect(JSON.stringify(tree.toJSON())).not.toContain('Flap Fit hit a snag'); };
-  return { camera, requestCameraPermission, getCameraPermission, openSettings, storage, adLoad, rcLoad, play, tree, sheet, router,
+  return { camera, requestCameraPermission, getCameraPermission, openSettings, storage, adLoad, rcLoad, play, tree, sheet, router, awakeStart, awakeStop,
     completeGame: async () => { await act(async () => {
       tree.root.findByType('WebView' as never).props.onMessage({ nativeEvent: { data: JSON.stringify({ type: 'gameover', score: 5, pushups: 0, tutSeconds: 0, runDurationMs: 1000 }) } });
       await settle();
@@ -143,9 +146,15 @@ test.each([false, true])('optional work stays paused from WebView admission unti
     await f.play();
     expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
     expect(activity.isGameplayActive()).toBe(true);
-    if (!unmount) { await f.completeGame(); expect(activity.isGameplayActive()).toBe(false); }
+    expect(f.awakeStart).toHaveBeenCalledTimes(1);
+    if (!unmount) {
+      await f.completeGame();
+      expect(activity.isGameplayActive()).toBe(false);
+      expect(f.awakeStop).toHaveBeenCalledWith(f.awakeStart.mock.calls[0][0]);
+    }
   } finally { await f.finish(); }
   expect(activity.isGameplayActive()).toBe(false);
+  expect(f.awakeStop).toHaveBeenCalledWith(f.awakeStart.mock.calls[0][0]);
 });
 
 test.each([false, true])('saved under-13 is restored before Home Play reaches camera setup (offline=%s)', async offline => {
