@@ -1,0 +1,132 @@
+[
+  {
+    "pose": "pressTop",
+    "sourceSha256": "225d0ef547a499dfcd644d8f9a42f0c83a9498a3c838596702684bd08edebc20",
+    "x": 65.00745156482861,
+    "y": -22.193740685543958,
+    "width": 113.65126676602087,
+    "height": 296.9597615499255,
+    "detailRepair": "2026-10-08 morning: restore source contours locally; see docs/release/ios-morning-corrections-2026-10-08.md",
+    "assetSha256": "12def58f97145d0771384926f458e0d4881a97d461c3248db3c5619b6d40c879"
+  },
+  {
+    "pose": "pressBottom",
+    "sourceSha256": "225d0ef547a499dfcd644d8f9a42f0c83a9498a3c838596702684bd08edebc20",
+    "x": 54.74217585692995,
+    "y": 18.867362146050652,
+    "width": 131.98211624441132,
+    "height": 256.63189269746647,
+    "detailRepair": "2026-10-08 morning: restore source contours locally; see docs/release/ios-morning-corrections-2026-10-08.md",
+    "assetSha256": "11f884f51157623c1efd17694afcb14926e82d6a753acb8c53249d3f5ffbf17b"
+  },
+  {
+    "pose": "lateralTop",
+    "sourceSha256": "e89ed526683d9cac09ce632e75a2fca06924a0e783b310846610f7a3c4e1184d",
+    "x": -1.3599999999999994,
+    "y": 19.407999999999987,
+    "width": 241.08,
+    "height": 255.84,
+    "detailRepair": "2026-10-08 morning: restore source contours locally; see docs/release/ios-morning-corrections-2026-10-08.md",
+    "assetSha256": "3f59a7783c9af45bb7a4a3f32063d298c679e3fd01754e1da00b4a76539611f4"
+  },
+  {
+    "pose": "lateralBottom",
+    "sourceSha256": "e89ed526683d9cac09ce632e75a2fca06924a0e783b310846610f7a3c4e1184d",
+    "x": 71.128,
+    "y": 19.407999999999987,
+    "width": 98.4,
+    "height": 255.84,
+    "detailRepair": "2026-10-08 morning: restore source contours locally; see docs/release/ios-morning-corrections-2026-10-08.md",
+    "assetSha256": "6a720be82925acbda6e6c3f7f6f5fb878ed38cfd2caf23fa17492e957a924a3e"
+  },
+  {
+    "pose": "curlTop",
+    "sourceSha256": "dab176b8c36978ef33acdb5e0c7e4037975f6d8c868f7d296b1e0215fe3a5fd4",
+    "x": 63.40102827763496,
+    "y": 20.52185089974293,
+    "width": 112.24935732647816,
+    "height": 256.1182519280206,
+    "detailRepair": "2026-10-08 morning: restore source contours locally; see docs/release/ios-morning-corrections-2026-10-08.md",
+    "assetSha256": "a5260f0f56102ae25a74f536362a87150a96c803e8d8c8276d67e56356fb815d"
+  },
+  {
+    "pose": "curlBottom",
+    "sourceSha256": "dab176b8c36978ef33acdb5e0c7e4037975f6d8c868f7d296b1e0215fe3a5fd4",
+    "x": 56.760925449871465,
+    "y": 20.52185089974293,
+    "width": 126.47814910025707,
+    "height": 256.1182519280206,
+    "detailRepair": "2026-10-08 morning: restore source contours locally; see docs/release/ios-morning-corrections-2026-10-08.md",
+    "assetSha256": "5cf6f2e7910fc4150eac1875e9631d079e44ea0728b0d084f89d53f4db8ba89e"
+  },
+  {
+    "pose": "squatTop",
+    "sourceSha256": "61473d4e38c3a229426f133495a0fdba00e61c66b07c63b4eedeeeae7c6aef3d",
+    "x": 73.17426273458446,
+    "y": 21.032171581769433,
+    "width": 93.98123324396782,
+    "height": 253.9142091152815,
+    "detailRepair": "2026-10-08 morning: restore source contours locally; see docs/release/ios-morning-corrections-2026-10-08.md",
+    "assetSha256": "bcf0befacf5ae2a703321589ab47082bd54bd0a9816c89b19cf5f4cb600cef51"
+  },
+  {
+    "pose": "squatBottom",
+    "sourceSha256": "61473d4e38c3a229426f133495a0fdba00e61c66b07c63b4eedeeeae7c6aef3d",
+    "x": 67.23860589812332,
+    "y": 71.15549597855227,
+    "width": 105.52278820375335,
+    "height": 204.4504021447721
+  },
+  {
+    "pose": "pullupTop",
+    "sourceSha256": "3b64f25db46f7e4c4f877039dec5fc15aba4ef14036cc2617d3c9b827efba185",
+    "x": 47.769999999999996,
+    "y": 10.5,
+    "width": 144.15,
+    "height": 228.78,
+    "detailRepair": "2026-10-08: original grey bar pixels and transparency restored locally; see docs/release/ios-pullup-bar-repair-2026-10-08.md",
+    "assetSha256": "3f8af3cf1e96dcfc9e594ad5ffc0aa86157b09469f135726ef8838fe9415dae1"
+  },
+  {
+    "pose": "pullupBottom",
+    "sourceSha256": "3b64f25db46f7e4c4f877039dec5fc15aba4ef14036cc2617d3c9b827efba185",
+    "x": 49.94,
+    "y": 18.560000000000002,
+    "width": 144.15,
+    "height": 249.55,
+    "detailRepair": "2026-10-08: original grey bar pixels and transparency restored locally; see docs/release/ios-pullup-bar-repair-2026-10-08.md",
+    "assetSha256": "2e9e84be952e014a45e17a8c61bdfd49ac73f0c73dc2be59290701295e9c03dc"
+  },
+  {
+    "pose": "pullupReach",
+    "sourceSha256": "80bb28fc70dad34558d12240ec0da362786906477a17cff5c68c6690238f91eb",
+    "x": 72.15648286140089,
+    "y": -26.193740685543958,
+    "width": 98.87660208643815,
+    "height": 300.9597615499255,
+    "detailRepair": "2026-10-08 morning: restore source contours locally; see docs/release/ios-morning-corrections-2026-10-08.md",
+    "assetSha256": "985830debe1ab066f230acabdfc4e163fe2da4b69e0543dc635f268eae2a9708"
+  },
+  {
+    "pose": "pushupTop",
+    "sourceSha256": "86a621c9bd1c01575884b2db11034d24431c20268611e1b0934d43b4bc5a0c7c",
+    "x": 24.96,
+    "y": 100.4,
+    "width": 190.4,
+    "height": 169.92,
+    "handSourceSha256": "a2d5546a8ea002cbc78db307986c2bbf3d0297050838f6fcc7b6286a2e1473f0",
+    "handSourceDescription": "Owner-selected single-figure pushup image, 2026-10-08; original palms/fingers retained, short forearm joins only."
+  },
+  {
+    "pose": "pushupBottom",
+    "sourceSha256": "86a621c9bd1c01575884b2db11034d24431c20268611e1b0934d43b4bc5a0c7c",
+    "x": 17.6,
+    "y": 161.2,
+    "width": 207.04,
+    "height": 109.12,
+    "handSourceSha256": "a2d5546a8ea002cbc78db307986c2bbf3d0297050838f6fcc7b6286a2e1473f0",
+    "handSourceDescription": "Owner-selected single-figure pushup image, 2026-10-08; original palms/fingers retained, short forearm joins only.",
+    "detailRepair": "2026-10-08 morning: restore source contours locally; see docs/release/ios-morning-corrections-2026-10-08.md",
+    "assetSha256": "14a985cb73ba39acb9b3bebf33aa51802b6d289436f488dced5a5ac0fc097147"
+  }
+]

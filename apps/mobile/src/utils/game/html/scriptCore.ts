@@ -101,7 +101,9 @@ for (var ci = 0; ci < 5; ci++) {
 // ---------- Calibration stability ----------
 var stabBuf = [];
 function stabilityProgress(y, now) {
-  if (usesExperimentalFormTracking() && CONFIG.exercise === 'pullups') {
+  var requireFreshPoseSamples = usesExperimentalFormTracking() &&
+    (CONFIG.exercise === 'pullups' || CONFIG.exercise === 'pushups');
+  if (requireFreshPoseSamples) {
     // Count camera observations, not repeated renders of the same pose.
     var poseTime = lastFormTrackTime;
     if (!experimentalTrackingFresh()) { stabBuf = []; return 0; }
@@ -115,7 +117,7 @@ function stabilityProgress(y, now) {
     now = poseTime;
   }
   stabBuf.push({ t: now, y: y });
-  var minimumKept = usesExperimentalFormTracking() && CONFIG.exercise === 'pullups' ? 8 : 1;
+  var minimumKept = requireFreshPoseSamples ? 8 : 1;
   while (stabBuf.length > minimumKept && now - stabBuf[0].t > 1600) { stabBuf.shift(); }
   if (stabBuf.length < 8) { return 0; }
   var mn = 1, mx = 0;

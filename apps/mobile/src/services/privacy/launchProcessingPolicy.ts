@@ -3,6 +3,8 @@ import {
   type AgeEvidence, type ProcessingChoice, type ProcessingDecision,
   type Purpose, type PurposeRequirement,
 } from './processingPolicy';
+import { europeanConsentAge, isLaunchCountry } from './launchCountries';
+import { EUROPEAN_PROVIDER_POLICY } from './europeanProviderPolicy';
 import type { NewYorkApplicabilityEvidence } from './regionalPolicy';
 
 /** Actual restricted route, not a provider permission. Native/UMP/Apple gates remain separate. */
@@ -17,7 +19,7 @@ export type LaunchPolicyReason = 'notice-route' | 'requested-service' | 'country
   'outside-launch-scope' | 'age-unresolved' | 'outside-audience' | 'province-unresolved' |
   'state-unresolved' | 'parental-authority-required' | 'quebec-activation-required' |
   'new-york-express-consent-required' | 'new-york-applicability-unresolved' | 'connecticut-ad-necessity-unresolved' |
-  'connecticut-reporting-not-necessary' | 'new-york-location-unresolved';
+  'connecticut-reporting-not-necessary' | 'new-york-location-unresolved' | 'european-reporting-consent-required' | 'provider-route-unreviewed';
 export type ConnecticutResidency = 'resident' | 'not-resident' | 'unknown';
 export type QuebecResidency = 'resident' | 'not-resident' | 'unknown';
 export type LaunchProcessingOptions = {
@@ -34,6 +36,8 @@ export type LaunchProcessingOptions = {
   parentalAuthority?: Partial<Record<Purpose, boolean>>;
   /** Exact disclosed purpose activation, not Google vendor consent or a generic grant. */
   quebecFunctionsActivated?: { ads: boolean; analytics: boolean };
+  /** Separate local reporting disclosure/opt-in, never a Google vendor consent. */
+  europeanReportingActivated?: boolean;
   adsWithdrawalScope?: 'none' | 'sale-sharing-targeting' | 'all-ad-personal-data';
 };
 export type LaunchProcessingInput = LaunchProcessingOptions & {
@@ -47,12 +51,15 @@ export type LaunchProcessingInput = LaunchProcessingOptions & {
   connecticutContextualAdsReviewed?: boolean;
 };
 /** Derived rules only. May be retained in RAM; never contains raw Apple bounds/source. */
-type LaunchAgeThresholds = { thirteen: boolean; fourteen: boolean; fifteen: boolean; eighteen: boolean };
+type LaunchAgeThresholds = { thirteen: boolean; fourteen: boolean; fifteen: boolean; sixteen: boolean; eighteen: boolean };
 export type LaunchProcessingPlan = {
   /** Minimal positive context retained through later refinements; never an exemption. */
   newYorkKnownContext?: boolean;
   /** Latent CA-specific authority rule for a later confirmed Quebec refinement. */
   quebecMinorAuthorityRequired: boolean;
+  /** Rule outcome only; no raw Apple age bounds retained. */
+  europeanConsentAgeSatisfied?: boolean;
+  europeanReportingActivationRequired?: boolean;
   requirements: Record<Purpose, PurposeRequirement>;
   reasons: Record<Purpose, LaunchPolicyReason>;
   missingFacts: Record<Purpose, LaunchMissingFact[]>;
@@ -69,6 +76,10 @@ export type LaunchProcessingResolution = LaunchProcessingPlan & {
 };
 /** No birthday; at most three Apple thresholds in any request. */
 export function launchAppleAgeGates(country: string | null): [number, number, number] {
+  const consentAge = europeanConsentAge(country);
+  // Apple's adjacent gates must be at least two years apart. A 13–14
+  // response cannot establish fourteen; keep that optional consent unresolved.
+  if (consentAge !== null && consentAge > 13) return [13, Math.max(15, consentAge), 18];
   switch (country?.trim().toUpperCase()) {
     // Gameplay includes Quebec; its ad providers remain disabled. Establish the
     // 13+ audience without using the advertising authority threshold for play.
@@ -129,6 +140,10 @@ export function evaluateLaunchProcessingPlan(
       decisions[purpose] = { allowed: false, reason: 'notice-needed' };
       continue;
     }
+    if (purpose === 'analytics' && plan.europeanReportingActivationRequired && !options.europeanReportingActivated) {
+      decisions[purpose] = { allowed: false, reason: 'permission-needed' };
+      continue;
+    }
     const qcActivation = purpose !== 'competition' && plan.quebecActivationRequired[purpose];
     if (qcActivation && !options.quebecFunctionsActivated?.[purpose as 'ads' | 'analytics']) {
       decisions[purpose] = { allowed: false, reason: 'permission-needed' };
@@ -171,12 +186,12 @@ export function resolveLaunchProcessingPolicy(input: LaunchProcessingInput): Lau
   const eligibility = valid && lower >= 13 ? 'allowed' : outside ? 'outside-audience' : 'age-unresolved';
   return resolveWithThresholds(input, eligibility, {
     thirteen: valid && lower >= 13, fourteen: valid && lower >= 14,
-    fifteen: valid && lower >= 15, eighteen: valid && lower >= 18,
+    fifteen: valid && lower >= 15, sixteen: valid && lower >= 16, eighteen: valid && lower >= 18,
   });
 }
 /** Only call when the central Apple verifier already established adulthood. */
 export function resolveVerifiedAdultLaunchPlan(input: Omit<LaunchProcessingInput, 'age'>): LaunchProcessingResolution {
-  return resolveWithThresholds(input, 'allowed', { thirteen: true, fourteen: true, fifteen: true, eighteen: true });
+  return resolveWithThresholds(input, 'allowed', { thirteen: true, fourteen: true, fifteen: true, sixteen: true, eighteen: true });
 }
 /** Refine subdivision within the SAME country only, using existing minimal rule outcomes. */
 export function refineLaunchProcessingPlan(
@@ -186,8 +201,9 @@ export function refineLaunchProcessingPlan(
   const country = input.country?.trim().toUpperCase();
   return resolveWithThresholds({ ...input, newYorkProtectedHistory: input.newYorkProtectedHistory || plan.newYorkKnownContext }, plan.ageEligibility, {
     thirteen: plan.ageEligibility === 'allowed',
-    fourteen: adult || (country === 'CA' && !plan.quebecMinorAuthorityRequired),
-    fifteen: adult || (country === 'AU' && !plan.underAgeOfConsent),
+    fourteen: adult || plan.europeanConsentAgeSatisfied === true || (country === 'CA' && !plan.quebecMinorAuthorityRequired),
+    fifteen: adult || plan.europeanConsentAgeSatisfied === true || (country === 'AU' && !plan.underAgeOfConsent),
+    sixteen: adult || plan.europeanConsentAgeSatisfied === true,
     eighteen: adult,
   });
 }
@@ -213,7 +229,7 @@ function resolveWithThresholds(
     if (missing) plan.missingFacts[purpose].push(missing);
   };
   const country = input.country?.trim().toUpperCase() ?? '';
-  if (!['CA', 'US', 'AU', 'MX'].includes(country)) {
+  if (!isLaunchCountry(country)) {
     for (const purpose of PURPOSES) block(purpose, country ? 'outside-launch-scope' : 'country-unresolved', 'country');
     return finish();
   }
@@ -222,6 +238,10 @@ function resolveWithThresholds(
     return finish();
   }
   const adult = thresholds.eighteen;
+  const consentAge = europeanConsentAge(country);
+  const european = consentAge !== null;
+  const consentAgeSatisfied = consentAge === 13 ? thresholds.thirteen : consentAge === 14 ? thresholds.fourteen : consentAge === 15 ? thresholds.fifteen : thresholds.sixteen;
+  if (european) plan.europeanConsentAgeSatisfied = consentAgeSatisfied;
   const subdivision = input.subdivision?.trim().toUpperCase().replace(new RegExp('^' + country + '-'), '') ?? '';
   plan.newYorkKnownContext = input.newYorkProtectedHistory === true || (!adult && (
     (country === 'US' && (subdivision === 'NY' || input.newYorkPresence === 'present')) ||
@@ -231,17 +251,30 @@ function resolveWithThresholds(
   const quebecConfirmed = country === 'CA' && (subdivision === 'QC' || input.quebecResidency === 'resident');
   const quebecUnresolved = country === 'CA' && !quebecConfirmed && !knownProvince && input.quebecResidency !== 'not-resident';
   plan.underAgeOfConsent = !adult && (
-    country === 'MX' || ((quebecConfirmed || quebecUnresolved) && !thresholds.fourteen) || (country === 'AU' && !thresholds.fifteen)
+    (european && !consentAgeSatisfied) || country === 'MX' || ((quebecConfirmed || quebecUnresolved) && !thresholds.fourteen) || (country === 'AU' && !thresholds.fifteen)
   );
   plan.treatment = plan.underAgeOfConsent ? 'child' : adult ? 'unspecified' : 'teen';
   plan.adTreatment = plan.treatment;
   plan.requirements = { ads: 'notice-and-opt-out', analytics: 'notice-and-opt-out', competition: 'requested-service' };
   plan.reasons = { ads: 'notice-route', analytics: 'notice-route', competition: 'requested-service' };
+  if (european) {
+    plan.europeanReportingActivationRequired = true;
+    plan.requirements.analytics = 'express-consent';
+    plan.separateExpressChoiceRequired.analytics = true;
+    plan.reasons.analytics = 'european-reporting-consent-required';
+  }
   for (const purpose of PURPOSES) {
     // No case-by-case capacity or verified guardian service is collected here.
     // OAIC B.61 does not let a CHILD ad tag stand in for under-15 consent.
-    plan.parentalAuthorityRequired[purpose] = (!adult && country === 'MX') ||
+    plan.parentalAuthorityRequired[purpose] = (european && !consentAgeSatisfied && purpose !== 'competition') || (!adult && country === 'MX') ||
       (quebecConfirmed && !thresholds.fourteen) || (country === 'AU' && !thresholds.fifteen);
+    if (european && (!EUROPEAN_PROVIDER_POLICY.enabled ||
+        (purpose === 'ads' && (!EUROPEAN_PROVIDER_POLICY.googleNonPersonalizedRouteReviewed || !EUROPEAN_PROVIDER_POLICY.googleLimitedAdsRouteReviewed)) ||
+        (purpose === 'analytics' && !EUROPEAN_PROVIDER_POLICY.revenueCatExplicitConsentReviewed) ||
+        (purpose === 'competition' && !EUROPEAN_PROVIDER_POLICY.competitionRequestedServiceReviewed))) {
+      block(purpose, 'provider-route-unreviewed');
+      continue;
+    }
     // Missing geography is a recoverable fact, not inferred Quebec consent.
     // An old purpose grant cannot substitute for the missing regional answer.
     if (quebecUnresolved && (purpose !== 'competition' || !thresholds.fourteen)) {

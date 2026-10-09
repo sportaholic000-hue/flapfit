@@ -22,7 +22,7 @@ async function load(options: { discovery?: UmpProviderInfo; final?: UmpProviderI
     getProviderInfo: jest.fn().mockResolvedValue(options.final ?? info()), loadAndShowIfRequired: jest.fn().mockResolvedValue(options.final ?? info()) };
   controls.update.mockResolvedValueOnce(options.discovery ?? info());
   jest.doMock('../umpPrivacyControls', () => ({ getUmpProcessingControls: () => options.missing ? null : controls }));
-  jest.doMock('../europeanProviderPolicy', () => ({ EUROPEAN_PROVIDER_POLICY: {
+  jest.doMock('../europeanProviderPolicy', () => ({ isEuropeanProcessingDeferred: () => false, EUROPEAN_PROVIDER_POLICY: {
     enabled: options.enabled ?? true, revision: 'test-v1', googleNonPersonalizedRouteReviewed: true, googleLimitedAdsRouteReviewed: true,
     revenueCatPublisherNoticeReviewed: options.reporting ?? false, competitionRequestedServiceReviewed: options.competition ?? false,
   } }));

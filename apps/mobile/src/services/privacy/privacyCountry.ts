@@ -1,7 +1,8 @@
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { AppState, Platform } from 'react-native';
 
-export type LaunchCountry = 'CA' | 'US' | 'AU' | 'MX';
+import { isLaunchCountry, type LaunchCountry } from './launchCountries';
+export type { LaunchCountry } from './launchCountries';
 export type PrivacyCountrySnapshot = Readonly<{
   status: 'unknown' | 'checking' | 'resolved' | 'outside-launch' | 'unavailable';
   country: LaunchCountry | null;
@@ -11,7 +12,6 @@ const TRACE_URL = 'https://flapfitapp.com/cdn-cgi/trace';
 const TRACE_HOST = 'flapfitapp.com';
 const MAX_TRACE_BYTES = 4096;
 const TIMEOUT_MS = 8_000;
-const countries = new Set<LaunchCountry>(['CA', 'US', 'AU', 'MX']);
 const unresolved = (status: 'unknown' | 'checking' | 'unavailable'): PrivacyCountrySnapshot => ({ status, country: null, source: null });
 /** Consume and discard trace text immediately. It includes an IP and must never
  * enter logs, storage, snapshots, analytics, error details or other SDKs.
@@ -37,7 +37,7 @@ export function parsePrivacyCountryTrace(raw: string): PrivacyCountrySnapshot {
     if (key === 'loc') country = line.slice(separator + 1);
   }
   if (host !== TRACE_HOST || !country || !/^[A-Z]{2}$/.test(country) || country === 'XX' || country === 'ZZ') return unresolved('unavailable');
-  if (!countries.has(country as LaunchCountry)) {
+  if (!isLaunchCountry(country)) {
     // No unsupported country code is retained or used to choose a policy.
     return { status: 'outside-launch', country: null, source: 'cloudflare-trace' };
   }

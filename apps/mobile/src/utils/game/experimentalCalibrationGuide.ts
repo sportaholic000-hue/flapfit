@@ -1,6 +1,7 @@
 import { CALIBRATION_ARTWORK, CALIBRATION_DETAILS } from './calibrationGuideArtwork';
+import { ANDROID_CALIBRATION_IMAGES } from './androidCalibrationImageData';
 
-// Branch-only visual experiment. This module never supplies tracking input.
+// Native camera-mode visual guide. This module never supplies tracking input.
 export function showExperimentalCalibrationGuide(platform: string | undefined, exercise: string, backgroundMode: string) {
   return platform === 'android' && supportedExercises.includes(exercise) && backgroundMode === 'camera';
 }
@@ -20,8 +21,23 @@ const exercisePoses: Record<string, GuidePoses> = {
   pushups: { top: artwork('pushupTop'), bottom: artwork('pushupBottom') },
   pullups: { top: artwork('pullupTop'), bottom: artwork('pullupBottom'), reach: artwork('pullupReach') },
 };
-export function buildCalibrationGuideMarkup(exercise: string) {
-  const poses = exercisePoses[exercise];
+// Approved lossless artwork adapted for Android. Existing coordinates and guide lifecycle stay intact.
+const imageArtwork = (pose: keyof typeof ANDROID_CALIBRATION_IMAGES) => {
+  const image = ANDROID_CALIBRATION_IMAGES[pose];
+  return '<image href="' + image.dataUri + '" x="' + image.x + '" y="' + image.y +
+    '" width="' + image.width + '" height="' + image.height +
+    '" preserveAspectRatio="' + (pose === 'pullupReach' ? 'none' : 'xMidYMax meet') + '"/>';
+};
+const androidImagePoses: Record<string, GuidePoses> = {
+  lateralraise: { top: imageArtwork('lateralTop'), bottom: imageArtwork('lateralBottom') },
+  biceps: { top: imageArtwork('curlTop'), bottom: imageArtwork('curlBottom') },
+  shoulderpress: { top: imageArtwork('pressTop'), bottom: imageArtwork('pressBottom') },
+  squats: { top: imageArtwork('squatTop'), bottom: imageArtwork('squatBottom') },
+  pushups: { top: imageArtwork('pushupTop'), bottom: imageArtwork('pushupBottom') },
+  pullups: { top: imageArtwork('pullupTop'), bottom: imageArtwork('pullupBottom'), reach: imageArtwork('pullupReach') },
+};
+export function buildCalibrationGuideMarkup(exercise: string, platform?: string) {
+  const poses = platform === 'android' ? androidImagePoses[exercise] : exercisePoses[exercise];
   if (!poses) { return ''; }
   return '<div id="calibration-pose-guide" hidden aria-hidden="true">' +
     '<svg viewBox="' + (poses.viewBox || '0 -28 240 310') + '" xmlns="http://www.w3.org/2000/svg" focusable="false">' +
@@ -123,7 +139,7 @@ export const CALIBRATION_GUIDE_SCRIPT = `
   }
 
   // The lowered instruction card exposes the bird that it used to cover.
-  // Keep this Android camera-guide change visual only; flight state is untouched.
+  // Keep this camera-guide change visual only; flight state is untouched.
   var originalDrawBird = drawBird;
   drawBird = function (now) {
     if (state === 'loading' || state === 'waitTop' || state === 'waitBottom') { return; }

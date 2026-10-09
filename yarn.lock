@@ -8038,6 +8038,7 @@ __metadata:
     expo-file-system: "npm:~57.0.7"
     expo-haptics: "npm:~57.0.3"
     expo-image: "npm:~57.0.5"
+    expo-keep-awake: "npm:~57.0.2"
     expo-linear-gradient: "npm:~57.0.2"
     expo-linking: "npm:~57.0.10"
     expo-mail-composer: "npm:57.0.2"

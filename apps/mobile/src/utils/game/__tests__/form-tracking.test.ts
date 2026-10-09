@@ -2,7 +2,7 @@ import { SCRIPT_FORM_TRACKING } from '../html/scriptFormTracking';
 import { SCRIPT_CORE } from '../html/scriptCore';
 import { SCRIPT_GAME } from '../html/scriptGame';
 
-type Point = { x: number; y: number; visibility: number };
+type Point = { x: number; y: number; z?: number; visibility: number };
 type FormCheck = {
   valid: boolean;
   message: string;
@@ -15,7 +15,7 @@ function point(x: number, y: number): Point {
 }
 
 function pose(entries: Array<[number, Point]>) {
-  const landmarks = Array.from({ length: 33 }, () => ({ x: 0, y: 0, visibility: 0 }));
+  const landmarks: Point[] = Array.from({ length: 33 }, () => ({ x: 0, y: 0, visibility: 0 }));
   for (const [index, value] of entries) landmarks[index] = value;
   return landmarks;
 }
@@ -33,7 +33,7 @@ function makeHarness(exercise: string, floorY = 0.97, floorScale = 1) {
     'CONFIG',
     'performance',
     'calibrationReadyAt',
-    SCRIPT_FORM_TRACKING +
+    "var video=CONFIG.exercise==='pushups'?{videoWidth:720,videoHeight:1280}:undefined;" + SCRIPT_FORM_TRACKING +
       '; return {' +
       ' update: updateExperimentalFormPose,' +
       ' reset: resetExperimentalFormTracking,' +
@@ -775,6 +775,11 @@ describe('experimental form tracking', () => {
       ...mirroredPair(15, 16, 0.42, 0.65),
       ...mirroredPair(23, 24, 0.43, 0.58),
     ]);
+    // Explicit front-facing prone torso depth; 2D alone also fits an upright person.
+    frontFacingTop[11].z = frontFacingTop[12].z = -0.7;
+    frontFacingTop[23].z = frontFacingTop[24].z = 0;
+    frontFacingTop[25] = { x: 0.43, y: 0.73, z: 0.65, visibility: 1 };
+    frontFacingTop[26] = { x: 0.57, y: 0.73, z: 0.65, visibility: 1 };
     harness.update(frontFacingTop, 2100);
 
     expect(harness.validateCalibration('top').valid).toBe(true);
@@ -1042,10 +1047,20 @@ function symmetricPose(shoulder: [number, number], elbow: [number, number], wris
   ]);
 }
 
+// Give this pushup calibration fixture an explicitly prone torso, while keeping
+// the existing joint angles that the gameplay/full-extension test exercises.
+function withPronePushupTorso(points: Point[]) {
+  points[11].z = points[12].z = -0.7;
+  points[23].z = points[24].z = 0;
+  points[25] = { x: 0.43, y: 0.73, z: 0.65, visibility: 1 };
+  points[26] = { x: 0.57, y: 0.73, z: 0.65, visibility: 1 };
+  return points;
+}
+
 const exerciseLockouts = [
   {
     exercise: 'pushups', norm: 1,
-    top: symmetricPose([0.42, 0.35], [0.355, 0.5], [0.42, 0.65], [0.43, 0.58]),
+    top: withPronePushupTorso(symmetricPose([0.42, 0.35], [0.355, 0.5], [0.42, 0.65], [0.43, 0.58])),
     bottom: symmetricPose([0.42, 0.45], [0.33, 0.5], [0.42, 0.65], [0.43, 0.62]),
     lockout: symmetricPose([0.42, 0.25], [0.42, 0.45], [0.42, 0.65], [0.43, 0.48]),
   },

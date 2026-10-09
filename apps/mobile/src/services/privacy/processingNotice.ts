@@ -10,7 +10,7 @@ import { getAdvertisingWithdrawalState, resetAdvertisingWithdrawalConfirmation, 
 // Only the notice acknowledgement and specific function activations are stored.
 // No age, jurisdiction, device, ad, or workout information belongs in this record.
 const KEY = '@flapfit/processing-notice-v1';
-type Notice = { version: number; acknowledged: boolean; adsActivated: boolean; reportingActivated: boolean };
+type Notice = { version: number; acknowledged: boolean; adsActivated: boolean; reportingActivated: boolean; europeanReportingActivated?: boolean };
 let saved: Notice = { version: PROCESSING_NOTICE_VERSION, acknowledged: false, adsActivated: false, reportingActivated: false };
 let hydration: Promise<void> | null = null;
 let writes: Promise<void> = Promise.resolve();
@@ -35,7 +35,7 @@ export async function restoreProcessingNotice(): Promise<void> {
       if (value?.version === PROCESSING_NOTICE_VERSION && value.acknowledged === true &&
           typeof value.adsActivated === 'boolean' && typeof value.reportingActivated === 'boolean') {
         saved = { version: PROCESSING_NOTICE_VERSION, acknowledged: true,
-          adsActivated: value.adsActivated, reportingActivated: value.reportingActivated };
+          adsActivated: value.adsActivated, reportingActivated: value.reportingActivated, europeanReportingActivated: value.europeanReportingActivated === true };
       }
     } catch { /* An unreadable acknowledgement grants nothing. */ }
   })();
@@ -51,8 +51,9 @@ function applySavedNotice(): void {
     const current = input.launch.options.quebecFunctionsActivated;
     const ads = saved.adsActivated && input.choices.ads.decision === 'granted' && input.choices.ads.noticeVersion === PROCESSING_NOTICE_VERSION;
     const analytics = saved.reportingActivated && input.choices.analytics.decision === 'granted' && input.choices.analytics.noticeVersion === PROCESSING_NOTICE_VERSION;
-    if (current?.ads !== ads || current?.analytics !== analytics) {
-      setLaunchProcessingOptions({ ...input.launch.options, quebecFunctionsActivated: { ads, analytics } });
+    const europeanReportingActivated = saved.europeanReportingActivated === true && analytics;
+    if (current?.ads !== ads || current?.analytics !== analytics || input.launch.options.europeanReportingActivated !== europeanReportingActivated) {
+      setLaunchProcessingOptions({ ...input.launch.options, quebecFunctionsActivated: { ads, analytics }, europeanReportingActivated });
     }
   }
   if (input.presentedNoticeVersion !== PROCESSING_NOTICE_VERSION) markProcessingNoticePresented(PROCESSING_NOTICE_VERSION);
@@ -92,7 +93,7 @@ export async function allowProcessingPurpose(purpose: 'ads' | 'analytics'): Prom
     const operation = writes.catch(() => undefined).then(async () => {
       if (!current()) return;
       const next = { ...saved,
-        ...(purpose === 'ads' ? { adsActivated: true } : { reportingActivated: true }) };
+        ...(purpose === 'ads' ? { adsActivated: true } : { reportingActivated: true, europeanReportingActivated: getProcessingInputs().launch?.plan?.europeanReportingActivationRequired === true || saved.europeanReportingActivated === true }) };
       await AsyncStorage.setItem(KEY, JSON.stringify(next));
       if (current()) saved = next;
     });
@@ -147,7 +148,8 @@ export function needsSeparatePurposeChoice(purpose: 'ads' | 'analytics'): boolea
   const choice = input.choices[purpose];
   const activated = purpose === 'ads' ? saved.adsActivated : saved.reportingActivated;
   return choice.decision !== 'granted' || choice.noticeVersion !== PROCESSING_NOTICE_VERSION ||
-    (plan.quebecActivationRequired[purpose] && !activated);
+    (plan.quebecActivationRequired[purpose] && !activated) ||
+    (purpose === 'analytics' && plan.europeanReportingActivationRequired === true && saved.europeanReportingActivated !== true);
 }
 
 export function processingPurposeStatus(purpose: 'ads' | 'analytics'): string {

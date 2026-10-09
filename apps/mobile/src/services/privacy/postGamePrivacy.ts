@@ -13,6 +13,12 @@ import {
 
 /** Called only for a claimed Done/Retry/Next action after a completed game.
  * Sharing, result appearance and foreground events never invoke this. */
+function needsReportingPrompt(): boolean {
+  // Optional European reporting can remain unset. Acknowledging setup is not
+  // consent and must not nag players on every subsequent result action.
+  return needsSeparatePurposeChoice('analytics') &&
+    (!getProcessingInputs().launch?.plan?.europeanReportingActivationRequired || !isProcessingNoticeAcknowledged());
+}
 export async function preparePostGamePrivacy(
   canPresent: () => boolean,
   openChoices: (showDetails?: boolean) => Promise<void>,
@@ -23,7 +29,7 @@ export async function preparePostGamePrivacy(
   // because another eligible exit was tapped. Explicit privacy refreshes retain
   // their existing invalidation/race handling in the monetization adapter.
   if (isMonetizationPrepared() && isProcessingNoticeAcknowledged() &&
-      !needsNewYorkClarification() && !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification() && !needsSeparatePurposeChoice('ads') && !needsSeparatePurposeChoice('analytics') && !needsGameSetup()) return true;
+      !needsNewYorkClarification() && !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification() && !needsSeparatePurposeChoice('ads') && !needsReportingPrompt() && !needsGameSetup()) return true;
   await prepareMonetization(canPresent);
   await restoreProcessingNotice();
   // Regional restrictions disable providers, never the next workout. Existing
@@ -31,7 +37,7 @@ export async function preparePostGamePrivacy(
   if (isRegionalAdvertisingDisabled(getProcessingInputs()) && !needsGameSetup()) return true;
   if (!canPresent()) return false;
   if (!canPresentProcessingNotice() && !needsNewYorkClarification() && !needsLocalAgeAnswer() && !needsConnecticutClarification() && !needsQuebecClarification()) return !needsGameSetup();
-  const requiredChoices = needsNewYorkClarification() || needsLocalAgeAnswer() || needsConnecticutClarification() || needsQuebecClarification() || needsSeparatePurposeChoice('ads') || needsSeparatePurposeChoice('analytics');
+  const requiredChoices = needsNewYorkClarification() || needsLocalAgeAnswer() || needsConnecticutClarification() || needsQuebecClarification() || needsSeparatePurposeChoice('ads') || needsReportingPrompt();
   if (!isProcessingNoticeAcknowledged() || requiredChoices) {
     if (requiredChoices) {
       await openChoices();

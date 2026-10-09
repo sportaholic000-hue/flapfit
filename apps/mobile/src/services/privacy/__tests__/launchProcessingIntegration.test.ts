@@ -1,7 +1,14 @@
 const settle = async () => { for (let i = 0; i < 40; i++) await Promise.resolve(); };
 const originalEnv = { ...process.env };
-async function load(options: { platform?: 'ios' | 'android'; offline?: boolean; unsupported?: boolean; osVersion?: string; requirements?: unknown; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string>; quebecResidency?: 'resident' | 'not-resident' } = {}) {
+async function load(options: { platform?: 'ios' | 'android'; futureEurope?: boolean; offline?: boolean; unsupported?: boolean; osVersion?: string; requirements?: unknown; age?: unknown; required?: boolean; country?: string; memory?: Map<string, string>; quebecResidency?: 'resident' | 'not-resident' } = {}) {
   jest.resetModules();
+  // The prepared future routes remain tested without enabling them in the build.
+  if (options.futureEurope) jest.doMock('../europeanProviderPolicy', () => {
+    const actual = jest.requireActual('../europeanProviderPolicy');
+    return { ...actual, EUROPEAN_PROVIDER_POLICY: { ...actual.EUROPEAN_PROVIDER_POLICY, enabled: true }, isEuropeanProcessingDeferred: () => false };
+  });
+  else jest.dontMock('../europeanProviderPolicy');
+
   process.env.EXPO_PUBLIC_ADS_MODE = 'test'; process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY = 'appl_test_only';
   if (options.platform === 'android') process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY = 'goog_test_only';
   const memory = options.memory ?? new Map<string, string>();
@@ -37,7 +44,7 @@ async function load(options: { platform?: 'ios' | 'android'; offline?: boolean; 
   const startup: typeof import('../privacyStartup') = require('../privacyStartup');
   const country: typeof import('../privacyCountry') = require('../privacyCountry');
   const stop = startup.startPrivacyStartup(); await Promise.all([startup.preparePrivacyStartup(), country.refreshPrivacyCountry()]);
-  return { access, adapter, country, requestAge, nativeAds, nativeAd, events, interstitial, consent: sdk.AdsConsent, purchases, adLoad, rcLoad, storage, fence, memory, alert,
+  return { fetcher, access, adapter, country, requestAge, nativeAds, nativeAd, events, interstitial, consent: sdk.AdsConsent, purchases, adLoad, rcLoad, storage, fence, memory, alert,
     change: (value: string) => { appState.currentState = value; [...listeners].forEach((listener) => listener(value)); },
     finish: () => { stop(); if (descriptor) Object.defineProperty(globalThis, 'fetch', descriptor); } };
 }
@@ -1288,5 +1295,267 @@ test('Android permitted test ads remain independent of disabled RevenueCat, even
     f.events.get('loaded')!();
     expect(ad?.isReady()).toBe(true);
     ad?.dispose();
+  } finally { f.finish(); }
+});
+
+test.each(['DE','FR','AT','GB','CH','IS','LI','NO'])('European %s setup permits Google UMP, keeps RC separate, and leaves normal game entry available', async country => {
+  const f = await load({ futureEurope: true, country});
+  try {
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const flow: typeof import('../postGamePrivacy') = require('../postGamePrivacy');
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    const choices = jest.fn(async () => { await notice.acknowledgeProcessingNotice(); });
+    await flow.preparePostGamePrivacy(() => true, choices); await settle();
+    expect(f.consent.requestInfoUpdate).toHaveBeenCalledWith({tagForUnderAgeOfConsent:false});
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(1);
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.access.getProcessingAccess().competition.allowed).toBe(false);
+    expect(await entry.authorizeGameEntry()).toEqual({status:'available'});
+    await flow.preparePostGamePrivacy(() => true, choices); await settle();
+    expect(choices).toHaveBeenCalledTimes(1);
+    await notice.allowProcessingPurpose('analytics');
+    await f.adapter.prepareMonetization(() => true); await settle();
+    expect(f.purchases.configure).toHaveBeenCalledTimes(1);
+    expect(f.access.getProcessingAccess().competition.allowed).toBe(false);
+    await notice.refuseProcessingPurpose('analytics'); await settle();
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+    expect(f.access.getProcessingAccess().revenueCat.allowed).toBe(false);
+  } finally { f.finish(); }
+});
+test.each([true,false])('German Google response canRequestAds=%s never authorizes RC or blocks game entry', async canRequestAds => {
+  const f=await load({ futureEurope: true, country:'DE'});
+  try {
+    f.consent.requestInfoUpdate.mockResolvedValue({canRequestAds,privacyOptionsRequirementStatus:'REQUIRED'});
+    f.consent.loadAndShowConsentFormIfRequired.mockResolvedValue({canRequestAds,privacyOptionsRequirementStatus:'REQUIRED'});
+    const notice: typeof import('../processingNotice')=require('../processingNotice');
+    await (require('../postGamePrivacy') as typeof import('../postGamePrivacy')).preparePostGamePrivacy(()=>true,async()=>{await notice.acknowledgeProcessingNotice();});
+    await settle();
+    expect(f.nativeAds.initialize).toHaveBeenCalledTimes(canRequestAds ? 1 : 0);
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(await (require('../gameEntry') as typeof import('../gameEntry')).authorizeGameEntry()).toEqual({status:'available'});
+  } finally {f.finish();}
+});
+test('German under-consent teenager can play without optional providers; prior broad local band is not promoted to sixteen',async()=>{
+ const f=await load({ futureEurope: true, country:'DE',unsupported:true,memory:new Map([['@flapfit/local-age-answer-v1',JSON.stringify({version:1,answer:'13-17'})]])});
+ try {
+  const flow: typeof import('../postGamePrivacy')=require('../postGamePrivacy');
+  await flow.preparePostGamePrivacy(()=>true,jest.fn()); await settle();
+  expect(f.nativeAds.initialize).not.toHaveBeenCalled(); expect(f.purchases.configure).not.toHaveBeenCalled();
+  expect(f.access.getProcessingInputs().launch?.plan?.europeanConsentAgeSatisfied).toBe(false);
+  expect(await (require('../gameEntry') as typeof import('../gameEntry')).authorizeGameEntry()).toEqual({status:'available'});
+ } finally {f.finish();}
+});
+test('old reporting grant requires European activation and a new explicit activation survives restart',async()=>{
+ const memory=orderedMemory(); let f=await load({ futureEurope: true, country:'DE',memory});
+ try {
+  const notice: typeof import('../processingNotice')=require('../processingNotice');
+  await f.adapter.prepareMonetization(()=>true); await notice.restoreProcessingNotice(); await settle();
+  expect(f.access.getProcessingAccess().revenueCat.allowed).toBe(false);
+  await notice.allowProcessingPurpose('analytics'); await f.adapter.prepareMonetization(()=>true); await settle();
+  expect(f.access.getProcessingAccess().revenueCat.allowed).toBe(true);
+ } finally {f.finish();}
+ f=await load({ futureEurope: true, country:'DE',memory});
+ try {await (require('../processingNotice') as typeof import('../processingNotice')).restoreProcessingNotice(); await f.adapter.prepareMonetization(()=>true); await settle(); expect(f.access.getProcessingAccess().revenueCat.allowed).toBe(true);}
+ finally {f.finish();}
+});
+
+
+test('Europe network-country transitions preserve real residency and require fresh country-specific age evidence', async () => {
+  const f = await load({ futureEurope: true,  country: 'DE' });
+  try {
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const regional: typeof import('../regionalClarification') = require('../regionalClarification');
+    await f.adapter.prepareMonetization(() => true);
+    await notice.acknowledgeProcessingNotice();
+    await f.adapter.prepareMonetization(() => true);
+    const move = async (code: string) => {
+      f.change('background');
+      expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+      f.fetcher.mockResolvedValue({ ok: true, status: 200, redirected: false,
+        url: 'https://flapfitapp.com/cdn-cgi/trace', headers: { get: (key: string) => key === 'content-type' ? 'text/plain' : null },
+        text: async () => 'h=flapfitapp.com\nloc=' + code + '\n' } as unknown as Response);
+      f.change('active'); await f.country.refreshPrivacyCountry();
+      expect(f.access.getProcessingInputs().verification).toBeNull();
+      await f.adapter.prepareMonetization(() => true); await settle();
+    };
+    await move('CA');
+    await regional.saveProvinceSelection('QC');
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(false);
+    await regional.saveProvinceSelection('NB');
+    await f.adapter.refreshMonetizationFromChoices(() => true);
+    expect(regional.getSavedProvinceName()).toBe('New Brunswick');
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+    await move('DE');
+    expect(regional.getSavedProvinceName()).toBe('New Brunswick');
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+    expect(f.access.getProcessingAccess().revenueCat.allowed).toBe(false);
+    await move('US');
+    expect(f.access.getProcessingAccess().ads.allowed).toBe(true);
+    expect(f.requestAge).toHaveBeenCalledTimes(4);
+    expect(f.nativeAd.load).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+test.each(['declined', 'error'])('Germany Apple %s cannot be replaced by local age or advertising choices', async status => {
+  const f = await load({ futureEurope: true,  country: 'DE', age: { status, lowerBound: null, upperBound: null } });
+  try {
+    await f.adapter.prepareMonetization(() => true);
+    expect((require('../localAgeAnswer') as typeof import('../localAgeAnswer')).hasLocalAgeControl()).toBe(false);
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(await (require('../gameEntry') as typeof import('../gameEntry')).authorizeGameEntry(true)).toEqual({ status: 'setup-required' });
+  } finally { f.finish(); }
+});
+
+test('Germany UMP failure and ad no-fill do not change game eligibility or start reporting', async () => {
+  const f = await load({ futureEurope: true,  country: 'DE' });
+  try {
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    await f.adapter.prepareMonetization(() => true);
+    await notice.acknowledgeProcessingNotice();
+    f.consent.requestInfoUpdate.mockRejectedValueOnce(new Error('network unavailable'));
+    await f.adapter.prepareMonetization(() => true); await settle();
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+    await f.adapter.refreshMonetizationFromChoices(() => true); await settle();
+    const ad = f.adapter.prepareResultInterstitial();
+    expect(ad).not.toBeNull();
+    f.events.get('error')!({ code: 'no-fill', message: 'No inventory' });
+    expect(ad!.isReady()).toBe(false);
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+test('Germany delayed menu consent cannot finish SDK preparation after gameplay starts', async () => {
+  const f = await load({ futureEurope: true,  country: 'DE' });
+  try {
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    await f.adapter.prepareMonetization(() => true);
+    await notice.acknowledgeProcessingNotice();
+    let release!: (value: { canRequestAds: boolean; privacyOptionsRequirementStatus: string }) => void;
+    f.consent.requestInfoUpdate.mockImplementationOnce(() => new Promise(resolve => { release = resolve; }));
+    const pending = f.adapter.prepareMonetization(() => true); await settle();
+    await f.adapter.settlePrivacyBeforeGameplay();
+    release({ canRequestAds: true, privacyOptionsRequirementStatus: 'REQUIRED' });
+    await pending; await settle();
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.nativeAd.load).not.toHaveBeenCalled();
+    expect(f.consent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
+  } finally { f.finish(); }
+});
+
+
+test.each(Object.keys(require('../launchCountries').EUROPEAN_COUNTRIES))('shipping release: %s keeps all European providers inactive even with saved grants', async country => {
+  const f = await load({ country, memory: orderedMemory() });
+  try {
+    const policy: typeof import('../europeanProviderPolicy') = require('../europeanProviderPolicy');
+    expect(policy.EUROPEAN_PROVIDER_POLICY.enabled).toBe(false);
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    await f.adapter.prepareCompetitionEligibility(() => true);
+    await f.access.setProcessingChoice('competition', 'granted');
+    await (require('../postGamePrivacy') as typeof import('../postGamePrivacy')).preparePostGamePrivacy(() => true, jest.fn());
+    await settle();
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: false }, revenueCat: { allowed: false }, competition: { allowed: false } });
+    expect(notice.canChooseProcessingPurpose('analytics')).toBe(false);
+    expect(notice.canChooseProcessingPurpose('ads')).toBe(false);
+    expect(f.consent.requestInfoUpdate).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.nativeAd.load).not.toHaveBeenCalled();
+    expect(await (require('../gameEntry') as typeof import('../gameEntry')).authorizeGameEntry(true)).toEqual({ status: 'available' });
+  } finally { f.finish(); }
+});
+
+test.each(['CA', 'US', 'AU', 'MX'])('shipping release: %s traveller loses provider access in Germany and recovers on return without changing residency', async country => {
+  const f = await load({ country, quebecResidency: country === 'CA' ? 'not-resident' : undefined });
+  try {
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    await f.adapter.prepareMonetization(() => true);
+    await notice.acknowledgeProcessingNotice();
+    await f.adapter.prepareMonetization(() => true); await settle();
+    await f.access.setProcessingChoice('competition', 'granted');
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: true }, competition: { allowed: true } });
+    const ad = f.adapter.prepareResultInterstitial(); f.events.get('loaded')!();
+    expect(ad!.isReady()).toBe(true);
+    const move = async (code: string) => {
+      f.change('background');
+      f.fetcher.mockResolvedValue({ ok: true, status: 200, redirected: false,
+        url: 'https://flapfitapp.com/cdn-cgi/trace', headers: { get: (key: string) => key === 'content-type' ? 'text/plain' : null },
+        text: async () => 'h=flapfitapp.com\nloc=' + code + '\n' } as unknown as Response);
+      f.change('active'); await f.country.refreshPrivacyCountry();
+      await f.adapter.prepareMonetization(() => true); await settle();
+    };
+    await move('DE');
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: false }, revenueCat: { allowed: false }, competition: { allowed: false } });
+    expect(ad!.isReady()).toBe(false);
+    expect(f.nativeAd.destroy).toHaveBeenCalled();
+    expect(f.nativeAd.show).not.toHaveBeenCalled();
+    expect(f.fence).toHaveBeenLastCalledWith(false);
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+    await move(country);
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: true }, competition: { allowed: true } });
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+  } finally { f.finish(); }
+});
+
+test.each(Object.keys(require('../launchCountries').EUROPEAN_COUNTRIES))('Android shipping release: %s keeps all European providers inactive even with saved grants', async country => {
+  const f = await load({ platform: 'android', unsupported: true, country, memory: orderedMemory() });
+  try {
+    const policy: typeof import('../europeanProviderPolicy') = require('../europeanProviderPolicy');
+    expect(policy.EUROPEAN_PROVIDER_POLICY.enabled).toBe(false);
+    await (require('../localAgeAnswer') as typeof import('../localAgeAnswer')).saveLocalAgeAnswer('18-plus');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    await f.adapter.prepareCompetitionEligibility(() => true);
+    await f.access.setProcessingChoice('competition', 'granted');
+    await (require('../postGamePrivacy') as typeof import('../postGamePrivacy')).preparePostGamePrivacy(() => true, jest.fn());
+    await settle();
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: false }, revenueCat: { allowed: false }, competition: { allowed: false } });
+    expect(notice.canChooseProcessingPurpose('analytics')).toBe(false);
+    expect(notice.canChooseProcessingPurpose('ads')).toBe(false);
+    expect(f.consent.requestInfoUpdate).not.toHaveBeenCalled();
+    expect(f.nativeAds.initialize).not.toHaveBeenCalled();
+    expect(f.purchases.configure).not.toHaveBeenCalled();
+    expect(f.nativeAd.load).not.toHaveBeenCalled();
+    expect(await (require('../gameEntry') as typeof import('../gameEntry')).authorizeGameEntry(true)).toEqual({ status: 'available' });
+  } finally { f.finish(); }
+});
+
+test.each(['CA', 'US', 'AU', 'MX'])('Android shipping release: %s traveller loses provider access in Germany and recovers on return without changing residency', async country => {
+  const f = await load({ platform: 'android', unsupported: true, country, quebecResidency: country === 'CA' ? 'not-resident' : undefined });
+  try {
+    await (require('../localAgeAnswer') as typeof import('../localAgeAnswer')).saveLocalAgeAnswer('18-plus');
+    const notice: typeof import('../processingNotice') = require('../processingNotice');
+    const entry: typeof import('../gameEntry') = require('../gameEntry');
+    await f.adapter.prepareMonetization(() => true);
+    await notice.acknowledgeProcessingNotice();
+    await f.adapter.prepareMonetization(() => true); await settle();
+    await f.access.setProcessingChoice('competition', 'granted');
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: true }, competition: { allowed: true } });
+    const ad = f.adapter.prepareResultInterstitial(); f.events.get('loaded')!();
+    expect(ad!.isReady()).toBe(true);
+    const move = async (code: string) => {
+      f.change('background');
+      f.fetcher.mockResolvedValue({ ok: true, status: 200, redirected: false,
+        url: 'https://flapfitapp.com/cdn-cgi/trace', headers: { get: (key: string) => key === 'content-type' ? 'text/plain' : null },
+        text: async () => 'h=flapfitapp.com\nloc=' + code + '\n' } as unknown as Response);
+      f.change('active'); await f.country.refreshPrivacyCountry();
+      await f.adapter.prepareMonetization(() => true); await settle();
+    };
+    await move('DE');
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: false }, revenueCat: { allowed: false }, competition: { allowed: false } });
+    expect(ad!.isReady()).toBe(false);
+    expect(f.nativeAd.destroy).toHaveBeenCalled();
+    expect(f.nativeAd.show).not.toHaveBeenCalled();
+    expect(f.requestAge).not.toHaveBeenCalled();
+    expect(f.rcLoad).not.toHaveBeenCalled();
+    expect(f.fence).not.toHaveBeenCalled();
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
+    await move(country);
+    expect(f.access.getProcessingAccess()).toMatchObject({ ads: { allowed: true }, revenueCat: { allowed: true }, competition: { allowed: true } });
+    expect(await entry.authorizeGameEntry(true)).toEqual({ status: 'available' });
   } finally { f.finish(); }
 });

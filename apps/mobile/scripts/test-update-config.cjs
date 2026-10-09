@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
-const { validateUpdateConfig } = require('./validate-update-config.cjs');
+const { validateUpdateConfig, validateDependencyLayout } = require('./validate-update-config.cjs');
 const config = require('../fingerprint.config.js');
 const appRoot = path.resolve(__dirname, '..');
 const eas = require('../eas.json');
@@ -19,6 +19,28 @@ const hook = (filePath, content, step = 1024) => {
   if (end) output.push(Buffer.from(end));
   return Buffer.concat(output).toString('utf8');
 };
+// Reproduce the build-9 failure with a real external dependency junction.
+const os = require('node:os');
+const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'flapfit-dependency-layout-'));
+assert(fixtureRoot.startsWith(path.join(os.tmpdir(), 'flapfit-dependency-layout-')));
+const fixtureApp = path.join(fixtureRoot, 'checkout', 'apps', 'mobile');
+const fixtureModules = path.join(fixtureRoot, 'checkout', 'node_modules');
+const sharedModules = path.join(fixtureRoot, 'shared-modules');
+try {
+  fs.mkdirSync(fixtureApp, { recursive: true });
+  fs.mkdirSync(fixtureModules);
+  fs.mkdirSync(sharedModules);
+  assert.deepEqual(validateDependencyLayout(fixtureApp), []);
+  fs.rmdirSync(fixtureModules); // Empty directory created by this test only.
+  fs.symlinkSync(sharedModules, fixtureModules, 'junction');
+  assert(validateDependencyLayout(fixtureApp).some(message => message.includes('linked node_modules')));
+  fs.unlinkSync(fixtureModules); // Remove the link, never the shared directory.
+  assert(fs.existsSync(sharedModules));
+  fs.mkdirSync(fixtureModules);
+  assert.deepEqual(validateDependencyLayout(fixtureApp), []);
+} finally {
+  fs.rmSync(fixtureRoot, { recursive: true, force: true });
+}
 assert.deepEqual(validateUpdateConfig(appRoot, 'production', eas.build.production.env), []);
 assert.deepEqual(validateUpdateConfig(appRoot, 'preview', eas.build.preview.env), []);
 assert(validateUpdateConfig(appRoot, 'production', eas.build.preview.env).some(x => x.includes('EXPO_PUBLIC_ADS_MODE')));
@@ -63,4 +85,4 @@ for (const [filename, transform, undo] of [
   assert.equal(hook(filePath, original), hook(filePath, final));
   assert.throws(() => hook(filePath, original + '// drift'), /drift/);
 }
-console.log('OTA checks passed: all 16 environment omissions rejected, live/test mismatch rejected; Windows/LF and overlapping streams stable; binary bytes untouched; fresh/patched RevenueCat + both AdMob bridges identical; native drift rejected.');
+console.log('OTA checks passed: external dependency junction rejected; isolated install accepted; all 16 environment omissions rejected, live/test mismatch rejected; Windows/LF and overlapping streams stable; binary bytes untouched; fresh/patched RevenueCat + both AdMob bridges identical; native drift rejected.');

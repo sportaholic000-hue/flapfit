@@ -33,6 +33,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import { RunCelebrations } from '@/components/RunCelebrations';
+import { GameScreenAwake } from '@/components/GameScreenAwake';
 import { ChampionshipResultHeading } from '@/components/ChampionBadge';
 import { isChampionshipRun } from '@/utils/game/levelAchievements';
 import { GameEligibilityGate } from '@/components/GameEligibilityGate';
@@ -260,7 +261,12 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
     });
   };
   const [recordWithoutAudio, setRecordWithoutAudio] = useState(false);
+  // A saved Android denial is a complete choice: optional audio must not block play.
+  const recordSilently = recordWithoutAudio ||
+    (Platform.OS === 'android' && microphonePermission?.status === 'denied');
   const [runKey, setRunKey] = useState(0);
+  const [wakeError, setWakeError] = useState(false);
+  useEffect(() => { setWakeError(false); }, [runKey]);
   const resultSubmissionGeneration = useRef(0);
   useEffect(() => () => { resultSubmissionGeneration.current += 1; }, []);
   const [result, setResult] = useState<GameResult | null>(null);
@@ -566,7 +572,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
         recordRun,
         recordAudio: recordRun && !recordWithoutAudio && microphonePermission?.granted === true,
         recordingBranding: recordRun && Platform.OS === 'android',
-        // Branch-only visual experiment; also gated by exercise and background.
+        // Presentation only; calibration measurements and acceptance stay unchanged.
         experimentalCalibrationGuidePlatform: Platform.OS,
       });
     },
@@ -606,7 +612,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   const [entryAttempt, setEntryAttempt] = useState(0);
   useEffect(() => {
     if (entryReadyRef.current || !webSource || trackerLoadError || !permission?.granted ||
-      (recordRun && !recordWithoutAudio && !microphonePermission?.granted)) return;
+      (recordRun && !recordSilently && !microphonePermission?.granted)) return;
     let active = true;
     void prepareEntry().then(async () => {
       if (!active) return;
@@ -618,7 +624,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       if (active) setEntryError('Game access could not be checked. Retry before starting.');
     });
     return () => { active = false; };
-  }, [webSource, trackerLoadError, permission?.granted, recordRun, recordWithoutAudio, microphonePermission?.granted, prepareEntry, entryAttempt]);
+  }, [webSource, trackerLoadError, permission?.granted, recordRun, recordSilently, microphonePermission?.granted, prepareEntry, entryAttempt]);
 
   useEffect(() => {
     trackerTransferTokenRef.current += 1;
@@ -932,6 +938,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
         return;
       }
       if (msg.type === 'trackingerror') {
+        setWakeError(true);
         console.error(
           'Camera tracker failed inside the game WebView',
           msg.message ?? 'Unknown error'
@@ -1107,12 +1114,17 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   // Camera permission gate
   const needsCameraPermission = permission != null && !permission.granted;
   const microphonePermissionLoading =
-    recordRun && !recordWithoutAudio && microphonePermission == null;
+    recordRun && !recordSilently && microphonePermission == null;
   if (permission == null || microphonePermissionLoading) {
     return <View style={{ flex: 1, backgroundColor: '#0F172A' }} />;
   }
 
   if (needsCameraPermission) {
+    // Android explains the first system request with one neutral action. A denied
+    // permission is recovered in Settings, never by repeatedly requesting it.
+    const canRequestCamera = permission.canAskAgain &&
+      (Platform.OS !== 'android' || permission.status === 'undetermined');
+    const cameraRequestLabel = Platform.OS === 'android' ? 'Continue' : 'Allow camera';
     return (
       <View
         style={{
@@ -1135,15 +1147,17 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
           your device. Video is recorded only when you explicitly select Record &amp; Play. With
           your permission, that recording includes microphone sound. It is kept temporarily for
           sharing and is not uploaded by Flap Fit.
-          {!permission.canAskAgain
-            ? '\n\nCamera access is currently blocked. Open your phone settings to allow it.'
+          {!canRequestCamera
+            ? Platform.OS === 'android'
+              ? '\n\nCamera access is currently blocked. Gameplay needs the camera to track your movement. You can change camera access in your device settings.'
+              : '\n\nCamera access is currently blocked. Open your phone settings to allow it.'
             : ''}
         </Text>
         <TouchableOpacity
           accessibilityRole="button"
-          accessibilityLabel={permission.canAskAgain ? 'Allow camera' : 'Open camera settings'}
+          accessibilityLabel={canRequestCamera ? cameraRequestLabel : 'Open camera settings'}
           onPress={() => {
-            if (permission.canAskAgain) void requestPermission();
+            if (canRequestCamera) void requestPermission();
             else openPermissionSettings('camera');
           }}
           style={{
@@ -1154,22 +1168,27 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
           }}
         >
           <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
-            {permission.canAskAgain ? 'Allow camera' : 'Open settings'}
+            {canRequestCamera ? cameraRequestLabel : 'Open settings'}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
-          <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>
-        </TouchableOpacity>
+        {(Platform.OS !== 'android' || !canRequestCamera) && (
+          <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
+            <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   }
 
   const needsMicrophonePermission =
     recordRun &&
-    !recordWithoutAudio &&
+    !recordSilently &&
     microphonePermission != null &&
     !microphonePermission.granted;
   if (needsMicrophonePermission) {
+    const canRequestMicrophone = microphonePermission.canAskAgain &&
+      (Platform.OS !== 'android' || microphonePermission.status === 'undetermined');
+    const microphoneRequestLabel = Platform.OS === 'android' ? 'Continue' : 'Allow microphone';
     return (
       <View
         style={{
@@ -1189,18 +1208,19 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
         </Text>
         <Text style={{ color: '#CBD5E1', fontSize: 15, lineHeight: 22 }}>
           Record &amp; Play can include your voice and workout sounds. Microphone audio stays inside
-          the temporary video on this device unless you choose to share it.
-          {!microphonePermission.canAskAgain
-            ? '\n\nMicrophone access is currently blocked. Open your phone settings to allow it.'
+          the temporary video on this device unless you choose to share it. You can still record
+          without sound if you decline microphone access.
+          {!canRequestMicrophone
+            ? '\n\nMicrophone access is off. You can record without sound or change microphone access in Settings.'
             : ''}
         </Text>
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel={
-            microphonePermission.canAskAgain ? 'Allow microphone' : 'Open microphone settings'
+            canRequestMicrophone ? microphoneRequestLabel : 'Open microphone settings'
           }
           onPress={() => {
-            if (microphonePermission.canAskAgain) void requestMicrophonePermission();
+            if (canRequestMicrophone) void requestMicrophonePermission();
             else openPermissionSettings('microphone');
           }}
           style={{
@@ -1211,20 +1231,24 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
           }}
         >
           <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
-            {microphonePermission.canAskAgain ? 'Allow microphone' : 'Open settings'}
+            {canRequestMicrophone ? microphoneRequestLabel : 'Open settings'}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel="Continue recording without sound"
-          onPress={() => setRecordWithoutAudio(true)}
-          style={{ alignItems: 'center', paddingVertical: 8 }}
-        >
-          <Text style={{ color: '#CBD5E1', fontWeight: '800' }}>Continue without sound</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
-          <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>
-        </TouchableOpacity>
+        {(Platform.OS !== 'android' || !canRequestMicrophone) && (
+          <>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Continue recording without sound"
+              onPress={() => setRecordWithoutAudio(true)}
+              style={{ alignItems: 'center', paddingVertical: 8 }}
+            >
+              <Text style={{ color: '#CBD5E1', fontWeight: '800' }}>Continue without sound</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={leaveGame} style={{ alignItems: 'center', paddingVertical: 4 }}>
+              <Text style={{ color: '#64748B', fontWeight: '700' }}>Go back</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     );
   }
@@ -1241,6 +1265,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   return (
     <View style={{ flex: 1, backgroundColor: level.sky1 }}>
       {privacyChoicesSheet}
+      {!result && webSource && !trackerLoadError && !wakeError && entryReady ? <GameScreenAwake /> : null}
       <StatusBar style="light" hidden={Platform.OS === 'ios'} />
       {webSource && !trackerLoadError && entryReady ? (
         <WebView
@@ -1260,6 +1285,9 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
           mediaCapturePermissionGrantType="grant"
           mixedContentMode="never"
           onMessage={onMessage}
+          onError={() => setWakeError(true)}
+          onHttpError={() => setWakeError(true)}
+          onRenderProcessGone={() => setWakeError(true)}
           allowsFullscreenVideo={false}
           bounces={false}
           scrollEnabled={false}

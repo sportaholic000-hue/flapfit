@@ -7,7 +7,14 @@ const settle = async () => { for (let i = 0; i < 80; i++) await Promise.resolve(
 const originalEnv = { ...process.env };
 jest.setTimeout(30_000);
 
-async function mountApp(saved: string | null, options: { delayed?: boolean; failRead?: boolean; offline?: boolean; completedRun?: boolean; playable?: boolean } = {}) {
+type CameraTestStatus = 'undetermined' | 'granted' | 'denied';
+async function mountApp(saved: string | null, options: {
+  delayed?: boolean; failRead?: boolean; offline?: boolean; completedRun?: boolean; playable?: boolean;
+  cameraStatus?: CameraTestStatus; cameraCanAskAgain?: boolean; cameraResponse?: CameraTestStatus;
+  cameraSettingsStatus?: CameraTestStatus; platform?: 'ios' | 'android';
+  recordRun?: boolean; microphoneStatus?: CameraTestStatus; microphoneResponse?: CameraTestStatus;
+  microphoneCanAskAgain?: boolean; microphoneSettingsStatus?: CameraTestStatus;
+} = {}) {
   jest.resetModules(); jest.useFakeTimers();
   const React: typeof import('react') = require('react');
   const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
@@ -32,10 +39,12 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
   const listeners = new Set<(state: string) => void>();
   const appState = { currentState: 'active', addEventListener: jest.fn((_event, listener) => { listeners.add(listener); return { remove: () => listeners.delete(listener) }; }) };
   const animation = () => ({ start: jest.fn(), stop: jest.fn() });
+  const openSettings = jest.fn().mockResolvedValue(undefined);
+  const platform = options.platform ?? 'ios';
   jest.doMock('react-native', () => ({
     View: 'View', Text: 'Text', ScrollView: 'ScrollView', TouchableOpacity: 'TouchableOpacity', ActivityIndicator: 'ActivityIndicator',
-    Platform: { OS: 'ios', Version: '18.6', select: (values: Record<string, unknown>) => values.ios ?? values.default }, AppState: appState,
-    Alert: { alert: jest.fn() }, Linking: { openSettings: jest.fn() }, Share: {}, StyleSheet: { create: (styles: unknown) => styles },
+    Platform: { OS: platform, Version: '18.6', select: (values: Record<string, unknown>) => values[platform] ?? values.default }, AppState: appState,
+    Alert: { alert: jest.fn() }, Linking: { openSettings }, Share: {}, StyleSheet: { create: (styles: unknown) => styles },
     Animated: { Value: class { interpolate = jest.fn(); setValue = jest.fn(); }, View: 'View', timing: animation, loop: animation, sequence: animation },
     Easing: { linear: jest.fn(), out: jest.fn(), quad: jest.fn() }, useWindowDimensions: () => ({ width: 390, height: 844 }),
     TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: jest.fn().mockResolvedValue(true), flapFitSetNetworkPaused: jest.fn().mockResolvedValue(true) } },
@@ -63,8 +72,42 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
   jest.doMock('@/services/videoSharing', () => ({ getVideoShareAvailability: jest.fn().mockResolvedValue({}) }));
   jest.doMock('@/utils/game/mediapipeAssets', () => ({ prepareMediaPipeAssets: () => options.playable ? Promise.resolve({}) : new Promise(() => {}) }));
   jest.doMock('@/utils/game/birdWebAsset', () => ({ loadBirdAssetDataUri: () => options.playable ? Promise.resolve('data:image/png;base64,test') : new Promise(() => {}) }));
-  const camera = jest.fn(() => [{ granted: options.playable === true, canAskAgain: true, status: 'undetermined' }, jest.fn(), jest.fn()]);
-  jest.doMock('expo-camera', () => ({ useCameraPermissions: camera, useMicrophonePermissions: () => [null, jest.fn(), jest.fn()] }));
+  const cameraSnapshot = (status: CameraTestStatus) => ({ status, granted: status === 'granted',
+    canAskAgain: status === 'denied' ? options.cameraCanAskAgain ?? false : true });
+  let nativeCamera = cameraSnapshot(options.cameraStatus ?? (options.playable ? 'granted' : 'undetermined'));
+  let updateCamera: ((value: typeof nativeCamera) => void) | undefined;
+  const requestCameraPermission = jest.fn(async () => {
+    nativeCamera = cameraSnapshot(options.cameraResponse ?? 'denied');
+    updateCamera?.(nativeCamera); return nativeCamera;
+  });
+  const getCameraPermission = jest.fn(async () => {
+    if (options.cameraSettingsStatus) nativeCamera = cameraSnapshot(options.cameraSettingsStatus);
+    updateCamera?.(nativeCamera); return nativeCamera;
+  });
+  const camera = jest.fn(() => {
+    const [permission, setPermission] = React.useState(nativeCamera); updateCamera = setPermission;
+    return [permission, requestCameraPermission, getCameraPermission];
+  });
+  const microphoneSnapshot = (status: CameraTestStatus) => ({ status, granted: status === 'granted',
+    canAskAgain: status === 'denied' ? options.microphoneCanAskAgain ?? false : true });
+  let nativeMicrophone = microphoneSnapshot(options.microphoneStatus ?? 'undetermined');
+  let updateMicrophone: ((value: typeof nativeMicrophone) => void) | undefined;
+  const requestMicrophonePermission = jest.fn(async () => {
+    nativeMicrophone = microphoneSnapshot(options.microphoneResponse ?? 'denied');
+    updateMicrophone?.(nativeMicrophone); return nativeMicrophone;
+  });
+  const getMicrophonePermission = jest.fn(async () => {
+    if (options.microphoneSettingsStatus) nativeMicrophone = microphoneSnapshot(options.microphoneSettingsStatus);
+    updateMicrophone?.(nativeMicrophone); return nativeMicrophone;
+  });
+  const microphone = () => {
+    const [permission, setPermission] = React.useState(nativeMicrophone); updateMicrophone = setPermission;
+    return [permission, requestMicrophonePermission, getMicrophonePermission];
+  };
+  jest.doMock('expo-camera', () => ({ useCameraPermissions: camera, useMicrophonePermissions: microphone }));
+  const awakeStart = jest.fn().mockResolvedValue(undefined);
+  const awakeStop = jest.fn().mockResolvedValue(undefined);
+  jest.doMock('expo-keep-awake', () => ({ activateKeepAwakeAsync: awakeStart, deactivateKeepAwake: awakeStop }));
   jest.doMock('expo-haptics', () => ({ impactAsync: jest.fn().mockResolvedValue(undefined), ImpactFeedbackStyle: {}, notificationAsync: jest.fn().mockResolvedValue(undefined), NotificationFeedbackType: { Success: 'success', Error: 'error' } }));
   const fetchDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'fetch');
   const fetcher = options.offline ? jest.fn().mockRejectedValue(new Error('Offline')) : jest.fn().mockResolvedValue({ ok: true, status: 200, redirected: false,
@@ -92,12 +135,19 @@ async function mountApp(saved: string | null, options: { delayed?: boolean; fail
   let tree!: ReactTestRenderer;
   await act(async () => { tree = renderer.create(React.createElement(Root)); await settle(); });
   await act(async () => { jest.advanceTimersByTime(1400); await settle(); });
-  const play = async () => { await act(async () => {
-    const button = tree.root.findAll(node => /^Play Level \d+$/.test(node.props.accessibilityLabel ?? '') && typeof node.props.onPress === 'function')[0];
+  const play = async () => {
+    if (options.recordRun) await act(async () => {
+      const cameraMode = tree.root.findAll(node => node.props.accessibilityLabel === 'Live Camera Background' && typeof node.props.onPress === 'function')[0];
+      expect(cameraMode).toBeDefined(); cameraMode.props.onPress(); await settle();
+    });
+    await act(async () => {
+    const button = tree.root.findAll(node => (options.recordRun ? /^Record and play Level \d+$/ : /^Play Level \d+$/).test(node.props.accessibilityLabel ?? '') && typeof node.props.onPress === 'function')[0];
     expect(button).toBeDefined(); button.props.onPress(); await settle();
   }); expect(router.push).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
     expect(JSON.stringify(tree.toJSON())).not.toContain('Flap Fit hit a snag'); };
-  return { camera, storage, adLoad, rcLoad, play, tree, sheet, router,
+  return { camera, requestCameraPermission, getCameraPermission, requestMicrophonePermission, getMicrophonePermission, openSettings, storage, adLoad, rcLoad, play, tree, sheet, router, awakeStart, awakeStop,
+    goHome: async () => { await act(async () => { router.back(); await settle(); }); },
+    setNativeMicrophoneStatus: (status: CameraTestStatus) => { nativeMicrophone = microphoneSnapshot(status); },
     completeGame: async () => { await act(async () => {
       tree.root.findByType('WebView' as never).props.onMessage({ nativeEvent: { data: JSON.stringify({ type: 'gameover', score: 5, pushups: 0, tutSeconds: 0, runDurationMs: 1000 }) } });
       await settle();
@@ -121,7 +171,10 @@ test.each([false, true])('optional work stays paused from WebView admission unti
     await f.play();
     expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
     expect(activity.isGameplayActive()).toBe(true);
-    if (!unmount) { await f.completeGame(); expect(activity.isGameplayActive()).toBe(false); }
+    if (!unmount) {
+      await f.completeGame();
+      expect(activity.isGameplayActive()).toBe(false);
+    }
   } finally { await f.finish(); }
   expect(activity.isGameplayActive()).toBe(false);
 });
@@ -306,4 +359,214 @@ test('audit A2: first free result does not refresh or allocate after background/
     await f.completeGame(); await f.change('background'); await f.change('active');
     expect(refresh).not.toHaveBeenCalled(); expect(allocate).not.toHaveBeenCalled();
   } finally { await f.finish(); }
+});
+
+
+const mountAndroidApp = (saved: string | null, options: Parameters<typeof mountApp>[1] = {}) => mountApp(saved, { ...options, platform: 'android' });
+
+// Apple's build-8 rejection: exercise the actual rendered camera gate and native
+// permission boundary, including updates after denial and a Settings return.
+test('Android first camera explanation has only Continue, which requests native permission once', async () => {
+  const f = await mountAndroidApp(null, { offline: true });
+  try {
+    await f.play();
+    const buttons = f.tree.root.findAllByType('TouchableOpacity' as never);
+    expect(buttons).toHaveLength(1);
+    expect(buttons[0].props.accessibilityLabel).toBe('Continue');
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Allow camera');
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Go back');
+    expect(f.requestCameraPermission).not.toHaveBeenCalled();
+    await f.pressResult('Continue');
+    expect(f.requestCameraPermission).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Open settings');
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Go back');
+    await f.pressResult('Go back'); await f.play();
+    await f.change('background'); await f.change('active');
+    expect(f.requestCameraPermission).toHaveBeenCalledTimes(1);
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(0);
+  } finally { await f.finish(); }
+});
+
+test('granting the first Android camera request proceeds into gameplay', async () => {
+  const f = await mountAndroidApp(null, { offline: true, playable: true, cameraStatus: 'undetermined', cameraResponse: 'granted' });
+  try {
+    await f.play(); await f.pressResult('Continue');
+    expect(f.requestCameraPermission).toHaveBeenCalledTimes(1);
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Camera access needed');
+  } finally { await f.finish(); }
+});
+
+test('already granted Android camera access bypasses the explanation and request', async () => {
+  const f = await mountAndroidApp(null, { offline: true, playable: true });
+  try {
+    await f.play();
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Camera access needed');
+    expect(f.requestCameraPermission).not.toHaveBeenCalled();
+  } finally { await f.finish(); }
+});
+
+test.each([false, true])('previous Android denial routes to Settings instead of another request (canAskAgain=%s)', async canAskAgain => {
+  const f = await mountAndroidApp(null, { offline: true, cameraStatus: 'denied', cameraCanAskAgain: canAskAgain });
+  try {
+    await f.play();
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Gameplay needs the camera');
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Go back');
+    await f.pressResult('Open settings');
+    expect(f.openSettings).toHaveBeenCalledTimes(1);
+    await f.change('background'); await f.change('active');
+    expect(f.getCameraPermission).toHaveBeenCalledTimes(1);
+    expect(f.requestCameraPermission).not.toHaveBeenCalled();
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(0);
+    await f.pressResult('Go back');
+    expect(f.router.back).toHaveBeenCalledTimes(1);
+  } finally { await f.finish(); }
+});
+
+test('granting camera access in Settings resumes Android gameplay without requesting again', async () => {
+  const f = await mountAndroidApp(null, { offline: true, playable: true, cameraStatus: 'denied', cameraSettingsStatus: 'granted' });
+  try {
+    await f.play(); await f.pressResult('Open settings');
+    await f.change('background'); await f.change('active');
+    expect(f.getCameraPermission).toHaveBeenCalledTimes(1);
+    expect(f.requestCameraPermission).not.toHaveBeenCalled();
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
+  } finally { await f.finish(); }
+});
+
+test('this Android correction preserves iOS camera explanation actions', async () => {
+  const f = await mountApp(null, { offline: true, platform: 'ios' });
+  try {
+    await f.play();
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Allow camera');
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Go back');
+    await f.pressResult('Allow camera');
+    expect(f.requestCameraPermission).toHaveBeenCalledTimes(1);
+  } finally { await f.finish(); }
+});
+
+
+// Exercise the first Record & Play entry with BOTH native permissions undecided.
+test.each(['granted', 'denied'] as const)('first Android recording moves from camera approval to microphone choice without re-entry (microphone %s)', async microphoneResponse => {
+  const f = await mountAndroidApp(null, { offline: true, playable: true, recordRun: true,
+    cameraStatus: 'undetermined', cameraResponse: 'granted', microphoneStatus: 'undetermined', microphoneResponse });
+  try {
+    await f.play();
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Camera access needed');
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(0);
+    await f.pressResult('Continue');
+    expect(f.requestCameraPermission).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Camera access needed');
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Add sound to your video');
+    expect(f.requestMicrophonePermission).not.toHaveBeenCalled();
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(0);
+    expect(f.router.push).toHaveBeenCalledTimes(1);
+    await f.pressResult('Continue');
+    expect(f.requestMicrophonePermission).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":' + String(microphoneResponse === 'granted'));
+  } finally { await f.finish(); }
+});
+
+// Same neutral Android pre-permission treatment as the reviewed camera correction.
+test('Android first microphone explanation has only Continue and native denial immediately starts silent recording', async () => {
+  const f = await mountAndroidApp(null, { offline: true, playable: true, recordRun: true });
+  try {
+    await f.play();
+    const buttons = f.tree.root.findAllByType('TouchableOpacity' as never);
+    expect(buttons).toHaveLength(1); expect(buttons[0].props.accessibilityLabel).toBe('Continue');
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Allow microphone');
+    expect(f.requestMicrophonePermission).not.toHaveBeenCalled();
+    await f.pressResult('Continue');
+    expect(f.requestMicrophonePermission).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Continue without sound');
+    expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
+    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":false');
+    await f.change('background'); await f.change('active');
+    expect(f.requestMicrophonePermission).toHaveBeenCalledTimes(1);
+    await f.goHome(); await f.play();
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":false');
+    expect(f.requestMicrophonePermission).toHaveBeenCalledTimes(1);
+    expect(f.adLoad).not.toHaveBeenCalled(); expect(f.rcLoad).not.toHaveBeenCalled();
+  } finally { await f.finish(); }
+});
+
+test.each(['undetermined', 'granted'] as const)('Android recording uses sound after microphone permission is granted (initial %s)', async microphoneStatus => {
+  const f = await mountAndroidApp(null, { offline: true, playable: true, recordRun: true, microphoneStatus, microphoneResponse: 'granted' });
+  try {
+    await f.play();
+    if (microphoneStatus === 'undetermined') await f.pressResult('Continue');
+    expect(f.requestMicrophonePermission).toHaveBeenCalledTimes(microphoneStatus === 'undetermined' ? 1 : 0);
+    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":true');
+  } finally { await f.finish(); }
+});
+
+test.each([false, true])('saved Android microphone denial starts every recording silently without asking again (canAskAgain=%s)', async microphoneCanAskAgain => {
+  const f = await mountAndroidApp(null, { offline: true, playable: true, recordRun: true, microphoneStatus: 'denied', microphoneCanAskAgain });
+  try {
+    for (let run = 0; run < 3; run++) {
+      await f.play();
+      expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+      expect(JSON.stringify(f.tree.toJSON())).not.toContain('Continue without sound');
+      expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":false');
+      if (run < 2) await f.goHome();
+    }
+    expect(f.requestMicrophonePermission).not.toHaveBeenCalled();
+    expect(f.openSettings).not.toHaveBeenCalled();
+  } finally { await f.finish(); }
+});
+
+test('a new Android recording uses permission granted in device Settings after an earlier silent run', async () => {
+  const f = await mountAndroidApp(null, { offline: true, playable: true, recordRun: true, microphoneStatus: 'denied' });
+  try {
+    await f.play();
+    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":false');
+    await f.goHome(); f.setNativeMicrophoneStatus('granted'); await f.play();
+    expect(f.requestMicrophonePermission).not.toHaveBeenCalled();
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound to your video');
+    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":true');
+  } finally { await f.finish(); }
+});
+
+test('Existing iOS microphone Settings recovery remains available', async () => {
+  const f = await mountApp(null, { offline: true, playable: true, recordRun: true, platform: 'ios', microphoneStatus: 'denied', microphoneSettingsStatus: 'granted' });
+  try {
+    await f.play(); await f.pressResult('Open settings');
+    await f.change('background'); await f.change('active');
+    expect(f.getMicrophonePermission).toHaveBeenCalledTimes(1);
+    expect(f.requestMicrophonePermission).not.toHaveBeenCalled();
+    expect(f.tree.root.findByType('WebView' as never).props.source.html).toContain('"recordAudio":true');
+  } finally { await f.finish(); }
+});
+
+test('ordinary non-recording play never prompts for microphone access', async () => {
+  const f = await mountAndroidApp(null, { offline: true, playable: true, microphoneStatus: 'denied' });
+  try { await f.play(); expect(f.tree.root.findAllByType('WebView' as never)).toHaveLength(1);
+    expect(f.requestMicrophonePermission).not.toHaveBeenCalled();
+    expect(JSON.stringify(f.tree.toJSON())).not.toContain('Add sound');
+  } finally { await f.finish(); }
+});
+
+test('Android microphone correction preserves iOS prompt actions', async () => {
+  const f = await mountApp(null, { offline: true, playable: true, recordRun: true, platform: 'ios' });
+  try { await f.play();
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Allow microphone');
+    expect(JSON.stringify(f.tree.toJSON())).toContain('Continue without sound');
+    await f.pressResult('Allow microphone'); expect(f.requestMicrophonePermission).toHaveBeenCalledTimes(1);
+  } finally { await f.finish(); }
+});
+
+test.each(['results', 'tracker', 'webview'] as const)('Android screen awake ends on %s and reacquires for new entry', async reason => {
+ const f = await mountAndroidApp(null, { offline: true, playable: true });
+ try {
+  await f.play(); expect(f.awakeStart).toHaveBeenCalledTimes(1); const first = f.awakeStart.mock.calls[0][0];
+  if (reason === 'results') await f.completeGame();
+  else { const React = require('react'); await React.act(async () => { const web = f.tree.root.findByType('WebView' as never); if (reason === 'tracker') web.props.onMessage({nativeEvent:{data:JSON.stringify({type:'trackingerror',message:'test failure'})}}); else web.props.onError({nativeEvent:{description:'test failure'}}); await settle(); }); }
+  expect(f.awakeStop).toHaveBeenCalledWith(first);
+  await f.goHome(); await f.play(); expect(f.awakeStart).toHaveBeenCalledTimes(2);
+ } finally { await f.finish(); }
 });

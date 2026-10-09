@@ -684,8 +684,8 @@ export default function InfoScreen() {
           />
           <ActionRow
             icon={<Settings size={21} color="#475569" />}
-            title="Camera permission settings"
-            subtitle="Open this app's system settings"
+            title="Camera & microphone settings"
+            subtitle="Change camera or microphone access in your device settings"
             onPress={() => void Linking.openSettings()}
           />
         </Section>
