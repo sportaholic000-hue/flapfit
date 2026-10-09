@@ -12,7 +12,11 @@ Production retains live advertising and its existing iOS IDs, independent privac
 
 ## Verification and build receipt
 
-Full tests, TypeScript, lint, production release/OTA validation and native SDK patch checks are being run before the build request. The exact pushed commit, results and cloud build/TestFlight upload receipt will be recorded after completion. No native compilation runs on the owner's computer.
+The full run covered 79 suites / 1,938 tests: 78 suites and 1,937 tests passed; one startup test exceeded its 30-second limit on the Windows computer. The entire affected startup suite then passed all 40 tests unchanged in an isolated rerun. This is not represented as one wholly passing full-suite invocation. TypeScript, lint, production release/OTA validation, fingerprint discovery normalization, SDK patch/bridge checks and calibration-guide layout/transition checks passed. One RevenueCat patch-test invocation omitted its required cached-source argument; the corrected invocation against the locked official 5.88.0 source passed without app changes. Native Apple-toolchain test harnesses were skipped on Windows; source checks are not claimed as native execution or device traffic verification. [Detailed verification](ios-testflight-11-2026-10-08/verification-summary.json).
+
+The production environment was read back and validated before requesting the build. The source checkout was clean, pushed, and checked against the owner's tested OTA: only the production tracker approval setting differs in application/configuration files. Live ads use app ID `ca-app-pub-5933597810180440~5139925774` and interstitial `ca-app-pub-5933597810180440/2284241303`. [Exact preflight evidence](ios-testflight-11-2026-10-08/preflight.json).
+
+One cloud production build was requested from `fcbf4e0c4bb2b5bdb07d85e5630f173786a72718`: version 1.0.0 (11), build ID `90abaf28-65cd-43e5-b542-70a49c56c68d`. [Expo build](https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/90abaf28-65cd-43e5-b542-70a49c56c68d). The source archive was uploaded successfully. Compilation/TestFlight completion will be added below when confirmed. No native compilation runs on the owner's computer.
 
 ## Owner acceptance after installation
 
@@ -21,3 +25,15 @@ Install the new TestFlight build and test its embedded version before using Chec
 ## Optional App Store header
 
 Apple's creative assets, including the product page header, are optional and can be submitted separately from a new app version. No header image or screenshot/listing edits are part of this build. Source: https://developer.apple.com/help/app-store-connect/manage-app-information/manage-your-app-store-assets .
+
+## Completed cloud build and TestFlight upload
+
+Build 11 finished successfully on Expo at `2026-10-09T00:15:15.694Z`. The cloud post-install production validation and CONFIGURE_EXPO_UPDATES phase passed; the latter sets the production update channel. EAS records native fingerprint `13f3cdc16a6f972c6de512a40c7ef2652bdbc9b6`. Keep normal fingerprint checks for any future OTA targeting build 11; do not assume build 10's earlier fingerprint remains applicable. The IPA and retained Xcode archive/evidence were produced. [Completion receipt](ios-testflight-11-2026-10-08/completed-build.json).
+
+The exact build was uploaded successfully to App Store Connect using the existing production upload credentials, requesting the existing internal group `Flap Fit Testing` with new-group creation disabled. EAS upload `b93b0341-b1be-471f-9c75-0061c4d06de2` completed successfully. Apple processing was pending at the upload receipt and is now independently confirmed complete: `VALID`, with `IN_BETA_TESTING` for internal testing. [Upload receipt](ios-testflight-11-2026-10-08/testflight-upload.json).
+
+Exactly one new build was requested in this step. No OTA publication, App Review submission, public release, store availability or screenshot change occurred. Device acceptance is the owner's next step; none is claimed for build 11 yet.
+
+### Final Apple read-back
+
+Apple reports version 1.0.0 (11) as `VALID` and `IN_BETA_TESTING`, not expired, associated with the exact EAS build/upload above. Runtime version and fingerprint are both `13f3cdc16a6f972c6de512a40c7ef2652bdbc9b6`. [Apple TestFlight status](ios-testflight-11-2026-10-08/apple-testflight-status.json). The owner can install build 11 and test the embedded candidate before any manual update. App Review resubmission remains unauthorized until the owner tests and approves it.

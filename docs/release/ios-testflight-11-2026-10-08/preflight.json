@@ -1,0 +1,20 @@
+{
+  "head": "fcbf4e0c4bb2b5bdb07d85e5630f173786a72718",
+  "branch": "codex/ios-camera-permission-review",
+  "remoteEnvironment": "production",
+  "trackerApproval": "2026-10-08.3-pushup-body-entry",
+  "adsMode": "live",
+  "iosAdmobAppId": "ca-app-pub-5933597810180440~5139925774",
+  "iosInterstitialId": "ca-app-pub-5933597810180440/2284241303",
+  "testedOtaSource": "229b6ae855b2e931889ac5925de2dc75a5390e7f",
+  "sourceAndAssetsMatchTestedOta": true,
+  "protectedRefs": {
+    "main": "0041d2680bd2db652dd26813c96e5489b5bc1dac",
+    "codex/android-closed-testing": "d2387952466d70b4448ca51f59af3c870871e21f",
+    "codex/android-lateral-calibration-guide": "dc4b47056ac9a9864f435c2025bff9022c56473d",
+    "codex/android-recording-branding": "3892565d7bf7f8916f86aca22cb71951e4f50a65",
+    "release/ios-1.0.0-build-8-submitted": "ad5d08d0f3aadf0497f3452f0a12e241e352fbfe"
+  },
+  "nativeBuildAllowed": 1,
+  "reviewSubmissionAllowed": false
+}

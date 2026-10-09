@@ -1,0 +1,88 @@
+{
+  "commit": "fcbf4e0c4bb2b5bdb07d85e5630f173786a72718",
+  "fullRun": {
+    "numTotalTestSuites": 79,
+    "numPassedTestSuites": 78,
+    "numFailedTestSuites": 1,
+    "numTotalTests": 1938,
+    "numPassedTests": 1937,
+    "numFailedTests": 1
+  },
+  "fullRunLimitation": "One startup test exceeded 30 seconds; entire affected suite reran unchanged and passed. Not one wholly passing full invocation.",
+  "startupRerun": {
+    "success": true,
+    "numTotalTests": 40,
+    "numPassedTests": 40,
+    "numFailedTests": 0
+  },
+  "checks": [
+    {
+      "name": "startup-suite-rerun",
+      "exitCode": 0,
+      "durationSeconds": 122.514
+    },
+    {
+      "name": "typecheck",
+      "exitCode": 0,
+      "durationSeconds": 220.086
+    },
+    {
+      "name": "lint",
+      "exitCode": 0,
+      "durationSeconds": 38.338
+    },
+    {
+      "name": "release-config",
+      "exitCode": 0,
+      "durationSeconds": 0.502
+    },
+    {
+      "name": "ota-config",
+      "exitCode": 0,
+      "durationSeconds": 0.301
+    },
+    {
+      "name": "test-update-config",
+      "exitCode": 0,
+      "durationSeconds": 1.423
+    },
+    {
+      "name": "test-fingerprint-discovery",
+      "exitCode": 0,
+      "durationSeconds": 2.938
+    },
+    {
+      "name": "test-admob-privacy-patch",
+      "exitCode": 0,
+      "durationSeconds": 0.287
+    },
+    {
+      "name": "test-admob-privacy-native",
+      "exitCode": 0,
+      "durationSeconds": 0.331
+    },
+    {
+      "name": "test-revenuecat-processing-patch",
+      "exitCode": 0,
+      "durationSeconds": 4.636
+    },
+    {
+      "name": "test-revenuecat-processing-bridge",
+      "exitCode": 0,
+      "durationSeconds": 0.927
+    },
+    {
+      "name": "test-revenuecat-processing-native",
+      "exitCode": 0,
+      "durationSeconds": 0.578
+    },
+    {
+      "name": "verify-calibration-guides",
+      "exitCode": 0,
+      "durationSeconds": 171.849
+    }
+  ],
+  "nativeExecutionLimitation": "AdMob/RevenueCat Apple-toolchain harnesses skipped on Windows. Source/patch/bridge checks passed; not a native-device traffic check.",
+  "initialRevenueCatInvocation": "First patch test invocation omitted its source-root argument; corrected invocation against cached official locked RevenueCat 5.88.0 source passed without source changes.",
+  "sourceAndAssetsMatchTestedOta": true
+}

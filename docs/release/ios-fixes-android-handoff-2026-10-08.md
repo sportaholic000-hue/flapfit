@@ -87,3 +87,7 @@ Inspect the two source commits independently; port only the requested fixes afte
 The owner chose to keep the existing white navigation bar, gray inactive controls and orange selection for the next native build. The four isolated styling changes from `c1336c9514b92f7335362f782b9f6bca1f6f02bb` are removed from the active candidate. The navy design and preview remain preserved in that pushed commit and these documents for possible future compatible OTA delivery. Do not include the navy colors or illustrated replacement icons in this release. No screenshots were edited.
 
 The owner-approved pushup rules are unchanged. The production profile approval marker is synchronized to `2026-10-08.3-pushup-body-entry` for the authorized native build following the owner's physical test and explicit instruction to lock it in. Android branches remain untouched.
+
+## Packaged iOS checkpoint: build 11
+
+The owner-tested source/assets from OTA `229b6ae855b2e931889ac5925de2dc75a5390e7f` are packaged in production iOS build 11 from `fcbf4e0c4bb2b5bdb07d85e5630f173786a72718`. The original white navigation bar is retained; the navy candidate remains deferred. The iOS production tracker approval marker and matching remote environment now record the approved pushup rules. This approval is not a claim of Android device testing and must not be blindly copied into Android release metadata. [Verification and build/upload receipts](ios-testflight-candidate-2026-10-08.md). All Android branches, main and the submitted build-8 tag were preserved.

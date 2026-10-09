@@ -1,0 +1,16 @@
+{
+  "id": "90abaf28-65cd-43e5-b542-70a49c56c68d",
+  "status": "FINISHED",
+  "platform": "IOS",
+  "distribution": "STORE",
+  "buildProfile": "production",
+  "appVersion": "1.0.0",
+  "appBuildVersion": "11",
+  "gitCommitHash": "fcbf4e0c4bb2b5bdb07d85e5630f173786a72718",
+  "createdAt": "2026-10-09T00:07:36.740Z",
+  "completedAt": "2026-10-09T00:15:15.694Z",
+  "fingerprintHash": "13f3cdc16a6f972c6de512a40c7ef2652bdbc9b6",
+  "hasIpa": true,
+  "hasNativeArchiveEvidence": true,
+  "buildUrl": "https://expo.dev/accounts/flapfitapp/projects/flapfit/builds/90abaf28-65cd-43e5-b542-70a49c56c68d"
+}

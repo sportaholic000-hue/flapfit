@@ -1,0 +1,15 @@
+{
+  "exitCode": 0,
+  "finishedAt": "2026-10-09T00:20:59.194Z",
+  "buildId": "90abaf28-65cd-43e5-b542-70a49c56c68d",
+  "buildNumber": "11",
+  "submissionId": "b93b0341-b1be-471f-9c75-0061c4d06de2",
+  "receiptUrl": "https://expo.dev/accounts/flapfitapp/projects/flapfit/submissions/b93b0341-b1be-471f-9c75-0061c4d06de2",
+  "uploadSucceeded": true,
+  "internalGroupRequested": "Flap Fit Testing",
+  "appleProcessingStatus": "VALID",
+  "appReviewSubmission": false,
+  "otaPublication": false,
+  "internalTestingStatus": "IN_BETA_TESTING",
+  "runtimeVersion": "13f3cdc16a6f972c6de512a40c7ef2652bdbc9b6"
+}

@@ -1,0 +1,16 @@
+{
+  "ascAppIdentifier": "6813280704",
+  "build": {
+    "appVersion": "1.0.0",
+    "buildNumber": "11",
+    "processingState": "VALID",
+    "internalState": "IN_BETA_TESTING",
+    "externalState": "READY_FOR_BETA_SUBMISSION",
+    "uploadedDate": "2026-10-08T17:19:15-07:00",
+    "expired": false,
+    "easSubmissionId": "b93b0341-b1be-471f-9c75-0061c4d06de2",
+    "easBuildId": "90abaf28-65cd-43e5-b542-70a49c56c68d",
+    "runtimeVersion": "13f3cdc16a6f972c6de512a40c7ef2652bdbc9b6",
+    "fingerprintHash": "13f3cdc16a6f972c6de512a40c7ef2652bdbc9b6"
+  }
+}
