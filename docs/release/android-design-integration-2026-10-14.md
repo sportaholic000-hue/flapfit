@@ -20,7 +20,11 @@ Android silhouette artwork, pull-up reach/grab sequence, fades, movement trackin
 - Exact Git blob comparison: all transferred source/artwork files match the tested design commit.
 - Package comparison: original production scripts/dependencies retained apart from the icon dependency above.
 - Changed-file allowlist and whitespace checks pass.
-- Automated check results are recorded below once completed.
+- Repository lint completed successfully (exit 0).
+- Locked dependency installation completed successfully with `yarn install --immutable --mode=skip-build`; an initial Windows EPERM on Yarn's local install-state file was resolved by retrying with the required filesystem access.
+- Full workspace typecheck and test runs stalled without diagnostics and were stopped. Focused source typechecking and the three changed UI regression suites (GameStartOptions, CompeteScreenPrivacy, InfoPrivacy) also exceeded a 10-minute limit without results. These checks are NOT recorded as passes; automated type/test verification remains outstanding.
+- Integration commit ece2c8b188dc7c0623448027cfbc6b13758f50d1 was pushed and verified against GitHub. All pre-existing remote branches and tags matched their before-integration values.
+- Physical Android testing is pending; this branch is a testing candidate, not a validated store release.
 - No native build, submission, deployment or OTA has been started.
 
 ## Android device check
