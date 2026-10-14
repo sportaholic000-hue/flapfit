@@ -412,7 +412,7 @@ export default function HomeScreen() {
             </Text>
             <View style={{ backgroundColor: NAVY, borderRadius: 6, marginTop: 8, padding: 8 }}>
               <Text
-                style={{ color: SKY_BLUE, fontWeight: '700', fontSize: 13, textAlign: 'center' }}
+                style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 13, textAlign: 'center' }}
               >
                 Fly today to keep them!
               </Text>
