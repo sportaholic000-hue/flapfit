@@ -1,0 +1,96 @@
+{
+  "verifiedAt": "2026-10-14T07:25:26.355Z",
+  "baseline": "fcbf4e0c4bb2b5bdb07d85e5630f173786a72718",
+  "designSource": "30e54a90331b9472452633e4ea9da4123e8ed5eb",
+  "branch": "codex/ios-design-update-2026-10-14",
+  "checks": [
+    {
+      "name": "release-config",
+      "exitCode": 0,
+      "seconds": 6,
+      "log": "release-config.log"
+    },
+    {
+      "name": "ota-config",
+      "exitCode": 0,
+      "seconds": 1,
+      "log": "ota-config.log"
+    },
+    {
+      "name": "admob-patch",
+      "exitCode": 0,
+      "seconds": 1,
+      "log": "admob-patch.log"
+    },
+    {
+      "name": "revenuecat-bridge",
+      "exitCode": 0,
+      "seconds": 1,
+      "log": "revenuecat-bridge.log"
+    },
+    {
+      "name": "calibration-guides",
+      "exitCode": 0,
+      "seconds": 131,
+      "log": "calibration-guides.log"
+    },
+    {
+      "name": "ios-js-export",
+      "exitCode": 0,
+      "seconds": 598,
+      "log": "ios-js-export.log"
+    },
+    {
+      "name": "typescript",
+      "exitCode": 0,
+      "seconds": 148,
+      "log": "typescript.log"
+    },
+    {
+      "name": "lint",
+      "exitCode": 0,
+      "seconds": 47,
+      "log": "lint.log"
+    },
+    {
+      "name": "jest",
+      "exitCode": 0,
+      "seconds": 376,
+      "log": "jest.log"
+    }
+  ],
+  "jest": {
+    "passedSuites": 81,
+    "totalSuites": 81,
+    "passedTests": 1955,
+    "totalTests": 1955,
+    "failedTests": 0
+  },
+  "assetPreservation": {
+    "victoryImagesMatchPinnedDesign": 7,
+    "calibrationAssetsAndManifestUnchanged": 14,
+    "calibrationSourceOnlyCardColors": true,
+    "unexpectedProductionChanges": []
+  },
+  "iconOutlineComparison": [
+    {
+      "name": "home",
+      "intersection": 123925,
+      "union": 123928,
+      "intersectionOverUnion": 0.9999757923955845
+    },
+    {
+      "name": "info",
+      "intersection": 114983,
+      "union": 114985,
+      "intersectionOverUnion": 0.9999826064269253
+    }
+  ],
+  "nativeDeviceTested": false,
+  "fullAppBrowserLayoutsVerified": false,
+  "fullAppBrowserLimitation": "Root page load timed out; isolated preview stopped. No production gates bypassed.",
+  "nativeBuildCreated": false,
+  "otaPublished": false,
+  "appleSubmissionChanged": false,
+  "localizationAdded": false
+}

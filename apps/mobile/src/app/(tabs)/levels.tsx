@@ -1,23 +1,23 @@
-import { LinearGradient } from 'expo-linear-gradient';
+import { GameStartOptions } from '@/components/GameStartOptions';
+import { TabSkyBackground } from '@/components/TabSkyBackground';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
-  Camera,
   CheckCircle2,
   Infinity as InfinityIcon,
   Lock,
   Play,
   Star,
-  Sun,
-  Video,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LEVELS } from '@/utils/game/levels';
 import { isEndlessUnlocked, useGameStore } from '@/utils/game/store';
 
-const ACCENT_BLUE = '#0284C7';
+const SELECTION_ORANGE = '#F59E0B';
+// Equal side columns keep every title centered, even with no score or completion star.
+const LEVEL_CARD_SIDE_WIDTH = 64;
 
 type PendingGame =
   | { mode: 'level'; levelId: number; title: string }
@@ -66,6 +66,7 @@ export default function LevelsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F0F9FF' }}>
+      <TabSkyBackground screen="levels" />
       <StatusBar style="dark" />
       <ScrollView
         style={{ flex: 1 }}
@@ -76,8 +77,21 @@ export default function LevelsScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={{ fontSize: 28, fontWeight: '900', color: '#0F172A' }}>Levels</Text>
-        <Text style={{ color: '#64748B', marginTop: 2, marginBottom: 16 }}>
+        <Text
+          accessibilityRole="header"
+          style={{
+            fontFamily: 'LuckiestGuy_400Regular',
+            fontSize: 34,
+            textAlign: 'center',
+            color: '#FFFFFF',
+            textShadowColor: 'rgba(0,0,0,0.3)',
+            textShadowOffset: { width: 0, height: 3 },
+            textShadowRadius: 4,
+          }}
+        >
+          Levels
+        </Text>
+        <Text style={{ color: '#06223D', fontSize: 14, lineHeight: 20, fontWeight: '800', textAlign: 'center', marginTop: 2, marginBottom: 16 }}>
           Clear the target score to unlock the next level
         </Text>
 
@@ -91,11 +105,16 @@ export default function LevelsScreen() {
           }}
         >
           <View style={{ gap: 3 }}>
-            <Text style={{ fontWeight: '900', color: '#1F2937', fontSize: 16 }}>
+            <Text accessibilityRole="header" style={{ fontWeight: '800', color: '#06223D', fontSize: 16, textAlign: 'center' }}>
               Game Background
             </Text>
-            <Text style={{ color: '#64748B', fontSize: 12 }}>
-              Choose a background, then tap Endless Mode or any unlocked level.
+            <View
+              accessible={false}
+              importantForAccessibility="no"
+              style={{ alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6 }}
+            />
+            <Text style={{ color: '#475569', fontSize: 13, lineHeight: 19, textAlign: 'center' }}>
+              Choose a background, then tap Endless Mode or any unlocked level to play.
             </Text>
           </View>
 
@@ -112,22 +131,20 @@ export default function LevelsScreen() {
                 padding: 12,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'sky' ? ACCENT_BLUE : '#D1D5DB',
-                backgroundColor: backgroundMode === 'sky' ? '#E0F2FE' : '#F8FAFC',
-                justifyContent: 'space-between',
+                borderColor: backgroundMode === 'sky' ? SELECTION_ORANGE : '#06223D',
+                backgroundColor: backgroundMode === 'sky' ? '#4AABDE' : '#06223D',
+                justifyContent: 'center',
+                paddingTop: 30,
               }}
             >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Sun size={23} color={backgroundMode === 'sky' ? ACCENT_BLUE : '#64748B'} />
-                {backgroundMode === 'sky' ? (
-                  <CheckCircle2 size={19} color={ACCENT_BLUE} fill="#FFFFFF" />
-                ) : null}
-              </View>
+              {backgroundMode === 'sky' ? (
+                <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 10, right: 10 }} />
+              ) : null}
               <View style={{ gap: 2 }}>
-                <Text style={{ fontWeight: '900', color: '#0F172A', fontSize: 14 }}>
+                <Text style={{ fontWeight: '900', color: backgroundMode === 'sky' ? '#06223D' : '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
                   Sky Background
                 </Text>
-                <Text style={{ color: '#64748B', fontSize: 10, fontWeight: '600' }}>
+                <Text style={{ color: backgroundMode === 'sky' ? '#FFFFFF' : '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
                   Classic game view
                 </Text>
               </View>
@@ -145,22 +162,20 @@ export default function LevelsScreen() {
                 padding: 12,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'camera' ? ACCENT_BLUE : '#D1D5DB',
-                backgroundColor: backgroundMode === 'camera' ? '#E0F2FE' : '#F8FAFC',
-                justifyContent: 'space-between',
+                borderColor: backgroundMode === 'camera' ? SELECTION_ORANGE : '#06223D',
+                backgroundColor: backgroundMode === 'camera' ? '#4AABDE' : '#06223D',
+                justifyContent: 'center',
+                paddingTop: 30,
               }}
             >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Camera size={23} color={backgroundMode === 'camera' ? ACCENT_BLUE : '#64748B'} />
-                {backgroundMode === 'camera' ? (
-                  <CheckCircle2 size={19} color={ACCENT_BLUE} fill="#FFFFFF" />
-                ) : null}
-              </View>
+              {backgroundMode === 'camera' ? (
+                <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 10, right: 10 }} />
+              ) : null}
               <View style={{ gap: 2 }}>
-                <Text style={{ fontWeight: '900', color: '#0F172A', fontSize: 14 }}>
+                <Text style={{ fontWeight: '900', color: backgroundMode === 'camera' ? '#06223D' : '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
                   Live Camera
                 </Text>
-                <Text style={{ color: '#64748B', fontSize: 10, fontWeight: '600' }}>
+                <Text style={{ color: backgroundMode === 'camera' ? '#FFFFFF' : '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
                   You become the backdrop
                 </Text>
               </View>
@@ -174,29 +189,36 @@ export default function LevelsScreen() {
           disabled={!endlessOpen}
           style={{ borderRadius: 20, overflow: 'hidden', marginBottom: 16 }}
         >
-          <LinearGradient
-            colors={endlessOpen ? ['#1D4ED8', '#60A5FA'] : ['#94A3B8', '#CBD5E1']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}
+          <View
+            style={{
+              backgroundColor: endlessOpen ? '#06223D' : '#475569',
+              padding: 18,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 14,
+            }}
           >
-            {endlessOpen ? (
-              <InfinityIcon size={32} color="#FFFFFF" />
-            ) : (
-              <Lock size={28} color="#FFFFFF" />
-            )}
-            <View style={{ flex: 1 }}>
-              <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 18 }}>
+            <View style={{ width: 32, alignItems: 'center' }}>
+              {endlessOpen ? (
+                <InfinityIcon size={32} color="#F59E0B" />
+              ) : (
+                <Lock size={28} color="#FFFFFF" />
+              )}
+            </View>
+            <View style={{ flex: 1, minWidth: 0 }}>
+              <Text style={{ color: endlessOpen ? '#F59E0B' : '#FFFFFF', fontWeight: '900', fontSize: 18, textAlign: 'center' }}>
                 Endless Mode
               </Text>
-              <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: 13 }}>
+              <Text style={{ color: endlessOpen ? '#F59E0B' : 'rgba(255,255,255,0.9)', fontSize: 13, textAlign: 'center' }}>
                 {endlessOpen
                   ? `Speeds up forever · Best: ${endlessBest}`
                   : 'Clear Level 5 to unlock'}
               </Text>
             </View>
-            {endlessOpen ? <Play size={24} color="#FFFFFF" fill="#FFFFFF" /> : null}
-          </LinearGradient>
+            <View style={{ width: 32, alignItems: 'center' }}>
+              {endlessOpen ? <Play size={24} color="#F59E0B" fill="#F59E0B" /> : null}
+            </View>
+          </View>
         </TouchableOpacity>
 
         {LEVELS.map((level) => {
@@ -222,39 +244,41 @@ export default function LevelsScreen() {
                 gap: 14,
                 opacity: unlocked ? 1 : 0.55,
                 borderWidth: 2,
-                borderColor: cleared ? '#FDE68A' : '#F1F5F9',
+                borderColor: cleared ? '#F59E0B' : '#F1F5F9',
               }}
             >
-              <View
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 14,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: unlocked ? level.sky1 : '#94A3B8',
-                }}
-              >
-                {unlocked ? (
-                  <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 18 }}>
-                    {level.id}
-                  </Text>
-                ) : (
-                  <Lock size={20} color="#FFFFFF" />
-                )}
+              <View style={{ width: LEVEL_CARD_SIDE_WIDTH, flexShrink: 0, alignItems: 'flex-start' }}>
+                <View
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 14,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: unlocked ? '#06223D' : '#94A3B8',
+                  }}
+                >
+                  {unlocked ? (
+                    <Text style={{ color: '#F59E0B', fontWeight: '900', fontSize: 18 }}>
+                      {level.id}
+                    </Text>
+                  ) : (
+                    <Lock size={20} color="#FFFFFF" />
+                  )}
+                </View>
               </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 15 }}>
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <Text style={{ fontWeight: '800', color: '#06223D', fontSize: 15, textAlign: 'center' }}>
                   {level.name}
                 </Text>
-                <Text style={{ color: '#64748B', fontSize: 12, marginTop: 2 }}>
+                <Text style={{ color: '#475569', fontSize: 12, marginTop: 2, textAlign: 'center' }}>
                   Target: {level.targetScore} pipes
                   {level.movingPipes ? ' · Moving gates' : ''}
                 </Text>
               </View>
-              <View style={{ alignItems: 'flex-end', gap: 2 }}>
+              <View style={{ width: LEVEL_CARD_SIDE_WIDTH, flexShrink: 0, alignItems: 'flex-end', gap: 2 }}>
                 {cleared ? <Star size={18} color="#F59E0B" fill="#F59E0B" /> : null}
-                <Text style={{ color: '#94A3B8', fontSize: 12, fontWeight: '700' }}>
+                <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ width: '100%', textAlign: 'left', color: '#F59E0B', fontSize: 12, fontWeight: '700' }}>
                   {best > 0 ? `Best ${best}` : unlocked ? 'New' : ''}
                 </Text>
               </View>
@@ -263,119 +287,12 @@ export default function LevelsScreen() {
         })}
       </ScrollView>
 
-      <Modal
+      <GameStartOptions
         visible={pendingGame !== null}
-        transparent
-        animationType="fade"
-        statusBarTranslucent
-        onRequestClose={() => setPendingGame(null)}
-      >
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Close game start options"
-          onPress={() => setPendingGame(null)}
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(15,23,42,0.58)',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <Pressable
-            onPress={(event) => event.stopPropagation()}
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderTopLeftRadius: 28,
-              borderTopRightRadius: 28,
-              paddingTop: 22,
-              paddingHorizontal: 20,
-              paddingBottom: Math.max(insets.bottom, 20),
-              gap: 14,
-            }}
-          >
-            <View style={{ alignItems: 'center', gap: 4 }}>
-              <Text
-                style={{
-                  color: '#0F172A',
-                  fontWeight: '900',
-                  fontSize: 20,
-                  textAlign: 'center',
-                }}
-              >
-                {pendingGame?.title}
-              </Text>
-              <Text style={{ color: '#64748B', fontSize: 13, fontWeight: '700' }}>
-                Live Camera Background
-              </Text>
-            </View>
-
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-              <TouchableOpacity
-                accessibilityRole="button"
-                accessibilityLabel="Play with live camera"
-                onPress={() => pendingGame && launchGame(pendingGame)}
-                style={{
-                  flex: 1,
-                  minHeight: 72,
-                  borderRadius: 20,
-                  backgroundColor: '#F59E0B',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 4,
-                }}
-              >
-                <Play size={22} color="#FFFFFF" fill="#FFFFFF" />
-                <Text
-                  style={{
-                    color: '#FFFFFF',
-                    fontWeight: '900',
-                    fontSize: 17,
-                    textAlign: 'center',
-                  }}
-                >
-                  PLAY
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                accessibilityRole="button"
-                accessibilityLabel="Record and play with live camera"
-                accessibilityHint="Records this game for sharing"
-                onPress={() => pendingGame && launchGame(pendingGame, true)}
-                style={{
-                  flex: 1,
-                  minHeight: 72,
-                  borderRadius: 20,
-                  backgroundColor: '#DC2626',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 4,
-                }}
-              >
-                <Video size={22} color="#FFFFFF" />
-                <Text
-                  style={{
-                    color: '#FFFFFF',
-                    fontWeight: '900',
-                    fontSize: 13,
-                    textAlign: 'center',
-                  }}
-                >
-                  RECORD{`\n`}&amp; PLAY
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel="Cancel"
-              onPress={() => setPendingGame(null)}
-              style={{ minHeight: 44, alignItems: 'center', justifyContent: 'center' }}
-            >
-              <Text style={{ color: '#64748B', fontWeight: '800' }}>Cancel</Text>
-            </TouchableOpacity>
-          </Pressable>
-        </Pressable>
-      </Modal>
+        title={pendingGame?.title}
+        onClose={() => setPendingGame(null)}
+        onPlay={(record) => { if (pendingGame) launchGame(pendingGame, record); }}
+      />
     </View>
   );
 }

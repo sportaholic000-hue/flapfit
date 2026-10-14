@@ -1,0 +1,126 @@
+{
+  "base": "fcbf4e0c4bb2b5bdb07d85e5630f173786a72718",
+  "source": "30e54a90331b9472452633e4ea9da4123e8ed5eb",
+  "initial": "99262746621669361441b24817e385b4c2c4d841",
+  "transferableFiles": 35,
+  "identical": [
+    "apps/mobile/assets/images/victory/README.md",
+    "apps/mobile/assets/images/victory/kiwi-flex.png",
+    "apps/mobile/assets/images/victory/onyx-flex.png",
+    "apps/mobile/assets/images/victory/pearl-flex.png",
+    "apps/mobile/assets/images/victory/ruby-flex.png",
+    "apps/mobile/assets/images/victory/sky-flex.png",
+    "apps/mobile/assets/images/victory/sunny-flex.png",
+    "apps/mobile/assets/images/victory/violet-flex.png",
+    "apps/mobile/src/app/(tabs)/_layout.tsx",
+    "apps/mobile/src/app/(tabs)/compete.tsx",
+    "apps/mobile/src/app/(tabs)/index.tsx",
+    "apps/mobile/src/app/(tabs)/info.tsx",
+    "apps/mobile/src/app/(tabs)/levels.tsx",
+    "apps/mobile/src/app/(tabs)/stats.tsx",
+    "apps/mobile/src/app/+not-found.tsx",
+    "apps/mobile/src/app/_layout.tsx",
+    "apps/mobile/src/app/onboarding.tsx",
+    "apps/mobile/src/components/AchievementCard.tsx",
+    "apps/mobile/src/components/AppErrorBoundary.tsx",
+    "apps/mobile/src/components/CompetitionTermsModal.tsx",
+    "apps/mobile/src/components/GameSetupScreen.tsx",
+    "apps/mobile/src/components/GameStartOptions.tsx",
+    "apps/mobile/src/components/LaunchUpdateGate.tsx",
+    "apps/mobile/src/components/PrivacyChoices.tsx",
+    "apps/mobile/src/components/ResultBird.tsx",
+    "apps/mobile/src/components/RunCelebrations.tsx",
+    "apps/mobile/src/components/TabSkyBackground.tsx",
+    "apps/mobile/src/components/__tests__/GameStartOptions.test.tsx",
+    "apps/mobile/src/components/__tests__/InfoPrivacy.test.tsx",
+    "apps/mobile/src/utils/game/gameHtml.ts"
+  ],
+  "adapted": [
+    "apps/mobile/src/app/game.tsx",
+    "apps/mobile/src/components/GameEligibilityGate.tsx",
+    "apps/mobile/src/components/__tests__/CompeteScreenPrivacy.test.tsx",
+    "apps/mobile/src/components/navigation/BottomTabVisuals.tsx",
+    "apps/mobile/src/utils/game/experimentalCalibrationGuide.ts"
+  ],
+  "assets": [
+    {
+      "path": "apps/mobile/assets/images/victory/kiwi-flex.png",
+      "sha256": "5f81c3bda97f82659c3dd97b80dab4dcc39fa1b4e6a7cc36b5fdb8dda6ff92c0"
+    },
+    {
+      "path": "apps/mobile/assets/images/victory/onyx-flex.png",
+      "sha256": "321bed80ba86d82abe29f29982feb5b956f5fe6a53c22902c604a71ea4dc603e"
+    },
+    {
+      "path": "apps/mobile/assets/images/victory/pearl-flex.png",
+      "sha256": "9153f51df447ca462d40cf43f5b4dbe01526c6f38bddf4d7d881b471fb8494dc"
+    },
+    {
+      "path": "apps/mobile/assets/images/victory/ruby-flex.png",
+      "sha256": "8d09c2edbca991d0c5c2c356447228e4a3b28e19e399aed37bebc0226c213330"
+    },
+    {
+      "path": "apps/mobile/assets/images/victory/sky-flex.png",
+      "sha256": "fb2c338e950f8ff82f0e263506f64fbe4e048b24122c7ee36029a5bb799e4bbf"
+    },
+    {
+      "path": "apps/mobile/assets/images/victory/sunny-flex.png",
+      "sha256": "239632200561c7c9bb8544ac59784c905f121eb487cce01fa5a051990fca8d1b"
+    },
+    {
+      "path": "apps/mobile/assets/images/victory/violet-flex.png",
+      "sha256": "4b89cd756e707d40d034d60657c0cff800ec5c072d24642ee899f4a35b4e056c"
+    }
+  ],
+  "calibrationAssetsUnchanged": 14,
+  "calibrationSourceOnlyCardColors": true,
+  "unexpectedProductionChanges": [],
+  "excludedSandboxFiles": [
+    "apps/mobile/dev/nav-qa-server.cjs",
+    "apps/mobile/dev/nav-qa.md",
+    "apps/mobile/dev/nav-qa.tsx",
+    "apps/mobile/dev/sky-qa-server.cjs",
+    "apps/mobile/dev/sky-qa.md",
+    "apps/mobile/dev/sky-qa.tsx",
+    "apps/mobile/package.json",
+    "design-qa.md",
+    "docs/design/bottom-navigation/comparison.png",
+    "docs/design/bottom-navigation/narrow-home-bar.png",
+    "docs/design/bottom-navigation/narrow-home.png",
+    "docs/design/bottom-navigation/phone-compete.png",
+    "docs/design/bottom-navigation/phone-home-bar.png",
+    "docs/design/bottom-navigation/phone-home.png",
+    "docs/design/bottom-navigation/phone-info.png",
+    "docs/design/bottom-navigation/phone-levels.png",
+    "docs/design/bottom-navigation/phone-stats.png",
+    "docs/design/bottom-navigation/reference.png",
+    "docs/design/bottom-navigation/tablet-home-bar.png",
+    "docs/design/bottom-navigation/tablet-home.png",
+    "docs/design/bottom-navigation/verification.jsonl",
+    "docs/design/tab-skies/README.md",
+    "docs/design/tab-skies/phone-compete-scrolled.png",
+    "docs/design/tab-skies/phone-compete-sky.png",
+    "docs/design/tab-skies/phone-info-scrolled.png",
+    "docs/design/tab-skies/phone-info-sky.png",
+    "docs/design/tab-skies/phone-levels-scrolled.png",
+    "docs/design/tab-skies/phone-levels-sky.png",
+    "docs/design/tab-skies/phone-stats-scrolled.png",
+    "docs/design/tab-skies/phone-stats-sky.png",
+    "docs/design/tab-skies/tablet-compete-scrolled.png",
+    "docs/design/tab-skies/tablet-compete-sky.png",
+    "docs/design/tab-skies/tablet-info-scrolled.png",
+    "docs/design/tab-skies/tablet-info-sky.png",
+    "docs/design/tab-skies/tablet-levels-scrolled.png",
+    "docs/design/tab-skies/tablet-levels-sky.png",
+    "docs/design/tab-skies/tablet-stats-scrolled.png",
+    "docs/design/tab-skies/tablet-stats-sky.png",
+    "docs/design/tab-skies/verification.json",
+    "yarn.lock"
+  ],
+  "contrast": {
+    "orangeOnWhite": 2.15,
+    "whiteOnSky": 2.57,
+    "navyOnSky": 6.27,
+    "orangeOnNavy": 7.5
+  }
+}

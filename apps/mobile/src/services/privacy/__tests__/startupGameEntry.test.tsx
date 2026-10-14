@@ -1,6 +1,6 @@
 import type { ReactTestRenderer } from 'react-test-renderer';
 
-// Render the real RootLayout -> Home Play button -> GameScreen -> eligibility gate.
+// Render the real RootLayout -> Home Play/record chooser -> GameScreen -> eligibility gate.
 // Native rendering, router transport and provider SDK boundaries are test adapters;
 // startup, eligibility, saved-age restoration and monetization controllers are real.
 const settle = async () => { for (let i = 0; i < 80; i++) await Promise.resolve(); };
@@ -42,11 +42,11 @@ async function mountApp(saved: string | null, options: {
   const openSettings = jest.fn().mockResolvedValue(undefined);
   const platform = options.platform ?? 'ios';
   jest.doMock('react-native', () => ({
-    View: 'View', Text: 'Text', ScrollView: 'ScrollView', TouchableOpacity: 'TouchableOpacity', ActivityIndicator: 'ActivityIndicator',
+    View: 'View', Text: 'Text', ScrollView: 'ScrollView', TouchableOpacity: 'TouchableOpacity', ActivityIndicator: 'ActivityIndicator', Modal: 'Modal', Pressable: 'Pressable',
     Platform: { OS: platform, Version: '18.6', select: (values: Record<string, unknown>) => values[platform] ?? values.default }, AppState: appState,
     Alert: { alert: jest.fn() }, Linking: { openSettings }, Share: {}, StyleSheet: { create: (styles: unknown) => styles },
     Animated: { Value: class { interpolate = jest.fn(); setValue = jest.fn(); }, View: 'View', timing: animation, loop: animation, sequence: animation },
-    Easing: { linear: jest.fn(), out: jest.fn(), quad: jest.fn() }, useWindowDimensions: () => ({ width: 390, height: 844 }),
+    Easing: { linear: jest.fn(), out: jest.fn(), quad: jest.fn() }, useWindowDimensions: () => ({ width: 390, height: 844, fontScale: 1 }),
     TurboModuleRegistry: { get: () => null }, NativeModules: { RNPurchases: { flapFitSetProcessingAllowed: jest.fn().mockResolvedValue(true), flapFitSetNetworkPaused: jest.fn().mockResolvedValue(true) } },
   }));
   jest.doMock('lucide-react-native', () => new Proxy({}, { get: (_target, key) => key === '__esModule' ? true : String(key) }));
@@ -141,9 +141,15 @@ async function mountApp(saved: string | null, options: {
       expect(cameraMode).toBeDefined(); cameraMode.props.onPress(); await settle();
     });
     await act(async () => {
-    const button = tree.root.findAll(node => (options.recordRun ? /^Record and play Level \d+$/ : /^Play Level \d+$/).test(node.props.accessibilityLabel ?? '') && typeof node.props.onPress === 'function')[0];
+    const button = tree.root.findAll(node => /^Play Level \d+$/.test(node.props.accessibilityLabel ?? '') && typeof node.props.onPress === 'function')[0];
     expect(button).toBeDefined(); button.props.onPress(); await settle();
-  }); expect(router.push).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
+  });
+    if (options.recordRun) await act(async () => {
+      expect(tree.root.findByType('Modal' as never).props.visible).toBe(true);
+      const record = tree.root.findAll(node => node.props.accessibilityLabel === 'Record and play with live camera' && typeof node.props.onPress === 'function')[0];
+      expect(record).toBeDefined(); record.props.onPress(); await settle();
+    });
+    expect(router.push).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/game' }));
     expect(JSON.stringify(tree.toJSON())).not.toContain('Flap Fit hit a snag'); };
   return { camera, requestCameraPermission, getCameraPermission, requestMicrophonePermission, getMicrophonePermission, openSettings, storage, adLoad, rcLoad, play, tree, sheet, router, awakeStart, awakeStop,
     goHome: async () => { await act(async () => { router.back(); await settle(); }); },

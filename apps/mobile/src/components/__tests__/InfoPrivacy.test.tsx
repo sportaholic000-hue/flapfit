@@ -2,8 +2,9 @@ import type { ReactTestRenderer } from 'react-test-renderer';
 
 jest.setTimeout(20_000);
 
-async function fixture(requiredInitially = true, diagnostics = false) {
+async function fixture(requiredInitially = true, diagnostics = false, section?: string) {
   jest.resetModules();
+  jest.doMock('@/components/TabSkyBackground', () => ({ TabSkyBackground: () => null }));
   const React: typeof import('react') = require('react');
   const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
   let required = requiredInitially;
@@ -29,8 +30,12 @@ async function fixture(requiredInitially = true, diagnostics = false) {
     StyleSheet: { create: (value: unknown) => value }, Platform: { OS: 'ios', Version: '26' },
     AppState: appState, Alert: { alert }, Linking: { openURL }, Share: { share: jest.fn() },
   }));
+  const params = { section };
+  const setParams = jest.fn((next: { section?: string }) => Object.assign(params, next));
+  const router = { push: jest.fn(), navigate: jest.fn(), setParams };
   jest.doMock('expo-router', () => ({
-    useRouter: () => ({ push: jest.fn() }),
+    useLocalSearchParams: () => params,
+    useRouter: () => router,
     useFocusEffect: (callback: () => (() => void)) => React.useEffect(callback, [callback]),
   }));
   jest.doMock('expo-constants', () => ({ __esModule: true, default: { expoConfig: { version: '1.0.0' } } }));
@@ -39,7 +44,7 @@ async function fixture(requiredInitially = true, diagnostics = false) {
   jest.doMock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) }));
   jest.doMock('lucide-react-native', () => Object.fromEntries([
     'Camera', 'ChevronRight', 'CircleHelp', 'Clock3', 'FileText', 'KeyRound', 'Mail', 'MessageSquareWarning',
-    'Settings', 'Share2', 'ShieldCheck', 'Smartphone', 'Trash2', 'TriangleAlert', 'X',
+    'RotateCcw', 'Settings', 'Share2', 'ShieldCheck', 'SlidersHorizontal', 'Smartphone', 'Trash2', 'TriangleAlert', 'X',
   ].map(name => [name, () => null])));
   jest.doMock('@/components/BirdAvatar', () => ({ __esModule: true, default: () => null }));
   jest.doMock('@/components/PrivacyChoices', () => ({ PrivacyChoices: 'PrivacyChoices' }));
@@ -57,7 +62,13 @@ async function fixture(requiredInitially = true, diagnostics = false) {
   const privacyRows = () => rows().filter(node => node.props.accessibilityLabel?.startsWith('Manage Privacy Choices'));
   const text = () => tree.root.findAllByType('Text' as never).map(node => node.children.join('')).join('\n');
   const versionText = () => tree.root.findAllByType('Text' as never).find(node => node.children.join('').startsWith('Version '))!;
-  return { show, refresh, openURL, alert, privacyRows, text, requestCheck, appState, diagnosticReport, versionText,
+  return { show, refresh, openURL, alert, privacyRows, text, setParams, navigate: router.navigate,
+    closeTermsWithBack: async () => { await React.act(async () => { tree.root.findAllByType('Modal' as never).find(node => node.props.visible === true)!.props.onRequestClose(); }); },
+    pressText: async (label: string) => { await React.act(async () => {
+      rows().find(node => node.findAllByType('Text' as never).some(text => text.children.join('') === label))!.props.onPress();
+    }); },
+    setupVisible: () => tree.root.findAllByType('PrivacyChoices' as never).length === 1,
+    termsVisible: () => tree.root.findAllByType('Modal' as never).some(node => node.props.visible === true), requestCheck, appState, diagnosticReport, versionText,
     pressUpdate: async () => { await React.act(async () => { rows().find(node => node.props.accessibilityLabel?.startsWith('Check for updates'))!.props.onPress(); }); },
     press: async () => { await React.act(async () => { privacyRows()[0].props.onPress(); }); },
     setRequired: async (value: boolean) => { await React.act(async () => { required = value; listeners.forEach(fn => fn()); }); },
@@ -143,5 +154,34 @@ test('an active workout refuses the Info update request', async () => {
   const f = await fixture(); f.requestCheck.mockReturnValue(false);
   await f.pressUpdate();
   expect(f.alert).toHaveBeenCalledWith('Finish your workout first', expect.any(String));
+  await f.unmount();
+});
+
+test.each(['Done', 'Android back'])('Compete rules close with %s returns to Compete without opening setup', async (close) => {
+  const f = await fixture(false, false, 'competition-terms');
+  expect(f.setupVisible()).toBe(false);
+  expect(f.termsVisible()).toBe(true);
+  expect(f.text()).toContain('Online Competition Terms');
+  expect(f.text()).not.toContain('I Agree');
+  expect(f.setParams).toHaveBeenCalledWith({ section: undefined });
+  if (close === 'Done') await f.pressText('Done');
+  else await f.closeTermsWithBack();
+  expect(f.termsVisible()).toBe(false);
+  expect(f.setupVisible()).toBe(false);
+  expect(f.navigate).toHaveBeenCalledWith('/(tabs)/compete');
+  expect(f.show).not.toHaveBeenCalled();
+  expect(f.openURL).not.toHaveBeenCalled();
+  await f.unmount();
+});
+
+test('rules deliberately opened from Your setup close in Info without navigating away', async () => {
+  const f = await fixture(false);
+  await f.pressText('Your setup');
+  await f.pressText('Competition rules & terms');
+  expect(f.termsVisible()).toBe(true);
+  await f.pressText('Done');
+  expect(f.termsVisible()).toBe(false);
+  expect(f.setupVisible()).toBe(true);
+  expect(f.navigate).not.toHaveBeenCalled();
   await f.unmount();
 });

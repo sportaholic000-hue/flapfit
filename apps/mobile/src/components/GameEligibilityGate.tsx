@@ -90,7 +90,7 @@ export function GameEligibilityGate({ children, hasCompletedRun = noCompletedRun
       onHome={() => router.replace('/(tabs)')} onInfo={() => router.replace('/(tabs)/info')} />
     {privacyChoicesSheet}
   </View>;
-  return <View style={{ flex: 1, backgroundColor: '#0F172A', padding: 28, justifyContent: 'center', gap: 18 }}>
+  return <View style={{ flex: 1, backgroundColor: '#06223D', padding: 28, justifyContent: 'center', gap: 18 }}>
     <Text accessibilityRole="header" style={{ color: '#FFFFFF', fontSize: 24, fontWeight: '800' }}>Flap Fit availability</Text>
     <Text style={{ color: '#FFFFFF', fontSize: 16, lineHeight: 24 }}>{error ?? (decision ? releaseEligibilityMessage(decision) : 'Checking availability…')}</Text>
     {busy ? <ActivityIndicator color="#FFFFFF" /> : <TouchableOpacity accessibilityRole="button" onPress={() => void check(true)} style={{ padding: 16 }}>

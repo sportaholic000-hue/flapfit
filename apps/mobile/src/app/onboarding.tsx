@@ -170,7 +170,7 @@ export default function OnboardingScreen() {
         }}
       >
         Do exercises and fly a bird through obstacles.{'\n'}Your body is the controller.{'\n\n'}
-        <Text style={{ color: '#0F172A', fontWeight: '800' }}>Choose your workout:</Text>
+        <Text style={{ color: '#06223D', fontWeight: '800' }}>Choose your workout:</Text>
         {'\n'}
         <Text style={{ fontWeight: '900' }}>
           Push-ups · Squats · Pull-ups{'\n'}Lateral Raise · Bicep Curls · Shoulder Press
@@ -184,7 +184,7 @@ export default function OnboardingScreen() {
           paddingVertical: 10,
         }}
       >
-        <Text style={{ color: '#0F172A', fontSize: 13, fontWeight: '700', textAlign: 'center' }}>
+        <Text style={{ color: '#06223D', fontSize: 13, fontWeight: '700', textAlign: 'center' }}>
           🐣 Your bird begins as a hatchling. Tracked training time grows it into a Legend.
         </Text>
       </View>
@@ -236,7 +236,7 @@ export default function OnboardingScreen() {
         contentFit="contain"
         transition={150}
       />
-      <Text style={{ fontSize: 28, color: '#0F172A', textAlign: 'center', fontWeight: '900' }}>
+      <Text style={{ fontSize: 28, color: '#06223D', textAlign: 'center', fontWeight: '900' }}>
         SET THE STAGE
       </Text>
       <View style={{ width: 72, height: 4, borderRadius: 2, backgroundColor: '#F59E0B' }} />
@@ -250,7 +250,7 @@ export default function OnboardingScreen() {
         }}
       >
         <View style={{ gap: 3 }}>
-          <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 14, textAlign: 'center' }}>
+          <Text style={{ color: '#06223D', fontWeight: '900', fontSize: 14, textAlign: 'center' }}>
             Push-ups
           </Text>
           <Text
@@ -266,7 +266,7 @@ export default function OnboardingScreen() {
           </Text>
         </View>
         <View style={{ gap: 3 }}>
-          <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 14, textAlign: 'center' }}>
+          <Text style={{ color: '#06223D', fontWeight: '900', fontSize: 14, textAlign: 'center' }}>
             Squats
           </Text>
           <Text
@@ -284,7 +284,7 @@ export default function OnboardingScreen() {
         <View style={{ gap: 3 }}>
           <Text
             style={{
-              color: '#0F172A',
+              color: '#06223D',
               fontWeight: '900',
               fontSize: 14,
               lineHeight: 18,
@@ -337,7 +337,7 @@ export default function OnboardingScreen() {
     >
       <Text
         style={{
-          color: '#0F172A',
+          color: '#06223D',
           fontSize: 28,
           textAlign: 'center',
           fontWeight: '900',
@@ -355,15 +355,15 @@ export default function OnboardingScreen() {
           also show you each pose.
         </Text>
         <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
-          <Text style={{ color: '#0F172A', fontWeight: '900' }}>1.</Text> Hold the TOP position of
+          <Text style={{ color: '#06223D', fontWeight: '900' }}>1.</Text> Hold the TOP position of
           your exercise until the bar fills.
         </Text>
         <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
-          <Text style={{ color: '#0F172A', fontWeight: '900' }}>2.</Text> Hold the BOTTOM position
+          <Text style={{ color: '#06223D', fontWeight: '900' }}>2.</Text> Hold the BOTTOM position
           until the bar fills.
         </Text>
         <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>
-          <Text style={{ color: '#0F172A', fontWeight: '900' }}>3.</Text> 3-2-1… GO! The bird
+          <Text style={{ color: '#06223D', fontWeight: '900' }}>3.</Text> 3-2-1… GO! The bird
           follows your movement in real time.
         </Text>
         <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, lineHeight: 20 }}>

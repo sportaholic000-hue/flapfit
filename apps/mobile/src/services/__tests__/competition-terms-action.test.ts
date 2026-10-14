@@ -1,5 +1,6 @@
 function fixture(options: { existingTerms?: boolean; allowed?: boolean; granted?: boolean } = {}) {
   jest.resetModules();
+  jest.doMock('@/components/TabSkyBackground', () => ({ TabSkyBackground: () => null }));
   const acceptTerms = jest.fn();
   const effects: Array<() => unknown> = [];
   const setters: jest.Mock[] = [];
@@ -20,7 +21,7 @@ function fixture(options: { existingTerms?: boolean; allowed?: boolean; granted?
   }));
   jest.doMock('react-native', () => ({ Alert: { alert: jest.fn() }, Linking: { openURL: jest.fn() },
     Modal: 'Modal', ScrollView: 'ScrollView', Text: 'Text', TextInput: 'TextInput', TouchableOpacity: 'TouchableOpacity', View: 'View' }));
-  jest.doMock('expo-router', () => ({ useFocusEffect: (effect: () => unknown) => { effects.push(effect); } }));
+  jest.doMock('expo-router', () => ({ useRouter: () => ({ push: jest.fn() }), useFocusEffect: (effect: () => unknown) => { effects.push(effect); } }));
   jest.doMock('@/services/monetization', () => ({ prepareCompetitionEligibility: jest.fn().mockResolvedValue(undefined) }));
   jest.doMock('expo-image', () => ({ Image: 'Image' }));
   jest.doMock('expo-status-bar', () => ({ StatusBar: 'StatusBar' }));

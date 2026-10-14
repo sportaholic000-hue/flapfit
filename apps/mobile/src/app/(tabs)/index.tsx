@@ -2,14 +2,10 @@ import { Image } from 'expo-image';
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
-  Camera,
   CheckCircle2,
   Flame,
-  Infinity as InfinityIcon,
   Lock,
   Play,
-  Sun,
-  Video,
 } from 'lucide-react-native';
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { getLobbyPrivacyKey, prepareMonetization } from '@/services/monetization';
@@ -18,6 +14,7 @@ import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'rea
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
 import BirdAvatar from '@/components/BirdAvatar';
+import { GameStartOptions } from '@/components/GameStartOptions';
 import { BIRDS, getBird } from '@/utils/game/birds';
 import { EXERCISE_IMAGES } from '@/utils/game/exerciseImages';
 import { getDailyChallenge, LEVELS } from '@/utils/game/levels';
@@ -35,8 +32,8 @@ import {
 
 // Sky blue that matches the bird illustration background
 const SKY_BLUE = '#4AABDE';
-const NAVY = '#0F172A';
-const ACCENT_BLUE = '#0284C7';
+const NAVY = '#06223D';
+const SELECTION_ORANGE = '#F59E0B';
 
 const CLOUD_PATH =
   'M22 69C10 69 2 61 2 50C2 40 9 32 19 30C21 15 33 5 48 5C59 5 69 11 74 20C79 15 86 12 94 12C108 12 119 23 119 37C122 34 127 32 133 32C144 32 152 40 152 51C152 62 143 69 132 69H22Z';
@@ -80,10 +77,16 @@ function Cloud({
   );
 }
 
+type PendingHomeGame = {
+  title: string;
+  params: Record<string, string>;
+};
+
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [backgroundMode, setBackgroundMode] = useState<'sky' | 'camera'>('sky');
+  const [pendingGame, setPendingGame] = useState<PendingHomeGame | null>(null);
   const [hydrationSlow, setHydrationSlow] = useState(false);
 
   const hydrated = useGameStore((s) => s.hydrated);
@@ -209,24 +212,34 @@ export default function HomeScreen() {
     ...(record && backgroundMode === 'camera' ? { record: '1' } : {}),
   });
 
-  const playCurrentLevel = (record = false) =>
+  const launchGame = (game: PendingHomeGame, record = false) => {
+    setPendingGame(null);
     router.push({
       pathname: '/game' as never,
-      params: withGameOptions({ mode: 'level', levelId: String(currentLevel.id) }, record),
+      params: withGameOptions(game.params, record),
     });
-  const playEndless = (record = false) =>
-    router.push({
-      pathname: '/game' as never,
-      params: withGameOptions({ mode: 'endless' }, record),
+  };
+
+  const requestGame = (game: PendingHomeGame) => {
+    if (backgroundMode === 'camera') setPendingGame(game);
+    else launchGame(game);
+  };
+
+  const playCurrentLevel = () => requestGame({
+    title: `Level ${currentLevel.id} · ${currentLevel.name}`,
+    params: { mode: 'level', levelId: String(currentLevel.id) },
+  });
+  const playEndless = () => {
+    if (!endlessOpen) return;
+    requestGame({ title: 'Endless Mode', params: { mode: 'endless' } });
+  };
+  const playDaily = () => {
+    if (dailyDone) return;
+    requestGame({
+      title: 'Daily Challenge',
+      params: { mode: 'daily', levelId: String(daily.levelId), target: String(daily.target) },
     });
-  const playDaily = (record = false) =>
-    router.push({
-      pathname: '/game' as never,
-      params: withGameOptions(
-        { mode: 'daily', levelId: String(daily.levelId), target: String(daily.target) },
-        record
-      ),
-    });
+  };
 
   // Exercise button with actual bird image (no icon needed anymore)
   const exBtn = (ex: typeof exerciseMode, label: string, sub: string) => {
@@ -244,24 +257,28 @@ export default function HomeScreen() {
           alignItems: 'center',
           justifyContent: 'center',
           gap: 4,
-          backgroundColor: selected ? '#FEF3C7' : '#F3F4F6',
+          backgroundColor: selected ? '#4AABDE' : '#06223D',
           borderWidth: 2,
           borderColor: selected ? '#F59E0B' : 'transparent',
           minHeight: 198,
         }}
       >
+        {selected ? (
+          <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 12, right: 12 }} />
+        ) : null}
         <Image
           source={imageSource}
           style={{ width: 118, height: 118, borderRadius: 14 }}
           contentFit="contain"
         />
-        <Text style={{ fontWeight: '800', fontSize: 11, color: selected ? '#B45309' : '#1F2937' }}>
+        <Text style={{ fontWeight: '800', fontSize: 14, lineHeight: 19, textAlign: 'center', color: selected ? '#06223D' : '#FFFFFF' }}>
           {label}
         </Text>
         <Text
           style={{
-            fontSize: 9,
-            color: selected ? '#B45309' : '#9CA3AF',
+            fontSize: 12,
+            lineHeight: 17,
+            color: selected ? '#FFFFFF' : '#4AABDE',
             fontWeight: '600',
             textAlign: 'center',
           }}
@@ -311,11 +328,16 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View
-          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
-        >
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
           <Text
+            accessibilityRole="header"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
             style={{
+              flex: 1,
+              paddingHorizontal: 64,
+              textAlign: 'center',
               fontFamily: 'LuckiestGuy_400Regular',
               fontSize: 34,
               color: '#FFFFFF',
@@ -330,6 +352,8 @@ export default function HomeScreen() {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
+              position: 'absolute',
+              right: 0,
               backgroundColor: 'rgba(255,255,255,0.9)',
               borderRadius: 20,
               paddingHorizontal: 12,
@@ -343,12 +367,15 @@ export default function HomeScreen() {
         </View>
         <Text
           style={{
-            color: NAVY,
+            color: '#06223D',
+            fontSize: 14,
+            lineHeight: 20,
+            textAlign: 'center',
             marginTop: 2,
             fontWeight: '800',
           }}
         >
-          Your body is the controller.
+          Your body is the controller
         </Text>
 
         {/* Inactivity warning */}
@@ -403,11 +430,11 @@ export default function HomeScreen() {
               gap: 6,
             }}
           >
-            <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 13, textAlign: 'center' }}>
+            <Text style={{ fontWeight: '800', color: NAVY, fontSize: 13, textAlign: 'center' }}>
               {EVO_NAMES[evoStage]}
             </Text>
             {evoStage < EVO_THRESHOLDS.length - 1 && (
-              <Text style={{ color: '#64748B', fontSize: 11, textAlign: 'center' }}>
+              <Text style={{ color: '#475569', fontSize: 11, textAlign: 'center' }}>
                 {Math.round(evoProgress * 100)}% to {EVO_NAMES[evoStage + 1]}
               </Text>
             )}
@@ -459,7 +486,7 @@ export default function HomeScreen() {
                 }}
               >
                 <BirdAvatar skin={b} size={44} evo={selected ? birdEvo : undefined} />
-                <Text style={{ fontSize: 11, fontWeight: '700', color: '#374151', marginTop: 2 }}>
+                <Text style={{ fontSize: 11, fontWeight: '700', color: '#475569', marginTop: 2 }}>
                   {b.name}
                 </Text>
               </TouchableOpacity>
@@ -478,10 +505,15 @@ export default function HomeScreen() {
           }}
         >
           <View style={{ gap: 3 }}>
-            <Text style={{ fontWeight: '900', color: '#1F2937', fontSize: 16 }}>
+            <Text accessibilityRole="header" style={{ fontWeight: '800', color: '#06223D', fontSize: 16, textAlign: 'center' }}>
               Game Background
             </Text>
-            <Text style={{ color: '#64748B', fontSize: 12 }}>
+            <View
+              accessible={false}
+              importantForAccessibility="no"
+              style={{ alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6 }}
+            />
+            <Text style={{ color: '#475569', fontSize: 13, lineHeight: 19, textAlign: 'center' }}>
               Choose what appears behind your bird and pipes.
             </Text>
           </View>
@@ -498,22 +530,20 @@ export default function HomeScreen() {
                 padding: 12,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'sky' ? ACCENT_BLUE : '#D1D5DB',
-                backgroundColor: backgroundMode === 'sky' ? '#E0F2FE' : '#F8FAFC',
-                justifyContent: 'space-between',
+                borderColor: backgroundMode === 'sky' ? SELECTION_ORANGE : '#06223D',
+                backgroundColor: backgroundMode === 'sky' ? '#4AABDE' : '#06223D',
+                justifyContent: 'center',
+                paddingTop: 30,
               }}
             >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Sun size={23} color={backgroundMode === 'sky' ? ACCENT_BLUE : '#64748B'} />
-                {backgroundMode === 'sky' ? (
-                  <CheckCircle2 size={19} color={ACCENT_BLUE} fill="#FFFFFF" />
-                ) : null}
-              </View>
+              {backgroundMode === 'sky' ? (
+                <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 10, right: 10 }} />
+              ) : null}
               <View style={{ gap: 2 }}>
-                <Text style={{ fontWeight: '900', color: '#0F172A', fontSize: 14 }}>
+                <Text style={{ fontWeight: '900', color: backgroundMode === 'sky' ? '#06223D' : '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
                   Sky Background
                 </Text>
-                <Text style={{ color: '#64748B', fontSize: 10, fontWeight: '600' }}>
+                <Text style={{ color: backgroundMode === 'sky' ? '#FFFFFF' : '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
                   Classic game view
                 </Text>
               </View>
@@ -530,22 +560,20 @@ export default function HomeScreen() {
                 padding: 12,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'camera' ? ACCENT_BLUE : '#D1D5DB',
-                backgroundColor: backgroundMode === 'camera' ? '#E0F2FE' : '#F8FAFC',
-                justifyContent: 'space-between',
+                borderColor: backgroundMode === 'camera' ? SELECTION_ORANGE : '#06223D',
+                backgroundColor: backgroundMode === 'camera' ? '#4AABDE' : '#06223D',
+                justifyContent: 'center',
+                paddingTop: 30,
               }}
             >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Camera size={23} color={backgroundMode === 'camera' ? ACCENT_BLUE : '#64748B'} />
-                {backgroundMode === 'camera' ? (
-                  <CheckCircle2 size={19} color={ACCENT_BLUE} fill="#FFFFFF" />
-                ) : null}
-              </View>
+              {backgroundMode === 'camera' ? (
+                <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 10, right: 10 }} />
+              ) : null}
               <View style={{ gap: 2 }}>
-                <Text style={{ fontWeight: '900', color: '#0F172A', fontSize: 14 }}>
+                <Text style={{ fontWeight: '900', color: backgroundMode === 'camera' ? '#06223D' : '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
                   Live Camera
                 </Text>
-                <Text style={{ color: '#64748B', fontSize: 10, fontWeight: '600' }}>
+                <Text style={{ color: backgroundMode === 'camera' ? '#FFFFFF' : '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
                   You become the backdrop
                 </Text>
               </View>
@@ -553,59 +581,65 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Current level start */}
+        {/* Main game choices */}
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel={`Play Level ${currentLevel.id}`}
-            onPress={() => playCurrentLevel()}
+            onPress={playCurrentLevel}
             style={{
               flex: 1,
               minHeight: 72,
               backgroundColor: '#F59E0B',
               borderRadius: 20,
-              paddingVertical: 14,
+              paddingVertical: 12,
+              paddingHorizontal: 10,
               alignItems: 'center',
-              flexDirection: 'row',
               justifyContent: 'center',
-              gap: 8,
+              flexDirection: 'row',
+              gap: 6,
             }}
           >
-            <Play size={24} color="#FFFFFF" fill="#FFFFFF" />
-            <View>
-              <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 18 }}>PLAY</Text>
-              <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: 10, fontWeight: '600' }}>
-                Level {currentLevel.id} · {currentLevel.name}
+            <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ color: '#06223D', fontWeight: '900', fontSize: 16, lineHeight: 20, textAlign: 'center' }}>
+                Level {currentLevel.id}
+              </Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ color: '#06223D', fontSize: 12, lineHeight: 16, fontWeight: '600', textAlign: 'center' }}>
+                {currentLevel.name}
               </Text>
             </View>
+            <Play size={36} color="#06223D" fill="#06223D" />
           </TouchableOpacity>
-          {backgroundMode === 'camera' ? (
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel={`Record and play Level ${currentLevel.id}`}
-              accessibilityHint="Records the live-camera game for sharing"
-              onPress={() => playCurrentLevel(true)}
-              style={{
-                flex: 1,
-                minHeight: 72,
-                backgroundColor: '#DC2626',
-                borderRadius: 20,
-                paddingVertical: 14,
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'row',
-                gap: 7,
-              }}
-            >
-              <Video size={22} color="#FFFFFF" />
-              <View>
-                <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 13 }}>RECORD</Text>
-                <Text style={{ color: 'rgba(255,255,255,0.9)', fontWeight: '800', fontSize: 11 }}>
-                  & PLAY
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ) : null}
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={endlessOpen ? 'Play Endless Mode' : 'Endless Mode locked'}
+            accessibilityHint={endlessOpen ? undefined : 'Clear Level 5 to unlock Endless Mode'}
+            accessibilityState={{ disabled: !endlessOpen }}
+            onPress={endlessOpen ? playEndless : undefined}
+            disabled={!endlessOpen}
+            style={{
+              flex: 1,
+              minHeight: 72,
+              backgroundColor: endlessOpen ? '#06223D' : '#475569',
+              borderRadius: 20,
+              paddingVertical: 12,
+              paddingHorizontal: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'row',
+              gap: 6,
+            }}
+          >
+            <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ color: endlessOpen ? '#F59E0B' : '#FFFFFF', fontWeight: '900', fontSize: 16, lineHeight: 20, textAlign: 'center' }}>
+                Endless Mode
+              </Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ color: endlessOpen ? '#F59E0B' : 'rgba(255,255,255,0.9)', fontSize: 12, lineHeight: 16, fontWeight: '600', textAlign: 'center' }}>
+                {endlessOpen ? `Best: ${endlessBest} pipes` : 'Clear Level 5'}
+              </Text>
+            </View>
+            {endlessOpen ? <Play size={36} color="#F59E0B" fill="#F59E0B" /> : <Lock size={32} color="#FFFFFF" />}
+          </TouchableOpacity>
         </View>
 
         {/* Exercise Type */}
@@ -617,9 +651,10 @@ export default function HomeScreen() {
             padding: 16,
           }}
         >
-          <Text style={{ fontWeight: '800', color: '#1F2937', fontSize: 16, textAlign: 'center' }}>
+          <Text accessibilityRole="header" style={{ fontWeight: '800', color: '#06223D', fontSize: 16, textAlign: 'center' }}>
             Exercise Type
           </Text>
+          <View accessible={false} importantForAccessibility="no" style={{ alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6 }} />
           <View
             style={{
               flexDirection: 'row',
@@ -638,69 +673,16 @@ export default function HomeScreen() {
           </View>
           <Text
             style={{
-              color: '#64748B',
-              fontSize: 12,
+              color: '#475569',
+              fontSize: 13,
               marginTop: 12,
               textAlign: 'center',
-              lineHeight: 17,
+              lineHeight: 19,
             }}
           >
             {exDescriptions[exerciseMode]}
           </Text>
         </View>
-
-        {/* Endless */}
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel={endlessOpen ? 'Play Endless Mode' : 'Endless Mode locked'}
-          onPress={endlessOpen ? () => playEndless() : undefined}
-          disabled={!endlessOpen}
-          style={{
-            marginTop: 12,
-            backgroundColor: endlessOpen ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.5)',
-            borderRadius: 20,
-            paddingVertical: 14,
-            paddingHorizontal: 18,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 12,
-          }}
-        >
-          {endlessOpen ? (
-            <InfinityIcon size={24} color="#1D4ED8" />
-          ) : (
-            <Lock size={22} color="#6B7280" />
-          )}
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontWeight: '800', color: '#1F2937', fontSize: 15 }}>Endless Mode</Text>
-            <Text style={{ color: '#6B7280', fontSize: 12 }}>
-              {endlessOpen ? `Best: ${endlessBest} pipes` : 'Clear Level 5 to unlock'}
-            </Text>
-          </View>
-        </TouchableOpacity>
-        {backgroundMode === 'camera' && endlessOpen ? (
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel="Record and play Endless Mode"
-            accessibilityHint="Records the live-camera Endless game for sharing"
-            onPress={() => playEndless(true)}
-            style={{
-              marginTop: 8,
-              minHeight: 44,
-              backgroundColor: '#DC2626',
-              borderRadius: 14,
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'row',
-              gap: 7,
-            }}
-          >
-            <Video size={18} color="#FFFFFF" />
-            <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 13 }}>
-              Record & Play Endless
-            </Text>
-          </TouchableOpacity>
-        ) : null}
 
         {/* Daily challenge */}
         <View
@@ -711,15 +693,18 @@ export default function HomeScreen() {
             padding: 16,
           }}
         >
-          <View
-            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
-          >
-            <Text style={{ fontWeight: '800', color: '#1F2937', fontSize: 15 }}>
+          <View style={{ minHeight: 22, justifyContent: 'center' }}>
+            <Text accessibilityRole="header" style={{ fontWeight: '800', color: '#06223D', fontSize: 16, textAlign: 'center', paddingHorizontal: 28 }}>
               Daily Challenge
             </Text>
-            {dailyDone ? <CheckCircle2 size={22} color="#16A34A" /> : null}
+            {dailyDone ? <CheckCircle2 size={22} color="#F59E0B" style={{ position: 'absolute', right: 0 }} /> : null}
           </View>
-          <Text style={{ color: '#6B7280', fontSize: 13, marginTop: 4 }}>
+          <View
+            accessible={false}
+            importantForAccessibility="no"
+            style={{ alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6 }}
+          />
+          <Text style={{ color: '#475569', fontSize: 13, lineHeight: 19, marginTop: 4, textAlign: 'center' }}>
             Pass {daily.target} pipes on Level {daily.levelId} today
           </Text>
           {!dailyDone ? (
@@ -729,44 +714,28 @@ export default function HomeScreen() {
               onPress={() => playDaily()}
               style={{
                 marginTop: 10,
-                backgroundColor: '#1D4ED8',
+                backgroundColor: '#06223D',
                 borderRadius: 14,
                 paddingVertical: 10,
                 alignItems: 'center',
               }}
             >
-              <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>Take it on</Text>
+              <Text style={{ color: '#F59E0B', fontWeight: '800' }}>Take it on</Text>
             </TouchableOpacity>
           ) : (
-            <Text style={{ color: '#16A34A', fontWeight: '700', marginTop: 8, fontSize: 13 }}>
+            <Text style={{ color: '#F59E0B', fontWeight: '700', marginTop: 8, fontSize: 13, textAlign: 'center' }}>
               Done! Come back tomorrow 🔥
             </Text>
           )}
-          {!dailyDone && backgroundMode === 'camera' ? (
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel="Record and play today's Daily Challenge"
-              accessibilityHint="Records the live-camera Daily Challenge for sharing"
-              onPress={() => playDaily(true)}
-              style={{
-                marginTop: 8,
-                minHeight: 42,
-                backgroundColor: '#DC2626',
-                borderRadius: 14,
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'row',
-                gap: 7,
-              }}
-            >
-              <Video size={17} color="#FFFFFF" />
-              <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 13 }}>
-                Record & Play Daily
-              </Text>
-            </TouchableOpacity>
-          ) : null}
+
         </View>
       </ScrollView>
+      <GameStartOptions
+        visible={pendingGame !== null}
+        title={pendingGame?.title}
+        onClose={() => setPendingGame(null)}
+        onPlay={(record) => { if (pendingGame) launchGame(pendingGame, record); }}
+      />
     </View>
   );
 }
