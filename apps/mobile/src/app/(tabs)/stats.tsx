@@ -190,8 +190,8 @@ export default function StatsScreen() {
   // ── Filter achievements to the selected category ──────────────────────────
   const visibleAchievements = ACHIEVEMENTS.filter((a) => a.category === exerciseFilter);
 
-  // ── Currently selected exercise TUT ──────────────────────────────────────
-  const selectedTut = exerciseFilter === 'global' ? totalTut : (exerciseTut[exerciseFilter] ?? 0);
+  // The headline uses the same exercise and date window as the visible bars.
+  const selectedTut = chartDays.reduce((total, day) => total + day.tut, 0);
 
   const recent = sessions.slice(0, 20);
 
