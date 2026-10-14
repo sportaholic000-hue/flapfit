@@ -407,7 +407,7 @@ export function RunCelebrations(props: RunCelebrationsProps) {
           >
             LIFETIME TRACKED TRAINING
           </Text>
-          <Text style={{ color: '#CBD5E1', fontSize: 11, marginTop: 4 }}>
+          <Text style={{ color: '#06223D', fontSize: 11, marginTop: 4 }}>
             +{formatTrackedTime(runTutSeconds)} this run
           </Text>
         </View>
