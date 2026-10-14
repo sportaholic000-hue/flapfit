@@ -1,7 +1,7 @@
+import { TabSkyBackground } from '@/components/TabSkyBackground';
 import { Image, type ImageSource } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
-import { ChevronDown, ChevronUp, Flame, Target, Timer, Trophy, Zap } from 'lucide-react-native';
-import type { ReactNode } from 'react';
+import { CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { AchievementCard } from '@/components/AchievementCard';
@@ -21,6 +21,7 @@ import {
   computeTutStreak,
   dayKey,
   EVO_NAMES,
+  EVO_THRESHOLDS,
   useGameStore,
 } from '@/utils/game/store';
 
@@ -49,7 +50,7 @@ const EXERCISE_OPTIONS: {
   {
     key: 'shoulderpress',
     label: 'Shoulder Press',
-    color: '#0EA5E9',
+    color: '#4AABDE',
     imageSource: EXERCISE_IMAGES.shoulderpress,
   },
 ];
@@ -65,22 +66,23 @@ function formatTut(seconds: number): string {
   return `${s}s`;
 }
 
-function StatCard({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
+function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <View
       style={{
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#06223D',
         borderRadius: 16,
         padding: 14,
         gap: 6,
         borderWidth: 1,
-        borderColor: '#F1F5F9',
+        borderColor: '#06223D',
       }}
     >
-      {icon}
-      <Text style={{ fontSize: 20, fontWeight: '900', color: '#0F172A' }}>{value}</Text>
-      <Text style={{ fontSize: 11, color: '#64748B', fontWeight: '600' }}>{label}</Text>
+      <Text style={{ fontSize: 20, fontWeight: '900', color: '#F59E0B', textAlign: 'center' }}>{value}</Text>
+      <Text style={{ fontSize: 13, lineHeight: 18, color: '#FFFFFF', fontWeight: '600', textAlign: 'center' }}>{label}</Text>
     </View>
   );
 }
@@ -113,6 +115,11 @@ export default function StatsScreen() {
 
   const tutStreak = computeTutStreak(dailyTut);
   const evoStage = computeEvolutionStage(totalTut, lastActivity);
+  const atFinalStage = evoStage === EVO_THRESHOLDS.length - 1;
+  const nextThreshold = EVO_THRESHOLDS[Math.min(evoStage + 1, EVO_THRESHOLDS.length - 1)];
+  const stageProgress = atFinalStage ? 1 : Math.max(0, Math.min(1,
+    (totalTut - EVO_THRESHOLDS[evoStage]) / (nextThreshold - EVO_THRESHOLDS[evoStage])
+  ));
   const birdEvo = { stage: evoStage, ...computeBirdMorphology(exerciseTut) };
   const skin = getBird(birdId);
 
@@ -146,7 +153,7 @@ export default function StatsScreen() {
         chartWindow === '7d'
           ? ['S', 'M', 'T', 'W', 'T', 'F', 'S'][d.getDay()]
           : i % 5 === 0
-            ? `${numDays - i}`
+            ? String(d.getDate())
             : '',
       key,
       tut: selectedDailyTut[key] ?? 0,
@@ -157,12 +164,12 @@ export default function StatsScreen() {
   // ── Build exercise-specific TUT breakdown ─────────────────────────────────
   const exBreakdown = (
     [
-      { key: 'pushups', label: 'Push-ups', color: '#F59E0B' },
-      { key: 'squats', label: 'Squats', color: '#22C55E' },
-      { key: 'pullups', label: 'Pull-ups', color: '#3B82F6' },
-      { key: 'lateralraise', label: 'Lateral Raise', color: '#8B5CF6' },
-      { key: 'biceps', label: 'Bicep Curls', color: '#EF4444' },
-      { key: 'shoulderpress', label: 'Shoulder Press', color: '#0EA5E9' },
+      { key: 'pushups', label: 'Push-ups', color: '#4AABDE' },
+      { key: 'squats', label: 'Squats', color: '#4AABDE' },
+      { key: 'pullups', label: 'Pull-ups', color: '#4AABDE' },
+      { key: 'lateralraise', label: 'Lateral Raise', color: '#4AABDE' },
+      { key: 'biceps', label: 'Bicep Curls', color: '#4AABDE' },
+      { key: 'shoulderpress', label: 'Shoulder Press', color: '#4AABDE' },
     ] as const
   ).map((e) => ({ ...e, seconds: exerciseTut[e.key] ?? 0, imageSource: EXERCISE_IMAGES[e.key] }));
   const maxExTut = Math.max(60, ...exBreakdown.map((e) => e.seconds));
@@ -189,7 +196,8 @@ export default function StatsScreen() {
   const recent = sessions.slice(0, 20);
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F0F9FF' }}>
+    <View style={{ flex: 1, backgroundColor: '#4AABDE' }}>
+      <TabSkyBackground screen="stats" />
       <StatusBar style="dark" />
       <ScrollView
         style={{ flex: 1 }}
@@ -201,8 +209,21 @@ export default function StatsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* ── Header ───────────────────────────────────────────────────────── */}
-        <Text style={{ fontSize: 28, fontWeight: '900', color: '#0F172A' }}>Stats</Text>
-        <Text style={{ color: '#64748B', marginTop: 2, marginBottom: 14 }}>
+        <Text
+          accessibilityRole="header"
+          style={{
+            fontFamily: 'LuckiestGuy_400Regular',
+            fontSize: 34,
+            textAlign: 'center',
+            color: '#FFFFFF',
+            textShadowColor: 'rgba(6,34,61,0.3)',
+            textShadowOffset: { width: 0, height: 3 },
+            textShadowRadius: 4,
+          }}
+        >
+          Stats
+        </Text>
+        <Text style={{ color: '#06223D', fontSize: 14, lineHeight: 20, fontWeight: '800', textAlign: 'center', marginTop: 2, marginBottom: 16 }}>
           Your fitness journey
         </Text>
 
@@ -213,48 +234,52 @@ export default function StatsScreen() {
           style={{
             backgroundColor: '#FFFFFF',
             borderRadius: 18,
-            padding: 16,
+            paddingHorizontal: 16,
+            paddingVertical: 12,
             marginBottom: 12,
             borderWidth: 1,
             borderColor: '#F1F5F9',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 12,
           }}
         >
-          <BirdAvatar skin={skin} size={72} evo={birdEvo} />
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontWeight: '900', color: '#0F172A', fontSize: 15 }}>
-              Stage {evoStage + 1} — {EVO_NAMES[evoStage]}
-            </Text>
-            <Text style={{ color: '#64748B', fontSize: 12, marginTop: 2 }}>
-              {formatTut(totalTut)} tracked training time
-            </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <BirdAvatar skin={skin} size={72} evo={birdEvo} />
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontWeight: '900', color: '#06223D', fontSize: 15, lineHeight: 18, textAlign: 'center' }}>
+                Stage {evoStage + 1} — {EVO_NAMES[evoStage]}
+              </Text>
+              <Text style={{ color: '#06223D', fontSize: 12, lineHeight: 17, fontWeight: '800', textAlign: 'center', marginTop: 2 }}>
+                {atFinalStage ? 'Legend reached!' : `${Math.round(stageProgress * 100)}% to ${EVO_NAMES[evoStage + 1]}`}
+              </Text>
+              <View
+                accessibilityRole="progressbar"
+                accessibilityLabel={atFinalStage ? 'Legend reached' : `Progress to ${EVO_NAMES[evoStage + 1]}`}
+                accessibilityValue={{ min: 0, max: 100, now: Math.round(stageProgress * 100) }}
+                style={{ height: 6, borderRadius: 3, backgroundColor: '#E2E8F0', overflow: 'hidden', marginTop: 5 }}
+              >
+                <View style={{ width: `${stageProgress * 100}%`, height: 6, borderRadius: 3, backgroundColor: '#F59E0B' }} />
+              </View>
+            </View>
+            <View accessible={false} importantForAccessibility="no" style={{ width: 72 }} />
           </View>
-          <Zap size={22} color="#F59E0B" />
         </View>
 
         {/* ── Overview stat cards ───────────────────────────────────────────── */}
         <View style={{ flexDirection: 'row', gap: 10 }}>
           <StatCard
-            icon={<Timer size={20} color="#0284C7" />}
             label="Training time"
             value={formatTut(totalTut)}
           />
           <StatCard
-            icon={<Flame size={20} color="#F97316" />}
             label="Active streak"
             value={`${tutStreak}d`}
           />
         </View>
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
           <StatCard
-            icon={<Trophy size={20} color="#1D4ED8" />}
             label="Best run"
             value={String(bestSingle)}
           />
           <StatCard
-            icon={<Target size={20} color="#16A34A" />}
             label="Total pipes"
             value={String(totalPipes)}
           />
@@ -271,9 +296,10 @@ export default function StatsScreen() {
             borderColor: '#F1F5F9',
           }}
         >
-          <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 15, marginBottom: 12 }}>
+          <Text accessibilityRole="header" style={{ fontWeight: '800', color: '#06223D', fontSize: 15, textAlign: 'center' }}>
             Time Under Tension · By Exercise
           </Text>
+          <View accessible={false} importantForAccessibility="no" style={{ alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6, marginBottom: 12 }} />
           {exBreakdown.map((e) => {
             const pct = e.seconds / maxExTut;
             return (
@@ -294,10 +320,10 @@ export default function StatsScreen() {
                         marginBottom: 3,
                       }}
                     >
-                      <Text style={{ fontWeight: '700', color: '#374151', fontSize: 12 }}>
+                      <Text style={{ fontWeight: '700', color: '#475569', fontSize: 13, lineHeight: 18 }}>
                         {e.label}
                       </Text>
-                      <Text style={{ fontWeight: '700', color: '#64748B', fontSize: 12 }}>
+                      <Text style={{ fontWeight: '700', color: '#475569', fontSize: 13, lineHeight: 18 }}>
                         {formatTut(e.seconds)}
                       </Text>
                     </View>
@@ -332,42 +358,44 @@ export default function StatsScreen() {
             onPress={() => setShowDropdown((v) => !v)}
             style={{
               flex: 1,
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#06223D',
               borderRadius: 14,
               paddingVertical: 11,
               paddingHorizontal: 14,
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'space-between',
+              justifyContent: 'center',
               borderWidth: 1.5,
-              borderColor: '#E2E8F0',
+              borderColor: '#06223D',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
               {activeEx.imageSource ? (
                 <Image
                   source={activeEx.imageSource}
-                  style={{ width: 50, height: 50, borderRadius: 10 }}
+                  style={{ width: 40, height: 40, borderRadius: 10 }}
                   contentFit="contain"
                 />
               ) : (
                 <Text style={{ fontSize: 18 }}>🌍</Text>
               )}
-              <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 13 }}>
-                {activeEx.label}
-              </Text>
             </View>
-            {showDropdown ? (
-              <ChevronUp size={16} color="#64748B" />
-            ) : (
-              <ChevronDown size={16} color="#64748B" />
-            )}
+            <Text style={{ flex: 1, marginHorizontal: 6, fontWeight: '800', color: '#FFFFFF', fontSize: 13, textAlign: 'center' }}>
+              {activeEx.label}
+            </Text>
+            <View style={{ width: 16, alignItems: 'center' }}>
+              {showDropdown ? (
+                <ChevronUp size={16} color="#4AABDE" />
+              ) : (
+                <ChevronDown size={16} color="#4AABDE" />
+              )}
+            </View>
           </TouchableOpacity>
           {/* 7d / 30d toggle */}
           <View
             style={{
               flexDirection: 'row',
-              backgroundColor: '#E2E8F0',
+              backgroundColor: '#06223D',
               borderRadius: 12,
               padding: 3,
             }}
@@ -387,7 +415,7 @@ export default function StatsScreen() {
                   style={{
                     fontWeight: '800',
                     fontSize: 12,
-                    color: chartWindow === w ? '#0F172A' : '#64748B',
+                    color: chartWindow === w ? '#06223D' : '#FFFFFF',
                   }}
                 >
                   {w}
@@ -401,75 +429,74 @@ export default function StatsScreen() {
         {showDropdown && (
           <View
             style={{
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#06223D',
               borderRadius: 16,
               marginTop: 4,
               borderWidth: 1,
-              borderColor: '#E2E8F0',
+              borderColor: '#06223D',
               overflow: 'hidden',
             }}
           >
-            {EXERCISE_OPTIONS.map((opt, idx) => {
+            {EXERCISE_OPTIONS.map((opt, index) => {
               const selected = opt.key === exerciseFilter;
               return (
-                <TouchableOpacity
-                  key={opt.key}
-                  onPress={() => {
-                    setExerciseFilter(opt.key);
-                    setShowDropdown(false);
-                  }}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 12,
-                    paddingVertical: 11,
-                    paddingHorizontal: 16,
-                    borderBottomWidth: idx < EXERCISE_OPTIONS.length - 1 ? 1 : 0,
-                    borderColor: '#F1F5F9',
-                    backgroundColor: selected ? '#FFFBEB' : '#FFFFFF',
-                  }}
-                >
-                  {opt.imageSource ? (
-                    <Image
-                      source={opt.imageSource}
-                      style={{ width: 68, height: 68, borderRadius: 12 }}
-                      contentFit="contain"
-                    />
-                  ) : (
-                    <View
-                      style={{
-                        width: 68,
-                        height: 68,
-                        borderRadius: 10,
-                        backgroundColor: '#F1F5F9',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <Text style={{ fontSize: 18 }}>🌍</Text>
-                    </View>
-                  )}
-                  <Text
+                <View key={opt.key}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setExerciseFilter(opt.key);
+                      setShowDropdown(false);
+                    }}
                     style={{
-                      fontWeight: selected ? '900' : '600',
-                      color: selected ? '#B45309' : '#0F172A',
-                      fontSize: 14,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 12,
+                      paddingVertical: 11,
+                      paddingHorizontal: 16,
+                      borderWidth: 2,
+                      borderColor: selected ? '#F59E0B' : '#06223D',
+                      backgroundColor: selected ? '#4AABDE' : '#06223D',
                     }}
                   >
-                    {opt.label}
-                  </Text>
-                  {selected && (
-                    <View
+                    {opt.imageSource ? (
+                      <Image
+                        source={opt.imageSource}
+                        style={{ width: 68, height: 68, borderRadius: 12 }}
+                        contentFit="contain"
+                      />
+                    ) : (
+                      <View
+                        style={{
+                          width: 68,
+                          height: 68,
+                          borderRadius: 10,
+                          backgroundColor: selected ? '#4AABDE' : '#06223D',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Text style={{ fontSize: 18 }}>🌍</Text>
+                      </View>
+                    )}
+                    <Text
                       style={{
-                        marginLeft: 'auto',
-                        width: 8,
-                        height: 8,
-                        borderRadius: 4,
-                        backgroundColor: '#F59E0B',
+                        fontWeight: selected ? '900' : '600',
+                        color: selected ? '#06223D' : '#FFFFFF',
+                        fontSize: 14,
+                        flex: 1,
+                        textAlign: 'center',
                       }}
-                    />
-                  )}
-                </TouchableOpacity>
+                    >
+                      {opt.label}
+                    </Text>
+                    <View style={{ width: 20, alignItems: 'center' }}>
+                      {selected ? <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" /> : null}
+                    </View>
+                  </TouchableOpacity>
+                  {index < EXERCISE_OPTIONS.length - 1 ? (
+                    <View accessible={false} importantForAccessibility="no" pointerEvents="none" style={{ height: 1, marginHorizontal: 16, backgroundColor: '#4AABDE' }} />
+                  ) : null}
+                </View>
               );
             })}
           </View>
@@ -478,18 +505,19 @@ export default function StatsScreen() {
         {/* ── TUT Chart ────────────────────────────────────────────────────── */}
         <View
           style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#06223D',
             borderRadius: 18,
             padding: 16,
             marginTop: 10,
             borderWidth: 1,
-            borderColor: '#F1F5F9',
+            borderColor: '#06223D',
           }}
         >
-          <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 14, marginBottom: 2 }}>
+          <Text accessibilityRole="header" style={{ fontWeight: '800', color: '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
             {activeEx.label} · Flying Time
           </Text>
-          <Text style={{ color: '#64748B', fontSize: 11, marginBottom: 12 }}>
+          <View accessible={false} importantForAccessibility="no" style={{ alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6, marginBottom: 8 }} />
+          <Text style={{ color: '#4AABDE', fontSize: 12, lineHeight: 17, marginBottom: 4, textAlign: 'center' }}>
             {exerciseFilter === 'global'
               ? 'All exercises combined'
               : `${activeEx.label} sessions only`}
@@ -499,20 +527,13 @@ export default function StatsScreen() {
           {/* Selected exercise TUT highlight */}
           <View
             style={{
-              backgroundColor: '#F8FAFC',
-              borderRadius: 12,
-              padding: 10,
-              marginBottom: 14,
+              paddingVertical: 4,
+              marginBottom: 6,
               alignItems: 'center',
             }}
           >
-            <Text style={{ fontWeight: '900', color: '#0284C7', fontSize: 22 }}>
+            <Text style={{ fontWeight: '900', color: '#FFFFFF', fontSize: 22 }}>
               {formatTut(selectedTut)}
-            </Text>
-            <Text style={{ color: '#64748B', fontSize: 11, fontWeight: '700' }}>
-              {exerciseFilter === 'global'
-                ? 'Total training time'
-                : `${activeEx.label} training time`}
             </Text>
           </View>
 
@@ -520,18 +541,19 @@ export default function StatsScreen() {
             style={{
               flexDirection: 'row',
               alignItems: 'flex-end',
-              height: 100,
+              height: 220,
               gap: chartWindow === '7d' ? 8 : 3,
             }}
           >
-            {chartDays.map((d) => {
-              const h = Math.max(4, (d.tut / maxTut) * 80);
+            {chartDays.map((d, index) => {
+              const h = Math.max(4, (d.tut / maxTut) * 184);
+              const roundedSeconds = Math.max(0, Math.round(d.tut));
               const labelStr =
-                d.tut >= 60 ? `${Math.round(d.tut / 60)}m` : d.tut > 0 ? `${d.tut}s` : '';
+                roundedSeconds >= 60 ? `${Math.round(roundedSeconds / 60)}m` : d.tut > 0 ? `${roundedSeconds}s` : '';
               return (
                 <View key={d.key} style={{ flex: 1, alignItems: 'center', gap: 3 }}>
                   {chartWindow === '7d' && (
-                    <Text style={{ fontSize: 8, color: '#64748B', fontWeight: '700' }}>
+                    <Text style={{ fontSize: 10, lineHeight: 14, color: '#4AABDE', fontWeight: '700' }}>
                       {labelStr}
                     </Text>
                   )}
@@ -541,14 +563,18 @@ export default function StatsScreen() {
                         width: '100%',
                         height: h,
                         borderRadius: 4,
-                        backgroundColor: d.tut > 0 ? '#0284C7' : '#E2E8F0',
+                        // Anchor at today so matching days keep their color across both windows.
+                        backgroundColor: (chartDays.length - 1 - index) % 2 === 0 ? '#F59E0B' : '#4AABDE',
                       }}
                     />
                   </View>
                   <Text
                     style={{
-                      fontSize: chartWindow === '7d' ? 10 : 8,
-                      color: '#94A3B8',
+                      fontSize: chartWindow === '7d' ? 11 : 10,
+                      lineHeight: 14,
+                      width: chartWindow === '30d' ? 24 : undefined,
+                      textAlign: 'center',
+                      color: '#4AABDE',
                       fontWeight: '700',
                     }}
                   >
@@ -564,14 +590,15 @@ export default function StatsScreen() {
         <Text
           style={{
             fontWeight: '900',
-            color: '#0F172A',
+            color: '#06223D',
             fontSize: 20,
+            textAlign: 'center',
             marginTop: 22,
-            marginBottom: 10,
           }}
         >
           {exerciseFilter === 'global' ? 'Achievements' : `${activeEx.label} Achievements`}
         </Text>
+        <View accessible={false} importantForAccessibility="no" style={{ alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6, marginBottom: 10 }} />
 
         {visibleAchievements.length === 0 ? (
           <View
@@ -582,10 +609,10 @@ export default function StatsScreen() {
               alignItems: 'center',
             }}
           >
-            <Text style={{ color: '#64748B' }}>No achievements for this category yet.</Text>
+            <Text style={{ color: '#475569' }}>No achievements for this category yet.</Text>
           </View>
         ) : (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 }}>
             {visibleAchievements.map(a => <AchievementCard key={a.id} achievement={a} snapshot={snapshot} />)}
           </View>
         )}
@@ -594,14 +621,15 @@ export default function StatsScreen() {
         <Text
           style={{
             fontWeight: '900',
-            color: '#0F172A',
+            color: '#06223D',
             fontSize: 20,
+            textAlign: 'center',
             marginTop: 24,
-            marginBottom: 10,
           }}
         >
           Recent Sessions
         </Text>
+        <View accessible={false} importantForAccessibility="no" style={{ alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6, marginBottom: 10 }} />
         {recent.length === 0 ? (
           <View
             style={{
@@ -611,7 +639,7 @@ export default function StatsScreen() {
               alignItems: 'center',
             }}
           >
-            <Text style={{ color: '#64748B' }}>No sessions yet — go fly! 🐦</Text>
+            <Text style={{ color: '#475569' }}>No sessions yet — go fly! 🐦</Text>
           </View>
         ) : (
           recent.map((s, idx) => {
@@ -640,16 +668,16 @@ export default function StatsScreen() {
                 }}
               >
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 13 }}>
+                  <Text style={{ fontWeight: '800', color: '#06223D', fontSize: 13 }}>
                     {modeLabel}
                   </Text>
-                  <Text style={{ color: '#94A3B8', fontSize: 11, marginTop: 2 }}>{s.day}</Text>
+                  <Text style={{ color: '#475569', fontSize: 12, lineHeight: 17, marginTop: 2 }}>{s.day}</Text>
                 </View>
                 <View style={{ alignItems: 'flex-end' }}>
                   <Text style={{ fontWeight: '800', color: '#F59E0B', fontSize: 14 }}>
                     {s.score} pipes
                   </Text>
-                  <Text style={{ color: '#0284C7', fontSize: 11 }}>
+                  <Text style={{ color: '#06223D', fontSize: 12, lineHeight: 17 }}>
                     {formatTut(s.tutSeconds ?? 0)} training
                   </Text>
                 </View>

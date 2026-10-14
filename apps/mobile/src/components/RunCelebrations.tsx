@@ -80,7 +80,7 @@ function CelebrationFrame({
         right: 0,
         bottom: 0,
         overflow: 'hidden',
-        backgroundColor: '#0F172A',
+        backgroundColor: '#06223D',
         alignItems: 'center',
         justifyContent: 'center',
         paddingTop: insets.top + 20,
@@ -90,7 +90,7 @@ function CelebrationFrame({
     >
       {championship ? (
         <LinearGradient
-          colors={['#07172E', '#172845', '#07111F']}
+          colors={['#06223D', '#06223D', '#06223D']}
           style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
         />
       ) : null}
@@ -194,7 +194,7 @@ export function ChampionshipCeremony({
             borderRadius: 62,
             borderWidth: 2,
             borderColor: '#FCD34D',
-            backgroundColor: '#1E2A3E',
+            backgroundColor: '#06223D',
             alignItems: 'center',
             justifyContent: 'center',
           }}
@@ -398,7 +398,7 @@ export function RunCelebrations(props: RunCelebrationsProps) {
           </Text>
           <Text
             style={{
-              color: '#93C5FD',
+              color: '#4AABDE',
               fontWeight: '800',
               fontSize: 11,
               letterSpacing: 0.8,

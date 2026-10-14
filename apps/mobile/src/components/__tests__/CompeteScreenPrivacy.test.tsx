@@ -2,6 +2,7 @@ import type { ReactTestRenderer } from 'react-test-renderer';
 jest.setTimeout(20_000);
 async function fixture() {
   jest.resetModules();
+  jest.doMock('@/components/TabSkyBackground', () => ({ TabSkyBackground: () => null }));
   const React: typeof import('react')=require('react');
   const {act}=React;
   const renderer: typeof import('react-test-renderer')=require('react-test-renderer');
@@ -9,7 +10,8 @@ async function fixture() {
   const storage={getItem:jest.fn(async (key:string)=>memory.get(key)??null),setItem:jest.fn(async (key:string,value:string)=>{memory.set(key,value);})};
   jest.doMock('@react-native-async-storage/async-storage',()=>storage);
   jest.doMock('react-native',()=>({View:'View',Text:'Text',TextInput:'TextInput',TouchableOpacity:'TouchableOpacity',Modal:'Modal',ScrollView:'ScrollView',Platform:{OS:'ios'},Alert:{alert:jest.fn()},Linking:{openURL:jest.fn()}}));
-  jest.doMock('expo-router',()=>({useFocusEffect:(callback:()=>void)=>React.useEffect(callback,[callback])}));
+  const push=jest.fn();
+  jest.doMock('expo-router',()=>({useRouter:()=>({push}),useFocusEffect:(callback:()=>void)=>React.useEffect(callback,[callback])}));
   jest.doMock('expo-image',()=>({Image:'Image'}));
   jest.doMock('expo-status-bar',()=>({StatusBar:'StatusBar'}));
   jest.doMock('react-native-safe-area-context',()=>({useSafeAreaInsets:()=>({top:0,bottom:0})}));
@@ -31,7 +33,7 @@ async function fixture() {
   await act(async()=>{tree=renderer.create(React.createElement(Screen));});
   const modal=()=>tree.root.findByType('Modal' as never);
   const press=async(text:string)=>{const button=tree.root.findAllByType('TouchableOpacity' as never).find(node=>node.findAllByType('Text' as never).some(t=>t.children.join('')===text));expect(button).toBeDefined();await act(async()=>{button!.props.onPress();});};
-  return {access,state,storage,memory,prepare,modal,press,act,text:()=>tree.root.findAllByType('Text' as never).map(n=>n.children.join('')).join('\n'),unmount:async()=>{await act(async()=>tree.unmount());}};
+  return {access,state,storage,memory,prepare,modal,press,act,push,text:()=>tree.root.findAllByType('Text' as never).map(n=>n.children.join('')).join('\n'),unmount:async()=>{await act(async()=>tree.unmount());}};
 }
 test('actual Compete acceptance saves only competition and waits for native terms dismissal before eligibility',async()=>{
   const f=await fixture();
@@ -77,7 +79,7 @@ test('a newer Stop defeats actual I Agree while an older Stop save is pending, i
   expect(f.state.acceptCompetitionTerms).not.toHaveBeenCalled();
   expect(f.prepare).not.toHaveBeenCalled();
   expect(f.modal().props.visible).toBe(true);
-  expect(JSON.parse(f.memory.get('@flapfit/processing-choices-v1')!).choices.competition.decision).toBe('denied');
+  expect(JSON.parse(f.memory.get('@flapfit-nav-design/processing-choices-v1')!).choices.competition.decision).toBe('denied');
   await f.unmount();
   jest.resetModules();
   const restarted:typeof import('@/services/privacy/processingAccess')=require('@/services/privacy/processingAccess');
@@ -93,5 +95,21 @@ test('Compete renders the older-system limitation, not an endlessly pending priv
   expect(f.text()).toContain('Your answer stays on this device, and your saved progress is retained.');
   expect(f.text()).not.toContain('Gameplay is available');
   expect(f.text()).not.toContain('Local play, recordings and saved progress remain available.');
+  await f.unmount();
+});
+
+ test('accepted terms card disappears and the footer opens rules in Info without accepting again', async () => {
+  const f = await fixture();
+  expect(f.text()).toContain('Accept the rules before publishing');
+  await f.press('Review and accept');
+  await f.press('I Agree');
+  await f.act(async () => f.modal().props.onDismiss());
+  expect(f.text()).not.toContain('Accept the rules before publishing');
+  expect(f.text()).not.toContain('Online competition terms accepted');
+  await f.press('Competition rules & terms');
+  expect(f.push).toHaveBeenCalledWith({ pathname: '/(tabs)/info', params: { section: 'competition-terms' } });
+  expect(f.state.acceptCompetitionTerms).toHaveBeenCalledTimes(1);
+  await f.act(async () => { await f.access.setProcessingChoice('competition', 'denied'); });
+  expect(f.text()).toContain('Accept the rules before publishing');
   await f.unmount();
 });

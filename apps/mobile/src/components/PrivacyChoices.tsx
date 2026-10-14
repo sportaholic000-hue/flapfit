@@ -284,8 +284,8 @@ export function usePrivacyChoicesSheet() {
 }
 
 const styles = StyleSheet.create({
-  intro: { gap: 8, marginBottom: 14 }, introHeading: { color: '#0F172A', fontSize: 25, lineHeight: 31, fontWeight: '800' },
-  root: { gap: 8 }, heading: { color: '#0F172A', fontSize: 15, fontWeight: '800' },
+  intro: { gap: 8, marginBottom: 14 }, introHeading: { color: '#06223D', fontSize: 25, lineHeight: 31, fontWeight: '800' },
+  root: { gap: 8 }, heading: { color: '#06223D', fontSize: 15, fontWeight: '800' },
   body: { color: '#475569', fontSize: 14, lineHeight: 21 }, group: { marginTop: 14, gap: 7 },
   note: { color: '#64748B', fontSize: 12, lineHeight: 18 }, status: { color: '#334155', fontSize: 13, fontWeight: '700' },
   agreement: { marginTop: 12 }, inlineLink: { color: '#0369A1', fontWeight: '700', textDecorationLine: 'underline' },
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   prominentChoice: { backgroundColor: '#BFDBFE', borderColor: '#075985', borderWidth: 2 },
   buttonText: { color: '#075985', fontSize: 14, fontWeight: '800' }, disabled: { opacity: 0.5 },
   link: { minHeight: 44, justifyContent: 'center' }, linkText: { color: '#0369A1', fontSize: 14, fontWeight: '700' },
-  sheet: { flex: 1, backgroundColor: '#0F172A' }, header: { paddingHorizontal: 20, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  sheet: { flex: 1, backgroundColor: '#06223D' }, header: { paddingHorizontal: 20, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },
   title: { flex: 1, color: '#FFFFFF', fontWeight: '900', fontSize: 21 }, close: { minHeight: 44, justifyContent: 'center', paddingHorizontal: 8 }, closeText: { color: '#FFFFFF', fontSize: 15 },
   sheetBody: { flexGrow: 1, padding: 21, backgroundColor: '#FFFFFF', borderTopLeftRadius: 24, borderTopRightRadius: 24 },
 });

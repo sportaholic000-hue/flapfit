@@ -74,7 +74,7 @@ const styles = {
     flex: 1,
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#06223D',
   },
   splashLogo: {
     width: '92%' as const,

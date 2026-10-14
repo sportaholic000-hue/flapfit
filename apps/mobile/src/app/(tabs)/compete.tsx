@@ -1,21 +1,18 @@
+import { TabSkyBackground } from '@/components/TabSkyBackground';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Image, type ImageSource } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { CompetitionTermsModal } from '@/components/CompetitionTermsModal';
 import { prepareCompetitionEligibility } from '@/services/monetization';
 import {
-  CheckCircle2,
   FileText,
-  Medal,
   RefreshCw,
   Trophy,
 } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import {
   Alert,
-  Linking,
-  Modal,
-  Platform,
   ScrollView,
   Text,
   TextInput,
@@ -24,7 +21,6 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import KeyboardAvoidingAnimatedView from '@/components/KeyboardAvoidingAnimatedView';
-import { RELEASE_LINKS } from '@/config/release';
 import { ageProcessingAvailability } from '@/services/privacy/processingAvailability';
 import { getProcessingAccess, getProcessingInputs, setProcessingChoice, subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import { PROCESSING_NOTICE_VERSION } from '@/services/privacy/processingPolicy';
@@ -57,25 +53,21 @@ const BOARD_TABS: {
   key: LeaderboardExercise;
   label: string;
   imageSource: ImageSource;
-  desc: string;
 }[] = [
   {
     key: 'pushups',
     label: 'Push-ups',
     imageSource: EXERCISE_IMAGES.pushups,
-    desc: 'Endless · Push-up controller',
   },
   {
     key: 'squats',
     label: 'Squats',
     imageSource: EXERCISE_IMAGES.squats,
-    desc: 'Endless · Squat controller',
   },
   {
     key: 'pullups',
     label: 'Pull-ups',
     imageSource: EXERCISE_IMAGES.pullups,
-    desc: 'Endless · Pull-up controller',
   },
 ];
 
@@ -141,165 +133,6 @@ function openPlayerActions(target: ModerationTarget, onUpdated: () => void) {
   ]);
 }
 
-function CompetitionTermsModal({
-  visible,
-  onAccept,
-  onClose,
-  onDismiss,
-}: {
-  visible: boolean;
-  onAccept: () => void;
-  onClose: () => void;
-  onDismiss: () => void;
-}) {
-  useEffect(() => { if (!visible && Platform.OS !== 'ios') onDismiss(); }, [visible, onDismiss]);
-  return (
-    <Modal
-      visible={visible}
-      animationType={Platform.OS === 'ios' ? 'fade' : 'none'}
-      onDismiss={onDismiss}
-      transparent
-      statusBarTranslucent
-      onRequestClose={onClose}
-    >
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          padding: 20,
-          backgroundColor: 'rgba(15, 23, 42, 0.72)',
-        }}
-      >
-        <View
-          style={{
-            maxHeight: '88%',
-            borderRadius: 22,
-            backgroundColor: '#FFFFFF',
-            overflow: 'hidden',
-          }}
-        >
-          <ScrollView contentContainerStyle={{ padding: 20 }}>
-            <Text style={{ color: '#0F172A', fontSize: 21, fontWeight: '900' }}>
-              Online Competition Terms
-            </Text>
-            <Text style={{ color: '#64748B', fontSize: 12, marginTop: 3 }}>
-              Community rules effective September 14, 2026
-            </Text>
-
-            <Text style={{ color: '#0F172A', fontWeight: '900', marginTop: 18 }}>
-              What becomes public
-            </Text>
-            <Text style={{ color: '#475569', lineHeight: 20, marginTop: 5 }}>
-              After you accept and use Compete, Flap Fit creates an anonymous online
-              profile. Its identifier may appear with leaderboard results. Your chosen player name and leaderboard scores may be visible to other
-              Flap Fit players. Your camera feed and
-              recordings are never uploaded to competition services.
-            </Text>
-
-            <Text style={{ color: '#0F172A', fontWeight: '900', marginTop: 16 }}>
-              Community rules
-            </Text>
-            <Text style={{ color: '#475569', lineHeight: 20, marginTop: 5 }}>
-              Do not use player names or competition features for sexual or obscene content, hate or
-              discrimination, threats, harassment, bullying, impersonation, fraud, spam, unlawful
-              content, cheating, score manipulation, or attempts to disrupt the service.
-            </Text>
-
-            <Text style={{ color: '#0F172A', fontWeight: '900', marginTop: 16 }}>
-              Moderation and control
-            </Text>
-            <Text style={{ color: '#475569', lineHeight: 20, marginTop: 5 }}>
-              You can report or block other players from clearly labeled controls beside public
-              leaderboard results. Flap Fit may filter, hide,
-              remove, or restrict content or accounts that break these rules. You can permanently
-              delete your online profile from the Info tab.
-            </Text>
-
-            <Text style={{ color: '#64748B', fontSize: 12, lineHeight: 18, marginTop: 16 }}>
-              By choosing I Agree, you accept these rules and the Flap Fit Terms of Use. You can
-              review the Terms of Use at any time in the Info tab.
-            </Text>
-
-            {RELEASE_LINKS.termsUrl || RELEASE_LINKS.privacyUrl ? (
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 14 }}>
-                {RELEASE_LINKS.termsUrl ? (
-                  <TouchableOpacity
-                    accessibilityRole="link"
-                    accessibilityLabel="Open the full Flap Fit Terms of Use"
-                    onPress={() =>
-                      void Linking.openURL(RELEASE_LINKS.termsUrl).catch(() =>
-                        Alert.alert('Could not open Terms', 'Please try again from the Info tab.')
-                      )
-                    }
-                    style={{ paddingVertical: 6, paddingRight: 8 }}
-                  >
-                    <Text style={{ color: '#1D4ED8', fontWeight: '900' }}>Full Terms</Text>
-                  </TouchableOpacity>
-                ) : null}
-                {RELEASE_LINKS.privacyUrl ? (
-                  <TouchableOpacity
-                    accessibilityRole="link"
-                    accessibilityLabel="Open the Flap Fit Privacy Policy"
-                    onPress={() =>
-                      void Linking.openURL(RELEASE_LINKS.privacyUrl).catch(() =>
-                        Alert.alert(
-                          'Could not open Privacy Policy',
-                          'Please try again from the Info tab.'
-                        )
-                      )
-                    }
-                    style={{ paddingVertical: 6, paddingRight: 8 }}
-                  >
-                    <Text style={{ color: '#1D4ED8', fontWeight: '900' }}>Privacy Policy</Text>
-                  </TouchableOpacity>
-                ) : null}
-              </View>
-            ) : null}
-          </ScrollView>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 10,
-              padding: 16,
-              borderTopWidth: 1,
-              borderTopColor: '#E2E8F0',
-            }}
-          >
-            <TouchableOpacity
-              accessibilityRole="button"
-              onPress={onClose}
-              style={{
-                flex: 1,
-                alignItems: 'center',
-                borderRadius: 12,
-                paddingVertical: 12,
-                backgroundColor: '#E2E8F0',
-              }}
-            >
-              <Text style={{ color: '#334155', fontWeight: '800' }}>Not now</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel="I agree to the online competition terms"
-              onPress={onAccept}
-              style={{
-                flex: 1,
-                alignItems: 'center',
-                borderRadius: 12,
-                paddingVertical: 12,
-                backgroundColor: '#1D4ED8',
-              }}
-            >
-              <Text style={{ color: '#FFFFFF', fontWeight: '900' }}>I Agree</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </Modal>
-  );
-}
-
 // ─── Leaderboard Panel ────────────────────────────────────────────────────────
 function LeaderboardPanel({
   exercise,
@@ -341,7 +174,7 @@ function LeaderboardPanel({
   const rows = data ?? [];
   const myRow = rows.find((r) => r.is_me) ?? null;
 
-  const medalColors = ['#F59E0B', '#9CA3AF', '#B45309'];
+  const rankMedals = ['🥇', '🥈', '🥉'];
 
   if (!competitionIsConfigured) {
     return (
@@ -354,10 +187,10 @@ function LeaderboardPanel({
           borderColor: '#E2E8F0',
         }}
       >
-        <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 15 }}>
+        <Text style={{ color: '#06223D', fontWeight: '900', fontSize: 15 }}>
           Online competition is temporarily unavailable
         </Text>
-        <Text style={{ color: '#64748B', fontSize: 12, lineHeight: 18, marginTop: 5 }}>
+        <Text style={{ color: '#475569', fontSize: 12, lineHeight: 18, marginTop: 5 }}>
           You can keep playing levels and Endless normally. Scores and training progress still save
           on this device.
         </Text>
@@ -376,10 +209,10 @@ function LeaderboardPanel({
           borderColor: '#E2E8F0',
         }}
       >
-        <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 15 }}>
+        <Text style={{ color: '#06223D', fontWeight: '900', fontSize: 15 }}>
           Accept the competition rules to connect
         </Text>
-        <Text style={{ color: '#64748B', fontSize: 12, lineHeight: 18, marginTop: 5 }}>
+        <Text style={{ color: '#475569', fontSize: 12, lineHeight: 18, marginTop: 5 }}>
           No anonymous online account or competition request starts until you accept the current
           Terms of Use and community rules above.
         </Text>
@@ -407,20 +240,19 @@ function LeaderboardPanel({
           style={{ width: 72, height: 72, borderRadius: 12 }}
           contentFit="contain"
         />
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontWeight: '900', color: '#0F172A', fontSize: 15 }}>
-            {tab.label} Board
-          </Text>
-          <Text style={{ color: '#94A3B8', fontSize: 11 }}>{tab.desc}</Text>
+        <Text accessibilityRole="header" style={{ flex: 1, fontWeight: '900', color: '#06223D', fontSize: 17, textAlign: 'center' }}>
+          {tab.label} Board
+        </Text>
+        <View style={{ width: 72, alignItems: 'flex-end' }}>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Refresh scores and retry pending results"
+            disabled={refreshing}
+            onPress={() => void refresh()}
+          >
+            <RefreshCw size={15} color="#94A3B8" />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel="Refresh scores and retry pending results"
-          disabled={refreshing}
-          onPress={() => void refresh()}
-        >
-          <RefreshCw size={15} color="#94A3B8" />
-        </TouchableOpacity>
       </View>
 
       {!processingAllowed ? <Text style={{ color: '#475569', fontSize: 13, marginVertical: 10 }}>
@@ -451,13 +283,13 @@ function LeaderboardPanel({
 
       {/* Rows */}
       {isLoading ? (
-        <Text style={{ color: '#94A3B8', paddingVertical: 12, fontSize: 13 }}>Loading…</Text>
+        <Text style={{ color: '#475569', paddingVertical: 12, fontSize: 13 }}>Loading…</Text>
       ) : isError ? (
         <Text style={{ color: '#DC2626', fontSize: 12, paddingVertical: 12 }}>
           Could not load scores — tap Refresh to retry.
         </Text>
       ) : rows.length === 0 ? (
-        <Text style={{ color: '#94A3B8', paddingVertical: 12, fontSize: 13, lineHeight: 18 }}>
+        <Text style={{ color: '#475569', paddingVertical: 12, fontSize: 13, lineHeight: 18 }}>
           No scores yet.{'\n'}Play Endless with {tab.label} to be first!
         </Text>
       ) : (
@@ -482,13 +314,11 @@ function LeaderboardPanel({
               {/* Rank */}
               <View style={{ width: 26, alignItems: 'center' }}>
                 {row.rank <= 3 ? (
-                  <Medal
-                    size={17}
-                    color={medalColors[row.rank - 1]}
-                    fill={medalColors[row.rank - 1]}
-                  />
+                  <Text accessibilityLabel={`Rank ${row.rank}`} style={{ fontSize: 24, textAlign: 'center' }}>
+                    {rankMedals[row.rank - 1]}
+                  </Text>
                 ) : (
-                  <Text style={{ color: '#94A3B8', fontWeight: '800', fontSize: 12 }}>
+                  <Text style={{ color: '#475569', fontWeight: '800', fontSize: 12 }}>
                     {row.rank}
                   </Text>
                 )}
@@ -498,7 +328,7 @@ function LeaderboardPanel({
                 style={{
                   flex: 1,
                   fontWeight: isMe ? '900' : '600',
-                  color: isMe ? '#B45309' : '#0F172A',
+                  color: isMe ? '#B45309' : '#06223D',
                   fontSize: 13,
                 }}
               >
@@ -529,10 +359,10 @@ function LeaderboardPanel({
               ) : null}
               {/* Score */}
               <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 3 }}>
-                <Text style={{ fontWeight: '900', color: '#0F172A', fontSize: 14 }}>
+                <Text style={{ fontWeight: '900', color: '#06223D', fontSize: 14 }}>
                   {row.score}
                 </Text>
-                <Text style={{ color: '#94A3B8', fontSize: 10, fontWeight: '600' }}>pipes</Text>
+                <Text style={{ color: '#475569', fontSize: 10, fontWeight: '600' }}>pipes</Text>
               </View>
             </View>
           );
@@ -544,6 +374,7 @@ function LeaderboardPanel({
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function CompeteScreen() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const playerName = useGameStore((s) => s.playerName);
@@ -654,6 +485,7 @@ export default function CompeteScreen() {
       style={{ flex: 1, backgroundColor: '#F0F9FF' }}
       behavior="padding"
     >
+      <TabSkyBackground screen="compete" />
       <StatusBar style="dark" />
       <ScrollView
         style={{ flex: 1 }}
@@ -665,9 +497,22 @@ export default function CompeteScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={{ fontSize: 28, fontWeight: '900', color: '#0F172A' }}>Compete</Text>
-        <Text style={{ color: '#64748B', marginTop: 2, marginBottom: 16 }}>
-          Global leaderboards
+        <Text
+          accessibilityRole="header"
+          style={{
+            fontFamily: 'LuckiestGuy_400Regular',
+            fontSize: 34,
+            textAlign: 'center',
+            color: '#FFFFFF',
+            textShadowColor: 'rgba(0,0,0,0.3)',
+            textShadowOffset: { width: 0, height: 3 },
+            textShadowRadius: 4,
+          }}
+        >
+          Compete
+        </Text>
+        <Text style={{ color: '#06223D', fontSize: 14, lineHeight: 20, fontWeight: '800', textAlign: 'center', marginTop: 2, marginBottom: 16 }}>
+          Play endless mode to see how you rank
         </Text>
 
         {/* ── Player name ─────────────────────────────────────────────────── */}
@@ -680,7 +525,7 @@ export default function CompeteScreen() {
             borderColor: '#F1F5F9',
           }}
         >
-          <Text style={{ fontWeight: '800', color: '#0F172A', fontSize: 15 }}>
+          <Text style={{ fontWeight: '800', color: '#06223D', fontSize: 15, textAlign: 'center' }}>
             Your player name
           </Text>
           <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
@@ -708,7 +553,7 @@ export default function CompeteScreen() {
                 paddingVertical: 10,
                 borderWidth: 1,
                 borderColor: '#E2E8F0',
-                color: '#0F172A',
+                color: '#06223D',
                 fontWeight: '600',
               }}
             />
@@ -725,19 +570,16 @@ export default function CompeteScreen() {
                 opacity: hydrated && nameSaveState !== 'saving' ? 1 : 0.55,
               }}
             >
-              <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>{nameSaveState === 'saving' ? 'Saving…' : 'Save'}</Text>
+              <Text style={{ color: '#06223D', fontWeight: '800' }}>{nameSaveState === 'saving' ? 'Saving…' : 'Save'}</Text>
             </TouchableOpacity>
           </View>
           <Text
             accessibilityLiveRegion="polite"
             style={{
-              color:
-                nameSaveState === 'invalid'
-                  ? '#DC2626'
-                  : (nameSaveState === 'saved' || nameSaveState === 'online') && hasName
-                    ? '#15803D'
-                    : '#94A3B8',
-              fontSize: 11,
+              color: nameSaveState === 'invalid' ? '#DC2626' : '#06223D',
+              fontSize: 12,
+              lineHeight: 17,
+              textAlign: 'center',
               marginTop: 6,
             }}
           >
@@ -755,80 +597,47 @@ export default function CompeteScreen() {
           </Text>
         </View>
 
-        <View
-          style={{
-            backgroundColor: hasAcceptedCompetitionTerms ? '#F0FDF4' : '#EFF6FF',
-            borderRadius: 18,
-            padding: 16,
-            marginTop: 12,
-            borderWidth: 1,
-            borderColor: hasAcceptedCompetitionTerms ? '#BBF7D0' : '#BFDBFE',
-          }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
-            {hasAcceptedCompetitionTerms ? (
-              <CheckCircle2 size={20} color="#15803D" />
-            ) : (
-              <FileText size={20} color="#1D4ED8" />
-            )}
-            <Text
-              style={{
-                flex: 1,
-                color: hasAcceptedCompetitionTerms ? '#166534' : '#1E3A8A',
-                fontWeight: '900',
-                fontSize: 14,
-              }}
-            >
-              {hasAcceptedCompetitionTerms
-                ? 'Online competition terms accepted'
-                : 'Accept the rules before publishing'}
+        {!hasAcceptedCompetitionTerms ? (
+          <View style={{ backgroundColor: '#EFF6FF', borderRadius: 18, padding: 16, marginTop: 12, borderWidth: 1, borderColor: '#BFDBFE' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
+              <FileText size={20} color="#06223D" />
+              <Text style={{ flex: 1, color: '#06223D', fontWeight: '900', fontSize: 14 }}>
+                Accept the rules before publishing
+              </Text>
+            </View>
+            <Text style={{ color: '#475569', fontSize: 12, lineHeight: 18, marginTop: 7 }}>
+              Player names and leaderboard scores can be public. Competition posts
+              stay disabled until you accept the Terms of Use and community rules.
             </Text>
+            <TouchableOpacity
+              accessibilityRole="button"
+              onPress={() => { setTermsHostOpen(true); setShowCompetitionTerms(true); }}
+              style={{ alignSelf: 'flex-start', marginTop: 10, borderRadius: 10, paddingHorizontal: 13, paddingVertical: 8, backgroundColor: '#06223D' }}
+            >
+              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 12 }}>Review and accept</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={{ color: '#475569', fontSize: 12, lineHeight: 18, marginTop: 7 }}>
-            Player names and leaderboard scores can be public. Competition posts
-            stay disabled until you accept the Terms of Use and community rules.
-          </Text>
-          <TouchableOpacity
-            accessibilityRole="button"
-            onPress={() => { setTermsHostOpen(true); setShowCompetitionTerms(true); }}
-            style={{
-              alignSelf: 'flex-start',
-              marginTop: 10,
-              borderRadius: 10,
-              paddingHorizontal: 13,
-              paddingVertical: 8,
-              backgroundColor: hasAcceptedCompetitionTerms ? '#DCFCE7' : '#1D4ED8',
-            }}
-          >
-            <Text
-              style={{
-                color: hasAcceptedCompetitionTerms ? '#166534' : '#FFFFFF',
-                fontWeight: '800',
-                fontSize: 12,
-              }}
-            >
-              {hasAcceptedCompetitionTerms ? 'Review terms' : 'Review and accept'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        ) : null}
 
         {/* ── Global Leaderboards ─────────────────────────────────────────── */}
         <View style={{ marginTop: 18 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-            <Trophy size={18} color="#F59E0B" />
-            <Text style={{ fontWeight: '900', color: '#0F172A', fontSize: 17 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <View accessible={false} importantForAccessibility="no-hide-descendants" style={{ width: 28, alignItems: 'flex-start' }}><Trophy size={20} color="#F59E0B" /></View>
+            <Text accessibilityRole="header" style={{ flexShrink: 1, fontWeight: '900', color: '#06223D', fontSize: 19, textAlign: 'center' }}>
               Global Leaderboards
             </Text>
+            <View accessible={false} importantForAccessibility="no-hide-descendants" style={{ width: 28, alignItems: 'flex-end' }}><Trophy size={20} color="#F59E0B" /></View>
           </View>
-          <Text style={{ color: '#64748B', fontSize: 12, marginBottom: 12 }}>
-            Body-weight exercises only — fairest measure of effort. Play Endless to rank up.
+          <View accessible={false} importantForAccessibility="no" style={{ alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6, marginBottom: 8 }} />
+          <Text style={{ color: '#06223D', fontSize: 14, lineHeight: 20, textAlign: 'center', marginBottom: 12 }}>
+            Body-weight exercises only for the fairest measure of effort.
           </Text>
 
           {/* Tab switcher */}
           <View
             style={{
               flexDirection: 'row',
-              backgroundColor: '#E2E8F0',
+              backgroundColor: '#06223D',
               borderRadius: 14,
               padding: 4,
               marginBottom: 12,
@@ -858,7 +667,7 @@ export default function CompeteScreen() {
                   style={{
                     fontWeight: '800',
                     fontSize: 12,
-                    color: boardTab === tab.key ? '#0F172A' : '#64748B',
+                    color: boardTab === tab.key ? '#06223D' : '#FFFFFF',
                   }}
                 >
                   {tab.label}
@@ -870,6 +679,15 @@ export default function CompeteScreen() {
           <LeaderboardPanel exercise={boardTab} termsAccepted={hasAcceptedCompetitionTerms} processingAllowed={processingAccess.competition.allowed} />
         </View>
 
+        <TouchableOpacity
+          accessibilityRole="link"
+          accessibilityLabel="Competition rules & terms in Info, Your setup"
+          onPress={() => router.push({ pathname: '/(tabs)/info', params: { section: 'competition-terms' } })}
+          style={{ alignSelf: 'center', minHeight: 44, justifyContent: 'center', marginTop: 12 }}
+        >
+          <Text style={{ color: '#06223D', fontSize: 13, fontWeight: '700' }}>Competition rules & terms</Text>
+          <View accessible={false} style={{ height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 5, alignSelf: 'stretch' }} />
+        </TouchableOpacity>
         {error && <Text style={{ color: '#DC2626', marginTop: 12, fontSize: 13 }}>{error}</Text>}
       </ScrollView>
       <CompetitionTermsModal

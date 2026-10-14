@@ -14,7 +14,6 @@ import {
   Home,
   RotateCcw,
   Share2,
-  Trophy,
   X,
 } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -33,6 +32,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import { RunCelebrations } from '@/components/RunCelebrations';
+import { ResultBird } from '@/components/ResultBird';
 import { GameScreenAwake } from '@/components/GameScreenAwake';
 import { ChampionshipResultHeading } from '@/components/ChampionBadge';
 import { isChampionshipRun } from '@/utils/game/levelAchievements';
@@ -180,7 +180,7 @@ export default function GameScreen() {
     {(newRun, prepareEntry) => <GameContent onNewRun={newRun} prepareEntry={prepareEntry} />}
   </GameEligibilityGate>;
   return (
-    <View style={{ flex: 1, backgroundColor: '#0F172A', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
+    <View style={{ flex: 1, backgroundColor: '#06223D', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
       <ActivityIndicator color="#FFFFFF" size="large" />
       <Text accessibilityRole="text" style={{ color: '#FFFFFF', marginTop: 18, textAlign: 'center' }}>
         {hydrated ? 'Finishing privacy choices before your game…' : 'Loading your saved progress…'}
@@ -1116,7 +1116,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   const microphonePermissionLoading =
     recordRun && !recordSilently && microphonePermission == null;
   if (permission == null || microphonePermissionLoading) {
-    return <View style={{ flex: 1, backgroundColor: '#0F172A' }} />;
+    return <View style={{ flex: 1, backgroundColor: '#06223D' }} />;
   }
 
   if (needsCameraPermission) {
@@ -1129,7 +1129,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       <View
         style={{
           flex: 1,
-          backgroundColor: '#0F172A',
+          backgroundColor: '#06223D',
           paddingTop: insets.top,
           paddingBottom: insets.bottom + 20,
           paddingHorizontal: 28,
@@ -1193,7 +1193,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       <View
         style={{
           flex: 1,
-          backgroundColor: '#0F172A',
+          backgroundColor: '#06223D',
           paddingTop: insets.top,
           paddingBottom: insets.bottom + 20,
           paddingHorizontal: 28,
@@ -1432,13 +1432,15 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
             }}
           >
             {championshipClear ? <ChampionshipResultHeading /> : <>
-            <Trophy size={36} color={cleared ? '#F59E0B' : '#94A3B8'} />
-            <Text style={{ fontSize: 24, fontWeight: '900', color: '#0F172A', marginTop: 8 }}>
-              {cleared
-                ? mode === 'daily'
-                  ? 'Daily done!'
-                  : 'Level cleared!'
-                : 'Run over'}
+            <ResultBird cleared={cleared} skin={skin} evo={birdEvo} />
+            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ width: '100%', textAlign: 'center', fontSize: 24, fontWeight: '900', color: '#06223D', marginTop: 8 }}>
+              {nextUnlocked
+                ? `Level ${level.id + 1} unlocked!`
+                : cleared
+                  ? mode === 'daily'
+                    ? 'Daily done!'
+                    : 'Level cleared!'
+                  : 'Run over'}
             </Text>
             </>}
             {result.endReason ? (
@@ -1455,38 +1457,34 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   : 'Run ended because camera tracking was lost.'}
               </Text>
             ) : null}
-            {nextUnlocked ? (
-              <Text style={{ color: '#16A34A', fontWeight: '800', marginTop: 4 }}>
-                Level {level.id + 1} unlocked 🎉
-              </Text>
-            ) : null}
             <View
               style={{
+                alignSelf: 'center',
+                maxWidth: '100%',
                 flexDirection: 'row',
-                gap: 14,
-                marginTop: 16,
-                flexWrap: 'wrap',
-                justifyContent: 'center',
+                gap: 24,
+                marginTop: 20,
+                alignItems: 'flex-start',
               }}
             >
-              <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 26, fontWeight: '900', color: '#F59E0B' }}>
+              <View style={{ flexShrink: 1, minWidth: 0, alignItems: 'center' }}>
+                <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ textAlign: 'center', fontSize: 26, lineHeight: 34, fontWeight: '900', color: '#F59E0B' }}>
                   {result.score}
                 </Text>
-                <Text style={{ fontSize: 11, color: '#64748B', fontWeight: '700' }}>PIPES</Text>
+                <Text style={{ fontSize: 11, lineHeight: 16, marginTop: 4, textAlign: 'center', color: '#475569', fontWeight: '700' }}>PIPES</Text>
               </View>
 
-              <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 26, fontWeight: '900', color: '#0284C7' }}>
+              <View style={{ flexShrink: 1, minWidth: 0, alignItems: 'center' }}>
+                <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ textAlign: 'center', fontSize: 26, lineHeight: 34, fontWeight: '900', color: '#F59E0B' }}>
                   {tutMinDisplay > 0 ? `${tutMinDisplay}m ${tutSecDisplay}s` : `${tutSecDisplay}s`}
                 </Text>
-                <Text style={{ fontSize: 11, color: '#64748B', fontWeight: '700' }}>
+                <Text style={{ fontSize: 11, lineHeight: 16, marginTop: 4, textAlign: 'center', color: '#475569', fontWeight: '700' }}>
                   TRAINING TIME
                 </Text>
               </View>
             </View>
             {!isEndless && !cleared ? (
-              <Text style={{ color: '#64748B', fontSize: 13, marginTop: 12 }}>
+              <Text style={{ color: '#475569', fontSize: 13, marginTop: 12 }}>
                 Target: {target} pipes — keep pushing!
               </Text>
             ) : null}
@@ -1500,9 +1498,9 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   paddingVertical: 10,
                   backgroundColor:
                     competitionResultState.status === 'accepted'
-                      ? '#F0FDF4'
+                      ? '#4AABDE'
                       : competitionResultState.status === 'pending'
-                        ? '#EFF6FF'
+                        ? '#4AABDE'
                         : competitionResultState.status === 'local'
                           ? '#F1F5F9'
                           : '#FEF2F2',
@@ -1512,9 +1510,9 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   style={{
                     color:
                       competitionResultState.status === 'accepted'
-                        ? '#166534'
+                        ? '#06223D'
                         : competitionResultState.status === 'pending'
-                          ? '#1E3A8A'
+                          ? '#06223D'
                           : competitionResultState.status === 'local'
                             ? '#475569'
                             : '#991B1B',
@@ -1533,7 +1531,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   width: '100%',
                   marginTop: 16,
                   borderRadius: 16,
-                  backgroundColor: '#EFF6FF',
+                  backgroundColor: '#4AABDE',
                   paddingHorizontal: 16,
                   paddingVertical: 14,
                   flexDirection: 'row',
@@ -1542,8 +1540,8 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   gap: 10,
                 }}
               >
-                <ActivityIndicator size="small" color="#2563EB" />
-                <Text style={{ color: '#1E3A8A', fontSize: 14, fontWeight: '900' }}>
+                <ActivityIndicator size="small" color="#06223D" />
+                <Text style={{ color: '#06223D', fontSize: 14, fontWeight: '900' }}>
                   Preparing video…
                 </Text>
               </View>
@@ -1557,7 +1555,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   onPress={() => void shareRecordedVideo()}
                   style={{
                     marginTop: 16,
-                    backgroundColor: '#2563EB',
+                    backgroundColor: '#06223D',
                     borderRadius: 16,
                     paddingVertical: 15,
                     width: '100%',
@@ -1583,14 +1581,14 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                     accessibilityLabel="Send video with Messages"
                     disabled={shareBusy || resultActionBusy}
                     onPress={() => void shareRecordedVideo('messages')}
-                    style={{ width: '100%', marginTop: 10, minHeight: 44, borderRadius: 12, backgroundColor: '#EFF6FF', alignItems: 'center', justifyContent: 'center', opacity: shareBusy ? 0.6 : 1 }}
+                    style={{ width: '100%', marginTop: 10, minHeight: 44, borderRadius: 12, backgroundColor: '#4AABDE', alignItems: 'center', justifyContent: 'center', opacity: shareBusy ? 0.6 : 1 }}
                   >
-                    <Text style={{ color: '#1D4ED8', fontWeight: '800' }}>Messages</Text>
+                    <Text style={{ color: '#06223D', fontWeight: '800' }}>Messages</Text>
                   </TouchableOpacity>
                 ) : null}
                 <Text
                   style={{
-                    color: '#64748B',
+                    color: '#475569',
                     fontSize: 11,
                     lineHeight: 16,
                     marginTop: 6,
@@ -1656,10 +1654,10 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   gap: 8,
                 }}
               >
-                <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
+                <Text style={{ color: '#06223D', fontWeight: '900', fontSize: 16 }}>
                   Next level
                 </Text>
-                <ArrowRight size={20} color="#FFFFFF" />
+                <ArrowRight size={20} color="#06223D" />
               </TouchableOpacity>
             ) : null}
             <TouchableOpacity
@@ -1667,7 +1665,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
               onPress={() => performResultAction(retry)}
               style={{
                 marginTop: canGoNextLevel ? 10 : 18,
-                backgroundColor: canGoNextLevel ? '#FFF7ED' : '#F59E0B',
+                backgroundColor: '#4AABDE',
                 borderRadius: 16,
                 paddingVertical: 14,
                 width: '100%',
@@ -1675,14 +1673,12 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                 flexDirection: 'row',
                 justifyContent: 'center',
                 gap: 8,
-                borderWidth: canGoNextLevel ? 1.5 : 0,
-                borderColor: '#F59E0B',
               }}
             >
-              <RotateCcw size={18} color={canGoNextLevel ? '#C2410C' : '#FFFFFF'} />
+              <RotateCcw size={18} color="#06223D" />
               <Text
                 style={{
-                  color: canGoNextLevel ? '#C2410C' : '#FFFFFF',
+                  color: '#06223D',
                   fontWeight: '900',
                   fontSize: 15,
                 }}
@@ -1705,8 +1701,8 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                 gap: 8,
               }}
             >
-              <Home size={18} color="#0F172A" />
-              <Text style={{ color: '#0F172A', fontWeight: '900', fontSize: 15 }}>Done</Text>
+              <Home size={18} color="#06223D" />
+              <Text style={{ color: '#06223D', fontWeight: '900', fontSize: 15 }}>Done</Text>
             </TouchableOpacity>
           </View>
           </ScrollView>

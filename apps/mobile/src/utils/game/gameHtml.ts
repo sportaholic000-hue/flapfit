@@ -56,7 +56,7 @@ body { margin: 0; padding: 0; background: ${config.sky1}; overflow: hidden; heig
 #dot { position: absolute; width: 10px; height: 10px; border-radius: 5px; background: #22C55E; margin-left: -5px; margin-top: -5px; border: 2px solid #fff; z-index: 6; }
 #camBtn { display: none; position: fixed; right: 10px; bottom: 193px; z-index: 7; background: rgba(15,23,42,0.72); border: none; border-radius: 12px; padding: 9px 13px; cursor: pointer; color: #fff; font-size: 20px; line-height: 1; -webkit-tap-highlight-color: transparent; }
 #overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; z-index: 10; pointer-events: none; }
-#card { background: rgba(15,23,42,0.88); border-radius: 22px; padding: 28px 30px; max-width: 88%; text-align: center; color: #fff; font-family: -apple-system, sans-serif; font-weight: 700; font-size: 24px; line-height: 1.55; }
+#card { background: rgba(6,34,61,0.88); border-radius: 22px; padding: 28px 30px; max-width: 88%; text-align: center; color: #fff; font-family: -apple-system, sans-serif; font-weight: 700; font-size: 24px; line-height: 1.55; }
 #card small { font-weight: 600; font-size: 17px; color: rgba(255,255,255,0.78); }
 #bar { display: none; height: 12px; border-radius: 6px; background: rgba(255,255,255,0.25); margin-top: 18px; overflow: hidden; }
 #fill { height: 100%; width: 0%; background: #F59E0B; border-radius: 6px; transition: width 0.1s linear; }

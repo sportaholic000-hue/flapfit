@@ -31,7 +31,7 @@ export function GameSetupScreen({ busy, error, onSetup, onHome, onInfo }: Props)
             <View accessible={false} style={{ position: 'absolute', width: 216, height: 216, borderRadius: 108, backgroundColor: '#EAF8FF', borderWidth: 10, borderColor: '#F5FCFF' }} />
             <Image source={require('../../assets/images/evolution/sky/stage-10.png')} accessibilityLabel="Sky Legend bird" accessible contentFit="contain" transition={0} style={{ width: '100%', maxWidth: 262, aspectRatio: 1 }} />
           </View>
-          <Text accessibilityRole="header" style={{ color: '#0F172A', fontSize: 30, lineHeight: 36, fontWeight: '900', letterSpacing: -1, textAlign: 'center', marginBottom: 14 }}>Almost ready to fly</Text>
+          <Text accessibilityRole="header" style={{ color: '#06223D', fontSize: 30, lineHeight: 36, fontWeight: '900', letterSpacing: -1, textAlign: 'center', marginBottom: 14 }}>Almost ready to fly</Text>
           <Text style={{ maxWidth: 315, color: '#536578', fontSize: 16, lineHeight: 25, textAlign: 'center', marginBottom: 26 }}>Let’s finish your setup so you’re ready for your next run.</Text>
           {error ? <Text accessibilityRole="alert" style={{ color: '#9F1239', fontSize: 14, lineHeight: 21, textAlign: 'center', marginBottom: 18 }}>{error}</Text> : null}
           <TouchableOpacity accessibilityRole="button" accessibilityLabel="Finish setup" accessibilityState={{ disabled: busy, busy }} disabled={busy} onPress={onSetup} style={{ width: '100%', minHeight: 54, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, paddingHorizontal: 18, paddingVertical: 14, backgroundColor: '#036CAA', borderRadius: 15, boxShadow: '0 4px 0 #03578B', opacity: busy ? 0.7 : 1 }}>

@@ -47,8 +47,9 @@ export function LaunchUpdateGate({ children }: { children: ReactNode }) {
             onPress={() => { if (AppState.currentState === 'active') void launchUpdates.download(); }}>
             <Text style={styles.primaryText}>Update now</Text>
           </TouchableOpacity>}
-          <TouchableOpacity accessibilityRole="button" style={styles.secondary} onPress={() => launchUpdates.later()}>
-            <Text style={styles.secondaryText}>{canContinue ? 'Continue' : 'Later'}</Text>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel={canContinue ? 'Continue' : 'Later'} style={styles.secondary} onPress={() => launchUpdates.later()}>
+            <Text style={[styles.secondaryText, canContinue ? styles.continueText : undefined]}>{canContinue ? 'Continue' : 'Later'}</Text>
+            {canContinue ? <Text accessible={false} importantForAccessibility="no" style={styles.continueArrow}>→</Text> : null}
           </TouchableOpacity>
         </>
       ) : <ActivityIndicator color="#38BDF8" size="large" style={styles.spinner} />}
@@ -57,12 +58,14 @@ export function LaunchUpdateGate({ children }: { children: ReactNode }) {
 }
 
 const styles = {
-  screen: { flex: 1, justifyContent: 'center' as const, alignItems: 'center' as const, padding: 28, backgroundColor: '#0F172A' },
+  screen: { flex: 1, justifyContent: 'center' as const, alignItems: 'center' as const, padding: 28, backgroundColor: '#06223D' },
   title: { color: '#F8FAFC', fontSize: 24, fontWeight: '700' as const, textAlign: 'center' as const },
   body: { color: '#CBD5E1', fontSize: 16, lineHeight: 24, textAlign: 'center' as const, marginTop: 16, maxWidth: 420 },
-  primary: { backgroundColor: '#38BDF8', paddingVertical: 15, paddingHorizontal: 32, borderRadius: 16, marginTop: 28 },
-  primaryText: { color: '#0F172A', fontSize: 17, fontWeight: '700' as const },
-  secondary: { paddingVertical: 16, paddingHorizontal: 32, marginTop: 4 },
+  primary: { backgroundColor: '#06223D', paddingVertical: 15, paddingHorizontal: 32, borderRadius: 16, marginTop: 28 },
+  primaryText: { color: '#F59E0B', fontSize: 17, fontWeight: '700' as const },
+  secondary: { paddingVertical: 16, paddingHorizontal: 32, marginTop: 4, flexDirection: 'row' as const, alignItems: 'center' as const, justifyContent: 'center' as const, gap: 8 },
   secondaryText: { color: '#CBD5E1', fontSize: 17 },
+  continueText: { color: '#F59E0B' },
+  continueArrow: { color: '#F59E0B', fontSize: 20, fontWeight: '700' as const },
   spinner: { marginTop: 24 },
 };

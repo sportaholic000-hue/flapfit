@@ -1,19 +1,20 @@
+import { TabSkyBackground } from '@/components/TabSkyBackground';
 import Constants from 'expo-constants';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { CompetitionTermsModal } from '@/components/CompetitionTermsModal';
 import { StatusBar } from 'expo-status-bar';
 import { useQueryClient } from '@tanstack/react-query';
 import {
-  Camera,
   ChevronRight,
-  CircleHelp,
-  Clock3,
   FileText,
   KeyRound,
   Mail,
   MessageSquareWarning,
+  RotateCcw,
   Settings,
   Share2,
   ShieldCheck,
+  SlidersHorizontal,
   Smartphone,
   Trash2,
   TriangleAlert,
@@ -48,9 +49,7 @@ import {
 import { getBird } from '@/utils/game/birds';
 import { EVO_NAMES, EVO_THRESHOLDS, useGameStore } from '@/utils/game/store';
 
-const NAVY = '#0F172A';
-const SKY = '#4AABDE';
-const AMBER = '#F59E0B';
+const NAVY = '#06223D';
 
 type ModalPage = 'privacy' | 'safety' | 'terms' | null;
 
@@ -82,21 +81,11 @@ function stageRange(index: number): string {
   return `${clock(start)}–${clock(EVO_THRESHOLDS[index + 1] - 1)}`;
 }
 
-function Section({
-  title,
-  icon,
-  children,
-}: {
-  title: string;
-  icon: ReactNode;
-  children: ReactNode;
-}) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <View style={styles.section}>
-      <View style={styles.sectionTitleRow}>
-        {icon}
-        <Text style={styles.sectionTitle}>{title}</Text>
-      </View>
+      <Text accessibilityRole="header" style={styles.sectionTitle}>{title}</Text>
+      <View accessible={false} importantForAccessibility="no" style={styles.sectionTitleUnderline} />
       {children}
     </View>
   );
@@ -318,9 +307,26 @@ function InfoModal({ page, onClose }: { page: Exclude<ModalPage, null>; onClose:
 export default function InfoScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { section } = useLocalSearchParams<{ section?: string }>();
+  const returnToCompete = useRef(false);
+  const [showCompetitionTerms, setShowCompetitionTerms] = useState(false);
   const [modalPage, setModalPage] = useState<ModalPage>(null);
   const [privacyChoicesExpanded, setPrivacyChoicesExpanded] = useState(false);
   const [onlineDeleteBusy, setOnlineDeleteBusy] = useState(false);
+  useFocusEffect(useCallback(() => {
+    if (section !== 'competition-terms') return;
+    returnToCompete.current = true;
+    setPrivacyChoicesExpanded(false);
+    setShowCompetitionTerms(true);
+    router.setParams({ section: undefined });
+  }, [section, router]));
+  const closeCompetitionTerms = () => {
+    setShowCompetitionTerms(false);
+    if (returnToCompete.current) {
+      returnToCompete.current = false;
+      router.navigate('/(tabs)/compete');
+    }
+  };
   const adPrivacyRequired = useSyncExternalStore(subscribeAdPrivacy, isAdPrivacyRequired, () => false);
   const [adPrivacyBusy, setAdPrivacyBusy] = useState(false);
   const privacyFocused = useRef(false);
@@ -498,13 +504,11 @@ export default function InfoScreen() {
 
   return (
     <View style={styles.root}>
-      <StatusBar style="light" />
-      <View style={[styles.hero, { paddingTop: insets.top + 18 }]}>
-        <View style={styles.heroIcon}>
-          <CircleHelp size={30} color={NAVY} strokeWidth={2.5} />
-        </View>
+      <TabSkyBackground screen="info" />
+      <StatusBar style="dark" />
+      <View style={[styles.hero, { paddingTop: insets.top + 16 }]}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.heroTitle}>INFO & HELP</Text>
+          <Text accessibilityRole="header" style={styles.heroTitle}>Info & Help</Text>
           <Text style={styles.heroSubtitle}>Camera setup, evolution, safety, and support</Text>
         </View>
       </View>
@@ -513,16 +517,16 @@ export default function InfoScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 32 }]}
       >
-        <Section title="Getting started" icon={<CircleHelp size={23} color={AMBER} />}>
+        <Section title="Getting started">
           <ActionRow
-            icon={<CircleHelp size={21} color="#2563EB" />}
+            icon={<RotateCcw size={21} color="#06223D" />}
             title="View introduction again"
             subtitle="Review bird choice, phone placement, and calibration"
             onPress={() => router.push({ pathname: '/onboarding', params: { preview: '1' } })}
           />
         </Section>
 
-        <Section title="Camera setup" icon={<Camera size={23} color={AMBER} />}>
+        <Section title="Camera setup">
           <NumberedStep number={1}>
             Prop your phone upright and stable. Use bright, even light and keep the camera lens
             clear.
@@ -556,7 +560,7 @@ export default function InfoScreen() {
           ))}
         </Section>
 
-        <Section title="Bird evolution" icon={<Clock3 size={23} color={AMBER} />}>
+        <Section title="Bird evolution">
           <Text style={styles.bodyText}>
             Your lifetime tracked training time moves your bird through ten stages. The stage names
             and times below come directly from the same rules used by the game.
@@ -604,7 +608,7 @@ export default function InfoScreen() {
             ))}
           </View>
           <View style={styles.noticeBox}>
-            <TriangleAlert size={20} color="#92400E" />
+            <TriangleAlert size={20} color="#06223D" />
             <Text style={styles.noticeText}>
               This total is active in-game training time after calibration. It is not verified
               time-under-tension or a medical measurement.
@@ -616,10 +620,7 @@ export default function InfoScreen() {
           </Text>
         </Section>
 
-        <Section
-          title="Privacy & choices"
-          icon={<ShieldCheck size={23} color={AMBER} />}
-        >
+        <Section title="Privacy & choices">
           {adPrivacyRequired ? (
             <ActionRow
               icon={<ShieldCheck size={21} color="#2563EB" />}
@@ -630,14 +631,22 @@ export default function InfoScreen() {
             />
           ) : null}
           <ActionRow
-            icon={<ShieldCheck size={21} color="#2563EB" />}
+            icon={<SlidersHorizontal size={21} color="#06223D" />}
             title="Your setup"
             subtitle={privacyChoicesExpanded ? 'Hide your saved answers and preferences' : 'Review your saved answers and preferences'}
             onPress={() => setPrivacyChoicesExpanded(value => !value)}
           />
-          {privacyChoicesExpanded ? <PrivacyChoices includeCompetition onDone={() => setPrivacyChoicesExpanded(false)} /> : null}
+          {privacyChoicesExpanded ? <>
+            <ActionRow
+              icon={<FileText size={21} color="#06223D" />}
+              title="Competition rules & terms"
+              subtitle="Review the rules for online leaderboards"
+              onPress={() => setShowCompetitionTerms(true)}
+            />
+            <PrivacyChoices includeCompetition onDone={() => setPrivacyChoicesExpanded(false)} />
+          </> : null}
           <ActionRow
-            icon={<ShieldCheck size={21} color="#2563EB" />}
+            icon={<ShieldCheck size={21} color="#06223D" />}
             title="Privacy & camera data"
             subtitle="Plain-language data and recording summary"
             onPress={() => setModalPage('privacy')}
@@ -690,7 +699,7 @@ export default function InfoScreen() {
           />
         </Section>
 
-        <Section title="Support & sharing" icon={<Smartphone size={23} color={AMBER} />}>
+        <Section title="Support & sharing">
           <ActionRow
             icon={<Smartphone size={21} color="#0284C7" />}
             title="Check for updates"
@@ -750,6 +759,7 @@ export default function InfoScreen() {
         </View>
       </ScrollView>
 
+      {showCompetitionTerms ? <CompetitionTermsModal visible onClose={closeCompetitionTerms} /> : null}
       {modalPage ? <InfoModal page={modalPage} onClose={() => setModalPage(null)} /> : null}
     </View>
   );
@@ -758,36 +768,32 @@ export default function InfoScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#F1F5F9' },
   hero: {
-    backgroundColor: NAVY,
     paddingHorizontal: 20,
-    paddingBottom: 22,
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 13,
   },
-  heroIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
+  heroTitle: {
+    fontFamily: 'LuckiestGuy_400Regular',
+    fontSize: 34,
+    textAlign: 'center',
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 4,
   },
-  heroTitle: { color: '#FFFFFF', fontWeight: '900', fontSize: 24, letterSpacing: 0.4 },
-  heroSubtitle: { color: '#CBD5E1', fontWeight: '600', fontSize: 12, marginTop: 3 },
+  heroSubtitle: { color: '#06223D', fontSize: 14, lineHeight: 20, fontWeight: '800', textAlign: 'center', marginTop: 2 },
   content: { padding: 16, gap: 14 },
   section: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 16,
-    shadowColor: '#0F172A',
+    shadowColor: '#06223D',
     shadowOpacity: 0.07,
     shadowRadius: 9,
     shadowOffset: { width: 0, height: 3 },
     elevation: 2,
   },
-  sectionTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 9, marginBottom: 13 },
-  sectionTitle: { color: NAVY, fontWeight: '900', fontSize: 17 },
+  sectionTitle: { color: '#06223D', fontWeight: '900', fontSize: 17, lineHeight: 24, textAlign: 'center' },
+  sectionTitleUnderline: { alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6, marginBottom: 13 },
   stepRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 11, marginBottom: 12 },
   stepNumber: {
     width: 25,
@@ -799,38 +805,38 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   stepNumberText: { color: '#FFFFFF', fontWeight: '900', fontSize: 12 },
-  stepText: { flex: 1, color: '#334155', fontSize: 13, lineHeight: 19, fontWeight: '500' },
+  stepText: { flex: 1, color: '#475569', fontSize: 13, lineHeight: 19, fontWeight: '500' },
   tipBox: {
-    backgroundColor: '#FEF3C7',
-    borderWidth: 1,
-    borderColor: '#FCD34D',
+    backgroundColor: '#4AABDE',
+    borderWidth: 2,
+    borderColor: '#F59E0B',
     borderRadius: 14,
     padding: 12,
     marginTop: 2,
     marginBottom: 10,
   },
-  tipTitle: { color: '#92400E', fontWeight: '900', fontSize: 13 },
-  tipText: { color: '#92400E', fontSize: 12, lineHeight: 17, marginTop: 3 },
+  tipTitle: { color: '#06223D', fontWeight: '900', fontSize: 13 },
+  tipText: { color: '#06223D', fontSize: 12, lineHeight: 17, marginTop: 3 },
   setupRow: { borderTopWidth: 1, borderTopColor: '#E2E8F0', paddingVertical: 10 },
   setupName: { color: NAVY, fontWeight: '800', fontSize: 13 },
-  setupText: { color: '#64748B', fontSize: 12, lineHeight: 17, marginTop: 2 },
+  setupText: { color: '#475569', fontSize: 12, lineHeight: 17, marginTop: 2 },
   bodyText: { color: '#475569', fontSize: 13, lineHeight: 19 },
   evolutionPreviewRow: { gap: 10, paddingTop: 13, paddingBottom: 2 },
   evolutionPreviewCard: {
     width: 116,
     minHeight: 144,
     borderRadius: 16,
-    backgroundColor: '#EFF6FF',
+    backgroundColor: NAVY,
     borderWidth: 1,
-    borderColor: '#BFDBFE',
+    borderColor: NAVY,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
     paddingHorizontal: 7,
   },
-  finalEvolutionCard: { backgroundColor: '#FFFBEB', borderColor: '#F59E0B', borderWidth: 2 },
-  evolutionPreviewStage: { color: '#075985', fontSize: 10, fontWeight: '900', marginTop: 4 },
-  evolutionPreviewName: { color: NAVY, fontSize: 11, fontWeight: '800', marginTop: 2 },
+  finalEvolutionCard: { backgroundColor: NAVY, borderColor: '#F59E0B', borderWidth: 2 },
+  evolutionPreviewStage: { color: '#4AABDE', fontSize: 10, fontWeight: '900', marginTop: 4 },
+  evolutionPreviewName: { color: '#FFFFFF', fontSize: 11, fontWeight: '800', marginTop: 2 },
   stageTable: {
     borderWidth: 1,
     borderColor: '#E2E8F0',
@@ -850,7 +856,7 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     borderRadius: 9,
-    backgroundColor: SKY,
+    backgroundColor: '#06223D',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 9,
@@ -864,7 +870,9 @@ const styles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
   },
   noticeBox: {
-    backgroundColor: '#FFF7ED',
+    backgroundColor: '#4AABDE',
+    borderWidth: 2,
+    borderColor: '#F59E0B',
     borderRadius: 14,
     padding: 12,
     marginTop: 12,
@@ -872,7 +880,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: 9,
   },
-  noticeText: { flex: 1, color: '#92400E', fontSize: 12, lineHeight: 17, fontWeight: '600' },
+  noticeText: { flex: 1, color: '#06223D', fontSize: 12, lineHeight: 17, fontWeight: '600' },
   actionRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -890,10 +898,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   actionTitle: { color: NAVY, fontSize: 14, fontWeight: '800' },
-  actionSubtitle: { color: '#64748B', fontSize: 11, lineHeight: 15, marginTop: 2 },
+  actionSubtitle: { color: '#475569', fontSize: 11, lineHeight: 15, marginTop: 2 },
   versionCard: { alignItems: 'center', paddingVertical: 8 },
   versionName: { color: NAVY, fontWeight: '900', fontSize: 14 },
-  versionText: { color: '#64748B', fontSize: 11, marginTop: 2 },
+  versionText: { color: '#475569', fontSize: 11, marginTop: 2 },
   modalRoot: { flex: 1, backgroundColor: NAVY },
   modalHeader: {
     paddingHorizontal: 20,

@@ -56,7 +56,7 @@ export const CALIBRATION_GUIDE_STYLE = `
 #calibration-pose-guide[data-pose="waitTop"] .pose-up,
 #calibration-pose-guide[data-pose="waitBottom"] .pose-down { display: block; }
 #overlay.has-calibration-pose { align-items: flex-end; box-sizing: border-box; padding: 10px 12px; }
-#overlay.has-calibration-pose #card { box-sizing: border-box; width: min(94vw, 460px); max-width: 100%; padding: 10px 16px; border-radius: 14px; background: rgba(15,23,42,0.72); font-size: clamp(14px, 3.8vw, 17px); line-height: 1.25; }
+#overlay.has-calibration-pose #card { box-sizing: border-box; width: min(94vw, 460px); max-width: 100%; padding: 10px 16px; border-radius: 14px; background: rgba(6,34,61,0.72); font-size: clamp(14px, 3.8vw, 17px); line-height: 1.25; }
 #overlay.has-calibration-pose #card small { font-size: 12px; }
 #overlay.has-calibration-pose #bar { height: 9px; margin-top: 9px; }
 #overlay.pose-transitioning #card { opacity: 0; }
