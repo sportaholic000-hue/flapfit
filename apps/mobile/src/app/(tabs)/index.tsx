@@ -383,20 +383,40 @@ export default function HomeScreen() {
           <View
             style={{
               marginTop: 10,
-              backgroundColor: '#FEF3C7',
+              backgroundColor: SELECTION_ORANGE,
               borderRadius: 14,
               padding: 12,
               borderWidth: 2,
-              borderColor: '#F59E0B',
+              borderColor: NAVY,
             }}
           >
-            <Text style={{ fontWeight: '800', color: '#92400E', fontSize: 13 }}>
-              ⚠️ Your bird is getting soft!
-            </Text>
-            <Text style={{ color: '#92400E', fontSize: 12, marginTop: 2 }}>
+            <View
+              style={{
+                alignSelf: 'center',
+                maxWidth: '100%',
+                borderBottomWidth: 2,
+                borderBottomColor: NAVY,
+                paddingBottom: 5,
+              }}
+            >
+              <Text
+                style={{ fontWeight: '800', color: NAVY, fontSize: 14, textAlign: 'center' }}
+              >
+                ⚠️ YOUR BIRD IS GETTING SOFT!
+              </Text>
+            </View>
+            <Text
+              style={{ color: NAVY, fontSize: 13, lineHeight: 18, marginTop: 8, textAlign: 'center' }}
+            >
               {Math.floor(daysInactive)} days without training — muscles fade without consistency.
-              Fly today to keep them!
             </Text>
+            <View style={{ backgroundColor: NAVY, borderRadius: 6, marginTop: 8, padding: 8 }}>
+              <Text
+                style={{ color: SKY_BLUE, fontWeight: '700', fontSize: 13, textAlign: 'center' }}
+              >
+                Fly today to keep them!
+              </Text>
+            </View>
           </View>
         )}
 
