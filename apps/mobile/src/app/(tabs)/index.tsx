@@ -259,13 +259,10 @@ export default function HomeScreen() {
           gap: 4,
           backgroundColor: '#06223D',
           borderWidth: 2,
-          borderColor: selected ? '#F59E0B' : 'transparent',
+          borderColor: selected ? SKY_BLUE : 'transparent',
           minHeight: 198,
         }}
       >
-        {selected ? (
-          <View pointerEvents="none" accessible={false} style={{ position: 'absolute', top: 2, bottom: 2, left: 2, right: 2, borderWidth: 2, borderColor: SKY_BLUE, borderRadius: 10 }} />
-        ) : null}
         {selected ? (
           <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 12, right: 12 }}>
             <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
@@ -556,15 +553,12 @@ export default function HomeScreen() {
                 padding: 10,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'sky' ? SELECTION_ORANGE : '#06223D',
+                borderColor: backgroundMode === 'sky' ? SKY_BLUE : '#06223D',
                 backgroundColor: '#06223D',
                 justifyContent: 'center',
                 paddingTop: 28,
               }}
             >
-              {backgroundMode === 'sky' ? (
-                <View pointerEvents="none" accessible={false} style={{ position: 'absolute', top: 2, bottom: 2, left: 2, right: 2, borderWidth: 2, borderColor: SKY_BLUE, borderRadius: 12 }} />
-              ) : null}
               {backgroundMode === 'sky' ? (
                 <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 10, right: 10 }}>
                   <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
@@ -592,15 +586,12 @@ export default function HomeScreen() {
                 padding: 10,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'camera' ? SELECTION_ORANGE : '#06223D',
+                borderColor: backgroundMode === 'camera' ? SKY_BLUE : '#06223D',
                 backgroundColor: '#06223D',
                 justifyContent: 'center',
                 paddingTop: 28,
               }}
             >
-              {backgroundMode === 'camera' ? (
-                <View pointerEvents="none" accessible={false} style={{ position: 'absolute', top: 2, bottom: 2, left: 2, right: 2, borderWidth: 2, borderColor: SKY_BLUE, borderRadius: 12 }} />
-              ) : null}
               {backgroundMode === 'camera' ? (
                 <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 10, right: 10 }}>
                   <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
