@@ -18,7 +18,7 @@ async function fixture(screen: 'home' | 'levels' = 'home', unlockedLevel = 6, da
   jest.doMock('expo-image', () => ({ Image: 'Image' }));
   jest.doMock('expo-status-bar', () => ({ StatusBar: () => null }));
   jest.doMock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) }));
-  jest.doMock('react-native-svg', () => ({ __esModule: true, default: 'Svg', Defs: 'Defs', LinearGradient: 'LinearGradient', Path: 'Path', Stop: 'Stop' }));
+  jest.doMock('react-native-svg', () => ({ __esModule: true, default: 'Svg', Defs: 'Defs', LinearGradient: 'LinearGradient', Path: 'Path', Circle: 'Circle', Stop: 'Stop' }));
   jest.doMock('lucide-react-native', () => Object.fromEntries(
     ['Camera', 'CheckCircle2', 'Flame', 'Infinity', 'Lock', 'Play', 'Sun', 'Video', 'Star'].map(name => [name, 'Icon'])
   ));

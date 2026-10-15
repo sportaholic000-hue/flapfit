@@ -12,6 +12,7 @@ async function mountApp(saved: string | null, options: {
   delayed?: boolean; failRead?: boolean; offline?: boolean; completedRun?: boolean; playable?: boolean;
   cameraStatus?: CameraTestStatus; cameraCanAskAgain?: boolean; cameraResponse?: CameraTestStatus;
   cameraSettingsStatus?: CameraTestStatus; platform?: 'ios' | 'android';
+  unlockedLevel?: number; endlessRun?: boolean;
   recordRun?: boolean; microphoneStatus?: CameraTestStatus; microphoneResponse?: CameraTestStatus;
   microphoneCanAskAgain?: boolean; microphoneSettingsStatus?: CameraTestStatus;
 } = {}) {
@@ -67,7 +68,10 @@ async function mountApp(saved: string | null, options: {
   jest.doMock('@/components/BirdAvatar', () => ({ __esModule: true, default: 'BirdAvatar' }));
   const sheet = { openChoices: jest.fn(), cancelChoices: jest.fn(), privacyChoicesSheet: null };
   jest.doMock('@/components/PrivacyChoices', () => ({ usePrivacyChoicesSheet: () => sheet }));
-  jest.doMock('@/services/competitionApi', () => ({ startCompetitionForegroundRetry: () => () => {}, competitionIsConfigured: () => false }));
+  jest.doMock('@/services/competitionApi', () => ({
+    startCompetitionForegroundRetry: () => () => {}, competitionIsConfigured: false,
+    competitionPlayerNameError: jest.fn(() => null),
+  }));
   jest.doMock('@/services/recordingCache', () => ({ startRecordingCacheCleanup: () => () => {}, discardGameplayRecordingFile: jest.fn() }));
   jest.doMock('@/services/videoSharing', () => ({ getVideoShareAvailability: jest.fn().mockResolvedValue({}) }));
   jest.doMock('@/utils/game/mediapipeAssets', () => ({ prepareMediaPipeAssets: () => options.playable ? Promise.resolve({}) : new Promise(() => {}) }));
@@ -129,7 +133,7 @@ async function mountApp(saved: string | null, options: {
   }));
   const { useGameStore } = require('@/utils/game/store');
   await useGameStore.persist.rehydrate();
-  useGameStore.setState({ hydrated: true, hydrationError: null, hasOnboarded: true });
+  useGameStore.setState({ hydrated: true, hydrationError: null, hasOnboarded: true, unlockedLevel: options.unlockedLevel ?? (options.endlessRun ? 6 : 1) });
   if (options.completedRun) useGameStore.getState().recordSession({ exercise: 'squats', mode: 'daily', levelId: 1, score: 0, pushups: 0, tutSeconds: 0 });
   const Root = require('@/app/_layout').default;
   let tree!: ReactTestRenderer;
@@ -141,7 +145,7 @@ async function mountApp(saved: string | null, options: {
       expect(cameraMode).toBeDefined(); cameraMode.props.onPress(); await settle();
     });
     await act(async () => {
-    const button = tree.root.findAll(node => /^Play Level \d+$/.test(node.props.accessibilityLabel ?? '') && typeof node.props.onPress === 'function')[0];
+    const button = tree.root.findAll(node => (options.endlessRun ? node.props.accessibilityLabel === 'Play Endless Mode' : /^Play Level \d+$/.test(node.props.accessibilityLabel ?? '')) && typeof node.props.onPress === 'function')[0];
     expect(button).toBeDefined(); button.props.onPress(); await settle();
   });
     if (options.recordRun) await act(async () => {
@@ -154,8 +158,8 @@ async function mountApp(saved: string | null, options: {
   return { camera, requestCameraPermission, getCameraPermission, requestMicrophonePermission, getMicrophonePermission, openSettings, storage, adLoad, rcLoad, play, tree, sheet, router, awakeStart, awakeStop,
     goHome: async () => { await act(async () => { router.back(); await settle(); }); },
     setNativeMicrophoneStatus: (status: CameraTestStatus) => { nativeMicrophone = microphoneSnapshot(status); },
-    completeGame: async () => { await act(async () => {
-      tree.root.findByType('WebView' as never).props.onMessage({ nativeEvent: { data: JSON.stringify({ type: 'gameover', score: 5, pushups: 0, tutSeconds: 0, runDurationMs: 1000 }) } });
+    completeGame: async (score = 5) => { await act(async () => {
+      tree.root.findByType('WebView' as never).props.onMessage({ nativeEvent: { data: JSON.stringify({ type: 'gameover', score, pushups: 0, tutSeconds: 0, runDurationMs: 1000 }) } });
       await settle();
     }); },
     pressResult: async (title: string) => { await act(async () => {
@@ -564,5 +568,53 @@ test('iOS microphone correction preserves Android prompt actions', async () => {
     expect(JSON.stringify(f.tree.toJSON())).toContain('Allow microphone');
     expect(JSON.stringify(f.tree.toJSON())).toContain('Continue without sound');
     await f.pressResult('Allow microphone'); expect(f.requestMicrophonePermission).toHaveBeenCalledTimes(1);
+  } finally { await f.finish(); }
+});
+
+test.each([
+  { score: 0, heading: 'Keep going!', panel: 'GOAL: 10 PIPES', progress: 0 },
+  { score: 7, heading: 'Keep going!', panel: 'GOAL: 10 PIPES', progress: 70 },
+  { score: 8, heading: 'So close!', panel: '2 MORE PIPES TO CLEAR!', progress: 80 },
+  { score: 9, heading: 'So close!', panel: '1 MORE PIPE TO CLEAR!', progress: 90 },
+  { score: 10, heading: null, panel: null, progress: null },
+  { score: 14, heading: null, panel: null, progress: null },
+])('incomplete-result display uses this run at score $score, preserving success and result exits', async ({ score, heading, panel, progress }) => {
+  const level = jest.requireActual<typeof import('@/utils/game/levels')>('@/utils/game/levels').LEVELS.find(l => l.targetScore === 10)!;
+  expect(level).toBeDefined();
+  const f = await mountApp(JSON.stringify({ version: 1, answer: '18-plus' }), { playable: true, unlockedLevel: level.id });
+  try {
+    await f.play(); await f.completeGame(score);
+    const renderedText = f.tree.root.findAllByType('Text' as never).map(node => node.children.join(''));
+    const bars = f.tree.root.findAll(node => node.props.accessibilityRole === 'progressbar');
+    if (panel) {
+      expect(renderedText).toContain(heading);
+      expect(renderedText).toContain(panel);
+      expect(renderedText).toContain('This run: ' + score + ' / 10 pipes');
+      expect(bars).toHaveLength(1);
+      expect(bars[0].props.accessibilityValue).toEqual({ min: 0, max: 10, now: score });
+      expect(bars[0].props.style.backgroundColor).toBe('#FFFFFF');
+      const fill = bars[0].findAllByType('View' as never).find(node => node.props.style?.height === '100%')!;
+      expect(fill.props.style.width).toBe(progress + '%');
+      expect(fill.props.style.backgroundColor).toBe('#06223D');
+    } else {
+      expect(bars).toHaveLength(0);
+      expect(renderedText.some(t => /Level .*unlocked!|Level cleared!/.test(t))).toBe(true);
+    }
+    const resultBird = f.tree.root.findByType(require('@/components/ResultBird').ResultBird);
+    expect(resultBird.props.cleared).toBe(score >= 10);
+    expect(renderedText).toContain('Done');
+    expect(renderedText).toContain('Try again');
+  } finally { await f.finish(); }
+});
+
+test('Endless results never introduce a finite-target panel', async () => {
+  const f = await mountApp(JSON.stringify({ version: 1, answer: '18-plus' }), { playable: true, endlessRun: true });
+  try {
+    await f.play(); await f.completeGame(20);
+    const renderedText = f.tree.root.findAllByType('Text' as never).map(node => node.children.join(''));
+    expect(renderedText).toContain('Keep going!');
+    expect(f.tree.root.findAll(node => node.props.accessibilityRole === 'progressbar')).toHaveLength(0);
+    expect(renderedText.some(t => t.startsWith('GOAL:') || t.includes('TO CLEAR!'))).toBe(false);
+    expect(f.tree.root.findByType(require('@/components/ResultBird').ResultBird).props.cleared).toBe(false);
   } finally { await f.finish(); }
 });

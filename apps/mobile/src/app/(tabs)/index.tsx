@@ -12,7 +12,7 @@ import { getLobbyPrivacyKey, prepareMonetization } from '@/services/monetization
 import { subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
 import BirdAvatar from '@/components/BirdAvatar';
 import { GameStartOptions } from '@/components/GameStartOptions';
 import { BIRDS, getBird } from '@/utils/game/birds';
@@ -257,28 +257,34 @@ export default function HomeScreen() {
           alignItems: 'center',
           justifyContent: 'center',
           gap: 4,
-          backgroundColor: selected ? '#4AABDE' : '#06223D',
+          backgroundColor: '#06223D',
           borderWidth: 2,
-          borderColor: selected ? '#F59E0B' : 'transparent',
+          borderColor: selected ? SKY_BLUE : 'transparent',
           minHeight: 198,
         }}
       >
         {selected ? (
-          <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 12, right: 12 }} />
+          <View pointerEvents="none" accessible={false} style={{ position: 'absolute', top: 2, bottom: 2, left: 2, right: 2, borderWidth: 2, borderColor: SELECTION_ORANGE, borderRadius: 10 }} />
+        ) : null}
+        {selected ? (
+          <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 12, right: 12 }}>
+            <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
+            <Path d="m8 12 3 3 5-6" fill="none" stroke="#06223D" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          </Svg>
         ) : null}
         <Image
           source={imageSource}
           style={{ width: 118, height: 118, borderRadius: 14 }}
           contentFit="contain"
         />
-        <Text style={{ fontWeight: '800', fontSize: 14, lineHeight: 19, textAlign: 'center', color: selected ? '#06223D' : '#FFFFFF' }}>
+        <Text style={{ fontWeight: '800', fontSize: 14, lineHeight: 19, textAlign: 'center', color: '#FFFFFF' }}>
           {label}
         </Text>
         <Text
           style={{
             fontSize: 12,
             lineHeight: 17,
-            color: selected ? '#FFFFFF' : '#4AABDE',
+            color: '#4AABDE',
             fontWeight: '600',
             textAlign: 'center',
           }}
@@ -383,20 +389,40 @@ export default function HomeScreen() {
           <View
             style={{
               marginTop: 10,
-              backgroundColor: '#FEF3C7',
+              backgroundColor: SELECTION_ORANGE,
               borderRadius: 14,
               padding: 12,
               borderWidth: 2,
-              borderColor: '#F59E0B',
+              borderColor: NAVY,
             }}
           >
-            <Text style={{ fontWeight: '800', color: '#92400E', fontSize: 13 }}>
-              ⚠️ Your bird is getting soft!
-            </Text>
-            <Text style={{ color: '#92400E', fontSize: 12, marginTop: 2 }}>
+            <View
+              style={{
+                alignSelf: 'center',
+                maxWidth: '100%',
+                borderBottomWidth: 2,
+                borderBottomColor: NAVY,
+                paddingBottom: 5,
+              }}
+            >
+              <Text
+                style={{ fontWeight: '800', color: NAVY, fontSize: 14, textAlign: 'center' }}
+              >
+                ⚠️ YOUR BIRD IS GETTING SOFT!
+              </Text>
+            </View>
+            <Text
+              style={{ color: NAVY, fontSize: 13, lineHeight: 18, marginTop: 8, textAlign: 'center' }}
+            >
               {Math.floor(daysInactive)} days without training — muscles fade without consistency.
-              Fly today to keep them!
             </Text>
+            <View style={{ backgroundColor: NAVY, borderRadius: 6, marginTop: 8, padding: 8 }}>
+              <Text
+                style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 13, textAlign: 'center' }}
+              >
+                Fly today to keep them!
+              </Text>
+            </View>
           </View>
         )}
 
@@ -526,24 +552,30 @@ export default function HomeScreen() {
               onPress={() => setBackgroundMode('sky')}
               style={{
                 flex: 1,
-                minHeight: 92,
-                padding: 12,
+                minHeight: 84,
+                padding: 10,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'sky' ? SELECTION_ORANGE : '#06223D',
-                backgroundColor: backgroundMode === 'sky' ? '#4AABDE' : '#06223D',
+                borderColor: backgroundMode === 'sky' ? SKY_BLUE : '#06223D',
+                backgroundColor: '#06223D',
                 justifyContent: 'center',
-                paddingTop: 30,
+                paddingTop: 28,
               }}
             >
               {backgroundMode === 'sky' ? (
-                <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 10, right: 10 }} />
+                <View pointerEvents="none" accessible={false} style={{ position: 'absolute', top: 2, bottom: 2, left: 2, right: 2, borderWidth: 2, borderColor: SELECTION_ORANGE, borderRadius: 12 }} />
+              ) : null}
+              {backgroundMode === 'sky' ? (
+                <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 10, right: 10 }}>
+                  <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
+                  <Path d="m8 12 3 3 5-6" fill="none" stroke="#06223D" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                </Svg>
               ) : null}
               <View style={{ gap: 2 }}>
-                <Text style={{ fontWeight: '900', color: backgroundMode === 'sky' ? '#06223D' : '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
+                <Text style={{ fontWeight: '900', color: '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
                   Sky Background
                 </Text>
-                <Text style={{ color: backgroundMode === 'sky' ? '#FFFFFF' : '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
+                <Text style={{ color: '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
                   Classic game view
                 </Text>
               </View>
@@ -556,25 +588,31 @@ export default function HomeScreen() {
               onPress={() => setBackgroundMode('camera')}
               style={{
                 flex: 1,
-                minHeight: 92,
-                padding: 12,
+                minHeight: 84,
+                padding: 10,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'camera' ? SELECTION_ORANGE : '#06223D',
-                backgroundColor: backgroundMode === 'camera' ? '#4AABDE' : '#06223D',
+                borderColor: backgroundMode === 'camera' ? SKY_BLUE : '#06223D',
+                backgroundColor: '#06223D',
                 justifyContent: 'center',
-                paddingTop: 30,
+                paddingTop: 28,
               }}
             >
               {backgroundMode === 'camera' ? (
-                <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 10, right: 10 }} />
+                <View pointerEvents="none" accessible={false} style={{ position: 'absolute', top: 2, bottom: 2, left: 2, right: 2, borderWidth: 2, borderColor: SELECTION_ORANGE, borderRadius: 12 }} />
+              ) : null}
+              {backgroundMode === 'camera' ? (
+                <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 10, right: 10 }}>
+                  <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
+                  <Path d="m8 12 3 3 5-6" fill="none" stroke="#06223D" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                </Svg>
               ) : null}
               <View style={{ gap: 2 }}>
-                <Text style={{ fontWeight: '900', color: backgroundMode === 'camera' ? '#06223D' : '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
+                <Text style={{ fontWeight: '900', color: '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
                   Live Camera
                 </Text>
-                <Text style={{ color: backgroundMode === 'camera' ? '#FFFFFF' : '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
-                  You become the backdrop
+                <Text style={{ color: '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
+                  You are the background
                 </Text>
               </View>
             </TouchableOpacity>

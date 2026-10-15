@@ -1251,6 +1251,11 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
   }
 
   const cleared = result != null && !isEndless && result.score >= target;
+  const targetProgress = result && !isEndless && target > 0
+    ? Math.max(0, Math.min(1, result.score / target))
+    : 0;
+  const pipesRemaining = Math.max(0, target - (result?.score ?? 0));
+  const closeToTarget = !cleared && targetProgress >= 0.8;
   const championshipClear = result !== null && isChampionshipRun(mode, level.id, result.score);
   const nextUnlocked =
     cleared && mode === 'level' && level.id === unlockedBefore.current && level.id < LEVELS.length;
@@ -1434,7 +1439,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   ? mode === 'daily'
                     ? 'Daily done!'
                     : 'Level cleared!'
-                  : 'Run over'}
+                  : closeToTarget ? 'So close!' : 'Keep going!'}
             </Text>
             </>}
             {result.endReason ? (
@@ -1477,10 +1482,35 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                 </Text>
               </View>
             </View>
-            {!isEndless && !cleared ? (
-              <Text style={{ color: '#475569', fontSize: 13, marginTop: 12 }}>
-                Target: {target} pipes — keep pushing!
-              </Text>
+            {!isEndless && !cleared && target > 0 ? (
+              <View
+                style={{
+                  width: '100%',
+                  backgroundColor: '#F59E0B',
+                  borderRadius: 14,
+                  padding: 14,
+                  marginTop: 14,
+                  gap: 8,
+                }}
+              >
+                <Text style={{ color: '#06223D', fontSize: 17, lineHeight: 22, fontWeight: '900', textAlign: 'center' }}>
+                  {closeToTarget
+                    ? `${pipesRemaining} MORE ${pipesRemaining === 1 ? 'PIPE' : 'PIPES'} TO CLEAR!`
+                    : `GOAL: ${target} PIPES`}
+                </Text>
+                <View
+                  accessible
+                  accessibilityRole="progressbar"
+                  accessibilityLabel="Pipes scored this run toward the target"
+                  accessibilityValue={{ min: 0, max: target, now: Math.min(target, Math.max(0, result.score)) }}
+                  style={{ height: 10, borderRadius: 5, backgroundColor: '#FFFFFF', overflow: 'hidden' }}
+                >
+                  <View style={{ width: `${targetProgress * 100}%`, height: '100%', borderRadius: 5, backgroundColor: '#06223D' }} />
+                </View>
+                <Text style={{ color: '#06223D', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
+                  This run: {result.score} / {target} pipes
+                </Text>
+              </View>
             ) : null}
             {competitionResultState ? (
               <View

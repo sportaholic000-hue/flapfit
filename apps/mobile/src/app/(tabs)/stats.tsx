@@ -3,7 +3,7 @@ import { Image, type ImageSource } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
 import { CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import { AchievementCard } from '@/components/AchievementCard';
 import { ChampionBadge } from '@/components/ChampionBadge';
 import { ChampionshipCeremony } from '@/components/RunCelebrations';
@@ -91,7 +91,6 @@ function StatCard({ label, value }: { label: string; value: string }) {
 export default function StatsScreen() {
   const insets = useSafeAreaInsets();
 
-  const router = useRouter();
   const hydrated = useGameStore((s) => s.hydrated);
   const championUnlocked = useGameStore((s) => s.championUnlocked);
   const championshipSeen = useGameStore((s) => s.championshipCelebrationSeen);
@@ -190,8 +189,8 @@ export default function StatsScreen() {
   // ── Filter achievements to the selected category ──────────────────────────
   const visibleAchievements = ACHIEVEMENTS.filter((a) => a.category === exerciseFilter);
 
-  // ── Currently selected exercise TUT ──────────────────────────────────────
-  const selectedTut = exerciseFilter === 'global' ? totalTut : (exerciseTut[exerciseFilter] ?? 0);
+  // The headline uses the same exercise and date window as the visible bars.
+  const selectedTut = chartDays.reduce((total, day) => total + day.tut, 0);
 
   const recent = sessions.slice(0, 20);
 
@@ -518,10 +517,7 @@ export default function StatsScreen() {
           </Text>
           <View accessible={false} importantForAccessibility="no" style={{ alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6, marginBottom: 8 }} />
           <Text style={{ color: '#4AABDE', fontSize: 12, lineHeight: 17, marginBottom: 4, textAlign: 'center' }}>
-            {exerciseFilter === 'global'
-              ? 'All exercises combined'
-              : `${activeEx.label} sessions only`}
-            {' · '}Last {chartWindow === '7d' ? '7 days' : '30 days'}
+            Last {chartWindow === '7d' ? '7 days' : '30 days'}
           </Text>
 
           {/* Selected exercise TUT highlight */}
@@ -685,12 +681,6 @@ export default function StatsScreen() {
             );
           })
         )}
-        {__DEV__ ? (
-          <TouchableOpacity accessibilityRole="button" onPress={() => router.push("../championship-preview")}
-            style={{ padding: 16, alignItems: "center" }}>
-            <Text style={{ color: "#1D4ED8", fontWeight: "800" }}>Preview championship & achievements</Text>
-          </TouchableOpacity>
-        ) : null}
       </ScrollView>
       {showChampionship ? <ChampionshipCeremony continueLabel="Continue to Stats" onContinue={() => {
         useGameStore.getState().markChampionshipCelebrationSeen();
