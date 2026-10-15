@@ -264,6 +264,9 @@ export default function HomeScreen() {
         }}
       >
         {selected ? (
+          <View pointerEvents="none" accessible={false} style={{ position: 'absolute', top: 2, bottom: 2, left: 2, right: 2, borderWidth: 2, borderColor: SELECTION_ORANGE, borderRadius: 10 }} />
+        ) : null}
+        {selected ? (
           <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 12, right: 12 }}>
             <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
             <Path d="m8 12 3 3 5-6" fill="none" stroke="#06223D" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -560,6 +563,9 @@ export default function HomeScreen() {
               }}
             >
               {backgroundMode === 'sky' ? (
+                <View pointerEvents="none" accessible={false} style={{ position: 'absolute', top: 2, bottom: 2, left: 2, right: 2, borderWidth: 2, borderColor: SELECTION_ORANGE, borderRadius: 12 }} />
+              ) : null}
+              {backgroundMode === 'sky' ? (
                 <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 10, right: 10 }}>
                   <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
                   <Path d="m8 12 3 3 5-6" fill="none" stroke="#06223D" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -592,6 +598,9 @@ export default function HomeScreen() {
                 paddingTop: 28,
               }}
             >
+              {backgroundMode === 'camera' ? (
+                <View pointerEvents="none" accessible={false} style={{ position: 'absolute', top: 2, bottom: 2, left: 2, right: 2, borderWidth: 2, borderColor: SELECTION_ORANGE, borderRadius: 12 }} />
+              ) : null}
               {backgroundMode === 'camera' ? (
                 <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 10, right: 10 }}>
                   <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
