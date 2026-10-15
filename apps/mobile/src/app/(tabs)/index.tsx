@@ -264,7 +264,7 @@ export default function HomeScreen() {
         }}
       >
         {selected ? (
-          <CheckCircle2 size={19} color="#06223D" fill="#4AABDE" style={{ position: 'absolute', top: 12, right: 12 }} />
+          <CheckCircle2 size={19} color="#F59E0B" fill="#4AABDE" style={{ position: 'absolute', top: 12, right: 12 }} />
         ) : null}
         <Image
           source={imageSource}
@@ -557,7 +557,7 @@ export default function HomeScreen() {
               }}
             >
               {backgroundMode === 'sky' ? (
-                <CheckCircle2 size={19} color="#06223D" fill="#4AABDE" style={{ position: 'absolute', top: 10, right: 10 }} />
+                <CheckCircle2 size={19} color="#F59E0B" fill="#4AABDE" style={{ position: 'absolute', top: 10, right: 10 }} />
               ) : null}
               <View style={{ gap: 2 }}>
                 <Text style={{ fontWeight: '900', color: '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
@@ -587,7 +587,7 @@ export default function HomeScreen() {
               }}
             >
               {backgroundMode === 'camera' ? (
-                <CheckCircle2 size={19} color="#06223D" fill="#4AABDE" style={{ position: 'absolute', top: 10, right: 10 }} />
+                <CheckCircle2 size={19} color="#F59E0B" fill="#4AABDE" style={{ position: 'absolute', top: 10, right: 10 }} />
               ) : null}
               <View style={{ gap: 2 }}>
                 <Text style={{ fontWeight: '900', color: '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
