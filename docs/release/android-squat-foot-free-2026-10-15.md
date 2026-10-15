@@ -52,3 +52,7 @@ The owner retested after the change: close/chair framing is still very jittery, 
 Added Android-development-only numeric pose diagnostics (squatDiagnostics = __DEV__ && Platform.OS === android). They report bounded batches of shoulder/hip/knee coordinates, confidence, camera intervals, calibration range, control signal, bird height and validation outcomes to the existing local Expo console. No images or audio are captured by diagnostics, no new service is called, and release builds disable it. Diagnostics do not change control behavior. The purpose is to compare actual close/framed pose instability before selecting a further fix. Runtime traces must stay local and are not committed to GitHub.
 
 Diagnostics validation: 174 regression cases passed, including disabled-by-default behavior, bounded batches and identical control with diagnostics enabled/disabled. Expo served the Android bundle successfully with diagnostic version 2026-10-15.2-squat-trace. Awaiting the actual close-framing phone run before changing the control algorithm again.
+
+## Subsequent shoulder-control change
+
+The owner supplied both phone runs. See [shoulder-control follow-up](android-squat-shoulder-control-2026-10-15.md) for the measured findings, new controller, validation tradeoff and pending physical acceptance. The hip-controller implementation above is historical and has been superseded.

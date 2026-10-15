@@ -5,7 +5,7 @@ import { SCRIPT_SQUAT_TRACKING } from './scriptSquatTracking';
 // explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-15.1-foot-free-squats';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-15.3-shoulder-squats';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
