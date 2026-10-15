@@ -257,28 +257,28 @@ export default function HomeScreen() {
           alignItems: 'center',
           justifyContent: 'center',
           gap: 4,
-          backgroundColor: selected ? '#4AABDE' : '#06223D',
+          backgroundColor: '#06223D',
           borderWidth: 2,
           borderColor: selected ? '#F59E0B' : 'transparent',
           minHeight: 198,
         }}
       >
         {selected ? (
-          <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 12, right: 12 }} />
+          <CheckCircle2 size={19} color="#06223D" fill="#4AABDE" style={{ position: 'absolute', top: 12, right: 12 }} />
         ) : null}
         <Image
           source={imageSource}
           style={{ width: 118, height: 118, borderRadius: 14 }}
           contentFit="contain"
         />
-        <Text style={{ fontWeight: '800', fontSize: 14, lineHeight: 19, textAlign: 'center', color: selected ? '#06223D' : '#FFFFFF' }}>
+        <Text style={{ fontWeight: '800', fontSize: 14, lineHeight: 19, textAlign: 'center', color: '#FFFFFF' }}>
           {label}
         </Text>
         <Text
           style={{
             fontSize: 12,
             lineHeight: 17,
-            color: selected ? '#FFFFFF' : '#4AABDE',
+            color: '#4AABDE',
             fontWeight: '600',
             textAlign: 'center',
           }}
@@ -551,19 +551,19 @@ export default function HomeScreen() {
                 borderRadius: 16,
                 borderWidth: 2,
                 borderColor: backgroundMode === 'sky' ? SELECTION_ORANGE : '#06223D',
-                backgroundColor: backgroundMode === 'sky' ? '#4AABDE' : '#06223D',
+                backgroundColor: '#06223D',
                 justifyContent: 'center',
                 paddingTop: 30,
               }}
             >
               {backgroundMode === 'sky' ? (
-                <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 10, right: 10 }} />
+                <CheckCircle2 size={19} color="#06223D" fill="#4AABDE" style={{ position: 'absolute', top: 10, right: 10 }} />
               ) : null}
               <View style={{ gap: 2 }}>
-                <Text style={{ fontWeight: '900', color: backgroundMode === 'sky' ? '#06223D' : '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
+                <Text style={{ fontWeight: '900', color: '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
                   Sky Background
                 </Text>
-                <Text style={{ color: backgroundMode === 'sky' ? '#FFFFFF' : '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
+                <Text style={{ color: '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
                   Classic game view
                 </Text>
               </View>
@@ -581,19 +581,19 @@ export default function HomeScreen() {
                 borderRadius: 16,
                 borderWidth: 2,
                 borderColor: backgroundMode === 'camera' ? SELECTION_ORANGE : '#06223D',
-                backgroundColor: backgroundMode === 'camera' ? '#4AABDE' : '#06223D',
+                backgroundColor: '#06223D',
                 justifyContent: 'center',
                 paddingTop: 30,
               }}
             >
               {backgroundMode === 'camera' ? (
-                <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 10, right: 10 }} />
+                <CheckCircle2 size={19} color="#06223D" fill="#4AABDE" style={{ position: 'absolute', top: 10, right: 10 }} />
               ) : null}
               <View style={{ gap: 2 }}>
-                <Text style={{ fontWeight: '900', color: backgroundMode === 'camera' ? '#06223D' : '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
+                <Text style={{ fontWeight: '900', color: '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
                   Live Camera
                 </Text>
-                <Text style={{ color: backgroundMode === 'camera' ? '#FFFFFF' : '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
+                <Text style={{ color: '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
                   You become the backdrop
                 </Text>
               </View>
