@@ -552,6 +552,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       return buildGameHtml({
         trackerAssetMode: USE_REMOTE_TRACKER ? 'remote' : 'bundled',
         trackingMode: PRODUCTION_TRACKING_MODE,
+        squatDiagnostics: __DEV__ && Platform.OS === 'android',
         exercise: exerciseMode,
         endless: isEndless,
         brandFirstPipe: mode === 'level' && level.id === 1,
@@ -947,6 +948,10 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       }
       if (msg.type === 'recordingdebug') {
         if (__DEV__) console.info('Video finalization:', msg.message ?? 'No measurements');
+        return;
+      }
+      if (msg.type === 'squatdebug') {
+        if (__DEV__) console.info('Squat tracking:', msg.message ?? 'No measurements');
         return;
       }
       if (msg.type === 'formdebug') {

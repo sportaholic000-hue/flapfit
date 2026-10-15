@@ -2,6 +2,42 @@
 // affect calibration, control, or gameplay validation. Injected with form tracking.
 // Must NOT contain backticks.
 export const SCRIPT_SQUAT_TRACKING = `
+// Preview-only numeric diagnostics. No camera frames, network calls, or saved scores.
+var squatTraceRows = [], squatTraceLastSample = -Infinity, squatTraceLastSend = 0;
+var squatTraceLastPose = 0, squatTraceSession = '';
+function resetSquatTrace() {
+  squatTraceRows = []; squatTraceLastSample = -Infinity; squatTraceLastSend = 0;
+  squatTraceLastPose = 0; squatTraceSession = String(Date.now());
+}
+function sampleSquatTrace(now) {
+  if (!CONFIG.squatDiagnostics || CONFIG.exercise !== 'squats' || typeof postRN !== 'function') { return; }
+  var dt = squatTraceLastPose ? now - squatTraceLastPose : 0;
+  squatTraceLastPose = now;
+  if (now - squatTraceLastSample < 40) { return; }
+  squatTraceLastSample = now;
+  function number(value) { return Number.isFinite(value) ? Math.round(value * 10000) / 10000 : null; }
+  var points = [0, 11, 12, 23, 24, 25, 26].map(function(index) {
+    var p = formPoseLandmarks && formPoseLandmarks[index];
+    return p ? [index, number(p.x), number(p.y), number(p.visibility)] : [index, null, null, null];
+  });
+  var phase = typeof state !== 'undefined' ? state : '';
+  var check = phase === 'play' && formTopMetrics && formBottomMetrics
+    ? validateSquatGameplay(formCurrentMetrics)
+    : validateSquatCalibration(phase === 'waitBottom' ? 'bottom' : 'top', formCurrentMetrics);
+  squatTraceRows.push({t:number(now),dt:number(dt),state:phase,points:points,
+    raw:number(formCurrentMetrics && formCurrentMetrics.controllerY),
+    previousSmooth:number(formTrackYSmooth),bird:number(typeof birdNorm !== 'undefined' ? birdNorm : null),
+    top:number(typeof topY !== 'undefined' ? topY : null),bottom:number(typeof bottomY !== 'undefined' ? bottomY : null),
+    valid:check.valid,reason:check.message,crash:typeof crashReason !== 'undefined' ? crashReason : ''});
+  if (squatTraceRows.length > 60) { squatTraceRows.shift(); }
+  if (now - squatTraceLastSend < 2000) { return; }
+  squatTraceLastSend = now;
+  postRN({type:'squatdebug',message:JSON.stringify({version:'2026-10-15.2-squat-trace',session:squatTraceSession,
+    video:typeof video !== 'undefined' ? [video.videoWidth,video.videoHeight] : null,
+    viewport:typeof W !== 'undefined' ? [W,H] : null,rows:squatTraceRows})});
+  squatTraceRows = [];
+}
+
 function collectSquatMetrics() {
   var leftShoulder = formInFramePoint(11, 0.24);
   var rightShoulder = formInFramePoint(12, 0.24);

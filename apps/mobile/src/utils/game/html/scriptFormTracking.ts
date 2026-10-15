@@ -33,6 +33,7 @@ function usesExperimentalFormTracking() {
 }
 
 function resetExperimentalFormTracking() {
+  resetSquatTrace();
   formPoseLandmarks = null;
   formCurrentMetrics = null;
   formTrackY = null;
@@ -290,6 +291,7 @@ function updateExperimentalFormPose(landmarks, now) {
   samplePullupCalibrationTrace(landmarks, now);
   formPoseLandmarks = landmarks;
   formCurrentMetrics = collectExperimentalFormMetrics();
+  sampleSquatTrace(now);
   if (CONFIG.exercise === 'pullups') {
     // Observation belongs to the camera clock across setup, calibration,
     // countdown and play. Rendering cannot manufacture new contact evidence.

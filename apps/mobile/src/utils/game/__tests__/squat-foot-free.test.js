@@ -19,12 +19,14 @@ function pose(progress, feet = 'hidden', scale = 1) {
   return points.map(p=>({...p,x:.5+(p.x-.5)*scale,y:.5+(p.y-.5)*scale}));
 }
 
-function tracker() {
-  return new Function('CONFIG', 'performance', scripts.form + 
+function tracker(diagnostics = false) {
+  const messages=[];
+  const result = new Function('CONFIG', 'performance', 'postRN', scripts.form + 
     ';return {update:updateExperimentalFormPose,calibrate:validateExperimentalCalibration,'+
     'save:saveExperimentalCalibration,check:validateExperimentalGameplay,'+
     'metrics:function(){return formCurrentMetrics;},smooth:getExperimentalTrackYSmooth,reset:resetExperimentalFormTracking};'
-  )({exercise:'squats',trackingMode:'form-test'}, {now:()=>2000});
+  )({exercise:'squats',trackingMode:'form-test',squatDiagnostics:diagnostics}, {now:()=>2000},message=>messages.push(message));
+  return {...result,messages};
 }
 
 function calibratedTracker(feet='hidden', scale=1) {
@@ -147,4 +149,26 @@ test('reset clears squat references and accepts fresh calibration at a different
   const t=calibratedTracker();t.reset();t.update(pose(0,'hidden',.7),3000);
   assert.equal(t.calibrate('top').valid,true);t.save('top');t.update(pose(1,'hidden',.7),4500);
   assert.equal(t.calibrate('bottom').valid,true);
+});
+
+
+test('squat diagnostics are silent unless explicitly enabled',()=>{
+  const t=tracker();for(let now=100;now<=6000;now+=25)t.update(pose(.5),now);
+  assert.equal(t.messages.length,0);
+});
+
+test('preview diagnostics are bounded and leave control unchanged',()=>{
+  const normal=tracker(), diagnostic=tracker(true);
+  for(let now=100;now<=6000;now+=25) {
+    const points=pose((1-Math.cos(now/1000))/2);
+    normal.update(points,now);diagnostic.update(points,now);
+    assert.equal(normal.smooth(),diagnostic.smooth());
+  }
+  assert.equal(diagnostic.messages.length,3);
+  for(const message of diagnostic.messages) {
+    assert.equal(message.type,'squatdebug');const trace=JSON.parse(message.message);
+    assert.equal(trace.version,'2026-10-15.2-squat-trace');
+    assert.ok(trace.rows.length<=60);
+    assert.ok(trace.rows.every(row=>row.points.every(p=>p[0]<27)));
+  }
 });

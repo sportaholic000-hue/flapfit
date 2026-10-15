@@ -44,3 +44,11 @@ Changed source/test lint and git diff --check passed. Synthetic pose results do 
 ## iOS handoff
 
 Do not modify the submitted Apple release. Once authorized, port scriptSquatTracking.ts, its import/injection and squat dispatches in scriptFormTracking.ts, the squat framing copy in scriptGame.ts and Home, and the regression suite. Confirm the target Apple checkout's tracking implementation before applying. Do not copy the entire Android branch or its native configuration. Run the same regressions and physically test on iPhone as well as iPad. App review timing/expedited review eligibility has not been evaluated here.
+
+## Physical retest outcome and next investigation
+
+The owner retested after the change: close/chair framing is still very jittery, while backing away until the full body is visible remains smooth. The user-visible defect is NOT resolved by removing ankle validation. Do not treat the synthetic results above as a release sign-off.
+
+Added Android-development-only numeric pose diagnostics (squatDiagnostics = __DEV__ && Platform.OS === android). They report bounded batches of shoulder/hip/knee coordinates, confidence, camera intervals, calibration range, control signal, bird height and validation outcomes to the existing local Expo console. No images or audio are captured by diagnostics, no new service is called, and release builds disable it. Diagnostics do not change control behavior. The purpose is to compare actual close/framed pose instability before selecting a further fix. Runtime traces must stay local and are not committed to GitHub.
+
+Diagnostics validation: 174 regression cases passed, including disabled-by-default behavior, bounded batches and identical control with diagnostics enabled/disabled. Expo served the Android bundle successfully with diagnostic version 2026-10-15.2-squat-trace. Awaiting the actual close-framing phone run before changing the control algorithm again.
