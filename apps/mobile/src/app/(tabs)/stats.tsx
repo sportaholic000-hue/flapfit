@@ -518,10 +518,7 @@ export default function StatsScreen() {
           </Text>
           <View accessible={false} importantForAccessibility="no" style={{ alignSelf: 'center', width: 48, height: 3, borderRadius: 2, backgroundColor: '#F59E0B', marginTop: 6, marginBottom: 8 }} />
           <Text style={{ color: '#4AABDE', fontSize: 12, lineHeight: 17, marginBottom: 4, textAlign: 'center' }}>
-            {exerciseFilter === 'global'
-              ? 'All exercises combined'
-              : `${activeEx.label} sessions only`}
-            {' · '}Last {chartWindow === '7d' ? '7 days' : '30 days'}
+            Last {chartWindow === '7d' ? '7 days' : '30 days'}
           </Text>
 
           {/* Selected exercise TUT highlight */}
