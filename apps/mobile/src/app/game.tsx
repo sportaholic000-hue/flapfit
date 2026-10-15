@@ -1492,14 +1492,14 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
               <View
                 style={{
                   width: '100%',
-                  backgroundColor: '#06223D',
+                  backgroundColor: '#4AABDE',
                   borderRadius: 14,
                   padding: 14,
                   marginTop: 14,
                   gap: 8,
                 }}
               >
-                <Text style={{ color: '#FFFFFF', fontSize: 17, lineHeight: 22, fontWeight: '900', textAlign: 'center' }}>
+                <Text style={{ color: '#06223D', fontSize: 17, lineHeight: 22, fontWeight: '900', textAlign: 'center' }}>
                   {closeToTarget
                     ? `${pipesRemaining} MORE ${pipesRemaining === 1 ? 'PIPE' : 'PIPES'} TO CLEAR!`
                     : `GOAL: ${target} PIPES`}
@@ -1509,11 +1509,11 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   accessibilityRole="progressbar"
                   accessibilityLabel="Pipes scored this run toward the target"
                   accessibilityValue={{ min: 0, max: target, now: Math.min(target, Math.max(0, result.score)) }}
-                  style={{ height: 10, borderRadius: 5, backgroundColor: 'rgba(74,171,222,0.25)', overflow: 'hidden' }}
+                  style={{ height: 10, borderRadius: 5, backgroundColor: '#06223D', overflow: 'hidden' }}
                 >
                   <View style={{ width: `${targetProgress * 100}%`, height: '100%', borderRadius: 5, backgroundColor: '#F59E0B' }} />
                 </View>
-                <Text style={{ color: '#4AABDE', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
+                <Text style={{ color: '#06223D', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
                   This run: {result.score} / {target} pipes
                 </Text>
               </View>

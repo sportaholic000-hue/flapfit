@@ -277,7 +277,7 @@ export default function LevelsScreen() {
                 </Text>
               </View>
               <View style={{ width: LEVEL_CARD_SIDE_WIDTH, flexShrink: 0, alignItems: 'flex-end' }}>
-                <View style={{ width: 52, alignItems: 'center', gap: 2, transform: [{ translateX: 4 }] }}>
+                <View style={{ width: 52, alignItems: 'center', gap: 2, transform: [{ translateX: 10 }] }}>
                   {cleared ? <Star size={18} color="#F59E0B" fill="#F59E0B" /> : null}
                   <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ width: '100%', textAlign: 'left', color: '#F59E0B', fontSize: 12, fontWeight: '700' }}>
                     {best > 0 ? `Best ${best}` : unlocked ? 'New' : ''}
