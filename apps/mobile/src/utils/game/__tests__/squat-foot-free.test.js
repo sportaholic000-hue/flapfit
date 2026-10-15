@@ -21,7 +21,7 @@ function pose(progress, feet = 'hidden', scale = 1) {
 
 function tracker(diagnostics = false) {
   const messages=[];
-  const result = new Function('CONFIG', 'performance', 'postRN', scripts.form + 
+  const result = new Function('CONFIG', 'performance', 'postRN', scripts.form +
     ';return {update:updateExperimentalFormPose,calibrate:validateExperimentalCalibration,'+
     'save:saveExperimentalCalibration,check:validateExperimentalGameplay,'+
     'metrics:function(){return formCurrentMetrics;},smooth:getExperimentalTrackYSmooth,reset:resetExperimentalFormTracking};'
