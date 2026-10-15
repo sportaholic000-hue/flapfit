@@ -12,7 +12,7 @@ import { getLobbyPrivacyKey, prepareMonetization } from '@/services/monetization
 import { subscribeProcessingAccess } from '@/services/privacy/processingAccess';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Path, Stop } from 'react-native-svg';
 import BirdAvatar from '@/components/BirdAvatar';
 import { GameStartOptions } from '@/components/GameStartOptions';
 import { BIRDS, getBird } from '@/utils/game/birds';
@@ -264,7 +264,10 @@ export default function HomeScreen() {
         }}
       >
         {selected ? (
-          <CheckCircle2 size={19} color="#F59E0B" fill="#4AABDE" style={{ position: 'absolute', top: 12, right: 12 }} />
+          <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 12, right: 12 }}>
+            <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
+            <Path d="m8 12 3 3 5-6" fill="none" stroke="#06223D" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          </Svg>
         ) : null}
         <Image
           source={imageSource}
@@ -557,7 +560,10 @@ export default function HomeScreen() {
               }}
             >
               {backgroundMode === 'sky' ? (
-                <CheckCircle2 size={19} color="#F59E0B" fill="#4AABDE" style={{ position: 'absolute', top: 10, right: 10 }} />
+                <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 10, right: 10 }}>
+            <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
+            <Path d="m8 12 3 3 5-6" fill="none" stroke="#06223D" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          </Svg>
               ) : null}
               <View style={{ gap: 2 }}>
                 <Text style={{ fontWeight: '900', color: '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
@@ -587,7 +593,10 @@ export default function HomeScreen() {
               }}
             >
               {backgroundMode === 'camera' ? (
-                <CheckCircle2 size={19} color="#F59E0B" fill="#4AABDE" style={{ position: 'absolute', top: 10, right: 10 }} />
+                <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 10, right: 10 }}>
+            <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
+            <Path d="m8 12 3 3 5-6" fill="none" stroke="#06223D" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          </Svg>
               ) : null}
               <View style={{ gap: 2 }}>
                 <Text style={{ fontWeight: '900', color: '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
