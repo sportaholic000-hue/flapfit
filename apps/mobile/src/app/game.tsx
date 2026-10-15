@@ -1509,9 +1509,9 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   accessibilityRole="progressbar"
                   accessibilityLabel="Pipes scored this run toward the target"
                   accessibilityValue={{ min: 0, max: target, now: Math.min(target, Math.max(0, result.score)) }}
-                  style={{ height: 10, borderRadius: 5, backgroundColor: '#06223D', overflow: 'hidden' }}
+                  style={{ height: 10, borderRadius: 5, backgroundColor: '#FFFFFF', overflow: 'hidden' }}
                 >
-                  <View style={{ width: `${targetProgress * 100}%`, height: '100%', borderRadius: 5, backgroundColor: '#4AABDE' }} />
+                  <View style={{ width: `${targetProgress * 100}%`, height: '100%', borderRadius: 5, backgroundColor: '#06223D' }} />
                 </View>
                 <Text style={{ color: '#06223D', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
                   This run: {result.score} / {target} pipes
