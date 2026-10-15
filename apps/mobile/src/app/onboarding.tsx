@@ -397,8 +397,8 @@ export default function OnboardingScreen() {
           zIndex: 1,
         }}
       >
-        <Camera size={20} color="#FFFFFF" />
-        <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
+        <Camera size={20} color="#06223D" />
+        <Text style={{ color: '#06223D', fontWeight: '900', fontSize: 16 }}>
           {preview === '1' ? 'Return to Info' : "I'm ready to play!"}
         </Text>
       </TouchableOpacity>
@@ -539,8 +539,8 @@ export default function OnboardingScreen() {
                 gap: 4,
               }}
             >
-              <Text style={{ fontWeight: '900', color: '#FFFFFF' }}>Next</Text>
-              <ChevronRight size={18} color="#FFFFFF" />
+              <Text style={{ fontWeight: '900', color: '#06223D' }}>Next</Text>
+              <ChevronRight size={18} color="#06223D" />
             </TouchableOpacity>
           ) : null}
         </View>
