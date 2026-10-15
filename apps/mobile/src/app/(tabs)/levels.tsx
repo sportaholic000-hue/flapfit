@@ -3,19 +3,20 @@ import { TabSkyBackground } from '@/components/TabSkyBackground';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
-  CheckCircle2,
   Infinity as InfinityIcon,
   Lock,
   Play,
   Star,
 } from 'lucide-react-native';
 import { useState } from 'react';
+import Svg, { Circle, Path } from 'react-native-svg';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LEVELS } from '@/utils/game/levels';
 import { isEndlessUnlocked, useGameStore } from '@/utils/game/store';
 
 const SELECTION_ORANGE = '#F59E0B';
+const SKY_BLUE = '#4AABDE';
 // Equal side columns keep every title centered, even with no score or completion star.
 const LEVEL_CARD_SIDE_WIDTH = 64;
 
@@ -127,29 +128,34 @@ export default function LevelsScreen() {
               onPress={() => setBackgroundMode('sky')}
               style={{
                 flex: 1,
-                minHeight: 92,
-                padding: 12,
+                minHeight: 84,
+                padding: 10,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'sky' ? SELECTION_ORANGE : '#06223D',
-                backgroundColor: backgroundMode === 'sky' ? '#4AABDE' : '#06223D',
+                borderColor: backgroundMode === 'sky' ? SKY_BLUE : '#06223D',
+                backgroundColor: '#06223D',
                 justifyContent: 'center',
-                paddingTop: 30,
+                paddingTop: 28,
               }}
             >
               {backgroundMode === 'sky' ? (
-                <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 10, right: 10 }} />
+                <View pointerEvents="none" accessible={false} style={{ position: 'absolute', top: 2, bottom: 2, left: 2, right: 2, borderWidth: 2, borderColor: SELECTION_ORANGE, borderRadius: 12 }} />
+              ) : null}
+              {backgroundMode === 'sky' ? (
+                <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 10, right: 10 }}>
+                  <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
+                  <Path d="m8 12 3 3 5-6" fill="none" stroke="#06223D" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                </Svg>
               ) : null}
               <View style={{ gap: 2 }}>
-                <Text style={{ fontWeight: '900', color: backgroundMode === 'sky' ? '#06223D' : '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
+                <Text style={{ fontWeight: '900', color: '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
                   Sky Background
                 </Text>
-                <Text style={{ color: backgroundMode === 'sky' ? '#FFFFFF' : '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
+                <Text style={{ color: '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
                   Classic game view
                 </Text>
               </View>
             </TouchableOpacity>
-
             <TouchableOpacity
               accessibilityRole="button"
               accessibilityLabel="Live Camera Background"
@@ -158,25 +164,31 @@ export default function LevelsScreen() {
               onPress={() => setBackgroundMode('camera')}
               style={{
                 flex: 1,
-                minHeight: 92,
-                padding: 12,
+                minHeight: 84,
+                padding: 10,
                 borderRadius: 16,
                 borderWidth: 2,
-                borderColor: backgroundMode === 'camera' ? SELECTION_ORANGE : '#06223D',
-                backgroundColor: backgroundMode === 'camera' ? '#4AABDE' : '#06223D',
+                borderColor: backgroundMode === 'camera' ? SKY_BLUE : '#06223D',
+                backgroundColor: '#06223D',
                 justifyContent: 'center',
-                paddingTop: 30,
+                paddingTop: 28,
               }}
             >
               {backgroundMode === 'camera' ? (
-                <CheckCircle2 size={19} color="#F59E0B" fill="#06223D" style={{ position: 'absolute', top: 10, right: 10 }} />
+                <View pointerEvents="none" accessible={false} style={{ position: 'absolute', top: 2, bottom: 2, left: 2, right: 2, borderWidth: 2, borderColor: SELECTION_ORANGE, borderRadius: 12 }} />
+              ) : null}
+              {backgroundMode === 'camera' ? (
+                <Svg width={19} height={19} viewBox="0 0 24 24" style={{ position: 'absolute', top: 10, right: 10 }}>
+                  <Circle cx={12} cy={12} r={10} fill="#4AABDE" stroke="#F59E0B" strokeWidth={2} />
+                  <Path d="m8 12 3 3 5-6" fill="none" stroke="#06223D" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                </Svg>
               ) : null}
               <View style={{ gap: 2 }}>
-                <Text style={{ fontWeight: '900', color: backgroundMode === 'camera' ? '#06223D' : '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
+                <Text style={{ fontWeight: '900', color: '#FFFFFF', fontSize: 14, textAlign: 'center' }}>
                   Live Camera
                 </Text>
-                <Text style={{ color: backgroundMode === 'camera' ? '#FFFFFF' : '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
-                  You become the backdrop
+                <Text style={{ color: '#4AABDE', fontSize: 12, lineHeight: 17, fontWeight: '600', textAlign: 'center' }}>
+                  You are the background
                 </Text>
               </View>
             </TouchableOpacity>
