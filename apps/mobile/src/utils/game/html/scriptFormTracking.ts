@@ -1,10 +1,11 @@
 import { SCRIPT_PULLUP_SUPPORT } from './scriptPullupSupport';
+import { SCRIPT_SQUAT_TRACKING } from './scriptSquatTracking';
 
-// Optional development-only form tracking. The normal tracker remains available
-// so physical A/B testing can happen without replacing the launch baseline.
+// Form-aware production tracking. The legacy tracker remains available for
+// explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-08.3-pushup-body-entry';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-15.1-foot-free-squats';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -18,6 +19,7 @@ var pullupSetupStarted = false;
 var pullupWristMissingAt = 0;
 var pullupStartReference = null;
 ${SCRIPT_PULLUP_SUPPORT}
+${SCRIPT_SQUAT_TRACKING}
 var pullupPoseTrace = [];
 var pullupTraceLastSampleAt = -Infinity;
 var pullupTraceLastExportAt = 0;
@@ -149,6 +151,7 @@ function shoulderPressBottomVisible(arm) {
 
 function collectExperimentalFormMetrics() {
   if (!formPoseLandmarks) { return null; }
+  if (CONFIG.exercise === 'squats') { return collectSquatMetrics(); }
   var isPullup = CONFIG.exercise === 'pullups';
   var pullupVisibility = isPullup ? 0.35 : 0.24;
   var leftEye = isPullup ? formInFramePoint(2, 0.5) : null;
@@ -198,8 +201,7 @@ function collectExperimentalFormMetrics() {
 
   if (CONFIG.exercise === 'pushups' || CONFIG.exercise === 'pullups') {
     controller = shoulders;
-  } else if (CONFIG.exercise === 'squats') {
-    controller = hips;
+
   } else if (CONFIG.exercise === 'shoulderpress') {
     // Use one stable control signal throughout the press, including while wrists
     // cross the top edge. Relative upper-arm elevation excludes torso translation.
@@ -555,22 +557,7 @@ function validateExperimentalCalibration(position) {
   }
 
   if (CONFIG.exercise === 'squats') {
-    if (!metrics.shoulders || !metrics.hips || metrics.kneeAngle === null) {
-      return formInvalid('Form check<br><br>Keep your shoulders, hips, knees, and at least one ankle visible.');
-    }
-    if (!formTorsoIsUpright(metrics)) {
-      return formInvalid('Form check<br><br>Raise your chest instead of folding at the waist.');
-    }
-    if (position === 'top' && metrics.kneeAngle < 130) {
-      return formInvalid('Form check<br><br>Stand comfortably tall for the top position.');
-    }
-    if (position === 'bottom' && metrics.kneeAngle > 150) {
-      return formInvalid('Form check<br><br>Bend your knees as you lower into the squat.');
-    }
-    if (position === 'bottom' && formTopMetrics && formTopMetrics.kneeAngle - metrics.kneeAngle < 15) {
-      return formInvalid('Form check<br><br>Bend your knees more instead of bending only at the waist.');
-    }
-    return formValid();
+    return validateSquatCalibration(position, metrics);
   }
 
   if (CONFIG.exercise === 'pullups') {
@@ -816,13 +803,7 @@ function validateExperimentalGameplay(norm) {
   }
 
   if (CONFIG.exercise === 'squats') {
-    if (!formTorsoIsUpright(metrics) || metrics.kneeAngle === null) {
-      return formInvalid('Form check<br><br>Keep your chest raised and your legs visible.');
-    }
-    if (!formMetricMatches(metrics.kneeAngle, formTopMetrics.kneeAngle, formBottomMetrics.kneeAngle, norm, 50)) {
-      return formInvalid('Form check<br><br>Bend your knees with the movement, not only your waist.');
-    }
-    return formValid();
+    return validateSquatGameplay(metrics);
   }
 
   if (CONFIG.exercise === 'pullups') {
