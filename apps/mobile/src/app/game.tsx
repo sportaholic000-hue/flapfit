@@ -1492,7 +1492,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
               <View
                 style={{
                   width: '100%',
-                  backgroundColor: '#4AABDE',
+                  backgroundColor: '#F59E0B',
                   borderRadius: 14,
                   padding: 14,
                   marginTop: 14,
@@ -1511,7 +1511,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   accessibilityValue={{ min: 0, max: target, now: Math.min(target, Math.max(0, result.score)) }}
                   style={{ height: 10, borderRadius: 5, backgroundColor: '#06223D', overflow: 'hidden' }}
                 >
-                  <View style={{ width: `${targetProgress * 100}%`, height: '100%', borderRadius: 5, backgroundColor: '#F59E0B' }} />
+                  <View style={{ width: `${targetProgress * 100}%`, height: '100%', borderRadius: 5, backgroundColor: '#4AABDE' }} />
                 </View>
                 <Text style={{ color: '#06223D', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
                   This run: {result.score} / {target} pipes
