@@ -5,7 +5,7 @@ import { SCRIPT_SQUAT_TRACKING } from './scriptSquatTracking';
 // explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-15.3-shoulder-squats';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-15.4-squat-leg-evidence';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -34,6 +34,7 @@ function usesExperimentalFormTracking() {
 
 function resetExperimentalFormTracking() {
   resetSquatTrace();
+  resetSquatLegEvidence();
   formPoseLandmarks = null;
   formCurrentMetrics = null;
   formTrackY = null;
@@ -291,6 +292,7 @@ function updateExperimentalFormPose(landmarks, now) {
   samplePullupCalibrationTrace(landmarks, now);
   formPoseLandmarks = landmarks;
   formCurrentMetrics = collectExperimentalFormMetrics();
+  updateSquatLegEvidence(now);
   sampleSquatTrace(now);
   if (CONFIG.exercise === 'pullups') {
     // Observation belongs to the camera clock across setup, calibration,

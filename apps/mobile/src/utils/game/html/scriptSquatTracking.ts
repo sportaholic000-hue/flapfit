@@ -5,6 +5,10 @@ export const SCRIPT_SQUAT_TRACKING = `
 // Preview-only numeric diagnostics. No camera frames, network calls, or saved scores.
 var squatTraceRows = [], squatTraceLastSample = -Infinity, squatTraceLastSend = 0;
 var squatTraceLastPose = 0, squatTraceSession = '';
+var squatLegDebtMs = 0, squatLegLastPose = null, squatLegFailure = false;
+function resetSquatLegEvidence() {
+  squatLegDebtMs = 0; squatLegLastPose = null; squatLegFailure = false;
+}
 function resetSquatTrace() {
   squatTraceRows = []; squatTraceLastSample = -Infinity; squatTraceLastSend = 0;
   squatTraceLastPose = 0; squatTraceSession = String(Date.now());
@@ -28,11 +32,11 @@ function sampleSquatTrace(now) {
     raw:number(formCurrentMetrics && formCurrentMetrics.controllerY),
     previousSmooth:number(formTrackYSmooth),bird:number(typeof birdNorm !== 'undefined' ? birdNorm : null),
     top:number(typeof topY !== 'undefined' ? topY : null),bottom:number(typeof bottomY !== 'undefined' ? bottomY : null),
-    valid:check.valid,reason:check.message,crash:typeof crashReason !== 'undefined' ? crashReason : ''});
+    legDebtMs:number(squatLegDebtMs),valid:check.valid,reason:check.message,crash:typeof crashReason !== 'undefined' ? crashReason : ''});
   if (squatTraceRows.length > 60) { squatTraceRows.shift(); }
   if (now - squatTraceLastSend < 2000) { return; }
   squatTraceLastSend = now;
-  postRN({type:'squatdebug',message:JSON.stringify({version:'2026-10-15.3-shoulder-squats',session:squatTraceSession,
+  postRN({type:'squatdebug',message:JSON.stringify({version:'2026-10-15.4-squat-leg-evidence',session:squatTraceSession,
     video:typeof video !== 'undefined' ? [video.videoWidth,video.videoHeight] : null,
     viewport:typeof W !== 'undefined' ? [W,H] : null,rows:squatTraceRows})});
   squatTraceRows = [];
@@ -102,11 +106,43 @@ function validateSquatCalibration(position, metrics) {
   return formValid();
 }
 
+// Coarse exercise evidence is separate from shoulder flight. A 40% allowance
+// absorbs hip/thigh estimate noise without mapping any of that noise to the bird.
+function squatLegMotionMissing(metrics) {
+  if (!squatBodyVisible(metrics) || !formTopMetrics || !formBottomMetrics) { return false; }
+  var shoulderRange = formBottomMetrics.shoulders.y - formTopMetrics.shoulders.y;
+  var hipRange = formBottomMetrics.hips.y - formTopMetrics.hips.y;
+  var thighRange = formTopMetrics.squatThighDrop - formBottomMetrics.squatThighDrop;
+  if (shoulderRange <= 0 || hipRange <= 0 || thighRange <= 0) { return true; }
+  var progress = Math.max(0, Math.min(1,
+    (metrics.shoulders.y - formTopMetrics.shoulders.y) / shoulderRange));
+  var hipProgress = (metrics.hips.y - formTopMetrics.hips.y) / hipRange;
+  var thighProgress = (formTopMetrics.squatThighDrop - metrics.squatThighDrop) / thighRange;
+  return progress > 0.45 && (hipProgress < progress - 0.4 || thighProgress < progress - 0.4);
+}
+
+function updateSquatLegEvidence(now) {
+  if (CONFIG.exercise !== 'squats') { return; }
+  if (!formTopMetrics || !formBottomMetrics || (typeof state !== 'undefined' && state !== 'play')) {
+    resetSquatLegEvidence(); return;
+  }
+  if (squatLegLastPose !== null && now <= squatLegLastPose) { return; }
+  var elapsed = squatLegLastPose === null ? 0 : Math.min(100, now - squatLegLastPose);
+  squatLegLastPose = now;
+  if (squatLegFailure || !squatBodyVisible(formCurrentMetrics)) { return; }
+  // Only fresh camera observations count. Standing briefly does not erase
+  // repeated waist bends; isolated noise recovers gradually during valid motion.
+  squatLegDebtMs = Math.max(0, squatLegDebtMs +
+    (squatLegMotionMissing(formCurrentMetrics) ? elapsed : -elapsed * 0.25));
+  if (squatLegDebtMs >= 600) { squatLegFailure = true; }
+}
+
 function validateSquatGameplay(metrics) {
-  // Calibration establishes the squat positions. During play, covered or noisy
-  // hips cannot invalidate shoulder-controlled flight. Hands are unrestricted.
-  if (!metrics || !metrics.shoulders || !metrics.kneesVisible) {
-    return formInvalid('Form check<br><br>Keep both shoulders and your knees in view.<br>Feet can stay outside the frame.');
+  if (squatLegFailure) {
+    return formFatal('Squat movement lost<br><br>Bend your knees and lower your hips, not just your shoulders.', 'squat-leg-motion');
+  }
+  if (!squatBodyVisible(metrics)) {
+    return formInvalid('Form check<br><br>Keep shoulders, hips, and knees in view.<br>Feet can stay outside the frame.');
   }
   return formValid();
 }

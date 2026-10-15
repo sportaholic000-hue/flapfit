@@ -26,3 +26,7 @@ Preview numeric diagnostics now also include elbows/wrists to investigate any re
 Reload the Android preview and start a NEW squat run so both endpoints are calibrated with shoulder height. Phone on chair, shoulders and knees visible, feet cropped; use the normal hands-in-front pose shown by the silhouette. Compare hands in front versus at sides, mid-squat holds and repeated squats. Then compare farther framing. Physical approval is still pending; do not call this fixed or release-ready from automated results alone.
 
 No iOS checkout/branch, main, release tag, dependency, recording pipeline, build or OTA was changed. Do not port this to the submitted Apple release. Any later iOS port needs separate authorization and iPhone/iPad verification.
+
+## Owner retest: smooth flight, insufficient exercise validation
+
+The owner confirmed the shoulder controller removed jitter, but could fly without bending the knees. The shoulder-only gameplay validation is rejected. See android-squat-leg-evidence-2026-10-15.md for its replacement; do not ship db21dcf as a completed squat fix.
