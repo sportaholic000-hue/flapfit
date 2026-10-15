@@ -11,30 +11,40 @@ const text = (node: ReactTestInstance): string => node.children.map(child =>
   typeof child === 'string' ? child : text(child)
 ).join('');
 
+// Load shared dependencies once; each case still mounts a fresh screen with independent history.
+const React: typeof import('react') = require('react');
+const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
+jest.doMock('react-native', () => Object.defineProperties({}, {
+  ...Object.getOwnPropertyDescriptors(jest.requireActual('react-native')),
+  View: { value: 'View', enumerable: true }, Text: { value: 'Text', enumerable: true },
+  ScrollView: { value: 'ScrollView', enumerable: true },
+  TouchableOpacity: { value: 'TouchableOpacity', enumerable: true },
+}));
+jest.doMock('expo-router', () => ({
+  useFocusEffect: (effect: () => void) => React.useEffect(effect, [effect]),
+}));
+jest.doMock('expo-image', () => ({ Image: 'Image' }));
+jest.doMock('expo-status-bar', () => ({ StatusBar: () => null }));
+jest.doMock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) }));
+jest.doMock('lucide-react-native', () => ({ CheckCircle2: 'Icon', ChevronDown: 'Icon', ChevronUp: 'Icon' }));
+jest.doMock('@/components/TabSkyBackground', () => ({ TabSkyBackground: () => null }));
+jest.doMock('@/components/BirdAvatar', () => ({ __esModule: true, default: () => null }));
+jest.doMock('@/components/AchievementCard', () => ({ AchievementCard: () => null }));
+jest.doMock('@/components/ChampionBadge', () => ({ ChampionBadge: () => null }));
+jest.doMock('@/components/RunCelebrations', () => ({ ChampionshipCeremony: () => null }));
+
+const real = jest.requireActual<typeof import('@/utils/game/store')>('@/utils/game/store');
+
+let screenState: ReturnType<typeof real.useGameStore.getState>;
+jest.doMock('@/utils/game/store', () => ({
+  ...real, useGameStore: (select: (value: typeof screenState) => unknown) => select(screenState),
+}));
+const Screen = require('@/app/(tabs)/stats').default;
+
 async function fixture(sessions: SessionRecord[]) {
-  jest.resetModules();
   jest.useFakeTimers();
   // Late local evening exercises local-day handling rather than UTC date slicing.
   jest.setSystemTime(new Date(2026, 9, 15, 23, 30));
-  const React: typeof import('react') = require('react');
-  const renderer: typeof import('react-test-renderer') = require('react-test-renderer');
-  jest.doMock('react-native', () => ({
-    View: 'View', Text: 'Text', ScrollView: 'ScrollView', TouchableOpacity: 'TouchableOpacity',
-  }));
-  jest.doMock('expo-router', () => ({
-    useFocusEffect: (effect: () => void) => React.useEffect(effect, [effect]),
-  }));
-  jest.doMock('expo-image', () => ({ Image: 'Image' }));
-  jest.doMock('expo-status-bar', () => ({ StatusBar: () => null }));
-  jest.doMock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) }));
-  jest.doMock('lucide-react-native', () => ({ CheckCircle2: 'Icon', ChevronDown: 'Icon', ChevronUp: 'Icon' }));
-  jest.doMock('@/components/TabSkyBackground', () => ({ TabSkyBackground: () => null }));
-  jest.doMock('@/components/BirdAvatar', () => ({ __esModule: true, default: () => null }));
-  jest.doMock('@/components/AchievementCard', () => ({ AchievementCard: () => null }));
-  jest.doMock('@/components/ChampionBadge', () => ({ ChampionBadge: () => null }));
-  jest.doMock('@/components/RunCelebrations', () => ({ ChampionshipCeremony: () => null }));
-
-  const real = jest.requireActual<typeof import('@/utils/game/store')>('@/utils/game/store');
   const exerciseTut = { ...real.useGameStore.getState().exerciseTut };
   for (const s of sessions) if (s.exercise) exerciseTut[s.exercise] += s.tutSeconds ?? 0;
   const state = {
@@ -43,11 +53,8 @@ async function fixture(sessions: SessionRecord[]) {
     totalTutSeconds: sessions.reduce((sum, s) => sum + (s.tutSeconds ?? 0), 0),
     exerciseTut, lastActivityDate: sessions[0]?.day ?? null,
   };
+  screenState = state;
   const savedBefore = JSON.stringify(state);
-  jest.doMock('@/utils/game/store', () => ({
-    ...real, useGameStore: (select: (value: typeof state) => unknown) => select(state),
-  }));
-  const Screen = require('@/app/(tabs)/stats').default;
   let tree!: ReactTestRenderer;
   await React.act(async () => { tree = renderer.create(React.createElement(Screen)); });
   const texts = (scope = tree.root) => scope.findAllByType('Text' as never).map(text);

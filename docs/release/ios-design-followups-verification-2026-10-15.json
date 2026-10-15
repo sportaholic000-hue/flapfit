@@ -1,0 +1,198 @@
+{
+  "verifiedAt": "2026-10-15T07:36:08.813Z",
+  "branch": "codex/ios-design-update-2026-10-14",
+  "status": "Prepared and automatically verified; native visual acceptance pending",
+  "scope": {
+    "baseline": "a070de99bfe55672d5c0e5e6296f8e0d4a5a385f",
+    "handoffCommit": "a5c0d7ba049b90fbba463c9c03dc4471f18868ae",
+    "handoffBase": "d837f37dde39d2b5c10a3258c963dbfc5214b14c",
+    "handoffSource": "00d32d8ca063d0f7dbe8c8d6c404a7255fb87165",
+    "patchBlob": "d9a808a381b539713fe945f25ed9f3729aa4d9aa",
+    "patchSHA256": "8d053581105d5c0592db52d17deb338614a5a1f7a05b41de4a41ebdf83988d2f",
+    "productionFiles": [
+      "apps/mobile/src/app/(tabs)/index.tsx",
+      "apps/mobile/src/app/(tabs)/levels.tsx",
+      "apps/mobile/src/app/(tabs)/stats.tsx",
+      "apps/mobile/src/app/game.tsx",
+      "apps/mobile/src/app/onboarding.tsx",
+      "apps/mobile/src/components/RunCelebrations.tsx"
+    ],
+    "exactApprovedSourceHunks": true,
+    "identicalToSourceSnapshot": [
+      "apps/mobile/src/app/(tabs)/index.tsx",
+      "apps/mobile/src/app/(tabs)/levels.tsx",
+      "apps/mobile/src/app/(tabs)/stats.tsx",
+      "apps/mobile/src/app/onboarding.tsx",
+      "apps/mobile/src/components/RunCelebrations.tsx"
+    ],
+    "retainedIOSDifferences": [
+      "apps/mobile/src/app/game.tsx"
+    ],
+    "noChangesOutsideScope": true,
+    "recordingCalibrationSquatCodeUnchanged": true,
+    "optionalExpoGoLinkFallback": "Not ported: no matching iOS preview failure established; existing production profile URLs retained.",
+    "contrastReview": "Deferred by owner until tomorrow; only specified design colors ported."
+  },
+  "checks": [
+    {
+      "name": "release-config",
+      "exitCode": 0,
+      "seconds": 14
+    },
+    {
+      "name": "ota-config",
+      "exitCode": 0,
+      "seconds": 0
+    },
+    {
+      "name": "typescript",
+      "exitCode": 0,
+      "seconds": 719
+    },
+    {
+      "name": "lint",
+      "exitCode": 0,
+      "seconds": 125
+    }
+  ],
+  "fullSuite": {
+    "success": true,
+    "passedTests": 1965,
+    "totalTests": 1965,
+    "failedTests": 0,
+    "pendingTests": 0,
+    "passedSuites": 82,
+    "totalSuites": 82,
+    "failedSuites": 0,
+    "timezone": "America/Halifax",
+    "repositoryTestTimeoutsUnchanged": true,
+    "localKeepAwakeDefaultTimeoutMs": 30000,
+    "execution": "81 non-entry suites in one broad run, followed by successful isolated reruns of both suites with initial timeouts; the 47 game-entry cases ran in five sequential isolated batches. Counts include each case and suite once.",
+    "startupBatches": [
+      {
+        "batch": 1,
+        "exitCode": 0,
+        "seconds": 48,
+        "passed": 10,
+        "failed": []
+      },
+      {
+        "batch": 2,
+        "exitCode": 0,
+        "seconds": 30,
+        "passed": 10,
+        "failed": []
+      },
+      {
+        "batch": 3,
+        "exitCode": 0,
+        "seconds": 35,
+        "passed": 10,
+        "failed": []
+      },
+      {
+        "batch": 4,
+        "exitCode": 0,
+        "seconds": 33,
+        "passed": 10,
+        "failed": []
+      },
+      {
+        "batch": 5,
+        "exitCode": 0,
+        "seconds": 27,
+        "passed": 7,
+        "failed": []
+      }
+    ],
+    "isolatedSuiteReruns": [
+      {
+        "file": "apps/mobile/src/components/__tests__/StatsChartWindow.test.tsx",
+        "exitCode": 0,
+        "seconds": 41,
+        "passed": 3,
+        "failed": 0,
+        "success": true,
+        "json": "retry-1.json"
+      },
+      {
+        "file": "apps/mobile/src/components/__tests__/GameScreenAwake.test.tsx",
+        "timeoutMs": 30000,
+        "exitCode": 0,
+        "seconds": 16,
+        "passed": 5,
+        "failed": 0,
+        "success": true,
+        "json": "retry-2.json"
+      }
+    ],
+    "initialBroadRunFailures": 2
+  },
+  "files": [
+    {
+      "file": "apps/mobile/src/app/(tabs)/index.tsx",
+      "sha256": "5ad9b1b53e677fd34d69072d6bba00d4cefc4e2c9f69f17755c51bfbc07e8b92"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/levels.tsx",
+      "sha256": "2c82b5a2261d4f7b767c8729330e6a69c27664adf6c5da4e4a410e316053b920"
+    },
+    {
+      "file": "apps/mobile/src/app/(tabs)/stats.tsx",
+      "sha256": "41968ee57b51eed72b12d92fa25ee1390410ee1566e1fa5ce6c5bc63e4a0a8a0"
+    },
+    {
+      "file": "apps/mobile/src/app/game.tsx",
+      "sha256": "28992ba94888b50651b0cc31b250b5e723ce4c2d285a8c4bef50b6c41e24797b"
+    },
+    {
+      "file": "apps/mobile/src/app/onboarding.tsx",
+      "sha256": "12f7ccabfeb676dc9cb14b75a840676299ddeb495f18c57fc560f1e06668c021"
+    },
+    {
+      "file": "apps/mobile/src/components/RunCelebrations.tsx",
+      "sha256": "cab6a75944faf167b384ea5478511659b2b4d67830b6a4a12baa76ed342205cc"
+    },
+    {
+      "file": "apps/mobile/src/components/__tests__/StatsChartWindow.test.tsx",
+      "sha256": "7058359e3819fc2b8ba4a69c19bd6c8cd67978207dd050edcd7526388af1a3f8"
+    },
+    {
+      "file": "apps/mobile/src/services/privacy/__tests__/startupGameEntry.test.tsx",
+      "sha256": "80766b95eb466593a711b746a22708a745c6609b0962b21405564423e387e352"
+    },
+    {
+      "file": "apps/mobile/src/components/__tests__/GameStartOptions.test.tsx",
+      "sha256": "35baf5bb2b8bf8acbf9ca4e02217d308d34620ba3c497d5d995a659383944f98"
+    }
+  ],
+  "verificationNotes": [
+    "Initial local Jest startup was stopped after 708 seconds without a test result; release/OTA/TypeScript/lint then completed.",
+    "A temporary NODE_DEBUG=module diagnostic conflicted with Jest reporter stderr handling. It was removed; no diagnostic code entered the application.",
+    "The first normal targeted run had three 30-second test timeouts and a missing competitionPlayerNameError export in the test adapter. The offline test adapter was completed and competitionIsConfigured corrected to its boolean shape. Production competition code was not changed.",
+    "An initial combined full run was stopped after game-entry timeouts and a later ad-mock assertion failure; those cases were rerun in isolated batches to avoid interference from timed-out async fixtures.",
+    "One local split-run command omitted the default node_modules test exclusion; it was stopped and corrected. The committed test configuration is unchanged.",
+    "The final complete test set was verified using the non-entry suite run, isolated reruns of every failed suite, and five game-entry batches. Repository test timeouts were unchanged; the unmodified keep-awake suite used a local CLI testTimeout of 30000 ms instead of the default 5000 ms. The rerun case lists were required to match the original lists, and the counts above count each test and suite once.",
+    "Shared dependency loading in the new chart test was moved to suite setup while each case retains independent saved history and a fresh screen; assertions and repository time limits are unchanged. React renderer is preloaded by the local test command for isolated retries/batches to reduce cold import overhead.",
+    "No iOS native build, OTA delivery or iPhone/iPad visual inspection was performed for this change."
+  ],
+  "protectedRefs": {
+    "main": "0041d2680bd2db652dd26813c96e5489b5bc1dac",
+    "iosSubmittedSource": "fcbf4e0c4bb2b5bdb07d85e5630f173786a72718",
+    "iosReviewBranch": "f2b8131326d33c3e38d9db8814be777d7b31ad25",
+    "build8ReleaseTagObject": "ad5d08d0f3aadf0497f3452f0a12e241e352fbfe"
+  },
+  "pending": [
+    "Owner contrast review",
+    "Native iPhone/iPad level alignment, larger text and approved colors",
+    "Native recording/share, selections and onboarding smoke test when delivery is authorized"
+  ],
+  "excluded": [
+    "All later squat changes and diagnostics",
+    "Recording changes",
+    "Translation",
+    "Optional Expo Go link fallback without reproduced iOS preview failure",
+    "Build, upload, OTA, review submission or release"
+  ],
+  "implementationCommit": "069548199dadefae0203ef960a13f334ffbe36a0"
+}
