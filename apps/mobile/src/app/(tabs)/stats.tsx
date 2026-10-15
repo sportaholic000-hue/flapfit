@@ -3,7 +3,7 @@ import { Image, type ImageSource } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
 import { CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import { AchievementCard } from '@/components/AchievementCard';
 import { ChampionBadge } from '@/components/ChampionBadge';
 import { ChampionshipCeremony } from '@/components/RunCelebrations';
@@ -91,7 +91,6 @@ function StatCard({ label, value }: { label: string; value: string }) {
 export default function StatsScreen() {
   const insets = useSafeAreaInsets();
 
-  const router = useRouter();
   const hydrated = useGameStore((s) => s.hydrated);
   const championUnlocked = useGameStore((s) => s.championUnlocked);
   const championshipSeen = useGameStore((s) => s.championshipCelebrationSeen);
@@ -682,12 +681,6 @@ export default function StatsScreen() {
             );
           })
         )}
-        {__DEV__ ? (
-          <TouchableOpacity accessibilityRole="button" onPress={() => router.push("../championship-preview")}
-            style={{ padding: 16, alignItems: "center" }}>
-            <Text style={{ color: "#1D4ED8", fontWeight: "800" }}>Preview championship & achievements</Text>
-          </TouchableOpacity>
-        ) : null}
       </ScrollView>
       {showChampionship ? <ChampionshipCeremony continueLabel="Continue to Stats" onContinue={() => {
         useGameStore.getState().markChampionshipCelebrationSeen();
