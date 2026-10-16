@@ -1,12 +1,13 @@
 import { SCRIPT_PULLUP_SUPPORT } from './scriptPullupSupport';
 import { SCRIPT_SQUAT_TRACKING } from './scriptSquatTracking';
 import { SCRIPT_CURL_DIAGNOSTICS } from './scriptCurlDiagnostics';
+import { SCRIPT_CURL_TRACKING } from './scriptCurlTracking';
 
 // Form-aware production tracking. The legacy tracker remains available for
 // explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-15.5-squat-presence';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-16.1-curl-control';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -22,6 +23,7 @@ var pullupStartReference = null;
 ${SCRIPT_PULLUP_SUPPORT}
 ${SCRIPT_SQUAT_TRACKING}
 ${SCRIPT_CURL_DIAGNOSTICS}
+${SCRIPT_CURL_TRACKING}
 var pullupPoseTrace = [];
 var pullupTraceLastSampleAt = -Infinity;
 var pullupTraceLastExportAt = 0;
@@ -37,6 +39,7 @@ function usesExperimentalFormTracking() {
 function resetExperimentalFormTracking() {
   resetSquatTrace();
   resetCurlTrace();
+  resetCurlControlFilter();
   resetSquatLegEvidence();
   formPoseLandmarks = null;
   formCurrentMetrics = null;
@@ -332,12 +335,21 @@ function updateExperimentalFormPose(landmarks, now) {
     }
   }
   if (!formCurrentMetrics || formCurrentMetrics.controllerY === null) {
+    if (CONFIG.exercise === 'biceps') {
+      resetCurlControlFilter();
+      if (typeof state !== 'undefined' && (state === 'waitTop' || state === 'waitBottom')) {
+        formTrackY = null; formTrackYSmooth = null; lastFormTrackTime = 0;
+        if (typeof stabBuf !== 'undefined') { stabBuf = []; }
+      }
+    }
     if (curlDiagnosticsEnabled()) { sampleCurlTrace(now); }
     return;
   }
   formTrackY = formCurrentMetrics.controllerY;
   if (formTrackYSmooth === null) { formTrackYSmooth = formTrackY; }
-  formTrackYSmooth = formTrackYSmooth + (formTrackY - formTrackYSmooth) * 0.55;
+  formTrackYSmooth = CONFIG.exercise === 'biceps'
+    ? filterCurlController(formCurrentMetrics, now)
+    : formTrackYSmooth + (formTrackY - formTrackYSmooth) * 0.55;
   lastFormTrackTime = now;
   if (curlDiagnosticsEnabled()) { sampleCurlTrace(now); }
 }
@@ -458,7 +470,9 @@ function pullupTopPoseValid(metrics) {
     metrics.leftElbowAngle <= 145 && metrics.rightElbowAngle <= 145;
 }
 
-function getExperimentalTrackY() { return formTrackY; }
+function getExperimentalTrackY() {
+  return CONFIG.exercise === 'biceps' && formTrackY !== null ? formTrackYSmooth : formTrackY;
+}
 function getExperimentalTrackYSmooth() { return formTrackYSmooth; }
 function experimentalTrackingFresh() {
   return lastFormTrackTime > 0 && (performance.now() - lastFormTrackTime) < 700;
@@ -703,7 +717,7 @@ function saveExperimentalCalibration(position, stableSince, controllerY) {
   if (!usesExperimentalFormTracking() || !formCurrentMetrics) { return; }
   var snapshot = CONFIG.exercise === 'pullups' && Number.isFinite(stableSince)
     ? pullupStableCalibrationMetrics(stableSince, controllerY) : formCurrentMetrics;
-  if (CONFIG.exercise === 'squats' && Number.isFinite(stableSince) && typeof stabBuf !== 'undefined') {
+  if ((CONFIG.exercise === 'squats' || CONFIG.exercise === 'biceps') && Number.isFinite(stableSince) && typeof stabBuf !== 'undefined') {
     snapshot = pullupStableCalibrationMetrics(stableSince, controllerY, stabBuf.filter(function(sample) { return !!sample.metrics; }));
   }
   if (position === 'top') {

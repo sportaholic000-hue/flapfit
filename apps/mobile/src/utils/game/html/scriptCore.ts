@@ -102,7 +102,7 @@ for (var ci = 0; ci < 5; ci++) {
 var stabBuf = [];
 function stabilityProgress(y, now) {
   var requireFreshPoseSamples = usesExperimentalFormTracking() &&
-    (CONFIG.exercise === 'pullups' || CONFIG.exercise === 'pushups' || CONFIG.exercise === 'squats');
+    (CONFIG.exercise === 'pullups' || CONFIG.exercise === 'pushups' || CONFIG.exercise === 'squats' || CONFIG.exercise === 'biceps');
   if (requireFreshPoseSamples) {
     // Count camera observations, not repeated renders of the same pose.
     var poseTime = lastFormTrackTime;
@@ -118,7 +118,7 @@ function stabilityProgress(y, now) {
   }
   var squatX = usesExperimentalFormTracking() && CONFIG.exercise === 'squats' && formCurrentMetrics && formCurrentMetrics.shoulders
     ? formCurrentMetrics.shoulders.x : null;
-  stabBuf.push({ t: now, y: y, x: squatX, metrics: squatX !== null ? formCurrentMetrics : null });
+  stabBuf.push({ t: now, y: y, x: squatX, metrics: squatX !== null || (usesExperimentalFormTracking() && CONFIG.exercise === 'biceps') ? formCurrentMetrics : null });
   var minimumKept = requireFreshPoseSamples ? 8 : 1;
   while (stabBuf.length > minimumKept && now - stabBuf[0].t > 1600) { stabBuf.shift(); }
   if (stabBuf.length < 8) { return 0; }
@@ -133,7 +133,7 @@ function stabilityProgress(y, now) {
     ? 0.04
     : 0.028;
   if (mx - mn > maxCalibrationDrift || (squatX !== null && maxX - minX > 0.028)) {
-    stabBuf = [{ t: now, y: y, x: squatX, metrics: squatX !== null ? formCurrentMetrics : null }]; return 0;
+    stabBuf = [{ t: now, y: y, x: squatX, metrics: squatX !== null || (usesExperimentalFormTracking() && CONFIG.exercise === 'biceps') ? formCurrentMetrics : null }]; return 0;
   }
   var span = now - stabBuf[0].t;
   return Math.min(1, span / 1300);
@@ -419,11 +419,17 @@ function trackLoop() {
         // An empty detector result is new evidence, not permission to reuse the
         // last person. Clear calibration immediately; keep normal gameplay grace.
         updateExperimentalFormPose(null, performance.now());
+      } else if (usesExperimentalFormTracking() && CONFIG.exercise === 'biceps' &&
+          (state === 'waitTop' || state === 'waitBottom')) {
+        updateExperimentalFormPose(null, performance.now());
       } else if (curlDiagnosticsEnabled()) {
         sampleCurlTrace(performance.now(), false);
       }
     } catch (e) {
       if (usesExperimentalFormTracking() && CONFIG.exercise === 'squats') {
+        updateExperimentalFormPose(null, performance.now());
+      } else if (usesExperimentalFormTracking() && CONFIG.exercise === 'biceps' &&
+          (state === 'waitTop' || state === 'waitBottom')) {
         updateExperimentalFormPose(null, performance.now());
       } else if (curlDiagnosticsEnabled()) {
         sampleCurlTrace(performance.now(), false);

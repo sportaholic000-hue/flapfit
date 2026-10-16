@@ -36,3 +36,7 @@ Diagnosis of the physical weighted-curl problem is pending these captures; diagn
 ## Verification
 
 The focused tracking runner passed all 203 cases (including 11 new diagnostic cases). Tests compare actual calibration, bird positions and end timing with diagnostics enabled/disabled; unilateral input still ends the run. Empty camera observations do not alter existing tracking. Other exercises never emit curl traces. TypeScript checking, lint and whitespace checks passed. The full Jest run was attempted but was not green: src/services/privacy/__tests__/startupGameEntry.test.tsx and src/components/__tests__/GameStartOptions.test.tsx failed while rendering existing screens (undefined component errors). Those screen/test files were not modified. The new curl diagnostics suite and the squat suite also passed under Jest. The broader run was stopped after these failures rather than expanding this task into unrelated screen-test repairs; no claim that the entire suite passed.
+
+## Follow-up after the owner captures
+
+The captures were analyzed and a curl-only control correction is documented in [android-curl-control-2026-10-16.md](android-curl-control-2026-10-16.md). Physical acceptance of that correction remains pending. The owner clarified that the hands were not wandering; fluctuating landmark estimates must not be described as actual hand movement.

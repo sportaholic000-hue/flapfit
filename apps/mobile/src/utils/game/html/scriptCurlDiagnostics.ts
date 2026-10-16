@@ -12,7 +12,7 @@ function resetCurlTrace() {
 }
 function flushCurlTrace(now, terminal) {
   if (!curlDiagnosticsEnabled() || typeof postRN !== 'function' || (!curlTraceRows.length && !terminal)) { return; }
-  postRN({type:'curldebug',message:JSON.stringify({version:'curl-trace-1',session:curlTraceSession,
+  postRN({type:'curldebug',message:JSON.stringify({version:'curl-trace-1',controller:'curl-filter-1',session:curlTraceSession,
     video:typeof video !== 'undefined' ? [video.videoWidth,video.videoHeight] : null,
     viewport:typeof W !== 'undefined' ? [W,H] : null,rows:curlTraceRows,terminal:terminal || null})});
   curlTraceRows = []; curlTraceLastSend = now;
