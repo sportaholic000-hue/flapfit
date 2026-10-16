@@ -11,6 +11,7 @@ function loadScripts() {
 function createGame(scripts = loadScripts(), options = {}) {
   const { core, form, game } = scripts;
   const stability = core.slice(core.indexOf('var stabBuf = []'), core.indexOf('// ---------- Camera + MediaPipe'));
+  const tracking = core.slice(core.indexOf('function trackLoop() {'), core.indexOf("window.addEventListener('pagehide'"));
   const helpers = game.slice(game.indexOf('var tutSeconds'), game.indexOf('// ---------- Composed-run recording'));
   const geometryAndEnd = game.slice(game.indexOf('function birdX()'), game.indexOf('// ---------- Drawing ----------'));
   const collisions = game.slice(game.indexOf('function collides()'), game.indexOf('// ---------- Main loop ----------'));
@@ -24,7 +25,9 @@ function createGame(scripts = loadScripts(), options = {}) {
     'var pipes=[{x:10000,w:40,gapC:320,gapH:250,moving:false,passed:false}],timers=[];',
     'var performance={now:function(){return nowValue;}},video={videoWidth:480,videoHeight:640};',
     'var ctx={fillRect:function(){}};',
-    form, stability, helpers,
+    'var trackingLoopActive=true,lastVideoTime=-1,landmarker=null,headY=null,headYSmooth=null,lastHeadTrackTime=0,headX=.5,usingShoulders=false,shoulderOffset=0;',
+    'var wristY=null,wristYSmooth=null,lastWristTrackTime=0;function updateDot(){}',
+    form, stability, helpers, tracking,
     'function getTrackY(){return getExperimentalTrackY();} function getTrackYSmooth(){return getExperimentalTrackYSmooth();}',
     'function trackingFresh(){return experimentalTrackingFresh();}',
     'function currentSpawnMs(){return 100000;} function currentSpeed(){return 100;} function spawnPipe(){}',
@@ -42,6 +45,7 @@ function createGame(scripts = loadScripts(), options = {}) {
     'function render(t){nowValue=t;loop(t);if(state!==previousState){transitions.push({t:t,from:previousState,to:state});previousState=state;}timers.filter(function(x){return x.at<=t;}).forEach(function(x){x.fn();});timers=timers.filter(function(x){return x.at>t;});}',
     'resetExperimentalFormTracking();',
     'return {step:function(t,points){nowValue=t;if(points)updateExperimentalFormPose(points,t);render(t);},render:render,',
+    'cameraFrame:function(t,points){nowValue=t;video.readyState=2;video.currentTime=t/1000;landmarker={detectForVideo:function(){return {landmarks:points?[points]:[]};}};trackLoop();render(t);},',
     'summary:function(){return {state:state,topY:topY,bottomY:bottomY,progress:progress,norm:computeNorm(),crashReason:crashReason,birdNorm:birdNorm,pipeX:pipes[0].x,recordingStartedAt:recordingStartedAt,recordingFramesFinished:recordingFramesFinished,calibrationReadyAt:calibrationReadyAt,setup:typeof getPullupSupportSetup===\'function\'?getPullupSupportSetup():null};},',
     'metrics:function(){return formCurrentMetrics;},support:function(){return pullupSupportDebug(formCurrentMetrics);},',
     'setPipe:function(x,gapC,gapH){pipes[0].x=x;pipes[0].gapC=gapC;pipes[0].gapH=gapH;},messages:messages,overlays:overlays,frames:frames,transitions:transitions};',

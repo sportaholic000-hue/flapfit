@@ -36,7 +36,7 @@ function sampleSquatTrace(now) {
   if (squatTraceRows.length > 60) { squatTraceRows.shift(); }
   if (now - squatTraceLastSend < 2000) { return; }
   squatTraceLastSend = now;
-  postRN({type:'squatdebug',message:JSON.stringify({version:'2026-10-15.4-squat-leg-evidence',session:squatTraceSession,
+  postRN({type:'squatdebug',message:JSON.stringify({version:'2026-10-15.5-squat-presence',session:squatTraceSession,
     video:typeof video !== 'undefined' ? [video.videoWidth,video.videoHeight] : null,
     viewport:typeof W !== 'undefined' ? [W,H] : null,rows:squatTraceRows})});
   squatTraceRows = [];
@@ -62,6 +62,7 @@ function collectSquatMetrics() {
   return {
     controllerY: shoulders ? shoulders.y : null,
     kneesVisible: !!(formInFramePoint(25, 0.24) || formInFramePoint(26, 0.24)),
+    shoulderWidth: leftShoulder && rightShoulder ? Math.abs(leftShoulder.x - rightShoulder.x) : 0,
     shoulders: shoulders,
     hips: hips,
     squatThighDrop: thighDrops.length
@@ -85,12 +86,18 @@ function validateSquatCalibration(position, metrics) {
   if (!squatBodyVisible(metrics)) {
     return formInvalid('Form check<br><br>Keep both shoulders, hips, and your knees in view.<br>Feet can stay outside the frame.');
   }
+  // A person passing the edge or turning away cannot establish a reference.
+  // This is a broad camera-facing area, not alignment to the silhouette outline.
+  var torsoHeight = metrics.hips.y - metrics.shoulders.y;
+  if (metrics.shoulders.x < 0.2 || metrics.shoulders.x > 0.8 ||
+      metrics.shoulderWidth < Math.max(0.05, torsoHeight * 0.45)) {
+    return formInvalid('Face the camera<br><br>Move into the middle of the view and hold still.');
+  }
   if (!squatChestRaised(metrics, formTopMetrics)) {
     return formInvalid('Form check<br><br>Raise your chest instead of folding at the waist.');
   }
   if (position === 'top') {
-    var torsoHeight = metrics.hips.y - metrics.shoulders.y;
-    if (metrics.squatThighDrop < Math.max(0.04, torsoHeight * 0.3)) {
+    if (metrics.squatThighDrop < Math.max(0.04, torsoHeight * 0.6)) {
       return formInvalid('Form check<br><br>Stand comfortably tall for the top position.');
     }
   } else if (formTopMetrics) {
@@ -106,8 +113,9 @@ function validateSquatCalibration(position, metrics) {
   return formValid();
 }
 
-// Coarse exercise evidence is separate from shoulder flight. A 40% allowance
-// absorbs hip/thigh estimate noise without mapping any of that noise to the bird.
+// Coarse exercise evidence is separate from shoulder flight. A 30% allowance
+// tolerates noisy leg estimates without ignoring the partial-range movements
+// seen in the straight-leg phone trace. Never map that noise to the bird.
 function squatLegMotionMissing(metrics) {
   if (!squatBodyVisible(metrics) || !formTopMetrics || !formBottomMetrics) { return false; }
   var shoulderRange = formBottomMetrics.shoulders.y - formTopMetrics.shoulders.y;
@@ -118,7 +126,7 @@ function squatLegMotionMissing(metrics) {
     (metrics.shoulders.y - formTopMetrics.shoulders.y) / shoulderRange));
   var hipProgress = (metrics.hips.y - formTopMetrics.hips.y) / hipRange;
   var thighProgress = (formTopMetrics.squatThighDrop - metrics.squatThighDrop) / thighRange;
-  return progress > 0.45 && (hipProgress < progress - 0.4 || thighProgress < progress - 0.4);
+  return progress > 0.3 && (hipProgress < progress - 0.3 || thighProgress < progress - 0.3);
 }
 
 function updateSquatLegEvidence(now) {

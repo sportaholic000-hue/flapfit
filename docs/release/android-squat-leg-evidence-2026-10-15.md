@@ -20,3 +20,7 @@ The owner confirmed shoulder-based flight removed jitter but allowed flight with
 Regression coverage includes legitimate squats with brief hip occlusion, hand placement changes and measured-scale hip noise; sustained straight-leg bends; rapid repeated bends with short upright resets; whole-body translation; fresh-frame-only timing; and reset. Replay compares the two earlier normal squat runs with the latest shoulder-only test run. 183 regression cases passed. Both earlier normal phone traces completed calibration and stayed in play with no form failure, preserving shoulder-driven flight. The latest shoulder-only phone trace triggered a confirmed form failure at camera time 37.718 s (play began at 30.626 s), followed by the existing gravity/collision ending. This is offline evidence, not physical-device sign-off.
 
 This is a candidate for owner testing, not a release approval. Test phone on chair with feet cropped, normal hands in front, real squats and deliberately straight-leg bends. No iOS checkout, main, submitted tag, native dependency, recording code, build or OTA changed.
+
+## Subsequent owner rejection
+
+Physical testing rejected this version: calibration advanced while leaving the view and partial straight-leg movement still controlled flight. See [presence follow-up](android-squat-presence-2026-10-15.md) for the demonstrated defects and next testing candidate. This version is not release-approved.

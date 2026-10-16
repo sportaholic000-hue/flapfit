@@ -167,7 +167,7 @@ test('preview diagnostics are bounded and leave control unchanged',()=>{
   assert.equal(diagnostic.messages.length,3);
   for(const message of diagnostic.messages) {
     assert.equal(message.type,'squatdebug');const trace=JSON.parse(message.message);
-    assert.equal(trace.version,'2026-10-15.4-squat-leg-evidence');
+    assert.equal(trace.version,'2026-10-15.5-squat-presence');
     assert.ok(trace.rows.length<=60);
     assert.ok(trace.rows.every(row=>row.points.every(p=>p[0]<27)));
   }
@@ -222,10 +222,10 @@ test('calibration still requires an observed squat and sufficient shoulder trave
 });
 
 
-test.each(['hold','repeated','translation'])('straight-leg %s cannot sustain flight after proper squat calibration',kind=>{
+test.each(['hold','repeated','translation','partial'])('straight-leg %s cannot sustain flight after proper squat calibration',kind=>{
   const g=gameWithSquats();let t=enterPlay(g,'hidden',1);let failed=false;
   for(let i=0;i<260;i++) {
-    const progress=kind==='repeated'?(1+Math.cos(i/20*Math.PI*2))/2:1;
+    const progress=kind==='partial'?.4:kind==='repeated'?(1+Math.cos(i/20*Math.PI*2))/2:1;
     const points=pose(0);
     points[11].y+=.15*progress;points[12].y+=.15*progress;
     if(kind==='translation')for(const index of [23,24,25,26])points[index].y+=.15*progress;
@@ -249,4 +249,60 @@ test('reset clears confirmed squat-leg failure for the next calibration',()=>{
   assert.equal(t.check(0).fatal,true);
   t.reset();t.update(pose(0),4000);t.save('top');t.update(pose(1),4500);t.save('bottom');
   t.update(pose(.5),4550);assert.equal(t.check(.5).valid,true);
+});
+
+
+test('a render loop cannot finish squat calibration using the last camera pose',()=>{
+  const g=gameWithSquats();hold(g,pose(0),100,2700);
+  assert.equal(g.summary().state,'waitTop');
+  for(let t=2825;t<=3450;t+=25)g.render(t);
+  assert.equal(g.summary().state,'waitTop');
+});
+
+test('empty camera results immediately discard squat calibration evidence',()=>{
+  const g=gameWithSquats();hold(g,pose(0),100,2700);
+  assert.ok(g.summary().progress>0);
+  g.cameraFrame(2825,null);
+  assert.equal(g.metrics(),null);assert.equal(g.summary().progress,0);
+  for(let t=2850;t<=5000;t+=25)g.cameraFrame(t,null);
+  assert.equal(g.summary().state,'waitTop');
+  hold(g,pose(0),5025,1000);assert.equal(g.summary().state,'waitTop');
+  hold(g,pose(0),6050,500);assert.equal(g.summary().state,'waitBottom');
+});
+
+test('an empty camera cannot acquire either calibration position',()=>{
+  const g=gameWithSquats();for(let t=100;t<5000;t+=50)g.cameraFrame(t,null);
+  assert.equal(g.summary().state,'waitTop');assert.equal(g.summary().topY,null);
+  let t=hold(g,pose(0),5000,1600);assert.equal(g.summary().state,'waitBottom');
+  t=hold(g,pose(1),t,700);
+  for(let now=t;now<t+2000;now+=25)g.cameraFrame(now,null);
+  assert.equal(g.summary().state,'waitBottom');assert.equal(g.summary().bottomY,null);
+});
+
+test.each(['edge','side','walking'])('squat setup ignores a person at the %s',kind=>{
+  const g=gameWithSquats();for(let t=100;t<=6000;t+=25){
+    const p=pose(0);if(kind==='edge')for(const i of [11,12,23,24,25,26])p[i].x+=.36;
+    if(kind==='side'){p[11].x=.49;p[12].x=.51;}
+    if(kind==='walking')for(const i of [11,12,23,24,25,26])p[i].x+=.15*Math.sin(t/700);
+    g.step(t,p);
+  }
+  assert.equal(g.summary().state,'waitTop');assert.equal(g.summary().topY,null);
+});
+
+
+test('a held deep squat cannot establish the standing reference',()=>{
+  const g=gameWithSquats();
+  hold(g,pose(1),100,6000);
+  assert.equal(g.summary().state,'waitTop');
+  assert.equal(g.summary().topY,null);
+});
+
+test('squat references average the same camera hold as flight',()=>{
+  // Use an explicit lexical buffer, just as the assembled game supplies it.
+  const src='var stabBuf=[];'+scripts.form+';return {save:saveExperimentalCalibration,set:function(metrics,samples){formCurrentMetrics=metrics;stabBuf=samples;},top:function(){return formTopMetrics;}};';
+  const t=new Function('CONFIG',src)({exercise:'squats',trackingMode:'form-test'});
+  const a={controllerY:.3,shoulders:{x:.5,y:.3},hips:{x:.5,y:.52},squatThighDrop:.2};
+  const b={controllerY:.31,shoulders:{x:.5,y:.31},hips:{x:.5,y:.54},squatThighDrop:.18};
+  t.set(b,[{t:100,metrics:a},{t:150,metrics:b}]);t.save('top',100,.305);
+  assert.equal(t.top().controllerY,.305);assert.equal(t.top().hips.y,.53);assert.equal(t.top().squatThighDrop,.19);
 });

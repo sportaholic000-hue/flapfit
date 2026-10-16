@@ -5,7 +5,7 @@ import { SCRIPT_SQUAT_TRACKING } from './scriptSquatTracking';
 // explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-15.4-squat-leg-evidence';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-15.5-squat-presence';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -292,6 +292,10 @@ function updateExperimentalFormPose(landmarks, now) {
   samplePullupCalibrationTrace(landmarks, now);
   formPoseLandmarks = landmarks;
   formCurrentMetrics = collectExperimentalFormMetrics();
+  if (CONFIG.exercise === 'squats' && (!formCurrentMetrics || formCurrentMetrics.controllerY === null)) {
+    formTrackY = null; lastFormTrackTime = 0;
+    if (typeof stabBuf !== 'undefined') { stabBuf = []; }
+  }
   updateSquatLegEvidence(now);
   sampleSquatTrace(now);
   if (CONFIG.exercise === 'pullups') {
@@ -664,8 +668,8 @@ function validateExperimentalCalibration(position) {
   return formValid();
 }
 
-function pullupStableCalibrationMetrics(since, controllerY) {
-  var samples = pullupCalibrationPoseHistory.filter(function(sample) { return sample.t >= since; });
+function pullupStableCalibrationMetrics(since, controllerY, poseHistory) {
+  var samples = (poseHistory || pullupCalibrationPoseHistory).filter(function(sample) { return sample.t >= since; });
   if (!samples.length) { return formCurrentMetrics; }
   var result = Object.assign({}, formCurrentMetrics);
   // References come from the same stable camera observations as the controller,
@@ -692,6 +696,9 @@ function saveExperimentalCalibration(position, stableSince, controllerY) {
   if (!usesExperimentalFormTracking() || !formCurrentMetrics) { return; }
   var snapshot = CONFIG.exercise === 'pullups' && Number.isFinite(stableSince)
     ? pullupStableCalibrationMetrics(stableSince, controllerY) : formCurrentMetrics;
+  if (CONFIG.exercise === 'squats' && Number.isFinite(stableSince) && typeof stabBuf !== 'undefined') {
+    snapshot = pullupStableCalibrationMetrics(stableSince, controllerY, stabBuf.filter(function(sample) { return !!sample.metrics; }));
+  }
   if (position === 'top') {
     exportPullupCalibrationTrace('accepted-top');
     formTopMetrics = snapshot;

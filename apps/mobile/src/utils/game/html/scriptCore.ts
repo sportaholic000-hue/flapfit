@@ -102,7 +102,7 @@ for (var ci = 0; ci < 5; ci++) {
 var stabBuf = [];
 function stabilityProgress(y, now) {
   var requireFreshPoseSamples = usesExperimentalFormTracking() &&
-    (CONFIG.exercise === 'pullups' || CONFIG.exercise === 'pushups');
+    (CONFIG.exercise === 'pullups' || CONFIG.exercise === 'pushups' || CONFIG.exercise === 'squats');
   if (requireFreshPoseSamples) {
     // Count camera observations, not repeated renders of the same pose.
     var poseTime = lastFormTrackTime;
@@ -116,20 +116,25 @@ function stabilityProgress(y, now) {
     }
     now = poseTime;
   }
-  stabBuf.push({ t: now, y: y });
+  var squatX = usesExperimentalFormTracking() && CONFIG.exercise === 'squats' && formCurrentMetrics && formCurrentMetrics.shoulders
+    ? formCurrentMetrics.shoulders.x : null;
+  stabBuf.push({ t: now, y: y, x: squatX, metrics: squatX !== null ? formCurrentMetrics : null });
   var minimumKept = requireFreshPoseSamples ? 8 : 1;
   while (stabBuf.length > minimumKept && now - stabBuf[0].t > 1600) { stabBuf.shift(); }
   if (stabBuf.length < 8) { return 0; }
-  var mn = 1, mx = 0;
+  var mn = 1, mx = 0, minX = 1, maxX = 0;
   for (var i = 0; i < stabBuf.length; i++) {
     var v = stabBuf[i].y;
     if (v < mn) { mn = v; }
     if (v > mx) { mx = v; }
+    if (squatX !== null) { minX = Math.min(minX, stabBuf[i].x); maxX = Math.max(maxX, stabBuf[i].x); }
   }
   var maxCalibrationDrift = usesExperimentalFormTracking() && CONFIG.exercise === 'pullups'
     ? 0.04
     : 0.028;
-  if (mx - mn > maxCalibrationDrift) { stabBuf = [{ t: now, y: y }]; return 0; }
+  if (mx - mn > maxCalibrationDrift || (squatX !== null && maxX - minX > 0.028)) {
+    stabBuf = [{ t: now, y: y, x: squatX, metrics: squatX !== null ? formCurrentMetrics : null }]; return 0;
+  }
   var span = now - stabBuf[0].t;
   return Math.min(1, span / 1300);
 }
@@ -410,8 +415,17 @@ function trackLoop() {
           wristYSmooth = wristYSmooth + (wy - wristYSmooth) * 0.55;
           lastWristTrackTime = performance.now();
         }
+      } else if (usesExperimentalFormTracking() && CONFIG.exercise === 'squats') {
+        // An empty detector result is new evidence, not permission to reuse the
+        // last person. Clear calibration immediately; keep normal gameplay grace.
+        updateExperimentalFormPose(null, performance.now());
       }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      if (usesExperimentalFormTracking() && CONFIG.exercise === 'squats') {
+        updateExperimentalFormPose(null, performance.now());
+      }
+      console.error(e);
+    }
   }
   updateDot();
   if (trackingLoopActive) { requestAnimationFrame(trackLoop); }
