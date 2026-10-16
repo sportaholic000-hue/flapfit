@@ -21,6 +21,7 @@ export type GameHtmlConfig = {
   recordAudio: boolean;
   recordingBranding?: boolean;
   squatDiagnostics?: boolean;
+  curlDiagnostics?: boolean;
   experimentalCalibrationGuidePlatform?: string;
   endless: boolean;
   brandFirstPipe?: boolean;

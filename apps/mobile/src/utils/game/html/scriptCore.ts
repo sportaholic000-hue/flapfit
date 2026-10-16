@@ -419,10 +419,14 @@ function trackLoop() {
         // An empty detector result is new evidence, not permission to reuse the
         // last person. Clear calibration immediately; keep normal gameplay grace.
         updateExperimentalFormPose(null, performance.now());
+      } else if (curlDiagnosticsEnabled()) {
+        sampleCurlTrace(performance.now(), false);
       }
     } catch (e) {
       if (usesExperimentalFormTracking() && CONFIG.exercise === 'squats') {
         updateExperimentalFormPose(null, performance.now());
+      } else if (curlDiagnosticsEnabled()) {
+        sampleCurlTrace(performance.now(), false);
       }
       console.error(e);
     }

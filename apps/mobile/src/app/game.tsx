@@ -78,6 +78,7 @@ type GameResult = {
   pushups: number;
   tutSeconds: number;
   endReason?: 'form' | 'tracking';
+  fatalCheckKey?: string;
 };
 
 type CompetitionResultState = CompetitionSubmissionOutcome;
@@ -553,6 +554,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
         trackerAssetMode: USE_REMOTE_TRACKER ? 'remote' : 'bundled',
         trackingMode: PRODUCTION_TRACKING_MODE,
         squatDiagnostics: __DEV__ && Platform.OS === 'android',
+        curlDiagnostics: __DEV__ && Platform.OS === 'android',
         exercise: exerciseMode,
         endless: isEndless,
         brandFirstPipe: mode === 'level' && level.id === 1,
@@ -870,6 +872,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
       let msg: {
         type?: string;
         reason?: string;
+        fatalCheckKey?: string;
         score?: number;
         pushups?: number;
         tutSeconds?: number;
@@ -950,6 +953,10 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
         if (__DEV__) console.info('Video finalization:', msg.message ?? 'No measurements');
         return;
       }
+      if (msg.type === 'curldebug') {
+        if (__DEV__ && Platform.OS === 'android') console.info('Curl tracking:', msg.message ?? 'No measurements');
+        return;
+      }
       if (msg.type === 'squatdebug') {
         if (__DEV__) console.info('Squat tracking:', msg.message ?? 'No measurements');
         return;
@@ -1020,7 +1027,9 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
         }
         const endReason =
           msg.reason === 'form' || msg.reason === 'tracking' ? msg.reason : undefined;
-        setResult({ score, pushups, tutSeconds: Math.round(tutSecs), endReason });
+        const fatalCheckKey = __DEV__ && Platform.OS === 'android' && exerciseMode === 'biceps' &&
+          typeof msg.fatalCheckKey === 'string' ? msg.fatalCheckKey : undefined;
+        setResult({ score, pushups, tutSeconds: Math.round(tutSecs), endReason, fatalCheckKey });
       }
     },
     [
@@ -1465,6 +1474,8 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                 {result.endReason === 'form'
                   ? 'Run ended because exercise form could not be verified.'
                   : 'Run ended because camera tracking was lost.'}
+                {__DEV__ && Platform.OS === 'android' && result.fatalCheckKey
+                  ? `\nDiagnostic: ${result.fatalCheckKey}` : null}
               </Text>
             ) : null}
             <View

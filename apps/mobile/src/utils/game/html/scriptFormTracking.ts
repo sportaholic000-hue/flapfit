@@ -1,5 +1,6 @@
 import { SCRIPT_PULLUP_SUPPORT } from './scriptPullupSupport';
 import { SCRIPT_SQUAT_TRACKING } from './scriptSquatTracking';
+import { SCRIPT_CURL_DIAGNOSTICS } from './scriptCurlDiagnostics';
 
 // Form-aware production tracking. The legacy tracker remains available for
 // explicit development comparisons.
@@ -20,6 +21,7 @@ var pullupWristMissingAt = 0;
 var pullupStartReference = null;
 ${SCRIPT_PULLUP_SUPPORT}
 ${SCRIPT_SQUAT_TRACKING}
+${SCRIPT_CURL_DIAGNOSTICS}
 var pullupPoseTrace = [];
 var pullupTraceLastSampleAt = -Infinity;
 var pullupTraceLastExportAt = 0;
@@ -34,6 +36,7 @@ function usesExperimentalFormTracking() {
 
 function resetExperimentalFormTracking() {
   resetSquatTrace();
+  resetCurlTrace();
   resetSquatLegEvidence();
   formPoseLandmarks = null;
   formCurrentMetrics = null;
@@ -328,11 +331,15 @@ function updateExperimentalFormPose(landmarks, now) {
       resetPullupTopReference();
     }
   }
-  if (!formCurrentMetrics || formCurrentMetrics.controllerY === null) { return; }
+  if (!formCurrentMetrics || formCurrentMetrics.controllerY === null) {
+    if (curlDiagnosticsEnabled()) { sampleCurlTrace(now); }
+    return;
+  }
   formTrackY = formCurrentMetrics.controllerY;
   if (formTrackYSmooth === null) { formTrackYSmooth = formTrackY; }
   formTrackYSmooth = formTrackYSmooth + (formTrackY - formTrackYSmooth) * 0.55;
   lastFormTrackTime = now;
+  if (curlDiagnosticsEnabled()) { sampleCurlTrace(now); }
 }
 
 // Optional pull-up context. This runs once per fresh pose and never gates step 1.

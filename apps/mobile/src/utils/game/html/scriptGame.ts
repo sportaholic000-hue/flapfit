@@ -425,7 +425,7 @@ function endGame(reason) {
     copyComposedRecordingFrame(performance.now(), true, true);
     recordingFramesFinished = true;
   }
-  postRN({
+  var gameoverMessage = {
     type: 'gameover',
     reason: reason || '',
     score: score,
@@ -433,7 +433,12 @@ function endGame(reason) {
     tutSeconds: tutSeconds,
     runDurationMs: Math.round(competitionDurationMs),
     unreportedTutSeconds: Math.max(0, tutSeconds - tutReportedSeconds)
-  });
+  };
+  if (CONFIG.exercise === 'biceps' && CONFIG.curlDiagnostics === true) {
+    gameoverMessage.fatalCheckKey = reason === 'form' ? fatalFormKey : '';
+    flushCurlTrace(performance.now(), {reason:reason || '',fatalCheckKey:gameoverMessage.fatalCheckKey});
+  }
+  postRN(gameoverMessage);
   if (recorderWasRunning) {
     setTimeout(stopRunRecording, 50);
   } else {
