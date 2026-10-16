@@ -17,22 +17,19 @@ The current curl controller averages the two wrist Y coordinates, applies 0.55 s
 - End-of-run flush includes the fatal check key. Android development results show that key below the existing run-ended explanation when applicable. Plain pipe collisions do not receive a misleading fatal reason.
 - No change to the accepted squat implementation or another exercise's tracking rules. No iOS branch, main, release tag, build, OTA, recording or dependency change.
 
-## Owner test when ready
+## Owner test when ready — corrected to actual gameplay
 
-Use Android Expo Go, the phone on a chair, and the normal camera distance (roughly 3-6 feet, keeping torso and both full arm movements in view). Use Sky background consistently for comparison. Reload the preview first, select Bicep Curls, and start a NEW run with fresh normal two-arm calibration for each condition:
+The owner clarified that gameplay consists of partial movements, holds and quick changes of direction, and rarely needs a full curl. The earlier steady-curl/full-endpoint test protocol was inappropriate and is superseded here.
 
-A. No weights, palms-up curls.
-B. Light dumbbells, palms-up curls.
-C. The same dumbbells, hammer grip.
-D. Repeat B one step farther from the phone, with both arms still visible.
+Reload Android Expo Go, choose Bicep Curls, use the owner's usual background and phone position, and calibrate normally. Diagnostics work with both Live Camera and Sky; there is no requirement to switch to Sky. Play the actual level normally, following the pipes with simultaneous partial curls, holds at whatever height the game needs, and quick transitions. Do not force full repetitions, a steady tempo, timed endpoint holds or a specified run length.
 
-For each, aim for up to 30 seconds of steady simultaneous curls, then about 5 seconds holding arms down and 5 seconds holding the curled position, if the game allows. A pipe collision or early tracking failure is useful evidence; no need to force a 40-second run or repeat until it succeeds. Tell the agent the A/B/C/D order, any skipped runs and which run felt jittery or ended unexpectedly. The agent collects local Metro logs; the owner does not need to copy JSON or files. Do not change lighting/background between A-C; a separate brighter-background comparison can follow if useful.
+For useful comparisons, use separate freshly calibrated runs with no weights, normal-grip dumbbells, and hammer-grip dumbbells when practical. Keep other conditions similar to help comparison. A farther-distance or different-background run is optional follow-up if the evidence calls for it, not a prerequisite to investigating the normal setup. Tell the agent which grip/weights were used in each run and which felt jittery or ended unexpectedly. Early failure is useful evidence; no need to retry until successful. The agent collects local Metro logs; the owner does not need to copy files.
 
 ## Analysis and fix boundaries
 
 Replay captured observations through the real tracking, calibration and game loop. For each wrist/run report confidence minimum and fifth percentile, Y jump magnitudes, in-frame losses, calibrated range, still-hold bird spread, left/right order changes and check-failure frequency. Distinguish normal collision, gradual model jitter, missing landmarks and a confirmed form-related fall.
 
-Do not automatically implement every proposed fix. Crossing wrists is not proof of a left/right label swap. Freezing flight on missing evidence changes gameplay and must be evaluated against the existing continuous-game behavior. Choose filtering or outlier handling only from measured evidence and compare before/after against normal motion. Do not loosen two-arm synchrony, elbow checks or calibration range without owner approval. Alternating/unilateral curls must continue failing. Preserve the accepted squat baseline a1701e3 and its acceptance record 5e97a4f.
+Do not automatically implement every proposed fix. Crossing wrists is not proof of a left/right label swap. The owner explicitly rejects freezing the bird as a tracking-loss or jitter fix. Do not add freeze/pause behavior or stop pipes/collision processing to mask tracking problems. Choose filtering or outlier handling only from measured evidence and compare before/after against real gameplay, including partial-range movement, holds and rapid transitions. A rapid legitimate movement must not be treated as noise merely because it is faster than steady full repetitions. Do not loosen two-arm synchrony, elbow checks or calibration range without owner approval. Alternating/unilateral curls must continue failing. Preserve the accepted squat baseline a1701e3 and its acceptance record 5e97a4f.
 
 Diagnosis of the physical weighted-curl problem is pending these captures; diagnostics alone are not a jitter fix.
 

@@ -17,3 +17,5 @@
 
 - Display the actual locally saved province/state name after a picker selection. Do not replace it with Quebec/non-Quebec or Connecticut/non-Connecticut categories. Legacy binary answers cannot reveal a previously discarded exact selection; retain their eligibility without inventing a province/state.
 - Results appear before interstitial ads. Preserve the existing ad frequency and immediate result-action behavior; do not add loading waits or change scheduling to repair location state.
+
+- Do not freeze the bird or pause pipes/collision processing as a response to tracking loss or as a way to hide jitter. The owner explicitly rejected that approach. Exercise control must support actual gameplay: partial movements, holds at different heights, and quick changes of direction. Do not require steady full repetitions during gameplay or use them as the sole basis for tuning tracking. Preserve the both-arm requirement for curls and shoulder exercises.
