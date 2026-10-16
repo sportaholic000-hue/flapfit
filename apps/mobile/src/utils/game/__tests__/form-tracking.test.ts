@@ -139,7 +139,7 @@ describe('experimental form tracking', () => {
     expect(() => new Function(SCRIPT_CORE + SCRIPT_FORM_TRACKING + SCRIPT_GAME)).not.toThrow();
   });
 
-  it('uses hips rather than head movement to control squats', () => {
+  it('uses shoulders rather than head movement to control squats', () => {
     const harness = makeHarness('squats');
     const standing = pose([
       ...mirroredPair(11, 12, 0.42, 0.3),

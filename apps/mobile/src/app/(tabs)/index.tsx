@@ -297,7 +297,7 @@ export default function HomeScreen() {
 
   const exDescriptions: Record<string, string> = {
     squats:
-      'Stand tall = top, deep squat = bottom. Phone on the floor or a chair, 3–6 ft in front.',
+      'Stand tall = top, deep squat = bottom. Keep shoulders, hips, and knees visible; feet can be out of frame. Phone on a chair or the floor.',
     pullups:
       'Eye line at the bar = top, comfortable hang with a slight elbow bend = bottom. Phone on a chair or higher, 4–6 ft in front; keep both hands on the bar.',
     lateralraise:

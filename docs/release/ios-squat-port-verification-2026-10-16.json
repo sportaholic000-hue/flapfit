@@ -1,0 +1,241 @@
+{
+  "verifiedAt": "2026-10-16T04:07:03.589Z",
+  "branch": "codex/ios-design-update-2026-10-14",
+  "status": "Prepared for iPhone acceptance; not release-approved",
+  "baseline": "75574c92af60211e707c5a1d28c6ad784c0f0471",
+  "acceptedImplementation": "a1701e36990f73e7b170ab5951821a31d819cc4f",
+  "acceptanceRecord": "5e97a4fb2bff610ec2b46537cbb00dc6a74d2f22",
+  "exactAcceptedFiles": [
+    "apps/mobile/src/app/(tabs)/index.tsx",
+    "apps/mobile/src/utils/game/html/scriptCore.ts",
+    "apps/mobile/src/utils/game/html/scriptGame.ts",
+    "apps/mobile/src/utils/game/__tests__/form-tracking.test.ts"
+  ],
+  "acceptedSquatAndFormWithOnlyPreviewDiagnosticsRemoved": true,
+  "protectedFilesUnchanged": [
+    "apps/mobile/src/app/game.tsx",
+    "apps/mobile/src/utils/game/gameHtml.ts",
+    "apps/mobile/src/utils/game/experimentalCalibrationGuide.ts",
+    "apps/mobile/src/utils/game/iosCalibrationImageData.ts",
+    "apps/mobile/src/utils/game/calibrationGuideArtwork.ts",
+    "apps/mobile/src/utils/game/html/scriptPullupSupport.ts",
+    "apps/mobile/src/app/onboarding.tsx",
+    "apps/mobile/src/app/(tabs)/levels.tsx",
+    "apps/mobile/src/app/(tabs)/stats.tsx",
+    "apps/mobile/package.json",
+    "apps/mobile/eas.json",
+    "apps/mobile/app.config.js",
+    "AGENTS.md"
+  ],
+  "productionChanges": [
+    "apps/mobile/src/app/(tabs)/index.tsx",
+    "apps/mobile/src/utils/game/html/scriptCore.ts",
+    "apps/mobile/src/utils/game/html/scriptGame.ts",
+    "apps/mobile/src/utils/game/html/scriptFormTracking.ts",
+    "apps/mobile/src/utils/game/html/scriptSquatTracking.ts"
+  ],
+  "changedPaths": [
+    "apps/mobile/src/app/(tabs)/index.tsx",
+    "apps/mobile/src/utils/game/__tests__/form-tracking.test.ts",
+    "apps/mobile/src/utils/game/html/scriptCore.ts",
+    "apps/mobile/src/utils/game/html/scriptFormTracking.ts",
+    "apps/mobile/src/utils/game/html/scriptGame.ts",
+    "apps/mobile/src/utils/game/testUtils/pullupGameplayHarness.js",
+    "apps/mobile/src/utils/game/__tests__/squat-foot-free.test.js",
+    "apps/mobile/src/utils/game/html/scriptSquatTracking.ts"
+  ],
+  "files": [
+    {
+      "file": "apps/mobile/src/app/(tabs)/index.tsx",
+      "normalizedSHA256": "8bce0f32eec8f9f9ce0145bfb68e250226e699f32d97b9471096fbf8c325afb1"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptCore.ts",
+      "normalizedSHA256": "2ca82432b2dd6c0dfeadad00dde80ddb335365301ad13684e82776cdc32d81e3"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptGame.ts",
+      "normalizedSHA256": "e841a9aacd0886f06eb620b0c762c9c2da4b0be731fad3996f93a1093334a976"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/form-tracking.test.ts",
+      "normalizedSHA256": "d01125f49ba7cacb23ec05a4db1b1fe3f62c203cac4214bea375ed39394e0a60"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptFormTracking.ts",
+      "normalizedSHA256": "2709a84c86b39f19b37c58801d121851d40aac03b3042eff84acdd5cc42d9721"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/html/scriptSquatTracking.ts",
+      "normalizedSHA256": "5749bb2165045fb54f4f3cdf8fed277ca56f4d7775207011683f27947e863292"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/testUtils/pullupGameplayHarness.js",
+      "normalizedSHA256": "166987244830f80b2e57b051c9872a01665eb135299f10fb15c83065d89cb074"
+    },
+    {
+      "file": "apps/mobile/src/utils/game/__tests__/squat-foot-free.test.js",
+      "normalizedSHA256": "8eb670fdb792353b45fc207ecb02927cd4f6db70871f10fa82ed526250b3016f"
+    }
+  ],
+  "tests": {
+    "passed": 434,
+    "total": 434,
+    "suites": 26,
+    "failed": 0,
+    "pending": 0,
+    "runner": "Existing Expo/Jest preset, --runInBand --runTestsByPath, America/Halifax timezone; no timeout override",
+    "suitesDetail": [
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/squat-foot-free.test.js",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/bird-stage-assets.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-gameplay-flow.test.js",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/form-tracking.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/mediapipe-recovery.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pushup-top-entry.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/championship-achievements.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-top-entry.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/continuous-gameplay.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/ios-calibration-artwork.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/camera-preview.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/competition-profile-reset.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/evolution-core.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/recording-mp4.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-standing-reach.test.js",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-grab-entry.test.js",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-elbow-clearance.test.js",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/game-modes.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-top-first.test.js",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-support-reference.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/pullup-top-reference.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/level-rules.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/recording-boundaries.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/recording-branding.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/store-hydration.test.ts",
+        "status": "passed"
+      },
+      {
+        "file": "apps/mobile/src/utils/game/__tests__/stats-history.test.ts",
+        "status": "passed"
+      }
+    ],
+    "squatCases": 40
+  },
+  "checks": [
+    {
+      "name": "release-config",
+      "exitCode": 1,
+      "seconds": 1
+    },
+    {
+      "name": "manual-ota",
+      "exitCode": 0,
+      "seconds": 0
+    },
+    {
+      "name": "lint",
+      "exitCode": 0,
+      "seconds": 36
+    },
+    {
+      "name": "typescript",
+      "exitCode": 0,
+      "seconds": 179
+    }
+  ],
+  "productionApproval": {
+    "status": "Pending physical iPhone acceptance",
+    "soleValidationFailure": "FLAPFIT_APPROVED_TRACKER_RULES_VERSION: must match the physically approved form-tracking rules version",
+    "profileVersion": "2026-10-08.3-pushup-body-entry",
+    "candidateVersion": "2026-10-15.5-squat-presence",
+    "profileAndValidatorUnchanged": true,
+    "nextStep": "After owner accepts iPhone testing, reconcile the existing production approval marker with the tested tracker version and rerun release validation before an authorized production build."
+  },
+  "protectedRefs": {
+    "main": "0041d2680bd2db652dd26813c96e5489b5bc1dac",
+    "iosReviewBranch": "f2b8131326d33c3e38d9db8814be777d7b31ad25",
+    "build8TagObject": "ad5d08d0f3aadf0497f3452f0a12e241e352fbfe",
+    "submittedBuild11Source": "fcbf4e0c4bb2b5bdb07d85e5630f173786a72718"
+  },
+  "nativeDeviceTesting": "Not performed by this preparation; Android owner acceptance is recorded separately.",
+  "actionsNotTaken": [
+    "Build",
+    "Upload",
+    "OTA publication",
+    "Apple submission or release",
+    "Change main or submitted release refs",
+    "Change Android branches"
+  ]
+}

@@ -650,7 +650,7 @@ function computeNorm() {
 
 function topCalibrationMessage() {
   if (CONFIG.exercise === 'squats') {
-    return 'STEP 1 OF 2<br><br>Stand <b>TALL</b><br>Feet shoulder-width apart, head up<br><br>Hold still…';
+    return 'STEP 1 OF 2<br><br>Stand <b>TALL</b><br>Feet shoulder-width apart, head up<br><small>Keep shoulders, hips, and knees visible; feet can be out of frame.</small><br><br>Hold still…';
   }
   if (CONFIG.exercise === 'pullups') {
       if (usesExperimentalFormTracking()) {
@@ -794,7 +794,7 @@ function loop(now) {
       }
       var frameMsg;
       if (CONFIG.exercise === 'squats') {
-        frameMsg = 'Get your head and body in frame<br><small>Place phone on the floor or a chair, 3–6 ft in front</small>';
+        frameMsg = 'Keep shoulders, hips, and knees in frame<br><small>Feet can stay outside the frame; place phone on a chair or the floor</small>';
       } else if (CONFIG.exercise === 'pullups') {
         frameMsg = usesExperimentalFormTracking()
           ? 'Get your upper body in frame<br><small>Both hands, elbows, and shoulders must stay visible; place phone 4–6 ft away</small>'
