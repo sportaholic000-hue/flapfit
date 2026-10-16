@@ -683,6 +683,7 @@ function loop(now) {
   var dt = Math.min(0.035, rawFrameMs / 1000);
   var drewPlayableRecordingFrame = false;
   lastFrame = now;
+  if (CONFIG.exercise === 'biceps' && CONFIG.curlDiagnostics === true) { recordCurlRenderInterval(rawFrameMs); }
 
   for (var i = 0; i < clouds.length; i++) {
     clouds[i].x -= (clouds[i].v * dt) / Math.max(1, W);

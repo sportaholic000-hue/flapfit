@@ -1,4 +1,5 @@
-// Curl-only control filtering; raw form evidence stays independent.
+// Curl calibration filtering only; gameplay uses its original response.
+// Raw form evidence stays independent.
 // Must NOT contain backticks.
 export const SCRIPT_CURL_TRACKING = `
 var curlFilterSamples = [], curlFilterMedian = null, curlFilterTime = null;

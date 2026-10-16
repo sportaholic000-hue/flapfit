@@ -1,7 +1,7 @@
 # Android curl control correction — phone evidence and verification
 
 Branch: codex/android-design-integration. Rules version: 2026-10-16.1-curl-control.
-Status: implemented for Android preview; physical owner acceptance is still required.
+Status: REJECTED in physical testing. The owner reported added no-weight lag and continued weighted jitter. Gameplay filtering was removed in the follow-up documented in android-curl-model-preview-2026-10-16.md. This document preserves the first experiment and is not an accepted fix.
 
 ## Owner observations
 

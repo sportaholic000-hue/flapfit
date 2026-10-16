@@ -26,7 +26,7 @@ function enter(g) {
   for(;t<=6500;t+=50)camera(g,t,pose(1));assert.equal(g.summary().state,'countdown');
   for(;t<=10000;t+=50)camera(g,t,pose(.5));assert.equal(g.summary().state,'play');return t;
 }
-test('single-wrist spike does not kick the controller; fresh two-arm motion still responds',()=>{
+test('calibration filter suppresses a wrist spike and follows a changed hold',()=>{
   const f=filter();for(let t=50;t<=500;t+=50)f.run(input(.4),t);
   assert.equal(f.run(input(.4,.46),550),.4);assert.equal(f.run(input(.4),600),.4);
   for(let t=650;t<=800;t+=50)f.run(input(.36),t);
@@ -70,4 +70,27 @@ test('both missing wrists still end flight; filter does not pause the world',()=
   const g=game();let t=enter(g);const x=g.summary().pipeX;const p=pose(.5);p[15].visibility=0;p[16].visibility=0;
   for(let i=0;i<70;i++,t+=50)camera(g,t,p);
   assert.ok(g.summary().pipeX<x);assert.equal(g.messages.find(m=>m.type==='gameover').reason,'form');
+});
+
+test('gameplay restores exactly the original 0.55 response with no median or adaptive delay',()=>{
+  const g=game();let t=enter(g);let state=g.summary();let previous=state.bottomY-state.norm*(state.bottomY-state.topY);
+  for(const down of [.3,.7,.2,.65,.4,.55]){const p=pose(down);const expected=previous+(p[15].y-previous)*.55;camera(g,t,p);state=g.summary();const actual=state.bottomY-state.norm*(state.bottomY-state.topY);assert.ok(Math.abs(actual-expected)<1e-10);previous=expected;t+=50;}
+});
+test('Full model selection is explicit and limited to remote curl previews',()=>{
+  const core=scripts.core;const start=core.indexOf('function usesCurlFullModelPreview()');const end=core.indexOf('var trackerDelegate',start);
+  const select=new Function('CONFIG','REMOTE_MODEL_URL',core.slice(start,end)+';return remotePoseModelUrl();');
+  for(const exercise of ['pushups','squats','pullups','lateralraise','shoulderpress','biceps'])for(const mode of ['bundled','remote'])for(const enabled of [false,true]){
+    const url=select({exercise,trackerAssetMode:mode,curlFullModelPreview:enabled},'lite');
+    assert.equal(url.includes('pose_landmarker_full'),exercise==='biceps'&&mode==='remote'&&enabled);
+  }
+  const fs=require('node:fs'),path=require('node:path');const screen=fs.readFileSync(path.resolve(__dirname,'../../../app/game.tsx'),'utf8');
+  assert.ok(screen.includes("curlFullModelPreview: __DEV__ && Platform.OS === 'android' && USE_REMOTE_TRACKER"));
+});
+test('curl timing records render and detector duration without changing flight',()=>{
+  const g=game();let t=enter(g);for(let i=0;i<60;i++,t+=50)camera(g,t,pose(.5));
+  const batches=g.messages.filter(m=>m.type==='curldebug').map(m=>JSON.parse(m.message));
+  assert.ok(batches.some(b=>b.render.count>0&&b.render.totalMs>0));
+  assert.ok(batches.flatMap(b=>b.rows).some(r=>r.state==='play'&&r.inferenceMs===0));
+  assert.ok(batches.every(b=>b.controller==='curl-cal-filter-flight-original'));
+  assert.equal(g.summary().state,'play');assert.equal(g.summary().crashReason,'');
 });

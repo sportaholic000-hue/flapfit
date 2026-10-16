@@ -555,6 +555,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
         trackingMode: PRODUCTION_TRACKING_MODE,
         squatDiagnostics: __DEV__ && Platform.OS === 'android',
         curlDiagnostics: __DEV__ && Platform.OS === 'android',
+        curlFullModelPreview: __DEV__ && Platform.OS === 'android' && USE_REMOTE_TRACKER,
         exercise: exerciseMode,
         endless: isEndless,
         brandFirstPipe: mode === 'level' && level.id === 1,

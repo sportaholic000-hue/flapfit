@@ -3,19 +3,31 @@
 export const SCRIPT_CURL_DIAGNOSTICS = `
 var curlTraceRows = [], curlTraceLastPose = null, curlTraceLastSample = -Infinity;
 var curlTraceLastSend = 0, curlTraceSession = '';
+var curlLastInferenceMs = null;
+var curlRenderStats = {count:0,totalMs:0,maxMs:0,over50Ms:0};
+function recordCurlRenderInterval(ms) {
+  if (!curlDiagnosticsEnabled() || state !== 'play') { return; }
+  curlRenderStats.count++; curlRenderStats.totalMs += ms;
+  curlRenderStats.maxMs = Math.max(curlRenderStats.maxMs, ms);
+  if (ms > 50) { curlRenderStats.over50Ms++; }
+}
 function curlDiagnosticsEnabled() {
   return CONFIG.exercise === 'biceps' && CONFIG.curlDiagnostics === true;
 }
 function resetCurlTrace() {
   curlTraceRows = []; curlTraceLastPose = null; curlTraceLastSample = -Infinity;
   curlTraceLastSend = 0; curlTraceSession = '';
+  curlLastInferenceMs = null; curlRenderStats = {count:0,totalMs:0,maxMs:0,over50Ms:0};
 }
 function flushCurlTrace(now, terminal) {
   if (!curlDiagnosticsEnabled() || typeof postRN !== 'function' || (!curlTraceRows.length && !terminal)) { return; }
-  postRN({type:'curldebug',message:JSON.stringify({version:'curl-trace-1',controller:'curl-filter-1',session:curlTraceSession,
+  postRN({type:'curldebug',message:JSON.stringify({version:'curl-trace-1',controller:'curl-cal-filter-flight-original',
+    model:typeof usesCurlFullModelPreview === 'function' && usesCurlFullModelPreview() ? 'full' : 'lite',
+    delegate:typeof trackerDelegate === 'undefined' ? null : trackerDelegate,render:curlRenderStats,session:curlTraceSession,
     video:typeof video !== 'undefined' ? [video.videoWidth,video.videoHeight] : null,
     viewport:typeof W !== 'undefined' ? [W,H] : null,rows:curlTraceRows,terminal:terminal || null})});
   curlTraceRows = []; curlTraceLastSend = now;
+  curlRenderStats = {count:0,totalMs:0,maxMs:0,over50Ms:0};
 }
 function sampleCurlTrace(now, detected) {
   if (!curlDiagnosticsEnabled() || typeof postRN !== 'function') { return; }
@@ -45,7 +57,7 @@ function sampleCurlTrace(now, detected) {
   // including its stale value if the detector returned no person; never clear it here.
   var check = phase === 'play' ? validateExperimentalGameplay(norm)
     : phase === 'waitTop' || phase === 'waitBottom' ? validateExperimentalCalibration(phase === 'waitTop' ? 'top' : 'bottom') : null;
-  curlTraceRows.push({t:number(now),dt:number(dt),state:phase,detected:hasPose,points:points,
+  curlTraceRows.push({t:number(now),dt:number(dt),inferenceMs:number(curlLastInferenceMs),state:phase,detected:hasPose,points:points,
     leftElbowAngle:hasPose ? number(formJointAngle(formPoint(11,.24),formPoint(13,.24),formPoint(15,.24))) : null,
     rightElbowAngle:hasPose ? number(formJointAngle(formPoint(12,.24),formPoint(14,.24),formPoint(16,.24))) : null,
     elbowAngle:number(metrics && metrics.elbowAngle),elbowCount:metrics ? metrics.elbowCount : 0,

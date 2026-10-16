@@ -184,6 +184,18 @@ function stopCameraAndTracking() {
 // development keeps the previously proven HTTPS loader for fast iteration.
 var REMOTE_VISION_BASE_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
 var REMOTE_MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task';
+// Development-only opt-in is supplied by the Android Expo screen. Bundled builds
+// and every other exercise retain the existing model and loader.
+function usesCurlFullModelPreview() {
+  return CONFIG.exercise === 'biceps' && CONFIG.curlFullModelPreview === true &&
+    CONFIG.trackerAssetMode === 'remote';
+}
+function remotePoseModelUrl() {
+  return usesCurlFullModelPreview()
+    ? 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task'
+    : REMOTE_MODEL_URL;
+}
+var trackerDelegate = null;
 var TRACKER_ASSET_NAMES = ['module', 'loader', 'wasm', 'model'];
 var trackerAssetChunks = {};
 var trackerAssetValues = {};
@@ -288,7 +300,7 @@ function loadTrackerRuntime() {
   if (CONFIG.trackerAssetMode === 'remote') {
     return import(REMOTE_VISION_BASE_URL + '/vision_bundle.mjs').then(function(vision) {
       return vision.FilesetResolver.forVisionTasks(REMOTE_VISION_BASE_URL + '/wasm').then(function(files) {
-        return { vision: vision, files: files, modelAssetPath: REMOTE_MODEL_URL };
+        return { vision: vision, files: files, modelAssetPath: remotePoseModelUrl() };
       });
     });
   }
@@ -331,8 +343,10 @@ function initCameraFlow() {
       };
       var createLandmarker = runtime.vision.PoseLandmarker
         .createFromOptions(runtime.files, makeOpts('GPU'))
+        .then(function(lm) { trackerDelegate = 'GPU'; return lm; })
         .catch(function () {
-          return runtime.vision.PoseLandmarker.createFromOptions(runtime.files, makeOpts('CPU'));
+          return runtime.vision.PoseLandmarker.createFromOptions(runtime.files, makeOpts('CPU'))
+            .then(function(lm) { trackerDelegate = 'CPU'; return lm; });
         });
       return createLandmarker.then(function(lm) {
         if (runtime.release) { runtime.release(); }
@@ -374,7 +388,10 @@ function trackLoop() {
   if (landmarker && video.readyState >= 2 && video.currentTime !== lastVideoTime) {
     lastVideoTime = video.currentTime;
     try {
+      var curlTimingStart = curlDiagnosticsEnabled() ? performance.now() : null;
+      if (curlTimingStart !== null) { curlLastInferenceMs = null; }
       var res = landmarker.detectForVideo(video, performance.now());
+      if (curlTimingStart !== null) { curlLastInferenceMs = performance.now() - curlTimingStart; }
       if (res && res.landmarks && res.landmarks.length > 0) {
         var lm = res.landmarks[0];
         if (usesExperimentalFormTracking()) {

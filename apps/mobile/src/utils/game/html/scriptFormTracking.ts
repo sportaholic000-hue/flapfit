@@ -7,7 +7,7 @@ import { SCRIPT_CURL_TRACKING } from './scriptCurlTracking';
 // explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-16.1-curl-control';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-16.2-curl-model-preview';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -347,7 +347,9 @@ function updateExperimentalFormPose(landmarks, now) {
   }
   formTrackY = formCurrentMetrics.controllerY;
   if (formTrackYSmooth === null) { formTrackYSmooth = formTrackY; }
-  formTrackYSmooth = CONFIG.exercise === 'biceps'
+  // Keep noise filtering for calibration only. The owner rejected its gameplay delay.
+  formTrackYSmooth = CONFIG.exercise === 'biceps' && typeof state !== 'undefined' &&
+      (state === 'waitTop' || state === 'waitBottom')
     ? filterCurlController(formCurrentMetrics, now)
     : formTrackYSmooth + (formTrackY - formTrackYSmooth) * 0.55;
   lastFormTrackTime = now;
