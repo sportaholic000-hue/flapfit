@@ -823,7 +823,8 @@ function loop(now) {
     }
   } else if (state === 'countdown') {
     prevBirdNorm = birdNorm;
-    birdNorm += (norm - birdNorm) * Math.min(1, dt * 16);
+    birdNorm += (norm - birdNorm) * (CONFIG.exercise === 'biceps' && usesCurlForearmControl()
+      ? curlBirdResponseGain(rawFrameMs) : Math.min(1, dt * 16));
     drawBird(now);
     drawCountdownNumber(now);
     if (now >= countdownEnd) {
@@ -852,7 +853,8 @@ function loop(now) {
       crashFallVelocity += 2.8 * dt;
       birdNorm -= crashFallVelocity * dt;
     } else {
-      birdNorm += (norm - birdNorm) * Math.min(1, dt * 16);
+      birdNorm += (norm - birdNorm) * (CONFIG.exercise === 'biceps' && usesCurlForearmControl()
+      ? curlBirdResponseGain(rawFrameMs) : Math.min(1, dt * 16));
       updatePushups(norm);
     }
 

@@ -113,3 +113,31 @@ test('arbitrary or missing world coordinates cannot affect calibration or flight
  const a=game(),b=game();let t=enter(a);enter(b,(_,w)=>{w.splice(0,w.length);});
  for(let i=0;i<100;i++,t+=50){const angle=90+25*Math.sin(i/7);camera(a,t,angle);camera(b,t,angle,angle,(_,w)=>{for(const p of w){p.y=i%2?20:-20;p.z=i%2?-30:30;p.visibility=0;}});assert.deepEqual(a.summary(),b.summary());}
 });
+
+
+const curlFollowGain=new Function(require('../html/scriptCurlForearmTracking').SCRIPT_CURL_FOREARM_TRACKING+';return curlBirdResponseGain;')();
+test('curl follow reaches the same position at equal elapsed time across render cadences',()=>{
+ const follow=steps=>{let y=.2;for(const dt of steps)y+=(.8-y)*curlFollowGain(dt);return y;};
+ const regular=Array.from({length:12},()=>1000/30);
+ const fast=Array.from({length:24},()=>1000/60);
+ const uneven=Array.from({length:6},()=>[1000/60,50]).flat();
+ assert.ok(Math.abs(follow(regular)-follow(fast))<1e-12);assert.ok(Math.abs(follow(regular)-follow(uneven))<1e-12);
+});
+test('curl follow matches existing 30 fps response without a new temporal filter',()=>{
+ assert.ok(Math.abs(curlFollowGain(1000/30)-16/30)<1e-12);
+ assert.ok(curlFollowGain(50)>Math.min(1,.035*16));
+ assert.equal(curlFollowGain(0),0);assert.equal(curlFollowGain(-10),0);
+ assert.equal(curlFollowGain(200),curlFollowGain(100));assert.ok(Number.isFinite(curlFollowGain(NaN)));
+});
+test('curl follow supports rapid reversals and small partial changes without overshoot',()=>{
+ let y=.5;for(const [target,dt] of [[.8,50],[.2,16],[.21,36],[.7,50],[.69,16],[.3,33]]){
+  const old=y;y+=(target-y)*curlFollowGain(dt);assert.ok(y>=Math.min(old,target)&&y<=Math.max(old,target));assert.ok(Math.abs(y-target)<Math.abs(old-target));
+ }
+});
+
+
+test('actual curl gameplay uses elapsed render time consistently after the same hand observation',()=>{
+ const run=steps=>{const g=game();const t=enter(g);camera(g,t,70);let now=t;for(const dt of steps){now+=dt;g.render(now);}assert.equal(g.summary().crashReason,'');return g.summary();};
+ const a=run(Array.from({length:12},()=>1000/30));const b=run(Array.from({length:6},()=>[1000/60,50]).flat());
+ assert.equal(a.norm,b.norm);assert.ok(Math.abs(a.birdNorm-b.birdNorm)<1e-10);
+});

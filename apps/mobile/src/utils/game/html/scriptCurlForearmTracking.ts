@@ -6,6 +6,15 @@ function usesCurlForearmControl() {
   return CONFIG.exercise === 'biceps' && CONFIG.curlForearmControl === true;
 }
 
+// Same follow response as the existing 16*dt easing at 30 fps, expressed in
+// elapsed time. Camera inference must not shorten the bird's follow interval.
+// Only movement toward the measured target; no prediction, overshoot or freeze.
+function curlBirdResponseGain(elapsedMs) {
+  if (!Number.isFinite(elapsedMs)) { elapsedMs=1000/60; }
+  var boundedMs=Math.max(0,Math.min(100,elapsedMs));
+  return 1-Math.pow(1-16/30,boundedMs/(1000/30));
+}
+
 function curlHandMedian(values) {
   values.sort(function(a,b){return a-b;});
   var middle=Math.floor(values.length/2);

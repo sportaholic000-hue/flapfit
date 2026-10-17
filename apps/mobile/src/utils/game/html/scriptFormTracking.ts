@@ -8,7 +8,7 @@ import { SCRIPT_CURL_FOREARM_TRACKING } from './scriptCurlForearmTracking';
 // explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-17.2-curl-image-hand-experiment';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-17.3-curl-frame-timing';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
