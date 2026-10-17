@@ -557,6 +557,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
         squatDiagnostics: __DEV__ && Platform.OS === 'android',
         curlDiagnostics: __DEV__ && Platform.OS === 'android',
         curlForearmControl: __DEV__ && Platform.OS === 'android',
+        curlWorkerTracking: __DEV__ && Platform.OS === 'android',
         exercise: exerciseMode,
         endless: isEndless,
         brandFirstPipe: mode === 'level' && level.id === 1,

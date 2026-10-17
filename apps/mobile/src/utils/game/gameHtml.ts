@@ -23,6 +23,7 @@ export type GameHtmlConfig = {
   squatDiagnostics?: boolean;
   curlDiagnostics?: boolean;
   curlForearmControl?: boolean;
+  curlWorkerTracking?: boolean;
   experimentalCalibrationGuidePlatform?: string;
   endless: boolean;
   brandFirstPipe?: boolean;

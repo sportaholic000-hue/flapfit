@@ -23,6 +23,7 @@ function flushCurlTrace(now, terminal) {
   if (!curlDiagnosticsEnabled() || typeof postRN !== 'function' || (!curlTraceRows.length && !terminal)) { return; }
   postRN({type:'curldebug',message:JSON.stringify({version:'curl-trace-1',controller:usesCurlForearmControl() ? 'hand-image-1' : 'curl-cal-filter-flight-original',
     response:usesCurlForearmControl() ? 'elapsed-follow-1' : 'legacy-frame-follow',
+    trackingThread:typeof curlTrackingThread === 'undefined' ? 'main' : curlTrackingThread,
     model:'lite',calibration:usesCurlForearmControl() ? 'eye-top-hand-bottom-1' : 'each-arm-1',formGeometry:usesCurlForearmControl() ? 'shoulder-free-image-hand-1' : 'world-when-calibrated-1',
     references:{top:formTopMetrics,bottom:formBottomMetrics},
     delegate:typeof trackerDelegate === 'undefined' ? null : trackerDelegate,render:curlRenderStats,session:curlTraceSession,
@@ -67,7 +68,7 @@ function sampleCurlTrace(now, detected) {
   // including its stale value if the detector returned no person; never clear it here.
   var check = phase === 'play' ? validateExperimentalGameplay(norm)
     : phase === 'waitTop' || phase === 'waitBottom' ? validateExperimentalCalibration(phase === 'waitTop' ? 'top' : 'bottom') : null;
-  curlTraceRows.push({t:number(now),dt:number(dt),inferenceMs:number(curlLastInferenceMs),state:phase,detected:hasPose,points:points,worldPoints:worldPoints,
+  curlTraceRows.push({t:number(now),dt:number(dt),inferenceMs:number(curlLastInferenceMs),frameAgeMs:number(typeof curlFrameAgeMs === 'undefined' ? null : curlFrameAgeMs),state:phase,detected:hasPose,points:points,worldPoints:worldPoints,
     leftElbowAngle:hasPose ? number(formJointAngle(formPoint(11,.24),formPoint(13,.24),formPoint(15,.24))) : null,
     rightElbowAngle:hasPose ? number(formJointAngle(formPoint(12,.24),formPoint(14,.24),formPoint(16,.24))) : null,
     handPosition:usesCurlForearmControl() && metrics ? [metrics.leftWrist,metrics.rightWrist] : null,

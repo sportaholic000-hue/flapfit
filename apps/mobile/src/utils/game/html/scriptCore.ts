@@ -1,3 +1,5 @@
+import { SCRIPT_CURL_WORKER_TRACKING } from './scriptCurlWorkerTracking';
+
 // Core script for the in-WebView game: setup, overlay UI, audio, camera,
 // MediaPipe pose tracking, and calibration helpers.
 // This is injected into a <script> tag. It must not contain backticks.
@@ -185,6 +187,7 @@ function stopCameraAndTracking() {
 var REMOTE_VISION_BASE_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
 var REMOTE_MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task';
 var trackerDelegate = null;
+${SCRIPT_CURL_WORKER_TRACKING}
 var TRACKER_ASSET_NAMES = ['module', 'loader', 'wasm', 'model'];
 var trackerAssetChunks = {};
 var trackerAssetValues = {};
@@ -316,10 +319,8 @@ function reportPullupCameraStartup(stage) {
   }
 }
 
-function initCameraFlow() {
-  reportPullupCameraStartup('loading-tracker');
-  showOverlay(CONFIG.trackerAssetMode === 'remote' ? 'Loading camera tracking engine…' : 'Loading on-device tracking engine…', CONFIG.trackerAssetMode !== 'remote');
-  loadTrackerRuntime().then(function (runtime) {
+function createMainThreadTracker() {
+  return loadTrackerRuntime().then(function (runtime) {
       var makeOpts = function (delegate) {
         var baseOptions = { delegate: delegate };
         if (runtime.modelAssetBuffer) { baseOptions.modelAssetBuffer = runtime.modelAssetBuffer; }
@@ -344,7 +345,20 @@ function initCameraFlow() {
         if (runtime.release) { runtime.release(); }
         throw err;
       });
-  }).then(function (lm) {
+  });
+}
+
+function initCameraFlow() {
+  reportPullupCameraStartup('loading-tracker');
+  showOverlay(CONFIG.trackerAssetMode === 'remote' ? 'Loading camera tracking engine…' : 'Loading on-device tracking engine…', CONFIG.trackerAssetMode !== 'remote');
+  var useCurlWorker = CONFIG.exercise === 'biceps' && CONFIG.curlForearmControl === true &&
+    CONFIG.curlWorkerTracking === true && CONFIG.trackerAssetMode === 'remote';
+  var trackerPromise = useCurlWorker ? createCurlWorkerTracker().catch(function(error) {
+    curlTrackingThread='main-fallback';
+    console.warn('Curl worker unavailable; using existing tracker',error.message);
+    return createMainThreadTracker();
+  }) : createMainThreadTracker();
+  trackerPromise.then(function (lm) {
     landmarker = lm;
     reportPullupCameraStartup('starting-camera');
     showOverlay('Starting camera…', false);
@@ -374,6 +388,13 @@ function initCameraFlow() {
 
 function trackLoop() {
   if (!trackingLoopActive) { return; }
+  if (landmarker && landmarker.curlWorker) {
+    if (video.readyState >= 2 && video.currentTime !== lastVideoTime &&
+        landmarker.submitFrame(video,performance.now())) { lastVideoTime=video.currentTime; }
+    updateDot();
+    if (trackingLoopActive) { requestAnimationFrame(trackLoop); }
+    return;
+  }
   if (landmarker && video.readyState >= 2 && video.currentTime !== lastVideoTime) {
     lastVideoTime = video.currentTime;
     try {
@@ -381,10 +402,28 @@ function trackLoop() {
       if (curlTimingStart !== null) { curlLastInferenceMs = null; }
       var res = landmarker.detectForVideo(video, performance.now());
       if (curlTimingStart !== null) { curlLastInferenceMs = performance.now() - curlTimingStart; }
+      acceptTrackedPose(res);
+    } catch (e) {
+      if (usesExperimentalFormTracking() && CONFIG.exercise === 'squats') {
+        updateExperimentalFormPose(null, performance.now());
+      } else if (usesExperimentalFormTracking() && CONFIG.exercise === 'biceps' &&
+          (state === 'waitTop' || state === 'waitBottom')) {
+        updateExperimentalFormPose(null, performance.now());
+      } else if (curlDiagnosticsEnabled()) {
+        sampleCurlTrace(performance.now(), false);
+      }
+      console.error(e);
+    }
+  }
+  updateDot();
+  if (trackingLoopActive) { requestAnimationFrame(trackLoop); }
+}
+
+function acceptTrackedPose(res, poseTime) {
       if (res && res.landmarks && res.landmarks.length > 0) {
         var lm = res.landmarks[0];
         if (usesExperimentalFormTracking()) {
-          updateExperimentalFormPose(lm, performance.now(), res.worldLandmarks && res.worldLandmarks[0]);
+          updateExperimentalFormPose(lm, (poseTime === undefined ? performance.now() : poseTime), res.worldLandmarks && res.worldLandmarks[0]);
         }
         var nose = lm[0], ls = lm[11], rs = lm[12];
         var nv = (nose && nose.visibility !== undefined) ? nose.visibility : 1;
@@ -408,7 +447,7 @@ function trackLoop() {
           headY = y;
           if (headYSmooth === null) { headYSmooth = y; }
           headYSmooth = headYSmooth + (y - headYSmooth) * 0.55;
-          lastHeadTrackTime = performance.now();
+          lastHeadTrackTime = poseTime === undefined ? performance.now() : poseTime;
         }
         // Wrist tracking — used for lateral raise exercise
         var lw = lm[15], rw = lm[16];
@@ -419,32 +458,18 @@ function trackLoop() {
           wristY = wy;
           if (wristYSmooth === null) { wristYSmooth = wy; }
           wristYSmooth = wristYSmooth + (wy - wristYSmooth) * 0.55;
-          lastWristTrackTime = performance.now();
+          lastWristTrackTime = poseTime === undefined ? performance.now() : poseTime;
         }
       } else if (usesExperimentalFormTracking() && CONFIG.exercise === 'squats') {
         // An empty detector result is new evidence, not permission to reuse the
         // last person. Clear calibration immediately; keep normal gameplay grace.
-        updateExperimentalFormPose(null, performance.now());
+        updateExperimentalFormPose(null, (poseTime === undefined ? performance.now() : poseTime));
       } else if (usesExperimentalFormTracking() && CONFIG.exercise === 'biceps' &&
           (state === 'waitTop' || state === 'waitBottom')) {
-        updateExperimentalFormPose(null, performance.now());
+        updateExperimentalFormPose(null, (poseTime === undefined ? performance.now() : poseTime));
       } else if (curlDiagnosticsEnabled()) {
-        sampleCurlTrace(performance.now(), false);
+        sampleCurlTrace(poseTime === undefined ? performance.now() : poseTime, false);
       }
-    } catch (e) {
-      if (usesExperimentalFormTracking() && CONFIG.exercise === 'squats') {
-        updateExperimentalFormPose(null, performance.now());
-      } else if (usesExperimentalFormTracking() && CONFIG.exercise === 'biceps' &&
-          (state === 'waitTop' || state === 'waitBottom')) {
-        updateExperimentalFormPose(null, performance.now());
-      } else if (curlDiagnosticsEnabled()) {
-        sampleCurlTrace(performance.now(), false);
-      }
-      console.error(e);
-    }
-  }
-  updateDot();
-  if (trackingLoopActive) { requestAnimationFrame(trackLoop); }
 }
 
 window.addEventListener('pagehide', stopCameraAndTracking);
