@@ -1510,14 +1510,14 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
               <View
                 style={{
                   width: '100%',
-                  backgroundColor: androidResultNavy ? '#06223D' : '#F59E0B',
+                  backgroundColor: '#F59E0B',
                   borderRadius: 14,
                   padding: 14,
                   marginTop: 14,
                   gap: 8,
                 }}
               >
-                <Text style={{ color: androidResultNavy ? '#FFFFFF' : '#06223D', fontSize: 17, lineHeight: 22, fontWeight: '900', textAlign: 'center' }}>
+                <Text style={{ color: '#06223D', fontSize: 17, lineHeight: 22, fontWeight: '900', textAlign: 'center' }}>
                   {closeToTarget
                     ? `${pipesRemaining} MORE ${pipesRemaining === 1 ? 'PIPE' : 'PIPES'} TO CLEAR!`
                     : `GOAL: ${target} PIPES`}
@@ -1531,7 +1531,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                 >
                   <View style={{ width: `${targetProgress * 100}%`, height: '100%', borderRadius: 5, backgroundColor: '#06223D' }} />
                 </View>
-                <Text style={{ color: androidResultNavy ? '#FFFFFF' : '#06223D', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
+                <Text style={{ color: '#06223D', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
                   This run: {result.score} / {target} pipes
                 </Text>
               </View>
@@ -1739,7 +1739,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
               onPress={() => performResultAction(leaveGame, false)}
               style={{
                 marginTop: 10,
-                backgroundColor: '#F1F5F9',
+                backgroundColor: androidResultNavy ? '#D1D5DB' : '#F1F5F9',
                 borderRadius: 16,
                 paddingVertical: 14,
                 width: '100%',

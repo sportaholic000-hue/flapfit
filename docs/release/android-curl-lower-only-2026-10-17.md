@@ -1,5 +1,9 @@
 # Android curl lower-half experiment and results colors
 
+**REJECTED by owner testing:** no-weight flight was terrible. The lower-only filter was fully removed in rules 2026-10-17.7-curl-lower-filter-reverted. Tracking is identical to a63d86b / 270ce1b except the rules identifier. No replacement filter was added. The following documents the rejected experiment, not the current behavior.
+
+The orange goal/progress panel and navy text were also restored. The outer results card remains navy; Share Video stays white/navy. Done was still its original very pale #F1F5F9, but now uses #D1D5DB on Android to visibly distinguish it from white Share Video. iOS colors are unchanged.
+
 Branch: codex/android-design-integration. Rules: 2026-10-17.6-curl-lower-only.
 
 Owner direction: use the 270ce1b version from the test where middle-to-top was best and lower-half movement remained jittery. Do not tune the whole movement again.

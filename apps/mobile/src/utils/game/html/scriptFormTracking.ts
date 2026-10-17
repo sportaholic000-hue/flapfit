@@ -8,7 +8,7 @@ import { SCRIPT_CURL_FOREARM_TRACKING } from './scriptCurlForearmTracking';
 // explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-17.6-curl-lower-only';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-17.7-curl-lower-filter-reverted';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -16,7 +16,6 @@ var formPoseLandmarks = null;
 var curlFormWorldLandmarks = null;
 var formCurrentMetrics = null;
 var formTrackY = null, formTrackYSmooth = null;
-var curlLowerTrackOutput = null;
 var lastFormTrackTime = 0;
 var formTopMetrics = null, formBottomMetrics = null;
 var pullupCalibrationPoseHistory = [];
@@ -50,7 +49,6 @@ function resetExperimentalFormTracking() {
   formCurrentMetrics = null;
   formTrackY = null;
   formTrackYSmooth = null;
-  curlLowerTrackOutput = null;
   lastFormTrackTime = 0;
   formTopMetrics = null;
   formBottomMetrics = null;
@@ -354,7 +352,7 @@ function updateExperimentalFormPose(landmarks, now, worldLandmarks) {
     if (CONFIG.exercise === 'biceps') {
       resetCurlControlFilter();
       if (typeof state !== 'undefined' && (state === 'waitTop' || state === 'waitBottom')) {
-        formTrackY = null; formTrackYSmooth = null; curlLowerTrackOutput = null; lastFormTrackTime = 0;
+        formTrackY = null; formTrackYSmooth = null; lastFormTrackTime = 0;
         if (typeof stabBuf !== 'undefined') { stabBuf = []; }
       }
     }
@@ -363,7 +361,6 @@ function updateExperimentalFormPose(landmarks, now, worldLandmarks) {
   }
   formTrackY = formCurrentMetrics.controllerY;
   if (formTrackYSmooth === null) { formTrackYSmooth = formTrackY; }
-  var previousBaselineTrack = formTrackYSmooth;
   // Keep noise filtering for calibration only. The owner rejected its gameplay delay.
   formTrackYSmooth = CONFIG.exercise === 'biceps' && typeof state !== 'undefined' &&
       (state === 'waitTop' || state === 'waitBottom')
@@ -372,9 +369,6 @@ function updateExperimentalFormPose(landmarks, now, worldLandmarks) {
         rightWrist:formCurrentMetrics.rightWrist
       } : formCurrentMetrics, now)
     : formTrackYSmooth + (formTrackY - formTrackYSmooth) * 0.55;
-  curlLowerTrackOutput = usesCurlForearmControl() && (state === 'play' || state === 'countdown')
-    ? curlLowerRangeOutput(formTrackYSmooth,previousBaselineTrack,formCurrentMetrics,formTopMetrics,formBottomMetrics)
-    : formTrackYSmooth;
   lastFormTrackTime = now;
   if (curlDiagnosticsEnabled()) { sampleCurlTrace(now); }
 }
@@ -496,12 +490,9 @@ function pullupTopPoseValid(metrics) {
 }
 
 function getExperimentalTrackY() {
-  if (usesCurlForearmControl() && formTrackY !== null) { return getExperimentalTrackYSmooth(); }
   return CONFIG.exercise === 'biceps' && formTrackY !== null ? formTrackYSmooth : formTrackY;
 }
-function getExperimentalTrackYSmooth() {
-  return usesCurlForearmControl() && curlLowerTrackOutput !== null ? curlLowerTrackOutput : formTrackYSmooth;
-}
+function getExperimentalTrackYSmooth() { return formTrackYSmooth; }
 function experimentalTrackingFresh() {
   return lastFormTrackTime > 0 && (performance.now() - lastFormTrackTime) < 700;
 }
