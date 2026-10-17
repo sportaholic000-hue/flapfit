@@ -141,17 +141,3 @@ test('actual curl gameplay uses elapsed render time consistently after the same 
  const a=run(Array.from({length:12},()=>1000/30));const b=run(Array.from({length:6},()=>[1000/60,50]).flat());
  assert.equal(a.norm,b.norm);assert.ok(Math.abs(a.birdNorm-b.birdNorm)<1e-10);
 });
-
-
-const curlInputGain=new Function(require('../html/scriptCurlForearmTracking').SCRIPT_CURL_FOREARM_TRACKING+';return curlInputResponseGain;')();
-test('curl input smoothing preserves 30 fps response and handles sparse camera updates by elapsed time',()=>{
- assert.ok(Math.abs(curlInputGain(1000/30)-.55)<1e-12);assert.ok(curlInputGain(66)>.78);
- const follow=steps=>{let y=.2;for(const dt of steps)y+=(.8-y)*curlInputGain(dt);return y;};
- assert.ok(Math.abs(follow([1000/30,1000/30])-follow([2000/30]))<1e-12);
- assert.ok(Math.abs(follow([50,50])-follow([1000/30,1000/30,1000/30]))<1e-12);
- assert.equal(curlInputGain(0),0);assert.equal(curlInputGain(-5),0);assert.equal(curlInputGain(500),curlInputGain(100));
-});
-test('actual curl hand input reaches equal normalized height with equal elapsed camera time',()=>{
- const run=steps=>{const g=game();let t=enter(g);camera(g,t,90);for(const dt of steps){t+=dt;camera(g,t,70);}return g.summary();};
- const a=run([1000/30,1000/30,1000/30]);const b=run([50,50]);assert.ok(Math.abs(a.norm-b.norm)<1e-12);assert.equal(a.crashReason,'');assert.equal(b.crashReason,'');
-});

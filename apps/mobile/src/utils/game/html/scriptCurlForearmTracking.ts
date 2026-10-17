@@ -15,13 +15,6 @@ function curlBirdResponseGain(elapsedMs) {
   return 1-Math.pow(1-16/30,boundedMs/(1000/30));
 }
 
-// Preserve the existing 0.55 input response at 30 fps, regardless of camera
-// update cadence. This replaces the existing gain rather than adding a filter.
-function curlInputResponseGain(elapsedMs) {
-  if (!Number.isFinite(elapsedMs)) { elapsedMs=1000/30; }
-  return 1-Math.pow(1-.55,Math.max(0,Math.min(100,elapsedMs))/(1000/30));
-}
-
 function curlHandMedian(values) {
   values.sort(function(a,b){return a-b;});
   var middle=Math.floor(values.length/2);

@@ -1,3 +1,5 @@
+> Rejected after owner testing: no-weight run felt great, but normal weighted curls regained bad middle-to-top jitter. Input timing change rolled back; retain this note as experiment history. Current preview restores the 270ce1b input behavior and retains its render-follow correction.
+
 # Android curl input timing — 2026-10-17
 
 Owner tested 270ce1b in this order: no weights, normal weighted curls, hammer curls, another normal weighted curl run. Upper/middle-to-top movement was reported as strongest now; remaining jitter was lower down and movement felt somewhat slow/static. Preserve the successful median-hand controller and avoid a new smoothing layer.
