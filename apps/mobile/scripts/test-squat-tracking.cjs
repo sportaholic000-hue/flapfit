@@ -16,7 +16,7 @@ global.test=(name,fn)=>{try{const result=fn();if(result && typeof result.then===
 test.each=values=>(name,fn)=>{for(const value of values)test(name+' '+JSON.stringify(value),()=>fn(...(Array.isArray(value)?value:[value])));};
 global.it=global.test;global.describe=(name,fn)=>fn();
 global.expect=require('expect').expect;
-for(const file of ['curl-control.test.js','curl-diagnostics.test.js','squat-foot-free.test.js','form-tracking.test.ts','continuous-gameplay.test.ts','pushup-top-entry.test.ts','pullup-gameplay-flow.test.js']) {
+for(const file of ['curl-forearm.test.js','curl-control.test.js','curl-diagnostics.test.js','squat-foot-free.test.js','form-tracking.test.ts','continuous-gameplay.test.ts','pushup-top-entry.test.ts','pullup-gameplay-flow.test.js']) {
  require(path.resolve(__dirname,'../src/utils/game/__tests__',file));
  console.log(file,JSON.stringify({passed,failed}));
 }

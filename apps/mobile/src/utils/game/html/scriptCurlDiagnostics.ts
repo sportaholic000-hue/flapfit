@@ -21,8 +21,8 @@ function resetCurlTrace() {
 }
 function flushCurlTrace(now, terminal) {
   if (!curlDiagnosticsEnabled() || typeof postRN !== 'function' || (!curlTraceRows.length && !terminal)) { return; }
-  postRN({type:'curldebug',message:JSON.stringify({version:'curl-trace-1',controller:'curl-cal-filter-flight-original',
-    model:'lite',calibration:'each-arm-1',formGeometry:'world-when-calibrated-1',
+  postRN({type:'curldebug',message:JSON.stringify({version:'curl-trace-1',controller:usesCurlForearmControl() ? 'forearm-eye-top-1' : 'curl-cal-filter-flight-original',
+    model:'lite',calibration:usesCurlForearmControl() ? 'eye-top-forearm-bottom-1' : 'each-arm-1',formGeometry:usesCurlForearmControl() ? 'shoulder-free-forearm-1' : 'world-when-calibrated-1',
     references:{top:formTopMetrics,bottom:formBottomMetrics},
     delegate:typeof trackerDelegate === 'undefined' ? null : trackerDelegate,render:curlRenderStats,session:curlTraceSession,
     video:typeof video !== 'undefined' ? [video.videoWidth,video.videoHeight] : null,
@@ -43,7 +43,7 @@ function sampleCurlTrace(now, detected) {
   var metrics = hasPose ? formCurrentMetrics : null;
   // Additional hand estimates distinguish wrist-only errors from whole-hand loss.
   // Keep the original point tuple/schema so existing replays remain compatible.
-  var points = [11,12,13,14,15,16,17,18,19,20,21,22,23,24].map(function(index) {
+  var points = (usesCurlForearmControl() ? [2,5,13,14,15,16,17,18,19,20,21,22,23,24] : [11,12,13,14,15,16,17,18,19,20,21,22,23,24]).map(function(index) {
     var p = hasPose && formPoseLandmarks[index];
     return p ? [index,number(p.x),number(p.y),number(p.visibility),
       Number.isFinite(p.x) && Number.isFinite(p.y) && p.x >= 0 && p.x <= 1 && p.y >= 0 && p.y <= 1]
@@ -58,7 +58,8 @@ function sampleCurlTrace(now, detected) {
     return metrics && metrics[key] && formTopMetrics && formTopMetrics[key] && formBottomMetrics && formBottomMetrics[key]
       ? formWristProgress(metrics[key].y,formTopMetrics[key].y,formBottomMetrics[key].y) : null;
   }
-  var leftProgress = wristProgress('leftWrist'), rightProgress = wristProgress('rightWrist');
+  var leftProgress = usesCurlForearmControl() ? metrics && metrics.curlLeftProgress : wristProgress('leftWrist');
+  var rightProgress = usesCurlForearmControl() ? metrics && metrics.curlRightProgress : wristProgress('rightWrist');
   var phase = typeof state !== 'undefined' ? state : '';
   var norm = typeof computeNorm === 'function' ? computeNorm() : null;
   // These biceps checks only read state. Record what gameplay currently sees,
@@ -68,6 +69,7 @@ function sampleCurlTrace(now, detected) {
   curlTraceRows.push({t:number(now),dt:number(dt),inferenceMs:number(curlLastInferenceMs),state:phase,detected:hasPose,points:points,worldPoints:worldPoints,
     leftElbowAngle:hasPose ? number(formJointAngle(formPoint(11,.24),formPoint(13,.24),formPoint(15,.24))) : null,
     rightElbowAngle:hasPose ? number(formJointAngle(formPoint(12,.24),formPoint(14,.24),formPoint(16,.24))) : null,
+    forearmLift:metrics ? [number(metrics.curlLeftLift),number(metrics.curlRightLift)] : [null,null],
     worldElbowAngles:metrics ? [number(metrics.curlLeftWorldAngle),number(metrics.curlRightWorldAngle)] : [null,null],
     elbowAngle:number(metrics && metrics.elbowAngle),elbowCount:metrics ? metrics.elbowCount : 0,
     leftProgress:number(leftProgress),rightProgress:number(rightProgress),

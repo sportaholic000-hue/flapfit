@@ -2,12 +2,13 @@ import { SCRIPT_PULLUP_SUPPORT } from './scriptPullupSupport';
 import { SCRIPT_SQUAT_TRACKING } from './scriptSquatTracking';
 import { SCRIPT_CURL_DIAGNOSTICS } from './scriptCurlDiagnostics';
 import { SCRIPT_CURL_TRACKING } from './scriptCurlTracking';
+import { SCRIPT_CURL_FOREARM_TRACKING } from './scriptCurlForearmTracking';
 
 // Form-aware production tracking. The legacy tracker remains available for
 // explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-16.4-curl-depth-form';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-17.1-curl-forearm-experiment';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -25,6 +26,7 @@ ${SCRIPT_PULLUP_SUPPORT}
 ${SCRIPT_SQUAT_TRACKING}
 ${SCRIPT_CURL_DIAGNOSTICS}
 ${SCRIPT_CURL_TRACKING}
+${SCRIPT_CURL_FOREARM_TRACKING}
 var pullupPoseTrace = [];
 var pullupTraceLastSampleAt = -Infinity;
 var pullupTraceLastExportAt = 0;
@@ -162,6 +164,7 @@ function shoulderPressBottomVisible(arm) {
 function collectExperimentalFormMetrics() {
   if (!formPoseLandmarks) { return null; }
   if (CONFIG.exercise === 'squats') { return collectSquatMetrics(); }
+  if (usesCurlForearmControl()) { return collectCurlForearmMetrics(); }
   var isPullup = CONFIG.exercise === 'pullups';
   var pullupVisibility = isPullup ? 0.35 : 0.24;
   var leftEye = isPullup ? formInFramePoint(2, 0.5) : null;
@@ -361,7 +364,10 @@ function updateExperimentalFormPose(landmarks, now, worldLandmarks) {
   // Keep noise filtering for calibration only. The owner rejected its gameplay delay.
   formTrackYSmooth = CONFIG.exercise === 'biceps' && typeof state !== 'undefined' &&
       (state === 'waitTop' || state === 'waitBottom')
-    ? filterCurlController(formCurrentMetrics, now)
+    ? filterCurlController(usesCurlForearmControl() ? {
+        leftWrist:{y:.5-.25*formCurrentMetrics.curlLeftLift},
+        rightWrist:{y:.5-.25*formCurrentMetrics.curlRightLift}
+      } : formCurrentMetrics, now)
     : formTrackYSmooth + (formTrackY - formTrackYSmooth) * 0.55;
   lastFormTrackTime = now;
   if (curlDiagnosticsEnabled()) { sampleCurlTrace(now); }
@@ -637,6 +643,7 @@ function validateExperimentalCalibration(position) {
   }
 
   if (CONFIG.exercise === 'biceps') {
+    if (usesCurlForearmControl()) { return validateCurlForearmCalibration(metrics, position); }
     if (!metrics.shoulders || !metrics.hips || !metrics.elbows || !metrics.wrists || metrics.elbowAngle === null || metrics.elbowCount < 2) {
       return formInvalid('Form check<br><br>Keep your shoulders, elbows, wrists, and torso visible.');
     }
@@ -912,6 +919,7 @@ function validateExperimentalGameplay(norm) {
   }
 
   if (CONFIG.exercise === 'biceps') {
+    if (usesCurlForearmControl()) { return validateCurlForearmGameplay(metrics); }
     var curlArmCount = curlUsesWorldBend()
       ? (Number.isFinite(metrics.curlLeftWorldAngle) ? 1 : 0) + (Number.isFinite(metrics.curlRightWorldAngle) ? 1 : 0)
       : metrics.elbowCount;

@@ -667,6 +667,9 @@ function topCalibrationMessage() {
     return 'STEP 1 OF 2<br><br>Raise arms to <b>SHOULDER HEIGHT</b><br>Parallel to the floor<br><br>Hold still…';
   }
   if (CONFIG.exercise === 'biceps') {
+    if (usesCurlForearmControl()) {
+      return 'STEP 1 OF 2<br><br>Curl BOTH hands to the <b>TOP</b><br>Keep elbows near your sides<br><br>Hold still…';
+    }
     return 'STEP 1 OF 2<br><br>Curl to the <b>TOP</b><br>Wrists near your shoulders<br><br>Hold still…';
   }
   if (CONFIG.exercise === 'shoulderpress') {
