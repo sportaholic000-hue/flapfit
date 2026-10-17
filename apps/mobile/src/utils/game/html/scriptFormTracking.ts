@@ -8,7 +8,7 @@ import { SCRIPT_CURL_FOREARM_TRACKING } from './scriptCurlForearmTracking';
 // explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-17.3-curl-frame-timing';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-17.4-curl-input-timing';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -368,7 +368,8 @@ function updateExperimentalFormPose(landmarks, now, worldLandmarks) {
         leftWrist:formCurrentMetrics.leftWrist,
         rightWrist:formCurrentMetrics.rightWrist
       } : formCurrentMetrics, now)
-    : formTrackYSmooth + (formTrackY - formTrackYSmooth) * 0.55;
+    : formTrackYSmooth + (formTrackY - formTrackYSmooth) * (usesCurlForearmControl()
+      ? curlInputResponseGain(lastFormTrackTime > 0 ? now-lastFormTrackTime : 1000/30) : 0.55);
   lastFormTrackTime = now;
   if (curlDiagnosticsEnabled()) { sampleCurlTrace(now); }
 }

@@ -22,7 +22,7 @@ function resetCurlTrace() {
 function flushCurlTrace(now, terminal) {
   if (!curlDiagnosticsEnabled() || typeof postRN !== 'function' || (!curlTraceRows.length && !terminal)) { return; }
   postRN({type:'curldebug',message:JSON.stringify({version:'curl-trace-1',controller:usesCurlForearmControl() ? 'hand-image-1' : 'curl-cal-filter-flight-original',
-    response:usesCurlForearmControl() ? 'elapsed-follow-1' : 'legacy-frame-follow',
+    response:usesCurlForearmControl() ? 'elapsed-input-follow-1' : 'legacy-frame-follow',
     model:'lite',calibration:usesCurlForearmControl() ? 'eye-top-hand-bottom-1' : 'each-arm-1',formGeometry:usesCurlForearmControl() ? 'shoulder-free-image-hand-1' : 'world-when-calibrated-1',
     references:{top:formTopMetrics,bottom:formBottomMetrics},
     delegate:typeof trackerDelegate === 'undefined' ? null : trackerDelegate,render:curlRenderStats,session:curlTraceSession,
