@@ -7,11 +7,12 @@ import { SCRIPT_CURL_TRACKING } from './scriptCurlTracking';
 // explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-16.3-curl-bilateral-calibration';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-16.4-curl-depth-form';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
 var formPoseLandmarks = null;
+var curlFormWorldLandmarks = null;
 var formCurrentMetrics = null;
 var formTrackY = null, formTrackYSmooth = null;
 var lastFormTrackTime = 0;
@@ -42,6 +43,7 @@ function resetExperimentalFormTracking() {
   resetCurlControlFilter();
   resetSquatLegEvidence();
   formPoseLandmarks = null;
+  curlFormWorldLandmarks = null;
   formCurrentMetrics = null;
   formTrackY = null;
   formTrackYSmooth = null;
@@ -190,6 +192,8 @@ function collectExperimentalFormMetrics() {
       ? { x: (leftFoot.x + rightFoot.x) / 2, y: Math.max(leftFoot.y, rightFoot.y) }
       : null)
     : formMeanPoint([27, 28], 0.22, 1);
+  var curlLeftWorldAngle = CONFIG.exercise === 'biceps' ? curlWorldJointAngle(curlFormWorldLandmarks, 11, 13, 15) : null;
+  var curlRightWorldAngle = CONFIG.exercise === 'biceps' ? curlWorldJointAngle(curlFormWorldLandmarks, 12, 14, 16) : null;
   var elbow = formAverageAngle([[11, 13, 15], [12, 14, 16]], pullupVisibility);
   var knee = formAverageAngle([[23, 25, 27], [24, 26, 28]], 0.22);
   var leftKneeAngle = formJointAngle(
@@ -254,6 +258,9 @@ function collectExperimentalFormMetrics() {
     feet: feet,
     leftFoot: leftFoot,
     rightFoot: rightFoot,
+    curlLeftWorldAngle: curlLeftWorldAngle,
+    curlRightWorldAngle: curlRightWorldAngle,
+    curlWorldAngle: curlLeftWorldAngle !== null && curlRightWorldAngle !== null ? (curlLeftWorldAngle + curlRightWorldAngle) / 2 : null,
     elbowAngle: elbow.value,
     elbowCount: elbow.count,
     kneeAngle: knee.value,
@@ -299,6 +306,7 @@ function exportPullupCalibrationTrace(event) {
 function updateExperimentalFormPose(landmarks, now, worldLandmarks) {
   if (curlDiagnosticsEnabled()) { curlWorldLandmarks = worldLandmarks || null; }
   samplePullupCalibrationTrace(landmarks, now);
+  curlFormWorldLandmarks = CONFIG.exercise === 'biceps' && landmarks ? worldLandmarks || null : null;
   formPoseLandmarks = landmarks;
   formCurrentMetrics = collectExperimentalFormMetrics();
   if (CONFIG.exercise === 'squats' && (!formCurrentMetrics || formCurrentMetrics.controllerY === null)) {
@@ -904,18 +912,20 @@ function validateExperimentalGameplay(norm) {
   }
 
   if (CONFIG.exercise === 'biceps') {
-    if (!metrics.leftWrist || !metrics.rightWrist || metrics.elbowCount < 2) {
+    var curlArmCount = curlUsesWorldBend()
+      ? (Number.isFinite(metrics.curlLeftWorldAngle) ? 1 : 0) + (Number.isFinite(metrics.curlRightWorldAngle) ? 1 : 0)
+      : metrics.elbowCount;
+    if (!metrics.leftWrist || !metrics.rightWrist || curlArmCount < 2) {
       return formFatal('Both arms can no longer be verified.', 'biceps-both-arms');
     }
-    if (!formTorsoIsUpright(metrics) || !metrics.elbows || metrics.elbowAngle === null) {
+    if (!formTorsoIsUpright(metrics) || !metrics.elbows || (!curlUsesWorldBend() && metrics.elbowAngle === null)) {
       return formInvalid('Form check<br><br>Keep your torso and elbows visible.');
     }
     if (!formBilateralWristMotionMatches(metrics)) {
       return formFatal('Both-arm curl could not be verified.', 'biceps-both-arms');
     }
-    if (!formMetricMatches(metrics.elbowAngle, formTopMetrics.elbowAngle, formBottomMetrics.elbowAngle, norm, 55)) {
-      return formInvalid('Form check<br><br>Curl by bending your elbows, not lifting your whole arms.');
-    }
+    var curlBendCheck = validateCurlElbowBend(metrics, norm);
+    if (!curlBendCheck.valid) { return curlBendCheck; }
     var elbowAnchor = {
       x: (formTopMetrics.elbows.x + formBottomMetrics.elbows.x) / 2,
       y: (formTopMetrics.elbows.y + formBottomMetrics.elbows.y) / 2

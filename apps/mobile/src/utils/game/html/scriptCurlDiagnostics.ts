@@ -22,7 +22,8 @@ function resetCurlTrace() {
 function flushCurlTrace(now, terminal) {
   if (!curlDiagnosticsEnabled() || typeof postRN !== 'function' || (!curlTraceRows.length && !terminal)) { return; }
   postRN({type:'curldebug',message:JSON.stringify({version:'curl-trace-1',controller:'curl-cal-filter-flight-original',
-    model:'lite',calibration:'each-arm-1',
+    model:'lite',calibration:'each-arm-1',formGeometry:'world-when-calibrated-1',
+    references:{top:formTopMetrics,bottom:formBottomMetrics},
     delegate:typeof trackerDelegate === 'undefined' ? null : trackerDelegate,render:curlRenderStats,session:curlTraceSession,
     video:typeof video !== 'undefined' ? [video.videoWidth,video.videoHeight] : null,
     viewport:typeof W !== 'undefined' ? [W,H] : null,rows:curlTraceRows,terminal:terminal || null})});
@@ -67,6 +68,7 @@ function sampleCurlTrace(now, detected) {
   curlTraceRows.push({t:number(now),dt:number(dt),inferenceMs:number(curlLastInferenceMs),state:phase,detected:hasPose,points:points,worldPoints:worldPoints,
     leftElbowAngle:hasPose ? number(formJointAngle(formPoint(11,.24),formPoint(13,.24),formPoint(15,.24))) : null,
     rightElbowAngle:hasPose ? number(formJointAngle(formPoint(12,.24),formPoint(14,.24),formPoint(16,.24))) : null,
+    worldElbowAngles:metrics ? [number(metrics.curlLeftWorldAngle),number(metrics.curlRightWorldAngle)] : [null,null],
     elbowAngle:number(metrics && metrics.elbowAngle),elbowCount:metrics ? metrics.elbowCount : 0,
     leftProgress:number(leftProgress),rightProgress:number(rightProgress),
     progressDifference:leftProgress !== null && rightProgress !== null ? number(Math.abs(leftProgress-rightProgress)) : null,

@@ -109,3 +109,78 @@ test('abandoned Full model experiment is absent from the runtime and app configu
   const fs=require('node:fs'),path=require('node:path');const screen=fs.readFileSync(path.resolve(__dirname,'../../../app/game.tsx'),'utf8');
   assert.ok(!screen.includes('curlFullModelPreview'));
 });
+
+// Front-facing sagittal curls: depth carries the forearm bend. At 90 degrees
+// the wrist and elbow project onto the same pixel despite a valid visible arm.
+function depthPose(angle, otherAngle = angle) {
+  const p = pose(0), world = Array.from({length:33},()=>({x:0,y:0,z:0,visibility:0}));
+  for (const [side,a] of [[0,angle],[1,otherAngle]]) {
+    const x=side?.65:.35, radians=a*Math.PI/180;
+    p[11+side]={x,y:.31,visibility:1};p[13+side]={x,y:.5,visibility:1};
+    p[15+side]={x,y:.5-.17*Math.cos(radians),visibility:1};
+    world[11+side]={x,y:.31,z:0,visibility:1};world[13+side]={x,y:.5,z:0,visibility:1};
+    world[15+side]={x,y:p[15+side].y,z:-.17*Math.sin(radians),visibility:1};
+  }
+  return {p,world};
+}
+function depthCamera(g,t,angle,otherAngle,worldEdit) {
+  const {p,world}=depthPose(angle,otherAngle);if(worldEdit)worldEdit(world,p);
+  for(let n=t-48;n<t;n+=16)g.render(n);g.cameraFrame(t,p,world);
+}
+function depthEnter(g) {
+  let t=50;for(;t<=4000;t+=50)depthCamera(g,t,10);
+  assert.equal(g.summary().state,'waitBottom');
+  for(;t<=6500;t+=50)depthCamera(g,t,170);
+  assert.equal(g.summary().state,'countdown');
+  for(;t<=10000;t+=50)depthCamera(g,t,90);
+  assert.equal(g.summary().state,'play');return t;
+}
+test('3D bend verification handles front-facing partial holds above, at and below 90 degrees',()=>{
+  const g=game();let t=depthEnter(g);const x=g.summary().pipeX,heights=[];
+  for(const angle of [80,90,100,65,115,85]){
+    for(let i=0;i<44;i++,t+=50)depthCamera(g,t,angle);
+    assert.equal(g.summary().crashReason,'');assert.equal(g.summary().state,'play');heights.push(g.summary().birdNorm);
+  }
+  assert.ok(g.summary().pipeX<x);assert.ok(heights[0]>heights[1]&&heights[1]>heights[2]);
+  assert.ok(heights[3]>heights[4]+.35);
+});
+test('projected-angle check reproduces a false rejection on the same ideal front-facing partial hold',()=>{
+  const legacy=createGame({...scripts,form:"CONFIG.exercise='biceps';CONFIG.curlDiagnostics=true;\n"+scripts.form.replace('var worldReferences = curlUsesWorldBend();','var worldReferences = false;')});
+  let t=depthEnter(legacy);for(let i=0;i<80;i++,t+=50)depthCamera(legacy,t,80);
+  assert.equal(legacy.messages.find(m=>m.type==='gameover').reason,'form');
+});
+test.each([false,true])('3D references preserve unilateral and alternating curl rejection %s',alternating=>{
+  const g=game();let t=depthEnter(g);
+  for(let i=0;i<80;i++,t+=50)depthCamera(g,t,alternating&&i%2?170:10,alternating&&i%2?10:170);
+  assert.equal(g.messages.find(m=>m.type==='gameover').fatalCheckKey,'biceps-both-arms');
+});
+test('a 3D-calibrated run does not silently switch to projected angles when depth observations disappear',()=>{
+  const g=game();let t=depthEnter(g);const x=g.summary().pipeX;
+  for(let i=0;i<80;i++,t+=50)depthCamera(g,t,80,80,world=>world[16].visibility=0);
+  assert.equal(g.messages.find(m=>m.type==='gameover').reason,'form');assert.ok(g.summary().pipeX<x);
+});
+test('raising straight whole arms still fails the unchanged 55-degree bend check with 3D references',()=>{
+  const g=game();let t=depthEnter(g);
+  // Keep calibrated wrists together around 70% height while a straight arm
+  // geometry reports no elbow bend. The independent bend check must reject it.
+  for(let i=0;i<80;i++,t+=50)depthCamera(g,t,65,65,world=>{
+    for(const side of [0,1])world[15+side]={...world[13+side],y:.67,z:0};
+  });
+  assert.equal(g.messages.find(m=>m.type==='gameover').reason,'form');
+});
+test('3D bend verification is independent of diagnostic logging',()=>{
+  const on=game(),off=createGame({...scripts,form:"CONFIG.exercise='biceps';CONFIG.curlDiagnostics=false;\n"+scripts.form});
+  let t=depthEnter(on);assert.equal(depthEnter(off),t);
+  for(const angle of [80,90,100,65,115])for(let i=0;i<44;i++,t+=50){depthCamera(on,t,angle);depthCamera(off,t,angle);assert.deepEqual(on.summary(),off.summary());}
+  assert.ok(!off.messages.some(m=>m.type==='curldebug'));
+});
+
+test('a compressed 3D calibration span does not weaken straight-arm rejection',()=>{
+  const rules=new Function(scripts.form+`;return function(value,norm){
+    formTopMetrics={elbowAngle:25,curlWorldAngle:70};
+    formBottomMetrics={elbowAngle:165,curlWorldAngle:150};
+    return validateCurlElbowBend({curlWorldAngle:value},norm);
+  };`)();
+  assert.equal(rules(150,.5).valid,false);
+  assert.equal(rules(136,.48).valid,true);
+});
