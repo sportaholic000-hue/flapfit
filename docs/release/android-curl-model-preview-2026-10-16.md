@@ -1,7 +1,7 @@
 # Curl follow-up: remove added flight lag and compare the Full pose model
 
 Branch: codex/android-design-integration. Rules marker: 2026-10-16.2-curl-model-preview.
-Status: diagnostic Android Expo experiment, not an accepted or release-ready weighted-curl fix. Do not port the rejected gameplay filter to iOS as a fix.
+Status: REJECTED by the owner after testing: no weighted-curl improvement. The Full-model experiment was removed. See android-curl-bilateral-calibration-2026-10-16.md for the separate confirmed calibration bug and remaining investigation. Do not port either rejected experiment as an accepted fix.
 
 ## Owner test and evidence
 

@@ -7,7 +7,7 @@ import { SCRIPT_CURL_TRACKING } from './scriptCurlTracking';
 // explicit development comparisons.
 // Must NOT contain backticks.
 
-export const FORM_TRACKING_RULES_VERSION = '2026-10-16.2-curl-model-preview';
+export const FORM_TRACKING_RULES_VERSION = '2026-10-16.3-curl-bilateral-calibration';
 
 export const SCRIPT_FORM_TRACKING = `
 // ---------- Experimental form-aware tracking ----------
@@ -241,8 +241,10 @@ function collectExperimentalFormMetrics() {
     rightShoulder: isPullup ? formInFramePoint(12, 0.35) : null,
     leftElbow: isPullup ? formInFramePoint(13, 0.35) : null,
     rightElbow: isPullup ? formInFramePoint(14, 0.35) : null,
-    leftElbowAngle: isPullup ? formJointAngle(formInFramePoint(11, 0.35), formInFramePoint(13, 0.35), leftWrist) : null,
-    rightElbowAngle: isPullup ? formJointAngle(formInFramePoint(12, 0.35), formInFramePoint(14, 0.35), rightWrist) : null,
+    leftElbowAngle: isPullup ? formJointAngle(formInFramePoint(11, 0.35), formInFramePoint(13, 0.35), leftWrist)
+      : CONFIG.exercise === 'biceps' ? formJointAngle(formPoint(11, .24), formPoint(13, .24), leftWrist) : null,
+    rightElbowAngle: isPullup ? formJointAngle(formInFramePoint(12, 0.35), formInFramePoint(14, 0.35), rightWrist)
+      : CONFIG.exercise === 'biceps' ? formJointAngle(formPoint(12, .24), formPoint(14, .24), rightWrist) : null,
     elbows: elbows,
     wrists: wrists,
     leftWrist: leftWrist,
@@ -294,7 +296,8 @@ function exportPullupCalibrationTrace(event) {
   pullupPoseTrace = [];
 }
 
-function updateExperimentalFormPose(landmarks, now) {
+function updateExperimentalFormPose(landmarks, now, worldLandmarks) {
+  if (curlDiagnosticsEnabled()) { curlWorldLandmarks = worldLandmarks || null; }
   samplePullupCalibrationTrace(landmarks, now);
   formPoseLandmarks = landmarks;
   formCurrentMetrics = collectExperimentalFormMetrics();
@@ -632,11 +635,17 @@ function validateExperimentalCalibration(position) {
     if (!formTorsoIsUpright(metrics)) {
       return formInvalid('Form check<br><br>Keep your torso comfortably upright.');
     }
-    if (position === 'top' && metrics.elbowAngle > 135) {
-      return formInvalid('Form check<br><br>Curl your hands toward your shoulders.');
+    // Each arm must qualify. Averaging lets one curled elbow hide a straight one.
+    if (metrics.leftElbowAngle === null || metrics.rightElbowAngle === null) {
+      return formInvalid('Form check<br><br>Keep both shoulders, elbows, and wrists visible.');
     }
-    if (position === 'bottom' && formTopMetrics && metrics.elbowAngle - formTopMetrics.elbowAngle < 20) {
-      return formInvalid('Form check<br><br>Extend your elbows more for the bottom position.');
+    if (position === 'top' && (metrics.leftElbowAngle > 135 || metrics.rightElbowAngle > 135)) {
+      return formInvalid('Form check<br><br>Curl BOTH hands toward your shoulders.');
+    }
+    if (position === 'bottom' && formTopMetrics && (
+        metrics.leftElbowAngle - formTopMetrics.leftElbowAngle < 20 ||
+        metrics.rightElbowAngle - formTopMetrics.rightElbowAngle < 20)) {
+      return formInvalid('Form check<br><br>Extend BOTH elbows more for the bottom position.');
     }
     if (position === 'bottom' && formTopMetrics && !formHasBilateralWristRange(metrics, 0.05)) {
       return formInvalid('Form check<br><br>Move both dumbbells through the full curl range.');

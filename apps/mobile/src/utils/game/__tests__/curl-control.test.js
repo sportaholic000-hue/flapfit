@@ -76,16 +76,6 @@ test('gameplay restores exactly the original 0.55 response with no median or ada
   const g=game();let t=enter(g);let state=g.summary();let previous=state.bottomY-state.norm*(state.bottomY-state.topY);
   for(const down of [.3,.7,.2,.65,.4,.55]){const p=pose(down);const expected=previous+(p[15].y-previous)*.55;camera(g,t,p);state=g.summary();const actual=state.bottomY-state.norm*(state.bottomY-state.topY);assert.ok(Math.abs(actual-expected)<1e-10);previous=expected;t+=50;}
 });
-test('Full model selection is explicit and limited to remote curl previews',()=>{
-  const core=scripts.core;const start=core.indexOf('function usesCurlFullModelPreview()');const end=core.indexOf('var trackerDelegate',start);
-  const select=new Function('CONFIG','REMOTE_MODEL_URL',core.slice(start,end)+';return remotePoseModelUrl();');
-  for(const exercise of ['pushups','squats','pullups','lateralraise','shoulderpress','biceps'])for(const mode of ['bundled','remote'])for(const enabled of [false,true]){
-    const url=select({exercise,trackerAssetMode:mode,curlFullModelPreview:enabled},'lite');
-    assert.equal(url.includes('pose_landmarker_full'),exercise==='biceps'&&mode==='remote'&&enabled);
-  }
-  const fs=require('node:fs'),path=require('node:path');const screen=fs.readFileSync(path.resolve(__dirname,'../../../app/game.tsx'),'utf8');
-  assert.ok(screen.includes("curlFullModelPreview: __DEV__ && Platform.OS === 'android' && USE_REMOTE_TRACKER"));
-});
 test('curl timing records render and detector duration without changing flight',()=>{
   const g=game();let t=enter(g);for(let i=0;i<60;i++,t+=50)camera(g,t,pose(.5));
   const batches=g.messages.filter(m=>m.type==='curldebug').map(m=>JSON.parse(m.message));
@@ -93,4 +83,29 @@ test('curl timing records render and detector duration without changing flight',
   assert.ok(batches.flatMap(b=>b.rows).some(r=>r.state==='play'&&r.inferenceMs===0));
   assert.ok(batches.every(b=>b.controller==='curl-cal-filter-flight-original'));
   assert.equal(g.summary().state,'play');assert.equal(g.summary().crashReason,'');
+});
+
+test.each([15,16])('a curled arm cannot compensate for the other straight arm during Step 1: %s',wrist=>{
+  const g=game(),p=pose(0),straight=pose(1);p[wrist]=straight[wrist];
+  for(let t=50;t<=6000;t+=50)camera(g,t,p);
+  assert.equal(g.summary().state,'waitTop');assert.equal(g.summary().progress,0);
+  assert.ok(g.overlays.some(o=>o.message.includes('BOTH hands')));
+});
+test.each([15,16])('alternating which arm is curled cannot complete Step 1: %s',first=>{
+  const g=game(),straight=pose(1);
+  for(let t=50;t<=6000;t+=50){const p=pose(0),wrist=Math.floor(t/500)%2?first:(first===15?16:15);p[wrist]=straight[wrist];camera(g,t,p);}
+  assert.equal(g.summary().state,'waitTop');assert.equal(g.summary().progress,0);
+});
+test.each([15,16])('Step 2 needs elbow extension in each arm, not just lowered wrists: %s',wrist=>{
+  const g=game();for(let t=50;t<=4000;t+=50)camera(g,t,pose(0));assert.equal(g.summary().state,'waitBottom');
+  const p=pose(1);p[wrist].y=.48;p[wrist===15?13:14].y=.65;
+  for(let t=4050;t<=7500;t+=50)camera(g,t,p);
+  assert.equal(g.summary().state,'waitBottom');assert.equal(g.summary().progress,0);
+  assert.ok(g.overlays.some(o=>o.message.includes('BOTH elbows')));
+});
+test('abandoned Full model experiment is absent from the runtime and app configuration',()=>{
+  assert.ok(!scripts.core.includes('pose_landmarker_full'));
+  assert.ok(scripts.core.includes('modelAssetPath: REMOTE_MODEL_URL'));
+  const fs=require('node:fs'),path=require('node:path');const screen=fs.readFileSync(path.resolve(__dirname,'../../../app/game.tsx'),'utf8');
+  assert.ok(!screen.includes('curlFullModelPreview'));
 });

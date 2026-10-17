@@ -184,17 +184,6 @@ function stopCameraAndTracking() {
 // development keeps the previously proven HTTPS loader for fast iteration.
 var REMOTE_VISION_BASE_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
 var REMOTE_MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task';
-// Development-only opt-in is supplied by the Android Expo screen. Bundled builds
-// and every other exercise retain the existing model and loader.
-function usesCurlFullModelPreview() {
-  return CONFIG.exercise === 'biceps' && CONFIG.curlFullModelPreview === true &&
-    CONFIG.trackerAssetMode === 'remote';
-}
-function remotePoseModelUrl() {
-  return usesCurlFullModelPreview()
-    ? 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task'
-    : REMOTE_MODEL_URL;
-}
 var trackerDelegate = null;
 var TRACKER_ASSET_NAMES = ['module', 'loader', 'wasm', 'model'];
 var trackerAssetChunks = {};
@@ -300,7 +289,7 @@ function loadTrackerRuntime() {
   if (CONFIG.trackerAssetMode === 'remote') {
     return import(REMOTE_VISION_BASE_URL + '/vision_bundle.mjs').then(function(vision) {
       return vision.FilesetResolver.forVisionTasks(REMOTE_VISION_BASE_URL + '/wasm').then(function(files) {
-        return { vision: vision, files: files, modelAssetPath: remotePoseModelUrl() };
+        return { vision: vision, files: files, modelAssetPath: REMOTE_MODEL_URL };
       });
     });
   }
@@ -395,7 +384,7 @@ function trackLoop() {
       if (res && res.landmarks && res.landmarks.length > 0) {
         var lm = res.landmarks[0];
         if (usesExperimentalFormTracking()) {
-          updateExperimentalFormPose(lm, performance.now());
+          updateExperimentalFormPose(lm, performance.now(), res.worldLandmarks && res.worldLandmarks[0]);
         }
         var nose = lm[0], ls = lm[11], rs = lm[12];
         var nv = (nose && nose.visibility !== undefined) ? nose.visibility : 1;

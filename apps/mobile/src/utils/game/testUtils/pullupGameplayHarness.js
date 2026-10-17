@@ -45,7 +45,7 @@ function createGame(scripts = loadScripts(), options = {}) {
     'function render(t){nowValue=t;loop(t);if(state!==previousState){transitions.push({t:t,from:previousState,to:state});previousState=state;}timers.filter(function(x){return x.at<=t;}).forEach(function(x){x.fn();});timers=timers.filter(function(x){return x.at>t;});}',
     'resetExperimentalFormTracking();',
     'return {step:function(t,points){nowValue=t;if(points)updateExperimentalFormPose(points,t);render(t);},render:render,',
-    'cameraFrame:function(t,points){nowValue=t;video.readyState=2;video.currentTime=t/1000;landmarker={detectForVideo:function(){return {landmarks:points?[points]:[]};}};trackLoop();render(t);},',
+    'cameraFrame:function(t,points,worldPoints){nowValue=t;video.readyState=2;video.currentTime=t/1000;landmarker={detectForVideo:function(){return {landmarks:points?[points]:[],worldLandmarks:worldPoints?[worldPoints]:[]};}};trackLoop();render(t);},',
     'summary:function(){return {state:state,topY:topY,bottomY:bottomY,progress:progress,norm:computeNorm(),crashReason:crashReason,birdNorm:birdNorm,pipeX:pipes[0].x,recordingStartedAt:recordingStartedAt,recordingFramesFinished:recordingFramesFinished,calibrationReadyAt:calibrationReadyAt,setup:typeof getPullupSupportSetup===\'function\'?getPullupSupportSetup():null};},',
     'metrics:function(){return formCurrentMetrics;},support:function(){return pullupSupportDebug(formCurrentMetrics);},',
     'setPipe:function(x,gapC,gapH){pipes[0].x=x;pipes[0].gapC=gapC;pipes[0].gapH=gapH;},messages:messages,overlays:overlays,frames:frames,transitions:transitions};',

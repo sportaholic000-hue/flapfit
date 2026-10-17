@@ -41,3 +41,16 @@ test('production and iOS configuration do not opt into curl diagnostics',()=>{
   const fs=require('node:fs'),path=require('node:path');const source=fs.readFileSync(path.resolve(__dirname,'../../../app/game.tsx'),'utf8');
   assert.ok(source.includes("curlDiagnostics: __DEV__ && Platform.OS === 'android'"));
 });
+
+test('diagnostics include neighboring hand points without changing the controller',()=>{
+  const off=game(false),on=game(true);for(let t=100;t<=2200;t+=50){const p=curlPose(.5);p[19]={x:.31,y:.42,visibility:.83};off.step(t,p);on.step(t,p);assert.deepEqual(on.summary(),off.summary());}
+  const rows=traces(on).flatMap(b=>b.rows);assert.ok(rows.length);assert.deepEqual(rows[0].points.find(p=>p[0]===19),[19,.31,.42,.83,true]);
+  assert.equal(rows[0].points.length,14);
+});
+
+test('world-arm telemetry uses fresh detector output without altering gameplay',()=>{
+  const off=game(false),on=game(true);const t=enter(off);assert.equal(enter(on),t);
+  const p=curlPose(.5),world=curlPose(.5);world[15]={x:.12,y:-.2,z:-.31,visibility:.91};
+  for(let i=0;i<50;i++){off.cameraFrame(t+i*50,p,world);on.cameraFrame(t+i*50,p,world);assert.deepEqual(on.summary(),off.summary());}
+  const rows=traces(on).flatMap(b=>b.rows);assert.ok(rows.some(r=>r.worldPoints.some(p=>p[0]===15&&p[1]===.12&&p[2]===-.2&&p[3]===-.31&&p[4]===.91)));
+});
