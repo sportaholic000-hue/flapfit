@@ -10,6 +10,7 @@ function pose(left=40,right=left){
   for(const [side,angle]of [[0,left],[1,right]]){
     const x=side?.65:.35,a=angle*Math.PI/180;
     p[13+side]={x,y:.50,visibility:1};p[15+side]={x,y:.50-.17*Math.cos(a),visibility:1};
+    for(const index of [17,19,21])p[index+side]={...p[15+side]};
     w[13+side]={x:side?.18:-.18,y:-.10,z:0,visibility:1};
     w[15+side]={x:w[13+side].x,y:-.10-.22*Math.cos(a),z:-.22*Math.sin(a),visibility:1};
   }
@@ -40,7 +41,7 @@ test('a lowered head cannot calibrate hanging arms as the top',()=>{
  const g=game();for(let t=50;t<=6000;t+=50)camera(g,t,160,160,p=>{p[2].y=.6;p[5].y=.6;});assert.equal(g.summary().state,'waitTop');assert.equal(g.summary().progress,0);
 });
 test('top calibration requires a face reference and both forearms',()=>{
- for(const missing of [2,5,13,14,15,16]){const g=game();for(let t=50;t<=5000;t+=50)camera(g,t,40,40,p=>p[missing].visibility=0);assert.equal(g.summary().state,'waitTop');assert.equal(g.summary().progress,0);}
+ for(const missing of [2,5,13,14]){const g=game();for(let t=50;t<=5000;t+=50)camera(g,t,40,40,p=>p[missing].visibility=0);assert.equal(g.summary().state,'waitTop');assert.equal(g.summary().progress,0);}
 });
 test.each([false,true])('one hanging arm cannot complete top calibration %s',swap=>{
  const g=game();for(let t=50;t<=6000;t+=50)camera(g,t,swap?160:40,swap?40:160);assert.equal(g.summary().state,'waitTop');assert.equal(g.summary().progress,0);
@@ -57,11 +58,11 @@ test('small natural differences are allowed while sustained large differences fa
  for(let i=0;i<90;i++,t+=50)camera(g,t,60,130);assert.equal(g.messages.find(m=>m.type==='gameover').fatalCheckKey,'biceps-both-arms');
 });
 test('loss of a forearm never becomes an invented midpoint or single-arm fallback',()=>{
- const g=game();let t=enter(g),x=g.summary().pipeX;for(let i=0;i<90;i++,t+=50)camera(g,t,80,80,(_,w)=>w[16].visibility=0);
+ const g=game();let t=enter(g),x=g.summary().pipeX;for(let i=0;i<90;i++,t+=50)camera(g,t,80,80,p=>{for(const i of [16,18,20,22])p[i].visibility=0;});
  assert.equal(g.messages.find(m=>m.type==='gameover').fatalCheckKey,'biceps-both-arms');assert.ok(g.summary().pipeX<x);
 });
 test('lifting a whole straight arm fails the independent per-arm elbow anchor',()=>{
- const g=game();let t=enter(g);for(let i=0;i<90;i++,t+=50)camera(g,t,90,90,p=>{p[13].y-=.16;p[14].y-=.16;p[15].y-=.16;p[16].y-=.16;});
+ const g=game();let t=enter(g);for(let i=0;i<90;i++,t+=50)camera(g,t,90,90,p=>{for(const i of [13,14,15,16,17,18,19,20,21,22])p[i].y-=.16;});
  assert.equal(g.messages.find(m=>m.type==='gameover').reason,'form');
 });
 test('forearm direction is unaffected by a common 3D position or scale change',()=>{
@@ -79,7 +80,7 @@ test('a tiny partial adjustment is responsive rather than a dead zone',()=>{
 });
 test('diagnostics do not influence the experimental controller',()=>{
  const a=game(false),b=game(true);let t=enter(a);assert.equal(enter(b),t);for(let i=0;i<100;i++,t+=50){const angle=90+25*Math.sin(i/8);camera(a,t,angle);camera(b,t,angle);assert.deepEqual(a.summary(),b.summary());}
- const rows=b.messages.filter(m=>m.type==='curldebug').map(m=>JSON.parse(m.message));assert.ok(rows.every(b=>b.controller==='forearm-eye-top-1'));assert.ok(rows.flatMap(b=>b.rows).some(r=>r.points.some(p=>p[0]===2)));assert.ok(!a.messages.some(m=>m.type==='curldebug'));
+ const rows=b.messages.filter(m=>m.type==='curldebug').map(m=>JSON.parse(m.message));assert.ok(rows.every(b=>b.controller==='hand-image-1'));assert.ok(rows.flatMap(b=>b.rows).some(r=>r.points.some(p=>p[0]===2)));assert.ok(!a.messages.some(m=>m.type==='curldebug'));
 });
 test('experimental calibration uses fresh observations and clears when the person leaves',()=>{
  const g=game();camera(g,2100,40);for(let t=2116;t<=3100;t+=16)g.render(t);assert.equal(g.summary().progress,0);
@@ -91,4 +92,24 @@ test('the forearm experiment is enabled only for Android development previews',(
  assert.ok(screen.includes("curlForearmControl: __DEV__ && Platform.OS === 'android'"));
  const g=createGame({...scripts,form:"CONFIG.exercise='biceps';CONFIG.curlForearmControl=false;\n"+scripts.form});
  for(let t=50;t<=5000;t+=50)camera(g,t,40);assert.equal(g.summary().state,'waitTop');
+});
+
+
+test('isolated wrist errors cannot move the median hand signal',()=>{
+ const a=game(),b=game();let t=enter(a);enter(b);
+ for(let i=0;i<100;i++,t+=50){const angle=90+25*Math.sin(i/7);camera(a,t,angle);camera(b,t,angle,angle,p=>{p[15].y+=i%2?.12:-.12;p[16].y+=i%2?-.12:.12;});assert.deepEqual(a.summary(),b.summary());}
+});
+test('isolated finger errors cannot move the median hand signal',()=>{
+ const a=game(),b=game();let t=enter(a);enter(b);
+ for(let i=0;i<100;i++,t+=50){const angle=90+25*Math.sin(i/7);camera(a,t,angle);camera(b,t,angle,angle,p=>{p[19].y+=.2;p[20].y-=.2;});assert.deepEqual(a.summary(),b.summary());}
+});
+test('finger points can calibrate and control both hands without wrists',()=>{
+ const g=game();let t=enter(g,p=>{p[15].visibility=0;p[16].visibility=0;});for(let i=0;i<90;i++,t+=50)camera(g,t,80,80,p=>{p[15].visibility=0;p[16].visibility=0;});assert.equal(g.summary().crashReason,'');assert.equal(g.summary().state,'play');
+});
+test('a single remaining point cannot qualify a hand for calibration',()=>{
+ const g=game();for(let t=50;t<=6000;t+=50)camera(g,t,40,40,p=>{for(const i of [18,20,22])p[i].visibility=0;});assert.equal(g.summary().state,'waitTop');assert.equal(g.summary().progress,0);
+});
+test('arbitrary or missing world coordinates cannot affect calibration or flight',()=>{
+ const a=game(),b=game();let t=enter(a);enter(b,(_,w)=>{w.splice(0,w.length);});
+ for(let i=0;i<100;i++,t+=50){const angle=90+25*Math.sin(i/7);camera(a,t,angle);camera(b,t,angle,angle,(_,w)=>{for(const p of w){p.y=i%2?20:-20;p.z=i%2?-30:30;p.visibility=0;}});assert.deepEqual(a.summary(),b.summary());}
 });
