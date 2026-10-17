@@ -22,6 +22,7 @@ function resetCurlTrace() {
 function flushCurlTrace(now, terminal) {
   if (!curlDiagnosticsEnabled() || typeof postRN !== 'function' || (!curlTraceRows.length && !terminal)) { return; }
   postRN({type:'curldebug',message:JSON.stringify({version:'curl-trace-1',controller:usesCurlForearmControl() ? 'hand-image-1' : 'curl-cal-filter-flight-original',
+    lowerFilter:usesCurlForearmControl() ? 'bounded-lower-only-1' : null,
     response:usesCurlForearmControl() ? 'elapsed-follow-1' : 'legacy-frame-follow',
     model:'lite',calibration:usesCurlForearmControl() ? 'eye-top-hand-bottom-1' : 'each-arm-1',formGeometry:usesCurlForearmControl() ? 'shoulder-free-image-hand-1' : 'world-when-calibrated-1',
     references:{top:formTopMetrics,bottom:formBottomMetrics},
@@ -75,7 +76,7 @@ function sampleCurlTrace(now, detected) {
     elbowAngle:number(metrics && metrics.elbowAngle),elbowCount:metrics ? metrics.elbowCount : 0,
     leftProgress:number(leftProgress),rightProgress:number(rightProgress),
     progressDifference:leftProgress !== null && rightProgress !== null ? number(Math.abs(leftProgress-rightProgress)) : null,
-    poseRaw:number(metrics && metrics.controllerY),raw:number(formTrackY),smooth:number(formTrackYSmooth),
+    poseRaw:number(metrics && metrics.controllerY),raw:number(formTrackY),smooth:number(formTrackYSmooth),output:number(getExperimentalTrackYSmooth()),
     bird:number(typeof birdNorm !== 'undefined' ? birdNorm : null),norm:number(norm),
     top:number(typeof topY !== 'undefined' ? topY : null),bottom:number(typeof bottomY !== 'undefined' ? bottomY : null),
     check:check ? {valid:check.valid,message:check.message,fatal:check.fatal,fatalKey:check.fatalKey} : null,

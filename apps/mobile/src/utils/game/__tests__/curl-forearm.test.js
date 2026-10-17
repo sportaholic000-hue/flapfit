@@ -141,3 +141,37 @@ test('actual curl gameplay uses elapsed render time consistently after the same 
  const a=run(Array.from({length:12},()=>1000/30));const b=run(Array.from({length:6},()=>[1000/60,50]).flat());
  assert.equal(a.norm,b.norm);assert.ok(Math.abs(a.birdNorm-b.birdNorm)<1e-10);
 });
+
+const lowerOutput=new Function(require('../html/scriptCurlForearmTracking').SCRIPT_CURL_FOREARM_TRACKING+';return curlLowerRangeOutput;')();
+const lowerTop={controllerY:0},lowerBottom={controllerY:1};
+function lowerSample(current,previous,left=1-current,right=left){return lowerOutput(current,previous,{curlLeftProgress:left,curlRightProgress:right},lowerTop,lowerBottom);}
+test('lower filter returns the exact original target at and above midpoint for either arm',()=>{
+ for(const previous of [.1,.4,.5,.7,.9])for(const current of [.1,.3,.5]){
+  assert.equal(lowerSample(current,previous),current);
+ }
+ assert.equal(lowerSample(.7,.72,.51,.09),.7);
+ assert.equal(lowerSample(.7,.72,.09,.51),.7);
+});
+test('lower filter reduces small lower-half oscillations without dead zones or overshoot',()=>{
+ const values=[.8,.806,.794,.806,.794,.8];let previous=values[0];
+ const output=values.map(v=>{const y=lowerSample(v,previous);assert.ok(Math.abs(y-v)<=.01);assert.ok(y>=Math.min(v,previous)&&y<=Math.max(v,previous));previous=v;return y;});
+ const variation=a=>a.slice(1).reduce((n,v,i)=>n+Math.abs(v-a[i]),0);
+ assert.ok(variation(output)<variation(values));
+ assert.ok(lowerSample(.8001,.8)>.8);
+ assert.equal(lowerSample(.9,.7),.9);
+ assert.equal(lowerSample(.7,.9),.7);
+});
+test('lower filter fades continuously to the unchanged midpoint and holds do not drift',()=>{
+ assert.ok(Math.abs(lowerSample(.500001,.51)-.500001)<1e-9);
+ for(const v of [.6,.7,.9])assert.equal(lowerSample(v,v),v);
+ assert.equal(lowerOutput(.7,.71,null,lowerTop,lowerBottom),.7);
+});
+test('actual upper-half target stays identical to baseline after repeated lower-half excursions',()=>{
+ const a=game(),b=createGame({...scripts,form:"CONFIG.exercise='biceps';CONFIG.curlForearmControl=true;CONFIG.curlDiagnostics=true;\n"+scripts.form+'\nfunction curlLowerRangeOutput(baseline){return baseline;}'});
+ let t=enter(a);assert.equal(enter(b),t);let lowerChanged=false;
+ for(let i=0;i<160;i++,t+=50){const angle=i%40<20?130+(i%2?2:-2):65+(i%2?2:-2);camera(a,t,angle);camera(b,t,angle);
+  const m=a.metrics();if(m.curlLeftProgress>=.5||m.curlRightProgress>=.5)assert.equal(a.summary().norm,b.summary().norm);
+  else if(Math.abs(a.summary().norm-b.summary().norm)>1e-7)lowerChanged=true;
+ }
+ assert.ok(lowerChanged);assert.equal(a.summary().crashReason,'');
+});

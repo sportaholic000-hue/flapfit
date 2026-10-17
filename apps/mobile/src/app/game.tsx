@@ -194,6 +194,7 @@ export default function GameScreen() {
 }
 
 function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepareEntry: () => Promise<void> }) {
+  const androidResultNavy = Platform.OS === 'android';
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -1443,7 +1444,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
           >
           <View
             style={{
-              backgroundColor: '#FFFFFF',
+              backgroundColor: androidResultNavy ? '#06223D' : '#FFFFFF',
               borderRadius: 24,
               padding: 24,
               width: '100%',
@@ -1453,7 +1454,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
           >
             {championshipClear ? <ChampionshipResultHeading /> : <>
             <ResultBird cleared={cleared} skin={skin} evo={birdEvo} />
-            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ width: '100%', textAlign: 'center', fontSize: 24, fontWeight: '900', color: '#06223D', marginTop: 8 }}>
+            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ width: '100%', textAlign: 'center', fontSize: 24, fontWeight: '900', color: androidResultNavy ? '#FFFFFF' : '#06223D', marginTop: 8 }}>
               {nextUnlocked
                 ? `Level ${level.id + 1} unlocked!`
                 : cleared
@@ -1466,7 +1467,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
             {result.endReason ? (
               <Text
                 style={{
-                  color: '#475569',
+                  color: androidResultNavy ? '#FFFFFF' : '#475569',
                   fontSize: 13,
                   textAlign: 'center',
                   marginTop: 8,
@@ -1493,14 +1494,14 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                 <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ textAlign: 'center', fontSize: 26, lineHeight: 34, fontWeight: '900', color: '#F59E0B' }}>
                   {result.score}
                 </Text>
-                <Text style={{ fontSize: 11, lineHeight: 16, marginTop: 4, textAlign: 'center', color: '#475569', fontWeight: '700' }}>PIPES</Text>
+                <Text style={{ fontSize: 11, lineHeight: 16, marginTop: 4, textAlign: 'center', color: androidResultNavy ? '#FFFFFF' : '#475569', fontWeight: '700' }}>PIPES</Text>
               </View>
 
               <View style={{ flexShrink: 1, minWidth: 0, alignItems: 'center' }}>
                 <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ textAlign: 'center', fontSize: 26, lineHeight: 34, fontWeight: '900', color: '#F59E0B' }}>
                   {tutMinDisplay > 0 ? `${tutMinDisplay}m ${tutSecDisplay}s` : `${tutSecDisplay}s`}
                 </Text>
-                <Text style={{ fontSize: 11, lineHeight: 16, marginTop: 4, textAlign: 'center', color: '#475569', fontWeight: '700' }}>
+                <Text style={{ fontSize: 11, lineHeight: 16, marginTop: 4, textAlign: 'center', color: androidResultNavy ? '#FFFFFF' : '#475569', fontWeight: '700' }}>
                   TRAINING TIME
                 </Text>
               </View>
@@ -1509,14 +1510,14 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
               <View
                 style={{
                   width: '100%',
-                  backgroundColor: '#F59E0B',
+                  backgroundColor: androidResultNavy ? '#06223D' : '#F59E0B',
                   borderRadius: 14,
                   padding: 14,
                   marginTop: 14,
                   gap: 8,
                 }}
               >
-                <Text style={{ color: '#06223D', fontSize: 17, lineHeight: 22, fontWeight: '900', textAlign: 'center' }}>
+                <Text style={{ color: androidResultNavy ? '#FFFFFF' : '#06223D', fontSize: 17, lineHeight: 22, fontWeight: '900', textAlign: 'center' }}>
                   {closeToTarget
                     ? `${pipesRemaining} MORE ${pipesRemaining === 1 ? 'PIPE' : 'PIPES'} TO CLEAR!`
                     : `GOAL: ${target} PIPES`}
@@ -1530,7 +1531,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                 >
                   <View style={{ width: `${targetProgress * 100}%`, height: '100%', borderRadius: 5, backgroundColor: '#06223D' }} />
                 </View>
-                <Text style={{ color: '#06223D', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
+                <Text style={{ color: androidResultNavy ? '#FFFFFF' : '#06223D', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>
                   This run: {result.score} / {target} pipes
                 </Text>
               </View>
@@ -1557,9 +1558,9 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   style={{
                     color:
                       competitionResultState.status === 'accepted'
-                        ? '#06223D'
+                        ? (androidResultNavy ? '#FFFFFF' : '#06223D')
                         : competitionResultState.status === 'pending'
-                          ? '#06223D'
+                          ? (androidResultNavy ? '#FFFFFF' : '#06223D')
                           : competitionResultState.status === 'local'
                             ? '#475569'
                             : '#991B1B',
@@ -1587,8 +1588,8 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   gap: 10,
                 }}
               >
-                <ActivityIndicator size="small" color="#06223D" />
-                <Text style={{ color: '#06223D', fontSize: 14, fontWeight: '900' }}>
+                <ActivityIndicator size="small" color={androidResultNavy ? "#FFFFFF" : "#06223D"} />
+                <Text style={{ color: androidResultNavy ? '#FFFFFF' : '#06223D', fontSize: 14, fontWeight: '900' }}>
                   Preparing video…
                 </Text>
               </View>
@@ -1602,7 +1603,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   onPress={() => void shareRecordedVideo()}
                   style={{
                     marginTop: 16,
-                    backgroundColor: '#06223D',
+                    backgroundColor: androidResultNavy ? '#FFFFFF' : '#06223D',
                     borderRadius: 16,
                     paddingVertical: 15,
                     width: '100%',
@@ -1614,11 +1615,11 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                   }}
                 >
                   {shareBusy ? (
-                    <ActivityIndicator size="small" color="#FFFFFF" />
+                    <ActivityIndicator size="small" color={androidResultNavy ? "#06223D" : "#FFFFFF"} />
                   ) : (
-                    <Share2 size={20} color="#FFFFFF" />
+                    <Share2 size={20} color={androidResultNavy ? "#06223D" : "#FFFFFF"} />
                   )}
-                  <Text style={{ color: '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
+                  <Text style={{ color: androidResultNavy ? '#06223D' : '#FFFFFF', fontWeight: '900', fontSize: 16 }}>
                     {shareBusy ? 'Opening share options…' : 'Share gameplay video'}
                   </Text>
                 </TouchableOpacity>
@@ -1635,7 +1636,7 @@ function GameContent({ onNewRun, prepareEntry }: { onNewRun: () => void; prepare
                 ) : null}
                 <Text
                   style={{
-                    color: '#475569',
+                    color: androidResultNavy ? '#FFFFFF' : '#475569',
                     fontSize: 11,
                     lineHeight: 16,
                     marginTop: 6,

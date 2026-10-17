@@ -15,6 +15,28 @@ function curlBirdResponseGain(elapsedMs) {
   return 1-Math.pow(1-16/30,boundedMs/(1000/30));
 }
 
+// A small, bounded extra noise filter below the midpoint only. Keep the
+// original smoother running separately: lower-range output must never feed
+// back into it or change the middle/top target after a lower-range excursion.
+function curlLowerRangeOutput(baseline, previous, metrics, top, bottom) {
+  if (!metrics || !top || !bottom || !Number.isFinite(previous)) { return baseline; }
+  var range=bottom.controllerY-top.controllerY;
+  if (!(range > 0) || !Number.isFinite(metrics.curlLeftProgress) ||
+      !Number.isFinite(metrics.curlRightProgress)) { return baseline; }
+  var uppermost=Math.max(metrics.curlLeftProgress,metrics.curlRightProgress,
+    (bottom.controllerY-baseline)/range,(bottom.controllerY-previous)/range);
+  if (uppermost >= .5) { return baseline; }
+  var depth=Math.max(0,Math.min(1,(.5-uppermost)/.2));
+  var rangeWeight=depth*depth*(3-2*depth);
+  // Preserve quick changes. This is not a dead zone: even tiny movements
+  // retain at least 80% of the original fresh-sample response.
+  var step=Math.abs(baseline-previous)/range;
+  var smallStepWeight=Math.max(0,Math.min(1,(.06-step)/.04));
+  var correction=(previous-baseline)*.2*rangeWeight*smallStepWeight;
+  correction=Math.max(-range*.01,Math.min(range*.01,correction));
+  return baseline+correction;
+}
+
 function curlHandMedian(values) {
   values.sort(function(a,b){return a-b;});
   var middle=Math.floor(values.length/2);
